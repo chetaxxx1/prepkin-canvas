@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Prepkin Canvas Sync",
+  "version": "0.1.0",
+  "description": "Syncs your Canvas to-do list to the Prepkin app when you log in.",
+  "permissions": ["storage", "alarms"],
+  "host_permissions": ["https://*.instructure.com/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://*.instructure.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Prepkin Canvas Sync"
+  }
+}

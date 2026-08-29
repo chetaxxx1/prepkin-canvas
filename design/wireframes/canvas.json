@@ -1,0 +1,27 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "title": "Home", "x": 0, "y": 0, "w": 390, "h": 844 },
+    { "file": "GradeCalc.dc.html", "title": "Grade calculator", "x": 0, "y": 1000, "w": 390, "h": 844 },
+    { "file": "Weekly.dc.html", "title": "Weekly summary", "x": 0, "y": 2000, "w": 390, "h": 844 },
+    { "file": "Pairing.dc.html", "title": "Connect Canvas", "x": 0, "y": 3000, "w": 390, "h": 844 },
+    { "file": "Focus.dc.html", "title": "Focus — set up", "x": 470, "y": 0, "w": 390, "h": 844 },
+    { "file": "FocusRunning.dc.html", "title": "Focus — running", "x": 470, "y": 1000, "w": 390, "h": 844 },
+    { "file": "Games.dc.html", "title": "Games hub", "x": 940, "y": 0, "w": 390, "h": 844 },
+    { "file": "DailyWord.dc.html", "title": "Daily Word", "x": 940, "y": 1000, "w": 390, "h": 844 },
+    { "file": "Learn.dc.html", "title": "Learn", "x": 1410, "y": 0, "w": 390, "h": 844 },
+    { "file": "Lesson.dc.html", "title": "Lesson player", "x": 1410, "y": 1000, "w": 390, "h": 844 },
+    { "file": "Friends.dc.html", "title": "Friends", "x": 1880, "y": 0, "w": 390, "h": 844 },
+    { "file": "Story.dc.html", "title": "Story viewer", "x": 1880, "y": 1000, "w": 390, "h": 844 },
+    { "file": "Shop.dc.html", "title": "Shop", "x": 2350, "y": 0, "w": 390, "h": 844 }
+  ],
+  "annotations": [
+    { "id": "overview", "x": -540, "y": 0, "w": 440, "text": "PREPKIN CANVAS — PAGE PLAN\n\n6 tabs: Home, Focus, Games, Learn, Friends, Shop. Each column is one tab; screens below it are its sub-pages.\n\nEconomy rule: coins pay for FINISHING things (tasks, focus, lessons, the daily word) — never for grades or correct answers.\n\nAlready working in the iOS build: everything except Versus, stories, and real friends (those need the M2 sync bridge).\n\nOpen questions:\n- Does the weekly summary auto-post as your story?\n- Do Canvas tasks auto-check when submitted?\n- Chibi art style (these blobs are placeholders)" },
+    { "id": "col-home", "x": 0, "y": -240, "w": 390, "text": "HOME\nGreeting + coins. Chibi front and center (tap = wave, task done = bounce). Upgrade button. This-week stats. Grade calculator entry. Today's tasks: Canvas + study + life, each with a coin reward.\n\nSub-pages: grade calculator (RogerHub-style sliders), weekly summary (share card), Canvas pairing (one-time setup with code for the Chrome extension)." },
+    { "id": "col-focus", "x": 470, "y": -240, "w": 390, "text": "FOCUS\nFocus Friend-style. Pick minutes, chibi naps while you work. Finish = 1 coin per minute. Give up = no shame, no pay. Running state hides the tab bar." },
+    { "id": "col-games", "x": 940, "y": -240, "w": 390, "text": "GAMES\nDaily Word: one word a day, +30 once, daily leaderboard with friends. Versus: turn-based word battles (Words-with-Friends-style) — locked until friend sync (M2)." },
+    { "id": "col-learn", "x": 1410, "y": -240, "w": 390, "text": "LEARN\nMicrolessons in tracks: personal finance, philosophy, study skills. 3–5 swipe cards, ~2 min, +20 coins on finish, once per lesson." },
+    { "id": "col-friends", "x": 1880, "y": -240, "w": 390, "text": "FRIENDS\nStories row (daily wins: focus streaks, solved words, finished lessons). Weekly coin leaderboard. Friends list with statuses. Add by code/link. All needs the M2 bridge — mock data until then." },
+    { "id": "col-shop", "x": 2350, "y": -240, "w": 390, "text": "SHOP\nChibi species grid: buy with coins (300–500), starter slime free, 3 levels each (Lv1→2: 100, Lv2→3: 250). Switching active chibi is free. Later: accessories / room items." }
+  ],
+  "launch": { "view": "canvas" }
+}

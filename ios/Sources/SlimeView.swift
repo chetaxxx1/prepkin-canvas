@@ -1,0 +1,443 @@
+import SwiftUI
+import UIKit
+
+/// The Prepkin slime mascot, drawn in code. All shapes are bezier paths traced
+/// programmatically from the approved renders in ~/Desktop/mascot/slime-handoff/
+/// (mascot-idle.png + approved-expressions.png), normalized to the character
+/// bounding box (aspect 1.1145). Palette from spec.json. The face is
+/// always code-drawn — never generated art. Do not hand-edit the path data;
+/// re-run the trace scripts in design/slime-trace/ (trace.py → emit_swift.py) instead.
+struct SlimeView: View {
+    var color: Color = Slime.body
+    var level: Int
+    var animation: ChibiAnimation
+    var size: CGFloat = 130
+    /// Optional explicit face; nil derives it from `animation`.
+    var expression: SlimeExpression? = nil
+
+    @State private var squish = false
+    @State private var hop = false
+
+    private var scale: CGFloat { [1: 0.78, 2: 0.9, 3: 1.0][level] ?? 0.78 }
+
+    @State private var danceStart: Date? = nil
+
+    private var face: SlimeExpression {
+        if let expression { return expression }
+        switch animation {
+        case .celebrate, .dance: return .delight
+        case .sleep: return .sleep
+        default: return .idle
+        }
+    }
+
+    var body: some View {
+        let w = size * scale                    // character bounding-box width
+        let h = w / Slime.aspect                // character bounding-box height
+        TimelineView(.animation(paused: animation != .dance)) { ctx in
+            let dance = danceFrame(at: ctx.date)
+            let d = dance.deform
+            ZStack {
+                Ellipse()
+                    .fill(Slime.ink.opacity(0.10))
+                    .frame(width: w * 0.92 * (1 - 0.16 * dance.air), height: h * 0.13)
+                    .offset(y: h * 0.47)
+
+                ZStack {
+                    TracedShape(subpaths: SlimeArt.body, deform: d).fill(color).frame(width: w, height: h)
+                    TracedShape(subpaths: SlimeArt.belly, deform: d).fill(Slime.belly(for: color)).frame(width: w, height: h)
+                    TracedShape(subpaths: face.art, deform: d).fill(Slime.ink).frame(width: w, height: h)
+
+                    if level >= 2 {
+                        HStack(spacing: w * 0.50) {
+                            Ellipse().fill(Slime.blush).frame(width: w * 0.11, height: h * 0.045)
+                            Ellipse().fill(Slime.blush).frame(width: w * 0.11, height: h * 0.045)
+                        }
+                        // cheeks sit at y ≈ 0.54 of the bbox; ride the squash
+                        // (the rigid tilt below carries them sideways)
+                        .offset(y: h * (0.04 + 0.46 * (1 - d.sy)))
+                    }
+                    if animation == .celebrate {
+                        Text("✨").font(.system(size: w * 0.22)).offset(x: w * 0.52, y: -h * 0.38)
+                        Text("✨").font(.system(size: w * 0.16)).offset(x: -w * 0.56, y: -h * 0.12)
+                    }
+                    if face == .sleep {
+                        Text("💤").font(.system(size: w * 0.2)).offset(x: w * 0.48, y: -h * 0.40)
+                    }
+                }
+                .rotationEffect(.degrees(dance.tilt), anchor: .bottom)
+                .scaleEffect(x: animation == .dance ? 1 : (squish ? 1.04 : 0.99),
+                             y: animation == .dance ? 1 : (squish ? 0.95 : 1.01),
+                             anchor: .bottom)
+                .offset(y: hop ? -size * 0.22 : dance.hopY * h)
+            }
+        }
+        .frame(width: size * 1.35, height: size * 1.15)
+        .onAppear { startIdle() }
+        .onChange(of: animation) { _, new in
+            if new == .dance { danceStart = Date() }
+            guard new == .bounce || new == .celebrate || new == .wave else { return }
+            withAnimation(.interpolatingSpring(stiffness: 260, damping: 9)) { hop = true }
+            Task {
+                try? await Task.sleep(for: .seconds(0.32))
+                withAnimation(.interpolatingSpring(stiffness: 260, damping: 9)) { hop = false }
+            }
+        }
+    }
+
+    private func startIdle() {
+        withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
+            squish = true
+        }
+    }
+
+    private func danceFrame(at date: Date) -> SlimeDance.Frame {
+        guard animation == .dance, let start = danceStart else { return SlimeDance.Frame() }
+        return SlimeDance.frame(at: date.timeIntervalSince(start))
+    }
+}
+
+/// The 4 approved expressions + the sleep placeholder (not yet approved —
+/// currently reuses the deadpan-style closed lids; see handoff BRIEF).
+enum SlimeExpression {
+    case idle, deadpan, judging, delight, sleep
+
+    var art: [[[Double]]] {
+        switch self {
+        case .idle: return SlimeArt.faceIdle
+        case .deadpan: return SlimeArt.faceDeadpan
+        case .judging: return SlimeArt.faceJudging
+        case .delight: return SlimeArt.faceDelight
+        case .sleep: return SlimeArt.faceSleep
+        }
+    }
+}
+
+enum Slime {
+    static let body = Color(red: 0x51 / 255, green: 0xCF / 255, blue: 0xA0 / 255)   // #51CFA0
+    static let bellyMint = Color(red: 0xB1 / 255, green: 0xED / 255, blue: 0xD4 / 255)  // #B1EDD4
+    static let ink = Color(red: 0x10 / 255, green: 0x18 / 255, blue: 0x20 / 255)    // #101820
+    static let blush = Color(red: 0xFF / 255, green: 0x9E / 255, blue: 0x94 / 255).opacity(0.7)
+    static let aspect: CGFloat = 1.1145
+
+    /// Exact #B1EDD4 for the canonical mint; recolors get the same 57% blend
+    /// toward white so ember/droplet/sprout keep the belly relationship.
+    static func belly(for bodyColor: Color) -> Color {
+        if bodyColor == body { return bellyMint }
+        let ui = UIColor(bodyColor)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        ui.getRed(&r, green: &g, blue: &b, alpha: &a)
+        let t: CGFloat = 0.57
+        return Color(red: r + (1 - r) * t, green: g + (1 - g) * t, blue: b + (1 - b) * t)
+    }
+}
+
+/// Jelly deformation applied to the unit-space path points, anchored at
+/// bottom-center. `sx`/`sy` are squash & stretch. `antennaSway` shifts ONLY
+/// the antenna region (top ~15% of the bbox) sideways with a smooth quadratic
+/// ramp — the head itself never shears. Body lean is a rigid rotation applied
+/// at the view level, not here.
+struct SlimeDeform {
+    var sx = 1.0, sy = 1.0, antennaSway = 0.0
+    static let neutral = SlimeDeform()
+
+    /// Below this unit-y the sway weight is exactly 0 (head untouched).
+    static let antennaBase = 0.15
+
+    func apply(x: Double, y: Double) -> (x: Double, y: Double) {
+        var nx = 0.5 + (x - 0.5) * sx
+        let ny = 1 - (1 - y) * sy
+        if y < Self.antennaBase {
+            let wgt = (Self.antennaBase - y) / Self.antennaBase
+            nx += antennaSway * wgt * wgt
+        }
+        return (nx, ny)
+    }
+}
+
+/// Dance choreography, TFT-emote style: four alternating tilt-hops.
+/// Each beat = anticipation crouch → launch stretch → ballistic arc while the
+/// whole body rigidly tilts into the hop → hard landing squash → rebound.
+/// The antenna is the only follow-through part: it lags the tilt and whips
+/// past it, and wobbles out during the final settle.
+/// Pure functions of time, so the app and the offline render harness produce
+/// identical frames. Timing: 4 hops × 0.62s + 0.5s settle = 2.98s
+/// (must match ChibiAnimation.dance.duration).
+enum SlimeDance {
+    struct Frame {
+        var deform = SlimeDeform.neutral
+        var tilt = 0.0   // rigid body lean in degrees, about the base center
+        var air = 0.0    // 0 on the ground, 1 near hop apex (drives the shadow)
+        var hopY = 0.0   // vertical offset in units of body height
+    }
+
+    static let duration = 2.98
+    private static let cycle = 0.62
+    private static let settleStart = 2.48
+
+    // Keyframes over one hop cycle (u in 0...1), smoothstep-interpolated.
+    private static let syKeys: [(Double, Double)] = [
+        (0.00, 1.00), (0.14, 0.83), (0.24, 1.14), (0.40, 1.06),
+        (0.58, 1.03), (0.70, 1.06), (0.76, 0.78), (0.87, 1.07), (1.00, 1.00),
+    ]
+    private static let tiltKeys: [(Double, Double)] = [
+        (0.00, 0), (0.14, -2.5), (0.30, 4.5), (0.50, 8.5),
+        (0.68, 6.0), (0.82, 1.5), (1.00, 0),
+    ]
+    // ballistic flight window inside a cycle
+    private static let liftoff = 0.20, touchdown = 0.72, hopHeight = 0.24
+
+    static func frame(at t: Double) -> Frame {
+        guard t >= 0, t < duration else { return Frame() }
+        var f = Frame()
+        if t < settleStart {
+            let i = Int(t / cycle)
+            let u = t / cycle - Double(i)
+            let dir: Double = i % 2 == 0 ? 1 : -1        // alternate hop direction
+            f.deform.sy = track(syKeys, u)
+            f.tilt = dir * track(tiltKeys, u)
+            if u > liftoff && u < touchdown {            // true parabola in the air
+                let v = (u - liftoff) / (touchdown - liftoff)
+                f.hopY = -hopHeight * 4 * v * (1 - v)
+            }
+            // follow-through: the antenna lags the tilt and catches up late
+            f.deform.antennaSway = min(0.12, max(-0.12, (tilt(at: t - 0.08) - f.tilt) * 0.012))
+        } else {
+            // damped jelly wobble back to rest after the last landing
+            let s = t - settleStart
+            f.deform.sy = 1 + 0.07 * exp(-7 * s) * sin(2 * .pi * 4.2 * s)
+            f.deform.antennaSway = 0.09 * exp(-5 * s) * sin(2 * .pi * 4.8 * s)
+        }
+        f.deform.sx = 1 / f.deform.sy.squareRoot()       // preserve volume
+        f.air = min(1, -f.hopY / hopHeight)
+        return f
+    }
+
+    private static func tilt(at t: Double) -> Double {
+        guard t >= 0, t < settleStart else { return 0 }
+        let i = Int(t / cycle)
+        let u = t / cycle - Double(i)
+        let dir: Double = i % 2 == 0 ? 1 : -1
+        return dir * track(tiltKeys, u)
+    }
+
+    private static func track(_ keys: [(Double, Double)], _ u: Double) -> Double {
+        if u <= keys[0].0 { return keys[0].1 }
+        for k in 1..<keys.count where u <= keys[k].0 {
+            let (t0, v0) = keys[k - 1]
+            let (t1, v1) = keys[k]
+            let s = (u - t0) / (t1 - t0)
+            return v0 + (v1 - v0) * s * s * (3 - 2 * s)
+        }
+        return keys.last?.1 ?? 0
+    }
+}
+
+/// Renders pre-traced cubic-bezier subpaths (unit coords over the character
+/// bounding box) scaled into the given rect. Each component is a single
+/// closed contour (no holes).
+struct TracedShape: Shape {
+    let subpaths: [[[Double]]]
+    var deform: SlimeDeform = .neutral
+
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        for segs in subpaths {
+            guard let first = segs.first else { continue }
+            func pt(_ x: Double, _ y: Double) -> CGPoint {
+                let d = deform.apply(x: x, y: y)
+                return CGPoint(x: r.minX + d.x * r.width, y: r.minY + d.y * r.height)
+            }
+            p.move(to: pt(first[0], first[1]))
+            for s in segs {
+                p.addCurve(to: pt(s[6], s[7]),
+                           control1: pt(s[2], s[3]),
+                           control2: pt(s[4], s[5]))
+            }
+            p.closeSubpath()
+        }
+        return p
+    }
+}
+
+/// Traced path data. Generated — do not hand-edit.
+enum SlimeArt {
+    static let body: [[[Double]]] = [
+        [
+            [0.5974, 0.0001, 0.6072, 0.0009, 0.6169, 0.0031, 0.6244, 0.0108],
+            [0.6244, 0.0108, 0.6383, 0.0253, 0.6352, 0.0511, 0.6202, 0.0628],
+            [0.6202, 0.0628, 0.6032, 0.0760, 0.5845, 0.0641, 0.5686, 0.0740],
+            [0.5686, 0.0740, 0.5611, 0.0786, 0.5569, 0.0892, 0.5656, 0.0953],
+            [0.5656, 0.0953, 0.5732, 0.1006, 0.5854, 0.1007, 0.5939, 0.1032],
+            [0.5939, 0.1032, 0.6126, 0.1088, 0.6316, 0.1156, 0.6490, 0.1249],
+            [0.6490, 0.1249, 0.7301, 0.1682, 0.7891, 0.2330, 0.8316, 0.3210],
+            [0.8316, 0.3210, 0.8530, 0.3653, 0.8676, 0.4149, 0.8776, 0.4638],
+            [0.8776, 0.4638, 0.8803, 0.4775, 0.8856, 0.5243, 0.8902, 0.5329],
+            [0.8902, 0.5329, 0.8946, 0.5415, 0.9055, 0.5478, 0.9122, 0.5542],
+            [0.9122, 0.5542, 0.9195, 0.5613, 0.9265, 0.5691, 0.9330, 0.5771],
+            [0.9330, 0.5771, 0.9679, 0.6198, 0.9989, 0.6771, 0.9989, 0.7365],
+            [0.9989, 0.7365, 0.9989, 0.7513, 0.9986, 0.7653, 0.9927, 0.7790],
+            [0.9927, 0.7790, 0.9806, 0.8073, 0.9492, 0.8154, 0.9271, 0.7959],
+            [0.9271, 0.7959, 0.9170, 0.7871, 0.9107, 0.7728, 0.9058, 0.7600],
+            [0.9058, 0.7600, 0.9047, 0.7572, 0.9021, 0.7467, 0.8991, 0.7457],
+            [0.8991, 0.7457, 0.8977, 0.7452, 0.8962, 0.7466, 0.8953, 0.7478],
+            [0.8953, 0.7478, 0.8916, 0.7535, 0.8922, 0.7678, 0.8914, 0.7746],
+            [0.8914, 0.7746, 0.8895, 0.7889, 0.8828, 0.8029, 0.8894, 0.8169],
+            [0.8894, 0.8169, 0.8932, 0.8249, 0.8997, 0.8310, 0.9049, 0.8378],
+            [0.9049, 0.8378, 0.9168, 0.8534, 0.9270, 0.8773, 0.9191, 0.8978],
+            [0.9191, 0.8978, 0.9066, 0.9302, 0.8561, 0.9460, 0.8281, 0.9548],
+            [0.8281, 0.9548, 0.7384, 0.9832, 0.6370, 0.9965, 0.5440, 0.9987],
+            [0.5440, 0.9987, 0.4367, 1.0013, 0.3294, 0.9932, 0.2242, 0.9693],
+            [0.2242, 0.9693, 0.1850, 0.9604, 0.1279, 0.9470, 0.0962, 0.9194],
+            [0.0962, 0.9194, 0.0911, 0.9149, 0.0864, 0.9097, 0.0828, 0.9037],
+            [0.0828, 0.9037, 0.0703, 0.8828, 0.0802, 0.8564, 0.0931, 0.8389],
+            [0.0931, 0.8389, 0.1003, 0.8292, 0.1099, 0.8209, 0.1121, 0.8079],
+            [0.1121, 0.8079, 0.1143, 0.7948, 0.1076, 0.7737, 0.1058, 0.7598],
+            [0.1058, 0.7598, 0.1055, 0.7572, 0.1053, 0.7456, 0.1017, 0.7449],
+            [0.1017, 0.7449, 0.0984, 0.7443, 0.0880, 0.7725, 0.0855, 0.7773],
+            [0.0855, 0.7773, 0.0670, 0.8123, 0.0267, 0.8194, 0.0072, 0.7810],
+            [0.0072, 0.7810, 0.0007, 0.7681, -0.0000, 0.7532, -0.0000, 0.7388],
+            [-0.0000, 0.7388, 0.0000, 0.6773, 0.0313, 0.6186, 0.0679, 0.5748],
+            [0.0679, 0.5748, 0.0758, 0.5652, 0.1074, 0.5380, 0.1102, 0.5303],
+            [0.1102, 0.5303, 0.1146, 0.5183, 0.1155, 0.4958, 0.1180, 0.4822],
+            [0.1180, 0.4822, 0.1238, 0.4502, 0.1317, 0.4188, 0.1413, 0.3880],
+            [0.1413, 0.3880, 0.1778, 0.2712, 0.2543, 0.1706, 0.3570, 0.1214],
+            [0.3570, 0.1214, 0.3868, 0.1072, 0.4188, 0.0981, 0.4509, 0.0935],
+            [0.4509, 0.0935, 0.4698, 0.0908, 0.4907, 0.0928, 0.5086, 0.0848],
+            [0.5086, 0.0848, 0.5491, 0.0666, 0.5407, 0.0056, 0.5974, 0.0001],
+        ],
+    ]
+    static let belly: [[[Double]]] = [
+        [
+            [0.4982, 0.6855, 0.5594, 0.6856, 0.6353, 0.7140, 0.6562, 0.7852],
+            [0.6562, 0.7852, 0.6614, 0.8029, 0.6620, 0.8228, 0.6558, 0.8404],
+            [0.6558, 0.8404, 0.6362, 0.8957, 0.5562, 0.9117, 0.5092, 0.9119],
+            [0.5092, 0.9119, 0.4636, 0.9122, 0.3916, 0.9051, 0.3585, 0.8660],
+            [0.3585, 0.8660, 0.3285, 0.8307, 0.3359, 0.7769, 0.3646, 0.7434],
+            [0.3646, 0.7434, 0.3989, 0.7034, 0.4496, 0.6862, 0.4982, 0.6855],
+        ],
+    ]
+    static let faceIdle: [[[Double]]] = [
+        [
+            [0.3317, 0.3535, 0.3414, 0.3535, 0.3517, 0.3561, 0.3604, 0.3609],
+            [0.3604, 0.3609, 0.4170, 0.3919, 0.4154, 0.4804, 0.3560, 0.5064],
+            [0.3560, 0.5064, 0.3482, 0.5098, 0.3384, 0.5123, 0.3299, 0.5119],
+            [0.3299, 0.5119, 0.2534, 0.5090, 0.2330, 0.3954, 0.3028, 0.3599],
+            [0.3028, 0.3599, 0.3118, 0.3554, 0.3219, 0.3535, 0.3317, 0.3535],
+        ],
+        [
+            [0.4500, 0.4390, 0.4594, 0.4390, 0.4647, 0.4477, 0.4718, 0.4536],
+            [0.4718, 0.4536, 0.4811, 0.4614, 0.4920, 0.4660, 0.5037, 0.4654],
+            [0.5037, 0.4654, 0.5160, 0.4647, 0.5267, 0.4557, 0.5355, 0.4471],
+            [0.5355, 0.4471, 0.5381, 0.4446, 0.5403, 0.4417, 0.5434, 0.4400],
+            [0.5434, 0.4400, 0.5562, 0.4330, 0.5599, 0.4501, 0.5586, 0.4604],
+            [0.5586, 0.4604, 0.5576, 0.4688, 0.5442, 0.4801, 0.5381, 0.4845],
+            [0.5381, 0.4845, 0.5110, 0.5036, 0.4758, 0.4992, 0.4515, 0.4765],
+            [0.4515, 0.4765, 0.4472, 0.4726, 0.4423, 0.4664, 0.4407, 0.4604],
+            [0.4407, 0.4604, 0.4386, 0.4527, 0.4417, 0.4394, 0.4500, 0.4390],
+        ],
+        [
+            [0.6692, 0.3535, 0.6789, 0.3535, 0.6891, 0.3561, 0.6979, 0.3609],
+            [0.6979, 0.3609, 0.7551, 0.3922, 0.7519, 0.4848, 0.6903, 0.5075],
+            [0.6903, 0.5075, 0.6831, 0.5102, 0.6746, 0.5124, 0.6670, 0.5119],
+            [0.6670, 0.5119, 0.6551, 0.5113, 0.6433, 0.5077, 0.6329, 0.5014],
+            [0.6329, 0.5014, 0.6206, 0.4940, 0.6110, 0.4819, 0.6048, 0.4681],
+            [0.6048, 0.4681, 0.5808, 0.4147, 0.6161, 0.3535, 0.6692, 0.3535],
+        ],
+    ]
+    static let faceDeadpan: [[[Double]]] = [
+        [
+            [0.3298, 0.3815, 0.3945, 0.3816, 0.3912, 0.4869, 0.3311, 0.4892],
+            [0.3311, 0.4892, 0.2675, 0.4916, 0.2640, 0.3816, 0.3298, 0.3815],
+        ],
+        [
+            [0.4875, 0.4492, 0.5013, 0.4492, 0.5347, 0.4484, 0.5462, 0.4543],
+            [0.5462, 0.4543, 0.5544, 0.4586, 0.5591, 0.4715, 0.5497, 0.4783],
+            [0.5497, 0.4783, 0.5456, 0.4814, 0.5350, 0.4828, 0.5300, 0.4830],
+            [0.5300, 0.4830, 0.5143, 0.4838, 0.4592, 0.4866, 0.4476, 0.4785],
+            [0.4476, 0.4785, 0.4445, 0.4763, 0.4426, 0.4710, 0.4423, 0.4671],
+            [0.4423, 0.4671, 0.4413, 0.4501, 0.4771, 0.4492, 0.4875, 0.4492],
+        ],
+        [
+            [0.6668, 0.3815, 0.7328, 0.3816, 0.7304, 0.4901, 0.6668, 0.4892],
+            [0.6668, 0.4892, 0.6602, 0.4891, 0.6533, 0.4861, 0.6475, 0.4829],
+            [0.6475, 0.4829, 0.6019, 0.4580, 0.6153, 0.3816, 0.6668, 0.3815],
+        ],
+    ]
+    static let faceJudging: [[[Double]]] = [
+        [
+            [0.2760, 0.3815, 0.3050, 0.3815, 0.3340, 0.3815, 0.3629, 0.3815],
+            [0.3629, 0.3815, 0.3689, 0.3815, 0.3920, 0.3794, 0.3960, 0.3826],
+            [0.3960, 0.3826, 0.4029, 0.3882, 0.3982, 0.4028, 0.3978, 0.4098],
+            [0.3978, 0.4098, 0.3959, 0.4486, 0.3625, 0.4720, 0.3312, 0.4756],
+            [0.3312, 0.4756, 0.3278, 0.4760, 0.3245, 0.4742, 0.3211, 0.4740],
+            [0.3211, 0.4740, 0.2963, 0.4719, 0.2764, 0.4545, 0.2656, 0.4300],
+            [0.2656, 0.4300, 0.2624, 0.4228, 0.2554, 0.3890, 0.2609, 0.3829],
+            [0.2609, 0.3829, 0.2637, 0.3798, 0.2724, 0.3815, 0.2760, 0.3815],
+        ],
+        [
+            [0.4950, 0.4492, 0.5075, 0.4492, 0.5335, 0.4498, 0.5436, 0.4584],
+            [0.5436, 0.4584, 0.5544, 0.4676, 0.5491, 0.4877, 0.5354, 0.4889],
+            [0.5354, 0.4889, 0.5251, 0.4898, 0.5075, 0.4823, 0.4974, 0.4834],
+            [0.4974, 0.4834, 0.4876, 0.4845, 0.4648, 0.4917, 0.4564, 0.4871],
+            [0.4564, 0.4871, 0.4515, 0.4844, 0.4484, 0.4791, 0.4477, 0.4730],
+            [0.4477, 0.4730, 0.4456, 0.4519, 0.4820, 0.4492, 0.4950, 0.4492],
+        ],
+        [
+            [0.6158, 0.3815, 0.6448, 0.3815, 0.6737, 0.3815, 0.7027, 0.3815],
+            [0.7027, 0.3815, 0.7086, 0.3815, 0.7319, 0.3794, 0.7358, 0.3826],
+            [0.7358, 0.3826, 0.7408, 0.3867, 0.7361, 0.4125, 0.7350, 0.4187],
+            [0.7350, 0.4187, 0.7289, 0.4518, 0.6966, 0.4771, 0.6667, 0.4756],
+            [0.6667, 0.4756, 0.6411, 0.4743, 0.6163, 0.4586, 0.6050, 0.4323],
+            [0.6050, 0.4323, 0.6010, 0.4231, 0.5932, 0.3910, 0.6007, 0.3829],
+            [0.6007, 0.3829, 0.6036, 0.3798, 0.6122, 0.3815, 0.6158, 0.3815],
+        ],
+    ]
+    static let faceDelight: [[[Double]]] = [
+        [
+            [0.3290, 0.3538, 0.3570, 0.3539, 0.3797, 0.3704, 0.3921, 0.3980],
+            [0.3921, 0.3980, 0.3984, 0.4121, 0.4057, 0.4462, 0.3825, 0.4461],
+            [0.3825, 0.4461, 0.3665, 0.4460, 0.3677, 0.4277, 0.3627, 0.4160],
+            [0.3627, 0.4160, 0.3562, 0.4006, 0.3416, 0.3901, 0.3264, 0.3908],
+            [0.3264, 0.3908, 0.3114, 0.3915, 0.2982, 0.4065, 0.2938, 0.4217],
+            [0.2938, 0.4217, 0.2923, 0.4268, 0.2930, 0.4320, 0.2906, 0.4369],
+            [0.2906, 0.4369, 0.2865, 0.4456, 0.2762, 0.4482, 0.2685, 0.4440],
+            [0.2685, 0.4440, 0.2548, 0.4365, 0.2601, 0.4166, 0.2639, 0.4043],
+            [0.2639, 0.4043, 0.2734, 0.3737, 0.3002, 0.3538, 0.3290, 0.3538],
+        ],
+        [
+            [0.5670, 0.4900, 0.6050, 0.4995, 0.6055, 0.5358, 0.5905, 0.5692],
+            [0.5905, 0.5692, 0.5755, 0.6027, 0.5419, 0.6247, 0.5087, 0.6276],
+            [0.5087, 0.6276, 0.4677, 0.6312, 0.4249, 0.6095, 0.4061, 0.5677],
+            [0.4061, 0.5677, 0.3979, 0.5494, 0.3906, 0.5152, 0.4084, 0.5000],
+            [0.4084, 0.5000, 0.4310, 0.4807, 0.4599, 0.4984, 0.4849, 0.5014],
+            [0.4849, 0.5014, 0.5133, 0.5047, 0.5393, 0.4931, 0.5670, 0.4900],
+        ],
+        [
+            [0.6688, 0.3538, 0.6959, 0.3539, 0.7233, 0.3727, 0.7326, 0.4019],
+            [0.7326, 0.4019, 0.7367, 0.4148, 0.7433, 0.4365, 0.7283, 0.4442],
+            [0.7283, 0.4442, 0.6972, 0.4602, 0.7115, 0.3923, 0.6703, 0.3908],
+            [0.6703, 0.3908, 0.6553, 0.3903, 0.6405, 0.4011, 0.6343, 0.4165],
+            [0.6343, 0.4165, 0.6295, 0.4285, 0.6303, 0.4463, 0.6143, 0.4461],
+            [0.6143, 0.4461, 0.5911, 0.4458, 0.5992, 0.4113, 0.6054, 0.3975],
+            [0.6054, 0.3975, 0.6178, 0.3698, 0.6408, 0.3538, 0.6688, 0.3538],
+        ],
+    ]
+
+    /// Sleep placeholder: gentle closed lids (thin down-arcs at the eye
+    /// positions). Pending an approved sleep expression.
+    static let faceSleep: [[[Double]]] = closedLid(cx: 0.3308, cy: 0.4326)
+        + closedLid(cx: 0.6681, cy: 0.4326)
+
+    private static func closedLid(cx: Double, cy: Double) -> [[[Double]]] {
+        // a shallow stroked-arc outline, built as a filled shape
+        let w = 0.115, t = 0.026, bow = 0.038
+        let x0 = cx - w / 2, x1 = cx + w / 2
+        return [[
+            [x0, cy, cx - w / 6, cy + bow, cx + w / 6, cy + bow, x1, cy],
+            [x1, cy, x1, cy + t, x1, cy + t, x1, cy + t],
+            [x1, cy + t, cx + w / 6, cy + bow + t, cx - w / 6, cy + bow + t, x0, cy + t],
+            [x0, cy + t, x0, cy, x0, cy, x0, cy],
+        ]]
+    }
+}

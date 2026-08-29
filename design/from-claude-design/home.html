@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:'Nunito',system-ui,sans-serif}
+a{color:#FF6F61;text-decoration:none}a:hover{color:#e85a4c}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+@keyframes squish{0%,100%{transform:scaleY(1) scaleX(1)}50%{transform:scaleY(.94) scaleX(1.04)}}
+@keyframes bounce{0%,100%{transform:translateY(0) scaleY(1)}30%{transform:translateY(0) scaleY(.9)}60%{transform:translateY(-16px) scaleY(1.05)}}
+@keyframes wave{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-38deg)}}
+@keyframes zfloat{0%{opacity:0;transform:translateY(4px)}30%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
+@keyframes coinpop{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-24px)}}
+@keyframes starpop{0%,100%{opacity:.3;transform:scale(.7) rotate(45deg)}50%{opacity:1;transform:scale(1.15) rotate(45deg)}}
+</style>
+</helmet>
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Color check, Finch-style checklist + filled tab icons (refines <a class="dv-oid" href="#3a">3a</a>)</span></div>
+<div style="max-width:860px;margin:0 0 20px;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.6)">
+Color strategy: UI colors stay fixed and low-chroma (cream, white, ink, coral for actions, yellow for coins, mint for done) — mascots are the only saturated thing on screen, so any species color pops. The scene layer is now a neutral warm linen instead of mint-tinted. <a class="dv-oid" href="#4b">4b</a> proves it against 4 mascot colors. Checklist rows get Finch-style category tiles + right-side checkboxes; tab bar icons are now filled with an active pill.
+</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="4a"><div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>LIVE — neutral scene, tile checklist, new tab bar</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="background:linear-gradient(180deg,#F4EEE3 0%,#F1EADC 68%,#EAE1CE 68%,#EFE7D6 100%)">
+  <div style="padding:24px 24px 0;display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:7px;background:#fff;border-radius:999px;padding:7px 14px;box-shadow:0 2px 8px rgba(46,40,34,.08)">
+      <span style="font-size:14px;font-weight:900;color:#2E2822">Pip</span>
+      <span style="font-size:11.5px;font-weight:900;color:#57C79B;background:#E3F6EE;border-radius:999px;padding:2px 8px">Lv 2</span>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:7px 12px 7px 8px;box-shadow:0 2px 8px rgba(46,40,34,.08)">
+      <sc-if value="{{ gainVisible }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-16px;right:8px;font-size:14px;font-weight:900;color:#B07A1A;animation:coinpop 1.6s ease-out forwards">+{{ gain }}</span></sc-if>
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">{{ coins }}</span>
+    </div>
+  </div>
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:246px;padding-bottom:18px">
+    <sc-if value="{{ bubbleVisible }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#fff;border-radius:16px;padding:9px 16px;box-shadow:0 3px 10px rgba(46,40,34,.12);font-size:14px;font-weight:700;color:#2E2822;white-space:nowrap;z-index:2">{{ bubbleText }}</div>
+    </sc-if>
+    <sc-if value="{{ notCelebrating }}" hint-placeholder-val="{{ true }}">
+    <svg width="182" height="158" viewBox="0 0 120 104" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+    </sc-if>
+    <sc-if value="{{ celebrating }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;display:inline-block">
+      <span style="position:absolute;top:2px;left:-18px;width:12px;height:12px;background:#FFC24B;animation:starpop 1.2s ease-in-out infinite"></span>
+      <span style="position:absolute;top:16px;right:-18px;width:10px;height:10px;background:#FF6F61;animation:starpop 1.2s ease-in-out .4s infinite"></span>
+      <svg width="182" height="158" viewBox="0 0 120 104" style="animation:bounce 1s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><path d="M39 58Q45 52 51 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M69 58Q75 52 81 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="60" cy="70" rx="7" ry="5" fill="#2E2822"></ellipse><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+    </div>
+    </sc-if>
+    <div style="width:150px;height:16px;border-radius:50%;background:rgba(46,40,34,.1);margin-top:-6px"></div>
+  </div>
+  </div>
+  <div style="padding:16px 24px 8px;display:flex;justify-content:space-between;align-items:baseline">
+    <div style="font-size:18px;font-weight:900;color:#2E2822">Today</div>
+    <div style="font-size:13px;font-weight:700;color:#988D80">{{ doneLabel }}</div>
+  </div>
+  <div style="padding:0 20px;display:flex;flex-direction:column;gap:8px;overflow:hidden">
+    <sc-for list="{{ liveTasks }}" as="t" hint-placeholder-count="5">
+    <div style="{{ t.rowStyle }}" onClick="{{ t.toggle }}">
+      <sc-if value="{{ t.isSchool }}" hint-placeholder-val="{{ true }}"><span style="width:40px;height:40px;border-radius:14px;background:#FFE9E5;flex:none;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24" fill="#FF8A7E"><path d="M4 5.5A1.5 1.5 0 015.5 4H10a2 2 0 012 2v14a3 3 0 00-3-2.5H5.5A1.5 1.5 0 014 16Z"></path><path d="M20 5.5A1.5 1.5 0 0018.5 4H14a2 2 0 00-2 2v14a3 3 0 013-2.5h3.5A1.5 1.5 0 0020 16Z"></path></svg></span></sc-if>
+      <sc-if value="{{ t.isLife }}" hint-placeholder-val="{{ false }}"><span style="width:40px;height:40px;border-radius:14px;background:#E3F6EE;flex:none;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24" fill="#57C79B"><path d="M12 20s-7-4.5-7-9.5A4 4 0 0112 7a4 4 0 017 3.5C19 15.5 12 20 12 20Z"></path></svg></span></sc-if>
+      <div style="flex:1;min-width:0">
+        <div style="{{ t.titleStyle }}">{{ t.title }}</div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:50%;background:#FFC24B;border:1.5px solid #E8A62E;flex:none"></span><span style="font-size:12px;font-weight:800;color:#B07A1A">+{{ t.reward }}</span><span style="font-size:12px;font-weight:700;color:#988D80;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">· {{ t.sub }}</span></div>
+      </div>
+      <sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}"><span style="width:30px;height:30px;border-radius:50%;background:#57C79B;flex:none;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(87,199,155,.4)"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></sc-if>
+      <sc-if value="{{ t.notDone }}" hint-placeholder-val="{{ true }}"><span style="width:30px;height:30px;border-radius:50%;border:2.5px solid #E5DDD0;background:#FCFAF5;flex:none"></span></sc-if>
+    </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:10px 8px 24px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;width:56px;background:rgba(255,111,97,.12);border-radius:16px;padding:6px 0"><svg width="23" height="23" viewBox="0 0 24 24" fill="#FF6F61"><path d="M12 3.5L4 10.2V19a1.5 1.5 0 001.5 1.5H9.5V15a2.5 2.5 0 015 0v5.5H18.5A1.5 1.5 0 0020 19V10.2Z"></path></svg><span style="font-size:10px;font-weight:900;color:#FF6F61">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;width:56px;padding:6px 0"><svg width="23" height="23" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8.5" fill="#C9BEAC"></circle><path d="M12 8.5V13L15.2 15" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;width:56px;padding:6px 0"><svg width="23" height="23" viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="11.5" rx="5.75" fill="#C9BEAC"></rect><path d="M7.5 11.2v3.1M5.95 12.75h3.1" stroke="#fff" stroke-width="1.8" stroke-linecap="round"></path><circle cx="16.5" cy="12.75" r="1.5" fill="#fff"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;width:56px;padding:6px 0"><svg width="23" height="23" viewBox="0 0 24 24" fill="#C9BEAC"><path d="M4 5.5A1.5 1.5 0 015.5 4H10a2 2 0 012 2v14a3 3 0 00-3-2.5H5.5A1.5 1.5 0 014 16Z"></path><path d="M20 5.5A1.5 1.5 0 0018.5 4H14a2 2 0 00-2 2v14a3 3 0 013-2.5h3.5A1.5 1.5 0 0020 16Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;width:56px;padding:6px 0"><svg width="23" height="23" viewBox="0 0 24 24" fill="#C9BEAC"><circle cx="9" cy="8.5" r="3.6"></circle><path d="M2.8 19.5c0-3.4 2.8-5.4 6.2-5.4s6.2 2 6.2 5.4Z"></path><circle cx="17.2" cy="9.5" r="2.7"></circle><path d="M16 14.4c3 0 5.2 1.9 5.2 4.9h-5.4a7.3 7.3 0 00-1.6-4.5 6.6 6.6 0 011.8-.4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;width:56px;padding:6px 0"><svg width="23" height="23" viewBox="0 0 24 24"><path d="M4.5 8h15l-.9 11.2a1.8 1.8 0 01-1.8 1.6H7.2a1.8 1.8 0 01-1.8-1.6Z" fill="#C9BEAC"></path><path d="M9 10.5V7a3 3 0 016 0v3.5" stroke="#C9BEAC" stroke-width="2" fill="none" stroke-linecap="round"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="4b"><div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a>Palette test — 4 mascot colors on the neutral scene</div>
+<div class="dv-card" style="width:390px;background:linear-gradient(180deg,#F4EEE3 0%,#F1EADC 66%,#EAE1CE 66%,#EFE7D6 100%);padding:26px 18px 20px">
+  <div style="display:flex;justify-content:space-around;align-items:flex-end">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:5px"><svg width="72" height="62" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">Pip</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:5px"><svg width="72" height="62" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#F7A8B8"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">Mochi</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:5px"><svg width="72" height="62" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#9BC8F2"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">Puff</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:5px"><svg width="72" height="62" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#C3B2F0"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">Wisp</span></div>
+  </div>
+  <div style="margin-top:16px;background:#fff;border-radius:14px;padding:10px 14px;font-size:12px;font-weight:700;color:#988D80;text-align:center">UI stays cream + coral + yellow + mint for every species; scenes stay low-chroma so mascots carry the color.</div>
+</div></div>
+
+</div>
+<p class="dv-next">Try next: "apply the new tab bar and checklist everywhere" · "try the sunset scene behind Wisp" · "warmer linen"</p>
+</section>
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Finch proportions + purchasable home scenes (refines <a class="dv-oid" href="#2a">2a</a>)</span></div>
+<div style="max-width:860px;margin:0 0 20px;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.6)">
+Greeting removed — the buddy IS the header. The top half is a swappable "scene" layer the student buys in the Shop (tweak: <b>homeScene</b> — plain / meadow / night). Speech bubble auto-hides after 3.5s and reappears briefly on each completion.
+</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="3a"><div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>LIVE — big Pip, scene equipped, transient bubble</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="{{ sceneStyle }}">
+  <div style="padding:24px 24px 0;display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:7px;background:#fff;border-radius:999px;padding:7px 14px;box-shadow:0 2px 8px rgba(46,40,34,.08)">
+      <span style="font-size:14px;font-weight:900;color:#2E2822">Pip</span>
+      <span style="font-size:11.5px;font-weight:900;color:#57C79B;background:#E3F6EE;border-radius:999px;padding:2px 8px">Lv 2</span>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:7px 12px 7px 8px;box-shadow:0 2px 8px rgba(46,40,34,.08)">
+      <sc-if value="{{ gainVisible }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-16px;right:8px;font-size:14px;font-weight:900;color:#B07A1A;animation:coinpop 1.6s ease-out forwards">+{{ gain }}</span></sc-if>
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">{{ coins }}</span>
+    </div>
+  </div>
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:252px;padding-bottom:18px">
+    <sc-if value="{{ bubbleVisible }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#fff;border-radius:16px;padding:9px 16px;box-shadow:0 3px 10px rgba(46,40,34,.12);font-size:14px;font-weight:700;color:#2E2822;white-space:nowrap;z-index:2">{{ bubbleText }}</div>
+    </sc-if>
+    <sc-if value="{{ notCelebrating }}" hint-placeholder-val="{{ true }}">
+    <svg width="190" height="165" viewBox="0 0 120 104" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+    </sc-if>
+    <sc-if value="{{ celebrating }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;display:inline-block">
+      <span style="position:absolute;top:2px;left:-18px;width:12px;height:12px;background:#FFC24B;animation:starpop 1.2s ease-in-out infinite"></span>
+      <span style="position:absolute;top:16px;right:-18px;width:10px;height:10px;background:#FF6F61;animation:starpop 1.2s ease-in-out .4s infinite"></span>
+      <svg width="190" height="165" viewBox="0 0 120 104" style="animation:bounce 1s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><path d="M39 58Q45 52 51 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M69 58Q75 52 81 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="60" cy="70" rx="7" ry="5" fill="#2E2822"></ellipse><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+    </div>
+    </sc-if>
+    <div style="width:150px;height:16px;border-radius:50%;background:rgba(46,40,34,.1);margin-top:-6px"></div>
+  </div>
+  </div>
+  <div style="padding:18px 24px 10px;display:flex;justify-content:space-between;align-items:baseline">
+    <div style="font-size:18px;font-weight:900;color:#2E2822">Today</div>
+    <div style="font-size:13px;font-weight:700;color:#988D80">{{ doneLabel }}</div>
+  </div>
+  <div style="padding:0 20px;display:flex;flex-direction:column;gap:9px;overflow:hidden">
+    <sc-for list="{{ liveTasks }}" as="t" hint-placeholder-count="5">
+    <div style="{{ t.rowStyle }}" onClick="{{ t.toggle }}">
+      <sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}"><span style="width:26px;height:26px;border-radius:50%;background:#57C79B;flex:none;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></sc-if>
+      <sc-if value="{{ t.notDone }}" hint-placeholder-val="{{ true }}"><span style="width:26px;height:26px;border-radius:50%;border:2.5px solid #E5DDD0;flex:none"></span></sc-if>
+      <div style="flex:1;min-width:0"><div style="{{ t.titleStyle }}">{{ t.title }}</div><div style="font-size:12px;font-weight:700;color:#988D80;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.sub }}</div></div>
+      <sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:900;color:#57C79B">+{{ t.reward }}</span></sc-if>
+      <sc-if value="{{ t.notDone }}" hint-placeholder-val="{{ true }}"><span style="background:#FFF3D6;border-radius:999px;padding:4px 9px;font-size:13px;font-weight:900;color:#B07A1A">+{{ t.reward }}</span></sc-if>
+    </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="3b"><div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Shop add-on — Scenes section</div>
+<div class="dv-card" style="width:390px;background:#FAF5EC;padding:20px">
+  <div style="font-size:16px;font-weight:900;color:#2E2822;margin-bottom:12px">Scenes <span style="font-size:12px;font-weight:700;color:#988D80">· backgrounds for Pip's home</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:#fff;border-radius:20px;padding:10px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <div style="height:74px;border-radius:14px;background:linear-gradient(180deg,#DDF2E6 0%,#EAF7F0 58%,#CBE9D6 58%,#D8EEDF 100%);margin-bottom:8px;position:relative"><span style="position:absolute;right:8px;top:6px;font-size:10px;font-weight:900;color:#2E8C68;background:#E3F6EE;border-radius:999px;padding:2px 8px">Equipped</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px 2px"><span style="font-size:13.5px;font-weight:900;color:#2E2822">Meadow</span><span style="font-size:12px;font-weight:900;color:#57C79B">Owned</span></div>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:10px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <div style="height:74px;border-radius:14px;background:linear-gradient(180deg,#2E3550 0%,#4A5378 62%,#3A4260 62%,#454E70 100%);margin-bottom:8px"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px 2px"><span style="font-size:13.5px;font-weight:900;color:#2E2822">Starry night</span><span style="display:inline-flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:12.5px;font-weight:900;color:#B07A1A">200</span></span></div>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:10px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <div style="height:74px;border-radius:14px;background:linear-gradient(180deg,#FFE3CE 0%,#FFD9C4 55%,#F3C4A8 55%,#F8CDB2 100%);margin-bottom:8px"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px 2px"><span style="font-size:13.5px;font-weight:900;color:#2E2822">Sunset</span><span style="display:inline-flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:12.5px;font-weight:900;color:#B07A1A">200</span></span></div>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:10px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <div style="height:74px;border-radius:14px;background:linear-gradient(180deg,#D9EFF7 0%,#E8F6FA 58%,#C8E6F0 58%,#D5ECF4 100%);margin-bottom:8px"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px 2px"><span style="font-size:13.5px;font-weight:900;color:#2E2822">Lakeside</span><span style="display:inline-flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:12.5px;font-weight:900;color:#B07A1A">250</span></span></div>
+    </div>
+  </div>
+  <div style="font-size:11.5px;font-weight:700;color:#B4A996;margin-top:12px;text-align:center">Slots into the Shop tab under "New buddies" · scenes are flat color layers, real art drops in later</div>
+</div></div>
+
+</div>
+<p class="dv-next">Try next: "sunset scene on <a class="dv-oid" href="#3a">3a</a>" · "apply this header to <a class="dv-oid" href="#1b">1b</a> and <a class="dv-oid" href="#1c">1c</a>" · "night mode text colors"</p>
+</section>
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Home explorations + live task flow (riffs on <a class="dv-oid" href="#1a">1a</a>)</span></div>
+<div style="max-width:860px;margin:0 0 20px;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.6)">
+Economy (my call, Finch-style effort pricing, no penalties): life care +5 · assignment +15 · big deliverable or 25-min focus +25 · Lv2 = 150 · Lv3 = 300 · new buddies 450–900 (a steady week ≈ 60–90/day). <a class="dv-oid" href="#2a">2a</a> is the live flow — tap tasks to complete them: coins tick up, Pip celebrates. Note: I couldn't reach the attached prepkin-canvas folder this round; I'll fold in its real tokens/data shapes next turn.
+</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a"><div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>LIVE — tap tasks to complete</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#988D80">Wednesday, Aug 28</div>
+      <div style="font-size:25px;font-weight:900;color:#2E2822;letter-spacing:-.3px">Good afternoon, Maya</div>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:7px 12px 7px 8px;margin-top:4px">
+      <sc-if value="{{ gainVisible }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-16px;right:8px;font-size:14px;font-weight:900;color:#B07A1A;animation:coinpop 1.6s ease-out forwards">+{{ gain }}</span></sc-if>
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">{{ coins }}</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;padding-top:18px;min-height:120px;justify-content:flex-end">
+    <sc-if value="{{ notCelebrating }}" hint-placeholder-val="{{ true }}">
+    <svg width="118" height="102" viewBox="0 0 120 104" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+    </sc-if>
+    <sc-if value="{{ celebrating }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;display:inline-block">
+      <span style="position:absolute;top:-2px;left:-14px;width:10px;height:10px;background:#FFC24B;animation:starpop 1.2s ease-in-out infinite"></span>
+      <span style="position:absolute;top:8px;right:-14px;width:8px;height:8px;background:#FF6F61;animation:starpop 1.2s ease-in-out .4s infinite"></span>
+      <svg width="118" height="102" viewBox="0 0 120 104" style="animation:bounce 1s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><path d="M39 58Q45 52 51 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M69 58Q75 52 81 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="60" cy="70" rx="7" ry="5" fill="#2E2822"></ellipse><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+    </div>
+    </sc-if>
+    <div style="width:110px;height:12px;border-radius:50%;background:rgba(46,40,34,.07);margin-top:-4px"></div>
+    <div style="background:#fff;border-radius:16px;padding:9px 16px;box-shadow:0 3px 10px rgba(46,40,34,.07);font-size:14px;font-weight:700;color:#2E2822;margin-top:8px">{{ bubbleText }}</div>
+  </div>
+  <div style="padding:20px 24px 10px;display:flex;justify-content:space-between;align-items:baseline">
+    <div style="font-size:18px;font-weight:900;color:#2E2822">Today</div>
+    <div style="font-size:13px;font-weight:700;color:#988D80">{{ doneLabel }}</div>
+  </div>
+  <div style="padding:0 20px;display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ liveTasks }}" as="t" hint-placeholder-count="5">
+    <div style="{{ t.rowStyle }}" onClick="{{ t.toggle }}">
+      <sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}"><span style="width:26px;height:26px;border-radius:50%;background:#57C79B;flex:none;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></sc-if>
+      <sc-if value="{{ t.notDone }}" hint-placeholder-val="{{ true }}"><span style="width:26px;height:26px;border-radius:50%;border:2.5px solid #E5DDD0;flex:none"></span></sc-if>
+      <div style="flex:1;min-width:0"><div style="{{ t.titleStyle }}">{{ t.title }}</div><div style="font-size:12px;font-weight:700;color:#988D80">{{ t.sub }}</div></div>
+      <sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:900;color:#57C79B">+{{ t.reward }}</span></sc-if>
+      <sc-if value="{{ t.notDone }}" hint-placeholder-val="{{ true }}"><span style="background:#FFF3D6;border-radius:999px;padding:4px 9px;font-size:13px;font-weight:900;color:#B07A1A">+{{ t.reward }}</span></sc-if>
+    </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="2b"><div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>"Up next" hero — one task at a time</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#988D80">Wednesday, Aug 28</div>
+      <div style="font-size:25px;font-weight:900;color:#2E2822;letter-spacing:-.3px">Good afternoon, Maya</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:7px 12px 7px 8px;margin-top:4px">
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">340</span>
+    </div>
+  </div>
+  <div style="padding:54px 20px 0;position:relative">
+    <svg width="96" height="83" viewBox="0 0 120 104" style="position:absolute;top:-6px;right:34px;animation:squish 3s ease-in-out infinite;transform-origin:60px 96px;z-index:2"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+    <div style="background:#fff;border-radius:28px;padding:24px 22px 22px;box-shadow:0 6px 20px rgba(46,40,34,.08);position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:12px;font-weight:900;letter-spacing:.08em;color:#FF6F61">UP NEXT</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;background:#FFF3D6;border-radius:999px;padding:5px 10px"><span style="width:14px;height:14px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:13px;font-weight:900;color:#B07A1A">+25</span></span>
+      </div>
+      <div style="font-size:23px;font-weight:900;color:#2E2822;line-height:1.2;margin-bottom:4px">English essay first draft</div>
+      <div style="font-size:13px;font-weight:700;color:#988D80;margin-bottom:18px">English 11 · due Friday · from Canvas</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;background:#FF6F61;border-radius:18px;padding:14px;text-align:center;font-size:15px;font-weight:900;color:#fff;box-shadow:0 4px 12px rgba(255,111,97,.3)">Start focus</div>
+        <div style="background:#FAF5EC;border-radius:18px;padding:14px 18px;font-size:15px;font-weight:900;color:#988D80">Done</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:24px 24px 10px;font-size:14px;font-weight:900;color:#988D80;letter-spacing:.04em">THEN</div>
+  <div style="padding:0 20px;display:flex;flex-direction:column;gap:8px">
+    <div style="background:#fff;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.04)">
+      <span style="width:22px;height:22px;border-radius:50%;border:2.5px solid #E5DDD0;flex:none"></span>
+      <div style="flex:1;font-size:14px;font-weight:800;color:#2E2822">Algebra problem set 4.2</div>
+      <span style="font-size:12.5px;font-weight:900;color:#B07A1A">+15</span>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.04)">
+      <span style="width:22px;height:22px;border-radius:50%;border:2.5px solid #E5DDD0;flex:none"></span>
+      <div style="flex:1;font-size:14px;font-weight:800;color:#2E2822">10-minute room reset</div>
+      <span style="font-size:12.5px;font-weight:900;color:#B07A1A">+5</span>
+    </div>
+  </div>
+  <div style="margin:24px 20px 0;background:#E3F6EE;border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+    <svg width="18" height="18" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#57C79B" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    <span style="font-size:13.5px;font-weight:800;color:#2E8C68">2 done today · 20 coins earned</span>
+  </div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="2c"><div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Day timeline — planner first</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:12px">
+      <svg width="54" height="47" viewBox="0 0 130 104" style="flex:none"><g style="animation:wave 1.2s ease-in-out infinite;transform-origin:100px 62px"><ellipse cx="110" cy="52" rx="8" ry="12" fill="#7DD8B4"></ellipse></g><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#988D80">Wednesday, Aug 28</div>
+        <div style="font-size:21px;font-weight:900;color:#2E2822;letter-spacing:-.3px">Your afternoon</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:7px 12px 7px 8px">
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">340</span>
+    </div>
+  </div>
+  <div style="padding:26px 24px 0;display:flex;flex-direction:column">
+    <div style="display:flex;gap:16px">
+      <div style="width:44px;text-align:right;font-size:13px;font-weight:800;color:#988D80;padding-top:14px;flex:none">3:30</div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none"><span style="width:12px;height:12px;border-radius:50%;background:#57C79B;margin-top:18px"></span><span style="width:2.5px;flex:1;background:#EDE5D6"></span></div>
+      <div style="flex:1;background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(46,40,34,.05);opacity:.65">
+        <div style="font-size:14.5px;font-weight:800;color:#2E2822;text-decoration:line-through">Read Ch. 5 — Cell Division</div>
+        <div style="font-size:12px;font-weight:700;color:#988D80">AP Biology · done · <span style="color:#57C79B">+15 earned</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px">
+      <div style="width:44px;text-align:right;font-size:13px;font-weight:800;color:#FF6F61;padding-top:14px;flex:none">4:30</div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none"><span style="width:12px;height:12px;border-radius:50%;background:#FF6F61;margin-top:18px;box-shadow:0 0 0 4px rgba(255,111,97,.18)"></span><span style="width:2.5px;flex:1;background:#EDE5D6"></span></div>
+      <div style="flex:1;background:#fff;border-radius:18px;padding:15px;margin-bottom:12px;box-shadow:0 4px 14px rgba(46,40,34,.08);border:2px solid #FFD9D4">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;font-weight:900;letter-spacing:.08em;color:#FF6F61">NOW · FOCUS</div>
+          <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:13px;height:13px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:12.5px;font-weight:900;color:#B07A1A">+25</span></span>
+        </div>
+        <div style="font-size:16px;font-weight:900;color:#2E2822;margin:4px 0 2px">English essay first draft</div>
+        <div style="font-size:12px;font-weight:700;color:#988D80;margin-bottom:12px">English 11 · due Friday</div>
+        <div style="background:#FF6F61;border-radius:14px;padding:11px;text-align:center;font-size:14px;font-weight:900;color:#fff">Start 25 min</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px">
+      <div style="width:44px;text-align:right;font-size:13px;font-weight:800;color:#988D80;padding-top:14px;flex:none">5:30</div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none"><span style="width:12px;height:12px;border-radius:50%;border:2.5px solid #E5DDD0;background:#FAF5EC;margin-top:18px"></span><span style="width:2.5px;flex:1;background:#EDE5D6"></span></div>
+      <div style="flex:1;background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+        <div style="font-size:14.5px;font-weight:800;color:#2E2822">Algebra problem set 4.2</div>
+        <div style="font-size:12px;font-weight:700;color:#988D80">Algebra II · due tomorrow · +15</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px">
+      <div style="width:44px;text-align:right;font-size:13px;font-weight:800;color:#988D80;padding-top:14px;flex:none">7:00</div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none"><span style="width:12px;height:12px;border-radius:50%;border:2.5px solid #E5DDD0;background:#FAF5EC;margin-top:18px"></span></div>
+      <div style="flex:1;background:#fff;border-radius:18px;padding:13px 15px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+        <div style="font-size:14.5px;font-weight:800;color:#2E2822">Wind down</div>
+        <div style="font-size:12px;font-weight:700;color:#988D80">Water +5 · room reset +5</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin:20px 24px 0;text-align:center;font-size:12.5px;font-weight:700;color:#B4A996">Finish everything and Pip does a little dance.</div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="2d"><div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Wilder — Pip's meadow, tasks as bubbles</div>
+<div class="dv-card" style="width:390px;height:844px;background:linear-gradient(180deg,#EAF7F0 0%,#FAF5EC 62%);position:relative;display:flex;flex-direction:column;overflow:hidden">
+  <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3">
+    <div style="font-size:21px;font-weight:900;color:#2E2822">Pip's meadow</div>
+    <div style="display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:7px 12px 7px 8px;box-shadow:0 2px 8px rgba(46,40,34,.06)">
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">340</span>
+    </div>
+  </div>
+  <div style="position:relative;height:470px;flex:none">
+    <div style="position:absolute;left:50%;top:225px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+      <svg width="150" height="130" viewBox="0 0 120 104" style="animation:bounce 2.8s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+      <div style="width:130px;height:16px;border-radius:50%;background:rgba(46,40,34,.08);margin-top:-6px"></div>
+    </div>
+    <div style="position:absolute;left:22px;top:56px;width:118px;height:118px;border-radius:50%;background:#fff;box-shadow:0 6px 18px rgba(46,40,34,.09);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px;text-align:center;animation:squish 4s ease-in-out infinite">
+      <div style="font-size:13px;font-weight:900;color:#2E2822;line-height:1.25">Essay draft</div>
+      <div style="font-size:10.5px;font-weight:700;color:#988D80">due Fri</div>
+      <div style="display:inline-flex;align-items:center;gap:4px;margin-top:2px"><span style="width:12px;height:12px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:12px;font-weight:900;color:#B07A1A">25</span></div>
+    </div>
+    <div style="position:absolute;right:26px;top:96px;width:104px;height:104px;border-radius:50%;background:#fff;box-shadow:0 6px 18px rgba(46,40,34,.09);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px;text-align:center;animation:squish 4s ease-in-out .7s infinite">
+      <div style="font-size:13px;font-weight:900;color:#2E2822;line-height:1.25">Algebra 4.2</div>
+      <div style="font-size:10.5px;font-weight:700;color:#988D80">tomorrow</div>
+      <div style="display:inline-flex;align-items:center;gap:4px;margin-top:2px"><span style="width:12px;height:12px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:12px;font-weight:900;color:#B07A1A">15</span></div>
+    </div>
+    <div style="position:absolute;left:44px;top:330px;width:92px;height:92px;border-radius:50%;background:#fff;box-shadow:0 6px 18px rgba(46,40,34,.09);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px;text-align:center;animation:squish 4s ease-in-out 1.4s infinite">
+      <div style="font-size:12.5px;font-weight:900;color:#2E2822;line-height:1.25">Room reset</div>
+      <div style="display:inline-flex;align-items:center;gap:4px;margin-top:2px"><span style="width:12px;height:12px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:12px;font-weight:900;color:#B07A1A">5</span></div>
+    </div>
+    <div style="position:absolute;right:40px;top:322px;width:92px;height:92px;border-radius:50%;background:#E3F6EE;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px;text-align:center;opacity:.85">
+      <svg width="20" height="20" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#57C79B" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div style="font-size:12px;font-weight:900;color:#2E8C68">Water</div>
+    </div>
+    <div style="position:absolute;left:150px;top:36px;width:78px;height:78px;border-radius:50%;background:#E3F6EE;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px;text-align:center;opacity:.85">
+      <svg width="18" height="18" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#57C79B" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div style="font-size:11.5px;font-weight:900;color:#2E8C68">Bio ch. 5</div>
+    </div>
+  </div>
+  <div style="padding:0 24px;display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:3">
+    <div style="background:#fff;border-radius:16px;padding:10px 18px;box-shadow:0 3px 10px rgba(46,40,34,.07);font-size:14px;font-weight:800;color:#2E2822">Pop a bubble to get started — 3 to go</div>
+    <div style="width:100%;height:10px;border-radius:999px;background:#F0E9DC;overflow:hidden"><span style="display:block;width:40%;height:100%;border-radius:999px;background:#57C79B"></span></div>
+    <div style="font-size:12px;font-weight:800;color:#988D80">2 of 5 · 20 coins earned today</div>
+  </div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around;position:relative;z-index:3">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#2b">2b</a> the live one" · "merge <a class="dv-oid" href="#2a">2a</a>'s list into <a class="dv-oid" href="#2c">2c</a>'s timeline" · "tone down <a class="dv-oid" href="#2d">2d</a>"</p>
+</section>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Prepkin Canvas — Home, Focus, Shop + chibi system</span></div>
+<div style="max-width:860px;margin:0 0 20px;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.6)">
+Assumptions: student "Maya," slime buddy "Pip" (Lv2), 340-coin balance. Canvas tasks and life-care tasks share one Today list; every task shows its coin reward up front. Focus screen has two states (tweakable: <b>focusRunning</b>) — ending early is a single quiet line, no guilt. Chibi is SVG so it animates and swaps for real art later. Type: Nunito. Cream #FAF5EC, coral #FF6F61, mint #57C79B, coin yellow #FFC24B.
+</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Home — today list + buddy</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#988D80">Wednesday, Aug 28</div>
+      <div style="font-size:25px;font-weight:900;color:#2E2822;letter-spacing:-.3px">Good afternoon, Maya</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:7px 12px 7px 8px;margin-top:4px">
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">340</span>
+    </div>
+  </div>
+  <sc-if value="{{ homeLv1 }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;flex-direction:column;align-items:center;padding-top:26px">
+    <svg width="88" height="76" viewBox="0 0 120 104" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg>
+  </div>
+  </sc-if>
+  <sc-if value="{{ homeLv2 }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column;align-items:center;padding-top:18px">
+    <svg width="118" height="102" viewBox="0 0 120 104" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+  </div>
+  </sc-if>
+  <sc-if value="{{ homeLv3 }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;flex-direction:column;align-items:center;padding-top:8px">
+    <svg width="132" height="130" viewBox="0 0 120 118" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 110px"><path d="M44 14L50 1L60 10L70 1L76 14Z" fill="#FFC24B" stroke="#E8A62E" stroke-width="2" stroke-linejoin="round"></path><g transform="translate(0 14)"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></g></svg>
+  </div>
+  </sc-if>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div style="width:110px;height:12px;border-radius:50%;background:rgba(46,40,34,.07);margin-top:-4px"></div>
+    <div style="background:#fff;border-radius:16px;padding:9px 16px;box-shadow:0 3px 10px rgba(46,40,34,.07);font-size:14px;font-weight:700;color:#2E2822">Pip is cheering you on — 3 to go!</div>
+  </div>
+  <div style="padding:22px 24px 10px;display:flex;justify-content:space-between;align-items:baseline">
+    <div style="font-size:18px;font-weight:900;color:#2E2822">Today</div>
+    <div style="font-size:13px;font-weight:700;color:#988D80">2 of 5 done</div>
+  </div>
+  <div style="padding:0 20px;display:flex;flex-direction:column;gap:10px">
+    <div style="background:#fff;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.05);opacity:.65">
+      <span style="width:26px;height:26px;border-radius:50%;background:#57C79B;flex:none;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+      <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:800;color:#2E2822;text-decoration:line-through">Read Ch. 5 — Cell Division</div><div style="font-size:12px;font-weight:700;color:#988D80">AP Biology · from Canvas</div></div>
+      <span style="font-size:13px;font-weight:900;color:#57C79B">+15</span>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <span style="width:26px;height:26px;border-radius:50%;border:2.5px solid #E5DDD0;flex:none"></span>
+      <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:800;color:#2E2822">English essay first draft</div><div style="font-size:12px;font-weight:700;color:#988D80">English 11 · due Fri · from Canvas</div></div>
+      <span style="background:#FFF3D6;border-radius:999px;padding:4px 9px;font-size:13px;font-weight:900;color:#B07A1A">+25</span>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <span style="width:26px;height:26px;border-radius:50%;border:2.5px solid #E5DDD0;flex:none"></span>
+      <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:800;color:#2E2822">Algebra problem set 4.2</div><div style="font-size:12px;font-weight:700;color:#988D80">Algebra II · due tomorrow · from Canvas</div></div>
+      <span style="background:#FFF3D6;border-radius:999px;padding:4px 9px;font-size:13px;font-weight:900;color:#B07A1A">+15</span>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.05);opacity:.65">
+      <span style="width:26px;height:26px;border-radius:50%;background:#57C79B;flex:none;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 7.5L5.5 11L12 3.5" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+      <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:800;color:#2E2822;text-decoration:line-through">Drink a glass of water</div><div style="font-size:12px;font-weight:700;color:#988D80">Life care</div></div>
+      <span style="font-size:13px;font-weight:900;color:#57C79B">+5</span>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <span style="width:26px;height:26px;border-radius:50%;border:2.5px solid #E5DDD0;flex:none"></span>
+      <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:800;color:#2E2822">10-minute room reset</div><div style="font-size:12px;font-weight:700;color:#988D80">Life care</div></div>
+      <span style="background:#FFF3D6;border-radius:999px;padding:4px 9px;font-size:13px;font-weight:900;color:#B07A1A">+5</span>
+    </div>
+  </div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Focus — timer (tweak: focusRunning)</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:25px;font-weight:900;color:#2E2822">Focus</div>
+    <div style="display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:7px 12px 7px 8px">
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">340</span>
+    </div>
+  </div>
+  <div style="padding:18px 24px 0">
+    <div style="font-size:13px;font-weight:800;color:#988D80;margin-bottom:8px">WORKING ON</div>
+    <div style="background:#fff;border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <div style="flex:1"><div style="font-size:15px;font-weight:800;color:#2E2822">English essay first draft</div><div style="font-size:12px;font-weight:700;color:#988D80">English 11 · due Fri</div></div>
+      <sc-if value="{{ focusReady }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;font-weight:800;color:#FF6F61">Change</span></sc-if>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding-bottom:10px">
+    <div style="position:relative;width:264px;height:264px">
+      <svg width="264" height="264" viewBox="0 0 264 264" style="position:absolute;inset:0">
+        <circle cx="132" cy="132" r="118" fill="#fff"></circle>
+        <circle cx="132" cy="132" r="118" fill="none" stroke="#F0E9DC" stroke-width="10"></circle>
+        <sc-if value="{{ focusRunning }}" hint-placeholder-val="{{ false }}">
+        <circle cx="132" cy="132" r="118" fill="none" stroke="#FF6F61" stroke-width="10" stroke-linecap="round" stroke-dasharray="741" stroke-dashoffset="333" transform="rotate(-90 132 132)"></circle>
+        </sc-if>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+        <sc-if value="{{ focusReady }}" hint-placeholder-val="{{ true }}"><div style="font-size:58px;font-weight:900;color:#2E2822;letter-spacing:-1px;font-variant-numeric:tabular-nums">25:00</div></sc-if>
+        <sc-if value="{{ focusRunning }}" hint-placeholder-val="{{ false }}"><div style="font-size:58px;font-weight:900;color:#2E2822;letter-spacing:-1px;font-variant-numeric:tabular-nums">13:42</div></sc-if>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:14px;font-weight:800;color:#988D80">+25 when you finish</span></div>
+      </div>
+    </div>
+    <sc-if value="{{ focusReady }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;align-items:center;margin-top:6px">
+      <svg width="86" height="76" viewBox="0 0 120 104" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+      <div style="font-size:13px;font-weight:700;color:#988D80;margin-top:6px">Pip will nap next to you while you work</div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ focusRunning }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;align-items:center;margin-top:6px;position:relative">
+      <div style="position:absolute;top:-8px;right:96px;font-size:15px;font-weight:900;color:#B4A996;animation:zfloat 2.4s ease-in-out infinite">z</div>
+      <div style="position:absolute;top:-20px;right:84px;font-size:12px;font-weight:900;color:#B4A996;animation:zfloat 2.4s ease-in-out .8s infinite">z</div>
+      <svg width="86" height="76" viewBox="0 0 120 104" style="animation:squish 4.5s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><path d="M39 56Q45 61 51 56" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M69 56Q75 61 81 56" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M56 68Q60 71 64 68" stroke="#2E2822" stroke-width="3" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+      <div style="font-size:13px;font-weight:700;color:#988D80;margin-top:6px">Pip is napping. You've got this.</div>
+    </div>
+    </sc-if>
+  </div>
+  <div style="padding:0 24px 18px;display:flex;flex-direction:column;align-items:center;gap:12px">
+    <sc-if value="{{ focusReady }}" hint-placeholder-val="{{ true }}">
+    <div style="width:100%;background:#FF6F61;border-radius:22px;padding:17px;text-align:center;font-size:17px;font-weight:900;color:#fff;box-shadow:0 6px 16px rgba(255,111,97,.35)">Start focus</div>
+    </sc-if>
+    <sc-if value="{{ focusRunning }}" hint-placeholder-val="{{ false }}">
+    <div style="width:100%;background:#fff;border:2px solid #F0E9DC;border-radius:22px;padding:16px;text-align:center;font-size:16px;font-weight:900;color:#988D80">End early</div>
+    <div style="font-size:12.5px;font-weight:700;color:#B4A996;text-align:center">Ending early just means no coins this time. Pip won't mind.</div>
+    </sc-if>
+  </div>
+  <div style="background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Shop — upgrade + new buddies</div>
+<div class="dv-card" style="width:390px;height:844px;background:#FAF5EC;position:relative;display:flex;flex-direction:column">
+  <div style="padding:26px 24px 0;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:25px;font-weight:900;color:#2E2822">Shop</div>
+    <div style="display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:7px 12px 7px 8px">
+      <span style="width:18px;height:18px;border-radius:50%;background:#FFC24B;border:2.5px solid #E8A62E;display:block"></span>
+      <span style="font-size:15px;font-weight:900;color:#2E2822">340</span>
+    </div>
+  </div>
+  <div style="padding:18px 20px 0">
+    <div style="background:#fff;border-radius:24px;padding:18px;box-shadow:0 2px 8px rgba(46,40,34,.05);display:flex;align-items:center;gap:16px">
+      <svg width="92" height="80" viewBox="0 0 120 104" style="flex:none;animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg>
+      <div style="flex:1">
+        <div style="font-size:17px;font-weight:900;color:#2E2822">Pip · Level 2</div>
+        <div style="font-size:12.5px;font-weight:700;color:#988D80;margin:2px 0 10px">Level 3 adds a tiny crown</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#FF6F61;border-radius:999px;padding:9px 14px;box-shadow:0 4px 10px rgba(255,111,97,.3)">
+          <span style="font-size:13.5px;font-weight:900;color:#fff">Upgrade</span>
+          <span style="width:14px;height:14px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span>
+          <span style="font-size:13.5px;font-weight:900;color:#fff">300</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:22px 24px 10px;font-size:18px;font-weight:900;color:#2E2822">New buddies</div>
+  <div style="padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:#fff;border-radius:22px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <svg width="78" height="68" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#F7A8B8"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".5"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg>
+      <div style="font-size:15px;font-weight:900;color:#2E2822">Mochi</div>
+      <div style="display:inline-flex;align-items:center;gap:5px;background:#FFF3D6;border-radius:999px;padding:7px 13px"><span style="width:14px;height:14px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:13.5px;font-weight:900;color:#B07A1A">450</span></div>
+    </div>
+    <div style="background:#fff;border-radius:22px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <svg width="78" height="68" viewBox="0 0 120 104"><ellipse cx="70" cy="10" rx="12" ry="6" fill="#7FB84E" transform="rotate(24 70 10)"></ellipse><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#A5CE6B"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".5"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg>
+      <div style="font-size:15px;font-weight:900;color:#2E2822">Sprout</div>
+      <div style="display:inline-flex;align-items:center;gap:5px;background:#FFF3D6;border-radius:999px;padding:7px 13px"><span style="width:14px;height:14px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:13.5px;font-weight:900;color:#B07A1A">650</span></div>
+    </div>
+    <div style="background:#fff;border-radius:22px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <svg width="78" height="68" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#9BBDF2"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".55"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg>
+      <div style="font-size:15px;font-weight:900;color:#2E2822">Puff</div>
+      <div style="display:inline-flex;align-items:center;gap:5px;background:#FFF3D6;border-radius:999px;padding:7px 13px"><span style="width:14px;height:14px;border-radius:50%;background:#FFC24B;border:2px solid #E8A62E;display:block"></span><span style="font-size:13.5px;font-weight:900;color:#B07A1A">900</span></div>
+    </div>
+    <div style="background:#fff;border-radius:22px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(46,40,34,.05)">
+      <svg width="78" height="68" viewBox="0 0 120 104" style="opacity:.35"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#CFC6B8"></path><circle cx="45" cy="56" r="5" fill="#8A8177"></circle><circle cx="75" cy="56" r="5" fill="#8A8177"></circle></svg>
+      <div style="font-size:15px;font-weight:900;color:#B4A996">???</div>
+      <div style="font-size:12px;font-weight:800;color:#B4A996;padding:7px 0">Coming soon</div>
+    </div>
+  </div>
+  <div style="padding:16px 24px 0;font-size:12.5px;font-weight:700;color:#B4A996;text-align:center">Coins come from finishing tasks and focus sessions.</div>
+  <div style="margin-top:auto;background:#fff;border-top:1px solid #F0E9DC;padding:12px 10px 26px;display:flex;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4L20 11V20H14V15H10V20H4Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Home</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9V13L15 15"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Focus</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="5"></rect><path d="M8 12H10M9 11V13"></path><circle cx="16" cy="13" r="1" fill="#B4A996" stroke="none"></circle></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Games</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5H10C11 5 12 6 12 7V19C12 18 11 17.5 10 17.5H4Z"></path><path d="M20 5H14C13 5 12 6 12 7V19C12 18 13 17.5 14 17.5H20Z"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Learn</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="3.5"></circle><path d="M3.5 19C3.5 16 6 14.5 9 14.5C12 14.5 14.5 16 14.5 19"></path><circle cx="17" cy="10" r="2.8"></circle><path d="M15.5 14.7C18.5 14.4 20.5 16 20.5 18.5"></path></svg><span style="font-size:10px;font-weight:800;color:#B4A996">Friends</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:52px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8H19L18 20H6Z"></path><path d="M9 11V7C9 5.3 10.3 4 12 4C13.7 4 15 5.3 15 7V11"></path></svg><span style="font-size:10px;font-weight:800;color:#FF6F61">Shop</span></div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="1d"><div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Chibi system — 5 animations · 3 levels</div>
+<div class="dv-card" style="width:390px;background:#fff;padding:24px">
+  <div style="font-size:14px;font-weight:900;color:#2E2822;margin-bottom:14px">Animations</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px 8px;margin-bottom:24px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><svg width="62" height="54" viewBox="0 0 120 104" style="animation:squish 3s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">idle</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><svg width="62" height="54" viewBox="0 0 120 104" style="animation:bounce 1.4s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">bounce</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="position:relative;display:inline-block"><span style="position:absolute;top:-4px;left:-8px;width:9px;height:9px;background:#FFC24B;animation:starpop 1.2s ease-in-out infinite"></span><span style="position:absolute;top:2px;right:-8px;width:7px;height:7px;background:#FF6F61;animation:starpop 1.2s ease-in-out .5s infinite"></span><svg width="62" height="54" viewBox="0 0 120 104" style="animation:bounce 1s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><path d="M39 58Q45 52 51 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M69 58Q75 52 81 58" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="60" cy="70" rx="7" ry="5" fill="#2E2822"></ellipse></svg></div><span style="font-size:11px;font-weight:800;color:#988D80">celebrate</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><svg width="62" height="54" viewBox="0 0 130 104"><g style="animation:wave 1.2s ease-in-out infinite;transform-origin:100px 62px"><ellipse cx="110" cy="52" rx="8" ry="12" fill="#7DD8B4"></ellipse></g><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">wave</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;position:relative"><span style="position:absolute;top:-4px;right:14px;font-size:13px;font-weight:900;color:#B4A996;animation:zfloat 2.4s ease-in-out infinite">z</span><svg width="62" height="54" viewBox="0 0 120 104" style="animation:squish 4.5s ease-in-out infinite;transform-origin:60px 96px"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><path d="M39 56Q45 61 51 56" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M69 56Q75 61 81 56" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><path d="M56 68Q60 71 64 68" stroke="#2E2822" stroke-width="3" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">sleep</span></div>
+  </div>
+  <div style="font-size:14px;font-weight:900;color:#2E2822;margin-bottom:14px">Levels</div>
+  <div style="display:flex;align-items:flex-end;justify-content:space-around">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><svg width="52" height="45" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg><span style="font-size:11px;font-weight:800;color:#988D80">Lv1 · plain</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><svg width="72" height="62" viewBox="0 0 120 104"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></svg><span style="font-size:11px;font-weight:800;color:#988D80">Lv2 · blush</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><svg width="92" height="90" viewBox="0 0 120 118"><path d="M44 14L50 1L60 10L70 1L76 14Z" fill="#FFC24B" stroke="#E8A62E" stroke-width="2" stroke-linejoin="round"></path><g transform="translate(0 14)"><path d="M60 10C88 10 104 38 104 62C104 85 85 96 60 96C35 96 16 85 16 62C16 38 32 10 60 10Z" fill="#7DD8B4"></path><ellipse cx="42" cy="30" rx="10" ry="6" fill="#fff" opacity=".45"></ellipse><circle cx="45" cy="56" r="5" fill="#2E2822"></circle><circle cx="75" cy="56" r="5" fill="#2E2822"></circle><path d="M54 68Q60 74 66 68" stroke="#2E2822" stroke-width="3.5" fill="none" stroke-linecap="round"></path><ellipse cx="33" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="87" cy="65" rx="6" ry="4" fill="#FF9E94" opacity=".7"></ellipse></g></svg><span style="font-size:11px;font-weight:800;color:#988D80">Lv3 · crown</span></div>
+  </div>
+</div></div>
+
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#1b">1b</a> tappable end-to-end" · "design Games and Learn" · "show the level-up celebration moment"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;homeScene&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;plain&quot;,&quot;meadow&quot;,&quot;night&quot;],&quot;default&quot;:&quot;meadow&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Chibi&quot;},&quot;homeLevel&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1&quot;,&quot;2&quot;,&quot;3&quot;],&quot;default&quot;:&quot;2&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Chibi&quot;},&quot;focusRunning&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Focus screen&quot;}}">
+class Component extends DCLogic {
+  state = {
+    coins: 340, celebrating: false, gain: 0, bubbleVisible: true,
+    tasks: [
+      {title:"Read Ch. 5 — Cell Division", sub:"AP Biology · from Canvas", reward:15, done:true, cat:"school"},
+      {title:"English essay first draft", sub:"English 11 · due Fri · from Canvas", reward:25, done:false, cat:"school"},
+      {title:"Algebra problem set 4.2", sub:"Algebra II · due tomorrow · from Canvas", reward:15, done:false, cat:"school"},
+      {title:"Drink a glass of water", sub:"Life care", reward:5, done:true, cat:"life"},
+      {title:"10-minute room reset", sub:"Life care", reward:5, done:false, cat:"life"}
+    ]
+  };
+  componentDidMount() {
+    this._bt = setTimeout(() => this.setState({bubbleVisible: false}), 3500);
+  }
+  toggle(i) {
+    this.setState(s => {
+      const t = s.tasks[i], finishing = !t.done;
+      const tasks = s.tasks.map((x, j) => j === i ? {...x, done: !x.done} : x);
+      clearTimeout(this._tm); clearTimeout(this._bt);
+      if (finishing) this._tm = setTimeout(() => this.setState({celebrating: false, gain: 0, bubbleVisible: false}), 2200);
+      return {tasks, coins: s.coins + (finishing ? t.reward : -t.reward), celebrating: finishing, gain: finishing ? t.reward : 0, bubbleVisible: finishing};
+    });
+  }
+  renderVals() {
+    const lvl = Number(this.props.homeLevel ?? 2);
+    const running = this.props.focusRunning ?? false;
+    const done = this.state.tasks.filter(t => t.done).length;
+    const left = this.state.tasks.length - done;
+    return {
+      homeLv1: lvl === 1, homeLv2: lvl === 2, homeLv3: lvl === 3,
+      focusRunning: running, focusReady: !running,
+      coins: this.state.coins,
+      celebrating: this.state.celebrating, notCelebrating: !this.state.celebrating,
+      gainVisible: this.state.gain > 0, gain: this.state.gain,
+      bubbleVisible: this.state.bubbleVisible,
+      sceneStyle: ({
+        plain: {background:"transparent"},
+        meadow: {background:"linear-gradient(180deg,#DDF2E6 0%,#EAF7F0 58%,#CBE9D6 58%,#D8EEDF 100%)"},
+        night: {background:"linear-gradient(180deg,#2E3550 0%,#4A5378 62%,#3A4260 62%,#454E70 100%)"}
+      })[this.props.homeScene ?? "meadow"],
+      sceneIsNight: (this.props.homeScene ?? "meadow") === "night",
+      doneLabel: done + " of " + this.state.tasks.length + " done",
+      bubbleText: left === 0 ? "All done today! Pip is so proud." : (this.state.celebrating ? "Yay! Nice work!" : "Pip is cheering you on — " + left + " to go!"),
+      liveTasks: this.state.tasks.map((t, i) => ({
+        ...t, notDone: !t.done,
+        isSchool: t.cat === "school", isLife: t.cat === "life",
+        rowStyle: {background:"#fff", borderRadius:20, padding:"12px 16px", display:"flex", alignItems:"center", gap:12, boxShadow:"0 2px 8px rgba(46,40,34,.05)", opacity: t.done ? .65 : 1, cursor:"pointer"},
+        titleStyle: {fontSize:15, fontWeight:800, color:"#2E2822", textDecoration: t.done ? "line-through" : "none"},
+        toggle: () => this.toggle(i)
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

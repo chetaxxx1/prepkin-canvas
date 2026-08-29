@@ -1,0 +1,121 @@
+{
+ "artboards": [
+  {
+   "file": "Main.dc.html",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "FocusReady.dc.html",
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "FocusRunning.dc.html",
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "Games.dc.html",
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "DailyWord.dc.html",
+   "x": 0,
+   "y": 1014,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "Learn.dc.html",
+   "x": 470,
+   "y": 1014,
+   "w": 390,
+   "h": 880
+  },
+  {
+   "file": "LessonPlayer.dc.html",
+   "x": 940,
+   "y": 1014,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "Friends.dc.html",
+   "x": 1410,
+   "y": 1014,
+   "w": 390,
+   "h": 880
+  },
+  {
+   "file": "StoryViewer.dc.html",
+   "x": 0,
+   "y": 2064,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "GradeCalc.dc.html",
+   "x": 470,
+   "y": 2064,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "Weekly.dc.html",
+   "x": 940,
+   "y": 2064,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "ConnectCanvas.dc.html",
+   "x": 1410,
+   "y": 2064,
+   "w": 390,
+   "h": 844
+  },
+  {
+   "file": "Shop.dc.html",
+   "x": 0,
+   "y": 3078,
+   "w": 390,
+   "h": 1500
+  }
+ ],
+ "annotations": [
+  {
+   "id": "brief",
+   "x": 0,
+   "y": -210,
+   "w": 540,
+   "text": "Prepkin Canvas \u2014 every screen.\nTokens lifted from ios/Sources/Theme.swift; the mascot is the real traced art from SlimeView.swift, not a redraw.\nRule: the mascot is the only saturated thing on any UI surface (scenes excepted)."
+  },
+  {
+   "id": "row-focus",
+   "x": 470,
+   "y": -90,
+   "w": 390,
+   "text": "Focus was the weakest screen. Now: a WORKING ON task card, a 264pt ring, and the reward stated before you start."
+  },
+  {
+   "id": "row-shop",
+   "x": 470,
+   "y": 3225,
+   "w": 420,
+   "text": "Shop as a buddy locker: one big hero for the buddy you actually have, then buddies, then scenes. Locked species stay silhouettes so there is something to want."
+  }
+ ],
+ "launch": {
+  "view": "canvas"
+ }
+}
