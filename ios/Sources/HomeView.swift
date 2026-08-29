@@ -123,6 +123,7 @@ struct HomeView: View {
                       level: state.activeChibi.level,
                       animation: state.animation,
                       size: 168)
+                .onTapGesture(count: 2) { state.play(.peek) }
                 .onTapGesture {
                     state.play(.wave)
                     showBubble(greeting)

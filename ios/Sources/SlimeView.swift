@@ -20,7 +20,9 @@ struct SlimeView: View {
 
     private var scale: CGFloat { [1: 0.78, 2: 0.9, 3: 1.0][level] ?? 0.78 }
 
-    @State private var danceStart: Date? = nil
+    @State private var choreoStart: Date? = nil
+
+    private var isChoreographed: Bool { animation == .dance || animation == .peek }
 
     private var face: SlimeExpression {
         if let expression { return expression }
@@ -34,9 +36,11 @@ struct SlimeView: View {
     var body: some View {
         let w = size * scale                    // character bounding-box width
         let h = w / Slime.aspect                // character bounding-box height
-        TimelineView(.animation(paused: animation != .dance)) { ctx in
-            let dance = danceFrame(at: ctx.date)
+        TimelineView(.animation(paused: !isChoreographed)) { ctx in
+            let dance = choreoFrame(at: ctx.date)
             let d = dance.deform
+            let faceNow: SlimeExpression = animation == .peek && expression == nil
+                ? (dance.face ?? .idle) : face
             ZStack {
                 Ellipse()
                     .fill(Slime.ink.opacity(0.10))
@@ -46,7 +50,7 @@ struct SlimeView: View {
                 ZStack {
                     TracedShape(subpaths: SlimeArt.body, deform: d).fill(color).frame(width: w, height: h)
                     TracedShape(subpaths: SlimeArt.belly, deform: d).fill(Slime.belly(for: color)).frame(width: w, height: h)
-                    TracedShape(subpaths: face.art, deform: d).fill(Slime.ink).frame(width: w, height: h)
+                    TracedShape(subpaths: faceNow.art, deform: d).fill(Slime.ink).frame(width: w, height: h)
 
                     if level >= 2 {
                         HStack(spacing: w * 0.50) {
@@ -57,17 +61,17 @@ struct SlimeView: View {
                         // (the rigid tilt below carries them sideways)
                         .offset(y: h * (0.04 + 0.46 * (1 - d.sy)))
                     }
-                    if animation == .celebrate {
+                    if animation == .celebrate || dance.face == .delight {
                         Text("✨").font(.system(size: w * 0.22)).offset(x: w * 0.52, y: -h * 0.38)
                         Text("✨").font(.system(size: w * 0.16)).offset(x: -w * 0.56, y: -h * 0.12)
                     }
-                    if face == .sleep {
+                    if faceNow == .sleep {
                         Text("💤").font(.system(size: w * 0.2)).offset(x: w * 0.48, y: -h * 0.40)
                     }
                 }
                 .rotationEffect(.degrees(dance.tilt), anchor: .bottom)
-                .scaleEffect(x: animation == .dance ? 1 : (squish ? 1.04 : 0.99),
-                             y: animation == .dance ? 1 : (squish ? 0.95 : 1.01),
+                .scaleEffect(x: isChoreographed ? 1 : (squish ? 1.04 : 0.99),
+                             y: isChoreographed ? 1 : (squish ? 0.95 : 1.01),
                              anchor: .bottom)
                 .offset(y: hop ? -size * 0.22 : dance.hopY * h)
             }
@@ -75,7 +79,7 @@ struct SlimeView: View {
         .frame(width: size * 1.35, height: size * 1.15)
         .onAppear { startIdle() }
         .onChange(of: animation) { _, new in
-            if new == .dance { danceStart = Date() }
+            if new == .dance || new == .peek { choreoStart = Date() }
             guard new == .bounce || new == .celebrate || new == .wave else { return }
             withAnimation(.interpolatingSpring(stiffness: 260, damping: 9)) { hop = true }
             Task {
@@ -91,9 +95,14 @@ struct SlimeView: View {
         }
     }
 
-    private func danceFrame(at date: Date) -> SlimeDance.Frame {
-        guard animation == .dance, let start = danceStart else { return SlimeDance.Frame() }
-        return SlimeDance.frame(at: date.timeIntervalSince(start))
+    private func choreoFrame(at date: Date) -> SlimeDance.Frame {
+        guard let start = choreoStart else { return SlimeDance.Frame() }
+        let t = date.timeIntervalSince(start)
+        switch animation {
+        case .dance: return SlimeDance.frame(at: t)
+        case .peek: return SlimePeek.frame(at: t)
+        default: return SlimeDance.Frame()
+        }
     }
 }
 
@@ -169,6 +178,7 @@ enum SlimeDance {
         var tilt = 0.0   // rigid body lean in degrees, about the base center
         var air = 0.0    // 0 on the ground, 1 near hop apex (drives the shadow)
         var hopY = 0.0   // vertical offset in units of body height
+        var face: SlimeExpression? = nil   // frame-driven face; nil = animation default
     }
 
     static let duration = 2.98
@@ -221,7 +231,7 @@ enum SlimeDance {
         return dir * track(tiltKeys, u)
     }
 
-    private static func track(_ keys: [(Double, Double)], _ u: Double) -> Double {
+    fileprivate static func track(_ keys: [(Double, Double)], _ u: Double) -> Double {
         if u <= keys[0].0 { return keys[0].1 }
         for k in 1..<keys.count where u <= keys[k].0 {
             let (t0, v0) = keys[k - 1]
@@ -230,6 +240,65 @@ enum SlimeDance {
             return v0 + (v1 - v0) * s * s * (3 - 2 * s)
         }
         return keys.last?.1 ?? 0
+    }
+}
+
+/// Peek-a-boo choreography, adapted from the TFT sprite tacticians'
+/// hide-under-the-cap emote (Mush Sprite showcase, 46–56s): anticipation
+/// stretch → crouch down with the judging (peeking) face → playful rock with
+/// the antenna lagging → pop back up (delight face + sparkles) → jelly settle.
+/// The crouch is a shallow squash, not a pancake — the face must stay readable.
+/// Pure function of time, like SlimeDance. Timing: 0.30s duck + 1.12s wiggle
+/// + 0.18s pop + 0.80s settle = 2.40s (must match ChibiAnimation.peek.duration).
+enum SlimePeek {
+    static let duration = 2.40
+    private static let duckEnd = 0.30, popStart = 1.42, popEnd = 1.60
+    private static let hideSy = 0.72     // crouch depth (face still readable)
+    private static let overshoot = 1.15
+
+    static func frame(at t: Double) -> SlimeDance.Frame {
+        guard t >= 0, t < duration else { return SlimeDance.Frame() }
+        var f = SlimeDance.Frame()
+        switch t {
+        case ..<duckEnd:
+            // stretch up first, then drop into the crouch
+            f.deform.sy = SlimeDance.track([(0.00, 1.0), (0.12, 1.09), (0.30, hideSy)], t)
+        case ..<popStart:
+            // crouched, peeking with the judging face; quick playful rock that
+            // ramps in after the duck and dies out before the pop
+            let s = t - duckEnd
+            f.deform.sy = hideSy + 0.015 * sin(2 * .pi * 1.1 * s)
+            f.tilt = wiggleTilt(s)
+            // follow-through: the antenna lags the rock and whips past it,
+            // same velocity-lag rule as the dance
+            f.deform.antennaSway = min(0.12, max(-0.12, (wiggleTilt(s - 0.08) - wiggleTilt(s)) * 0.014))
+            f.face = .judging
+        case ..<popEnd:
+            // spring up with a modest overshoot and a tiny hop
+            let v = (t - popStart) / (popEnd - popStart)
+            f.deform.sy = hideSy + (overshoot - hideSy) * v * v * (3 - 2 * v)
+            f.hopY = -0.08 * 4 * v * (1 - v)
+            f.face = .delight
+        default:
+            // damped jelly settle continuing from the overshoot
+            let s = t - popEnd
+            f.deform.sy = 1 + (overshoot - 1) * exp(-6 * s) * sin(2 * .pi * 3.6 * s + .pi / 2)
+            f.deform.antennaSway = 0.08 * exp(-5 * s) * sin(2 * .pi * 4.4 * s)
+            f.face = .delight
+        }
+        // volume-ish preserve, but cap the width gain so the crouch never
+        // reads as a pancake
+        f.deform.sx = min(1.11, 1 / f.deform.sy.squareRoot())
+        f.air = min(1, -f.hopY / 0.08)
+        return f
+    }
+
+    /// The crouched rock, as its own function of wiggle-time so the antenna
+    /// follow-through can sample it at a lag. 0 outside the wiggle window.
+    private static func wiggleTilt(_ s: Double) -> Double {
+        guard s > 0 else { return 0 }
+        let env = min(1, s * 5) * max(0, min(1, (popStart - duckEnd - s) / 0.22))
+        return 7.0 * env * sin(2 * .pi * 1.7 * s)
     }
 }
 

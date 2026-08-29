@@ -5,11 +5,15 @@ import Foundation
 /// The 5 preset animations (TFT-style fixed loops). Placeholder art still
 /// drives off these states, so real art swaps in without logic changes.
 enum ChibiAnimation: String {
-    case idle, bounce, celebrate, wave, sleep, dance
+    case idle, bounce, celebrate, wave, sleep, dance, peek
 
     /// How long a one-shot of this animation runs before falling back to idle.
     var duration: Double {
-        self == .dance ? 2.98 : 1.6
+        switch self {
+        case .dance: return 2.98
+        case .peek: return SlimePeek.duration
+        default: return 1.6
+        }
     }
 }
 
