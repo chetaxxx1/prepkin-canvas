@@ -22,19 +22,19 @@ final class AppState: ObservableObject {
     @Published private(set) var canvasStatus: String?
 
     private let store: Store
-    private let makeClient: (GameState) -> CanvasSyncClient
+    private let makeClient: (GameState) -> CanvasSyncClient?
 
-    /// Real bridge once there is a pairing code and a configured project;
-    /// sample data otherwise, so the app is never an empty page in a demo.
-    static func defaultClient(for state: GameState) -> CanvasSyncClient {
-        if let code = state.pairingCode, BridgeConfig.shared.isConfigured {
-            return SupabaseCanvasClient(code: code)
-        }
-        return MockCanvasClient()
+    /// Real bridge once there is a pairing code. Sample data only in a checkout
+    /// with no bridge configured at all, so a demo is never an empty page — but a
+    /// real install that unpairs gets nothing, not fake homework that pays coins.
+    nonisolated static func defaultClient(for state: GameState, config: BridgeConfig = .shared) -> CanvasSyncClient? {
+        guard config.isConfigured else { return MockCanvasClient() }
+        guard let code = state.pairingCode else { return nil }
+        return SupabaseCanvasClient(code: code)
     }
 
     init(store: Store = .shared,
-         makeClient: @escaping (GameState) -> CanvasSyncClient = AppState.defaultClient) {
+         makeClient: @escaping (GameState) -> CanvasSyncClient? = { AppState.defaultClient(for: $0) }) {
         self.store = store
         self.makeClient = makeClient
         var loaded = store.load()
@@ -71,12 +71,6 @@ final class AppState: ObservableObject {
         game.advance()
         game.lastOpenedAt = Date()
         rescheduleReminders()
-        if hasOverdue { play(.slump) }
-    }
-
-    /// An unfinished task whose due time has passed.
-    var hasOverdue: Bool {
-        game.tasks.contains { !$0.done && ($0.dueAt.map { $0 < Date() } ?? false) }
     }
 
     func flush() { store.flush() }
@@ -84,8 +78,16 @@ final class AppState: ObservableObject {
     // MARK: - Canvas
 
     func syncCanvas() async {
+        guard let client = makeClient(game) else {
+            canvasStatus = "Pair with the Chrome extension to see Canvas here."
+            return
+        }
+        // If the user disconnects (or re-pairs) while this fetch is in the air, the
+        // response belongs to a pairing that no longer exists. Drop it.
+        let codeAtStart = game.pairingCode
         do {
-            let snapshot = try await makeClient(game).fetchTodo()
+            let snapshot = try await client.fetchTodo()
+            guard game.pairingCode == codeAtStart else { return }
             let before = Set(game.tasks.map(\.id))
             game.applyCanvas(snapshot)
             canvasStatus = nil
@@ -96,8 +98,10 @@ final class AppState: ObservableObject {
                 play(.startle)
             }
         } catch BridgeError.notPairedYet {
+            guard game.pairingCode == codeAtStart else { return }
             canvasStatus = "Waiting for your laptop to send its first list."
         } catch {
+            guard game.pairingCode == codeAtStart else { return }
             // Keep whatever is already on the list. A dropped connection is not a
             // reason to empty somebody's day.
             canvasStatus = "Could not reach the bridge. Showing the last list."
@@ -161,8 +165,10 @@ final class AppState: ObservableObject {
         game.recordShift(miles: miles)
     }
 
-    func recordWordleWin(guesses: Int) {
-        if game.recordWordleWin() > 0 { play(.celebrate) }
+    /// `dealtDay` is the day the puzzle was dealt, so a solve finished just past
+    /// midnight settles the word it actually was.
+    func recordWordleWin(guesses: Int, dealtDay: DayKey) {
+        if game.recordWordleWin(day: dealtDay) > 0 { play(.celebrate) }
     }
 
     func completeLesson(id: String, reward: Int) {

@@ -17,10 +17,15 @@ final class WordleGame: ObservableObject {
     @Published var won = false
     @Published var shake = false
 
+    /// The day this puzzle was dealt. The win is paid under this key, so a solve
+    /// finished just past midnight cannot double-dip into tomorrow's word.
+    let dealtDay: DayKey
+
     init(date: Date = Date()) {
         let words = Self.answers
         let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
         target = words.isEmpty ? "SLIME" : words[day % words.count]
+        dealtDay = DayKey(date)
     }
 
     func key(_ letter: String) {
@@ -214,6 +219,6 @@ struct WordleView: View {
     /// No day stamp to keep here — the ledger's `wordle:<day>` key is what makes
     /// this pay once, and it can't be reset by changing the device clock.
     private func rewardWin(guesses: Int) {
-        state.recordWordleWin(guesses: guesses)
+        state.recordWordleWin(guesses: guesses, dealtDay: game.dealtDay)
     }
 }

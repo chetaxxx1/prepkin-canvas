@@ -353,6 +353,8 @@ struct FocusView: View {
         total = 0
         phase = .ready
         pairedTask = nil
+        // The timer can run out while "Clock out early?" is still up.
+        confirmingClockOut = false
         state.recordShift(miles: driven)
         if paid > 0 {
             state.recordFocus(minutes: paid)

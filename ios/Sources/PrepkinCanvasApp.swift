@@ -22,6 +22,13 @@ struct PrepkinCanvasApp: App {
                     @unknown default: break
                     }
                 }
+                // A cold launch can land with the scene already `.active`, in which
+                // case `onChange` has nothing to diff and never fires. Idempotent,
+                // so running alongside `onChange` on ordinary launches is fine.
+                .task {
+                    state.refreshDay()
+                    await state.syncCanvas()
+                }
                 .onReceive(dayChanged) { _ in state.refreshDay() }
                 .onReceive(timeZoneChanged) { _ in state.refreshDay() }
         }
