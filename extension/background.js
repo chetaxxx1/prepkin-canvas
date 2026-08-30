@@ -23,7 +23,12 @@ chrome.runtime.onInstalled.addListener(async () => {
   chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
   await registerAll();
 });
-chrome.runtime.onStartup.addListener(registerAll);
+// Re-created on every browser start too — creating an alarm that already
+// exists is a cheap no-op, and a lost alarm would otherwise stay lost.
+chrome.runtime.onStartup.addListener(() => {
+  chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
+  registerAll();
+});
 
 // MARK: - Putting the skin on a page
 
@@ -81,11 +86,25 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     registerFor(msg.origin).then(() => sendResponse({ ok: true }));
     return true;
   }
-  if (msg.type === 'unregister') {
-    unregisterFor(msg.origin).then(() => sendResponse({ ok: true }));
+  if (msg.type === 'forget') {
+    forgetOrigin(msg.origin).then(sendResponse);
     return true;
   }
 });
+
+/// Disconnecting a school also takes its already-synced work back off the phone
+/// and the page overlay — revoking the permission alone would leave the last
+/// pushed list lingering forever.
+async function forgetOrigin(origin) {
+  await unregisterFor(origin);
+  try { await chrome.permissions.remove({ origins: [`${origin}/*`] }); } catch {}
+  const { origins = [] } = await chrome.storage.local.get('origins');
+  await chrome.storage.local.set({ origins: origins.filter((o) => o !== origin) });
+  const { lastResults = {} } = await chrome.storage.local.get('lastResults');
+  delete lastResults[origin];
+  await chrome.storage.local.set({ lastResults });
+  return send({});
+}
 
 // MARK: - Origins
 
@@ -132,25 +151,36 @@ async function isCanvas(origin) {
 async function syncAll() {
   const origins = await connectedOrigins();
   if (!origins.length) return finish({ ok: false, error: 'No Canvas connected yet.' });
-  const results = (await Promise.all(origins.map(readSchool))).filter(Boolean);
-  if (!results.length) return finish({ ok: false, error: 'Canvas said no — log in again?' });
-  return send(results);
+  const reads = await Promise.all(origins.map(async (o) => [o, await readSchool(o)]));
+  const fresh = Object.fromEntries(reads.filter(([, r]) => r));
+  if (!Object.keys(fresh).length) return finish({ ok: false, error: 'Canvas said no — log in again?' });
+  return send(fresh);
 }
 
 async function syncNow(origin) {
   const result = await readSchool(origin);
   if (!result) return finish({ ok: false, error: 'Canvas said no — log in again?' });
-  return send([result]);
+  return send({ [origin]: result });
 }
 
-async function send(results) {
+/// Folds this round's reads into the per-school store and pushes the lot. A
+/// school that did not answer this round — an expired login, a flaky network —
+/// keeps its last good list rather than vanishing from the phone.
+async function send(fresh) {
+  const { lastResults = {} } = await chrome.storage.local.get('lastResults');
+  const results = {};
+  for (const origin of await connectedOrigins()) {
+    const r = fresh[origin] ?? lastResults[origin];
+    if (r) results[origin] = r;
+  }
+  const all = Object.values(results);
   const payload = {
-    tasks: results.flatMap((r) => r.tasks),
-    courses: results.flatMap((r) => r.courses),
+    tasks: all.flatMap((r) => r.tasks),
+    courses: all.flatMap((r) => r.courses),
   };
-  // The page overlay reads this, so the slime knows what you owe even when the
-  // phone is in another room.
-  await chrome.storage.local.set({ lastPayload: payload });
+  // The page overlay reads lastPayload, so the slime knows what you owe even
+  // when the phone is in another room.
+  await chrome.storage.local.set({ lastResults: results, lastPayload: payload });
   return finish(await pushToBridge(payload), payload.tasks.length);
 }
 
@@ -164,22 +194,22 @@ async function readSchool(origin) {
   const host = new URL(origin).hostname;
 
   const [rawCourses, rawColors] = await Promise.all([
-    getJSON(origin, '/api/v1/courses?enrollment_state=active&include[]=total_scores&per_page=50'),
-    getJSON(origin, '/api/v1/users/self/colors'),
+    getPaged(origin, '/api/v1/courses?enrollment_state=active&include[]=total_scores&per_page=100'),
+    getJSON(`${origin}/api/v1/users/self/colors`),
   ]);
   if (rawCourses === null) return null; // logged out, or not Canvas any more
 
   const courses = mapCourses(rawCourses, rawColors?.custom_colors ?? {});
 
   const perCourse = await Promise.all(courses.map(async (course) => {
-    const raw = await getJSON(
+    const raw = await getPaged(
       origin,
-      `/api/v1/courses/${course.id}/assignments?include[]=submission&order_by=due_at&per_page=50`
+      `/api/v1/courses/${course.id}/assignments?include[]=submission&order_by=due_at&per_page=100`
     );
     return raw ? mapAssignments(raw, { host, course }) : [];
   }));
 
-  const rawTodo = await getJSON(origin, '/api/v1/users/self/todo?per_page=50&include[]=ungraded_quizzes');
+  const rawTodo = await getPaged(origin, '/api/v1/users/self/todo?per_page=100&include[]=ungraded_quizzes');
 
   return { courses, tasks: merge(perCourse.flat(), rawTodo ? mapTodo(rawTodo, host) : []) };
 }
@@ -187,9 +217,9 @@ async function readSchool(origin) {
 /// One GET with the session cookie already in the browser. No password is ever
 /// asked for, stored, or sent anywhere. Returns null rather than throwing, so a
 /// single bad endpoint cannot take the whole sync down.
-async function getJSON(origin, path) {
+async function getJSON(url) {
   try {
-    const res = await fetch(`${origin}${path}`, {
+    const res = await fetch(url, {
       credentials: 'include',
       headers: { Accept: 'application/json' },
     });
@@ -197,6 +227,39 @@ async function getJSON(origin, path) {
   } catch {
     return null;
   }
+}
+
+/// A list endpoint, following Canvas's `Link: rel="next"` paging. A semester's
+/// worth of assignments does not fit in one page, and Canvas sorts `due_at`
+/// ascending — so stopping at page one would keep the oldest work and silently
+/// drop what is actually due this week. Capped so a pathological feed cannot
+/// spin forever; a later page failing costs that page, not the ones already read.
+const MAX_PAGES = 4;
+
+async function getPaged(origin, path) {
+  let url = `${origin}${path}`;
+  let out = null;
+  for (let page = 0; page < MAX_PAGES && url; page += 1) {
+    let res;
+    try {
+      res = await fetch(url, { credentials: 'include', headers: { Accept: 'application/json' } });
+    } catch { return out; }
+    if (!res.ok) return out;
+    const body = await res.json().catch(() => null);
+    if (!Array.isArray(body)) return out ?? body;
+    out = (out ?? []).concat(body);
+    url = nextLink(res.headers.get('Link'));
+  }
+  return out;
+}
+
+function nextLink(header) {
+  if (!header) return null;
+  for (const part of header.split(',')) {
+    const m = part.match(/<([^>]+)>\s*;\s*rel="next"/);
+    if (m) return m[1];
+  }
+  return null;
 }
 
 /// Hands the list to the bridge, keyed by the pairing code and nothing else —

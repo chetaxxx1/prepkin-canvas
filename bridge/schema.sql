@@ -20,18 +20,31 @@ create table if not exists pairings (
 alter table pairings enable row level security;
 
 -- The extension calls this to hand over the latest Canvas list.
+--
+-- Two cheap guards, because the public key ships in every extension install:
+-- a push must look like a real pairing code (so random writes cannot fill the
+-- table with junk rows), and a payload is capped at 256 KB (a real semester is
+-- a few KB; multi-megabyte bodies are only ever abuse).
 create or replace function push_todo(p_code text, p_todo jsonb)
 returns void
-language sql
+language plpgsql
 security definer
 set search_path = public
 as $$
+begin
+  if p_code !~ '^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$' then
+    return;
+  end if;
+  if pg_column_size(p_todo) > 262144 then
+    return;
+  end if;
   insert into pairings (code, todo, updated_at, expires_at)
   values (p_code, p_todo, now(), now() + interval '30 days')
   on conflict (code) do update
     set todo = excluded.todo,
         updated_at = now(),
         expires_at = now() + interval '30 days';
+end;
 $$;
 
 -- The app calls this to pick the list up. Returns nothing for a wrong or

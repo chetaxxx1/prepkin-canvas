@@ -95,11 +95,11 @@ async function render() {
   }
 }
 
+// The whole disconnect lives in the background worker, so the permission, the
+// stored origin list, and the school's already-synced tasks all go together —
+// including a fresh push, so the phone drops them too.
 async function forget(origin) {
-  await chrome.runtime.sendMessage({ type: 'unregister', origin });
-  await chrome.permissions.remove({ origins: [`${origin}/*`] });
-  const { origins = [] } = await chrome.storage.local.get('origins');
-  await chrome.storage.local.set({ origins: origins.filter((o) => o !== origin) });
+  await chrome.runtime.sendMessage({ type: 'forget', origin });
   render();
 }
 

@@ -105,7 +105,11 @@ function isWorthShowing({ dueAt, submittedAt, now }) {
 
 /// The cheap cross-course sweep. Used to catch anything the per-course pass
 /// missed, so its rows carry no grade or submission detail.
-function mapTodo(raw, host) {
+///
+/// Filtered through the same date window as the per-course pass — with
+/// `ungraded_quizzes` included, the feed can surface a quiz months out, and a
+/// syllabus full of May deadlines must not bury this week here either.
+function mapTodo(raw, host, now = Date.now()) {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((item) => {
     if (!item || item.type !== TODO_TYPE_TO_DO) return [];
@@ -113,6 +117,7 @@ function mapTodo(raw, host) {
     if (!source || source.id == null) return [];
     const title = source.name ?? source.title;
     if (!title) return [];
+    if (!isWorthShowing({ dueAt: source.due_at ?? null, submittedAt: null, now })) return [];
     return [{
       id: `c-${host}-${item.assignment ? 'a' : 'q'}${source.id}`,
       title,

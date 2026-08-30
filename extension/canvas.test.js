@@ -128,6 +128,18 @@ test('quizzes come through under their own key', () => {
   assert.equal(t.title, 'Unit 3 quiz', 'quizzes use title where assignments use name');
 });
 
+test('the sweep obeys the same date window as the per-course pass', () => {
+  const monthsOut = mapTodo([{ type: 'submitting', context_name: 'APUSH',
+    quiz: { id: 13, title: 'Final exam', due_at: at(DAYS_AHEAD + 30) } }], HOST, NOW);
+  assert.deepEqual(monthsOut, [], 'a quiz months out must not bury this week');
+});
+
+test('an undated sweep item is still owed', () => {
+  const [t] = mapTodo([{ type: 'submitting', context_name: 'APUSH',
+    assignment: { id: 14, name: 'Reading response' } }], HOST, NOW);
+  assert.equal(t.title, 'Reading response');
+});
+
 // MARK: - Merging the two passes
 
 test('the detailed pass wins, and the sweep only adds what it alone found', () => {
