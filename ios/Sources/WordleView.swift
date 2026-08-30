@@ -4,12 +4,9 @@ import SwiftUI
 
 @MainActor
 final class WordleGame: ObservableObject {
-    static let answers = [
-        "ABOUT", "BRAVE", "CHILL", "DREAM", "EARLY", "FOCUS", "GRIND", "HONOR",
-        "IDEAS", "JUICE", "KNACK", "LEARN", "MONEY", "NOTES", "OCEAN", "PRIDE",
-        "QUIET", "SLIME", "STUDY", "THINK", "ULTRA", "VIVID", "WORTH", "YOUTH",
-        "SMART", "POINT", "COACH", "TRACK", "SPARK", "BLOOM",
-    ]
+    /// Word list lives in Resources/Content/words.json.
+    static var answers: [String] { Catalog.wordleAnswers }
+
 
     enum TileState { case empty, absent, present, correct }
 
@@ -21,8 +18,9 @@ final class WordleGame: ObservableObject {
     @Published var shake = false
 
     init(date: Date = Date()) {
+        let words = Self.answers
         let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
-        target = Self.answers[day % Self.answers.count]
+        target = words.isEmpty ? "SLIME" : words[day % words.count]
     }
 
     func key(_ letter: String) {
@@ -93,13 +91,12 @@ final class WordleGame: ObservableObject {
 struct WordleView: View {
     @EnvironmentObject var state: AppState
     @StateObject private var game = WordleGame()
-    @AppStorage("wordleRewardDay") private var rewardDay = ""
 
     var body: some View {
         VStack(spacing: 16) {
             grid
             if game.finished {
-                Text(game.won ? "Solved in \(game.guesses.count)! +30 coins" : "Out of guesses — it was \(game.target)")
+                Text(resultLine)
                     .font(.headline)
                     .foregroundStyle(game.won ? Theme.mint : Theme.coral)
             }
@@ -109,9 +106,19 @@ struct WordleView: View {
         .padding(16)
         .background(Theme.paper)
         .navigationTitle("Daily Word")
+        .onAppear { alreadyClaimed = state.wordleClaimedToday }
         .hidesTabBar()
         .navigationBarTitleDisplayMode(.inline)
     }
+
+    private var resultLine: String {
+        guard game.won else { return "Out of guesses — it was \(game.target)" }
+        return alreadyClaimed ? "Solved in \(game.guesses.count)! Today's coins are already in."
+                              : "Solved in \(game.guesses.count)! +30 coins"
+    }
+
+    /// Read once, before the win is posted, so the message tells the truth.
+    @State private var alreadyClaimed = false
 
     private var grid: some View {
         VStack(spacing: 6) {
@@ -204,10 +211,9 @@ struct WordleView: View {
         }
     }
 
+    /// No day stamp to keep here — the ledger's `wordle:<day>` key is what makes
+    /// this pay once, and it can't be reset by changing the device clock.
     private func rewardWin(guesses: Int) {
-        let today = Date().formatted(.iso8601.year().month().day())
-        guard rewardDay != today else { return }
-        rewardDay = today
         state.recordWordleWin(guesses: guesses)
     }
 }

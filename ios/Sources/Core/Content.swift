@@ -26,7 +26,7 @@ struct Lesson: Identifiable, Decodable, Equatable {
 ///
 /// A missing or malformed file never crashes the app — it falls back to a small
 /// built-in set and logs, because bad content should degrade, not take the app down.
-enum Content {
+enum Catalog {
     static let lessons: [Lesson] = load("lessons", fallback: fallbackLessons)
     static let wordleAnswers: [String] = load("words", fallback: fallbackWords)
         .map { $0.uppercased() }

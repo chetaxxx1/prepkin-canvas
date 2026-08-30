@@ -2,7 +2,7 @@ import Foundation
 
 /// User-controlled switches. Reminders default to off — nothing asks for a
 /// notification permission until the user turns it on themselves.
-struct Settings: Codable, Equatable {
+struct AppSettings: Codable, Equatable {
     var remindersEnabled = false
     /// Hour of the local evening nudge, when tasks are still open.
     var nudgeHour = 19
@@ -22,6 +22,7 @@ struct GameState: Codable, Equatable {
 
     var templates: [TaskTemplate] = TaskTemplate.starterSet()
     var canvasItems: [CanvasItem] = []
+    var canvasCourses: [CanvasCourse] = []
 
     /// The day the list on screen was last built for.
     var currentDay: DayKey = .today()
@@ -29,8 +30,55 @@ struct GameState: Codable, Equatable {
     /// the raw clock, so winding the device date backwards can't re-open a paid day.
     var maxDayReached: DayKey = .today()
 
-    var settings = Settings()
+    var settings = AppSettings()
     var lastOpenedAt = Date()
+
+    /// Most miles Kin has driven in a single focus shift. A target to beat, never
+    /// spendable — the coins for a shift come out of the ledger like any other pay.
+    var bestShift = 0
+
+    /// The code the student types into the Chrome extension. Optional on purpose:
+    /// nothing is created until they actually open the connect screen, and the app
+    /// works fully without one.
+    var pairingCode: String?
+    var lastCanvasSyncAt: Date?
+
+    // MARK: - Decoding
+
+    private enum CodingKeys: String, CodingKey {
+        case ledger, owned, activeChibiID, sceneID, ownedScenes, completedLessons
+        case templates, canvasItems, canvasCourses, currentDay, maxDayReached
+        case settings, lastOpenedAt, pairingCode, lastCanvasSyncAt, bestShift
+    }
+
+    init() {}
+
+    /// Every field is read with `decodeIfPresent` and falls back to its default.
+    ///
+    /// The synthesized decoder would throw on the first key a older save does not
+    /// have, and a throw here means the whole file is unreadable — which reads to
+    /// the student as every coin gone. Adding a field should never be able to do
+    /// that, so adding one is free from here on.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let blank = GameState()
+        ledger = try c.decodeIfPresent(Ledger.self, forKey: .ledger) ?? blank.ledger
+        owned = try c.decodeIfPresent([OwnedChibi].self, forKey: .owned) ?? blank.owned
+        activeChibiID = try c.decodeIfPresent(String.self, forKey: .activeChibiID) ?? blank.activeChibiID
+        sceneID = try c.decodeIfPresent(String.self, forKey: .sceneID) ?? blank.sceneID
+        ownedScenes = try c.decodeIfPresent(Set<String>.self, forKey: .ownedScenes) ?? blank.ownedScenes
+        completedLessons = try c.decodeIfPresent(Set<String>.self, forKey: .completedLessons) ?? blank.completedLessons
+        templates = try c.decodeIfPresent([TaskTemplate].self, forKey: .templates) ?? blank.templates
+        canvasItems = try c.decodeIfPresent([CanvasItem].self, forKey: .canvasItems) ?? blank.canvasItems
+        canvasCourses = try c.decodeIfPresent([CanvasCourse].self, forKey: .canvasCourses) ?? blank.canvasCourses
+        currentDay = try c.decodeIfPresent(DayKey.self, forKey: .currentDay) ?? blank.currentDay
+        maxDayReached = try c.decodeIfPresent(DayKey.self, forKey: .maxDayReached) ?? blank.maxDayReached
+        settings = try c.decodeIfPresent(AppSettings.self, forKey: .settings) ?? blank.settings
+        lastOpenedAt = try c.decodeIfPresent(Date.self, forKey: .lastOpenedAt) ?? blank.lastOpenedAt
+        pairingCode = try c.decodeIfPresent(String.self, forKey: .pairingCode)
+        lastCanvasSyncAt = try c.decodeIfPresent(Date.self, forKey: .lastCanvasSyncAt)
+        bestShift = try c.decodeIfPresent(Int.self, forKey: .bestShift) ?? blank.bestShift
+    }
 
     // MARK: - Day
 
@@ -71,7 +119,8 @@ struct GameState: Codable, Equatable {
             .map { item in
                 DailyTask(id: item.id, title: item.title, kind: .canvas,
                           detail: item.courseName, dueAt: item.dueAt,
-                          done: ledger.isClaimed(taskKey(item.id, on: day)))
+                          done: item.isSubmitted || ledger.isClaimed(taskKey(item.id, on: day)),
+                          isLocked: item.isSubmitted)
             }
         let mine = templates
             .filter { $0.isActive && $0.retiredOn == nil }
@@ -102,12 +151,6 @@ struct GameState: Codable, Equatable {
         return posted ? reward : 0
     }
 
-    /// Un-checks a task and takes the coins back. Never a penalty — the balance just
-    /// returns to what it was before the tap.
-    mutating func uncomplete(taskID: String) {
-        ledger.revoke(taskKey(taskID, on: effectiveDay))
-    }
-
     mutating func addTask(title: String, kind: TaskKind, recurrence: Recurrence, id: String = UUID().uuidString) {
         let clean = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !clean.isEmpty else { return }
@@ -133,6 +176,12 @@ struct GameState: Codable, Equatable {
         let ok = ledger.post(CoinEntry(key: "focus:\(sessionID)", amount: minutes,
                                        reason: .focus, units: minutes, day: day, at: now))
         return ok ? minutes : 0
+    }
+
+    /// Keeps the best single shift. Miles are cosmetic, so this is a plain max with
+    /// no ledger entry behind it.
+    mutating func recordShift(miles: Int) {
+        bestShift = max(bestShift, miles)
     }
 
     /// Pays for the daily word once per day. Replaces the old `@AppStorage` day
@@ -201,7 +250,39 @@ struct GameState: Codable, Equatable {
 
     // MARK: - Canvas
 
-    mutating func applyCanvas(_ items: [CanvasItem]) {
-        canvasItems = items
+    /// Takes a push from the extension. Work Canvas confirms you handed in pays
+    /// on the spot: submitting *is* completing, and the ledger key means a student
+    /// who also ticked it by hand is never paid twice.
+    mutating func applyCanvas(_ snapshot: CanvasSnapshot, now: Date = Date()) {
+        canvasItems = snapshot.tasks
+        canvasCourses = snapshot.courses
+        lastCanvasSyncAt = now
+        for item in snapshot.tasks where item.isSubmitted {
+            complete(taskID: item.id, reward: TaskKind.canvas.reward, now: now)
+        }
+    }
+
+    /// Un-checking is for things you told the app about. Canvas already knows.
+    mutating func uncomplete(taskID: String) {
+        guard !(canvasItems.first { $0.id == taskID }?.isSubmitted ?? false) else { return }
+        ledger.revoke(taskKey(taskID, on: effectiveDay))
+    }
+
+    /// Makes a code the first time it is needed, then keeps it. Regenerating would
+    /// silently orphan a laptop that is already pushing to the old one.
+    @discardableResult
+    mutating func ensurePairingCode() -> String {
+        if let existing = pairingCode { return existing }
+        let code = PairingCode.generate()
+        pairingCode = code
+        return code
+    }
+
+    /// Forgets the pairing. The row in the bridge is left to expire on its own.
+    mutating func unpair() {
+        pairingCode = nil
+        canvasItems = []
+        canvasCourses = []
+        lastCanvasSyncAt = nil
     }
 }

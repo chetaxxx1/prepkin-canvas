@@ -1,0 +1,131 @@
+<!doctype html>
+<meta charset="utf-8" />
+<style>
+  body {
+    font: 13px/1.45 "Nunito", "Trebuchet MS", "Segoe UI", -apple-system, sans-serif;
+    width: 340px; margin: 0; padding: 16px; box-sizing: border-box;
+    background: #fff; color: #33291f; -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .head h1 { font-size: 16px; font-weight: 900; letter-spacing: -.01em; margin: 0; flex-grow: 1; }
+  .head .ver { font-size: 11px; font-weight: 700; color: #a8977f; }
+
+  .label {
+    font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    color: #8a7a66; margin: 0 0 8px;
+  }
+  .card { background: #f4f1ea; border-radius: 16px; padding: 14px; margin-bottom: 14px; }
+  .card.outline { background: #fff; box-shadow: inset 0 0 0 1px #eae5da; padding: 0; }
+  .hint { font-size: 12px; font-weight: 600; color: #8a7a66; margin: 2px 0 10px; }
+
+  .pair { display: flex; gap: 8px; }
+  input#code {
+    flex-grow: 1; min-width: 0; padding: 10px 12px; font-size: 13px; font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .18em; text-transform: uppercase; text-align: center;
+    background: #fff; border: 0; box-shadow: inset 0 0 0 1px #eae5da;
+    border-radius: 12px; color: #33291f; outline: none;
+  }
+  input#code:focus { box-shadow: inset 0 0 0 2px #51cfa0; }
+
+  button.mint {
+    flex-shrink: 0; border: 0; cursor: pointer; padding: 9px 16px;
+    font: inherit; font-size: 13px; font-weight: 800;
+    background: #51cfa0; color: #101820; border-radius: 12px;
+    box-shadow: 0 3px 0 #35a87c;
+  }
+  button.mint:active { transform: translateY(2px); box-shadow: 0 1px 0 #35a87c; }
+  button.mint:disabled { opacity: .5; box-shadow: 0 3px 0 #35a87c; transform: none; cursor: default; }
+  button.mint.wide { width: 100%; margin: 0 0 16px; }
+
+  button.link {
+    border: 0; background: none; cursor: pointer; padding: 4px;
+    font: inherit; font-size: 12px; font-weight: 800; color: #2e7d57;
+  }
+
+  .sites { margin: 0; padding: 0; list-style: none; }
+  .sites li { display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
+  .sites li + li { border-top: 1px solid #eae5da; }
+  .sites .who { flex-grow: 1; min-width: 0; }
+  .sites .who b { display: block; font-size: 13px; font-weight: 700; }
+  .sites .who small { font-size: 11px; font-weight: 600; color: #8a7a66; }
+  .sites li.none { font-size: 12px; font-weight: 600; color: #8a7a66; }
+  .sites button.x {
+    border: 0; background: none; cursor: pointer; padding: 2px 4px;
+    font: inherit; font-size: 14px; color: #a8977f; line-height: 1;
+  }
+  .sites button.x:hover { color: #b0453c; }
+
+  .toggles { margin: 0; padding: 0; list-style: none; }
+  .toggles li { display: flex; align-items: center; gap: 8px; padding: 11px 14px; }
+  .toggles li + li { border-top: 1px solid #eae5da; }
+  .toggles .name { flex-grow: 1; font-size: 13px; font-weight: 700; }
+  .toggles .soon {
+    background: #f4f1ea; color: #a8977f; border-radius: 999px; padding: 2px 8px;
+    font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .toggles input { position: absolute; opacity: 0; pointer-events: none; }
+  .toggles label { display: flex; align-items: center; gap: 8px; width: 100%; cursor: pointer; }
+  .toggles label.off { cursor: default; }
+  .toggles .sw {
+    flex-shrink: 0; width: 38px; height: 22px; border-radius: 999px;
+    background: #e5dfd2; position: relative; transition: background .15s ease;
+  }
+  .toggles .sw::after {
+    content: ""; position: absolute; left: 2px; top: 2px; width: 18px; height: 18px;
+    border-radius: 999px; background: #fff; box-shadow: 0 1px 2px rgba(51, 41, 31, .25);
+    transition: left .15s ease;
+  }
+  .toggles input:checked + .sw { background: #51cfa0; }
+  .toggles input:checked + .sw::after { left: 18px; }
+  .toggles label.off .sw { opacity: .55; }
+
+  .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  #status { min-height: 17px; font-size: 12px; font-weight: 600; }
+  .ok  { color: #2e7d57; }
+  .bad { color: #b0453c; }
+</style>
+
+<div class="head">
+  <span id="slime" aria-hidden="true"></span>
+  <h1>Prepkin</h1>
+  <span class="ver" id="version"></span>
+</div>
+
+<div class="card">
+  <p class="label">Connect your phone</p>
+  <p class="hint">Open the app, tap the sliders on Today, and copy the code it shows you.</p>
+  <div class="pair">
+    <input id="code" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off" spellcheck="false" />
+    <button id="save" class="mint">Save</button>
+  </div>
+</div>
+
+<p class="label">Connected schools</p>
+<div class="card outline">
+  <ul class="sites" id="sites"></ul>
+</div>
+<div class="row">
+  <button id="resync" class="link">Sync now</button>
+  <div id="status"></div>
+</div>
+<button id="connect" class="mint wide" hidden></button>
+
+<p class="label">Appearance</p>
+<div class="card outline">
+  <ul class="toggles">
+    <li><label><span class="name">Buddy on Canvas pages</span>
+      <input type="checkbox" data-skin="mascot" /><span class="sw"></span></label></li>
+    <li><label><span class="name">Warm theme &amp; cards</span>
+      <input type="checkbox" data-skin="cards" /><span class="sw"></span></label></li>
+    <li><label><span class="name">Tidy sidebar</span>
+      <input type="checkbox" data-skin="tidy" /><span class="sw"></span></label></li>
+    <li><label class="off"><span class="name">Dark mode</span><span class="soon">Soon</span>
+      <input type="checkbox" disabled /><span class="sw"></span></label></li>
+  </ul>
+</div>
+
+<script src="slime.js"></script>
+<script src="popup.js"></script>

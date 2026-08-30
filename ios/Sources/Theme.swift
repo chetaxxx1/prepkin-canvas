@@ -1,30 +1,53 @@
 import SwiftUI
 
-/// Design tokens from the Claude Design handoff (design/from-claude-design/HANDOFF.md).
+/// Design tokens from the Home handoff (`design_handoff_prepkin_home_v2/README.md`).
 /// Rule: UI colors stay fixed and low-chroma. Mascots are the only saturated thing
 /// on screen, so any species color pops.
 enum Theme {
-    static let paper = hex(0xFAF5EC)        // cream background
+    static let paper = hex(0xFAF5EC)        // cream background, off-Home screens
     static let card = Color.white
-    static let ink = hex(0x2E2822)
-    static let muted = hex(0x988D80)        // warm gray text
+    static let ink = hex(0x2E2622)
+    static let muted = hex(0x96877F)        // warm gray text
     static let dim = hex(0xB4A996)          // muted gray
     static let inactive = hex(0xC9BEAC)     // inactive tab icon
     static let hairline = hex(0xF0E9DC)
-    static let checkBorder = hex(0xE5DDD0)
+
+    /// Task-row tile: one constant near-white circle for every category, so six
+    /// objects give the variety without six competing backgrounds.
+    static let tile = hex(0xFDF9F4)
+    static let tileRing = hex(0xEDE1D3)
+
+    static let checkFill = hex(0xF4F0EB)
+    static let checkBorder = hex(0xE6DFD7)
+    static let check = hex(0x6FC79E)        // checked box
 
     static let coral = hex(0xFF6F61)        // action
     static let coralSoft = hex(0xFFE9E5)
     static let coralIcon = hex(0xFF8A7E)
+    static let coralDeep = hex(0xE4735F)
+    static let coralShade = hex(0xC4523F)
 
-    static let mint = hex(0x57C79B)         // success / done
-    static let mintSoft = hex(0xE3F6EE)
-    static let mintDark = hex(0x2E8C68)
+    static let mint = hex(0x57C79B)         // success / affordability dot
+    static let mintSoft = hex(0xDFF3E9)
+    static let mintDark = hex(0x3E9E78)
 
     static let coin = hex(0xFFC24B)
     static let coinBorder = hex(0xE8A62E)
     static let coinSoft = hex(0xFFF3D6)
-    static let coinDark = hex(0xB07A1A)
+    static let coinDark = hex(0xA8761D)
+
+    // Tab bar. Every icon is a full-colour object, so a tab is found by silhouette
+    // and colour — which is the only reason six of them fit.
+    static let tabBar = hex(0xFFFDF8)
+    static let tabInk = hex(0x6E5F53)
+    static let tabActiveInk = hex(0xC24A3E)
+    static let tabActiveFill = hex(0xFFE0DA)
+    static let kinChip = hex(0x3E2C28)
+
+    // On the scene.
+    static let onDarkWarm = hex(0xFFF3E4)
+    static let chipDivider = hex(0xE9E1D6)
+    static let bagInk = hex(0x8A7869)
 
     /// Mascot body — the approved slime green. Never approximate.
     static let slime = hex(0x51CFA0)
@@ -35,6 +58,11 @@ enum Theme {
     // Aliases kept for the other tabs.
     static var sun: Color { coin }
     static var sky: Color { hex(0x9BC8F2) }
+
+    /// The handoff calls for Nunito; SF Pro Rounded is the sanctioned native stand-in.
+    static func font(_ size: CGFloat, _ weight: Font.Weight) -> Font {
+        .system(size: size, weight: weight, design: .rounded)
+    }
 
     static func species(_ id: String) -> Color {
         switch id {
@@ -61,12 +89,20 @@ struct Scene0: Identifiable, Equatable {
     let asset: String
     /// True when the art is dark, so overlaid pills flip to a light-on-dark treatment.
     let isDark: Bool
+    /// The art's own bottom edge, sampled from the last rows of the asset. Home paints
+    /// the whole page this colour, so the illustration just stops and the value carries
+    /// on — no gradient, no seam. **Re-sample this whenever the art changes.**
+    let floor: Color
 
     static let all: [Scene0] = [
-        Scene0(id: "dorm", name: "Study room", price: 0, asset: "scene-dorm", isDark: false),
-        Scene0(id: "meadow", name: "Meadow", price: 200, asset: "scene-meadow", isDark: false),
-        Scene0(id: "sunset", name: "Golden hour", price: 220, asset: "scene-sunset", isDark: false),
-        Scene0(id: "night", name: "Night in", price: 250, asset: "scene-night", isDark: true),
+        Scene0(id: "dorm", name: "Study room", price: 0, asset: "scene-dorm",
+               isDark: false, floor: Theme.hex(0xEF6C53)),
+        Scene0(id: "meadow", name: "Meadow", price: 200, asset: "scene-meadow",
+               isDark: false, floor: Theme.hex(0x515B18)),
+        Scene0(id: "sunset", name: "Golden hour", price: 220, asset: "scene-sunset",
+               isDark: false, floor: Theme.hex(0xB44417)),
+        Scene0(id: "night", name: "Night in", price: 250, asset: "scene-night",
+               isDark: true, floor: Theme.hex(0x80423F)),
     ]
 
     static func find(_ id: String) -> Scene0 { all.first { $0.id == id } ?? all[0] }

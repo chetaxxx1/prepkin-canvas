@@ -16,19 +16,33 @@ struct SlimeView: View {
     var expression: SlimeExpression? = nil
 
     @State private var squish = false
-    @State private var hop = false
 
-    private var scale: CGFloat { [1: 0.78, 2: 0.9, 3: 1.0][level] ?? 0.78 }
+    static func scale(for level: Int) -> CGFloat { [1: 0.78, 2: 0.9, 3: 1.0][level] ?? 0.78 }
+    private var scale: CGFloat { Self.scale(for: level) }
+
+    /// Empty space between the bottom of this view's frame and the character's feet.
+    /// Home uses it to stand the mascot on the scene's floor rather than above it.
+    static func footInset(size: CGFloat, level: Int) -> CGFloat {
+        (size * 1.15 - size * scale(for: level) / Slime.aspect) / 2
+    }
 
     @State private var choreoStart: Date? = nil
 
-    private var isChoreographed: Bool { animation == .dance || animation == .peek }
+    private var isChoreographed: Bool {
+        switch animation {
+        case .dance, .peek, .celebrate, .bounce, .wave, .startle, .slump: return true
+        default: return false
+        }
+    }
 
     private var face: SlimeExpression {
         if let expression { return expression }
         switch animation {
         case .celebrate, .dance: return .delight
         case .sleep: return .sleep
+        case .wave: return .wink
+        case .startle: return .surprised
+        case .slump: return .sad
         default: return .idle
         }
     }
@@ -49,6 +63,10 @@ struct SlimeView: View {
 
                 ZStack {
                     TracedShape(subpaths: SlimeArt.body, deform: d).fill(color).frame(width: w, height: h)
+                    if let armAngle = dance.armAngle {
+                        SlimeArm(angleDeg: armAngle, stretch: dance.armStretch)
+                            .fill(color).frame(width: w, height: h)
+                    }
                     TracedShape(subpaths: SlimeArt.belly, deform: d).fill(Slime.belly(for: color)).frame(width: w, height: h)
                     TracedShape(subpaths: faceNow.art, deform: d).fill(Slime.ink).frame(width: w, height: h)
 
@@ -69,22 +87,20 @@ struct SlimeView: View {
                         Text("💤").font(.system(size: w * 0.2)).offset(x: w * 0.48, y: -h * 0.40)
                     }
                 }
-                .rotationEffect(.degrees(dance.tilt), anchor: .bottom)
+                .rotationEffect(.degrees(dance.tilt), anchor: dance.spinAnchor)
                 .scaleEffect(x: isChoreographed ? 1 : (squish ? 1.04 : 0.99),
                              y: isChoreographed ? 1 : (squish ? 0.95 : 1.01),
                              anchor: .bottom)
-                .offset(y: hop ? -size * 0.22 : dance.hopY * h)
+                .offset(y: dance.hopY * h)
             }
         }
         .frame(width: size * 1.35, height: size * 1.15)
         .onAppear { startIdle() }
         .onChange(of: animation) { _, new in
-            if new == .dance || new == .peek { choreoStart = Date() }
-            guard new == .bounce || new == .celebrate || new == .wave else { return }
-            withAnimation(.interpolatingSpring(stiffness: 260, damping: 9)) { hop = true }
-            Task {
-                try? await Task.sleep(for: .seconds(0.32))
-                withAnimation(.interpolatingSpring(stiffness: 260, damping: 9)) { hop = false }
+            switch new {
+            case .dance, .peek, .celebrate, .bounce, .wave, .startle, .slump:
+                choreoStart = Date()
+            default: break
             }
         }
     }
@@ -101,15 +117,20 @@ struct SlimeView: View {
         switch animation {
         case .dance: return SlimeDance.frame(at: t)
         case .peek: return SlimePeek.frame(at: t)
+        case .celebrate: return SlimeCelebrate.frame(at: t)
+        case .bounce: return SlimeJump.frame(at: t)
+        case .wave: return SlimeWave.frame(at: t)
+        case .startle: return SlimeStartle.frame(at: t)
+        case .slump: return SlimeSlump.frame(at: t)
         default: return SlimeDance.Frame()
         }
     }
 }
 
-/// The 4 approved expressions + the sleep placeholder (not yet approved —
-/// currently reuses the deadpan-style closed lids; see handoff BRIEF).
+/// The approved expressions: the original 4 traced faces plus the 5
+/// parametric faces approved 2026-08-29 (sleepy/surprised/sad/focused/wink).
 enum SlimeExpression {
-    case idle, deadpan, judging, delight, sleep
+    case idle, deadpan, judging, delight, sleep, surprised, sad, focused, wink
 
     var art: [[[Double]]] {
         switch self {
@@ -118,6 +139,10 @@ enum SlimeExpression {
         case .judging: return SlimeArt.faceJudging
         case .delight: return SlimeArt.faceDelight
         case .sleep: return SlimeArt.faceSleep
+        case .surprised: return SlimeArt.faceSurprised
+        case .sad: return SlimeArt.faceSad
+        case .focused: return SlimeArt.faceFocused
+        case .wink: return SlimeArt.faceWink
         }
     }
 }
@@ -148,17 +173,34 @@ enum Slime {
 /// at the view level, not here.
 struct SlimeDeform {
     var sx = 1.0, sy = 1.0, antennaSway = 0.0
+    /// Positive narrows the base linearly toward y = 1 (cartoon teardrop
+    /// stretch on launch — 2D jump-cycle idiom). 0 = straight scaling.
+    var taper = 0.0
+    /// Pulls the antenna tip down (unit-height at the tip, same quadratic
+    /// falloff as the sway). Keep it small and pair it with a sway so the
+    /// antenna bends over sideways like a wilting stem — a large droop alone
+    /// crushes the nob into the dome.
+    var antennaDroop = 0.0
+    /// 0…1 retracts the baked-in resting right mitten into the flank — used
+    /// while the separate SlimeArm is raised so there aren't two right hands.
+    var armTuck = 0.0
     static let neutral = SlimeDeform()
 
     /// Below this unit-y the sway weight is exactly 0 (head untouched).
     static let antennaBase = 0.15
 
     func apply(x: Double, y: Double) -> (x: Double, y: Double) {
-        var nx = 0.5 + (x - 0.5) * sx
-        let ny = 1 - (1 - y) * sy
+        var x = x
+        if armTuck > 0, x > 0.87, y > 0.48, y < 0.88 {
+            let wy = min(1, max(0, 1 - abs(y - 0.68) / 0.20) * 3)
+            x -= (x - 0.87) * armTuck * wy
+        }
+        var nx = 0.5 + (x - 0.5) * sx * (1 - taper * y)
+        var ny = 1 - (1 - y) * sy
         if y < Self.antennaBase {
             let wgt = (Self.antennaBase - y) / Self.antennaBase
             nx += antennaSway * wgt * wgt
+            ny += antennaDroop * wgt * wgt
         }
         return (nx, ny)
     }
@@ -179,6 +221,14 @@ enum SlimeDance {
         var air = 0.0    // 0 on the ground, 1 near hop apex (drives the shadow)
         var hopY = 0.0   // vertical offset in units of body height
         var face: SlimeExpression? = nil   // frame-driven face; nil = animation default
+        var spinAnchor: UnitPoint = .bottom   // .center for airborne flips
+        /// When set, the separate right arm is drawn at this angle (degrees
+        /// from vertical, positive = away from the body; SlimeArm.restDeg is
+        /// the resting pose). Whenever this is set, deform.armTuck must be 1
+        /// so the baked-in mitten never shows alongside it.
+        var armAngle: Double? = nil
+        /// Radial stretch of the raised arm about its pivot (1 = mitten size).
+        var armStretch = 1.0
     }
 
     static let duration = 2.98
@@ -299,6 +349,269 @@ enum SlimePeek {
         guard s > 0 else { return 0 }
         let env = min(1, s * 5) * max(0, min(1, (popStart - duckEnd - s) / 0.22))
         return 7.0 * env * sin(2 * .pi * 1.7 * s)
+    }
+}
+
+/// Celebrate choreography, adapted from the TFT sprite tacticians' joy-roll
+/// (Mush Sprite showcase, 3–7s): crouch → launch → one full airborne 360°
+/// backflip spinning about the body center (compact, no sideways sweep) →
+/// landing squash → jelly settle. Delight face + sparkles come from the
+/// .celebrate defaults. Pure function of time, like SlimeDance.
+/// Timing: 0.16 crouch + 0.18 launch + 0.78 flip + 0.20 land + 0.58 settle
+/// = 1.90s (must match ChibiAnimation.celebrate.duration).
+enum SlimeCelebrate {
+    static let duration = 1.90
+    private static let launchStart = 0.16, rollStart = 0.34
+    private static let rollEnd = 1.12, landEnd = 1.32
+
+    static func frame(at t: Double) -> SlimeDance.Frame {
+        guard t >= 0, t < duration else { return SlimeDance.Frame() }
+        var f = SlimeDance.Frame()
+        switch t {
+        case ..<rollStart:
+            // anticipation crouch, then launch stretch
+            f.deform.sy = SlimeDance.track(
+                [(0.00, 1.0), (launchStart, 0.80), (rollStart, 1.14)], t)
+        case ..<rollEnd:
+            // airborne backflip: ballistic arc + one eased 360° about center
+            let v = (t - rollStart) / (rollEnd - rollStart)
+            f.tilt = 360 * v * v * (3 - 2 * v)
+            f.spinAnchor = .center
+            f.hopY = -0.55 * 4 * v * (1 - v)
+            f.deform.sy = 1.04
+        case ..<landEnd:
+            // hard landing squash and release
+            f.deform.sy = SlimeDance.track(
+                [(rollEnd, 1.04), (1.20, 0.78), (landEnd, 1.08)], t)
+        default:
+            // damped jelly settle with antenna follow-through
+            let s = t - landEnd
+            f.deform.sy = 1 + 0.08 * exp(-6 * s) * sin(2 * .pi * 4.0 * s + .pi / 2)
+            f.deform.antennaSway = 0.09 * exp(-5 * s) * sin(2 * .pi * 4.6 * s)
+        }
+        f.deform.sx = 1 / f.deform.sy.squareRoot()       // preserve volume
+        f.air = min(1, -f.hopY / 0.5)
+        return f
+    }
+}
+
+/// Bounce choreography, keyframed from a 2D cartoon slime jump cycle
+/// (pancake anticipation → teardrop launch with the base tapering into a
+/// tail → round at the apex → flatten on descent → wide splat landing →
+/// jelly rebound). One hop, then back to idle. Pure function of time.
+/// Timing: 0.14 crouch + 0.12 launch + 0.36 air + 0.18 land + 0.60 settle
+/// = 1.40s (must match ChibiAnimation.bounce.duration).
+enum SlimeJump {
+    static let duration = 1.40
+    private static let launchStart = 0.14, liftoff = 0.26
+    private static let touchdown = 0.62, splatEnd = 0.80
+    private static let hopHeight = 0.55
+
+    static func frame(at t: Double) -> SlimeDance.Frame {
+        guard t >= 0, t < duration else { return SlimeDance.Frame() }
+        var f = SlimeDance.Frame()
+        switch t {
+        case ..<liftoff:
+            // pancake anticipation, then gather into the launch stretch
+            f.deform.sy = SlimeDance.track(
+                [(0.00, 1.0), (launchStart, 0.72), (liftoff, 1.32)], t)
+            f.deform.taper = SlimeDance.track(
+                [(launchStart, 0.0), (liftoff, 0.28)], t)
+        case ..<touchdown:
+            // ballistic arc: teardrop relaxes to round by the apex, then
+            // flattens slightly before contact
+            let v = (t - liftoff) / (touchdown - liftoff)
+            f.hopY = -hopHeight * 4 * v * (1 - v)
+            f.deform.sy = SlimeDance.track(
+                [(0.0, 1.32), (0.45, 0.98), (0.80, 0.95), (1.0, 0.86)], v)
+            f.deform.taper = SlimeDance.track([(0.0, 0.28), (0.5, 0.0)], v)
+        case ..<splatEnd:
+            // wide splat on contact, then release
+            f.deform.sy = SlimeDance.track(
+                [(touchdown, 0.86), (0.70, 0.60), (splatEnd, 1.10)], t)
+        default:
+            // damped jelly rebound with antenna follow-through
+            let s = t - splatEnd
+            f.deform.sy = 1 + 0.10 * exp(-6 * s) * sin(2 * .pi * 4.0 * s + .pi / 2)
+            f.deform.antennaSway = 0.09 * exp(-5 * s) * sin(2 * .pi * 4.6 * s)
+        }
+        f.deform.sx = min(1.28, 1 / f.deform.sy.squareRoot())  // cap the splat width
+        f.air = min(1, -f.hopY / hopHeight)
+        return f
+    }
+}
+
+/// The separate right arm: the EXACT traced resting-mitten outline (copied
+/// from SlimeArt.body), rotated about its base and drawn in the body color.
+/// At angleDeg == restDeg it overlays the baked-in mitten pixel-for-pixel,
+/// so tucking the baked-in one and drawing this is seamless at rest —
+/// there is never a second hand. Plain mitten — no thumb.
+struct SlimeArm: Shape {
+    var angleDeg: Double     // degrees from vertical, positive = outward
+    var stretch: Double      // radial scale about the pivot; 1 = mitten size
+    /// The angle the traced mitten hangs at.
+    static let restDeg = 138.0
+    private static let pivot = (x: 0.909, y: 0.657)
+    /// Resting-mitten outline, lifted verbatim from the SlimeArt.body trace,
+    /// closed across the base (which stays hidden inside the body).
+    private static let flipper: [[Double]] = [
+        [0.9122, 0.5542, 0.9195, 0.5613, 0.9265, 0.5691, 0.9330, 0.5771],
+        [0.9330, 0.5771, 0.9679, 0.6198, 0.9989, 0.6771, 0.9989, 0.7365],
+        [0.9989, 0.7365, 0.9989, 0.7513, 0.9986, 0.7653, 0.9927, 0.7790],
+        [0.9927, 0.7790, 0.9806, 0.8073, 0.9492, 0.8154, 0.9271, 0.7959],
+        [0.9271, 0.7959, 0.9170, 0.7871, 0.9107, 0.7728, 0.9058, 0.7600],
+        [0.9058, 0.7600, 0.9070, 0.6914, 0.9101, 0.6228, 0.9122, 0.5542],
+    ]
+
+    var animatableData: AnimatablePair<Double, Double> {
+        get { AnimatablePair(angleDeg, stretch) }
+        set { angleDeg = newValue.first; stretch = newValue.second }
+    }
+
+    func path(in r: CGRect) -> Path {
+        // rotate in a square space so angles stay true despite the bbox aspect
+        let alpha = (Self.restDeg - angleDeg) * .pi / 180    // lift = CCW
+        let ca = cos(alpha), sa = sin(alpha)
+        let aspect = 1.1145   // Slime.aspect; literal keeps this file-local
+        func pt(_ x: Double, _ y: Double) -> CGPoint {
+            let ax = (x - Self.pivot.x) * aspect
+            let ay = y - Self.pivot.y
+            let rx = (ca * ax + sa * ay) * stretch
+            let ry = (-sa * ax + ca * ay) * stretch
+            let px: Double = r.minX + (Self.pivot.x + rx / aspect) * r.width
+            let py: Double = r.minY + (Self.pivot.y + ry) * r.height
+            return CGPoint(x: px, y: py)
+        }
+        var p = Path()
+        p.move(to: pt(Self.flipper[0][0], Self.flipper[0][1]))
+        for s in Self.flipper {
+            p.addCurve(to: pt(s[6], s[7]), control1: pt(s[2], s[3]), control2: pt(s[4], s[5]))
+        }
+        p.closeSubpath()
+        return p
+    }
+}
+
+/// Wave choreography v3, keyframed from the approved Flow reference clip
+/// (Green_slime_character_waving_hello_202608300339.mp4): the arm sweeps up
+/// beside the head, waves side to side 2½ times like a wiper about the
+/// shoulder, then lowers. The body barely moves — a perk-up and a slight
+/// lean, wink face (from the .wave default) the whole way.
+/// Timing: 0.30 raise + 0.95 wave + 0.35 lower = 1.60s
+/// (must match ChibiAnimation.wave.duration).
+enum SlimeWave {
+    static let duration = 1.60
+    private static let raiseEnd = 0.30, waveEnd = 1.25
+    private static let upAngle = 22.0   // degrees from vertical when waving
+
+    /// NOTE: the arm-wave version of this one-shot is moving to the Rive rig
+    /// (hybrid plan, 2026-08-30). Until the .riv ships, wave is a simple
+    /// perk-and-bob so nothing broken reaches the app. SlimeArm and the
+    /// armTuck deform stay for the transition period.
+    static func frame(at t: Double) -> SlimeDance.Frame {
+        guard t >= 0, t < duration else { return SlimeDance.Frame() }
+        var f = SlimeDance.Frame()
+        switch t {
+        case ..<raiseEnd:
+            let v = t / raiseEnd
+            let eased = v * v * (3 - 2 * v)
+            f.deform.sy = 1 + 0.05 * eased
+            f.tilt = 2.0 * eased
+        case ..<waveEnd:
+            let s = t - raiseEnd
+            let env = max(0, min(1, (waveEnd - raiseEnd - s) / 0.12))
+            f.deform.sy = 1.05 - 0.03 * env * (1 - cos(2 * .pi * 2.2 * s)) / 2
+            f.deform.antennaSway = 0.05 * env * sin(2 * .pi * 2.2 * s)
+            f.tilt = 2.0
+        default:
+            let v = (t - waveEnd) / (duration - waveEnd)
+            let eased = v * v * (3 - 2 * v)
+            f.deform.sy = 1.05 - 0.05 * eased
+            f.tilt = 2.0 * (1 - eased)
+        }
+        f.deform.sx = 1 / f.deform.sy.squareRoot()
+        return f
+    }
+}
+
+/// Startle choreography — "whoa!". A sharp upward stretch with a tiny hop,
+/// a short trembling hold, then a quick settle. Surprised face from the
+/// .startle default. Timing: 0.10 pop + 0.45 tremble + 0.45 settle = 1.00s
+/// (must match ChibiAnimation.startle.duration).
+enum SlimeStartle {
+    static let duration = 1.00
+    private static let popEnd = 0.10, holdEnd = 0.55
+
+    static func frame(at t: Double) -> SlimeDance.Frame {
+        guard t >= 0, t < duration else { return SlimeDance.Frame() }
+        var f = SlimeDance.Frame()
+        switch t {
+        case ..<popEnd:
+            let v = t / popEnd
+            f.deform.sy = 1 + 0.20 * v
+            f.hopY = -0.12 * v
+        case ..<holdEnd:
+            // stretched, quivering
+            let s = t - popEnd
+            f.deform.sy = 1.14 + 0.025 * exp(-3 * s) * sin(2 * .pi * 9 * s)
+            f.hopY = -0.12 * max(0, 1 - s / 0.18)
+        default:
+            let s = t - holdEnd
+            f.deform.sy = 1 + 0.14 * exp(-7 * s) * cos(2 * .pi * 3.0 * s)
+        }
+        f.deform.sx = 1 / f.deform.sy.squareRoot()
+        f.air = min(1, -f.hopY / 0.12)
+        return f
+    }
+}
+
+/// Slump choreography v4 — the overdue-homework sigh. A double sag into a
+/// slight melt, the antenna WILTING OVER SIDEWAYS like a stem (sway-led bend
+/// with only a touch of droop — never crushed into the dome), two heavy
+/// breaths, then a slow straighten-up with the antenna springing back last.
+/// Sad face from the .slump default. Timing: 0.55 sag + 1.15 heavy hold +
+/// 0.70 rise = 2.40s (must match ChibiAnimation.slump.duration).
+enum SlimeSlump {
+    static let duration = 2.40
+    private static let sinkEnd = 0.55, sighEnd = 1.70
+    private static let slumpSy = 0.82, melt = -0.10, lean = -3.0
+    private static let wiltSway = -0.17, wiltDroop = 0.05
+
+    static func frame(at t: Double) -> SlimeDance.Frame {
+        guard t >= 0, t < duration else { return SlimeDance.Frame() }
+        var f = SlimeDance.Frame()
+        switch t {
+        case ..<sinkEnd:
+            // first give → beat → the real sag; the antenna wilts over
+            f.deform.sy = SlimeDance.track(
+                [(0.00, 1.0), (0.15, 0.90), (0.28, 0.92), (0.48, 0.79), (sinkEnd, slumpSy)], t)
+            let v = min(1, t / sinkEnd)
+            f.deform.taper = melt * v * v
+            f.tilt = lean * v * v
+            f.deform.antennaSway = wiltSway * v * v
+            f.deform.antennaDroop = wiltDroop * v * v
+        case ..<sighEnd:
+            // sagging: two slow heavy breaths, antenna hanging over
+            let s = t - sinkEnd
+            f.deform.sy = slumpSy + 0.028 * (1 - cos(2 * .pi * s / 0.57)) / 2
+            f.deform.taper = melt
+            f.tilt = lean
+            f.deform.antennaSway = wiltSway + 0.012 * sin(2 * .pi * s / 0.57)
+            f.deform.antennaDroop = wiltDroop
+        default:
+            // straighten up; the antenna springs back last with a tiny
+            // overshoot past upright
+            let v = (t - sighEnd) / (duration - sighEnd)
+            let eased = v * v * (3 - 2 * v)
+            f.deform.sy = slumpSy + (1 - slumpSy) * eased
+            f.deform.taper = melt * (1 - eased)
+            f.tilt = lean * (1 - eased)
+            let spring = 1 - eased * eased
+            f.deform.antennaSway = wiltSway * spring + 0.05 * eased * sin(2 * .pi * 2.2 * v)
+            f.deform.antennaDroop = wiltDroop * spring
+        }
+        f.deform.sx = 1 / f.deform.sy.squareRoot()
+        return f
     }
 }
 
@@ -493,20 +806,82 @@ enum SlimeArt {
         ],
     ]
 
-    /// Sleep placeholder: gentle closed lids (thin down-arcs at the eye
-    /// positions). Pending an approved sleep expression.
-    static let faceSleep: [[[Double]]] = closedLid(cx: 0.3308, cy: 0.4326)
-        + closedLid(cx: 0.6681, cy: 0.4326)
+    // MARK: - Expression set 2 (approved 2026-08-29)
+    // Parametric, code-drawn in the same vector language as the traced faces.
+    // Eye anchors from spec.json: cx 0.3308 / 0.6681, cy 0.4326.
 
-    private static func closedLid(cx: Double, cy: Double) -> [[[Double]]] {
-        // a shallow stroked-arc outline, built as a filled shape
-        let w = 0.115, t = 0.026, bow = 0.038
+    private static let eyeL = 0.3308, eyeR = 0.6681, eyeY = 0.4326
+
+    /// Sleepy: relaxed closed lids + small o mouth.
+    static let faceSleep: [[[Double]]] = [
+        arcStroke(eyeL, 0.435, 0.135, 0.028, 0.048),
+        arcStroke(eyeR, 0.435, 0.135, 0.028, 0.048),
+        ellipseSub(0.5, 0.505, 0.020, 0.016),
+    ]
+
+    /// Surprised: round eyes a touch taller + tall O mouth.
+    static let faceSurprised: [[[Double]]] = [
+        ellipseSub(eyeL, eyeY - 0.008, 0.078, 0.086),
+        ellipseSub(eyeR, eyeY - 0.008, 0.078, 0.086),
+        ellipseSub(0.5, 0.535, 0.040, 0.050),
+    ]
+
+    /// Sad: smaller, lower eyes + frown.
+    static let faceSad: [[[Double]]] = [
+        ellipseSub(eyeL, eyeY + 0.012, 0.064, 0.070),
+        ellipseSub(eyeR, eyeY + 0.012, 0.064, 0.070),
+        arcStroke(0.5, 0.520, 0.130, 0.026, -0.048),
+    ]
+
+    /// Focused: brows angled in over the judging half-lids + the idle smile.
+    static let faceFocused: [[[Double]]] =
+        [brow(eyeL, 0.292, 0.054, 0.026, 0.026),
+         brow(eyeR, 0.292, 0.054, -0.026, 0.026)]
+        + [faceJudging[0], faceJudging[2]]
+        + [faceIdle[1]]
+
+    /// Wink: open left eye, delight ^ arc right eye, idle smile.
+    static let faceWink: [[[Double]]] = [faceIdle[0], faceDelight[2], faceIdle[1]]
+
+    // MARK: parametric shape builders
+
+    /// A straight edge as a degenerate cubic (controls at the thirds).
+    private static func seg(_ a: (Double, Double), _ b: (Double, Double)) -> [Double] {
+        [a.0, a.1,
+         a.0 + (b.0 - a.0) / 3, a.1 + (b.1 - a.1) / 3,
+         a.0 + 2 * (b.0 - a.0) / 3, a.1 + 2 * (b.1 - a.1) / 3,
+         b.0, b.1]
+    }
+
+    private static func ellipseSub(_ cx: Double, _ cy: Double, _ rx: Double, _ ry: Double) -> [[Double]] {
+        let k = 0.5523
+        return [
+            [cx + rx, cy, cx + rx, cy + k * ry, cx + k * rx, cy + ry, cx, cy + ry],
+            [cx, cy + ry, cx - k * rx, cy + ry, cx - rx, cy + k * ry, cx - rx, cy],
+            [cx - rx, cy, cx - rx, cy - k * ry, cx - k * rx, cy - ry, cx, cy - ry],
+            [cx, cy - ry, cx + k * rx, cy - ry, cx + rx, cy - k * ry, cx + rx, cy],
+        ]
+    }
+
+    /// Thin arc band. bow > 0 bulges downward (closed lid), bow < 0 upward (frown).
+    private static func arcStroke(_ cx: Double, _ cy: Double, _ w: Double, _ t: Double, _ bow: Double) -> [[Double]] {
         let x0 = cx - w / 2, x1 = cx + w / 2
-        return [[
+        return [
             [x0, cy, cx - w / 6, cy + bow, cx + w / 6, cy + bow, x1, cy],
-            [x1, cy, x1, cy + t, x1, cy + t, x1, cy + t],
+            seg((x1, cy), (x1, cy + t)),
             [x1, cy + t, cx + w / 6, cy + bow + t, cx - w / 6, cy + bow + t, x0, cy + t],
-            [x0, cy + t, x0, cy, x0, cy, x0, cy],
-        ]]
+            seg((x0, cy + t), (x0, cy)),
+        ]
+    }
+
+    /// Slanted brow bar. slant > 0 lowers the right end.
+    private static func brow(_ cx: Double, _ cy: Double, _ halfW: Double, _ slant: Double, _ t: Double) -> [[Double]] {
+        let yl = cy - slant / 2, yr = cy + slant / 2
+        return [
+            seg((cx - halfW, yl), (cx + halfW, yr)),
+            seg((cx + halfW, yr), (cx + halfW, yr + t)),
+            seg((cx + halfW, yr + t), (cx - halfW, yl + t)),
+            seg((cx - halfW, yl + t), (cx - halfW, yl)),
+        ]
     }
 }

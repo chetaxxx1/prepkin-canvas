@@ -4,22 +4,26 @@ struct RootView: View {
     @EnvironmentObject var state: AppState
     @State private var tab: Tab = .home
 
-    /// The five icon tabs. Shop is not here — it lives in the mascot circle.
+    /// Six tabs, and **Shop is deliberately not one of them** — it opens from the coin
+    /// chip on Home, where the motivation already is.
+    ///
+    /// Six is more than the usual iOS advice, and it works here for one reason: every
+    /// icon is a full-colour object, so a tab is found by silhouette and colour rather
+    /// than by parsing a grey glyph. If the icons are ever reduced to monochrome, this
+    /// bar has to be cut to four or five.
     enum Tab: String, CaseIterable {
-        case home, focus, games, learn, friends, shop
+        case home, focus, games, learn, friends, kin
 
-        var icon: String {
+        var label: String {
             switch self {
-            case .home: return "house.fill"
-            case .focus: return "clock.fill"
-            case .games: return "gamecontroller.fill"
-            case .learn: return "book.fill"
-            case .friends: return "person.2.fill"
-            case .shop: return "bag.fill"
+            case .home: return "Home"
+            case .focus: return "Focus"
+            case .games: return "Games"
+            case .learn: return "Learn"
+            case .friends: return "Friends"
+            case .kin: return "Kin"
             }
         }
-
-        static var pillTabs: [Tab] { [.home, .focus, .games, .learn, .friends] }
     }
 
     var body: some View {
@@ -31,7 +35,7 @@ struct RootView: View {
                 case .games: GamesView()
                 case .learn: LearnView()
                 case .friends: FriendsView()
-                case .shop: ShopView()
+                case .kin: ShopView(title: "Kin")
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,72 +45,76 @@ struct RootView: View {
             }
         }
         .animation(.easeInOut(duration: 0.22), value: state.hideTabBar)
-        .background(Theme.paper)
-        .ignoresSafeArea(edges: .bottom)
+        .background(Theme.paper.ignoresSafeArea())
     }
 
-    // MARK: - Floating pill + mascot circle
+    // MARK: - Tab bar
 
     private var tabBar: some View {
-        HStack(spacing: 10) {
-            HStack(spacing: 2) {
-                ForEach(Tab.pillTabs, id: \.self) { t in
-                    iconButton(t)
-                }
+        HStack(alignment: .bottom, spacing: 2) {
+            ForEach(Tab.allCases, id: \.self) { t in
+                tabButton(t)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 8)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Theme.ink)
-                    .shadow(color: .black.opacity(0.22), radius: 16, y: 6))
-
-            mascotButton
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 30)
-        // Fade page content out beneath the floating bar instead of letting
-        // cards slide under it edge-first.
+        .padding(.horizontal, 4)
+        .padding(.top, 6)
         .background(
-            LinearGradient(colors: [Theme.paper.opacity(0), Theme.paper.opacity(0.92), Theme.paper],
-                           startPoint: .top, endPoint: .bottom)
-                .frame(height: 150)
-                .allowsHitTesting(false),
-            alignment: .bottom)
+            Theme.tabBar
+                .ignoresSafeArea(edges: .bottom)
+                .shadow(color: Theme.hex(0x281412).opacity(0.06), radius: 11, y: -6)
+        )
+        .overlay(alignment: .top) {
+            Rectangle().fill(Theme.ink.opacity(0.08)).frame(height: 0.5)
+        }
     }
 
-    private func iconButton(_ t: Tab) -> some View {
+    private func tabButton(_ t: Tab) -> some View {
         let active = t == tab
         return Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) { tab = t }
         } label: {
-            Image(systemName: t.icon)
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(active ? .white : Color.white.opacity(0.42))
-                .frame(width: 44, height: 40)
-                .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(active ? Theme.coral : .clear))
-        }
-        .buttonStyle(.plain)
-    }
+            VStack(spacing: 3) {
+                ZStack {
+                    if t == .kin {
+                        // Exempt from the inactive dimming — a face that dims reads as
+                        // an unwell pet.
+                        KinChip(color: Theme.species(state.activeChibiID), size: 28)
+                    } else {
+                        TabIcon(tab: t, size: 27)
+                            .opacity(active ? 1 : 0.82)
+                            .saturation(active ? 1 : 0.72)
+                    }
+                }
+                .frame(height: 28)
 
-    private var mascotButton: some View {
-        let active = tab == .shop
-        return Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) { tab = .shop }
-        } label: {
-            SlimeAvatar(color: Theme.species(state.activeChibiID), size: 56)
-                .overlay(
-                    Circle().strokeBorder(active ? Theme.coral : Color.white, lineWidth: 3))
-                .shadow(color: .black.opacity(0.18), radius: 12, y: 5)
+                Text(t.label)
+                    .font(Theme.font(10.5, active ? .black : .heavy))
+                    .foregroundStyle(active ? Theme.tabActiveInk : Theme.tabInk)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 7).padding(.bottom, 5)
+            .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(active ? Theme.tabActiveFill : .clear))
+            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(TabPressStyle())
+        .accessibilityLabel(t.label)
+        .accessibilityAddTraits(active ? [.isSelected, .isButton] : .isButton)
     }
 }
 
-/// The mascot's face in a circle — used as the Shop tab button and anywhere a
-/// small buddy avatar is needed. Crops the traced art to the head.
+/// Tab press: scale to ~0.94 and back.
+private struct TabPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+            .animation(.spring(response: 0.22, dampingFraction: 0.7), value: configuration.isPressed)
+    }
+}
+
+/// The mascot's face in a circle — used anywhere a small buddy avatar is needed.
+/// Crops the traced art to the head.
 struct SlimeAvatar: View {
     var color: Color = Slime.body
     var size: CGFloat = 56

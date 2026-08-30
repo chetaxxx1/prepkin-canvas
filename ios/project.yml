@@ -17,3 +17,26 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_VERSION: "5.9"
         CODE_SIGNING_ALLOWED: NO
+  PrepkinCanvasTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: PrepkinCanvas
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prepkin.canvas.tests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.9"
+        CODE_SIGNING_ALLOWED: NO
+schemes:
+  PrepkinCanvas:
+    build:
+      targets:
+        PrepkinCanvas: all
+        PrepkinCanvasTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets: [PrepkinCanvasTests]

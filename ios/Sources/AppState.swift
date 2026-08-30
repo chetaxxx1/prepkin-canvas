@@ -1,202 +1,232 @@
 import Foundation
 import SwiftUI
 
+/// The bridge between SwiftUI and `GameState`.
+///
+/// All the rules live in `GameState`, which is a plain value type with no I/O — this
+/// class only publishes it, saves it, and plays the mascot's reaction. Anything you
+/// would want to write a test for belongs on the other side of this line.
 @MainActor
 final class AppState: ObservableObject {
-    @Published var coins: Int
-    @Published var owned: [OwnedChibi]
-    @Published var activeChibiID: String
-    @Published var tasks: [DailyTask]
+    @Published private(set) var game: GameState {
+        didSet { store.save(game) }
+    }
+
     @Published var animation: ChibiAnimation = .wave
-    @Published var completedLessons: Set<String>
-    @Published var week: WeekStats
-    @Published var sceneID: String
-    @Published var ownedScenes: Set<String>
     /// Raised by pushed sub-screens (Daily Word, a lesson, the grade calculator)
     /// and by a running focus session, so the floating bar gets out of the way.
     @Published var hideTabBar = false
 
-    private let canvas: CanvasSyncClient = MockCanvasClient()
+    /// What the last sync did, for the connect screen. Not persisted — it is only
+    /// ever about this run.
+    @Published private(set) var canvasStatus: String?
 
-    var activeChibi: OwnedChibi {
-        owned.first { $0.speciesID == activeChibiID } ?? owned[0]
-    }
+    private let store: Store
+    private let makeClient: (GameState) -> CanvasSyncClient
 
-    var allDone: Bool { !tasks.isEmpty && tasks.allSatisfy(\.done) }
-
-    // MARK: - Weekly stats
-
-    struct WeekStats: Codable {
-        var key: String          // e.g. "2026-W35"
-        var tasksDone = 0
-        var coinsEarned = 0
-        var focusMinutes = 0
-        var wordleSolved = 0
-        var lessonsDone = 0
-
-        static func currentKey() -> String {
-            let c = Calendar.current
-            return "\(c.component(.yearForWeekOfYear, from: Date()))-W\(c.component(.weekOfYear, from: Date()))"
+    /// Real bridge once there is a pairing code and a configured project;
+    /// sample data otherwise, so the app is never an empty page in a demo.
+    static func defaultClient(for state: GameState) -> CanvasSyncClient {
+        if let code = state.pairingCode, BridgeConfig.shared.isConfigured {
+            return SupabaseCanvasClient(code: code)
         }
+        return MockCanvasClient()
     }
 
-    // MARK: - Init / persistence
-
-    private struct Snapshot: Codable {
-        var coins: Int
-        var owned: [OwnedChibi]
-        var activeChibiID: String
-        var tasks: [DailyTask]
-        var completedLessons: Set<String>
-        var week: WeekStats
-        var savedOn: Date
-        var sceneID: String?
-        var ownedScenes: Set<String>?
+    init(store: Store = .shared,
+         makeClient: @escaping (GameState) -> CanvasSyncClient = AppState.defaultClient) {
+        self.store = store
+        self.makeClient = makeClient
+        var loaded = store.load()
+        loaded.advance()
+        loaded.lastOpenedAt = Date()
+        game = loaded
+        store.save(game)
     }
 
-    init() {
-        if let data = UserDefaults.standard.data(forKey: "snapshot2"),
-           let snap = try? JSONDecoder().decode(Snapshot.self, from: data) {
-            coins = snap.coins
-            owned = snap.owned
-            activeChibiID = snap.activeChibiID
-            tasks = Calendar.current.isDateInToday(snap.savedOn) ? snap.tasks : Self.defaultTasks()
-            completedLessons = snap.completedLessons
-            week = snap.week.key == WeekStats.currentKey() ? snap.week : WeekStats(key: WeekStats.currentKey())
-            sceneID = snap.sceneID ?? "dorm"
-            ownedScenes = snap.ownedScenes ?? ["dorm"]
-        } else {
-            coins = 0
-            owned = [OwnedChibi(speciesID: "slime", level: 1)]
-            activeChibiID = "slime"
-            tasks = Self.defaultTasks()
-            completedLessons = []
-            week = WeekStats(key: WeekStats.currentKey())
-            sceneID = "dorm"
-            ownedScenes = ["dorm"]
-        }
+    // MARK: - Read-through for the views
+
+    var coins: Int { game.ledger.balance }
+    var owned: [OwnedChibi] { game.owned }
+    var activeChibiID: String { game.activeChibiID }
+    var activeChibi: OwnedChibi { game.activeChibi }
+    var tasks: [DailyTask] { game.tasks }
+    var allDone: Bool { game.allDone }
+    var week: WeekStats { game.week }
+    var completedLessons: Set<String> { game.completedLessons }
+    var sceneID: String { game.sceneID }
+    var ownedScenes: Set<String> { game.ownedScenes }
+    var templates: [TaskTemplate] { game.templates }
+    var settings: AppSettings { game.settings }
+    var wordleClaimedToday: Bool { game.wordleClaimedToday }
+    var coinHistory: [CoinEntry] { game.ledger.entries.reversed() }
+    var courses: [CanvasCourse] { game.canvasCourses }
+    var bestShift: Int { game.bestShift }
+
+    // MARK: - Day
+
+    /// Rebuilds today's list. Called on launch, on foreground, at midnight, and on a
+    /// time-zone change — the four moments the old `isDateInToday` check missed.
+    func refreshDay() {
+        game.advance()
+        game.lastOpenedAt = Date()
+        rescheduleReminders()
+        if hasOverdue { play(.slump) }
     }
 
-    private static func defaultTasks() -> [DailyTask] {
-        [
-            DailyTask(id: "s-1", title: "20 min SAT practice", kind: .study),
-            DailyTask(id: "l-1", title: "Drink a glass of water", kind: .life),
-            DailyTask(id: "l-2", title: "10 minute walk", kind: .life),
-            DailyTask(id: "l-3", title: "In bed by 11", kind: .life),
-        ]
+    /// An unfinished task whose due time has passed.
+    var hasOverdue: Bool {
+        game.tasks.contains { !$0.done && ($0.dueAt.map { $0 < Date() } ?? false) }
     }
 
-    private func save() {
-        let snap = Snapshot(coins: coins, owned: owned, activeChibiID: activeChibiID,
-                            tasks: tasks, completedLessons: completedLessons,
-                            week: week, savedOn: Date(),
-                            sceneID: sceneID, ownedScenes: ownedScenes)
-        if let data = try? JSONEncoder().encode(snap) {
-            UserDefaults.standard.set(data, forKey: "snapshot2")
-        }
-    }
+    func flush() { store.flush() }
 
     // MARK: - Canvas
 
     func syncCanvas() async {
-        guard let items = try? await canvas.fetchTodo() else { return }
-        let existing = Dictionary(uniqueKeysWithValues: tasks.filter { $0.kind == .canvas }.map { ($0.id, $0) })
-        let canvasTasks = items.map { item in
-            var t = DailyTask(id: item.id, title: item.title, kind: .canvas,
-                              detail: item.courseName, dueAt: item.dueAt)
-            t.done = existing[item.id]?.done ?? false
-            return t
+        do {
+            let snapshot = try await makeClient(game).fetchTodo()
+            let before = Set(game.tasks.map(\.id))
+            game.applyCanvas(snapshot)
+            canvasStatus = nil
+            rescheduleReminders()
+            // New homework just dropped in — a startled "whoa!", but never
+            // interrupting an animation that is already playing.
+            if animation == .idle, game.tasks.contains(where: { !before.contains($0.id) }) {
+                play(.startle)
+            }
+        } catch BridgeError.notPairedYet {
+            canvasStatus = "Waiting for your laptop to send its first list."
+        } catch {
+            // Keep whatever is already on the list. A dropped connection is not a
+            // reason to empty somebody's day.
+            canvasStatus = "Could not reach the bridge. Showing the last list."
         }
-        tasks = canvasTasks + tasks.filter { $0.kind != .canvas }
-        save()
     }
 
-    // MARK: - Economy
+    // MARK: - Pairing
 
-    /// Every coin in the app flows through here. Pays for completion, never for performance.
-    func earn(_ amount: Int, celebrate: Bool = false) {
-        coins += amount
-        week.coinsEarned += amount
-        play(celebrate ? .celebrate : .bounce)
-        save()
+    var pairingCode: String? { game.pairingCode }
+    var lastCanvasSyncAt: Date? { game.lastCanvasSyncAt }
+    var isBridgeConfigured: Bool { BridgeConfig.shared.isConfigured }
+
+    @discardableResult
+    func ensurePairingCode() -> String { game.ensurePairingCode() }
+
+    func unpair() {
+        game.unpair()
+        canvasStatus = nil
     }
+
+    // MARK: - Tasks
 
     func complete(_ task: DailyTask) {
-        guard let i = tasks.firstIndex(where: { $0.id == task.id }), !tasks[i].done else { return }
-        tasks[i].done = true
-        week.tasksDone += 1
-        earn(task.reward, celebrate: allDone)
+        let paid = game.complete(taskID: task.id, reward: task.reward)
+        guard paid > 0 else { return }
+        play(game.allDone ? .celebrate : .bounce)
+        rescheduleReminders()
     }
 
     /// Undo a check-off. Takes the coins back, plays nothing. Never a penalty.
     func uncomplete(_ task: DailyTask) {
-        guard let i = tasks.firstIndex(where: { $0.id == task.id }), tasks[i].done else { return }
-        tasks[i].done = false
-        coins = max(0, coins - task.reward)
-        week.tasksDone = max(0, week.tasksDone - 1)
-        week.coinsEarned = max(0, week.coinsEarned - task.reward)
-        save()
+        game.uncomplete(taskID: task.id)
+        rescheduleReminders()
     }
 
-    // MARK: - Scenes
-
-    func buyScene(_ scene: Scene0) {
-        guard coins >= scene.price, !ownedScenes.contains(scene.id) else { return }
-        coins -= scene.price
-        ownedScenes.insert(scene.id)
-        sceneID = scene.id
-        play(.celebrate)
-        save()
+    func addTask(title: String, kind: TaskKind, recurrence: Recurrence) {
+        game.addTask(title: title, kind: kind, recurrence: recurrence)
+        rescheduleReminders()
     }
 
-    func equipScene(_ id: String) {
-        guard ownedScenes.contains(id) else { return }
-        sceneID = id
-        save()
+    func setTemplate(_ id: String, active: Bool) {
+        game.setTemplate(id, active: active)
+        rescheduleReminders()
     }
+
+    func deleteTask(_ id: String) {
+        game.deleteTask(id)
+        rescheduleReminders()
+    }
+
+    // MARK: - Other earnings
 
     func recordFocus(minutes: Int) {
-        week.focusMinutes += minutes
-        earn(minutes, celebrate: minutes >= 25)
+        let paid = game.recordFocus(minutes: minutes)
+        if paid > 0 { play(minutes >= 25 ? .celebrate : .bounce) }
+    }
+
+    /// Miles from a finished shift. Called for a clock-out too — the miles were
+    /// still driven.
+    func recordShift(miles: Int) {
+        game.recordShift(miles: miles)
     }
 
     func recordWordleWin(guesses: Int) {
-        week.wordleSolved += 1
-        earn(30, celebrate: true)
+        if game.recordWordleWin() > 0 { play(.celebrate) }
     }
 
     func completeLesson(id: String, reward: Int) {
-        guard !completedLessons.contains(id) else { return }
-        completedLessons.insert(id)
-        week.lessonsDone += 1
-        earn(reward, celebrate: true)
+        if game.completeLesson(id: id, reward: reward) > 0 { play(.celebrate) }
     }
 
+    // MARK: - Spending
+
     func upgradeActiveChibi() {
-        guard let cost = activeChibi.nextUpgradeCost, coins >= cost,
-              let i = owned.firstIndex(where: { $0.speciesID == activeChibiID }) else { return }
-        coins -= cost
-        owned[i].level += 1
-        play(.celebrate)
-        save()
+        if game.upgradeActiveChibi() { play(.celebrate) }
     }
 
     func buy(_ species: ChibiSpecies) {
-        guard coins >= species.price,
-              !owned.contains(where: { $0.speciesID == species.id }) else { return }
-        coins -= species.price
-        owned.append(OwnedChibi(speciesID: species.id, level: 1))
-        activeChibiID = species.id
-        play(.celebrate)
-        save()
+        if game.buy(species) { play(.celebrate) }
     }
 
-    func setActive(_ speciesID: String) {
-        guard owned.contains(where: { $0.speciesID == speciesID }) else { return }
-        activeChibiID = speciesID
-        play(.wave)
-        save()
+    func buyScene(_ scene: Scene0) {
+        if game.buyScene(scene) { play(.celebrate) }
     }
+
+    func equipScene(_ id: String) { game.equipScene(id) }
+
+    func setActive(_ speciesID: String) {
+        game.setActive(speciesID)
+        play(.wave)
+    }
+
+    // MARK: - Reminders
+
+    /// Turning reminders on is the only thing that asks iOS for permission. If the
+    /// user says no at the system prompt, the switch goes back off rather than
+    /// pretending it worked.
+    func setRemindersEnabled(_ on: Bool) async {
+        if on {
+            let granted = await NotificationScheduler.shared.requestAuthorization()
+            game.settings.remindersEnabled = granted
+        } else {
+            game.settings.remindersEnabled = false
+        }
+        await NotificationScheduler.shared.reschedule(for: game)
+    }
+
+    func setNudgeHour(_ hour: Int) {
+        game.settings.nudgeHour = min(max(hour, 6), 23)
+        rescheduleReminders()
+    }
+
+    func setDueReminders(_ on: Bool) {
+        game.settings.dueRemindersEnabled = on
+        rescheduleReminders()
+    }
+
+    func setComeBackReminders(_ on: Bool) {
+        game.settings.comeBackRemindersEnabled = on
+        rescheduleReminders()
+    }
+
+    private func rescheduleReminders() {
+        guard game.settings.remindersEnabled else { return }
+        let snapshot = game
+        Task { await NotificationScheduler.shared.reschedule(for: snapshot) }
+    }
+
+    // MARK: - Mascot
 
     /// Play a one-shot animation, then fall back to idle.
     private var animationToken = UUID()

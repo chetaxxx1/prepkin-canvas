@@ -12,7 +12,7 @@ import Foundation
 ///    on the main thread mid-animation.
 final class Store {
     /// Bump when `GameState`'s shape changes, and add a step to `migrate`.
-    static let currentVersion = 2
+    static let currentVersion = 3
 
     /// The v1 shape: the `snapshot2` blob in UserDefaults, from before there was a file.
     static let legacyDefaultsKey = "snapshot2"
@@ -83,8 +83,9 @@ final class Store {
     /// one step here; nothing else in the app needs to know the file is old.
     private func migrate(_ envelope: Envelope) -> GameState {
         var state = envelope.state
-        // v2 is the first file-based schema. Later versions chain from here, e.g.
-        // if envelope.version < 3 { state = Self.v2ToV3(state) }
+        // v2 was the first file-based schema. v3 added Canvas courses, grades and
+        // submission state; no step is needed for it, because `GameState` now
+        // reads every field with a fallback, so a missing key is not an error.
         state.advance()
         return state
     }
@@ -147,7 +148,7 @@ final class Store {
 
     private func loadLegacyDefaults(now: Date = Date()) -> GameState? {
         guard let data = defaults.data(forKey: Self.legacyDefaultsKey),
-              let old = try? Self.decoder.decode(LegacySnapshot.self, from: data) else { return nil }
+              let old = try? Self.legacyDecoder.decode(LegacySnapshot.self, from: data) else { return nil }
         return Self.fromLegacy(old, now: now)
     }
 
@@ -203,6 +204,11 @@ final class Store {
         e.outputFormatting = [.prettyPrinted, .sortedKeys]
         return e
     }()
+
+    /// The old save was written by a bare `JSONEncoder()`, so its dates are raw
+    /// numbers rather than ISO-8601 strings. Reading it with the current decoder
+    /// throws, and the user silently starts over at zero coins.
+    static let legacyDecoder = JSONDecoder()
 
     static let decoder: JSONDecoder = {
         let d = JSONDecoder()

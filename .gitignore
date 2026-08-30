@@ -2,3 +2,6 @@ ios/PrepkinCanvas.xcodeproj/
 DerivedData/
 build/
 .DS_Store
+bridge/config.local.json
+extension/config.js
+ios/Resources/bridge-config.json

@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ShopView: View {
+    /// The tab bar reaches this screen as "Kin", the coin chip reaches it as "Shop".
+    var title: String = "Shop"
+
     @EnvironmentObject var state: AppState
 
     private let columns = [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)]
@@ -35,7 +38,7 @@ struct ShopView: View {
                 .padding(.bottom, 104)
             }
             .background(Theme.paper)
-            .navigationTitle("Shop")
+            .navigationTitle(title)
             .safeAreaInset(edge: .top) {
                 HStack {
                     Spacer()
