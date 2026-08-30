@@ -135,6 +135,22 @@ final class CanvasSnapshotTests: XCTestCase {
         XCTAssertTrue(snap.tasks.isEmpty)
         XCTAssertTrue(snap.courses.isEmpty)
     }
+
+    func testAJunkDueDateLosesTheDateNotTheWholeList() throws {
+        // The extension deliberately keeps an assignment whose due date it could
+        // not parse. One bad date must not sink the other nine assignments.
+        let snap = try decode("""
+        {"tasks":[{"id":"c-1","title":"Essay","courseName":"English 11","dueAt":"2026-09-01T23:59:00Z"},
+                  {"id":"c-2","title":"Quiz","courseName":"APUSH","dueAt":"whenever the sub says"},
+                  {"id":"c-3","title":"Reading","courseName":"English 11","dueAt":null,
+                   "submittedAt":"also junk"}]}
+        """)
+        XCTAssertEqual(snap.tasks.map(\.id), ["c-1", "c-2", "c-3"])
+        XCTAssertNotNil(snap.tasks[0].dueAt)
+        XCTAssertNil(snap.tasks[1].dueAt, "an unreadable date reads as no date")
+        XCTAssertNil(snap.tasks[2].submittedAt, "junk must not count as handed in")
+        XCTAssertFalse(snap.tasks[2].isSubmitted)
+    }
 }
 
 final class SubmissionTests: XCTestCase {

@@ -105,6 +105,20 @@ final class StoreTests: XCTestCase {
         XCTAssertEqual(state.completedLessons, ["fin-1"])
     }
 
+    func testALegacySaveThatSpentTodaysEarningsDoesNotMintCoins() {
+        // Earned 30 today (10 + 20), then spent most of it: 5 coins left.
+        let now = Date()
+        var life = DailyTask(id: "l-1", title: "Drink a glass of water", kind: .life)
+        life.done = true
+        var study = DailyTask(id: "s-1", title: "20 min SAT practice", kind: .study)
+        study.done = true
+
+        let state = Store.fromLegacy(legacy(coins: 5, savedOn: now, tasks: [life, study]), now: now)
+
+        XCTAssertEqual(state.ledger.balance, 5,
+                       "the number on screen must not change on upgrade — up or down")
+    }
+
     func testTheOldSaveDoesNotCarryYesterdaysCheckmarks() {
         let now = Date()
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!

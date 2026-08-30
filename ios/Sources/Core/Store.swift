@@ -187,12 +187,19 @@ final class Store {
             CanvasItem(id: $0.id, title: $0.title, courseName: $0.detail ?? "", dueAt: $0.dueAt)
         }
 
+        // Today's finished tasks become real ledger lines, and the opening balance
+        // is whatever makes the total come out to the old number exactly. It can be
+        // negative — a user who earned 30 today and spent 25 of it had 5 on screen,
+        // and 5 is what they keep.
         let doneToday = carriedToday ? old.tasks.filter(\.done) : []
-        let spentOnDone = doneToday.reduce(0) { $0 + $1.reward }
-        state.ledger = Ledger(openingBalance: max(0, old.coins - spentOnDone))
-        for task in doneToday {
-            state.complete(taskID: task.id, reward: task.reward, now: old.savedOn)
+        let canvasIDs = Set(state.canvasItems.map(\.id))
+        let entries = doneToday.map { task in
+            CoinEntry(key: canvasIDs.contains(task.id) ? state.canvasKey(task.id)
+                                                       : state.taskKey(task.id, on: today),
+                      amount: task.reward, reason: .task, day: today, at: old.savedOn)
         }
+        let replayed = entries.reduce(0) { $0 + $1.amount }
+        state.ledger = Ledger(openingBalance: old.coins - replayed, entries: entries)
         return state
     }
 

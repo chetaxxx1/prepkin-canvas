@@ -110,32 +110,55 @@ struct SupabaseCanvasClient: CanvasSyncClient {
         let trimmed = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed != "null", !trimmed.isEmpty else { throw BridgeError.notPairedYet }
         if trimmed.hasPrefix("[") {
-            return CanvasSnapshot(tasks: try decoder.decode([CanvasItem].self, from: data))
+            return CanvasSnapshot(tasks: try decoder.decode([WireItem].self, from: data).map(\.item))
         }
         struct Payload: Decodable {
-            var tasks: [CanvasItem]?
+            var tasks: [WireItem]?
             var courses: [CanvasCourse]?
         }
         let payload = try decoder.decode(Payload.self, from: data)
-        return CanvasSnapshot(tasks: payload.tasks ?? [], courses: payload.courses ?? [])
+        return CanvasSnapshot(tasks: (payload.tasks ?? []).map(\.item), courses: payload.courses ?? [])
     }
 
-    /// Canvas writes due dates with and without fractional seconds depending on
-    /// the install, so accept both rather than losing a whole sync to a decimal.
-    private static let decoder: JSONDecoder = {
-        let plain = ISO8601DateFormatter()
-        let fractional = ISO8601DateFormatter()
-        fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    /// One task as the wire carries it. The extension deliberately keeps an
+    /// assignment whose due date it could not read, so dates arrive as raw strings
+    /// and are parsed one field at a time — a bad date costs that date, never the
+    /// other nine assignments in the push.
+    private struct WireItem: Decodable {
+        let id: String
+        let title: String
+        let courseName: String
+        var dueAt: String?
+        var courseId: String?
+        var colorHex: String?
+        var submittedAt: String?
+        var score: Double?
+        var pointsPossible: Double?
 
-        let d = JSONDecoder()
-        d.dateDecodingStrategy = .custom { decoder in
-            let text = try decoder.singleValueContainer().decode(String.self)
-            if let date = plain.date(from: text) ?? fractional.date(from: text) { return date }
-            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath,
-                                                    debugDescription: "not an ISO 8601 date: \(text)"))
+        var item: CanvasItem {
+            CanvasItem(id: id, title: title, courseName: courseName,
+                       dueAt: SupabaseCanvasClient.date(from: dueAt),
+                       courseId: courseId, colorHex: colorHex,
+                       submittedAt: SupabaseCanvasClient.date(from: submittedAt),
+                       score: score, pointsPossible: pointsPossible)
         }
-        return d
+    }
+
+    private static let decoder = JSONDecoder()
+
+    /// Canvas writes dates with and without fractional seconds depending on the
+    /// install, so accept both.
+    private static let plainISO = ISO8601DateFormatter()
+    private static let fractionalISO: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
     }()
+
+    private static func date(from text: String?) -> Date? {
+        guard let text else { return nil }
+        return plainISO.date(from: text) ?? fractionalISO.date(from: text)
+    }
 }
 
 /// Sample data, used until a pairing code exists so the app is never a blank page.

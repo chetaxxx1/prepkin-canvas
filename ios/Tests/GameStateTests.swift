@@ -91,6 +91,18 @@ final class GameStateTests: XCTestCase {
         XCTAssertFalse(s.tasks.contains { $0.id == id }, "a finished one-off should not come back")
     }
 
+    func testAFinishedOneOffRetiresEvenIfTheClockWasRolledBack() {
+        var s = fresh(on: day1)
+        s.advance(to: day2)
+        s.advance(to: day1)   // clock set back; rewards stay keyed to day2
+        s.addTask(title: "Finish lab report", kind: .study, recurrence: .once, id: "lab")
+        s.complete(taskID: "u-lab", reward: TaskKind.study.reward)
+
+        s.advance(to: DayKey(raw: "2026-08-31"))
+        XCTAssertFalse(s.tasks.contains { $0.id == "u-lab" },
+                       "a paid one-off must retire no matter which day its pay was keyed to")
+    }
+
     func testAnUnfinishedOneOffStaysOnTheList() {
         var s = fresh(on: day1)
         s.addTask(title: "Call the dentist", kind: .life, recurrence: .once, id: "dentist")
@@ -179,5 +191,41 @@ final class GameStateTests: XCTestCase {
         s.applyCanvas(CanvasSnapshot(tasks: [item]))   // a later sync returns the same item
         XCTAssertTrue(s.tasks.first { $0.id == "c-1" }!.done)
         XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward)
+    }
+
+    func testASubmittedItemDoesNotPayAgainAfterADayRollover() {
+        var s = fresh(on: day1)
+        var item = CanvasItem(id: "c-1", title: "Problem set", courseName: "Physics", dueAt: nil)
+        item.submittedAt = Date()
+        s.applyCanvas(CanvasSnapshot(tasks: [item]))
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward)
+
+        s.advance(to: day2)
+        s.applyCanvas(CanvasSnapshot(tasks: [item]))   // the extension still lists it for a few days
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward,
+                       "an assignment is handed in once; it cannot pay again tomorrow")
+    }
+
+    func testACheckedOffAssignmentStaysDoneTomorrow() {
+        var s = fresh(on: day1)
+        let item = CanvasItem(id: "c-1", title: "Problem set", courseName: "Physics", dueAt: nil)
+        s.applyCanvas(CanvasSnapshot(tasks: [item]))
+        s.complete(taskID: "c-1", reward: TaskKind.canvas.reward)
+
+        s.advance(to: day2)
+        s.applyCanvas(CanvasSnapshot(tasks: [item]))   // still unsubmitted, still in the feed
+        XCTAssertTrue(s.tasks.first { $0.id == "c-1" }!.done,
+                      "an assignment is not a daily habit; done stays done")
+        XCTAssertEqual(s.complete(taskID: "c-1", reward: TaskKind.canvas.reward), 0)
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward)
+    }
+
+    func testTheDailyWordCanPayForTheDayTheGameStarted() {
+        var s = fresh(on: day1)
+        s.advance(to: day2)   // midnight passed while the puzzle was open
+        XCTAssertEqual(s.recordWordleWin(day: day1), 30, "the solve pays under the day it was dealt")
+        XCTAssertFalse(s.wordleClaimedToday, "today's word is still unplayed")
+        XCTAssertEqual(s.recordWordleWin(day: day1), 0)
+        XCTAssertEqual(s.recordWordleWin(), 30)
     }
 }

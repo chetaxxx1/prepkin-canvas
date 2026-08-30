@@ -33,6 +33,16 @@ final class LedgerTests: XCTestCase {
         XCTAssertTrue(l.post(earn("t", 30)), "the key should be usable again after an undo")
     }
 
+    func testRevokeRefusesWhenTheCoinsAreAlreadySpent() {
+        var l = Ledger()
+        l.post(earn("t", 20))
+        l.post(CoinEntry(key: "f", amount: 80, reason: .focus, units: 80, day: day))
+        l.post(CoinEntry(key: "upgrade:slime:1", amount: -100, reason: .upgrade, day: day))
+        XCTAssertFalse(l.revoke("t"), "undoing an earning that is already spent would overdraw")
+        XCTAssertEqual(l.balance, 0, "the balance can never go negative")
+        XCTAssertTrue(l.isClaimed("t"), "the task stays checked; its pay is spoken for")
+    }
+
     func testRevokingSomethingThatIsNotThereChangesNothing() {
         var l = Ledger()
         l.post(earn("t", 30))

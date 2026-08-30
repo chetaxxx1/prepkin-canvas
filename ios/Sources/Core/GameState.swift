@@ -90,12 +90,17 @@ struct GameState: Codable, Equatable {
     /// Rolls the list over to `day` if it isn't already there. Safe to call on every
     /// foreground, midnight tick, and time-zone change.
     mutating func advance(to day: DayKey = .today()) {
+        // While the clock is rolled back, a completion is keyed to this later day,
+        // not to `currentDay` — the retirement check below has to look at both.
+        let paidDay = effectiveDay
         maxDayReached = DayKey.latest(maxDayReached, day)
         guard day != currentDay else { return }
         // A finished one-off is done with; retire it rather than deleting, so the
         // ledger line it produced still has something to point at.
         for i in templates.indices where templates[i].recurrence == .once {
-            if templates[i].retiredOn == nil, isDone(templateID: templates[i].id, on: currentDay) {
+            if templates[i].retiredOn == nil,
+               isDone(templateID: templates[i].id, on: currentDay)
+                || isDone(templateID: templates[i].id, on: paidDay) {
                 templates[i].retiredOn = currentDay
                 templates[i].isActive = false
             }
@@ -105,7 +110,18 @@ struct GameState: Codable, Equatable {
 
     // MARK: - Today's list
 
-    private func taskKey(_ id: String, on day: DayKey) -> String { "task:\(id):\(day.raw)" }
+    func taskKey(_ id: String, on day: DayKey) -> String { "task:\(id):\(day.raw)" }
+
+    /// Assignments are one-shot, so their pay is keyed without a day. A submitted
+    /// item that stays in the extension's feed across midnight, or a hand-ticked
+    /// one still open tomorrow, must not pay a second time.
+    func canvasKey(_ id: String) -> String { "task:\(id)" }
+
+    /// Ever paid, under the day-less key or under a day-keyed line written before
+    /// day-less keys existed.
+    private func isCanvasPaid(_ id: String) -> Bool {
+        ledger.entries.contains { $0.key == canvasKey(id) || $0.key.hasPrefix("task:\(id):") }
+    }
 
     func isDone(templateID: String, on day: DayKey) -> Bool {
         ledger.isClaimed(taskKey(templateID, on: day))
@@ -119,7 +135,7 @@ struct GameState: Codable, Equatable {
             .map { item in
                 DailyTask(id: item.id, title: item.title, kind: .canvas,
                           detail: item.courseName, dueAt: item.dueAt,
-                          done: item.isSubmitted || ledger.isClaimed(taskKey(item.id, on: day)),
+                          done: item.isSubmitted || isCanvasPaid(item.id),
                           isLocked: item.isSubmitted)
             }
         let mine = templates
@@ -142,10 +158,16 @@ struct GameState: Codable, Equatable {
     // MARK: - Tasks
 
     /// Pays for a finished task, once. Returns what was paid, or 0 if it was already
-    /// checked off today.
+    /// checked off — today for a daily task, ever for a Canvas assignment.
     @discardableResult
     mutating func complete(taskID: String, reward: Int, now: Date = Date()) -> Int {
         let day = effectiveDay
+        if canvasItems.contains(where: { $0.id == taskID }) {
+            guard !isCanvasPaid(taskID) else { return 0 }
+            let posted = ledger.post(CoinEntry(key: canvasKey(taskID), amount: reward,
+                                               reason: .task, day: day, at: now))
+            return posted ? reward : 0
+        }
         let posted = ledger.post(CoinEntry(key: taskKey(taskID, on: day), amount: reward,
                                            reason: .task, day: day, at: now))
         return posted ? reward : 0
@@ -185,10 +207,11 @@ struct GameState: Codable, Equatable {
     }
 
     /// Pays for the daily word once per day. Replaces the old `@AppStorage` day
-    /// stamp, which a clock change could reset.
+    /// stamp, which a clock change could reset. `day` is the day the puzzle was
+    /// dealt — a solve finished just past midnight still settles the word it was.
     @discardableResult
-    mutating func recordWordleWin(reward: Int = 30, now: Date = Date()) -> Int {
-        let day = effectiveDay
+    mutating func recordWordleWin(reward: Int = 30, day: DayKey? = nil, now: Date = Date()) -> Int {
+        let day = day ?? effectiveDay
         let ok = ledger.post(CoinEntry(key: "wordle:\(day.raw)", amount: reward,
                                        reason: .wordle, day: day, at: now))
         return ok ? reward : 0
@@ -264,8 +287,12 @@ struct GameState: Codable, Equatable {
 
     /// Un-checking is for things you told the app about. Canvas already knows.
     mutating func uncomplete(taskID: String) {
-        guard !(canvasItems.first { $0.id == taskID }?.isSubmitted ?? false) else { return }
-        ledger.revoke(taskKey(taskID, on: effectiveDay))
+        if let item = canvasItems.first(where: { $0.id == taskID }) {
+            guard !item.isSubmitted else { return }
+            ledger.revoke(canvasKey(taskID))
+        } else {
+            ledger.revoke(taskKey(taskID, on: effectiveDay))
+        }
     }
 
     /// Makes a code the first time it is needed, then keeps it. Regenerating would

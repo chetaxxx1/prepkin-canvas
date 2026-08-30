@@ -103,9 +103,12 @@ struct Ledger: Codable, Equatable {
     }
 
     /// Removes the line with this key and gives back its amount. Used only for undo.
+    /// Refused when the coins are already spent — taking back an earning may never
+    /// push the balance below zero, so in that case the line simply stands.
     @discardableResult
     mutating func revoke(_ key: String) -> Bool {
-        guard let i = entries.firstIndex(where: { $0.key == key }) else { return false }
+        guard let i = entries.firstIndex(where: { $0.key == key }),
+              balance - entries[i].amount >= 0 else { return false }
         balance -= entries[i].amount
         entries.remove(at: i)
         return true
