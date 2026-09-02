@@ -1,0 +1,1044 @@
+[
+ {
+  "f": 0,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5,
+  "filletR": 23.4,
+  "slotW": 23.4
+ },
+ {
+  "f": 8,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 9,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 10,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 11,
+  "deg": 1.3,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -2.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.3
+ },
+ {
+  "f": 12,
+  "deg": 7.6,
+  "reach": 1.01,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -8.0,
+   1.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 21.3
+ },
+ {
+  "f": 13,
+  "deg": 20.6,
+  "reach": 1.04,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -24.0,
+   1.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 27.0
+ },
+ {
+  "f": 14,
+  "deg": 39.5,
+  "reach": 1.13,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -43.0,
+   4.0,
+   885.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 34.5
+ },
+ {
+  "f": 15,
+  "deg": 64.7,
+  "reach": 1.32,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -50.0,
+   3.0,
+   880.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 22.7,
+  "filletR": 73.4,
+  "slotW": 63.2
+ },
+ {
+  "f": 16,
+  "deg": 86.8,
+  "reach": 1.61,
+  "comp": 1,
+  "holes": 0,
+  "gap": 99.0,
+  "bbox": [
+   -70.0,
+   2.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 22.3
+ },
+ {
+  "f": 17,
+  "deg": 107.2,
+  "reach": 2.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 164.0,
+  "bbox": [
+   -69.0,
+   1.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 23.2
+ },
+ {
+  "f": 18,
+  "deg": 118.0,
+  "reach": 2.36,
+  "comp": 1,
+  "holes": 0,
+  "gap": 178.0,
+  "bbox": [
+   -69.0,
+   4.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 25.2
+ },
+ {
+  "f": 19,
+  "deg": 115.8,
+  "reach": 2.55,
+  "comp": 1,
+  "holes": 0,
+  "gap": 207.0,
+  "bbox": [
+   -85.0,
+   1.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 29.9
+ },
+ {
+  "f": 20,
+  "deg": 108.7,
+  "reach": 2.61,
+  "comp": 1,
+  "holes": 0,
+  "gap": 214.0,
+  "bbox": [
+   -119.0,
+   3.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 42.2
+ },
+ {
+  "f": 21,
+  "deg": 101.2,
+  "reach": 2.63,
+  "comp": 1,
+  "holes": 0,
+  "gap": 218.0,
+  "bbox": [
+   -146.0,
+   5.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 49.2
+ },
+ {
+  "f": 23,
+  "deg": 96.6,
+  "reach": 2.68,
+  "comp": 1,
+  "holes": 0,
+  "gap": 235.0,
+  "bbox": [
+   -170.0,
+   1.0,
+   876.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 32.0
+ },
+ {
+  "f": 25,
+  "deg": 114.3,
+  "reach": 2.74,
+  "comp": 1,
+  "holes": 0,
+  "gap": 235.0,
+  "bbox": [
+   -104.0,
+   3.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 46.7,
+  "filletR": 23.4,
+  "slotW": 140.0
+ },
+ {
+  "f": 27,
+  "deg": 120.1,
+  "reach": 2.35,
+  "comp": 1,
+  "holes": 0,
+  "gap": 174.0,
+  "bbox": [
+   -60.0,
+   2.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 23.9
+ },
+ {
+  "f": 29,
+  "deg": 114.4,
+  "reach": 2.4,
+  "comp": 1,
+  "holes": 0,
+  "gap": 183.0,
+  "bbox": [
+   -85.0,
+   3.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 27.7
+ },
+ {
+  "f": 31,
+  "deg": 100.7,
+  "reach": 2.52,
+  "comp": 2,
+  "holes": 0,
+  "gap": 241.0,
+  "bbox": [
+   -135.0,
+   4.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 49.3
+ },
+ {
+  "f": 33,
+  "deg": 88.4,
+  "reach": 2.54,
+  "comp": 1,
+  "holes": 0,
+  "gap": 206.0,
+  "bbox": [
+   -161.0,
+   1.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 33.3
+ },
+ {
+  "f": 35,
+  "deg": 94.3,
+  "reach": 2.54,
+  "comp": 2,
+  "holes": 0,
+  "gap": 247.0,
+  "bbox": [
+   -148.0,
+   4.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 42.3
+ },
+ {
+  "f": 37,
+  "deg": 117.8,
+  "reach": 2.59,
+  "comp": 1,
+  "holes": 0,
+  "gap": 217.0,
+  "bbox": [
+   -85.0,
+   1.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 32.1
+ },
+ {
+  "f": 39,
+  "deg": 123.3,
+  "reach": 2.4,
+  "comp": 1,
+  "holes": 0,
+  "gap": 183.0,
+  "bbox": [
+   -56.0,
+   2.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 24.1
+ },
+ {
+  "f": 41,
+  "deg": 113.3,
+  "reach": 2.38,
+  "comp": 1,
+  "holes": 0,
+  "gap": 180.0,
+  "bbox": [
+   -90.0,
+   3.0,
+   879.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 27.9,
+  "filletR": 70.3,
+  "slotW": 111.7
+ },
+ {
+  "f": 43,
+  "deg": 95.7,
+  "reach": 2.54,
+  "comp": 2,
+  "holes": 0,
+  "gap": 246.0,
+  "bbox": [
+   -146.0,
+   5.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 45.3
+ },
+ {
+  "f": 45,
+  "deg": 85.4,
+  "reach": 2.52,
+  "comp": 1,
+  "holes": 0,
+  "gap": 205.0,
+  "bbox": [
+   -164.0,
+   1.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 31.1
+ },
+ {
+  "f": 47,
+  "deg": 100.5,
+  "reach": 2.48,
+  "comp": 2,
+  "holes": 0,
+  "gap": 237.0,
+  "bbox": [
+   -132.0,
+   4.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 50.1
+ },
+ {
+  "f": 49,
+  "deg": 115.1,
+  "reach": 2.39,
+  "comp": 1,
+  "holes": 0,
+  "gap": 179.0,
+  "bbox": [
+   -83.0,
+   5.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 25.9
+ },
+ {
+  "f": 51,
+  "deg": 116.4,
+  "reach": 2.45,
+  "comp": 1,
+  "holes": 0,
+  "gap": 191.0,
+  "bbox": [
+   -79.0,
+   3.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 27.4
+ },
+ {
+  "f": 53,
+  "deg": 103.4,
+  "reach": 2.64,
+  "comp": 1,
+  "holes": 0,
+  "gap": 220.0,
+  "bbox": [
+   -142.0,
+   6.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 51.4
+ },
+ {
+  "f": 55,
+  "deg": 88.4,
+  "reach": 2.61,
+  "comp": 1,
+  "holes": 0,
+  "gap": 232.0,
+  "bbox": [
+   -185.0,
+   2.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 27.0
+ },
+ {
+  "f": 57,
+  "deg": 116.8,
+  "reach": 2.56,
+  "comp": 1,
+  "holes": 0,
+  "gap": 209.0,
+  "bbox": [
+   -81.0,
+   1.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 31.0,
+  "filletR": 23.4,
+  "slotW": 123.4
+ },
+ {
+  "f": 59,
+  "deg": 124.7,
+  "reach": 2.44,
+  "comp": 1,
+  "holes": 0,
+  "gap": 185.0,
+  "bbox": [
+   -55.0,
+   2.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 24.1
+ },
+ {
+  "f": 61,
+  "deg": 114.4,
+  "reach": 2.47,
+  "comp": 1,
+  "holes": 0,
+  "gap": 193.0,
+  "bbox": [
+   -89.0,
+   2.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 28.0
+ },
+ {
+  "f": 63,
+  "deg": 94.8,
+  "reach": 2.61,
+  "comp": 1,
+  "holes": 0,
+  "gap": 221.0,
+  "bbox": [
+   -163.0,
+   1.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 34.2
+ },
+ {
+  "f": 65,
+  "deg": 84.5,
+  "reach": 2.55,
+  "comp": 1,
+  "holes": 0,
+  "gap": 213.0,
+  "bbox": [
+   -176.0,
+   1.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 28.8
+ },
+ {
+  "f": 67,
+  "deg": 103.7,
+  "reach": 2.56,
+  "comp": 1,
+  "holes": 0,
+  "gap": 209.0,
+  "bbox": [
+   -134.0,
+   5.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 52.4
+ },
+ {
+  "f": 69,
+  "deg": 114.3,
+  "reach": 2.4,
+  "comp": 1,
+  "holes": 0,
+  "gap": 183.0,
+  "bbox": [
+   -86.0,
+   3.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 27.5
+ },
+ {
+  "f": 71,
+  "deg": 119.8,
+  "reach": 2.37,
+  "comp": 1,
+  "holes": 0,
+  "gap": 177.0,
+  "bbox": [
+   -62.0,
+   3.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 24.1
+ },
+ {
+  "f": 73,
+  "deg": 117.2,
+  "reach": 2.48,
+  "comp": 1,
+  "holes": 0,
+  "gap": 194.0,
+  "bbox": [
+   -76.0,
+   3.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 27.2,
+  "filletR": 23.4,
+  "slotW": 116.3
+ },
+ {
+  "f": 75,
+  "deg": 97.8,
+  "reach": 2.51,
+  "comp": 2,
+  "holes": 0,
+  "gap": 240.0,
+  "bbox": [
+   -137.0,
+   5.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 56.1
+ },
+ {
+  "f": 77,
+  "deg": 91.0,
+  "reach": 2.55,
+  "comp": 1,
+  "holes": 0,
+  "gap": 248.0,
+  "bbox": [
+   -155.0,
+   2.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 39.5
+ },
+ {
+  "f": 79,
+  "deg": 95.3,
+  "reach": 2.59,
+  "comp": 2,
+  "holes": 0,
+  "gap": 258.0,
+  "bbox": [
+   -157.0,
+   2.0,
+   877.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 38.3
+ },
+ {
+  "f": 81,
+  "deg": 107.5,
+  "reach": 2.6,
+  "comp": 1,
+  "holes": 0,
+  "gap": 214.0,
+  "bbox": [
+   -123.0,
+   3.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 48.2
+ },
+ {
+  "f": 83,
+  "deg": 119.7,
+  "reach": 2.57,
+  "comp": 1,
+  "holes": 0,
+  "gap": 209.0,
+  "bbox": [
+   -77.0,
+   2.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 27.9
+ },
+ {
+  "f": 85,
+  "deg": 115.9,
+  "reach": 2.44,
+  "comp": 1,
+  "holes": 0,
+  "gap": 202.0,
+  "bbox": [
+   -84.0,
+   1.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 30.0
+ },
+ {
+  "f": 87,
+  "deg": 116.3,
+  "reach": 2.48,
+  "comp": 1,
+  "holes": 0,
+  "gap": 195.0,
+  "bbox": [
+   -81.0,
+   2.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 27.8
+ },
+ {
+  "f": 89,
+  "deg": 118.3,
+  "reach": 2.63,
+  "comp": 1,
+  "holes": 0,
+  "gap": 218.0,
+  "bbox": [
+   -86.0,
+   1.0,
+   878.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 32.4,
+  "filletR": 68.8,
+  "slotW": 127.4
+ },
+ {
+  "f": 91,
+  "deg": 102.3,
+  "reach": 2.22,
+  "comp": 1,
+  "holes": 0,
+  "gap": 195.0,
+  "bbox": [
+   -95.0,
+   2.0,
+   879.0,
+   794.0
+  ],
+  "inflect": 16,
+  "minR_concave": 28.2
+ },
+ {
+  "f": 92,
+  "deg": 87.6,
+  "reach": 1.87,
+  "comp": 1,
+  "holes": 0,
+  "gap": 115.0,
+  "bbox": [
+   -92.0,
+   3.0,
+   880.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 23.2
+ },
+ {
+  "f": 93,
+  "deg": 69.2,
+  "reach": 1.53,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -81.0,
+   2.0,
+   879.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 94,
+  "deg": 49.8,
+  "reach": 1.27,
+  "comp": 1,
+  "holes": 0,
+  "gap": 46.0,
+  "bbox": [
+   -60.0,
+   2.0,
+   882.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 22.8
+ },
+ {
+  "f": 95,
+  "deg": 33.2,
+  "reach": 1.12,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -33.0,
+   3.0,
+   885.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 39.5
+ },
+ {
+  "f": 96,
+  "deg": 19.0,
+  "reach": 1.04,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -23.0,
+   1.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 27.9
+ },
+ {
+  "f": 97,
+  "deg": 9.2,
+  "reach": 1.01,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -11.0,
+   1.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 14,
+  "minR_concave": 21.6
+ },
+ {
+  "f": 98,
+  "deg": 3.5,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -4.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.3,
+  "filletR": 23.4,
+  "slotW": 23.3
+ },
+ {
+  "f": 99,
+  "deg": 0.7,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -2.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.3
+ },
+ {
+  "f": 100,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 101,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 102,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 103,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 108,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5
+ },
+ {
+  "f": 119,
+  "deg": 0.0,
+  "reach": 1.0,
+  "comp": 1,
+  "holes": 0,
+  "gap": 0.0,
+  "bbox": [
+   -1.0,
+   2.0,
+   886.0,
+   794.0
+  ],
+  "inflect": 12,
+  "minR_concave": 21.5,
+  "filletR": 23.4,
+  "slotW": 23.4
+ }
+]

@@ -1,0 +1,700 @@
+import SwiftUI
+
+/// The reader. One idea per card, one figure that grows across the deck.
+///
+/// Three rules from the handoff that are easy to break by accident:
+/// - **Leaving is silent.** No confirm dialog, no guilt copy. The place is kept.
+/// - **The check card pays nothing.** Coins are for finishing, never for correctness,
+///   and the card says so out loud so the student doesn't wonder.
+/// - **Body copy is left aligned.** The old reader centred a paragraph; a centred
+///   ragged-left block is slower to read and looked like a pull quote.
+struct LessonDeckView: View {
+    let lesson: Lesson
+    /// Called when the student takes the one forward move on the complete screen.
+    /// The presenter swaps the deck rather than stacking a second reader on top.
+    var onNext: (Lesson) -> Void = { _ in }
+
+    @EnvironmentObject var state: AppState
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var index: Int
+    /// Which choice was tapped on each check card. Present means locked.
+    @State private var answers: [Int: Int] = [:]
+    @State private var showCoach = false
+    @State private var askKin = false
+    @State private var finished = false
+    @State private var paid = 0
+    /// One 0→1 value per flying coin, so they can be staggered.
+    @State private var arc: [Double] = Array(repeating: 0, count: 5)
+    @State private var flying = false
+    @State private var heartPop = false
+
+    init(lesson: Lesson, startAt: Int = 0, onNext: @escaping (Lesson) -> Void = { _ in }) {
+        self.lesson = lesson
+        self.onNext = onNext
+        _index = State(initialValue: min(max(startAt, 0), max(lesson.cards.count - 1, 0)))
+    }
+
+    private var cards: [LessonCard] { lesson.cards }
+    private var isFinish: Bool { index >= cards.count }
+    private var card: LessonCard? { isFinish ? nil : cards[index] }
+
+    var body: some View {
+        ZStack {
+            Theme.paper.ignoresSafeArea()
+
+            if finished {
+                LessonCompleteView(lesson: lesson, paid: paid, onNext: onNext) { dismiss() }
+                    .transition(.opacity)
+            } else {
+                deck
+            }
+        }
+        .animation(.easeOut(duration: 0.22), value: finished)
+        .onAppear { showCoach = !state.hasSeenTapCoach }
+        .sheet(isPresented: $askKin) { askKinSheet }
+    }
+
+    // MARK: - Deck
+
+    private var deck: some View {
+        VStack(spacing: 0) {
+            topBar
+            GeometryReader { geo in
+                content(in: geo.size)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .opacity(showCoach ? 0.2 : 1)
+                    // The zones sit *behind* the content, so a button on a card — an
+                    // answer row, Finish, the heart — still wins the tap.
+                    .background(alignment: .leading) { tapZones }
+            }
+            if !isFinish { bottomBar }
+        }
+        .overlay { if showCoach { coachOverlay } }
+        .overlay(alignment: .topTrailing) { coinArc }
+    }
+
+    private var topBar: some View {
+        HStack(spacing: 14) {
+            Button(action: { dismiss() }) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 14, weight: .black))
+                    .foregroundStyle(Theme.ink)
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill(Theme.card))
+            }
+            .accessibilityLabel("Close")
+
+            HStack(spacing: 4) {
+                ForEach(0..<max(cards.count, 1), id: \.self) { i in
+                    Capsule()
+                        .fill(i < filledSegments ? Theme.mint : Theme.hex(0xEFE7D9))
+                        .frame(height: 5)
+                }
+            }
+            .animation(.easeOut(duration: 0.22), value: filledSegments)
+            .accessibilityElement()
+            .accessibilityLabel("Card \(min(index + 1, cards.count)) of \(cards.count)")
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 6)
+    }
+
+    private var filledSegments: Int { isFinish ? cards.count : index + 1 }
+
+    /// Left third goes back, the rest goes forward. Faster than swiping and it keeps
+    /// one thumb on the screen — but a swipe still works, for anyone who expects it.
+    private var tapZones: some View {
+        HStack(spacing: 0) {
+            Color.clear.frame(width: 130).contentShape(Rectangle()).onTapGesture { back() }
+            Color.clear.contentShape(Rectangle()).onTapGesture { advance() }
+        }
+        .highPriorityGesture(
+            DragGesture(minimumDistance: 30)
+                .onEnded { g in g.translation.width < 0 ? advance() : back() }
+        )
+    }
+
+    @ViewBuilder
+    private func content(in size: CGSize) -> some View {
+        if let card {
+            switch card.kind {
+            case .figure:  figureCard(card, in: size)
+            case .text:    textCard(card)
+            case .key:     keyCard(card)
+            case .example: exampleCard(card, in: size)
+            case .check:   checkCard(card)
+            }
+        } else {
+            // The coins are already flying; the complete view takes over in a beat.
+            Color.clear
+        }
+    }
+
+    // MARK: - Card kinds
+
+    /// The figure is a **band that bleeds to both edges**, not a card floating on the
+    /// page. That is what makes it read as the lesson rather than as an illustration
+    /// attached to it — and it is how the reference app frames every drawing.
+    private func figureCard(_ card: LessonCard, in size: CGSize) -> some View {
+        VStack(alignment: .leading, spacing: 22) {
+            GeometryReader { geo in
+                LessonFigure(id: lesson.figure, step: card.step ?? 1)
+                    .frame(width: geo.size.width,
+                           height: min(geo.size.width / FigureSpace.aspect, size.height * 0.62))
+                    .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 30,
+                                                      bottomTrailingRadius: 30,
+                                                      style: .continuous))
+            }
+            .frame(height: min(size.width / FigureSpace.aspect, size.height * 0.62))
+
+            bodyCopy(card.body)
+            Spacer(minLength: 0)
+        }
+    }
+
+    /// A lesson with no figure authored yet.
+    ///
+    /// Copy sits in a white card, top-anchored, the same surface a figure gets. Bare
+    /// text floating on the page left a gap above *and* below and read as a screen
+    /// that had failed to load; on a card the space below it is margin.
+    private func textCard(_ card: LessonCard) -> some View {
+        prosePanel(card.body, label: nil)
+    }
+
+    /// The card people screenshot. No figure, real air around the sentence, and the
+    /// slime cropped by the screen edge so a shared screenshot carries the character.
+    private func keyCard(_ card: LessonCard) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            CardTypeLabel("KEY IDEA")
+                .padding(.leading, 24).padding(.top, 30)
+
+            Text(card.body.uppercased())
+                .font(Theme.font(23, .heavy))
+                .lineSpacing(23 * 0.4)
+                .foregroundStyle(Theme.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 26)
+                .padding(.top, 32).padding(.bottom, 36)
+                .background(RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(Theme.mintSoft))
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+
+            Spacer(minLength: 0)
+
+            HStack(alignment: .bottom, spacing: 0) {
+                slime(size: 132, expression: .delight)
+                    .offset(x: -30)
+                Text("Screenshot this one.")
+                    .font(Theme.font(13.5, .heavy))
+                    .foregroundStyle(Theme.ink)
+                    .padding(.horizontal, 13).padding(.vertical, 9)
+                    .background(UnevenRoundedRectangle(topLeadingRadius: 18,
+                                                       bottomLeadingRadius: 6,
+                                                       bottomTrailingRadius: 18,
+                                                       topTrailingRadius: 18,
+                                                       style: .continuous)
+                        .fill(Theme.card))
+                    .offset(x: -16, y: -30)
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    private func exampleCard(_ card: LessonCard, in size: CGSize) -> some View {
+        prosePanel(card.body, label: "FOR EXAMPLE")
+    }
+
+    /// Copy on its own white card. The one surface every figure-less card shares.
+    private func prosePanel(_ text: String, label: String?) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer(minLength: 0)
+            VStack(alignment: .leading, spacing: 14) {
+                if let label { CardTypeLabel(label) }
+                Text(text)
+                    .font(Theme.font(21, .bold))
+                    .lineSpacing(21 * 0.5)
+                    .foregroundStyle(Theme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 30).padding(.bottom, 34)
+            // Tall enough to hold the middle of the screen. A panel sized only to its
+            // copy floated in the page and read as something that failed to load.
+            .frame(maxWidth: .infinity, minHeight: 296, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Theme.card))
+            .padding(.horizontal, 20)
+
+            Spacer(minLength: 0)
+            Spacer(minLength: 0)
+        }
+        .padding(.top, 20)
+    }
+
+    /// One recall question. A wrong pick is never marked wrong — the row you tapped
+    /// keeps a quiet label, the right answer turns mint, and the reason appears.
+    ///
+    /// Deliberately not scrollable: a scroll view would swallow the forward tap. Check
+    /// cards are authored to fit — one line of question, three short choices.
+    private func checkCard(_ card: LessonCard) -> some View {
+        let picked = answers[index]
+        return VStack(alignment: .leading, spacing: 0) {
+            CardTypeLabel("QUICK CHECK")
+                .padding(.leading, 24).padding(.top, 30)
+
+            Text(card.question)
+                .font(Theme.font(21, .heavy))
+                .lineSpacing(21 * 0.32)
+                .foregroundStyle(Theme.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24).padding(.top, 12)
+
+            VStack(spacing: 10) {
+                ForEach(Array(card.choices.enumerated()), id: \.offset) { i, choice in
+                    answerRow(choice, at: i, correct: card.answer, picked: picked)
+                }
+            }
+            .padding(.horizontal, 20).padding(.top, 24)
+
+            if picked != nil {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(card.why)
+                        .font(Theme.font(16, .bold))
+                        .lineSpacing(16 * 0.5)
+                        .foregroundStyle(Theme.hex(0x7C6F68))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("No coins for this one. Finishing the lesson pays.")
+                        .font(Theme.font(12.5, .heavy))
+                        .foregroundStyle(Theme.muted)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(18)
+                .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Theme.card))
+                .padding(.horizontal, 20).padding(.top, 16)
+                .transition(.opacity)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .animation(.easeOut(duration: 0.2), value: picked)
+    }
+
+    private func answerRow(_ choice: String, at i: Int, correct: Int, picked: Int?) -> some View {
+        let locked = picked != nil
+        let isCorrect = locked && i == correct
+        let isPicked = picked == i
+        return Button {
+            guard !locked else { return }
+            answers[index] = i
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        } label: {
+            HStack(spacing: 13) {
+                ZStack {
+                    Circle()
+                        .fill(isCorrect ? Theme.mint : Color.clear)
+                        .overlay(Circle().strokeBorder(isCorrect ? .clear : Theme.hex(0xDDD2C0),
+                                                       lineWidth: 2))
+                        .frame(width: 22, height: 22)
+                    if isCorrect {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .black))
+                            .foregroundStyle(.white)
+                    }
+                }
+                Text(choice)
+                    .font(Theme.font(15.5, isCorrect ? .heavy : .bold))
+                    .foregroundStyle(isCorrect ? Theme.ink : Theme.hex(0x7C6F68))
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 6)
+                if isPicked && !isCorrect {
+                    Text("you picked")
+                        .font(Theme.font(11.5, .heavy))
+                        .foregroundStyle(Theme.muted)
+                }
+            }
+            .padding(.horizontal, 16).padding(.vertical, 15)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(isCorrect ? Theme.mintSoft : Theme.card))
+            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(isCorrect ? Theme.mint : Theme.hairline,
+                              lineWidth: isCorrect ? 2 : 1.5))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .allowsHitTesting(!locked)
+    }
+
+    // MARK: - Bottom bar
+
+    private var bottomBar: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 26) {
+                Button(action: toggleSave) {
+                    Image(systemName: isSaved ? "heart.fill" : "heart")
+                        .font(.system(size: 21, weight: .semibold))
+                        .foregroundStyle(isSaved ? Theme.coral : Theme.muted)
+                        .scaleEffect(heartPop ? 1.15 : 1)
+                }
+                .accessibilityLabel(isSaved ? "Remove from saved cards" : "Save this card")
+
+                ShareLink(item: shareText) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(Theme.muted)
+                }
+
+                Button {} label: {
+                    Image(systemName: "flag")
+                        .font(.system(size: 19, weight: .semibold))
+                        .foregroundStyle(Theme.muted)
+                }
+                .accessibilityLabel("Report a problem with this card")
+            }
+            .frame(maxWidth: .infinity).frame(height: 52)
+            .background(Capsule().fill(Theme.card))
+
+            Button { askKin = true } label: {
+                HStack(spacing: 9) {
+                    SlimeAvatar(speciesID: state.activeChibiID, size: 38)
+                    Text("Ask Kin")
+                        .font(Theme.font(15, .heavy))
+                        .foregroundStyle(Theme.onDarkWarm)
+                }
+                .padding(.leading, 7).padding(.trailing, 18)
+                .frame(height: 52)
+                .background(Capsule().fill(Theme.coral))
+            }
+            .buttonStyle(PressStyle())
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 8).padding(.bottom, 4)
+    }
+
+    private var isSaved: Bool {
+        guard let card else { return false }
+        return state.isSaved(lessonID: lesson.id, index: card.index)
+    }
+
+    private var shareText: String {
+        guard let card else { return lesson.title }
+        return card.kind == .check ? card.question : card.body
+    }
+
+    /// Ask Kin is drawn so the reader's layout is right, and says plainly that it
+    /// can't answer yet rather than pretending to.
+    private var askKinSheet: some View {
+        VStack(spacing: 16) {
+            slime(size: 120, expression: .wink)
+            Text("Kin can't answer yet")
+                .font(Theme.font(22, .black))
+                .foregroundStyle(Theme.ink)
+            Text("Asking about the card you're on is coming. For now the quick check at the end of the deck is the part that makes it stick.")
+                .font(Theme.font(15, .bold))
+                .lineSpacing(6)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Theme.hex(0x7C6F68))
+                .padding(.horizontal, 30)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Theme.paper)
+        .presentationDetents([.height(370)])
+        .presentationCornerRadius(28)
+    }
+
+    // MARK: - Coach overlay
+
+    /// Shown once, ever. The line removes pressure rather than explaining the UI twice.
+    private var coachOverlay: some View {
+        ZStack {
+            Theme.hex(0x2E2622).opacity(0.7).ignoresSafeArea()
+
+            HStack(spacing: 16) {
+                zoneHint("tap here\nto go back", 15).frame(width: 112)
+                Rectangle().fill(Theme.mint).frame(width: 2)
+                zoneHint("tap here\nto go forward", 21)
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 46).padding(.bottom, 210)
+
+            VStack(spacing: 18) {
+                Spacer()
+                HStack(spacing: 12) {
+                    slime(size: 78, expression: .wink)
+                    Text("Leave whenever you like — I'll keep your place.")
+                        .font(Theme.font(15, .heavy))
+                        .foregroundStyle(Theme.onDarkWarm)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 24)
+
+                Button {
+                    state.markTapCoachSeen()
+                    withAnimation(.easeOut(duration: 0.2)) { showCoach = false }
+                } label: {
+                    Text("Got it")
+                        .font(Theme.font(17, .heavy))
+                        .foregroundStyle(Theme.onDarkWarm)
+                        .frame(maxWidth: .infinity).frame(height: 56)
+                        .background(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .fill(Theme.coral))
+                }
+                .buttonStyle(PressStyle())
+                .padding(.horizontal, 24).padding(.bottom, 30)
+            }
+        }
+        .transition(.opacity)
+    }
+
+    /// The hint sits high in its zone rather than dead centre — the middle of the
+    /// screen is where a card's own copy is, and two blocks of text on top of each
+    /// other read as neither.
+    private func zoneHint(_ text: String, _ size: CGFloat) -> some View {
+        Text(text)
+            .font(Theme.font(size, .heavy))
+            .multilineTextAlignment(.center)
+            .foregroundStyle(Theme.onDarkWarm)
+            .padding(.top, 54)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .strokeBorder(Theme.onDarkWarm.opacity(0.34),
+                              style: StrokeStyle(lineWidth: 2, dash: [7, 6])))
+    }
+
+    // MARK: - Coins flying home
+
+    /// Five discs arc from the slime into the coin chip, so the eye lands on the
+    /// chip rather than on the button that was just pressed.
+    private var coinArc: some View {
+        ZStack(alignment: .topTrailing) {
+            ForEach(0..<5, id: \.self) { i in
+                let t = arc[i]
+                CoinDisc(size: 17 - CGFloat(i) * 2)
+                    .opacity(flying ? (1 - Double(i) * 0.16) * (1 - t * 0.55) : 0)
+                    .offset(x: -230 * (1 - t) + 26 * sin(t * .pi),
+                            y: 430 * (1 - t) - 110 * sin(t * .pi))
+            }
+        }
+        .padding(.trailing, 34).padding(.top, 52)
+        .allowsHitTesting(false)
+    }
+
+    // MARK: - Behaviour
+
+    /// Stepping past the last card *is* finishing: it pays and lands on the one
+    /// complete screen. There used to be a "That's the lesson" card with its own
+    /// Finish button before that screen — two celebrations for one lesson.
+    private func advance() {
+        guard index < cards.count, !flying else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        if index == cards.count - 1 {
+            withAnimation(.easeOut(duration: 0.2)) { index += 1 }
+            finish()
+            return
+        }
+        withAnimation(.easeOut(duration: 0.2)) { index += 1 }
+        state.setDeckProgress(lesson.id, card: index)
+    }
+
+    private func back() {
+        guard index > 0 else { return }
+        withAnimation(.easeOut(duration: 0.2)) { index -= 1 }
+    }
+
+    private func toggleSave() {
+        guard let card else { return }
+        let saved = state.toggleSaved(lessonID: lesson.id, index: card.index)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        guard saved else { return }
+        withAnimation(.spring(response: 0.14, dampingFraction: 0.5)) { heartPop = true }
+        withAnimation(.spring(response: 0.14, dampingFraction: 0.5).delay(0.12)) { heartPop = false }
+    }
+
+    private func finish() {
+        paid = state.completeLesson(id: lesson.id, reward: lesson.reward)
+        if paid > 0 {
+            flying = true
+            for i in 0..<arc.count {
+                withAnimation(.easeInOut(duration: 0.42).delay(Double(i) * 0.06)) { arc[i] = 1 }
+            }
+        }
+        Task {
+            try? await Task.sleep(for: .seconds(paid > 0 ? 0.78 : 0.12))
+            finished = true
+        }
+    }
+
+    private func slime(size: CGFloat,
+                       animation: ChibiAnimation = .idle,
+                       expression: SlimeExpression? = .idle) -> some View {
+        SproutImage(speciesID: state.activeChibiID,
+                    level: state.activeChibi.level,
+                    animation: animation, size: size)
+    }
+
+    private func bodyCopy(_ text: String) -> some View {
+        Text(text)
+            .font(Theme.font(19.5, .bold))
+            .lineSpacing(19.5 * 0.5)
+            .foregroundStyle(Theme.ink)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 24).padding(.trailing, 26)
+    }
+}
+
+// MARK: - Lesson complete
+
+/// One warm screen instead of a dump back to the map: what you learned in one line,
+/// the coins, one forward move, one quiet way out.
+struct LessonCompleteView: View {
+    let lesson: Lesson
+    let paid: Int
+    let onNext: (Lesson) -> Void
+    let onClose: () -> Void
+
+    @EnvironmentObject var state: AppState
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .black))
+                        .foregroundStyle(Theme.ink)
+                        .frame(width: 40, height: 40)
+                        .background(Circle().fill(Theme.card))
+                }
+                .accessibilityLabel("Close")
+                Spacer()
+                CoinBadge(coins: state.coins)
+            }
+            .padding(.horizontal, 22).padding(.top, 10)
+
+            SproutImage(speciesID: state.activeChibiID,
+                        level: state.activeChibi.level,
+                        animation: .celebrate, size: 170)
+                .padding(.top, 18)
+
+            Text(lesson.takeaway)
+                .font(Theme.font(24, .heavy))
+                .lineSpacing(24 * 0.34)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Theme.ink)
+                .padding(.horizontal, 30).padding(.top, 16)
+
+            if paid > 0 {
+                HStack(spacing: 7) {
+                    CoinDisc(size: 16)
+                    Text("+\(paid) coins for finishing")
+                        .font(Theme.font(14.5, .heavy))
+                        .foregroundStyle(Theme.coinDark)
+                }
+                .padding(.horizontal, 14).padding(.vertical, 8)
+                .background(Capsule().fill(Theme.coinSoft))
+                .padding(.top, 18)
+            }
+
+            Spacer(minLength: 12)
+
+            if let next = nextLesson {
+                nextCard(next)
+                Button(action: onClose) {
+                    Text("Not now")
+                        .font(Theme.font(14.5, .heavy))
+                        .foregroundStyle(Theme.muted)
+                }
+                .padding(.top, 14).padding(.bottom, 20)
+            } else {
+                Button(action: onClose) {
+                    Text("Back to Learn")
+                        .font(Theme.font(18, .heavy))
+                        .foregroundStyle(Theme.onDarkWarm)
+                        .frame(maxWidth: .infinity).frame(height: 54)
+                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .fill(Theme.coral))
+                }
+                .buttonStyle(PressStyle())
+                .padding(.horizontal, 22).padding(.bottom, 28)
+            }
+        }
+    }
+
+    /// One choice, not a menu.
+    private func nextCard(_ next: Lesson) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("NEXT IN \(Catalog.track(next.trackID).name.uppercased())")
+                .font(Theme.font(11.5, .heavy))
+                .tracking(1.1)
+                .foregroundStyle(Theme.muted)
+
+            Text(next.title)
+                .font(Theme.font(19, .heavy))
+                .foregroundStyle(Theme.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 8)
+
+            Text("\(next.cards.count) cards · \(next.minutes) min · +\(next.reward)")
+                .font(Theme.font(13, .bold))
+                .foregroundStyle(Theme.muted)
+                .padding(.top, 4)
+
+            Button { onNext(next) } label: {
+                Text("Start")
+                    .font(Theme.font(17, .heavy))
+                    .foregroundStyle(Theme.onDarkWarm)
+                    .frame(maxWidth: .infinity).frame(height: 54)
+                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Theme.coral))
+            }
+            .buttonStyle(PressStyle())
+            .padding(.top, 16)
+        }
+        .padding(20)
+        .background(RoundedRectangle(cornerRadius: 24, style: .continuous).fill(Theme.card))
+        .padding(.horizontal, 22)
+    }
+
+    /// The next unfinished lesson in the same track, else anything else unfinished in
+    /// it. Nothing left means the screen has one button instead of two — never a
+    /// consolation card.
+    private var nextLesson: Lesson? {
+        let run = Catalog.lessons(in: lesson.trackID)
+        guard let here = run.firstIndex(where: { $0.id == lesson.id }) else { return nil }
+        return run[(here + 1)...].first { !state.completedLessons.contains($0.id) }
+            ?? run.first { $0.id != lesson.id && !state.completedLessons.contains($0.id) }
+    }
+}
+
+// MARK: - Shared pieces
+
+/// Coral buttons darken on press; white cards scale slightly with no colour change.
+struct PressStyle: ButtonStyle {
+    var scale: CGFloat = 0.97
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .brightness(configuration.isPressed ? -0.05 : 0)
+            .scaleEffect(configuration.isPressed ? scale : 1)
+            .animation(.spring(response: 0.22, dampingFraction: 0.7), value: configuration.isPressed)
+    }
+}
+
+/// The uppercase label above a key idea, an example, or a check.
+struct CardTypeLabel: View {
+    let text: String
+    init(_ text: String) { self.text = text }
+
+    var body: some View {
+        Text(text)
+            .font(Theme.font(12, .heavy))
+            .tracking(1.7)
+            .foregroundStyle(Theme.muted)
+    }
+}

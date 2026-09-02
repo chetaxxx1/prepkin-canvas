@@ -1,0 +1,8 @@
+root74 tip8 k38 inf12 ccv26.9 cvx15.9
+root74 tip8 k58 inf12 ccv29.7 cvx14.2
+root74 tip22 k38 inf12 ccv23.5 cvx21.6
+root74 tip22 k58 inf12 ccv24.4 cvx23.2
+root92 tip8 k38 inf14 ccv28.3 cvx18.8
+root92 tip8 k58 inf12 ccv29.4 cvx18.2
+root92 tip22 k38 inf12 ccv23.8 cvx26.1
+root92 tip22 k58 inf12 ccv25.4 cvx23.3

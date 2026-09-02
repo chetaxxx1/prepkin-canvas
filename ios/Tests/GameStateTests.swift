@@ -229,3 +229,99 @@ final class GameStateTests: XCTestCase {
         XCTAssertEqual(s.recordWordleWin(), 30)
     }
 }
+
+// MARK: - Learn v2
+
+/// Deck progress, saved cards, and the rule that finishing pays but reading again
+/// does not.
+final class LearnStateTests: XCTestCase {
+    func testProgressOnlyMovesForward() {
+        var s = GameState()
+        s.setDeckProgress("fin-1", card: 4)
+        s.setDeckProgress("fin-1", card: 2)
+        XCTAssertEqual(s.deckProgress("fin-1"), 4)
+    }
+
+    /// Being on the first card is not "in progress" — Continue must not offer a deck
+    /// the student only glanced at.
+    func testCardZeroIsNotProgress() {
+        var s = GameState()
+        s.setDeckProgress("fin-1", card: 3)
+        s.setDeckProgress("fin-1", card: 0)
+        XCTAssertEqual(s.deckProgress("fin-1"), 0)
+        XCTAssertNil(s.deckProgress["fin-1"])
+    }
+
+    func testFinishingClearsProgressSoContinueStopsOfferingIt() {
+        var s = GameState()
+        s.setDeckProgress("fin-1", card: 5)
+        s.completeLesson(id: "fin-1", reward: 20)
+        XCTAssertNil(s.deckProgress["fin-1"])
+        XCTAssertTrue(s.completedLessons.contains("fin-1"))
+    }
+
+    func testALessonPaysOnceEver() {
+        var s = GameState()
+        XCTAssertEqual(s.completeLesson(id: "fin-1", reward: 20), 20)
+        XCTAssertEqual(s.completeLesson(id: "fin-1", reward: 20), 0)
+        XCTAssertEqual(s.ledger.balance, 20)
+    }
+
+    /// A re-read still counts as done, so the map doesn't un-tick a finished node.
+    func testRereadingKeepsTheLessonCompleted() {
+        var s = GameState()
+        s.completeLesson(id: "fin-1", reward: 20)
+        s.completeLesson(id: "fin-1", reward: 20)
+        XCTAssertTrue(s.completedLessons.contains("fin-1"))
+    }
+
+    func testHeartingIsAToggleAndNewestIsFirst() {
+        var s = GameState()
+        XCTAssertTrue(s.toggleSaved(lessonID: "fin-1", index: 2))
+        XCTAssertTrue(s.toggleSaved(lessonID: "fin-1", index: 6))
+        XCTAssertEqual(s.savedCards.first?.index, 6)
+        XCTAssertTrue(s.isSaved(lessonID: "fin-1", index: 2))
+
+        XCTAssertFalse(s.toggleSaved(lessonID: "fin-1", index: 2))
+        XCTAssertFalse(s.isSaved(lessonID: "fin-1", index: 2))
+        XCTAssertEqual(s.savedCards.count, 1)
+    }
+
+    func testLessonsThisMonthCountsOnlyLessons() {
+        var s = GameState()
+        s.completeLesson(id: "fin-1", reward: 20)
+        s.completeLesson(id: "fin-2", reward: 20)
+        s.recordFocus(minutes: 20)
+        XCTAssertEqual(s.lessonsThisMonth(), 2)
+    }
+
+    func testLastMonthsLessonsDoNotCount() {
+        var s = GameState()
+        let old = Calendar.current.date(byAdding: .day, value: -45, to: Date())!
+        s.completeLesson(id: "fin-1", reward: 20, now: old)
+        XCTAssertEqual(s.lessonsThisMonth(), 0)
+    }
+
+    /// Everything Learn keeps has to survive a relaunch.
+    func testLearnStateRoundTripsThroughTheSaveFile() throws {
+        var s = GameState()
+        s.setDeckProgress("fin-1", card: 3)
+        s.toggleSaved(lessonID: "fin-1", index: 6)
+        s.hasSeenTapCoach = true
+
+        let data = try Store.encoder.encode(s)
+        let back = try Store.decoder.decode(GameState.self, from: data)
+        XCTAssertEqual(back.deckProgress("fin-1"), 3)
+        XCTAssertTrue(back.isSaved(lessonID: "fin-1", index: 6))
+        XCTAssertTrue(back.hasSeenTapCoach)
+    }
+
+    /// A save written before Learn v2 has none of these keys and must still load.
+    func testASaveWithoutLearnKeysStillLoads() throws {
+        let json = #"{"activeChibiID": "slime", "sceneID": "dorm"}"#.data(using: .utf8)!
+        let s = try Store.decoder.decode(GameState.self, from: json)
+        XCTAssertTrue(s.savedCards.isEmpty)
+        XCTAssertFalse(s.hasSeenTapCoach)
+        XCTAssertEqual(s.deckProgress("fin-1"), 0)
+    }
+}

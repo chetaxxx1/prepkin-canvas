@@ -1,0 +1,7 @@
+cfg                  inflect  minR_cvx  minR_ccv  ripple   restXOR 
+rest R60 base0.0     18       16.8      8.2       506      1.63%
+rest R60 base0.5     18       17.5      8.2       394      2.03%
+rest R60 base1.0     16       17.7      8.2       350      2.22%
+rest R110 base0.0    18       16.8      8.2       506      1.63%
+rest R110 base0.5    20       17.6      8.2       374      2.12%
+rest R110 base1.0    18       17.8      8.2       322      2.34%

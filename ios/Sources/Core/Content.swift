@@ -1,25 +1,152 @@
 import Foundation
 
+// MARK: - Cards
+
+/// The five shapes a card in a deck can take. The variety is what keeps an
+/// eight-card deck from reading as one long scroll.
+enum CardKind: String, Decodable {
+    /// Body copy under the lesson's figure, at some reveal step.
+    case figure
+    /// Body copy with no figure — for lessons that don't have one drawn yet.
+    case text
+    /// The one sentence worth screenshotting. No figure, set in caps.
+    case key
+    /// A worked case, with a small drawn spot rather than the full figure.
+    case example
+    /// One recall question. Getting it right pays nothing; finishing the deck does.
+    case check
+}
+
+/// One card in a lesson deck.
+///
+/// `id` is synthesized from the lesson and the card's position, so a saved card is
+/// a pointer into the catalogue rather than a copy of its text. Editing a lesson
+/// updates what the student saved, and the save file never carries prose.
+struct LessonCard: Identifiable, Equatable {
+    let id: String
+    let index: Int
+    let kind: CardKind
+    let body: String
+    /// Which reveal step of the lesson's figure this card shows. `nil` on the cards
+    /// that carry no figure at all.
+    let step: Int?
+    let question: String
+    let choices: [String]
+    let answer: Int
+    let why: String
+
+    var isFigure: Bool { kind == .figure && step != nil }
+}
+
+/// The JSON shape of a card. Every field is optional so one card kind's keys are
+/// simply absent on the others.
+private struct RawCard: Decodable {
+    var kind: CardKind = .text
+    var body = ""
+    var step: Int?
+    var question = ""
+    var choices: [String] = []
+    var answer = 0
+    var why = ""
+
+    private enum CodingKeys: String, CodingKey {
+        case kind, body, step, question, choices, answer, why
+    }
+
+    init(kind: CardKind = .text, body: String = "", step: Int? = nil) {
+        self.kind = kind
+        self.body = body
+        self.step = step
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        kind = try c.decodeIfPresent(CardKind.self, forKey: .kind) ?? .text
+        body = try c.decodeIfPresent(String.self, forKey: .body) ?? ""
+        step = try c.decodeIfPresent(Int.self, forKey: .step)
+        question = try c.decodeIfPresent(String.self, forKey: .question) ?? ""
+        choices = try c.decodeIfPresent([String].self, forKey: .choices) ?? []
+        answer = try c.decodeIfPresent(Int.self, forKey: .answer) ?? 0
+        why = try c.decodeIfPresent(String.self, forKey: .why) ?? ""
+    }
+}
+
+// MARK: - Lessons
+
 struct Lesson: Identifiable, Decodable, Equatable {
     let id: String
-    let emoji: String
     let title: String
-    let track: String
-    let pages: [String]
-    var reward: Int = 20
+    /// A `Track.id`, not a display name.
+    let trackID: String
+    /// The three lines under "What you'll learn" on the preview sheet.
+    let blurb: String
+    /// The one line the complete screen says back to you. Falls back to the key idea
+    /// when a lesson doesn't state one, so no deck can reach that screen with nothing
+    /// to show.
+    let takeaway: String
+    /// Which drawn figure the deck accretes. `nil` until one is authored, and the
+    /// deck falls back to text cards rather than showing an empty half-screen.
+    let figure: String?
+    let minutes: Int
+    let reward: Int
+    /// Task categories that make this lesson worth surfacing on Learn. A Canvas quiz
+    /// due Friday pulls up the lesson about studying for one.
+    let triggers: [TaskCategory]
+    let cards: [LessonCard]
 
-    private enum CodingKeys: String, CodingKey { case id, emoji, title, track, pages, reward }
+    private enum CodingKeys: String, CodingKey {
+        case id, title, track, blurb, takeaway, figure, minutes, reward, triggers, cards, pages
+    }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
-        emoji = try c.decode(String.self, forKey: .emoji)
         title = try c.decode(String.self, forKey: .title)
-        track = try c.decode(String.self, forKey: .track)
-        pages = try c.decode([String].self, forKey: .pages)
+        trackID = try c.decode(String.self, forKey: .track)
+        blurb = try c.decodeIfPresent(String.self, forKey: .blurb) ?? ""
+        minutes = try c.decodeIfPresent(Int.self, forKey: .minutes) ?? 2
         reward = try c.decodeIfPresent(Int.self, forKey: .reward) ?? 20
+        triggers = (try c.decodeIfPresent([String].self, forKey: .triggers) ?? [])
+            .compactMap(TaskCategory.init(rawValue:))
+
+        // A lesson written before typed cards existed is a list of strings. It still
+        // reads, as a deck of plain text cards with no figure.
+        let raw: [RawCard]
+        if let typed = try c.decodeIfPresent([RawCard].self, forKey: .cards) {
+            raw = typed
+        } else {
+            raw = (try c.decodeIfPresent([String].self, forKey: .pages) ?? [])
+                .map { RawCard(kind: .text, body: $0) }
+        }
+
+        let named = try c.decodeIfPresent(String.self, forKey: .figure)
+        // A figure only exists if some card actually reveals a step of it.
+        figure = raw.contains { $0.kind == .figure && $0.step != nil } ? named : nil
+        let lessonID = id
+        cards = raw.enumerated().map { i, r in
+            LessonCard(id: "\(lessonID)#\(i)", index: i,
+                       // Without a figure to reveal, a figure card is a text card.
+                       kind: r.kind == .figure && r.step == nil ? .text : r.kind,
+                       body: r.body, step: r.step,
+                       question: r.question, choices: r.choices,
+                       answer: r.answer, why: r.why)
+        }
+        takeaway = try c.decodeIfPresent(String.self, forKey: .takeaway)
+            ?? cards.first { $0.kind == .key }?.body
+            ?? title
     }
 }
+
+// MARK: - Tracks
+
+/// A run of lessons. Three exist; each has a hand-drawn icon in `LearnIcons`, which
+/// is why the display name and order live in code rather than in the JSON.
+struct Track: Identifiable, Equatable {
+    let id: String
+    let name: String
+}
+
+// MARK: - Catalog
 
 /// Text content lives in JSON in the bundle, not in Swift arrays, so writing a
 /// lesson or adding a word is an edit to a data file instead of a code change.
@@ -31,6 +158,43 @@ enum Catalog {
     static let wordleAnswers: [String] = load("words", fallback: fallbackWords)
         .map { $0.uppercased() }
         .filter { $0.count == 5 }
+
+    private static let trackNames = [
+        "finance": "Personal finance",
+        "philosophy": "Philosophy",
+        "study": "Study skills",
+    ]
+
+    /// Every track the catalogue actually uses, in the order it first appears. A
+    /// lesson whose track has no name here still shows up rather than vanishing.
+    static let tracks: [Track] = {
+        var seen = Set<String>()
+        return lessons.compactMap { lesson in
+            guard seen.insert(lesson.trackID).inserted else { return nil }
+            return Track(id: lesson.trackID,
+                         name: trackNames[lesson.trackID] ?? lesson.trackID.capitalized)
+        }
+    }()
+
+    static func track(_ id: String) -> Track {
+        tracks.first { $0.id == id } ?? Track(id: id, name: trackNames[id] ?? id.capitalized)
+    }
+
+    static func lessons(in trackID: String) -> [Lesson] {
+        lessons.filter { $0.trackID == trackID }
+    }
+
+    static func lesson(_ id: String) -> Lesson? {
+        lessons.first { $0.id == id }
+    }
+
+    /// The card a saved reference points at, or nil if the lesson has since been
+    /// rewritten shorter. Callers drop those rather than showing a blank row.
+    static func card(_ ref: SavedCard) -> (Lesson, LessonCard)? {
+        guard let lesson = lesson(ref.lessonID),
+              ref.index < lesson.cards.count else { return nil }
+        return (lesson, lesson.cards[ref.index])
+    }
 
     private static func load<T: Decodable>(_ name: String, fallback: T, bundle: Bundle = .main) -> T {
         guard let url = bundle.url(forResource: name, withExtension: "json"),
@@ -49,4 +213,44 @@ enum Catalog {
     private static let fallbackWords = ["SLIME", "STUDY", "FOCUS", "LEARN", "BRAVE"]
 
     private static let fallbackLessons: [Lesson] = []
+}
+
+// MARK: - Because of your week
+
+extension Catalog {
+    /// A lesson worth reading because of something actually on the student's plate,
+    /// paired with the assignment that earned it a place on the screen.
+    struct Suggestion: Identifiable, Equatable {
+        let lesson: Lesson
+        let task: DailyTask
+        var id: String { lesson.id }
+    }
+
+    /// Picks lessons off the real Canvas feed by matching the assignment's category
+    /// against each lesson's `triggers`. Soonest due first, one lesson per slot, and
+    /// nothing already finished.
+    ///
+    /// Returns empty when Canvas has sent nothing — Learn then simply doesn't draw
+    /// the section, rather than showing an empty state for a feature the student
+    /// may not have connected.
+    static func suggestions(for tasks: [DailyTask],
+                            completed: Set<String>,
+                            limit: Int = 2) -> [Suggestion] {
+        let open = tasks
+            .filter { $0.kind == .canvas && !$0.done }
+            .sorted { ($0.dueAt ?? .distantFuture) < ($1.dueAt ?? .distantFuture) }
+
+        var picked: [Suggestion] = []
+        var used = Set<String>()
+        for task in open {
+            let category = task.category
+            guard let lesson = lessons.first(where: {
+                $0.triggers.contains(category) && !completed.contains($0.id) && !used.contains($0.id)
+            }) else { continue }
+            used.insert(lesson.id)
+            picked.append(Suggestion(lesson: lesson, task: task))
+            if picked.count == limit { break }
+        }
+        return picked
+    }
 }

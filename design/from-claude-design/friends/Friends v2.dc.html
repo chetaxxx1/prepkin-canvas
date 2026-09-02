@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDE7DC;font-family:Nunito,system-ui,sans-serif}
+a{color:#E4735F}a:hover{color:#FF6F61}
+.dv-turn{padding:44px 48px 40px;scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 26px}
+.dv-tid{font:800 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#2E2622;color:#FAF5EC;border-radius:4px;text-decoration:none}
+.dv-tname{font:800 13px/1.2 Nunito,sans-serif;color:#2E2622}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;width:390px;scroll-margin-top:16px}
+.dv-oid{font:800 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:800 12px/1.3 Nunito,sans-serif;color:#2E2622}
+.dv-note{margin:0;font:400 11.5px/1.55 Nunito,sans-serif;color:rgba(46,38,34,.6)}
+.dv-opt:target .dv-oid{background:#FF6F61;color:#fff}
+.dv-next{margin:30px 0 0;font:700 12px/1.6 Nunito,sans-serif;color:rgba(46,38,34,.55)}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t2" style="border-bottom:1px solid rgba(46,38,34,.1)">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Scaling past eight friends, and the notification set</span></div>
+<div class="dv-opts" style="display:grid;grid-template-columns:repeat(4,390px);gap:44px 34px;align-items:start;justify-content:start">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>The Yard with 15 friends active</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:30px;font-weight:900;letter-spacing:-.01em">Friends</div><div style="width:38px;height:38px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M12 4.5v3M5.5 20h13a1.5 1.5 0 0 0 1.3-2.2c-.9-1.6-1.3-3-1.3-4.6a7.5 7.5 0 0 0-15 0c0 1.6-.4 3-1.3 4.6A1.5 1.5 0 0 0 5.5 20Z" fill="none" stroke="#2E2622" strokeWidth="2" strokeLinecap="round"></path></svg></div></div>
+<div style="position:absolute;left:16px;right:16px;top:100px;height:330px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;right:34px;top:26px;width:50px;height:50px;border-radius:999px;background:#FFF3D6"></div>
+<div style="position:absolute;left:-30px;right:-30px;top:130px;height:300px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:232px;height:120px;background:#C6DCB4"></div>
+<dc-import name="Slime" face="focused" level="1" species="sky" hint-size="44px,44px" style="position:absolute;left:44px;top:96px;width:44px;height:44px"></dc-import>
+<dc-import name="Slime" face="idle" level="1" species="leaf" hint-size="46px,46px" style="position:absolute;left:136px;top:88px;width:46px;height:46px"></dc-import>
+<dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="44px,44px" style="position:absolute;left:222px;top:94px;width:44px;height:44px"></dc-import>
+<dc-import name="Slime" face="delight" level="1" species="pink" hint-size="46px,46px" style="position:absolute;left:296px;top:88px;width:46px;height:46px"></dc-import>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="60px,60px" style="position:absolute;left:20px;top:152px;width:60px;height:60px"></dc-import>
+<dc-import name="Slime" face="focused" level="2" species="sky" hint-size="58px,58px" style="position:absolute;left:104px;top:158px;width:58px;height:58px"></dc-import>
+<dc-import name="Slime" face="idle" level="1" species="leaf" hint-size="58px,58px" style="position:absolute;left:210px;top:156px;width:58px;height:58px"></dc-import>
+<dc-import name="Slime" face="wink" level="2" species="lavender" hint-size="60px,60px" style="position:absolute;left:288px;top:152px;width:60px;height:60px"></dc-import>
+<dc-import name="Slime" face="idle" level="2" species="green" hint-size="92px,92px" style="position:absolute;left:138px;top:196px;width:92px;height:92px"></dc-import>
+<div style="position:absolute;left:166px;top:288px;background:#2E2622;border-radius:999px;padding:3px 11px;font-size:10.5px;font-weight:800;color:#FFF6EF">Pip · you</div>
+<div style="position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:8px;background:#FFFFFF;border-radius:999px;padding:7px 13px 7px 9px">
+<div style="display:flex"><div style="width:18px;height:18px;border-radius:999px;background:#F7A8B8;box-shadow:0 0 0 2px #FFFFFF"></div><div style="width:18px;height:18px;border-radius:999px;background:#A5CE6B;box-shadow:0 0 0 2px #FFFFFF;margin-left:-6px"></div><div style="width:18px;height:18px;border-radius:999px;background:#C3B2F0;box-shadow:0 0 0 2px #FFFFFF;margin-left:-6px"></div></div>
+<span style="font-size:12.5px;font-weight:800">7 more out here</span>
+</div>
+</div>
+<div style="position:absolute;left:24px;right:24px;top:448px;font-size:13.5px;font-weight:700;line-height:1.5;color:#96877F;text-wrap:pretty">Three of them are in a session right now, so they're standing at the front.</div>
+<div style="position:absolute;left:24px;top:502px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">TODAY</div>
+<div style="position:absolute;left:20px;right:0;top:532px;display:flex;gap:12px">
+<div style="width:64px;flex:none;text-align:center"><div style="width:64px;height:64px;border-radius:999px;border:3px solid #FF6F61;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="focused" level="3" species="pink" hint-size="48px,48px" style="width:48px;height:48px;margin-top:6px"></dc-import></div><div style="margin-top:6px;font-size:11px;font-weight:800">Maya</div></div>
+<div style="width:64px;flex:none;text-align:center"><div style="width:64px;height:64px;border-radius:999px;border:3px solid #FF6F61;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="delight" level="1" species="sky" hint-size="48px,48px" style="width:48px;height:48px;margin-top:6px"></dc-import></div><div style="margin-top:6px;font-size:11px;font-weight:800">Josh</div></div>
+<div style="width:64px;flex:none;text-align:center"><div style="width:64px;height:64px;border-radius:999px;border:3px solid #FF6F61;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="48px,48px" style="width:48px;height:48px;margin-top:6px"></dc-import></div><div style="margin-top:6px;font-size:11px;font-weight:800">Ava</div></div>
+<div style="width:64px;flex:none;text-align:center"><div style="width:64px;height:64px;border-radius:999px;border:3px solid #FF6F61;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="idle" level="1" species="leaf" hint-size="48px,48px" style="width:48px;height:48px;margin-top:6px"></dc-import></div><div style="margin-top:6px;font-size:11px;font-weight:800">Sam</div></div>
+<div style="width:64px;flex:none;text-align:center"><div style="width:64px;height:64px;border-radius:999px;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="idle" level="2" species="pink" hint-size="48px,48px" style="width:48px;height:48px;margin-top:6px"></dc-import></div><div style="margin-top:6px;font-size:11px;font-weight:700;color:#96877F">Nadia</div></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:650px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">THIS WEEK, TOGETHER</div>
+<div style="margin-top:12px;display:flex;align-items:flex-end;justify-content:space-between">
+<div><div style="font-size:24px;font-weight:900;line-height:1">126</div><div style="margin-top:4px;font-size:11.5px;font-weight:800;color:#96877F">TASKS</div></div>
+<div><div style="font-size:24px;font-weight:900;line-height:1">21h</div><div style="margin-top:4px;font-size:11.5px;font-weight:800;color:#96877F">FOCUS</div></div>
+<div><div style="font-size:24px;font-weight:900;line-height:1">38</div><div style="margin-top:4px;font-size:11.5px;font-weight:800;color:#96877F">LESSONS</div></div>
+</div>
+</div>
+<dc-import name="TabBar" active="friends" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">Eight stay the ceiling; the overflow pill carries the rest. Front row is whoever is in a live session — the only fact that earns a better spot, because it is an invitation rather than a score. Everyone else fills by most recent activity and then rotates daily, so the same four friends are not permanently on stage.</p>
+</div>
+
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Everyone — the flat grid</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:108px;font-size:30px;font-weight:900;letter-spacing:-.01em">Everyone</div>
+<div style="position:absolute;left:24px;top:148px;font-size:13px;font-weight:700;color:#96877F">15 friends · A to Z</div>
+<div style="position:absolute;left:20px;right:20px;top:186px;background:#FFFFFF;border-radius:20px;padding:14px 16px;font-size:13px;font-weight:700;line-height:1.5;color:#7C6F68">Alphabetical, always. Never sorted by activity, coins or level — this list is a phone book, not a chart.</div>
+<div style="position:absolute;left:20px;right:20px;top:290px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px">
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Ava</div><div style="font-size:11px;font-weight:700;color:#57C79B">in a session</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="leaf" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Dev</div><div style="font-size:11px;font-weight:700;color:#B4A996">today</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="3" species="sky" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Elle</div><div style="font-size:11px;font-weight:700;color:#B4A996">today</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="pink" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Iris</div><div style="font-size:11px;font-weight:700;color:#DDD2C0">—</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Josh</div><div style="font-size:11px;font-weight:700;color:#B4A996">today</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="2" species="leaf" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Kian</div><div style="font-size:11px;font-weight:700;color:#DDD2C0">—</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Maya</div><div style="font-size:11px;font-weight:700;color:#57C79B">in a session</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="2" species="pink" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Nadia</div><div style="font-size:11px;font-weight:700;color:#B4A996">today</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="lavender" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Omar</div><div style="font-size:11px;font-weight:700;color:#DDD2C0">—</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="leaf" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Sam</div><div style="font-size:11px;font-weight:700;color:#B4A996">today</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="2" species="sky" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Tess</div><div style="font-size:11px;font-weight:700;color:#DDD2C0">—</div></div>
+<div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="green" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Theo</div><div style="font-size:11px;font-weight:700;color:#B4A996">today</div></div><div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="3" species="lavender" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Uma</div><div style="font-size:11px;font-weight:700;color:#DDD2C0">—</div></div><div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="2" species="sky" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Wes</div><div style="font-size:11px;font-weight:700;color:#B4A996">today</div></div><div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="pink" hint-size="56px,56px" style="width:56px;height:56px;margin-top:8px"></dc-import></div><div style="margin-top:7px;font-size:12.5px;font-weight:800">Zoe</div><div style="font-size:11px;font-weight:700;color:#DDD2C0">—</div></div><div style="text-align:center"><div style="width:74px;height:74px;border-radius:999px;border:2px dashed #E0D4C0;box-sizing:border-box;display:grid;place-items:center;margin:0 auto"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13" stroke="#B4A996" strokeWidth="2.4" strokeLinecap="round"></path></svg></div><div style="margin-top:7px;font-size:12.5px;font-weight:700;color:#B4A996">Add</div></div>
+</div>
+<dc-import name="TabBar" active="friends" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">The overflow destination. Three states only — in a session, active today, nothing today — and the third is a dash, never an accusation. Alphabetical order is load-bearing: any other sort turns fifteen friends into a ranking the moment you open it.</p>
+</div>
+
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Notifications <span style="font-weight:400;color:rgba(46,38,34,.5)">(new)</span></div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:108px;font-size:30px;font-weight:900;letter-spacing:-.01em">Notifications</div>
+<div style="position:absolute;left:24px;top:162px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">RIGHT NOW</div>
+<div style="position:absolute;left:20px;right:20px;top:192px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:46px;height:46px;border-radius:999px;background:#DFF3E9;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="focused" level="3" species="pink" hint-size="36px,36px" style="width:36px;height:36px;margin-top:6px"></dc-import></div>
+<div style="flex:1"><div style="font-size:15.5px;font-weight:800;line-height:1.3">Maya's room has a free seat</div><div style="margin-top:3px;font-size:12.5px;font-weight:700;color:#96877F">28 minutes left · with Josh</div></div>
+</div>
+<div style="margin-top:14px;height:48px;border-radius:18px;background:#FF6F61;display:grid;place-items:center;font-size:15.5px;font-weight:800;color:#FFF6EF">Sit down</div>
+</div>
+<div style="position:absolute;left:24px;top:388px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">TODAY</div>
+<div style="position:absolute;left:20px;right:20px;top:418px;background:#FFFFFF;border-radius:22px;padding:6px 16px">
+<div style="padding:13px 0;display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div><div style="flex:1;font-size:14.5px;font-weight:700;line-height:1.4"><b style="font-weight:800">Josh</b> sent you a wave</div><div style="font-size:12px;font-weight:700;color:#B4A996;flex:none">2h</div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:13px 0;display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="delight" level="2" species="pink" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div><div style="flex:1;font-size:14.5px;font-weight:700;line-height:1.4"><b style="font-weight:800">Nadia</b> accepted your code</div><div style="font-size:12px;font-weight:700;color:#B4A996;flex:none">5h</div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:13px 0;display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div><div style="flex:1;font-size:14.5px;font-weight:700;line-height:1.4"><b style="font-weight:800">Ava</b> asked you to study at 7</div><div style="font-size:12px;font-weight:700;color:#B4A996;flex:none">6h</div></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:648px;background:#FFF3D6;border-radius:20px;padding:16px 18px;font-size:13.5px;font-weight:700;line-height:1.55;color:#A8761D">Only four things ever reach your lock screen: an invite, a free seat, a vibe, and someone accepting your code. Nothing here is ever a reminder about you.</div>
+<div style="position:absolute;left:24px;right:24px;top:764px;font-size:12.5px;font-weight:800;color:#96877F">Notification settings</div>
+</div>
+<p class="dv-note">The retention lever, kept honest. Every push is an <b>invitation from a person</b> — never "you haven't studied", never "your streak", never "Maya is beating you". "Right now" is the only thing with an action button, because a free seat expires on its own without any countdown being shown.</p>
+</div>
+
+<div class="dv-opt" id="2d" style="width:814px;grid-column:span 2">
+<div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Spec — occupancy rule, push policy, what changes at scale</div>
+<div style="width:814px;box-sizing:border-box;background:#FFFFFF;border-radius:24px;padding:34px 36px;font-family:Nunito,system-ui,sans-serif;color:#2E2622">
+<div style="font-size:20px;font-weight:900">Yard occupancy — who gets drawn</div>
+<div style="margin-top:6px;font-size:13.5px;font-weight:700;color:#96877F">Eight slots, filled in this order, recomputed once an hour. Friends with no activity today are never candidates.</div>
+<div style="margin-top:18px;display:flex;flex-direction:column;gap:2px">
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14px;font-weight:900">1 · In a session</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Front row, largest, <span style="font-family:ui-monospace,Menlo,monospace">focused</span> face. The only fact that earns a better spot, because it is an invitation rather than a score.</div></div>
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14px;font-weight:900">2 · Most recent</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Active in the last hour, by recency. Middle row.</div></div>
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14px;font-weight:900">3 · Daily rotation</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Remaining slots shuffle from everyone else active today, seeded by the date so it is stable all day and different tomorrow. Stops the same four friends living permanently on stage.</div></div>
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC;border-bottom:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14px;font-weight:900">Overflow</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">"<b>n</b> more out here" pill, bottom-right of the scene, three species dots as its avatar stack. Opens <a class="dv-oid" href="#2b">2b</a>, which is alphabetical and never sorted by anything else.</div></div>
+</div>
+<div style="margin-top:14px;font-size:13.5px;font-weight:700;line-height:1.55;color:#96877F">Under eight active, everyone is drawn and the pill is absent — which is the normal case and the reason <a class="dv-oid" href="#1e">1e</a> has no pill.</div>
+
+<div style="margin-top:34px;font-size:20px;font-weight:900">Push policy</div>
+<div style="margin-top:16px;display:flex;gap:16px">
+<div style="flex:1;background:#DFF3E9;border-radius:20px;padding:18px">
+<div style="font-size:14px;font-weight:900;color:#2E6B52">Pushes — four, and only four</div>
+<div style="margin-top:10px;font-size:13.5px;font-weight:700;line-height:1.7;color:#2E6B52">A friend invites you to study<br>A room you could join has a free seat<br>A friend sends you a vibe<br>Someone accepts your code</div>
+<div style="margin-top:12px;font-size:12.5px;font-weight:700;line-height:1.5;color:#3E9E78">All four are a person doing something toward you. Every one is individually switchable, and all four are silent between 10pm and 7am.</div>
+</div>
+<div style="flex:1;background:#FFE9E5;border-radius:20px;padding:18px">
+<div style="font-size:14px;font-weight:900;color:#B24A3E">Never pushes</div>
+<div style="margin-top:10px;font-size:13.5px;font-weight:700;line-height:1.7;color:#B24A3E">"You haven't studied today"<br>Anything about a streak<br>A friend's score, rank or level<br>"Maya finished 5 tasks — you've done 1"<br>A moment being posted<br>A vibe you failed to send back<br>Anything at all when you have been away</div>
+<div style="margin-top:12px;font-size:12.5px;font-weight:700;line-height:1.5;color:#C4675A">A quiet week produces exactly zero notifications. That is the feature.</div>
+</div>
+</div>
+
+<div style="margin-top:34px;font-size:20px;font-weight:900">What else changes past eight friends</div>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:2px">
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC"><div style="width:190px;flex:none;font-size:14px;font-weight:900">Ranked board <a class="dv-oid" href="#1p">1p</a></div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Retire the segment above about eight friends. At twenty-five people it stops being a group photo and becomes the league we refused; the group total <a class="dv-oid" href="#1o">1o</a> scales without any change.</div></div>
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC"><div style="width:190px;flex:none;font-size:14px;font-weight:900">Paid vibes</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Cap the payout at <b>3 vibes a day</b>, not one per friend. Extra vibes still send and still land warmly, they just pay nothing — otherwise twenty-five friends is fifty coins a day for tapping.</div></div>
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC"><div style="width:190px;flex:none;font-size:14px;font-weight:900">Same class <a class="dv-oid" href="#1u">1u</a></div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Collapse to one card per course: "3 friends in BIOL 12", their three slimes, one Study together button. Never one card per friend.</div></div>
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC"><div style="width:190px;flex:none;font-size:14px;font-weight:900">Today row <a class="dv-oid" href="#1e">1e</a></div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Scrolls, unseen first, and caps at twelve — after that the oldest unseen drop off silently rather than accumulating as an obligation.</div></div>
+<div style="display:flex;gap:18px;padding:12px 0;border-top:1px solid #F0E9DC;border-bottom:1px solid #F0E9DC"><div style="width:190px;flex:none;font-size:14px;font-weight:900">Daily Word strip <a class="dv-oid" href="#1t">1t</a></div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Show the first five in finishing order, then "and 6 others solved it" as a plain line. No expansion, no full ranking.</div></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Friends tab — "who's around, and can I sit with them?"</span></div>
+<div class="dv-opts" style="display:grid;grid-template-columns:repeat(4,390px);gap:44px 34px;align-items:start;justify-content:start">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Empty state — no friends yet</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;justify-content:space-between">
+<div style="font-size:30px;font-weight:900;letter-spacing:-.01em">Friends</div>
+<div style="display:flex;align-items:center;gap:7px;background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:999px;padding:7px 13px 7px 9px"><svg width="19" height="19" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:15px;font-weight:800">1,130</span></div>
+</div>
+<div style="position:absolute;left:16px;right:16px;top:100px;height:290px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;right:36px;top:30px;width:52px;height:52px;border-radius:999px;background:#FFF3D6"></div>
+<div style="position:absolute;left:-30px;right:-30px;top:120px;height:260px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:214px;height:120px;background:#C6DCB4"></div>
+<div style="position:absolute;left:22px;top:186px;width:44px;height:44px;border-radius:999px;background:#B9D3A6"></div>
+<div style="position:absolute;right:26px;top:196px;width:34px;height:34px;border-radius:999px;background:#B9D3A6"></div>
+<div style="position:absolute;left:44px;top:170px;width:62px;height:62px;border-radius:999px;border:2px dashed rgba(46,38,34,.18)"></div>
+<div style="position:absolute;right:52px;top:158px;width:62px;height:62px;border-radius:999px;border:2px dashed rgba(46,38,34,.18)"></div>
+<div style="position:absolute;right:130px;top:206px;width:54px;height:54px;border-radius:999px;border:2px dashed rgba(46,38,34,.18)"></div>
+<dc-import name="Slime" face="idle" level="2" species="green" hint-size="92px,92px" style="position:absolute;left:149px;top:168px;width:92px;height:92px"></dc-import>
+<div style="position:absolute;left:159px;top:262px;background:#FFFFFF;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800">Pip</div>
+</div>
+<div style="position:absolute;left:24px;right:24px;top:412px;font-size:22px;font-weight:800;line-height:1.3;text-wrap:pretty">Room for four more out here.</div>
+<div style="position:absolute;left:24px;right:24px;top:452px;font-size:15px;font-weight:700;line-height:1.5;color:#96877F;text-wrap:pretty">Swap codes with someone and their slime moves in. No accounts, no searching, no finding people you didn't ask for.</div>
+<div style="position:absolute;left:20px;right:20px;top:540px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">YOUR FRIEND CODE</div>
+<div style="margin-top:10px;font-size:28px;font-weight:900;letter-spacing:.06em">K4RT-9BXM</div>
+<div style="margin-top:14px;display:flex;gap:10px">
+<div style="flex:1;height:46px;border-radius:16px;background:#FAF5EC;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="16" height="16" viewBox="0 0 20 20"><rect x="3" y="3" width="11" height="13" rx="2.5" fill="none" stroke="#2E2622" strokeWidth="2"></rect><path d="M7 17h8a2 2 0 0 0 2-2V7" fill="none" stroke="#2E2622" strokeWidth="2" strokeLinecap="round"></path></svg><span style="font-size:14.5px;font-weight:800">Copy</span></div>
+<div style="flex:1;height:46px;border-radius:16px;background:#FF6F61;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 3.4v11M8 7.2l4-3.8 4 3.8M5 13.6v5.4a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-5.4" fill="none" stroke="#FFF6EF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"></path></svg><span style="font-size:14.5px;font-weight:800;color:#FFF6EF">Share</span></div>
+</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:700px;height:54px;border-radius:18px;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center;font-size:15.5px;font-weight:800;color:#2E2622">Enter a friend's code</div>
+<dc-import name="TabBar" active="friends" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">Designed first. The Yard is already a place, with dashed spots where friends will stand — the count is the invitation, so nothing has to say "you have no friends". Pip is fine alone. Your code is the hero because it is the entire identity system.</p>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Add a friend</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:110px;font-size:30px;font-weight:900;letter-spacing:-.01em">Add a friend</div>
+<div style="position:absolute;left:20px;right:20px;top:172px;background:#FFFFFF;border-radius:24px;padding:22px 20px 20px;text-align:center">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">YOUR CODE</div>
+<div style="margin-top:12px;font-size:36px;font-weight:900;letter-spacing:.07em;line-height:1">K4RT-9BXM</div>
+<div style="margin-top:10px;font-size:12.5px;font-weight:700;color:#B4A996">Tap to copy</div>
+<div style="margin-top:18px;height:52px;border-radius:18px;background:#FF6F61;display:flex;align-items:center;justify-content:center;gap:9px"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 3.4v11M8 7.2l4-3.8 4 3.8M5 13.6v5.4a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-5.4" fill="none" stroke="#FFF6EF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"></path></svg><span style="font-size:16.5px;font-weight:800;color:#FFF6EF">Share my code</span></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:436px;display:flex;align-items:center;gap:14px"><div style="flex:1;height:1.5px;background:#F0E9DC"></div><div style="font-size:12.5px;font-weight:800;color:#B4A996">or</div><div style="flex:1;height:1.5px;background:#F0E9DC"></div></div>
+<div style="position:absolute;left:24px;right:24px;top:486px;font-size:13.5px;font-weight:800">Enter their code</div>
+<div style="position:absolute;left:20px;right:20px;top:516px;height:60px;border-radius:18px;background:#FFFFFF;border:1.5px solid #F0E9DC;box-sizing:border-box;display:flex;align-items:center;padding:0 18px;font-size:22px;font-weight:900;letter-spacing:.07em;color:#CFC3B2">XXXX-XXXX</div>
+<div style="position:absolute;left:24px;right:24px;top:588px;font-size:12.5px;font-weight:700;line-height:1.5;color:#96877F">Eight characters, split by a dash. No I, O, 0 or 1 — so nothing is ever mistyped.</div>
+<div style="position:absolute;left:20px;right:20px;top:648px;height:56px;border-radius:20px;background:#F5EFE3;display:grid;place-items:center;font-size:16.5px;font-weight:800;color:#C0B4A6">Add friend</div>
+</div>
+<p class="dv-note">Your code first and biggest, because sharing is the action people actually take. The Add button stays inert until eight valid characters are in. No contacts upload, no search field, no QR — a code you can read out loud is the whole point.</p>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Code field — the three answers</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:110px;font-size:30px;font-weight:900;letter-spacing:-.01em">Enter their code</div>
+<div style="position:absolute;left:20px;right:20px;top:180px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">GOOD CODE</div>
+<div style="margin-top:9px;height:60px;border-radius:18px;background:#FFFFFF;border:2px solid #57C79B;box-sizing:border-box;display:flex;align-items:center;padding:0 16px 0 18px;gap:12px">
+<div style="flex:1;font-size:22px;font-weight:900;letter-spacing:.07em">M2XP-7QTV</div>
+<div style="width:26px;height:26px;border-radius:999px;background:#57C79B;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M5 12.6 9.8 17.4 19 7.6" stroke="#FFFFFF" strokeWidth="3.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+</div>
+<div style="margin-top:9px;font-size:13px;font-weight:800;color:#3E9E78">That's a code. Send the request?</div>
+<div style="margin-top:14px;height:52px;border-radius:18px;background:#FF6F61;display:grid;place-items:center;font-size:16.5px;font-weight:800;color:#FFF6EF">Send request</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:428px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">NOT A CODE</div>
+<div style="margin-top:9px;height:60px;border-radius:18px;background:#FFFFFF;border:1.5px solid #F0E9DC;box-sizing:border-box;display:flex;align-items:center;padding:0 18px">
+<div style="flex:1;font-size:22px;font-weight:900;letter-spacing:.07em">M2XP-7QT1</div>
+</div>
+<div style="margin-top:9px;font-size:13px;font-weight:800;color:#E4735F">Codes never use I, O, 0 or 1. Check the last character.</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:606px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">ALREADY IN YOUR YARD</div>
+<div style="margin-top:9px;height:60px;border-radius:18px;background:#FFFFFF;border:1.5px solid #F0E9DC;box-sizing:border-box;display:flex;align-items:center;padding:0 12px 0 18px;gap:10px">
+<div style="flex:1;font-size:22px;font-weight:900;letter-spacing:.07em">P7WQ-4KDE</div>
+<dc-import name="Slime" face="idle" level="3" species="pink" hint-size="38px,38px" style="width:38px;height:38px;flex:none"></dc-import>
+</div>
+<div style="margin-top:9px;font-size:13px;font-weight:800;color:#96877F">You and Maya are already out there together.</div>
+</div>
+</div>
+<p class="dv-note">Three answers, no drama: mint and a check for valid, a plain hairline field and one warm sentence for invalid — no red border, no shake, no shouting at a teenager who mistyped. The already-friends case answers itself by showing her slime.</p>
+</div>
+
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Request received</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:16px;right:16px;top:100px;height:290px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;left:-30px;right:-30px;top:120px;height:260px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:214px;height:120px;background:#C6DCB4"></div>
+</div>
+<div style="position:absolute;inset:0;background:rgba(46,38,34,.45)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;top:334px;background:#FFFFFF;border-radius:28px 28px 0 0">
+<div style="position:absolute;left:50%;top:12px;width:44px;height:5px;border-radius:999px;background:#F0E9DC;transform:translateX(-50%)"></div>
+<dc-import name="Slime" face="wink" level="3" species="pink" hint-size="140px,140px" style="position:absolute;left:125px;top:38px;width:140px;height:140px"></dc-import>
+<div style="position:absolute;left:32px;right:32px;top:200px;text-align:center;font-size:23px;font-weight:800;line-height:1.32">Maya wants to join your yard</div>
+<div style="position:absolute;left:32px;right:32px;top:274px;text-align:center;font-size:14.5px;font-weight:700;line-height:1.5;color:#96877F">She used the code you shared. If you accept, you'll each see what the other finishes — nothing more.</div>
+<div style="position:absolute;left:24px;right:24px;top:368px;height:58px;border-radius:20px;background:#FF6F61;display:grid;place-items:center;font-size:17.5px;font-weight:800;color:#FFF6EF">Accept</div>
+<div style="position:absolute;left:0;right:0;top:444px;text-align:center;font-size:15px;font-weight:800;color:#96877F">Ignore</div>
+</div>
+</div>
+<p class="dv-note">Her slime does the introducing. One line states exactly what accepting shares, so consent is informed. Ignore is a plain text button, sends nothing, tells her nothing, and does not queue a reminder.</p>
+</div>
+
+<div class="dv-opt" id="1e">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>The Yard + Today — populated tab root</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;justify-content:space-between">
+<div style="font-size:30px;font-weight:900;letter-spacing:-.01em">Friends</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M12 4.5v3M5.5 20h13a1.5 1.5 0 0 0 1.3-2.2c-.9-1.6-1.3-3-1.3-4.6a7.5 7.5 0 0 0-15 0c0 1.6-.4 3-1.3 4.6A1.5 1.5 0 0 0 5.5 20Z" fill="none" stroke="#2E2622" strokeWidth="2" strokeLinecap="round"></path></svg></div>
+<div style="width:38px;height:38px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+</div>
+</div>
+<div style="position:absolute;left:16px;right:16px;top:100px;height:330px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;right:34px;top:26px;width:50px;height:50px;border-radius:999px;background:#FFF3D6"></div>
+<div style="position:absolute;left:-30px;right:-30px;top:130px;height:300px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:232px;height:120px;background:#C6DCB4"></div>
+<div style="position:absolute;left:18px;top:198px;width:42px;height:42px;border-radius:999px;background:#B9D3A6"></div>
+<div style="position:absolute;right:20px;top:210px;width:32px;height:32px;border-radius:999px;background:#B9D3A6"></div>
+<dc-import name="Slime" face="sleep" level="1" species="leaf" hint-size="58px,58px" style="position:absolute;left:112px;top:104px;width:58px;height:58px"></dc-import>
+<div style="position:absolute;left:117px;top:166px;background:#FFFFFF;border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:800">Sam</div>
+<dc-import name="Slime" face="delight" level="1" species="sky" hint-size="62px,62px" style="position:absolute;left:236px;top:98px;width:62px;height:62px"></dc-import>
+<div style="position:absolute;left:243px;top:162px;background:#FFFFFF;border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:800">Josh</div>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="74px,74px" style="position:absolute;left:22px;top:150px;width:74px;height:74px"></dc-import>
+<div style="position:absolute;left:14px;top:228px;display:flex;align-items:center;gap:5px;background:#DFF3E9;border-radius:999px;padding:3px 9px"><div style="width:7px;height:7px;border-radius:999px;background:#3E9E78"></div><span style="font-size:10.5px;font-weight:800;color:#3E9E78">Maya · in a session</span></div>
+<dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="66px,66px" style="position:absolute;left:274px;top:184px;width:66px;height:66px"></dc-import>
+<div style="position:absolute;left:288px;top:252px;background:#FFFFFF;border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:800">Ava</div>
+<dc-import name="Slime" face="idle" level="2" species="green" hint-size="90px,90px" style="position:absolute;left:140px;top:190px;width:90px;height:90px"></dc-import>
+<div style="position:absolute;left:167px;top:280px;background:#2E2622;border-radius:999px;padding:3px 11px;font-size:10.5px;font-weight:800;color:#FFF6EF">Pip · you</div>
+</div>
+<div style="position:absolute;left:24px;top:448px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">TODAY</div>
+<div style="position:absolute;left:20px;right:0;top:478px;display:flex;gap:14px">
+<div style="width:70px;flex:none;text-align:center"><div style="width:70px;height:70px;border-radius:999px;border:3px solid #FF6F61;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="focused" level="3" species="pink" hint-size="52px,52px" style="width:52px;height:52px;margin-top:7px"></dc-import></div><div style="margin-top:6px;font-size:11.5px;font-weight:800">Maya</div></div>
+<div style="width:70px;flex:none;text-align:center"><div style="width:70px;height:70px;border-radius:999px;border:3px solid #FF6F61;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="delight" level="1" species="sky" hint-size="52px,52px" style="width:52px;height:52px;margin-top:7px"></dc-import></div><div style="margin-top:6px;font-size:11.5px;font-weight:800">Josh</div></div>
+<div style="width:70px;flex:none;text-align:center"><div style="width:70px;height:70px;border-radius:999px;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="52px,52px" style="width:52px;height:52px;margin-top:7px"></dc-import></div><div style="margin-top:6px;font-size:11.5px;font-weight:700;color:#96877F">Ava</div></div>
+<div style="width:70px;flex:none;text-align:center"><div style="width:70px;height:70px;border-radius:999px;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="sleep" level="1" species="leaf" hint-size="52px,52px" style="width:52px;height:52px;margin-top:7px"></dc-import></div><div style="margin-top:6px;font-size:11.5px;font-weight:700;color:#96877F">Sam</div></div>
+<div style="width:70px;flex:none;text-align:center"><div style="width:70px;height:70px;border-radius:999px;border:2px dashed #E0D4C0;box-sizing:border-box;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13" stroke="#B4A996" strokeWidth="2.4" strokeLinecap="round"></path></svg></div><div style="margin-top:6px;font-size:11.5px;font-weight:700;color:#B4A996">Add</div></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:596px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="display:flex;align-items:center;justify-content:space-between">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">THIS WEEK, TOGETHER</div>
+<svg width="9" height="15" viewBox="0 0 9 15"><path d="M1.6 1.6 7 7.5 1.6 13.4" stroke="#B4A996" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+<div style="margin-top:14px;display:flex;align-items:flex-end;justify-content:space-between">
+<div><div style="font-size:24px;font-weight:900;line-height:1">41</div><div style="margin-top:4px;font-size:11.5px;font-weight:800;color:#96877F">TASKS</div></div>
+<div><div style="font-size:24px;font-weight:900;line-height:1">6h 20m</div><div style="margin-top:4px;font-size:11.5px;font-weight:800;color:#96877F">FOCUS</div></div>
+<div><div style="font-size:24px;font-weight:900;line-height:1">12</div><div style="margin-top:4px;font-size:11.5px;font-weight:800;color:#96877F">LESSONS</div></div>
+</div>
+<div style="margin-top:14px;font-size:13px;font-weight:700;color:#96877F">You and 4 friends</div>
+</div>
+<dc-import name="TabBar" active="friends" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">Replaces the story ring, the coin leaderboard and the flat name list. The Yard is one place you look at, not a row of avatars: species colour identifies people at a glance, size is depth, Maya's <b>focused</b> face plus a mint chip reads as busy. Today sits under it — unseen coral ring, seen hairline, no camera anywhere. <b>One item:</b> the row is just that one ring plus Add. <b>Twelve:</b> it scrolls horizontally, unseen first, seen after.</p>
+</div>
+
+<div class="dv-opt" id="1f">
+<div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>The Yard at eight</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;font-size:30px;font-weight:900;letter-spacing:-.01em">Friends</div>
+<div style="position:absolute;left:16px;right:16px;top:100px;height:330px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;right:34px;top:26px;width:50px;height:50px;border-radius:999px;background:#FFF3D6"></div>
+<div style="position:absolute;left:-30px;right:-30px;top:130px;height:300px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:232px;height:120px;background:#C6DCB4"></div>
+<dc-import name="Slime" face="idle" level="1" species="sky" hint-size="44px,44px" style="position:absolute;left:44px;top:96px;width:44px;height:44px"></dc-import>
+<dc-import name="Slime" face="sleep" level="1" species="leaf" hint-size="46px,46px" style="position:absolute;left:136px;top:88px;width:46px;height:46px"></dc-import>
+<dc-import name="Slime" face="idle" level="2" species="pink" hint-size="44px,44px" style="position:absolute;left:222px;top:94px;width:44px;height:44px"></dc-import>
+<dc-import name="Slime" face="delight" level="1" species="lavender" hint-size="46px,46px" style="position:absolute;left:296px;top:88px;width:46px;height:46px"></dc-import>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="60px,60px" style="position:absolute;left:20px;top:152px;width:60px;height:60px"></dc-import>
+<dc-import name="Slime" face="idle" level="2" species="leaf" hint-size="58px,58px" style="position:absolute;left:104px;top:158px;width:58px;height:58px"></dc-import>
+<dc-import name="Slime" face="idle" level="1" species="sky" hint-size="58px,58px" style="position:absolute;left:210px;top:156px;width:58px;height:58px"></dc-import>
+<dc-import name="Slime" face="wink" level="2" species="lavender" hint-size="60px,60px" style="position:absolute;left:288px;top:152px;width:60px;height:60px"></dc-import>
+<dc-import name="Slime" face="idle" level="2" species="green" hint-size="92px,92px" style="position:absolute;left:138px;top:196px;width:92px;height:92px"></dc-import>
+<div style="position:absolute;left:166px;top:288px;background:#2E2622;border-radius:999px;padding:3px 11px;font-size:10.5px;font-weight:800;color:#FFF6EF">Pip · you</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:456px;background:#FFFFFF;border-radius:22px;padding:16px 18px;font-size:14px;font-weight:700;line-height:1.5;color:#7C6F68">Eight is the comfortable ceiling: three depth rows, names on tap rather than always-on, you always front and centre. Past eight the scene scrolls sideways one screen at a time.</div>
+<dc-import name="TabBar" active="friends" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">Name pills drop out at eight and appear on tap — the slimes are already identity, so labels become noise. Depth rows keep everyone the same visual weight; nobody is ranked by position.</p>
+</div>
+
+<div class="dv-opt" id="1g">
+<div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>Nobody around today <span style="font-weight:400;color:rgba(46,38,34,.5)">(invented)</span></div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;font-size:30px;font-weight:900;letter-spacing:-.01em">Friends</div>
+<div style="position:absolute;left:16px;right:16px;top:100px;height:330px;border-radius:28px;overflow:hidden;background:#E9EFF8">
+<div style="position:absolute;right:40px;top:30px;width:44px;height:44px;border-radius:999px;background:#FFF3D6"></div>
+<div style="position:absolute;left:64px;top:52px;width:10px;height:10px;border-radius:999px;background:#FFFFFF;opacity:.8"></div>
+<div style="position:absolute;left:104px;top:74px;width:7px;height:7px;border-radius:999px;background:#FFFFFF;opacity:.7"></div>
+<div style="position:absolute;left:-30px;right:-30px;top:130px;height:300px;background:#DAE9CD;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:232px;height:120px;background:#C9DEB7"></div>
+<div style="position:absolute;left:18px;top:198px;width:42px;height:42px;border-radius:999px;background:#BCD5A9"></div>
+<div style="position:absolute;right:20px;top:210px;width:32px;height:32px;border-radius:999px;background:#BCD5A9"></div>
+<dc-import name="Slime" face="idle" level="2" species="green" hint-size="90px,90px" style="position:absolute;left:150px;top:190px;width:90px;height:90px"></dc-import>
+<div style="position:absolute;left:176px;top:280px;background:#2E2622;border-radius:999px;padding:3px 11px;font-size:10.5px;font-weight:800;color:#FFF6EF">Pip · you</div>
+</div>
+<div style="position:absolute;left:24px;top:452px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">TODAY</div>
+<div style="position:absolute;left:20px;right:20px;top:482px;display:flex;align-items:center;gap:14px">
+<div style="width:70px;flex:none;text-align:center"><div style="width:70px;height:70px;border-radius:999px;border:3px solid #57C79B;box-sizing:border-box;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="idle" level="2" species="green" hint-size="52px,52px" style="width:52px;height:52px;margin-top:7px"></dc-import></div><div style="margin-top:6px;font-size:11.5px;font-weight:800">You</div></div>
+<div style="flex:1;font-size:14.5px;font-weight:700;line-height:1.5;color:#7C6F68">You focused 25 minutes. Sam and Maya were out here yesterday.</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:606px;background:#FFFFFF;border-radius:22px;padding:20px">
+<div style="font-size:19px;font-weight:800;line-height:1.3">Quiet out here today.</div>
+<div style="margin-top:7px;font-size:14px;font-weight:700;line-height:1.5;color:#96877F">Open a room and leave the door unlocked — whoever shows up can sit down with you.</div>
+<div style="margin-top:16px;height:52px;border-radius:18px;background:#FF6F61;display:grid;place-items:center;font-size:16px;font-weight:800;color:#FFF6EF">Open a room</div>
+</div>
+<dc-import name="TabBar" active="friends" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">The most common state on a Tuesday morning. Absent friends are simply absent — no grey slimes, no "hasn't studied in 5 days", no explanation offered. The day shifts to a lighter palette, your own moment holds the Today row, and the one offer is to open a room rather than to go chase anybody.</p>
+</div>
+
+<div class="dv-opt" id="1h">
+<div class="dv-olabel"><a class="dv-oid" href="#1h">1h</a>First friend <span style="font-weight:400;color:rgba(46,38,34,.5)">(invented, once ever)</span></div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:16px;right:16px;top:100px;height:360px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;left:-30px;right:-30px;top:150px;height:320px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:256px;height:120px;background:#C6DCB4"></div>
+<div style="position:absolute;left:64px;top:44px;width:9px;height:9px;border-radius:999px;background:#FFC24B"></div>
+<div style="position:absolute;left:288px;top:60px;width:7px;height:7px;border-radius:999px;background:#FF9E94"></div>
+<div style="position:absolute;left:196px;top:34px;width:8px;height:8px;border-radius:999px;background:#9BC8F2"></div>
+<div style="position:absolute;left:118px;top:76px;width:6px;height:6px;border-radius:999px;background:#A5CE6B"></div>
+<dc-import name="Slime" face="delight" level="2" species="green" hint-size="104px,104px" style="position:absolute;left:78px;top:176px;width:104px;height:104px"></dc-import>
+<dc-import name="Slime" face="delight" level="3" species="pink" hint-size="104px,104px" style="position:absolute;left:186px;top:172px;width:104px;height:104px"></dc-import>
+</div>
+<div style="position:absolute;left:32px;right:32px;top:504px;text-align:center;font-size:27px;font-weight:900;line-height:1.2;letter-spacing:-.01em">Maya moved in.</div>
+<div style="position:absolute;left:38px;right:38px;top:552px;text-align:center;font-size:15px;font-weight:700;line-height:1.5;color:#96877F">She'll be out in the yard whenever she's been in the app. You'll see what she finishes, and she'll see you.</div>
+<div style="position:absolute;left:22px;right:22px;bottom:110px;height:58px;border-radius:20px;background:#FF6F61;display:grid;place-items:center;font-size:17.5px;font-weight:800;color:#FFF6EF">Say hi</div>
+<div style="position:absolute;left:0;right:0;bottom:56px;text-align:center;font-size:14.5px;font-weight:800;color:#96877F">Later</div>
+</div>
+<p class="dv-note">One warm beat, once ever. Both slimes at <b>delight</b>, a handful of confetti dots in species colours, and the only action routes straight into a vibe — the first thing you do with a friend is send something kind, which also pays you 2 coins.</p>
+</div>
+
+<div class="dv-opt" id="1i">
+<div class="dv-olabel"><a class="dv-oid" href="#1i">1i</a>Moment viewer — fresh</div>
+<div style="width:390px;height:844px;background:#FBEDF0;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:-40px;right:-40px;top:300px;height:600px;background:#F7DFE5;border-radius:300px 300px 0 0"></div>
+<div style="position:absolute;left:16px;right:16px;top:50px;display:flex;gap:4px"><div style="flex:1;height:4px;border-radius:999px;background:#2E2622"></div><div style="flex:1;height:4px;border-radius:999px;background:rgba(46,38,34,.2)"></div><div style="flex:1;height:4px;border-radius:999px;background:rgba(46,38,34,.2)"></div><div style="flex:1;height:4px;border-radius:999px;background:rgba(46,38,34,.2)"></div></div>
+<div style="position:absolute;left:16px;right:16px;top:72px;display:flex;align-items:center;gap:10px">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<div style="flex:1;display:flex;align-items:baseline;gap:8px"><span style="font-size:15.5px;font-weight:800">Maya</span><span style="font-size:12.5px;font-weight:700;color:#A38B90">2:40 pm</span></div>
+<svg width="15" height="15" viewBox="0 0 14 14" style="flex:none"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg>
+</div>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="216px,216px" style="position:absolute;left:87px;top:198px;width:216px;height:216px"></dc-import>
+<div style="position:absolute;left:32px;right:32px;top:466px;text-align:center;font-size:32px;font-weight:900;line-height:1.15;letter-spacing:-.01em">Focused 45 minutes</div>
+<div style="position:absolute;left:32px;right:32px;top:524px;text-align:center;font-size:15px;font-weight:700;color:#A38B90">This afternoon · her longest yet</div>
+<div style="position:absolute;left:20px;right:20px;bottom:96px;height:66px;background:#FFFFFF;border-radius:999px;display:flex;align-items:center;justify-content:space-around;padding:0 10px;box-sizing:border-box">
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M8.5 12V5.6a1.5 1.5 0 0 1 3 0V11m0-.6a1.4 1.4 0 0 1 2.8 0v1.2m0-.8a1.4 1.4 0 0 1 2.8 0V13c0 4-2.2 6.6-5.6 6.6-3 0-5-1.8-5.7-4.6l-.7-2.6a1.5 1.5 0 0 1 2.6-1.3l.8 1" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="none" stroke="#2E2622" strokeWidth="1.9"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="m12 3.4 2.5 5.3 5.7.7-4.2 4 1.1 5.7-5.1-2.9-5.1 2.9 1.1-5.7-4.2-4 5.7-.7Z" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinejoin="round"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M5.5 8h11v6a4 4 0 0 1-4 4h-3a4 4 0 0 1-4-4V8Zm11 1.5h1.8a2.2 2.2 0 0 1 0 4.4h-1.8M6 20.6h10" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 19c-4 0-7-3-7-7 4 0 7 3 7 7Zm0 0c0-4 3-7 7-7 0 4-3 7-7 7Zm0 0V9.5" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:56px;text-align:center;font-size:12px;font-weight:800;color:#A38B90">Sending one pays you 2 coins · once a day each</div>
+</div>
+<p class="dv-note">Full bleed, tab bar hidden, segmented bar at the top — Instagram's shape without its content. Her slime and one fact are the whole card, tinted to her species colour. The reaction row is <b>fixed and closed</b>: five drawn vectors, no reply field, no keyboard, nothing to type.</p>
+</div>
+
+<div class="dv-opt" id="1j">
+<div class="dv-olabel"><a class="dv-oid" href="#1j">1j</a>Moment viewer — reacted</div>
+<div style="width:390px;height:844px;background:#FBEDF0;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:-40px;right:-40px;top:300px;height:600px;background:#F7DFE5;border-radius:300px 300px 0 0"></div>
+<div style="position:absolute;left:16px;right:16px;top:50px;display:flex;gap:4px"><div style="flex:1;height:4px;border-radius:999px;background:#2E2622"></div><div style="flex:1;height:4px;border-radius:999px;background:rgba(46,38,34,.2)"></div><div style="flex:1;height:4px;border-radius:999px;background:rgba(46,38,34,.2)"></div><div style="flex:1;height:4px;border-radius:999px;background:rgba(46,38,34,.2)"></div></div>
+<div style="position:absolute;left:16px;right:16px;top:72px;display:flex;align-items:center;gap:10px">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<div style="flex:1;display:flex;align-items:baseline;gap:8px"><span style="font-size:15.5px;font-weight:800">Maya</span><span style="font-size:12.5px;font-weight:700;color:#A38B90">2:40 pm</span></div>
+<svg width="15" height="15" viewBox="0 0 14 14" style="flex:none"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg>
+</div>
+<div style="position:absolute;right:16px;top:126px;display:flex;align-items:center;gap:7px;background:#FFFFFF;border-radius:999px;padding:6px 12px 6px 8px"><svg width="17" height="17" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:14px;font-weight:800">+2</span></div>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="216px,216px" style="position:absolute;left:87px;top:198px;width:216px;height:216px"></dc-import>
+<div style="position:absolute;left:32px;right:32px;top:466px;text-align:center;font-size:32px;font-weight:900;line-height:1.15;letter-spacing:-.01em">Focused 45 minutes</div>
+<div style="position:absolute;left:32px;right:32px;top:524px;text-align:center;font-size:15px;font-weight:700;color:#A38B90">This afternoon · her longest yet</div>
+<div style="position:absolute;left:20px;right:20px;bottom:96px;height:66px;background:#FFFFFF;border-radius:999px;display:flex;align-items:center;justify-content:space-around;padding:0 10px;box-sizing:border-box">
+<div style="width:52px;height:52px;border-radius:999px;background:#FF6F61;display:grid;place-items:center"><svg width="27" height="27" viewBox="0 0 24 24"><path d="M8.5 12V5.6a1.5 1.5 0 0 1 3 0V11m0-.6a1.4 1.4 0 0 1 2.8 0v1.2m0-.8a1.4 1.4 0 0 1 2.8 0V13c0 4-2.2 6.6-5.6 6.6-3 0-5-1.8-5.7-4.6l-.7-2.6a1.5 1.5 0 0 1 2.6-1.3l.8 1" fill="none" stroke="#FFF6EF" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;opacity:.35"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="none" stroke="#2E2622" strokeWidth="1.9"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;opacity:.35"><svg width="24" height="24" viewBox="0 0 24 24"><path d="m12 3.4 2.5 5.3 5.7.7-4.2 4 1.1 5.7-5.1-2.9-5.1 2.9 1.1-5.7-4.2-4 5.7-.7Z" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinejoin="round"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;opacity:.35"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M5.5 8h11v6a4 4 0 0 1-4 4h-3a4 4 0 0 1-4-4V8Zm11 1.5h1.8a2.2 2.2 0 0 1 0 4.4h-1.8M6 20.6h10" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round"></path></svg></div>
+<div style="width:46px;height:46px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;opacity:.35"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 19c-4 0-7-3-7-7 4 0 7 3 7 7Zm0 0c0-4 3-7 7-7 0 4-3 7-7 7Zm0 0V9.5" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:56px;text-align:center;font-size:12.5px;font-weight:800;color:#3E9E78">High five sent · +2 coins</div>
+</div>
+<p class="dv-note">The sent one fills coral and grows; the rest drop to 35% and are inert for the day. Coins land in the chip that appears top-right, so the payment is visibly <b>yours</b> — kindness is the paid act. Maya's side shows the high five and pays her nothing.</p>
+</div>
+
+<div class="dv-opt" id="1k">
+<div class="dv-olabel"><a class="dv-oid" href="#1k">1k</a>Study together — invite</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:110px;font-size:30px;font-weight:900;letter-spacing:-.01em">Study together</div>
+<div style="position:absolute;left:24px;top:158px;font-size:14.5px;font-weight:700;color:#96877F">Same timer, same room. Pays the same as studying alone.</div>
+<div style="position:absolute;left:24px;top:212px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">WHO</div>
+<div style="position:absolute;left:20px;right:20px;top:242px;display:flex;gap:10px">
+<div style="width:74px;text-align:center"><div style="width:70px;height:70px;border-radius:999px;background:#FFFFFF;box-shadow:0 0 0 3px #FF6F61;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="54px,54px" style="width:54px;height:54px;margin-top:7px"></dc-import></div><div style="margin-top:7px;font-size:12px;font-weight:800">Maya</div></div>
+<div style="width:74px;text-align:center"><div style="width:70px;height:70px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="54px,54px" style="width:54px;height:54px;margin-top:7px"></dc-import></div><div style="margin-top:7px;font-size:12px;font-weight:700;color:#96877F">Josh</div></div>
+<div style="width:74px;text-align:center"><div style="width:70px;height:70px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;margin:0 auto"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="54px,54px" style="width:54px;height:54px;margin-top:7px"></dc-import></div><div style="margin-top:7px;font-size:12px;font-weight:700;color:#96877F">Ava</div></div>
+<div style="flex:1;text-align:center"><div style="width:70px;height:70px;border-radius:999px;border:2px dashed #E0D4C0;box-sizing:border-box;display:grid;place-items:center;margin:0 auto"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M9 11.2a3.6 3.6 0 1 0 0-7.2 3.6 3.6 0 0 0 0 7.2Zm7.2-.4a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2.4 19.2c0-3 3-4.9 6.6-4.9s6.6 1.9 6.6 4.9V20H2.4v-.8Z" fill="#B4A996"></path></svg></div><div style="margin-top:7px;font-size:12px;font-weight:700;color:#96877F">Open room</div></div>
+</div>
+<div style="position:absolute;left:24px;top:396px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">HOW LONG</div>
+<div style="position:absolute;left:20px;right:20px;top:426px;display:flex;gap:10px">
+<div style="flex:1;height:52px;border-radius:18px;background:#FFFFFF;display:grid;place-items:center;font-size:15.5px;font-weight:800;color:#96877F">25 min</div>
+<div style="flex:1;height:52px;border-radius:18px;background:#2E2622;display:grid;place-items:center;font-size:15.5px;font-weight:800;color:#FFF6EF">45 min</div>
+<div style="flex:1;height:52px;border-radius:18px;background:#FFFFFF;display:grid;place-items:center;font-size:15.5px;font-weight:800;color:#96877F">60 min</div>
+</div>
+<div style="position:absolute;left:24px;top:508px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">ON WHAT</div>
+<div style="position:absolute;left:20px;right:20px;top:538px;display:flex;flex-direction:column;gap:9px">
+<div style="background:#FFFFFF;border:2px solid #57C79B;border-radius:18px;padding:13px 15px;display:flex;align-items:center;gap:12px;box-sizing:border-box">
+<div style="width:20px;height:20px;border-radius:999px;background:#57C79B;display:grid;place-items:center;flex:none"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M5 12.6 9.8 17.4 19 7.6" stroke="#FFFFFF" strokeWidth="3.6" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="flex:1"><div style="font-size:15px;font-weight:800">Ch. 5 Problem Set</div><div style="margin-top:2px;font-size:12px;font-weight:700;color:#96877F">AP Physics · due Fri</div></div>
+</div>
+<div style="background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:18px;padding:13px 15px;display:flex;align-items:center;gap:12px;box-sizing:border-box">
+<div style="width:20px;height:20px;border-radius:999px;border:2px solid #DDD2C0;flex:none"></div>
+<div style="flex:1"><div style="font-size:15px;font-weight:700">Essay outline</div><div style="margin-top:2px;font-size:12px;font-weight:700;color:#96877F">English 11 · due Sat</div></div>
+</div>
+<div style="background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:18px;padding:13px 15px;display:flex;align-items:center;gap:12px;box-sizing:border-box">
+<div style="width:20px;height:20px;border-radius:999px;border:2px solid #DDD2C0;flex:none"></div>
+<div style="flex:1;font-size:15px;font-weight:700">Just studying</div>
+</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;bottom:40px;height:58px;border-radius:20px;background:#FF6F61;display:flex;align-items:center;justify-content:center;gap:10px"><span style="font-size:17.5px;font-weight:800;color:#FFF6EF">Ask Maya to sit down</span></div>
+</div>
+<p class="dv-note">Calmer than a game invite: no countdown to accept, no "challenge". "On what" is picked from your real synced Canvas tasks, which keeps the no-free-text rule and makes the room mean something. The line under the title states the coin rule so nobody expects a bonus for being social.</p>
+</div>
+
+<div class="dv-opt" id="1l">
+<div class="dv-olabel"><a class="dv-oid" href="#1l">1l</a>Live room — three in, tab bar hidden</div>
+<div style="width:390px;height:844px;background:#E8EEF6;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:-40px;right:-40px;top:420px;height:520px;background:#DCE6F2;border-radius:280px 280px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:596px;height:250px;background:#D3DFEE"></div>
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:7px;background:#FFFFFF;border-radius:999px;padding:6px 13px"><div style="width:8px;height:8px;border-radius:999px;background:#57C79B"></div><span style="font-size:13px;font-weight:800">3 in the room</span></div>
+<div style="width:38px;height:38px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;top:132px;text-align:center;font-size:72px;font-weight:900;letter-spacing:-.02em;line-height:1">28:14</div>
+<div style="position:absolute;left:0;right:0;top:214px;text-align:center;font-size:13.5px;font-weight:800;color:#8A93A3">45 minutes · started 3:32</div>
+<div style="position:absolute;left:34px;right:34px;top:250px;height:6px;border-radius:999px;background:rgba(46,38,34,.1)"><div style="width:37%;height:6px;border-radius:999px;background:#57C79B"></div></div>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="96px,96px" style="position:absolute;left:34px;top:470px;width:96px;height:96px"></dc-import>
+<div style="position:absolute;left:36px;top:576px;background:#FFFFFF;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800">Maya</div>
+<dc-import name="Slime" face="sleep" level="1" species="sky" hint-size="92px,92px" style="position:absolute;left:262px;top:478px;width:92px;height:92px"></dc-import>
+<div style="position:absolute;left:270px;top:580px;background:#FFFFFF;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800">Josh</div>
+<dc-import name="Slime" face="focused" level="2" species="green" hint-size="122px,122px" style="position:absolute;left:134px;top:520px;width:122px;height:122px"></dc-import>
+<div style="position:absolute;left:158px;top:648px;background:#2E2622;border-radius:999px;padding:3px 11px;font-size:11px;font-weight:800;color:#FFF6EF">Pip · you</div>
+<div style="position:absolute;left:24px;right:24px;bottom:88px;background:#FFFFFF;border-radius:20px;padding:14px 16px">
+<div style="font-size:13.5px;font-weight:800">Ch. 5 Problem Set · AP Physics</div>
+<div style="margin-top:4px;font-size:12.5px;font-weight:700;color:#96877F">Maya: Unit 3 quiz prep · Josh: just studying</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:48px;text-align:center;font-size:12.5px;font-weight:800;color:#8A93A3">No chat in here. Just company.</div>
+</div>
+<p class="dv-note">The strongest screen in the set, and the whole point of the tab. One shared timer, three slimes in one scene at <b>focused</b> or <b>sleep</b>, everyone's task listed once so the room has a subject. No chat, no reactions, no presence dots blinking — the company is the feature.</p>
+</div>
+
+<div class="dv-opt" id="1m">
+<div class="dv-olabel"><a class="dv-oid" href="#1m">1m</a>Live room — Josh left early</div>
+<div style="width:390px;height:844px;background:#E8EEF6;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:-40px;right:-40px;top:420px;height:520px;background:#DCE6F2;border-radius:280px 280px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:596px;height:250px;background:#D3DFEE"></div>
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:7px;background:#FFFFFF;border-radius:999px;padding:6px 13px"><div style="width:8px;height:8px;border-radius:999px;background:#57C79B"></div><span style="font-size:13px;font-weight:800">2 in the room</span></div>
+<div style="width:38px;height:38px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;top:132px;text-align:center;font-size:72px;font-weight:900;letter-spacing:-.02em;line-height:1">14:02</div>
+<div style="position:absolute;left:0;right:0;top:214px;text-align:center;font-size:13.5px;font-weight:800;color:#8A93A3">45 minutes · started 3:32</div>
+<div style="position:absolute;left:34px;right:34px;top:250px;height:6px;border-radius:999px;background:rgba(46,38,34,.1)"><div style="width:69%;height:6px;border-radius:999px;background:#57C79B"></div></div>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="96px,96px" style="position:absolute;left:34px;top:470px;width:96px;height:96px"></dc-import>
+<div style="position:absolute;left:36px;top:576px;background:#FFFFFF;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800">Maya</div>
+<dc-import name="Slime" face="focused" level="2" species="green" hint-size="122px,122px" style="position:absolute;left:134px;top:520px;width:122px;height:122px"></dc-import>
+<div style="position:absolute;left:158px;top:648px;background:#2E2622;border-radius:999px;padding:3px 11px;font-size:11px;font-weight:800;color:#FFF6EF">Pip · you</div>
+<div style="position:absolute;left:24px;right:24px;bottom:88px;background:#FFFFFF;border-radius:20px;padding:14px 16px">
+<div style="font-size:13.5px;font-weight:800">Ch. 5 Problem Set · AP Physics</div>
+<div style="margin-top:4px;font-size:12.5px;font-weight:700;color:#96877F">Maya: Unit 3 quiz prep</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:48px;text-align:center;font-size:12.5px;font-weight:800;color:#8A93A3">No chat in here. Just company.</div>
+</div>
+<p class="dv-note">Identical screen, one fewer slime. The count goes 3 → 2, Josh's line drops out of the task card, and that is the entire event: no notification, no "Josh left", no empty seat, no shame. He keeps the minutes he sat for.</p>
+</div>
+
+<div class="dv-opt" id="1n">
+<div class="dv-olabel"><a class="dv-oid" href="#1n">1n</a>Study together — finished</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:16px;right:16px;top:96px;height:330px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;left:-30px;right:-30px;top:150px;height:300px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:250px;height:110px;background:#C6DCB4"></div>
+<dc-import name="Slime" face="delight" level="2" species="green" hint-size="112px,112px" style="position:absolute;left:76px;top:172px;width:112px;height:112px"></dc-import>
+<dc-import name="Slime" face="delight" level="3" species="pink" hint-size="112px,112px" style="position:absolute;left:182px;top:170px;width:112px;height:112px"></dc-import>
+</div>
+<div style="position:absolute;left:32px;right:32px;top:462px;text-align:center;font-size:28px;font-weight:900;line-height:1.18;letter-spacing:-.01em">45 minutes, together.</div>
+<div style="position:absolute;left:20px;right:20px;top:530px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="2" species="green" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:15.5px;font-weight:800">You</div>
+<div style="display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:6px 12px 6px 9px"><svg width="16" height="16" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:14px;font-weight:800;color:#A8761D">+30</span></div>
+</div>
+<div style="margin:14px 0;height:1.5px;background:#F0E9DC"></div>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:15.5px;font-weight:800">Maya</div>
+<div style="display:flex;align-items:center;gap:6px;background:#FFF3D6;border-radius:999px;padding:6px 12px 6px 9px"><svg width="16" height="16" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:14px;font-weight:800;color:#A8761D">+30</span></div>
+</div>
+</div>
+<div style="position:absolute;left:32px;right:32px;top:704px;text-align:center;font-size:13.5px;font-weight:700;line-height:1.5;color:#96877F">Same as focusing alone. Nobody won.</div>
+<div style="position:absolute;left:20px;right:20px;bottom:40px;height:58px;border-radius:20px;background:#FF6F61;display:grid;place-items:center;font-size:17.5px;font-weight:800;color:#FFF6EF">Done</div>
+</div>
+<p class="dv-note">Two rows, identical numbers, no ordering that implies a winner — and the copy says so out loud. Josh, who left at 14:02, gets his 20 for the time he sat, on his own screen, with no comparison shown to anyone.</p>
+</div>
+
+<div class="dv-opt" id="1o">
+<div class="dv-olabel"><a class="dv-oid" href="#1o">1o</a>This week, together — the default</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:110px;font-size:30px;font-weight:900;letter-spacing:-.01em">This week</div>
+<div style="position:absolute;left:20px;right:20px;top:166px;display:flex;gap:8px;background:#FFFFFF;border-radius:999px;padding:5px">
+<div style="flex:1;height:42px;border-radius:999px;background:#2E2622;display:grid;place-items:center;font-size:14px;font-weight:800;color:#FFF6EF">Together</div>
+<div style="flex:1;height:42px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:800;color:#96877F">Who did what</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:236px;background:#FFFFFF;border-radius:26px;padding:24px 22px">
+<div style="display:flex;align-items:center">
+<div style="width:38px;height:38px;border-radius:999px;background:#FAF5EC;box-shadow:0 0 0 2.5px #FFFFFF;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="idle" level="2" species="green" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<div style="width:38px;height:38px;border-radius:999px;background:#FAF5EC;box-shadow:0 0 0 2.5px #FFFFFF;display:grid;place-items:center;overflow:hidden;margin-left:-10px"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<div style="width:38px;height:38px;border-radius:999px;background:#FAF5EC;box-shadow:0 0 0 2.5px #FFFFFF;display:grid;place-items:center;overflow:hidden;margin-left:-10px"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<div style="width:38px;height:38px;border-radius:999px;background:#FAF5EC;box-shadow:0 0 0 2.5px #FFFFFF;display:grid;place-items:center;overflow:hidden;margin-left:-10px"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<div style="width:38px;height:38px;border-radius:999px;background:#FAF5EC;box-shadow:0 0 0 2.5px #FFFFFF;display:grid;place-items:center;overflow:hidden;margin-left:-10px"><dc-import name="Slime" face="idle" level="1" species="leaf" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<div style="flex:1"></div>
+<div style="font-size:13px;font-weight:800;color:#96877F">5 of you</div>
+</div>
+<div style="margin-top:24px"><div style="font-size:44px;font-weight:900;line-height:1;letter-spacing:-.02em">41</div><div style="margin-top:6px;font-size:12px;font-weight:800;letter-spacing:.08em;color:#96877F">TASKS FINISHED</div></div>
+<div style="margin-top:22px;display:flex;gap:16px">
+<div style="flex:1"><div style="font-size:26px;font-weight:900;line-height:1">6h 20m</div><div style="margin-top:5px;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:#96877F">FOCUSED</div></div>
+<div style="flex:1"><div style="font-size:26px;font-weight:900;line-height:1">12</div><div style="margin-top:5px;font-size:11.5px;font-weight:800;letter-spacing:.08em;color:#96877F">LESSONS</div></div>
+</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:592px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">TOGETHER TIME</div>
+<div style="margin-top:12px;font-size:16px;font-weight:700;line-height:1.5">You sat in a room with someone for <b>2h 10m</b> of that — three sessions, all with Maya.</div>
+</div>
+<div style="position:absolute;left:24px;right:24px;top:744px;font-size:12.5px;font-weight:700;line-height:1.5;color:#B4A996">Adds up from Monday. Nothing here resets, and no number can go down.</div>
+</div>
+<p class="dv-note">Replaces the coins leaderboard. The group total is the default because it is the only framing where a quiet week from one person doesn't read as a failure — a group photo, not a ladder. Together time is the number we actually want to move.</p>
+</div>
+
+<div class="dv-opt" id="1p">
+<div class="dv-olabel"><a class="dv-oid" href="#1p">1p</a>Who did what — the alternate</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:110px;font-size:30px;font-weight:900;letter-spacing:-.01em">This week</div>
+<div style="position:absolute;left:20px;right:20px;top:166px;display:flex;gap:8px;background:#FFFFFF;border-radius:999px;padding:5px">
+<div style="flex:1;height:42px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:800;color:#96877F">Together</div>
+<div style="flex:1;height:42px;border-radius:999px;background:#2E2622;display:grid;place-items:center;font-size:14px;font-weight:800;color:#FFF6EF">Who did what</div>
+</div>
+<div style="position:absolute;left:24px;top:234px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">BY FOCUS MINUTES</div>
+<div style="position:absolute;left:20px;right:20px;top:266px;display:flex;flex-direction:column;gap:10px">
+<div style="background:#FFFFFF;border-radius:20px;padding:11px 16px;display:flex;align-items:center;gap:13px">
+<div style="width:16px;font-size:14px;font-weight:900;color:#B4A996;flex:none">1</div>
+<div style="width:44px;height:44px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="34px,34px" style="width:34px;height:34px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:16px;font-weight:800">Maya</div>
+<div style="font-size:16px;font-weight:800">3h 05m</div>
+</div>
+<div style="background:#DFF3E9;border-radius:20px;padding:11px 16px;display:flex;align-items:center;gap:13px">
+<div style="width:16px;font-size:14px;font-weight:900;color:#3E9E78;flex:none">2</div>
+<div style="width:44px;height:44px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="2" species="green" hint-size="34px,34px" style="width:34px;height:34px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:16px;font-weight:800">You</div>
+<div style="font-size:16px;font-weight:800">1h 40m</div>
+</div>
+<div style="background:#FFFFFF;border-radius:20px;padding:11px 16px;display:flex;align-items:center;gap:13px">
+<div style="width:16px;font-size:14px;font-weight:900;color:#B4A996;flex:none">3</div>
+<div style="width:44px;height:44px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="34px,34px" style="width:34px;height:34px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:16px;font-weight:800">Ava</div>
+<div style="font-size:16px;font-weight:800">1h 05m</div>
+</div>
+<div style="background:#FFFFFF;border-radius:20px;padding:11px 16px;display:flex;align-items:center;gap:13px">
+<div style="width:16px;font-size:14px;font-weight:900;color:#B4A996;flex:none">4</div>
+<div style="width:44px;height:44px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="34px,34px" style="width:34px;height:34px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:16px;font-weight:800">Josh</div>
+<div style="font-size:16px;font-weight:800">25m</div>
+</div>
+<div style="background:#FFFFFF;border-radius:20px;padding:11px 16px;display:flex;align-items:center;gap:13px">
+<div style="width:16px;font-size:14px;font-weight:900;color:#B4A996;flex:none">5</div>
+<div style="width:44px;height:44px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="1" species="leaf" hint-size="34px,34px" style="width:34px;height:34px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:16px;font-weight:800">Sam</div>
+<div style="font-size:16px;font-weight:800">5m</div>
+</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:672px;background:#FFF3D6;border-radius:20px;padding:16px 18px;font-size:13.5px;font-weight:700;line-height:1.55;color:#A8761D">Ranked on minutes focused, never on coins — ranking the currency would make people grind for money instead of for work.</div>
+<div style="position:absolute;left:24px;right:24px;top:780px;font-size:12.5px;font-weight:700;line-height:1.5;color:#B4A996">No promotion, no demotion, no reset. Monday starts a new week beside this one; it never wipes it.</div>
+</div>
+<p class="dv-note">Deliberately the second tab, not the first. Plain numerals instead of medals, no zones, no timer to a reset, and Sam's 5 minutes sit in the list without commentary. <b>I'd ship the group total as the default</b> — reasoning in the notes panel.</p>
+</div>
+
+<div class="dv-opt" id="1q">
+<div class="dv-olabel"><a class="dv-oid" href="#1q">1q</a>Friend card + safety menu</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:16px;right:16px;top:100px;height:290px;border-radius:28px;overflow:hidden;background:#E4EDF7">
+<div style="position:absolute;left:-30px;right:-30px;top:120px;height:260px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:214px;height:120px;background:#C6DCB4"></div>
+</div>
+<div style="position:absolute;inset:0;background:rgba(46,38,34,.45)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;top:296px;background:#FFFFFF;border-radius:28px 28px 0 0">
+<div style="position:absolute;left:50%;top:12px;width:44px;height:5px;border-radius:999px;background:#F0E9DC;transform:translateX(-50%)"></div>
+<div style="position:absolute;right:18px;top:24px;width:38px;height:38px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="4.6" r="1.7" fill="#96877F"></circle><circle cx="10" cy="10" r="1.7" fill="#96877F"></circle><circle cx="10" cy="15.4" r="1.7" fill="#96877F"></circle></svg></div>
+<dc-import name="Slime" face="focused" level="3" species="pink" hint-size="150px,150px" style="position:absolute;left:120px;top:34px;width:150px;height:150px"></dc-import>
+<div style="position:absolute;left:0;right:0;top:196px;text-align:center;font-size:27px;font-weight:900;letter-spacing:-.01em">Maya</div>
+<div style="position:absolute;left:0;right:0;top:236px;text-align:center"><span style="display:inline-block;background:#FFF3D6;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;color:#A8761D">Lv 3 · pink slime</span></div>
+<div style="position:absolute;left:32px;right:32px;top:284px;text-align:center;font-size:15.5px;font-weight:700;line-height:1.5;color:#7C6F68">Focused 45 minutes today, and she's in a session until 4:15.</div>
+<div style="position:absolute;left:20px;right:20px;top:356px;display:flex;gap:10px">
+<div style="flex:1;height:56px;border-radius:20px;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center;font-size:15.5px;font-weight:800">Send a vibe</div>
+<div style="flex:1;height:56px;border-radius:20px;background:#FF6F61;display:grid;place-items:center;font-size:15.5px;font-weight:800;color:#FFF6EF">Study together</div>
+</div>
+<div style="position:absolute;left:0;right:0;top:436px;text-align:center;font-size:13.5px;font-weight:800;color:#96877F">What Maya can see</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;bottom:16px;background:#FFFFFF;border-radius:22px;padding:8px;box-shadow:0 -6px 30px rgba(46,38,34,.22)">
+<div style="padding:10px 14px;display:flex;align-items:center;gap:12px"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 11a3.4 3.4 0 1 0 0-6.8A3.4 3.4 0 0 0 9 11Zm-6.4 8.4c0-2.9 2.9-4.7 6.4-4.7 1.4 0 2.7.3 3.8.8M16 12h6" fill="none" stroke="#2E2622" strokeWidth="2" strokeLinecap="round"></path></svg><div><div style="font-size:15px;font-weight:800">Remove friend</div><div style="margin-top:2px;font-size:11.5px;font-weight:700;color:#96877F">She isn't told</div></div></div>
+<div style="height:1.5px;background:#F0E9DC;margin:0 14px"></div>
+<div style="padding:10px 14px;display:flex;align-items:center;gap:12px"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="#2E2622" strokeWidth="2"></circle><path d="M6.2 6.2l11.6 11.6" stroke="#2E2622" strokeWidth="2" strokeLinecap="round"></path></svg><div><div style="font-size:15px;font-weight:800">Block</div><div style="margin-top:2px;font-size:11.5px;font-weight:700;color:#96877F">Your code stops working for her</div></div></div>
+<div style="height:1.5px;background:#F0E9DC;margin:0 14px"></div>
+<div style="padding:10px 14px;display:flex;align-items:center;gap:12px"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M6 3v18M6 4.6h11l-2.2 4.2L17 13H6" fill="none" stroke="#E4735F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg><div><div style="font-size:15px;font-weight:800;color:#E4735F">Report</div><div style="margin-top:2px;font-size:11.5px;font-weight:700;color:#96877F">Goes to us, not to her</div></div></div>
+</div>
+</div>
+<p class="dv-note">Her slime at its real level does the identity work; one line says what she did today. Two actions, equal weight, and the safety menu is one tap from the top-right — plain words, no red banners, and each row states the consequence so using it is undramatic. Report is the only coral thing in it.</p>
+</div>
+
+<div class="dv-opt" id="1r">
+<div class="dv-olabel"><a class="dv-oid" href="#1r">1r</a>Send a vibe</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;inset:0;background:rgba(46,38,34,.45)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;top:158px;background:#FFFFFF;border-radius:28px 28px 0 0;padding:0 20px;box-sizing:border-box">
+<div style="position:absolute;left:50%;top:12px;width:44px;height:5px;border-radius:999px;background:#F0E9DC;transform:translateX(-50%)"></div>
+<div style="margin-top:40px;display:flex;align-items:center;gap:12px">
+<div style="width:44px;height:44px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="34px,34px" style="width:34px;height:34px;margin-top:5px"></dc-import></div>
+<div><div style="font-size:20px;font-weight:900">Send Maya a vibe</div><div style="margin-top:2px;font-size:12.5px;font-weight:700;color:#96877F">One a day each · pays you 2 coins</div></div>
+</div>
+<div style="margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div style="height:112px;border-radius:20px;background:#FFFFFF;border:2px solid #FF6F61;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+<svg width="32" height="32" viewBox="0 0 24 24"><path d="M8.5 12V5.6a1.5 1.5 0 0 1 3 0V11m0-.6a1.4 1.4 0 0 1 2.8 0v1.2m0-.8a1.4 1.4 0 0 1 2.8 0V13c0 4-2.2 6.6-5.6 6.6-3 0-5-1.8-5.7-4.6l-.7-2.6a1.5 1.5 0 0 1 2.6-1.3l.8 1" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+<div style="font-size:14px;font-weight:800">Wave</div>
+</div>
+<div style="height:112px;border-radius:20px;background:#FAF5EC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+<svg width="32" height="32" viewBox="0 0 24 24"><path d="M5.5 8h11v6a4 4 0 0 1-4 4h-3a4 4 0 0 1-4-4V8Zm11 1.5h1.8a2.2 2.2 0 0 1 0 4.4h-1.8M6 20.6h10" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round"></path></svg>
+<div style="font-size:14px;font-weight:800">Brew</div>
+</div>
+<div style="height:112px;border-radius:20px;background:#FAF5EC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+<svg width="32" height="32" viewBox="0 0 24 24"><path d="M3.5 19h17L14 6.5l-3.4 5.8-2.1-2.4Z" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinejoin="round"></path></svg>
+<div style="font-size:14px;font-weight:800">You've got this</div>
+</div>
+<div style="height:112px;border-radius:20px;background:#FAF5EC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+<svg width="32" height="32" viewBox="0 0 24 24"><path d="m12 3.4 2.5 5.3 5.7.7-4.2 4 1.1 5.7-5.1-2.9-5.1 2.9 1.1-5.7-4.2-4 5.7-.7Z" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinejoin="round"></path></svg>
+<div style="font-size:14px;font-weight:800">Nice one</div>
+</div>
+<div style="height:112px;border-radius:20px;background:#FAF5EC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+<svg width="32" height="32" viewBox="0 0 24 24"><path d="M12 19c-4 0-7-3-7-7 4 0 7 3 7 7Zm0 0c0-4 3-7 7-7 0 4-3 7-7 7Zm0 0V9.5" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+<div style="font-size:14px;font-weight:800">Take a breath</div>
+</div>
+<div style="height:112px;border-radius:20px;background:#FAF5EC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+<svg width="32" height="32" viewBox="0 0 24 24"><path d="M15.8 3.6a8.6 8.6 0 1 0 4.9 15.2 9.6 9.6 0 0 1-4.9-15.2Z" fill="none" stroke="#2E2622" strokeWidth="1.9" strokeLinejoin="round"></path></svg>
+<div style="font-size:14px;font-weight:800">Good luck tomorrow</div>
+</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;bottom:98px;height:58px;border-radius:20px;background:#FF6F61;display:grid;place-items:center;font-size:17.5px;font-weight:800;color:#FFF6EF">Send Wave</div>
+<div style="position:absolute;left:24px;right:24px;bottom:52px;text-align:center;font-size:12.5px;font-weight:700;color:#B4A996">Six cards, no typing. That's the whole vocabulary.</div>
+</div>
+</div>
+<p class="dv-note">Finch's Good Vibes, six cards, all drawn vectors. Every one is sendable to someone you barely know without meaning anything strange, and none of them can be turned into a taunt. The one-a-day cap is stated as a fact next to the name — a nice constraint, never a locked padlock or a "buy more".</p>
+</div>
+
+<div class="dv-opt" id="1s">
+<div class="dv-olabel"><a class="dv-oid" href="#1s">1s</a>Daily Word — before you've solved</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:26px;font-weight:900;letter-spacing:-.01em">Daily word</div><div style="font-size:13px;font-weight:800;color:#96877F">Guess 3 of 6</div></div>
+<div style="position:absolute;left:65px;top:110px;display:grid;grid-template-columns:repeat(5,48px);gap:8px">
+<div style="height:48px;border-radius:12px;background:#E6DECF"></div><div style="height:48px;border-radius:12px;background:#FFC24B"></div><div style="height:48px;border-radius:12px;background:#E6DECF"></div><div style="height:48px;border-radius:12px;background:#57C79B"></div><div style="height:48px;border-radius:12px;background:#E6DECF"></div>
+<div style="height:48px;border-radius:12px;background:#57C79B"></div><div style="height:48px;border-radius:12px;background:#E6DECF"></div><div style="height:48px;border-radius:12px;background:#E6DECF"></div><div style="height:48px;border-radius:12px;background:#57C79B"></div><div style="height:48px;border-radius:12px;background:#FFC24B"></div>
+<div style="height:48px;border-radius:12px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box"></div><div style="height:48px;border-radius:12px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box"></div><div style="height:48px;border-radius:12px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box"></div><div style="height:48px;border-radius:12px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box"></div><div style="height:48px;border-radius:12px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box"></div>
+</div>
+<div style="position:absolute;left:24px;top:412px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">FRIENDS TODAY</div>
+<div style="position:absolute;left:20px;right:20px;top:442px;background:#FFFFFF;border-radius:22px;padding:8px 16px">
+<div style="padding:12px 0;display:flex;align-items:center;gap:13px"><div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div><div style="flex:1;font-size:15.5px;font-weight:800">Maya</div><div style="display:flex;align-items:center;gap:7px"><div style="width:22px;height:22px;border-radius:999px;background:#57C79B;display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M5 12.6 9.8 17.4 19 7.6" stroke="#FFFFFF" strokeWidth="3.6" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div><span style="font-size:13.5px;font-weight:800;color:#3E9E78">solved</span></div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:12px 0;display:flex;align-items:center;gap:13px"><div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div><div style="flex:1;font-size:15.5px;font-weight:800">Josh</div><div style="display:flex;align-items:center;gap:7px"><div style="width:22px;height:22px;border-radius:999px;background:#57C79B;display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M5 12.6 9.8 17.4 19 7.6" stroke="#FFFFFF" strokeWidth="3.6" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div><span style="font-size:13.5px;font-weight:800;color:#3E9E78">solved</span></div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:12px 0;display:flex;align-items:center;gap:13px"><div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div><div style="flex:1;font-size:15.5px;font-weight:700;color:#96877F">Ava</div><div style="font-size:13.5px;font-weight:800;color:#B4A996">not yet</div></div>
+</div>
+<div style="position:absolute;left:24px;right:24px;top:646px;font-size:14px;font-weight:700;line-height:1.55;color:#96877F;text-wrap:pretty">Two solved it. How they did stays hidden until you've had your go — no spoilers, and no pressure to match anyone.</div>
+</div>
+<p class="dv-note">Before you play you learn only <b>that</b> someone solved it. Counts and grids are withheld, so the strip can't spoil the puzzle or set a bar before you start. "Not yet" is neutral — it never becomes a nudge or a notification.</p>
+</div>
+
+<div class="dv-opt" id="1t">
+<div class="dv-olabel"><a class="dv-oid" href="#1t">1t</a>Daily Word — after you've solved</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:26px;font-weight:900;letter-spacing:-.01em">Daily word</div><div style="display:flex;align-items:center;gap:7px;background:#DFF3E9;border-radius:999px;padding:6px 12px"><span style="font-size:13px;font-weight:800;color:#3E9E78">Solved in 4</span></div></div>
+<div style="position:absolute;left:24px;top:110px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">HOW EVERYONE WENT</div>
+<div style="position:absolute;left:20px;right:20px;top:142px;background:#FFFFFF;border-radius:22px;padding:8px 16px">
+<div style="padding:14px 0;display:flex;align-items:center;gap:13px">
+<div style="width:40px;height:40px;border-radius:999px;background:#DFF3E9;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="delight" level="2" species="green" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div>
+<div style="flex:1"><div style="font-size:15.5px;font-weight:800">You</div><div style="margin-top:6px;display:flex;gap:3px"><div style="width:12px;height:12px;border-radius:4px;background:#E6DECF"></div><div style="width:12px;height:12px;border-radius:4px;background:#FFC24B"></div><div style="width:12px;height:12px;border-radius:4px;background:#57C79B"></div><div style="width:12px;height:12px;border-radius:4px;background:#57C79B"></div></div></div>
+<div style="font-size:19px;font-weight:900">4</div>
+</div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:14px 0;display:flex;align-items:center;gap:13px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div>
+<div style="flex:1"><div style="font-size:15.5px;font-weight:800">Josh</div><div style="margin-top:6px;display:flex;gap:3px"><div style="width:12px;height:12px;border-radius:4px;background:#FFC24B"></div><div style="width:12px;height:12px;border-radius:4px;background:#57C79B"></div><div style="width:12px;height:12px;border-radius:4px;background:#57C79B"></div></div></div>
+<div style="font-size:19px;font-weight:900">3</div>
+</div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:14px 0;display:flex;align-items:center;gap:13px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="3" species="pink" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div>
+<div style="flex:1"><div style="font-size:15.5px;font-weight:800">Maya</div><div style="margin-top:6px;display:flex;gap:3px"><div style="width:12px;height:12px;border-radius:4px;background:#E6DECF"></div><div style="width:12px;height:12px;border-radius:4px;background:#E6DECF"></div><div style="width:12px;height:12px;border-radius:4px;background:#FFC24B"></div><div style="width:12px;height:12px;border-radius:4px;background:#57C79B"></div><div style="width:12px;height:12px;border-radius:4px;background:#57C79B"></div></div></div>
+<div style="font-size:19px;font-weight:900">5</div>
+</div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:14px 0;display:flex;align-items:center;gap:13px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="2" species="lavender" hint-size="32px,32px" style="width:32px;height:32px;margin-top:5px"></dc-import></div>
+<div style="flex:1;font-size:15.5px;font-weight:700;color:#96877F">Ava</div>
+<div style="font-size:13.5px;font-weight:800;color:#B4A996">not yet</div>
+</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:544px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">SHARE THE SHAPE</div>
+<div style="margin-top:12px;display:flex;gap:4px"><div style="width:16px;height:16px;border-radius:5px;background:#E6DECF"></div><div style="width:16px;height:16px;border-radius:5px;background:#FFC24B"></div><div style="width:16px;height:16px;border-radius:5px;background:#57C79B"></div><div style="width:16px;height:16px;border-radius:5px;background:#57C79B"></div></div>
+<div style="margin-top:14px;font-size:13.5px;font-weight:700;line-height:1.5;color:#96877F">Drawn tiles, not emoji squares — copies as a small image, and never reveals a letter.</div>
+</div>
+<div style="position:absolute;left:24px;right:24px;top:740px;font-size:12.5px;font-weight:700;line-height:1.5;color:#B4A996">Ordered by who finished first, not by score. No ranking, nothing lost by taking six.</div>
+</div>
+<p class="dv-note">Wordle's real social feature was the shape, so it's here as drawn tiles in the app's own three colours. Guess counts appear only once you've played. Rows are in finishing order rather than ranked, and Ava's blank is just a blank.</p>
+</div>
+
+<div class="dv-opt" id="1u">
+<div class="dv-olabel"><a class="dv-oid" href="#1u">1u</a>Same class + the per-course opt-in</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:16px;right:16px;top:52px;height:150px;border-radius:28px;overflow:hidden;background:#E4EDF7;opacity:.55">
+<div style="position:absolute;left:-30px;right:-30px;top:60px;height:200px;background:#D6E7C8;border-radius:200px 200px 0 0"></div>
+<div style="position:absolute;left:0;right:0;top:120px;height:60px;background:#C6DCB4"></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:222px;background:#FFFFFF;border-radius:22px;padding:18px">
+<div style="display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H11v16H6.5A2.5 2.5 0 0 1 4 17.5v-11ZM13 4h4.5A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5H13V4Z" fill="none" stroke="#96877F" strokeWidth="2"></path></svg><div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">SAME CLASS</div></div>
+<div style="margin-top:12px;font-size:19px;font-weight:800;line-height:1.3">You and Josh both have BIOL 12.</div>
+<div style="margin-top:6px;font-size:14.5px;font-weight:700;color:#7C6F68">Quiz 3 is on Friday for both of you.</div>
+<div style="margin-top:16px;display:flex;align-items:center;gap:10px">
+<div style="width:44px;height:44px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center;overflow:hidden;flex:none"><dc-import name="Slime" face="idle" level="1" species="sky" hint-size="34px,34px" style="width:34px;height:34px;margin-top:5px"></dc-import></div>
+<div style="flex:1;height:48px;border-radius:18px;background:#FF6F61;display:grid;place-items:center;font-size:15.5px;font-weight:800;color:#FFF6EF">Study together</div>
+</div>
+<div style="margin-top:12px;font-size:12px;font-weight:700;color:#B4A996">Only the two of you see this match.</div>
+</div>
+<div style="position:absolute;left:24px;top:512px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">MATCH ME ON THESE COURSES</div>
+<div style="position:absolute;left:20px;right:20px;top:544px;background:#FFFFFF;border-radius:22px;padding:6px 16px">
+<div style="padding:14px 0;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:15.5px;font-weight:800">BIOL 12</div><div style="margin-top:2px;font-size:12px;font-weight:700;color:#96877F">1 friend also has it</div></div><div style="width:46px;height:28px;border-radius:999px;background:#57C79B;position:relative;flex:none"><div style="position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:999px;background:#FFFFFF"></div></div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:14px 0;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:15.5px;font-weight:700">AP Physics</div></div><div style="width:46px;height:28px;border-radius:999px;background:#EFE7D9;position:relative;flex:none"><div style="position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:999px;background:#FFFFFF"></div></div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:14px 0;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:15.5px;font-weight:700">English 11</div></div><div style="width:46px;height:28px;border-radius:999px;background:#EFE7D9;position:relative;flex:none"><div style="position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:999px;background:#FFFFFF"></div></div></div>
+</div>
+<div style="position:absolute;left:24px;right:24px;top:734px;font-size:13px;font-weight:700;line-height:1.55;color:#96877F;text-wrap:pretty">Off for every course until you turn it on, and a match needs both of you switched on. Course names only — never your marks or your work.</div>
+</div>
+<p class="dv-note">The one card only this app can show, and it sits third — under the Yard and Today, where it reads as useful rather than as surveillance. It appears only when both students opted that course in, which is why the toggle list lives directly beneath it instead of buried in settings.</p>
+</div>
+
+<div class="dv-opt" id="1v">
+<div class="dv-olabel"><a class="dv-oid" href="#1v">1v</a>Privacy &amp; safety</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:110px;font-size:30px;font-weight:900;letter-spacing:-.01em">What friends see</div>
+<div style="position:absolute;left:24px;right:24px;top:156px;font-size:14.5px;font-weight:700;line-height:1.5;color:#96877F">Your friends are people you swapped a code with. Even so, you decide what reaches them.</div>
+<div style="position:absolute;left:20px;right:20px;top:232px;background:#FFFFFF;border-radius:22px;padding:6px 16px">
+<div style="padding:15px 0;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:15.5px;font-weight:800">What I finished today</div><div style="margin-top:3px;font-size:12.5px;font-weight:700;line-height:1.45;color:#96877F">Task and lesson titles. Never marks.</div></div><div style="width:46px;height:28px;border-radius:999px;background:#57C79B;position:relative;flex:none"><div style="position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:999px;background:#FFFFFF"></div></div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:15px 0;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:15.5px;font-weight:800">My focus sessions</div><div style="margin-top:3px;font-size:12.5px;font-weight:700;line-height:1.45;color:#96877F">Minutes, and whether you're in one now.</div></div><div style="width:46px;height:28px;border-radius:999px;background:#57C79B;position:relative;flex:none"><div style="position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:999px;background:#FFFFFF"></div></div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:15px 0;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:15.5px;font-weight:800">My word result</div><div style="margin-top:3px;font-size:12.5px;font-weight:700;line-height:1.45;color:#96877F">Guess count and grid shape, after they've played.</div></div><div style="width:46px;height:28px;border-radius:999px;background:#57C79B;position:relative;flex:none"><div style="position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:999px;background:#FFFFFF"></div></div></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:15px 0;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:15.5px;font-weight:700">My courses</div><div style="margin-top:3px;font-size:12.5px;font-weight:700;line-height:1.45;color:#96877F">Course names only, per course, off by default.</div></div><div style="width:46px;height:28px;border-radius:999px;background:#EFE7D9;position:relative;flex:none"><div style="position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:999px;background:#FFFFFF"></div></div></div>
+</div>
+<div style="position:absolute;left:24px;top:598px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">SAFETY</div>
+<div style="position:absolute;left:20px;right:20px;top:616px;background:#FFFFFF;border-radius:22px;padding:2px 16px">
+<div style="padding:12px 0;display:flex;align-items:center;gap:12px"><div style="flex:1;font-size:15.5px;font-weight:800">Blocked</div><div style="font-size:14px;font-weight:800;color:#96877F">1 person</div><svg width="9" height="15" viewBox="0 0 9 15"><path d="M1.6 1.6 7 7.5 1.6 13.4" stroke="#B4A996" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:12px 0;display:flex;align-items:center;gap:12px"><div style="flex:1;font-size:15.5px;font-weight:800">Report a problem</div><svg width="9" height="15" viewBox="0 0 9 15"><path d="M1.6 1.6 7 7.5 1.6 13.4" stroke="#B4A996" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="height:1.5px;background:#F0E9DC"></div>
+<div style="padding:12px 0;display:flex;align-items:center;gap:12px"><div style="flex:1;font-size:15.5px;font-weight:800">Change my code</div><svg width="9" height="15" viewBox="0 0 9 15"><path d="M1.6 1.6 7 7.5 1.6 13.4" stroke="#B4A996" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+</div>
+<div style="position:absolute;left:24px;right:24px;bottom:14px;font-size:12.5px;font-weight:700;line-height:1.45;color:#B4A996">There is no message box anywhere in Friends, so there is nothing to moderate. Nobody can find you without a code you handed over.</div>
+</div>
+<p class="dv-note">The screen a parent might read. Four things, each in plain words with what is <i>not</i> shared stated next to it, and "change my code" as the nuclear option that quietly ends every connection. Sensible by default: courses off, everything else on and harmless.</p>
+</div>
+
+<div class="dv-opt" id="1w" style="width:814px;grid-column:span 2">
+<div class="dv-olabel"><a class="dv-oid" href="#1w">1w</a>Spec — vibe cards, reactions, and the call on screen 8</div>
+<div style="width:814px;box-sizing:border-box;background:#FFFFFF;border-radius:24px;padding:34px 36px;font-family:Nunito,system-ui,sans-serif;color:#2E2622">
+<div style="font-size:20px;font-weight:900">The six vibe cards</div>
+<div style="margin-top:6px;font-size:13.5px;font-weight:700;color:#96877F">One per friend per day. Sending pays the sender 2 coins; receiving pays nothing. Every card is drawn vector, 2pt ink, no fill — they read on cream and on a species tint alike.</div>
+<div style="margin-top:20px;display:flex;flex-direction:column;gap:2px">
+<div style="display:flex;gap:18px;padding:13px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14.5px;font-weight:900">Wave</div><div style="width:130px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#96877F">open hand</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Says nothing but "you exist and I noticed". The default, and the one the first-friend screen sends.</div></div>
+<div style="display:flex;gap:18px;padding:13px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14.5px;font-weight:900">Brew</div><div style="width:130px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#96877F">mug</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Go make a tea. Reads as care rather than encouragement, which matters at 11pm.</div></div>
+<div style="display:flex;gap:18px;padding:13px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14.5px;font-weight:900">You've got this</div><div style="width:130px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#96877F">peak</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">For the thing that hasn't happened yet. A hill, not a trophy — the climb is the point.</div></div>
+<div style="display:flex;gap:18px;padding:13px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14.5px;font-weight:900">Nice one</div><div style="width:130px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#96877F">star</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">For the thing that already happened. The only card that can be read as praise, and it never mentions a number.</div></div>
+<div style="display:flex;gap:18px;padding:13px 0;border-top:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14.5px;font-weight:900">Take a breath</div><div style="width:130px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#96877F">leaf</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Permission to stop. The card that argues against the app, which is exactly why it should exist.</div></div>
+<div style="display:flex;gap:18px;padding:13px 0;border-top:1px solid #F0E9DC;border-bottom:1px solid #F0E9DC"><div style="width:150px;flex:none;font-size:14.5px;font-weight:900">Good luck tomorrow</div><div style="width:130px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#96877F">crescent moon</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Sent the night before a test. The moon does the work — it means "sleep", not "study more".</div></div>
+</div>
+
+<div style="margin-top:32px;font-size:20px;font-weight:900">The moment-viewer reaction set</div>
+<div style="margin-top:6px;font-size:13.5px;font-weight:700;line-height:1.6;color:#96877F">Five, fixed, in this order: <b>Wave</b> · <b>Warm</b> (heart outline) · <b>Nice one</b> (star) · <b>Brew</b> (mug) · <b>Take a breath</b> (leaf). Four are shared with the vibe set so the vocabulary is one vocabulary — a student learns five shapes, not eleven. Warm is viewer-only: a heart is fine as a reaction to something that happened, and too loaded as a card you post to someone. One per friend per day, coral fill on the sent one, the rest inert at 35% until tomorrow.</div>
+
+<div style="margin-top:32px;font-size:20px;font-weight:900">Screen 8: ship the group total</div>
+<div style="margin-top:8px;font-size:14.5px;font-weight:700;line-height:1.6">Make <a class="dv-oid" href="#1o">1o</a> the default and the only thing on the tab root; keep <a class="dv-oid" href="#1p">1p</a> behind the second segment, one tap away.</div>
+<div style="margin-top:12px;display:flex;gap:16px">
+<div style="flex:1;background:#FAF5EC;border-radius:20px;padding:18px"><div style="font-size:14px;font-weight:900">Why the total wins</div><div style="margin-top:7px;font-size:13.5px;font-weight:700;line-height:1.55;color:#7C6F68">With five friends a ranking has exactly one winner and four people who lost to their friends — and the person at the bottom is usually the one having the worst week. The total is the only framing where a quiet week reads as fine. It also survives the rules: a sum can only go up, so there is nothing to defend and nothing that resets on Monday.</div></div>
+<div style="flex:1;background:#FAF5EC;border-radius:20px;padding:18px"><div style="font-size:14px;font-weight:900">Why keep the board at all</div><div style="margin-top:7px;font-size:13.5px;font-weight:700;line-height:1.55;color:#7C6F68">Some students genuinely like the ladder, and hiding it entirely invites screenshots-of-screenshots comparison outside the app. One tap away, ranked on minutes rather than coins, with no zones and no decay, it is honest without being the frame everyone opens into. If usage says otherwise, the segment is cheap to remove.</div></div>
+</div>
+<div style="margin-top:16px;font-size:13.5px;font-weight:700;line-height:1.55;color:#96877F">The number I'd actually put on the tab root over time is <b>together time</b> — hours two or more of you were in a room at once. It is the only metric on this tab that measures the thing the tab exists for.</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "ship the group total, drop the ranked board" · "more vibe cards" · "show the Yard at 12 friends"</p>
+</section>
+</x-dc>
+</body>
+</html>

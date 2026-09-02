@@ -35,7 +35,7 @@ struct RootView: View {
                 case .games: GamesView()
                 case .learn: LearnView()
                 case .friends: FriendsView()
-                case .kin: ShopView(title: "Kin")
+                case .kin: KinView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -46,6 +46,15 @@ struct RootView: View {
         }
         .animation(.easeInOut(duration: 0.22), value: state.hideTabBar)
         .background(Theme.paper.ignoresSafeArea())
+        .onChange(of: state.meetKinRequest) { _, new in
+            guard new != nil else { return }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) { tab = .kin }
+            // Held for one beat so the Kin tab and the shop sheet both see it.
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(400))
+                state.meetKinRequest = nil
+            }
+        }
     }
 
     // MARK: - Tab bar
@@ -79,7 +88,7 @@ struct RootView: View {
                     if t == .kin {
                         // Exempt from the inactive dimming — a face that dims reads as
                         // an unwell pet.
-                        KinChip(color: Theme.species(state.activeChibiID), size: 28)
+                        KinChip(speciesID: state.activeChibiID, size: 28)
                     } else {
                         TabIcon(tab: t, size: 27)
                             .opacity(active ? 1 : 0.82)
@@ -116,16 +125,11 @@ private struct TabPressStyle: ButtonStyle {
 /// The mascot's face in a circle — used anywhere a small buddy avatar is needed.
 /// Crops the traced art to the head.
 struct SlimeAvatar: View {
-    var color: Color = Slime.body
+    var speciesID: String = "slime"
     var size: CGFloat = 56
 
     var body: some View {
-        ZStack {
-            Circle().fill(Slime.belly(for: color).opacity(0.55))
-            SlimeView(color: color, level: 1, animation: .idle, size: size * 1.30)
-                .offset(y: size * 0.07)
-        }
-        .frame(width: size, height: size)
-        .clipShape(Circle())
+        SproutFace(speciesID: speciesID, size: size,
+                   plate: Theme.species(speciesID).opacity(0.35))
     }
 }

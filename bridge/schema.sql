@@ -71,3 +71,50 @@ set search_path = public
 as $$
   delete from pairings where expires_at < now();
 $$;
+
+-- ---------------------------------------------------------------------------
+-- The way back: phone → laptop.
+--
+-- Everything above moves Canvas work from the laptop to the phone. This moves
+-- one small thing the other way: the coin balance and which looks are owned, so
+-- the extension's Looks shop can show a real number instead of a guess. The app
+-- owns the ledger; the extension only ever reads this.
+alter table pairings add column if not exists state jsonb not null default '{}'::jsonb;
+
+-- The app calls this after a coin balance changes.
+create or replace function push_state(p_code text, p_state jsonb)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_code !~ '^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$' then
+    return;
+  end if;
+  -- A wallet is a handful of numbers; 32 KB is already generous.
+  if pg_column_size(p_state) > 32768 then
+    return;
+  end if;
+  -- Only ever updates a pairing that already exists, so this cannot be used to
+  -- seed rows for codes nobody has claimed.
+  update pairings
+     set state = p_state,
+         updated_at = now(),
+         expires_at = now() + interval '30 days'
+   where code = p_code;
+end;
+$$;
+
+-- The extension calls this on each sync. Nothing for a wrong or expired code.
+create or replace function fetch_state(p_code text)
+returns jsonb
+language sql
+security definer
+set search_path = public
+as $$
+  select state from pairings where code = p_code and expires_at > now();
+$$;
+
+grant execute on function push_state(text, jsonb) to anon;
+grant execute on function fetch_state(text)       to anon;

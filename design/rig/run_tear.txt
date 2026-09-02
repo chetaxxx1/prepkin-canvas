@@ -1,0 +1,12 @@
+d70 r1.55 root66 inf14 ccv59.8 c1 h0
+d70 r1.55 root80 inf14 ccv54.5 c1 h0
+d70 r1.80 root66 inf20 ccv37.7 c1 h0
+d70 r1.80 root80 inf20 ccv39.0 c1 h0
+d85 r1.55 root66 inf14 ccv49.0 c1 h0
+d85 r1.55 root80 inf14 ccv45.5 c1 h0
+d85 r1.80 root66 inf14 ccv55.4 c1 h0
+d85 r1.80 root80 inf14 ccv55.9 c1 h0
+d100 r1.55 root66 inf12 ccv37.0 c1 h0
+d100 r1.55 root80 inf14 ccv36.7 c1 h0
+d100 r1.80 root66 inf12 ccv57.4 c1 h0
+d100 r1.80 root80 inf12 ccv53.4 c1 h0

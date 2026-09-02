@@ -1,0 +1,13 @@
+t0.55 p0.95 w0.55 d75 r1.50  pit 18688/73  comp1 h0  x-111
+t0.55 p0.95 w0.55 d85 r1.55  pit 17336/62  comp1 h0  x-84
+t0.55 p0.95 w0.55 d95 r1.60  pit 17179/67  comp1 h0  x-52
+t0.90 p0.95 w0.55 d75 r1.50  pit 18944/75  comp1 h0  x-112
+t0.90 p0.95 w0.55 d85 r1.55  pit 17590/65  comp1 h0  x-84
+t0.90 p0.95 w0.55 d95 r1.60  pit 17030/67  comp1 h0  x-52
+t0.90 p1.05 w0.62 d75 r1.50  pit 20413/79  comp1 h0  x-120
+t0.90 p1.05 w0.62 d85 r1.55  pit 18974/68  comp1 h0  x-90
+t0.90 p1.05 w0.62 d95 r1.60  pit 16476/54  comp1 h0  x-57
+t1.20 p1.05 w0.62 d75 r1.50  pit 20574/79  comp1 h0  x-120
+t1.20 p1.05 w0.62 d85 r1.55  pit 19141/70  comp1 h0  x-90
+t1.20 p1.05 w0.62 d95 r1.60  pit 16662/55  comp1 h0  x-57
+wrote diag_paw.png (653, 836)

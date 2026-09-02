@@ -42,7 +42,9 @@ async function registerFor(origin) {
     await chrome.scripting.registerContentScripts([{
       id,
       matches: [`${origin}/*`],
-      js: ['slime.js', 'content.js'],
+      // canvas.js rides along because the what-if screen does its arithmetic with
+      // the same requiredScore() the worker uses. One source of truth beats two.
+      js: ['slime.js', 'looks.js', 'canvas.js', 'content.js'],
       css: ['skin.css'],
       runAt: 'document_end',
     }]);
@@ -63,6 +65,7 @@ async function registerAll() {
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === SYNC_ALARM) syncAll();
+  if (alarm.name === FOCUS_ALARM) focusDone();
 });
 
 // Syncing when you land on a connected Canvas keeps the phone close to current
@@ -73,7 +76,52 @@ chrome.tabs.onUpdated.addListener(async (_id, info, tab) => {
   if (origin && (await connectedOrigins()).includes(origin)) syncNow(origin);
 });
 
+// MARK: - Focus timer
+//
+// The countdown lives here, not in the page: a content script dies on every
+// navigation, and a timer that resets when you open your reading is useless.
+
+const FOCUS_ALARM = 'prepkin-focus';
+
+async function focusStart({ taskId, title, url, minutes }) {
+  const durationMin = [15, 25, 45].includes(minutes) ? minutes : 25;
+  const focus = {
+    state: 'running', taskId, title, url,
+    durationMin, endsAt: Date.now() + durationMin * 60_000,
+  };
+  await chrome.storage.local.set({ focus });
+  chrome.alarms.create(FOCUS_ALARM, { when: focus.endsAt });
+  return focus;
+}
+
+/// Giving up costs nothing — no coins lost, no record kept, no nagging.
+async function focusStop() {
+  chrome.alarms.clear(FOCUS_ALARM);
+  await chrome.storage.local.set({ focus: { state: 'idle' } });
+}
+
+async function focusDone() {
+  const { focus } = await chrome.storage.local.get('focus');
+  if (focus?.state !== 'running') return;
+  await chrome.storage.local.set({ focus: { ...focus, state: 'done' } });
+  await queueRequest({ kind: 'focus', taskId: focus.taskId, minutes: focus.durationMin });
+  syncAll();
+}
+
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  if (msg.type === 'focus-start') {
+    focusStart(msg).then(sendResponse);
+    return true;
+  }
+  if (msg.type === 'focus-stop' || msg.type === 'focus-clear') {
+    focusStop().then(() => sendResponse({ ok: true }));
+    return true;
+  }
+  if (msg.type === 'spend') {
+    queueRequest({ kind: 'look', lookId: msg.lookId, price: msg.price })
+      .then(() => sendResponse({ ok: true }));
+    return true;
+  }
   if (msg.type === 'sync-now') {
     (msg.origin ? syncNow(msg.origin) : syncAll()).then(sendResponse);
     return true; // keep the message channel open for the async reply
@@ -174,14 +222,66 @@ async function send(fresh) {
     if (r) results[origin] = r;
   }
   const all = Object.values(results);
+  const { requests = [] } = await chrome.storage.local.get('requests');
   const payload = {
     tasks: all.flatMap((r) => r.tasks),
     courses: all.flatMap((r) => r.courses),
+    graded: Object.assign({}, ...all.map((r) => r.graded ?? {})),
+    weights: Object.assign({}, ...all.map((r) => r.weights ?? {})),
+    // Coins the phone still owes or is owed: finished focus sessions, and looks
+    // worn here. The app's ledger is the truth; this is only the request.
+    requests,
+    at: new Date().toISOString(),
   };
   // The page overlay reads lastPayload, so the slime knows what you owe even
   // when the phone is in another room.
   await chrome.storage.local.set({ lastResults: results, lastPayload: payload });
-  return finish(await pushToBridge(payload), payload.tasks.length);
+  const pushed = await pushToBridge(payload);
+  // A push the bridge accepted means the phone can see the requests.
+  if (pushed.ok && requests.length) await chrome.storage.local.set({ requests: [] });
+  await pullWallet();
+  return finish(pushed, payload.tasks.length);
+}
+
+/// The phone's side of the bridge: the coin balance and which looks are owned.
+/// Absent until the app publishes it — the shop says so rather than inventing
+/// a number.
+async function pullWallet() {
+  const { pairingCode } = await chrome.storage.local.get('pairingCode');
+  if (!pairingCode || !bridge) return;
+  try {
+    const res = await fetch(`${bridge.url}/rest/v1/rpc/fetch_state`, {
+      method: 'POST',
+      headers: {
+        apikey: bridge.key,
+        Authorization: `Bearer ${bridge.key}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ p_code: pairingCode }),
+    });
+    if (!res.ok) return;
+    const state = await res.json();
+    if (!state || typeof state.coins !== 'number') return;
+    const { wallet = {} } = await chrome.storage.local.get('wallet');
+    await chrome.storage.local.set({
+      wallet: {
+        ...wallet,
+        coins: state.coins,
+        owned: Array.isArray(state.owned) ? state.owned : (wallet.owned ?? ['classic']),
+      },
+    });
+  } catch {
+    // A bridge that is down is not worth a broken panel.
+  }
+}
+
+/// Queued for the next sync rather than sent on the spot, so a click never
+/// waits on the network and a flaky connection cannot drop the request.
+async function queueRequest(request) {
+  const { requests = [] } = await chrome.storage.local.get('requests');
+  await chrome.storage.local.set({
+    requests: [...requests, { ...request, at: new Date().toISOString() }].slice(-50),
+  });
 }
 
 /// Everything one school knows, in three or so calls: the courses you are in
@@ -201,17 +301,30 @@ async function readSchool(origin) {
 
   const courses = mapCourses(rawCourses, rawColors?.custom_colors ?? {});
 
+  const graded = {};
+  const weights = {};
   const perCourse = await Promise.all(courses.map(async (course) => {
     const raw = await getPaged(
       origin,
       `/api/v1/courses/${course.id}/assignments?include[]=submission&order_by=due_at&per_page=100`
     );
-    return raw ? mapAssignments(raw, { host, course }) : [];
+    if (!raw) return [];
+    // The same rows feed the task list and the grade sparkline — one fetch read
+    // two ways, rather than asking Canvas twice for the same assignments.
+    graded[course.id] = mapGraded(raw);
+    const rawGroups = await getPaged(origin, `/api/v1/courses/${course.id}/assignment_groups?per_page=50`);
+    weights[course.id] = mapWeights(rawGroups, { weighted: course.weighted !== false });
+    return mapAssignments(raw, { host, course });
   }));
 
   const rawTodo = await getPaged(origin, '/api/v1/users/self/todo?per_page=100&include[]=ungraded_quizzes');
 
-  return { courses, tasks: merge(perCourse.flat(), rawTodo ? mapTodo(rawTodo, host) : []) };
+  return {
+    courses,
+    graded,
+    weights,
+    tasks: merge(perCourse.flat(), rawTodo ? mapTodo(rawTodo, host) : []),
+  };
 }
 
 /// One GET with the session cookie already in the browser. No password is ever

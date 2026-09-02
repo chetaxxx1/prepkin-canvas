@@ -1,0 +1,2 @@
+OLD        underarm gap: max 166.3  mean  78.4  |  fillet radius: min  17.4 median  36.5  (art px, character 795 tall)
+NEW        underarm gap: max 349.3  mean 206.0  |  fillet radius: min  16.5 median  60.6  (art px, character 795 tall)

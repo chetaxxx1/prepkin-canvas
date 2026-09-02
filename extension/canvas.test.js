@@ -1,7 +1,8 @@
 // Run with: node --test extension/canvas.test.js
 const test = require('node:test');
 const assert = require('node:assert');
-const { mapCourses, mapAssignments, mapTodo, merge, DAYS_AHEAD, DAYS_OVERDUE } = require('./canvas.js');
+const { mapCourses, mapAssignments, mapTodo, merge, mapGraded, mapWeights, requiredScore,
+        DAYS_AHEAD, DAYS_OVERDUE } = require('./canvas.js');
 
 const HOST = 'canvas.dartmouth.edu';
 const NOW = Date.parse('2026-09-01T12:00:00Z');
@@ -176,4 +177,48 @@ test('junk from the network never throws', () => {
 
 test('an unparseable due date is kept rather than silently dropped', () => {
   assert.equal(map([assignment({ due_at: 'sometime next week' })]).length, 1);
+});
+
+// MARK: - Grades over time
+
+test('mapGraded keeps only scored work, oldest first', () => {
+  const items = mapGraded([
+    { id: 1, name: 'Late quiz', points_possible: 10, submission: { score: 8, graded_at: '2026-03-02T00:00:00Z' } },
+    { id: 2, name: 'Early quiz', points_possible: 10, submission: { score: 9, graded_at: '2026-01-02T00:00:00Z' } },
+    { id: 3, name: 'Not marked yet', points_possible: 10, submission: { score: null } },
+    { id: 4, name: 'Ungraded practice', points_possible: 0, submission: { score: 0 } },
+  ]);
+  assert.deepEqual(items.map((g) => g.title), ['Early quiz', 'Late quiz']);
+  assert.equal(items[0].percent, 90);
+  assert.equal(items[1].score, 8);
+});
+
+test('mapGraded survives junk', () => {
+  for (const junk of [null, undefined, 'nope', {}, [null, 3]]) {
+    assert.deepEqual(mapGraded(junk), []);
+  }
+});
+
+test('mapWeights ignores a course that does not weight its groups', () => {
+  const groups = [{ id: 1, name: 'Final', group_weight: 30 }];
+  assert.equal(mapWeights(groups, { weighted: false }), null);
+  assert.deepEqual(mapWeights(groups), [{ id: '1', name: 'Final', weight: 30 }]);
+  // Groups with no weight are not a weighting scheme.
+  assert.equal(mapWeights([{ id: 2, name: 'Homework', group_weight: 0 }]), null);
+});
+
+test('requiredScore answers the what-if question', () => {
+  // Sitting at 91.2 with a final worth 30%: holding an A- (90) is easy.
+  assert.equal(requiredScore({ current: 91.2, target: 90, weight: 30 }), 87.2);
+  // Reaching for more asks for more.
+  assert.ok(requiredScore({ current: 91.2, target: 93, weight: 30 }) > 90);
+  // A small remaining weight can put a target out of reach, and it says so
+  // rather than pretending.
+  assert.ok(requiredScore({ current: 70, target: 90, weight: 10 }) > 100);
+});
+
+test('requiredScore refuses nonsense rather than guessing', () => {
+  assert.equal(requiredScore({ current: null, target: 90, weight: 30 }), null);
+  assert.equal(requiredScore({ current: 80, target: 90, weight: 0 }), null);
+  assert.equal(requiredScore({ current: 80, target: 90, weight: 140 }), null);
 });

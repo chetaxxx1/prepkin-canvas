@@ -59,6 +59,39 @@ enum Theme {
     static var sun: Color { coin }
     static var sky: Color { hex(0x9BC8F2) }
 
+    // MARK: - Kin tier ramp
+
+    static let lavender = hex(0xC3B2F0)
+    static let leaf = hex(0xA5CE6B)
+    static let pink = hex(0xF7A8B8)
+
+    /// The field an unowned kin card sits on. One step off `paper` — deliberately
+    /// NOT a desaturation, because the kin itself is never dimmed, locked or hidden.
+    static let unowned = hex(0xFBF7F0)
+
+    /// A kin's tier colour. It appears in exactly three places and never as a large
+    /// fill: the name plate, the cost badge, and a 2pt card border. The UI stays
+    /// low-chroma so the kin is still the most saturated thing on screen.
+    static func tier(_ t: Int) -> Color {
+        switch t {
+        case 2: return mint
+        case 3: return sky
+        case 4: return lavender
+        case 5: return coin
+        default: return dim
+        }
+    }
+
+    static func tierName(_ t: Int) -> String {
+        switch t {
+        case 2: return "UNCOMMON"
+        case 3: return "RARE"
+        case 4: return "EPIC"
+        case 5: return "LEGENDARY"
+        default: return "COMMON"
+        }
+    }
+
     /// The handoff calls for Nunito; SF Pro Rounded is the sanctioned native stand-in.
     static func font(_ size: CGFloat, _ weight: Font.Weight) -> Font {
         .system(size: size, weight: weight, design: .rounded)
@@ -66,11 +99,14 @@ enum Theme {
 
     static func species(_ id: String) -> Color {
         switch id {
-        case "ember", "mochi": return hex(0xF7A8B8)   // pink
-        case "droplet", "puff": return hex(0x9BC8F2)  // sky
-        case "wisp": return hex(0xC3B2F0)             // lavender
-        case "sprout": return hex(0xA5CE6B)           // leaf
-        default: return slime
+        // Sprout's coat bodies (`palettes.ts` in the Sprout repo), so a tint drawn
+        // next to the character is the character's own colour.
+        case "ember", "mochi": return hex(0xE07A72)   // coral
+        case "droplet", "puff": return hex(0x6BAFE0)  // sky
+        case "wisp": return hex(0xB08EE0)             // lilac
+        case "sprout": return hex(0xE9A07C)           // peach
+        case "comet": return hex(0xE4C45C)            // butter
+        default: return hex(0x58CC9F)                 // mint
         }
     }
 

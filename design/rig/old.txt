@@ -1,0 +1,2 @@
+frames rendered (452, 318)
+old.gif

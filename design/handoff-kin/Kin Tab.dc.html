@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
+*{box-sizing:border-box}
+body{margin:0;background:#EFEAE0;font-family:Nunito,'SF Pro Rounded',system-ui,sans-serif;color:#2E2822;-webkit-font-smoothing:antialiased}
+a{color:#FF6F61;text-decoration:none}a:hover{color:#E4735F}
+.dv-turn{padding:44px 48px 40px;border-bottom:1px solid rgba(46,40,34,.10)}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.dv-tid{font:900 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#2E2822;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:900 14px/1.2 Nunito,system-ui;color:#2E2822}
+.dv-sub{font:700 12px/1.5 Nunito,system-ui;color:#96877F;margin:0 0 26px;max-width:640px}
+.dv-grp{margin:0 0 34px}
+.dv-ghd{font:900 11px/1 Nunito,system-ui;color:#96877F;letter-spacing:.14em;text-transform:uppercase;margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(46,40,34,.10)}
+.dv-opts{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:8px;width:390px}
+.dv-oid{font:900 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,40,34,.09);color:#2E2822;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:center;gap:8px;font:800 12px/1.3 Nunito,system-ui;color:#2E2822}
+.dv-card{background:#FAF5EC;border:1px solid rgba(46,40,34,.10);border-radius:14px;box-shadow:0 3px 14px rgba(46,40,34,.10);overflow:hidden}
+.dv-opt:target .dv-oid{background:#FF6F61;color:#fff}
+.dv-cap{font:700 11px/1.5 Nunito,system-ui;color:#96877F;margin:0;max-width:390px}
+.dv-next{margin:26px 0 0;font:700 12px/1.6 Nunito,system-ui;color:#96877F}
+@keyframes kinPop{0%{transform:translateY(0) scale(1,1)}22%{transform:translateY(0) scale(1.07,.9)}52%{transform:translateY(-16px) scale(.97,1.06)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes confPop{0%{opacity:0;transform:translate(0,0) scale(.5) rotate(45deg)}30%{opacity:1}100%{opacity:0;transform:translate(var(--cx),-34px) scale(1.1) rotate(45deg)}}
+[data-care^="on"] [data-kin]{animation:kinPop .62s cubic-bezier(.3,1.4,.5,1)}
+[data-care^="on"] [data-face="i"]{opacity:0}
+[data-care^="on"] [data-face="d"]{opacity:1}
+[data-care^="on"] [data-conf]{animation:confPop .9s ease-out forwards}
+[data-caps="off"] [data-cap]{display:none}
+</style>
+</helmet>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<path id="sB" fill="#51CFA0" d="M597.4 0.1C607.2 0.8 616.9 2.8 624.4 9.7C638.3 22.7 635.2 45.9 620.2 56.3C603.2 68.2 584.5 57.5 568.6 66.4C561.1 70.5 556.9 80.0 565.6 85.5C573.2 90.3 585.4 90.4 593.9 92.6C612.6 97.6 631.6 103.7 649.0 112.1C730.1 150.9 789.1 209.1 831.6 288.0C853.0 327.8 867.6 372.3 877.6 416.2C880.3 428.4 885.6 470.4 890.2 478.2C894.6 485.9 905.5 491.5 912.2 497.3C919.5 503.6 926.5 510.6 933.0 517.8C967.9 556.1 998.9 607.5 998.9 660.8C998.9 674.1 998.6 686.7 992.7 699.0C980.6 724.4 949.2 731.6 927.1 714.1C917.0 706.2 910.7 693.4 905.8 681.9C904.7 679.4 902.1 670.0 899.1 669.1C897.7 668.6 896.2 669.9 895.3 671.0C891.6 676.1 892.2 688.9 891.4 695.0C889.5 707.9 882.8 720.4 889.4 733.0C893.2 740.2 899.7 745.6 904.9 751.7C916.8 765.7 927.0 787.2 919.1 805.6C906.6 834.6 856.1 848.8 828.1 856.7C738.4 882.2 637.0 894.1 544.0 896.1C436.7 898.4 329.4 891.2 224.2 869.7C185.0 861.7 127.9 849.7 96.2 824.9C91.1 820.9 86.4 816.2 82.8 810.9C70.3 792.1 80.2 768.4 93.1 752.7C100.3 744.0 109.9 736.6 112.1 724.9C114.3 713.1 107.6 694.2 105.8 681.7C105.5 679.4 105.3 669.0 101.7 668.4C98.4 667.8 88.0 693.1 85.5 697.4C67.0 728.8 26.7 735.2 7.2 700.8C0.7 689.2 -0.0 675.8 -0.0 662.9C0.0 607.7 31.3 555.0 67.9 515.7C75.8 507.1 107.4 482.7 110.2 475.8C114.6 465.1 115.5 444.9 118.0 432.7C123.8 403.9 131.7 375.8 141.3 348.1C177.8 243.3 254.3 153.1 357.0 108.9C386.8 96.2 418.8 88.0 450.9 83.9C469.8 81.5 490.7 83.3 508.6 76.1C549.1 59.8 540.7 5.0 597.4 0.1Z"></path>
+<path id="sL" fill="#B1EDD4" d="M498.2 615.1C559.4 615.2 635.3 640.6 656.2 704.5C661.4 720.4 662.0 738.3 655.8 754.1C636.2 803.7 556.2 818.0 509.2 818.2C463.6 818.5 391.6 812.1 358.5 777.0C328.5 745.4 335.9 697.1 364.6 667.0C398.9 631.1 449.6 615.7 498.2 615.1Z"></path>
+<path id="fI" fill="#101820" d="M331.7 317.2C341.4 317.2 351.7 319.5 360.4 323.8C417.0 351.6 415.4 431.0 356.0 454.4C348.2 457.4 338.4 459.7 329.9 459.3C253.4 456.7 233.0 354.8 302.8 322.9C311.8 318.9 321.9 317.2 331.7 317.2Z M450.0 393.9C459.4 393.9 464.7 401.7 471.8 407.0C481.1 414.0 492.0 418.1 503.7 417.6C516.0 417.0 526.7 408.9 535.5 401.2C538.1 398.9 540.3 396.3 543.4 394.8C556.2 388.5 559.9 403.9 558.6 413.1C557.6 420.6 544.2 430.8 538.1 434.7C511.0 451.9 475.8 447.9 451.5 427.5C447.2 424.0 442.3 418.5 440.7 413.1C438.6 406.2 441.7 394.3 450.0 393.9Z M669.2 317.2C678.9 317.2 689.1 319.5 697.9 323.8C755.1 351.9 751.9 435.0 690.3 455.4C683.1 457.8 674.6 459.8 667.0 459.3C655.1 458.8 643.3 455.5 632.9 449.9C620.6 443.2 611.0 432.4 604.8 420.0C580.8 372.1 616.1 317.2 669.2 317.2Z"></path>
+<path id="fD" fill="#101820" d="M329.0 317.5C357.0 317.5 379.7 332.3 392.1 357.1C398.4 369.8 405.7 400.4 382.5 400.3C366.5 400.2 367.7 383.8 362.7 373.3C356.2 359.4 341.6 350.0 326.4 350.7C311.4 351.3 298.2 364.7 293.8 378.4C292.3 383.0 293.0 387.6 290.6 392.0C286.5 399.8 276.2 402.2 268.5 398.4C254.8 391.7 260.1 373.8 263.9 362.8C273.4 335.3 300.2 317.5 329.0 317.5Z M567.0 439.7C605.0 448.2 605.5 480.8 590.5 510.7C575.5 540.8 541.9 560.5 508.7 563.1C467.7 566.4 424.9 546.9 406.1 509.4C397.9 493.0 390.6 462.3 408.4 448.6C431.0 431.3 459.9 447.2 484.9 449.9C513.3 452.8 539.3 442.4 567.0 439.7Z M668.8 317.5C695.9 317.5 723.3 334.4 732.6 360.6C736.7 372.2 743.3 391.7 728.3 398.6C697.2 412.9 711.5 352.0 670.3 350.7C655.3 350.2 640.5 359.9 634.3 373.7C629.5 384.5 630.3 400.4 614.3 400.3C591.1 400.0 599.2 369.0 605.4 356.7C617.8 331.8 640.8 317.5 668.8 317.5Z"></path>
+<g id="blush"><ellipse cx="195" cy="484.5" rx="55" ry="20.2" fill="#FF9E94" opacity=".7"></ellipse><ellipse cx="805" cy="484.5" rx="55" ry="20.2" fill="#FF9E94" opacity=".7"></ellipse></g>
+<g id="crown"><g transform="translate(300 18) rotate(-12) scale(0.42)"><path d="M120 250 L96 92 L232 178 L330 40 L428 178 L564 92 L540 250 Z" fill="#FFC24B" stroke="#E8A62E" stroke-width="26" stroke-linejoin="round"></path></g></g>
+
+<g id="n-slime"><use href="#sB" fill="#51CFA0"></use><use href="#sL" fill="#B1EDD4"></use></g>
+
+<g id="n-ember"><g fill="#F7A8B8"><ellipse cx="232" cy="700" rx="58" ry="78"></ellipse><ellipse cx="768" cy="700" rx="58" ry="78"></ellipse><path d="M500 200C620 200 700 300 700 470C700 640 730 872 700 880C640 890 360 890 300 880C270 872 300 640 300 470C300 300 380 200 500 200Z"></path><path d="M498 205C480 90 530 30 590 0C562 60 588 110 556 152C536 178 518 205 498 205Z"></path></g><ellipse cx="500" cy="775" rx="111" ry="82" fill="#FCDAE1"></ellipse></g>
+
+<g id="n-droplet"><g fill="#9BC8F2"><ellipse cx="135" cy="760" rx="85" ry="76"></ellipse><ellipse cx="865" cy="760" rx="85" ry="76"></ellipse><path d="M500 380C720 380 850 500 850 660C850 780 860 884 810 886C650 895 350 895 190 886C140 884 150 780 150 660C150 500 280 380 500 380Z"></path><circle cx="400" cy="372" r="48"></circle><circle cx="500" cy="352" r="58"></circle><circle cx="600" cy="372" r="48"></circle></g><ellipse cx="500" cy="790" rx="155" ry="88" fill="#D4E7F9"></ellipse></g>
+
+<g id="n-sprout"><g fill="#A5CE6B"><ellipse cx="212" cy="630" rx="94" ry="78"></ellipse><ellipse cx="788" cy="630" rx="94" ry="78"></ellipse><path d="M500 150C660 150 780 320 780 520C780 700 700 884 620 886C540 893 460 893 380 886C300 884 220 700 220 520C220 320 340 150 500 150Z"></path><path d="M495 160C430 110 395 45 400 0C450 25 490 90 500 155Z"></path><path d="M505 160C570 105 615 55 625 15C580 35 525 85 505 155Z"></path></g><ellipse cx="500" cy="758" rx="130" ry="92" fill="#D8EABF"></ellipse></g>
+
+<g id="n-wisp"><g fill="#C3B2F0"><ellipse cx="168" cy="560" rx="64" ry="80"></ellipse><ellipse cx="832" cy="560" rx="64" ry="80"></ellipse><path d="M200 560C200 380 340 240 500 240C660 240 800 380 800 560C800 680 760 750 720 740C680 730 680 650 632 660C584 670 596 810 508 820C424 830 418 700 364 695C310 690 320 820 240 802C180 788 200 680 200 560Z"></path><path d="M505 268C420 282 330 320 268 400C230 380 180 320 176 268C172 200 260 152 360 158C440 164 490 210 505 268Z"></path></g><ellipse cx="500" cy="690" rx="134" ry="78" fill="#E5DEF9"></ellipse></g>
+
+<g id="n-comet"><g fill="#FFC24B"><circle cx="66" cy="316" r="40" fill="#E8A62E"></circle><path d="M330 560C220 520 100 420 44 302C132 362 250 430 350 470C382 500 370 545 330 560Z"></path><ellipse cx="298" cy="712" rx="92" ry="78"></ellipse><ellipse cx="812" cy="700" rx="92" ry="78"></ellipse><path d="M560 300C700 300 800 440 800 600C800 740 730 884 640 886C560 893 480 890 420 884C340 878 300 740 300 600C300 440 420 300 560 300Z"></path></g><ellipse cx="556" cy="734" rx="156" ry="94" fill="#FFE5B2"></ellipse></g>
+
+<symbol id="k-slime1" viewBox="0 0 1000 897"><use href="#n-slime"></use><use href="#fI" fill="#101820"></use></symbol>
+<symbol id="k-slime2" viewBox="0 0 1000 897"><use href="#n-slime"></use><use href="#fI" fill="#101820"></use><use href="#blush"></use></symbol>
+<symbol id="k-slime3" viewBox="0 0 1000 897"><use href="#n-slime"></use><use href="#fI" fill="#101820"></use><use href="#blush"></use><use href="#crown"></use></symbol>
+<symbol id="k-slime3d" viewBox="0 0 1000 897"><use href="#n-slime"></use><use href="#fD" fill="#101820"></use><use href="#blush"></use><use href="#crown"></use></symbol>
+<symbol id="k-ember" viewBox="0 0 1000 897"><use href="#n-ember"></use><g transform="translate(500,400) scale(.62) translate(-494,-388)"><use href="#fI"></use></g></symbol>
+<symbol id="k-droplet" viewBox="0 0 1000 897"><use href="#n-droplet"></use><g transform="translate(500,530) scale(.88) translate(-494,-388)"><use href="#fI"></use></g></symbol>
+<symbol id="k-sprout" viewBox="0 0 1000 897"><use href="#n-sprout"></use><g transform="translate(500,405) scale(.8) translate(-494,-388)"><use href="#fI" fill="#101820"></use></g></symbol>
+<symbol id="k-wisp" viewBox="0 0 1000 897"><use href="#n-wisp"></use><g transform="translate(500,430) scale(.80) translate(-494,-388)"><use href="#fI"></use></g></symbol>
+<symbol id="k-wisp2" viewBox="0 0 1000 897"><use href="#n-wisp"></use><g transform="translate(500,430) scale(.80) translate(-494,-388)"><use href="#fI"></use></g><g transform="translate(500,596) scale(0.78,1) translate(-500,-484.5)"><use href="#blush"></use></g></symbol>
+<symbol id="k-wispd" viewBox="0 0 1000 897"><use href="#n-wisp"></use><g transform="translate(500,430) scale(.80) translate(-494,-388)"><use href="#fD"></use></g></symbol>
+<symbol id="k-comet" viewBox="0 0 1000 897"><use href="#n-comet"></use><g transform="translate(560,490) scale(.75) translate(-494,-388)"><use href="#fI" fill="#101820"></use></g></symbol>
+<symbol id="st-on" viewBox="0 0 20 20"><path d="M10 1.4l2.5 5.3 5.8.7-4.3 3.9 1.2 5.7L10 14.2 4.8 17l1.2-5.7L1.7 7.4l5.8-.7z" fill="#FFC24B" stroke="#E8A62E" stroke-width="1.4" stroke-linejoin="round"></path></symbol>
+<symbol id="st-off" viewBox="0 0 20 20"><path d="M10 1.4l2.5 5.3 5.8.7-4.3 3.9 1.2 5.7L10 14.2 4.8 17l1.2-5.7L1.7 7.4l5.8-.7z" fill="none" stroke="#DDD3C4" stroke-width="1.8" stroke-linejoin="round"></path></symbol>
+</defs></svg>
+
+<section class="dv-turn" id="t2" data-caps="{{ capsMode }}">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Production gaps</span></div>
+<p class="dv-sub">Five things turn 1 skipped that the real screen cannot. <code style="font:700 11px ui-monospace">Scene0.isDark</code> is already in your Swift and had no design. Equipping had no confirmation, so it silently did nothing visible. The shop had one scroll position. And nothing covered a 13-character name, a missing Canvas connection, Dynamic Type, or Reduce Motion.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Root on a dark scene · <code style="font:800 10px ui-monospace">isDark: true</code></div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:0;left:0;right:0;height:452px;overflow:hidden;border-radius:0 0 30px 30px">
+    <img src="scene-night.jpg" style="position:absolute;bottom:0;left:0;width:390px;height:462px;object-fit:cover" alt="Night in scene">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 74%,rgba(155,200,242,.16),transparent 60%)"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(to bottom,rgba(20,26,40,0),rgba(20,26,40,.30))"></div>
+    <div style="position:absolute;top:58px;right:24px;display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;border-radius:999px;background:rgba(16,24,32,.54);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path d="M3 8l2.2-4h13.6L21 8z" fill="#FF9E94"></path><path d="M4.2 8h15.6v11.2a1 1 0 0 1-1 1H5.2a1 1 0 0 1-1-1z" fill="#FFE9E5"></path><rect x="9.4" y="12.4" width="5.2" height="7.8" rx="1.4" fill="#FF6F61"></rect></svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(16,24,32,.54);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px)">
+        <span style="width:18px;height:18px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span>
+        <span style="font-size:15px;font-weight:900;color:#fff">1,450</span>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:16px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="background:rgba(16,24,32,.62);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);border-radius:16px;padding:9px 16px;font-size:13.5px;font-weight:700;color:#fff">Moss likes it quiet in here.</div>
+      <div style="padding:6px 15px;border-radius:999px;background:rgba(16,24,32,.62);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);font-size:14.5px;font-weight:900;color:#fff;letter-spacing:-.2px">Moss</div>
+      <svg viewBox="0 0 1000 897" width="228" height="205" style="display:block;overflow:visible">
+        <ellipse cx="500" cy="878" rx="440" ry="52" fill="#050A12" opacity=".34"></ellipse>
+        <use href="#k-slime2" width="1000" height="897"></use>
+      </svg>
+      <div style="display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;background:rgba(16,24,32,.62);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px)">
+        <svg width="15" height="15"><use href="#st-on" width="15" height="15"></use></svg>
+        <svg width="15" height="15"><use href="#st-on" width="15" height="15"></use></svg>
+        <svg width="15" height="15"><use href="#st-off" width="15" height="15"></use></svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:468px;left:24px;right:24px;display:flex;justify-content:space-between">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#FF8A7E" stroke-width="2.4" stroke-linecap="round"><path d="M3.5 8.5c2.4-2.9 5-2.9 7.4 0"></path><path d="M8.5 13.6c2.4-2.9 5-2.9 7.4 0"></path><path d="M13.5 18.7c2.2-2.6 4.6-2.6 6.8 0"></path></svg></div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">Pet</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24" fill="#57C79B"><rect x="5" y="9.4" width="14" height="11.6" rx="5.8"></rect><rect x="6.4" y="3.6" width="2.9" height="8" rx="1.45"></rect><rect x="10.6" y="2.2" width="2.9" height="9.4" rx="1.45"></rect><rect x="14.8" y="3.6" width="2.9" height="8" rx="1.45"></rect></svg></div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">High five</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24"><circle cx="9" cy="6.6" r="2.1" fill="#A5CE6B"></circle><circle cx="14.6" cy="5.8" r="2.5" fill="#F7A8B8"></circle><path d="M3.4 12.4h17.2a8.6 8.6 0 0 1-17.2 0z" fill="#FFC24B"></path><rect x="2.4" y="10.4" width="19.2" height="2.8" rx="1.4" fill="#E8A62E"></rect></svg></div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">Snack</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:572px;left:20px;right:20px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 8px;display:flex">
+    <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">23</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">days together</div></div>
+    <div style="width:1px;background:#F0E9DC"></div>
+    <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">41</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">assignments done</div></div>
+    <div style="width:1px;background:#F0E9DC"></div>
+    <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">6h 20m</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">focused</div></div>
+  </div>
+
+  <div style="position:absolute;top:664px;left:20px;right:20px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:9px">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="#2E2822"><rect x="3" y="3" width="8" height="8" rx="2.6"></rect><rect x="13" y="3" width="8" height="8" rx="2.6"></rect><rect x="3" y="13" width="8" height="8" rx="2.6"></rect><rect x="13" y="13" width="8" height="8" rx="2.6"></rect></svg>
+      <span style="font-size:15px;font-weight:900">Collection</span><span style="font-size:12px;font-weight:800;color:#96877F">2 of 6</span>
+    </div>
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#B4A996" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+  </div>
+
+  <div style="position:absolute;left:16px;right:16px;bottom:30px;display:flex;gap:10px;align-items:center">
+    <div style="display:flex;gap:2px;padding:8px;border-radius:999px;background:#2E2822;box-shadow:0 8px 22px rgba(0,0,0,.22)">
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5v5.6l3.8 2.2-1 1.7L11 13.7V7z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M7 7h10a5 5 0 0 1 5 5v2a4 4 0 0 1-7.2 2.4L14 15h-4l-.8 1.4A4 4 0 0 1 2 14v-2a5 5 0 0 1 5-5zm-1 3v1.5H4.5V13H6v1.5h1.5V13H9v-1.5H7.5V10zm10 .5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm2.6 2.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M4 4h6a3 3 0 0 1 2 .8V21a3 3 0 0 0-2-.8H4zm16 0h-6a3 3 0 0 0-2 .8V21a3 3 0 0 1 2-.8h6z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm7 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5v1H2zm15.5-4.6c2.6.5 4.5 2.3 4.5 4.6v1h-4.4v-1c0-1.7-.7-3.2-1.8-4.3z"></path></svg></div>
+    </div>
+    <div style="width:56px;height:56px;border-radius:999px;border:3px solid #FF6F61;background:#B1EDD48C;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;flex:none"><div style="margin-bottom:-22px;flex:none"><svg viewBox="0 0 1000 897" width="74" height="66" style="display:block"><use href="#k-slime2" width="1000" height="897"></use></svg></div></div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Your <code style="font:700 11px ui-monospace">Scene0.isDark</code> flag finally has a design. Every pill over the scene flips to a dark glass treatment — <code style="font:700 11px ui-monospace">rgba(16,24,32,.54–.62)</code>, 1px <code style="font:700 11px ui-monospace">rgba(255,255,255,.18)</code> hairline, 12pt blur, white type — while the coin disc keeps its brand colours because it must stay the same object across every scene. Ground shadow deepens to 34%, and a bottom scrim keeps the cream section from cutting hard against the art. Everything below the scene is unchanged, so only one branch is needed in code. Compare <a class="dv-oid" href="#1a">1a</a>: the stage also grew 32pt and the kin 16pt, following Tolan's much more generous companion stage — the collection card lost its thumbnail strip on dark scenes to pay for it.</p>
+</div>
+
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Toast · the missing confirmation</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="font-size:17px;font-weight:900">Collection</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08)"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span><span style="font-size:14px;font-weight:900">810</span></div>
+  </div>
+  <div style="position:absolute;top:98px;left:24px;font-size:12px;font-weight:800;color:#96877F">3 of 6 owned · nothing here is ever locked or hidden</div>
+
+  <div style="position:absolute;top:126px;left:20px;right:20px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#B4A996;padding:3px 8px;border-radius:999px">COMMON</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="background:#fff;border:2px solid #B4A996;border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:13px">
+      <svg width="64" height="57" style="flex:none"><use href="#k-slime2" width="64" height="57"></use></svg>
+      <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:900">Moss</div><div style="font-size:11.5px;font-weight:800;color:#96877F;margin-top:1px">Slime</div></div>
+      <div style="display:flex;gap:3px"><svg width="13" height="13"><use href="#st-on" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-on" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#57C79B;padding:3px 8px;border-radius:999px">UNCOMMON</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="background:#fff;border:2px solid #57C79B;border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:13px">
+      <svg width="64" height="57" style="flex:none"><use href="#k-ember" width="64" height="57"></use></svg>
+      <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:900">Pilot</div><div style="font-size:11.5px;font-weight:800;color:#96877F;margin-top:1px">Ember</div></div>
+      <div style="display:flex;gap:3px"><svg width="13" height="13"><use href="#st-on" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#9BC8F2;padding:3px 8px;border-radius:999px">RARE</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="display:flex;gap:12px">
+      <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:20px;padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center"><svg width="74" height="66"><use href="#k-droplet" width="74" height="66"></use></svg><div style="font-size:13.5px;font-weight:900;margin-top:2px">Droplet</div><div style="display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #9BC8F2;padding:2px 9px;border-radius:999px;margin-top:7px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">400</span></div></div>
+      <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:20px;padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center"><svg width="74" height="66"><use href="#k-sprout" width="74" height="66"></use></svg><div style="font-size:13.5px;font-weight:900;margin-top:2px">Sprout</div><div style="display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #9BC8F2;padding:2px 9px;border-radius:999px;margin-top:7px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">500</span></div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#C3B2F0;padding:3px 8px;border-radius:999px">EPIC</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="background:#fff;border:2px solid #C3B2F0;border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:13px;box-shadow:0 0 0 4px rgba(195,178,240,.24)">
+      <svg width="64" height="57" style="flex:none"><use href="#k-wisp" width="64" height="57"></use></svg>
+      <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:900">Juno</div><div style="font-size:11.5px;font-weight:800;color:#96877F;margin-top:1px">Wisp · adopted today</div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="display:flex;gap:3px"><svg width="13" height="13"><use href="#st-on" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg></div>
+        <div style="font-size:10px;font-weight:900;color:#3E9E78;background:#DFF3E9;padding:2px 9px;border-radius:999px">ACTIVE</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:20px;right:20px;bottom:34px;background:#2E2822;border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(46,40,34,.28)">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#57C79B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 13l4 4L19 7"></path></svg>
+    <span style="font-size:14px;font-weight:800;color:#fff">Juno is your active kin</span>
+  </div>
+</div>
+<div style="width:390px;padding:20px;background:#F1EADC;border-top:1px solid rgba(46,40,34,.10)">
+  <div style="font-size:12px;font-weight:900;letter-spacing:.12em;color:#B4A996;margin-bottom:12px">EVERY COPY THIS TOAST CARRIES</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="background:#2E2822;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#57C79B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 13l4 4L19 7"></path></svg><span style="font-size:13.5px;font-weight:800;color:#fff">Golden hour is your scene</span></div>
+    <div style="background:#2E2822;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" width="15" height="15" style="flex:none"><rect x="4.5" y="10.4" width="15" height="10.6" rx="3.8" fill="#C3B2F0"></rect><path d="M8.4 10.4V8.2a3.6 3.6 0 0 1 7.2 0v2.2" fill="none" stroke="#C3B2F0" stroke-width="2.5" stroke-linecap="round"></path></svg><span style="font-size:13.5px;font-weight:800;color:#fff">Wisp held at 640 · tap to release</span></div>
+    <div style="background:#2E2822;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFC24B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M20.2 12a8.2 8.2 0 1 1-2.5-5.9"></path><path d="M20.4 3.6v4.6h-4.6"></path></svg><span style="font-size:13.5px;font-weight:800;color:#fff">Five new picks · Wisp kept</span></div>
+  </div>
+  <div style="font-size:11.5px;font-weight:700;color:#96877F;line-height:1.65;margin-top:14px;text-wrap:pretty"><b style="color:#2E2822">Spec.</b> Ink <code style="font:800 11px ui-monospace">#2E2822</code>, radius 16, padding 14×18, 20pt side margins, 34pt from the bottom safe area — or 12pt above the tab bar where one is present. Rises 12pt and fades in over 180ms, holds 2.4s, fades out over 200ms. Leading glyph is the tier or action colour; text is white 14/800. Never more than one on screen: a second replaces the first in place. No dismiss control, no undo — every action it reports is reversible by repeating it.</div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Turn 1 had no feedback for equipping, locking or rerolling — the biggest production hole in the set. This is Finch's dark toast from <code style="font:700 11px ui-monospace">04</code>, which is the right pattern precisely because none of these actions is destructive enough to earn a modal. The screen behind is also the answer to "what does Collection look like after a purchase": Juno slots into Epic with a lavender halo and the ACTIVE pill, and Moss quietly loses it.</p>
+</div>
+
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Shop · scrolled, sticky header</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:340px;left:20px;right:20px;display:flex;flex-wrap:wrap;gap:12px">
+    <div style="width:163px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:9px 9px 12px;display:flex;flex-direction:column;align-items:center"><img src="scene-dorm.jpg" style="width:145px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Study room"><div style="font-size:14.5px;font-weight:900;margin-top:9px">Study room</div><div style="font-size:10px;font-weight:900;color:#96877F;background:#F6F1E6;padding:3px 11px;border-radius:999px;margin-top:7px">OWNED</div></div>
+    <div style="width:163px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:9px 9px 12px;display:flex;flex-direction:column;align-items:center"><img src="scene-sunset.jpg" style="width:145px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Golden hour"><div style="font-size:14.5px;font-weight:900;margin-top:9px">Golden hour</div><div style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:900;color:#3E9E78;background:#DFF3E9;padding:3px 11px;border-radius:999px;margin-top:7px"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#3E9E78" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>EQUIPPED</div></div>
+    <div style="width:163px;background:#FBF7F0;border:2px solid #57C79B;border-radius:22px;padding:8px 8px 11px;display:flex;flex-direction:column;align-items:center"><img src="scene-meadow.jpg" style="width:143px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Meadow"><div style="font-size:14.5px;font-weight:900;margin-top:9px">Meadow</div><div style="display:flex;align-items:center;gap:6px;margin-top:7px"><span style="font-size:11px;font-weight:800;color:#B4A996;text-decoration:line-through">200</span><div style="display:flex;align-items:center;gap:4px;background:#57C79B;padding:3px 10px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">160</span></div></div></div>
+    <div style="width:163px;background:#FBF7F0;border:2px solid #57C79B;border-radius:22px;padding:8px 8px 11px;display:flex;flex-direction:column;align-items:center"><img src="scene-night.jpg" style="width:143px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Night in"><div style="font-size:14.5px;font-weight:900;margin-top:9px">Night in</div><div style="display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #57C79B;padding:3px 10px;border-radius:999px;margin-top:7px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">250</span></div></div>
+  </div>
+  <div style="position:absolute;top:172px;left:24px;right:24px;display:flex;flex-wrap:wrap;gap:12px;opacity:.5">
+    <div style="width:150px;height:132px;background:#fff;border:2px solid #C3B2F0;border-radius:22px"></div>
+    <div style="width:150px;height:132px;background:#FBF7F0;border:2px solid #FFC24B;border-radius:22px"></div>
+  </div>
+  <div style="position:absolute;top:300px;left:24px;right:24px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:18px;font-weight:900">Scenes</span><span style="font-size:11.5px;font-weight:800;color:#96877F">2 of 4 owned</span></div>
+
+  <div style="position:absolute;top:0;left:0;right:0;background:rgba(250,245,236,.94);backdrop-filter:blur(14px);border-bottom:1px solid #F0E9DC;padding-top:46px;padding-bottom:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px">
+      <div style="width:38px;height:38px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+      <div style="font-size:17px;font-weight:900">Shop</div>
+      <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08)"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span><span style="font-size:14px;font-weight:900">1,450</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 20px 0;padding:9px 14px;border-radius:999px;background:#fff;border:2px solid #F0E9DC">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#2E2822" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 15l7-7 7 7"></path></svg>
+      <span style="font-size:13px;font-weight:900;flex:1">Today's picks</span>
+      <div style="display:flex;gap:3px">
+        <span style="width:9px;height:9px;border-radius:3px;background:#9BC8F2"></span>
+        <span style="width:9px;height:9px;border-radius:3px;background:#57C79B"></span>
+        <span style="width:9px;height:9px;border-radius:3px;background:#C3B2F0"></span>
+        <span style="width:9px;height:9px;border-radius:3px;background:#FFC24B"></span>
+        <span style="width:9px;height:9px;border-radius:3px;background:#9BC8F2"></span>
+      </div>
+      <span style="font-size:11.5px;font-weight:800;color:#8874C9">1 held</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(to bottom,rgba(250,245,236,0),#FAF5EC)"></div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Once you scroll past the picks row you lose the whole reason you came, so the row collapses into a sticky summary pill: an up-chevron back to it, five 9pt tier-coloured squares standing in for the slots, and the held count. That squares strip is the cheapest possible restatement of "what's on offer and what's it worth" — it needs no art and no prices, only the tier ramp. Header goes translucent with a 14pt blur and gains the hairline only on scroll; at rest it is flat cream, as in <a class="dv-oid" href="#1e">1e</a>.</p>
+</div>
+
+<div class="dv-opt" id="2d" style="width:430px">
+<div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Resilience · long names, missing data, Dynamic Type</div>
+<div class="dv-card" style="width:430px">
+<div style="width:430px;padding:24px;background:#FAF5EC">
+
+<div style="font-size:12px;font-weight:900;letter-spacing:.12em;color:#B4A996">1 · A 13-CHARACTER NAME</div>
+<div style="display:flex;gap:12px;margin-top:12px;align-items:flex-start">
+  <div style="flex:1;background:#fff;border-radius:18px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px">
+    <div style="font-size:10.5px;font-weight:900;color:#3E9E78;margin-bottom:9px">DO</div>
+    <div style="display:inline-flex;padding:6px 15px;border-radius:999px;background:#F6F1E6;font-size:14.5px;font-weight:900;letter-spacing:-.2px">Bartholomew</div>
+    <div style="font-size:19px;font-weight:900;letter-spacing:-.4px;margin-top:12px">Bartholomew</div>
+    <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:8px;line-height:1.55">Name plate grows; the detail-sheet title drops from 27 to 19pt on a single line. Field caps at 14 characters.</div>
+  </div>
+  <div style="flex:1;background:#fff;border-radius:18px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px">
+    <div style="font-size:10.5px;font-weight:900;color:#E4735F;margin-bottom:9px">DON'T</div>
+    <div style="display:inline-flex;padding:6px 15px;border-radius:999px;background:#F6F1E6;font-size:14.5px;font-weight:900;max-width:96px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Bartholomew</div>
+    <div style="font-size:27px;font-weight:900;letter-spacing:-.5px;margin-top:12px;line-height:1.05">Barthol<br>omew</div>
+    <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:8px;line-height:1.55">Never truncate a name the student chose, and never let it wrap mid-word into the star plate.</div>
+  </div>
+</div>
+
+<div style="height:1px;background:#F0E9DC;margin:22px 0"></div>
+
+<div style="font-size:12px;font-weight:900;letter-spacing:.12em;color:#B4A996">2 · CANVAS NOT CONNECTED</div>
+<div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:6px;line-height:1.55;text-wrap:pretty">The together-since strip is derived from <code style="font:800 11px ui-monospace">Ledger.entries</code>. With no Canvas link there are no assignment entries — and a hard <b style="color:#2E2822">0</b> would read as failure on the one strip that is supposed to only go up. Drop the cell instead and redistribute.</div>
+<div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 8px;display:flex;margin-top:12px">
+  <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">23</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">days together</div></div>
+  <div style="width:1px;background:#F0E9DC"></div>
+  <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">6h 20m</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">focused</div></div>
+  <div style="width:1px;background:#F0E9DC"></div>
+  <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">9</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">lessons read</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;background:#FFE9E5;border-radius:16px;padding:12px 14px;margin-top:8px">
+  <div style="width:26px;height:26px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="14" height="14" fill="#FF8A7E"><circle cx="12" cy="12" r="10" fill="none" stroke="#FF8A7E" stroke-width="2.4"></circle><rect x="10.9" y="6" width="2.2" height="8" rx="1.1"></rect><circle cx="12" cy="17" r="1.4"></circle></svg></div>
+  <span style="font-size:12.5px;font-weight:800;color:#E4735F;flex:1">Connect Canvas to count assignments here</span>
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#E4735F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</div>
+
+<div style="height:1px;background:#F0E9DC;margin:22px 0"></div>
+
+<div style="font-size:12px;font-weight:900;letter-spacing:.12em;color:#B4A996">3 · DYNAMIC TYPE AT XL AND ABOVE</div>
+<div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:6px;line-height:1.55;text-wrap:pretty">Three columns cannot hold "assignments done" at accessibility sizes. Past XL the strip becomes rows, and the care row's labels move inline beside the buttons.</div>
+<div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:6px 18px;margin-top:12px">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0"><span style="font-size:15px;font-weight:700;color:#96877F">Days together</span><span style="font-size:18px;font-weight:900">23</span></div>
+  <div style="height:1px;background:#F0E9DC"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0"><span style="font-size:15px;font-weight:700;color:#96877F">Assignments done</span><span style="font-size:18px;font-weight:900">41</span></div>
+  <div style="height:1px;background:#F0E9DC"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0"><span style="font-size:15px;font-weight:700;color:#96877F">Time focused</span><span style="font-size:18px;font-weight:900">6h 20m</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+  <div style="display:flex;align-items:center;gap:14px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:10px 16px"><div style="width:52px;height:52px;border-radius:999px;background:#FFE9E5;display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#FF8A7E" stroke-width="2.4" stroke-linecap="round"><path d="M3.5 8.5c2.4-2.9 5-2.9 7.4 0"></path><path d="M8.5 13.6c2.4-2.9 5-2.9 7.4 0"></path><path d="M13.5 18.7c2.2-2.6 4.6-2.6 6.8 0"></path></svg></div><span style="font-size:17px;font-weight:900">Pet</span></div>
+  <div style="display:flex;align-items:center;gap:14px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:10px 16px"><div style="width:52px;height:52px;border-radius:999px;background:#DFF3E9;display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="#57C79B"><rect x="5" y="9.4" width="14" height="11.6" rx="5.8"></rect><rect x="6.4" y="3.6" width="2.9" height="8" rx="1.45"></rect><rect x="10.6" y="2.2" width="2.9" height="9.4" rx="1.45"></rect><rect x="14.8" y="3.6" width="2.9" height="8" rx="1.45"></rect></svg></div><span style="font-size:17px;font-weight:900">High five</span></div>
+</div>
+
+</div>
+</div>
+<p class="dv-cap" data-cap>The three inputs that break every artboard in turn 1. The Canvas case matters most: a strip whose whole promise is "these only go up" must never print a zero it cannot earn, so the cell is removed rather than emptied, and the fix is offered in coral as an action instead of an error.</p>
+</div>
+
+<div class="dv-opt" id="2e" style="width:800px">
+<div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>Reduce Motion · the celebrations, without motion</div>
+<div class="dv-card" style="width:800px">
+<div style="width:800px;padding:24px;background:#FAF5EC">
+  <div style="font-size:12px;font-weight:700;color:#96877F;margin-bottom:16px;text-wrap:pretty">Arrival and star-up are the two screens carrying real motion, and both are the emotional payload of the tab — so with <code style="font:800 11px ui-monospace">accessibilityReduceMotion</code> on they must still land, not just stop moving. Rings and confetti are already static geometry, so they stay; only the travel is removed.</div>
+  <div style="display:flex;gap:16px">
+
+    <div style="flex:1;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px">
+      <div style="font-size:13px;font-weight:900;margin-bottom:12px">Arrival <span style="font-weight:700;color:#96877F">· <a class="dv-oid" href="#1l">1l</a></span></div>
+      <div style="height:280px;border-radius:16px;background:radial-gradient(circle at 50% 44%,#F3EFF9 0%,#FAF5EC 62%);position:relative;overflow:hidden">
+        <div style="position:absolute;left:50%;top:124px;transform:translate(-50%,-50%);width:212px;height:212px;border-radius:999px;border:2px solid rgba(195,178,240,.34)"></div>
+        <div style="position:absolute;left:50%;top:124px;transform:translate(-50%,-50%);width:150px;height:150px;border-radius:999px;background:rgba(195,178,240,.18)"></div>
+        <div style="position:absolute;left:0;right:0;top:56px;display:flex;justify-content:center"><svg width="152" height="136"><use href="#k-wispd" width="152" height="136"></use></svg></div>
+        <div style="position:absolute;left:0;right:0;top:198px;text-align:center"><span style="font-size:8.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#C3B2F0;padding:2.5px 8px;border-radius:999px">EPIC</span><div style="font-size:23px;font-weight:900;letter-spacing:-.5px;margin-top:8px">Wisp is here.</div></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:12px;line-height:1.6;text-wrap:pretty"><b style="color:#2E2822">Changed:</b> confetti squares omitted entirely — they are the only element whose meaning is its trajectory. Rings render at final size with no expand. Kin cross-fades in at 100% scale over 260ms instead of springing up from 0.7. Copy fades on the same curve, 80ms later.<br><b style="color:#2E2822">Kept:</b> the delight face, the ring geometry, the full-screen no-chrome treatment, and the 248pt kin. Nothing about the composition changes, so it reads as the same moment.</div>
+    </div>
+
+    <div style="flex:1;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px">
+      <div style="font-size:13px;font-weight:900;margin-bottom:12px">Star-up to 3★ <span style="font-weight:700;color:#96877F">· <a class="dv-oid" href="#1p">1p</a></span></div>
+      <div style="height:280px;border-radius:16px;background:radial-gradient(circle at 50% 42%,#FFF3D6 0%,#FAF5EC 62%);position:relative;overflow:hidden">
+        <div style="position:absolute;left:50%;top:118px;transform:translate(-50%,-50%);width:226px;height:226px;border-radius:999px;border:2px solid rgba(255,194,75,.30)"></div>
+        <div style="position:absolute;left:50%;top:118px;transform:translate(-50%,-50%);width:158px;height:158px;border-radius:999px;background:rgba(255,194,75,.20)"></div>
+        <div style="position:absolute;left:0;right:0;top:48px;display:flex;justify-content:center"><svg width="164" height="147"><use href="#k-slime3d" width="164" height="147"></use></svg></div>
+        <div style="position:absolute;left:0;right:0;top:186px;display:flex;justify-content:center"><div style="display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:999px;background:#fff;box-shadow:0 3px 12px rgba(46,40,34,.10)"><svg width="20" height="20"><use href="#st-on" width="20" height="20"></use></svg><svg width="20" height="20"><use href="#st-on" width="20" height="20"></use></svg><svg width="20" height="20"><use href="#st-on" width="20" height="20"></use></svg></div></div>
+        <div style="position:absolute;left:0;right:0;top:236px;text-align:center;font-size:20px;font-weight:900;letter-spacing:-.4px">Moss wears the crown.</div>
+      </div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:12px;line-height:1.6;text-wrap:pretty"><b style="color:#2E2822">Changed:</b> crown does not drop or tilt-overshoot — it fades in over 220ms already seated at its final <code style="font:800 11px ui-monospace">rotate(-12°)</code>. Third pip fades rather than scaling 1.4 → 1.0, and loses its two halo rings so the plate reads flat. Coin confetti omitted.<br><b style="color:#2E2822">Kept:</b> the gold radial and both rings, the crown itself, and the pip plate at full size. The crown arriving at all is the payoff; how it gets there is not.</div>
+    </div>
+
+  </div>
+  <div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px 18px;margin-top:16px">
+    <div style="font-size:13px;font-weight:900">The rule this follows</div>
+    <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:6px;line-height:1.65;text-wrap:pretty">Anything whose meaning <i>is</i> the movement gets removed (confetti, the reroll stagger in <a class="dv-oid" href="#1g">1g</a>, the care-row squash in <a class="dv-oid" href="#1a">1a</a> — which becomes a 160ms face cross-fade plus the toast). Anything that merely arrives with movement gets a cross-fade at final position and final scale. The idle breathing loop in <code style="font:800 11px ui-monospace">SlimeView.startIdle()</code> stops entirely; the kin is simply still, which is the one case where doing less costs the design nothing.</div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>High school students are a population where Reduce Motion is genuinely common, and both of these screens exist purely to feel good. Treated as a design problem rather than a switch: decide per element whether the motion carries the meaning, then keep the composition identical either way.</p>
+</div>
+
+</div>
+<p class="dv-next">Try next: "apply <a class="dv-oid" href="#2a">2a</a>'s bigger stage to <a class="dv-oid" href="#1a">1a</a> too" · "the picks summary pill in <a class="dv-oid" href="#2c">2c</a> should show prices" · "add the loading and offline states for the picks row" · "spec the haptics and VoiceOver labels"</p>
+</section>
+
+<section class="dv-turn" id="t1" data-caps="{{ capsMode }}">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Kin tab — full screen and state set</span></div>
+<p class="dv-sub">18 artboards, 390×844pt, in the Prepkin token set. TFT's grammar of value (tier on badge, plate and 2pt border; stars instead of levels; a five-slot picks row; the lock) with none of its grammar of loss (free unlimited reroll, no countdown, no exclusivity, nothing greyed or padlocked). Mascot art is the traced production geometry from <code style="font:700 11px ui-monospace">SlimeArt</code> — never redrawn. Four new kin are proposals, faces marked not drawn.</p>
+
+<div class="dv-grp">
+<div class="dv-ghd">A · Kin tab root</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Root · settled kin, 2 stars <span style="font-weight:700;color:#96877F">— care row is live, tap it</span></div>
+<div class="dv-card">
+<div data-care="{{ careState }}" style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:0;left:0;right:0;height:420px;overflow:hidden;border-radius:0 0 30px 30px">
+    <img src="scene-sunset.jpg" style="position:absolute;bottom:0;left:0;width:390px;height:430px;object-fit:cover" alt="Golden hour scene">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 78%,rgba(255,255,255,.30),transparent 62%)"></div>
+    <div style="position:absolute;top:58px;right:24px;display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.12);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path d="M3 8l2.2-4h13.6L21 8z" fill="#FF8A7E"></path><path d="M4.2 8h15.6v11.2a1 1 0 0 1-1 1H5.2a1 1 0 0 1-1-1z" fill="#FFE9E5"></path><rect x="9.4" y="12.4" width="5.2" height="7.8" rx="1.4" fill="#FF6F61"></rect></svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.12)">
+        <span style="width:18px;height:18px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span>
+        <span style="font-size:15px;font-weight:900">1,450</span>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:14px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="background:#fff;border-radius:16px;padding:9px 16px;font-size:13.5px;font-weight:700;box-shadow:0 3px 10px rgba(46,40,34,.12)">{{ careMsg }}</div>
+      <div style="padding:6px 15px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.12);font-size:14.5px;font-weight:900;letter-spacing:-.2px">{{ kinName }}</div>
+      <div style="position:relative">
+        <span data-conf style="position:absolute;left:6px;top:24px;width:11px;height:11px;background:#FFC24B;opacity:0;--cx:-26px"></span>
+        <span data-conf style="position:absolute;right:2px;top:40px;width:9px;height:9px;background:#FF6F61;opacity:0;--cx:22px;animation-delay:.08s"></span>
+        <span data-conf style="position:absolute;left:44px;top:6px;width:8px;height:8px;background:#57C79B;opacity:0;--cx:-8px;animation-delay:.15s"></span>
+        <div data-kin style="transform-origin:50% 100%">
+          <svg viewBox="0 0 1000 897" width="212" height="190" style="display:block;overflow:visible">
+            <ellipse cx="500" cy="878" rx="440" ry="52" fill="#101820" opacity=".10"></ellipse>
+            <use href="#n-slime"></use>
+            <g data-face="i" style="opacity:1"><use href="#fI" fill="#101820"></use></g>
+            <g data-face="d" style="opacity:0"><use href="#fD" fill="#101820"></use></g>
+            <use href="#blush"></use>
+          </svg>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.12)">
+        <svg width="15" height="15"><use href="#st-on" width="15" height="15"></use></svg>
+        <svg width="15" height="15"><use href="#st-on" width="15" height="15"></use></svg>
+        <svg width="15" height="15"><use href="#st-off" width="15" height="15"></use></svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:436px;left:24px;right:24px;display:flex;justify-content:space-between">
+    <div onClick="{{ onPet }}" style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px;cursor:pointer">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#FF8A7E" stroke-width="2.4" stroke-linecap="round"><path d="M3.5 8.5c2.4-2.9 5-2.9 7.4 0"></path><path d="M8.5 13.6c2.4-2.9 5-2.9 7.4 0"></path><path d="M13.5 18.7c2.2-2.6 4.6-2.6 6.8 0"></path></svg>
+      </div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">Pet</span>
+    </div>
+    <div onClick="{{ onFive }}" style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px;cursor:pointer">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="#57C79B"><rect x="5" y="9.4" width="14" height="11.6" rx="5.8"></rect><rect x="6.4" y="3.6" width="2.9" height="8" rx="1.45"></rect><rect x="10.6" y="2.2" width="2.9" height="9.4" rx="1.45"></rect><rect x="14.8" y="3.6" width="2.9" height="8" rx="1.45"></rect></svg>
+      </div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">High five</span>
+    </div>
+    <div onClick="{{ onSnack }}" style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px;cursor:pointer">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" width="24" height="24"><circle cx="9" cy="6.6" r="2.1" fill="#A5CE6B"></circle><circle cx="14.6" cy="5.8" r="2.5" fill="#F7A8B8"></circle><path d="M3.4 12.4h17.2a8.6 8.6 0 0 1-17.2 0z" fill="#FFC24B"></path><rect x="2.4" y="10.4" width="19.2" height="2.8" rx="1.4" fill="#E8A62E"></rect></svg>
+      </div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">Snack</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:540px;left:20px;right:20px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 8px;display:flex">
+    <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">23</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">days together</div></div>
+    <div style="width:1px;background:#F0E9DC"></div>
+    <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">41</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">assignments done</div></div>
+    <div style="width:1px;background:#F0E9DC"></div>
+    <div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:900">6h 20m</div><div style="font-size:10.5px;font-weight:800;color:#96877F;margin-top:2px">focused</div></div>
+  </div>
+  <div style="position:absolute;top:626px;left:20px;right:20px;text-align:center;font-size:10.5px;font-weight:800;color:#B4A996">Every one of these only ever goes up.</div>
+
+  <div style="position:absolute;top:654px;left:20px;right:20px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 16px 12px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:9px">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="#2E2822"><rect x="3" y="3" width="8" height="8" rx="2.6"></rect><rect x="13" y="3" width="8" height="8" rx="2.6"></rect><rect x="3" y="13" width="8" height="8" rx="2.6"></rect><rect x="13" y="13" width="8" height="8" rx="2.6"></rect></svg>
+        <span style="font-size:15px;font-weight:900">Collection</span>
+        <span style="font-size:12px;font-weight:800;color:#96877F">2 of 6</span>
+      </div>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#B4A996" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:11px">
+      <div style="flex:1;height:52px;border-radius:13px;background:#F6F1E6;border:2px solid #57C79B;display:flex;align-items:flex-end;justify-content:center;overflow:hidden"><svg width="42" height="38" style="margin-bottom:-4px"><use href="#k-slime2" width="42" height="38"></use></svg></div>
+      <div style="flex:1;height:52px;border-radius:13px;background:#F6F1E6;border:2px solid #F0E9DC;display:flex;align-items:flex-end;justify-content:center;overflow:hidden"><svg width="42" height="38" style="margin-bottom:-4px"><use href="#k-ember" width="42" height="38"></use></svg></div>
+      <div style="flex:1;height:52px;border-radius:13px;background:#FBF7F0;border:2px solid #F0E9DC;display:flex;align-items:flex-end;justify-content:center;overflow:hidden"><svg width="42" height="38" style="margin-bottom:-4px"><use href="#k-droplet" width="42" height="38"></use></svg></div>
+      <div style="flex:1;height:52px;border-radius:13px;background:#FBF7F0;border:2px solid #F0E9DC;display:flex;align-items:flex-end;justify-content:center;overflow:hidden"><svg width="42" height="38" style="margin-bottom:-4px"><use href="#k-sprout" width="42" height="38"></use></svg></div>
+      <div style="flex:1;height:52px;border-radius:13px;background:#FBF7F0;border:2px solid #F0E9DC;display:flex;align-items:flex-end;justify-content:center;overflow:hidden"><svg width="42" height="38" style="margin-bottom:-4px"><use href="#k-wisp" width="42" height="38"></use></svg></div>
+      <div style="flex:1;height:52px;border-radius:13px;background:#FBF7F0;border:2px solid #FFC24B;display:flex;align-items:flex-end;justify-content:center;overflow:hidden"><svg width="42" height="38" style="margin-bottom:-4px"><use href="#k-comet" width="42" height="38"></use></svg></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;height:140px;pointer-events:none;background:linear-gradient(to bottom,rgba(250,245,236,0),rgba(250,245,236,.92) 55%,#FAF5EC)"></div>
+  <div style="position:absolute;left:16px;right:16px;bottom:30px;display:flex;gap:10px;align-items:center">
+    <div style="display:flex;gap:2px;padding:8px;border-radius:999px;background:#2E2822;box-shadow:0 8px 22px rgba(0,0,0,.22)">
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5v5.6l3.8 2.2-1 1.7L11 13.7V7z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M7 7h10a5 5 0 0 1 5 5v2a4 4 0 0 1-7.2 2.4L14 15h-4l-.8 1.4A4 4 0 0 1 2 14v-2a5 5 0 0 1 5-5zm-1 3v1.5H4.5V13H6v1.5h1.5V13H9v-1.5H7.5V10zm10 .5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm2.6 2.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M4 4h6a3 3 0 0 1 2 .8V21a3 3 0 0 0-2-.8H4zm16 0h-6a3 3 0 0 0-2 .8V21a3 3 0 0 1 2-.8h6z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm7 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5v1H2zm15.5-4.6c2.6.5 4.5 2.3 4.5 4.6v1h-4.4v-1c0-1.7-.7-3.2-1.8-4.3z"></path></svg></div>
+    </div>
+    <div style="width:56px;height:56px;border-radius:999px;border:3px solid #FF6F61;background:#B1EDD48C;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;flex:none"><div style="margin-bottom:-22px;flex:none"><svg viewBox="0 0 1000 897" width="74" height="66" style="display:block"><use href="#k-slime2" width="1000" height="897"></use></svg></div></div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Was: a two-column grid of buyable things. Now the tab opens on the kin itself, full-bleed in its owned scene. Care row is three free unlimited taps — the one thing the tab could not do before. "Lv 2" is gone: two gold pips on a plate. The together-since strip is the payload only this app can produce, and the collection preview draws all six kin at full colour so the unowned ones are the motivation, not a wall.</p>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Root · first run, empty wallet</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:0;left:0;right:0;height:420px;overflow:hidden;border-radius:0 0 30px 30px">
+    <img src="scene-dorm.jpg" style="position:absolute;bottom:0;left:0;width:390px;height:430px;object-fit:cover" alt="Study room scene">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 78%,rgba(255,255,255,.30),transparent 62%)"></div>
+    <div style="position:absolute;top:58px;right:24px;display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.12);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" width="21" height="21"><path d="M3 8l2.2-4h13.6L21 8z" fill="#FF8A7E"></path><path d="M4.2 8h15.6v11.2a1 1 0 0 1-1 1H5.2a1 1 0 0 1-1-1z" fill="#FFE9E5"></path><rect x="9.4" y="12.4" width="5.2" height="7.8" rx="1.4" fill="#FF6F61"></rect></svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.12)">
+        <span style="width:18px;height:18px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span>
+        <span style="font-size:15px;font-weight:900">0</span>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:16px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="background:#fff;border-radius:16px;padding:9px 16px;font-size:13.5px;font-weight:700;box-shadow:0 3px 10px rgba(46,40,34,.12)">This one is yours. It's free.</div>
+      <div style="display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;background:#fff;border:2px dashed #E5DDD0;font-size:13.5px;font-weight:900;color:#96877F">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="#B4A996"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#B4A996" stroke-width="2.2"></rect><circle cx="8.5" cy="8.5" r="1.7"></circle><circle cx="15.5" cy="8.5" r="1.7"></circle><circle cx="12" cy="12" r="1.7"></circle><circle cx="8.5" cy="15.5" r="1.7"></circle><circle cx="15.5" cy="15.5" r="1.7"></circle></svg>
+        Name your kin
+      </div>
+      <svg viewBox="0 0 1000 897" width="164" height="147" style="display:block;overflow:visible">
+        <ellipse cx="500" cy="878" rx="440" ry="52" fill="#101820" opacity=".10"></ellipse>
+        <use href="#k-slime1" width="1000" height="897"></use>
+      </svg>
+      <div style="display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.12)">
+        <svg width="15" height="15"><use href="#st-on" width="15" height="15"></use></svg>
+        <svg width="15" height="15"><use href="#st-off" width="15" height="15"></use></svg>
+        <svg width="15" height="15"><use href="#st-off" width="15" height="15"></use></svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:436px;left:24px;right:24px;display:flex;justify-content:space-between">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#FF8A7E" stroke-width="2.4" stroke-linecap="round"><path d="M3.5 8.5c2.4-2.9 5-2.9 7.4 0"></path><path d="M8.5 13.6c2.4-2.9 5-2.9 7.4 0"></path><path d="M13.5 18.7c2.2-2.6 4.6-2.6 6.8 0"></path></svg></div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">Pet</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24" fill="#57C79B"><rect x="5" y="9.4" width="14" height="11.6" rx="5.8"></rect><rect x="6.4" y="3.6" width="2.9" height="8" rx="1.45"></rect><rect x="10.6" y="2.2" width="2.9" height="9.4" rx="1.45"></rect><rect x="14.8" y="3.6" width="2.9" height="8" rx="1.45"></rect></svg></div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">High five</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;width:96px">
+      <div style="width:60px;height:60px;border-radius:999px;background:#fff;box-shadow:0 2px 10px rgba(46,40,34,.09);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24"><circle cx="9" cy="6.6" r="2.1" fill="#A5CE6B"></circle><circle cx="14.6" cy="5.8" r="2.5" fill="#F7A8B8"></circle><path d="M3.4 12.4h17.2a8.6 8.6 0 0 1-17.2 0z" fill="#FFC24B"></path><rect x="2.4" y="10.4" width="19.2" height="2.8" rx="1.4" fill="#E8A62E"></rect></svg></div>
+      <span style="font-size:11.5px;font-weight:800;color:#96877F">Snack</span>
+    </div>
+  </div>
+  <div style="position:absolute;top:522px;left:24px;right:24px;text-align:center;font-size:11.5px;font-weight:800;color:#B4A996">Free, unlimited, always. No cooldown.</div>
+
+  <div style="position:absolute;top:556px;left:20px;right:20px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px">
+    <div style="font-size:15px;font-weight:900">Day 1 together</div>
+    <div style="font-size:12.5px;font-weight:700;color:#96877F;margin-top:5px;text-wrap:pretty">Assignments finished, hours focused, lessons read — they start filling in here as soon as you finish something today.</div>
+  </div>
+
+  <div style="position:absolute;top:660px;left:20px;right:20px;background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 16px 12px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:9px">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="#2E2822"><rect x="3" y="3" width="8" height="8" rx="2.6"></rect><rect x="13" y="3" width="8" height="8" rx="2.6"></rect><rect x="3" y="13" width="8" height="8" rx="2.6"></rect><rect x="13" y="13" width="8" height="8" rx="2.6"></rect></svg>
+        <span style="font-size:15px;font-weight:900">Five more to meet</span>
+      </div>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#B4A996" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:11px">
+      <div style="flex:1;height:56px;border-radius:13px;background:#FBF7F0;border:2px solid #57C79B;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden"><svg width="40" height="36"><use href="#k-ember" width="40" height="36"></use></svg><span style="font-size:9.5px;font-weight:900;color:#3E9E78;margin-bottom:3px">300</span></div>
+      <div style="flex:1;height:56px;border-radius:13px;background:#FBF7F0;border:2px solid #9BC8F2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden"><svg width="40" height="36"><use href="#k-droplet" width="40" height="36"></use></svg><span style="font-size:9.5px;font-weight:900;color:#5E93C6;margin-bottom:3px">400</span></div>
+      <div style="flex:1;height:56px;border-radius:13px;background:#FBF7F0;border:2px solid #9BC8F2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden"><svg width="40" height="36"><use href="#k-sprout" width="40" height="36"></use></svg><span style="font-size:9.5px;font-weight:900;color:#5E93C6;margin-bottom:3px">500</span></div>
+      <div style="flex:1;height:56px;border-radius:13px;background:#FBF7F0;border:2px solid #C3B2F0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden"><svg width="40" height="36"><use href="#k-wisp" width="40" height="36"></use></svg><span style="font-size:9.5px;font-weight:900;color:#8874C9;margin-bottom:3px">800</span></div>
+      <div style="flex:1;height:56px;border-radius:13px;background:#FBF7F0;border:2px solid #FFC24B;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden"><svg width="40" height="36"><use href="#k-comet" width="40" height="36"></use></svg><span style="font-size:9.5px;font-weight:900;color:#A8761D;margin-bottom:3px">1,200</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:800;color:#B4A996;margin-top:9px">Finishing things earns coins. Nothing here ever expires.</div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;height:140px;pointer-events:none;background:linear-gradient(to bottom,rgba(250,245,236,0),rgba(250,245,236,.92) 55%,#FAF5EC)"></div>
+  <div style="position:absolute;left:16px;right:16px;bottom:30px;display:flex;gap:10px;align-items:center">
+    <div style="display:flex;gap:2px;padding:8px;border-radius:999px;background:#2E2822;box-shadow:0 8px 22px rgba(0,0,0,.22)">
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5v5.6l3.8 2.2-1 1.7L11 13.7V7z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M7 7h10a5 5 0 0 1 5 5v2a4 4 0 0 1-7.2 2.4L14 15h-4l-.8 1.4A4 4 0 0 1 2 14v-2a5 5 0 0 1 5-5zm-1 3v1.5H4.5V13H6v1.5h1.5V13H9v-1.5H7.5V10zm10 .5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm2.6 2.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M4 4h6a3 3 0 0 1 2 .8V21a3 3 0 0 0-2-.8H4zm16 0h-6a3 3 0 0 0-2 .8V21a3 3 0 0 1 2-.8h6z"></path></svg></div>
+      <div style="width:44px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="19" height="19" fill="rgba(255,255,255,.42)"><path d="M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm7 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5v1H2zm15.5-4.6c2.6.5 4.5 2.3 4.5 4.6v1h-4.4v-1c0-1.7-.7-3.2-1.8-4.3z"></path></svg></div>
+    </div>
+    <div style="width:56px;height:56px;border-radius:999px;border:3px solid #FF6F61;background:#B1EDD48C;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;flex:none"><div style="margin-bottom:-22px;flex:none"><svg viewBox="0 0 1000 897" width="74" height="66" style="display:block"><use href="#k-slime1" width="1000" height="897"></use></svg></div></div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Day one shows no zeros and no prices you can't meet. The together-since card says what will appear rather than printing "0 · 0 · 0". The collection preview is retitled "Five more to meet" and every one is drawn in full colour with its price — you can see the whole ladder from an empty wallet. Naming is offered as a dashed affordance where the name plate will live.</p>
+</div>
+
+</div>
+</div>
+
+<div class="dv-grp">
+<div class="dv-ghd">B · Collection — the dock</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Collection · grouped by tier, cheap first</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="font-size:17px;font-weight:900">Collection</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08)"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span><span style="font-size:14px;font-weight:900">1,450</span></div>
+  </div>
+  <div style="position:absolute;top:98px;left:24px;font-size:12px;font-weight:800;color:#96877F">2 of 6 owned · nothing here is ever locked or hidden</div>
+
+  <div style="position:absolute;top:126px;left:20px;right:20px">
+
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#B4A996;padding:3px 8px;border-radius:999px">COMMON</span><span style="font-size:10.5px;font-weight:800;color:#B4A996">0–150</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="background:#fff;border:2px solid #B4A996;border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:13px">
+      <svg width="64" height="57" style="flex:none"><use href="#k-slime2" width="64" height="57"></use></svg>
+      <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:900">Moss</div><div style="font-size:11.5px;font-weight:800;color:#96877F;margin-top:1px">Slime</div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="display:flex;gap:3px"><svg width="13" height="13"><use href="#st-on" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-on" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg></div>
+        <div style="font-size:10px;font-weight:900;color:#3E9E78;background:#DFF3E9;padding:2px 9px;border-radius:999px">ACTIVE</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#57C79B;padding:3px 8px;border-radius:999px">UNCOMMON</span><span style="font-size:10.5px;font-weight:800;color:#B4A996">200–300</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="background:#fff;border:2px solid #57C79B;border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:13px">
+      <svg width="64" height="57" style="flex:none"><use href="#k-ember" width="64" height="57"></use></svg>
+      <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:900">Pilot</div><div style="font-size:11.5px;font-weight:800;color:#96877F;margin-top:1px">Ember</div></div>
+      <div style="display:flex;gap:3px"><svg width="13" height="13"><use href="#st-on" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg><svg width="13" height="13"><use href="#st-off" width="13" height="13"></use></svg></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#9BC8F2;padding:3px 8px;border-radius:999px">RARE</span><span style="font-size:10.5px;font-weight:800;color:#B4A996">400–500</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="display:flex;gap:12px">
+      <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:20px;padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center"><svg width="74" height="66"><use href="#k-droplet" width="74" height="66"></use></svg><div style="font-size:13.5px;font-weight:900;margin-top:2px">Droplet</div><div style="display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #9BC8F2;padding:2px 9px;border-radius:999px;margin-top:7px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">400</span></div></div>
+      <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:20px;padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center"><svg width="74" height="66"><use href="#k-sprout" width="74" height="66"></use></svg><div style="font-size:13.5px;font-weight:900;margin-top:2px">Sprout</div><div style="display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #9BC8F2;padding:2px 9px;border-radius:999px;margin-top:7px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">500</span></div></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#C3B2F0;padding:3px 8px;border-radius:999px">EPIC</span><span style="font-size:10.5px;font-weight:800;color:#B4A996">700–900</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="background:#FBF7F0;border:2px solid #C3B2F0;border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:13px">
+      <svg width="64" height="57" style="flex:none"><use href="#k-wisp" width="64" height="57"></use></svg>
+      <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:900">Wisp</div><div style="font-size:11.5px;font-weight:800;color:#96877F;margin-top:1px">Not yours yet</div></div>
+      <div style="display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #C3B2F0;padding:4px 11px;border-radius:999px"><span style="width:12px;height:12px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:13px;font-weight:900">800</span></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px"><span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#FFC24B;padding:3px 8px;border-radius:999px">LEGENDARY</span><span style="font-size:10.5px;font-weight:800;color:#B4A996">1200</span><div style="flex:1;height:1px;background:#F0E9DC"></div></div>
+    <div style="background:#FBF7F0;border:2px solid #FFC24B;border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:13px">
+      <svg width="64" height="57" style="flex:none"><use href="#k-comet" width="64" height="57"></use></svg>
+      <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:900">Comet</div><div style="font-size:11.5px;font-weight:800;color:#96877F;margin-top:1px">About ten days of finishing everything</div></div>
+      <div style="display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #FFC24B;padding:4px 11px;border-radius:999px"><span style="width:12px;height:12px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:13px;font-weight:900">1,200</span></div>
+    </div>
+
+    <div style="font-size:11px;font-weight:800;color:#B4A996;text-align:center;margin-top:18px;text-wrap:pretty">That's the whole ladder. It never gets longer and nothing on it ever leaves.</div>
+
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Cheap tiers first, so the price ladder itself reads as progression. Unowned kin sit on a cream field instead of white — that is the only difference from owned. Full colour, full silhouette, named, priced: no padlock, no <code style="font:700 11px ui-monospace">?</code>, no silhouette, no blur. The tier colour appears three times only: the plate, the 2pt border and the price chip's ring.</p>
+</div>
+
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Kin detail sheet · the unit tooltip, rewritten</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;inset:0;background:#FAF5EC"></div>
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;opacity:.35">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff"></div><div style="font-size:17px;font-weight:900">Collection</div><div style="width:86px;height:32px;border-radius:999px;background:#fff"></div>
+  </div>
+  <div style="position:absolute;inset:0;background:rgba(46,40,34,.34)"></div>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;background:#FAF5EC;border-radius:28px 28px 0 0;padding:12px 24px 34px;box-shadow:0 -8px 30px rgba(46,40,34,.16)">
+    <div style="width:42px;height:5px;border-radius:999px;background:#E5DDD0;margin:0 auto 14px"></div>
+
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#B4A996;padding:3px 9px;border-radius:999px">COMMON</span>
+      <svg width="176" height="158" style="margin-top:6px"><use href="#k-slime2" width="176" height="158"></use></svg>
+      <div style="font-size:27px;font-weight:900;letter-spacing:-.5px;margin-top:-2px">Moss</div>
+      <div style="font-size:12.5px;font-weight:800;color:#96877F;margin-top:2px">Slime · adopted 12 August 2026</div>
+    </div>
+
+    <div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 16px;margin-top:16px">
+      <div style="display:flex;justify-content:space-between;padding:5px 0"><span style="font-size:13px;font-weight:700;color:#96877F">Days together</span><span style="font-size:14px;font-weight:900">23</span></div>
+      <div style="height:1px;background:#F0E9DC"></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0"><span style="font-size:13px;font-weight:700;color:#96877F">Assignments finished</span><span style="font-size:14px;font-weight:900">41</span></div>
+      <div style="height:1px;background:#F0E9DC"></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0"><span style="font-size:13px;font-weight:700;color:#96877F">Time focused</span><span style="font-size:14px;font-weight:900">6h 20m</span></div>
+      <div style="height:1px;background:#F0E9DC"></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0"><span style="font-size:13px;font-weight:700;color:#96877F">Lessons read</span><span style="font-size:14px;font-weight:900">9</span></div>
+    </div>
+
+    <div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 16px;margin-top:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:6px">
+          <svg width="19" height="19"><use href="#st-on" width="19" height="19"></use></svg>
+          <svg width="19" height="19"><use href="#st-on" width="19" height="19"></use></svg>
+          <svg width="19" height="19"><use href="#st-off" width="19" height="19"></use></svg>
+          <span style="font-size:13px;font-weight:800;color:#96877F;margin-left:4px">2 of 3 stars</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+        <div style="font-size:12px;font-weight:800;color:#96877F">Third star adds the gold crown</div>
+        <div style="display:flex;align-items:center;gap:6px;background:#FF6F61;padding:9px 16px;border-radius:18px;box-shadow:0 4px 12px rgba(255,111,97,.32)">
+          <span style="width:14px;height:14px;border-radius:999px;background:#FFC24B;border:2px solid #E8A62E"></span>
+          <span style="font-size:13.5px;font-weight:900;color:#fff">Star up · 250</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:14px;padding:13px;border-radius:20px;background:#DFF3E9">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#3E9E78" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
+      <span style="font-size:14px;font-weight:900;color:#3E9E78">Active kin</span>
+    </div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>This is the Webkinz certificate and TFT's unit tooltip in one sheet. Adoption date and four only-go-up counters are the substance; star progress prices the next star inline the way Finch prices a gift before you send it. "Set active" is the same control in its already-active state — mint, not a disabled grey.</p>
+</div>
+
+</div>
+</div>
+
+<div class="dv-grp">
+<div class="dv-ghd">C · Shop — the TFT screen</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1e">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Shop · picks row at rest</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="font-size:17px;font-weight:900">Shop</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08)"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span><span style="font-size:14px;font-weight:900">1,450</span></div>
+  </div>
+
+  <div style="position:absolute;top:104px;left:24px;right:24px;display:flex;align-items:baseline;justify-content:space-between">
+    <span style="font-size:18px;font-weight:900">Today's picks</span>
+    <span style="font-size:11.5px;font-weight:800;color:#96877F">New picks tomorrow</span>
+  </div>
+
+  <div style="position:absolute;top:136px;left:20px;right:20px;display:flex;gap:6px">
+    <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;position:relative"><span style="position:absolute;top:-7px;right:-3px;font-size:8px;font-weight:900;color:#2E2822;background:#9BC8F2;padding:2px 5px;border-radius:999px">−20%</span><svg width="52" height="47"><use href="#k-droplet" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">400</span><div style="display:flex;align-items:center;gap:3px;background:#9BC8F2;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">320</span></div></div>
+    <div style="flex:1;background:#FBF7F0;border:2px solid #57C79B;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;position:relative"><span style="position:absolute;top:-7px;right:-3px;font-size:8px;font-weight:900;color:#2E2822;background:#57C79B;padding:2px 5px;border-radius:999px">−20%</span><div style="width:52px;height:47px;border-radius:11px;overflow:hidden"><img src="scene-meadow.jpg" style="width:52px;height:47px;object-fit:cover;display:block" alt="Meadow"></div><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">200</span><div style="display:flex;align-items:center;gap:3px;background:#57C79B;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">160</span></div></div>
+    <div style="flex:1;background:#FBF7F0;border:2px solid #C3B2F0;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;position:relative"><span style="position:absolute;top:-7px;right:-3px;font-size:8px;font-weight:900;color:#2E2822;background:#C3B2F0;padding:2px 5px;border-radius:999px">−20%</span><svg width="52" height="47"><use href="#k-wisp" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">800</span><div style="display:flex;align-items:center;gap:3px;background:#C3B2F0;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">640</span></div></div>
+    <div style="flex:1;background:#FBF7F0;border:2px solid #FFC24B;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;position:relative"><span style="position:absolute;top:-7px;right:-3px;font-size:8px;font-weight:900;color:#2E2822;background:#FFC24B;padding:2px 5px;border-radius:999px">−20%</span><svg width="52" height="47"><use href="#k-comet" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">1,200</span><div style="display:flex;align-items:center;gap:3px;background:#FFC24B;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFF3D6;border:1.4px solid #A8761D"></span><span style="font-size:11px;font-weight:900">960</span></div></div>
+    <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;position:relative"><span style="position:absolute;top:-7px;right:-3px;font-size:8px;font-weight:900;color:#2E2822;background:#9BC8F2;padding:2px 5px;border-radius:999px">−20%</span><svg width="52" height="47"><use href="#k-sprout" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">500</span><div style="display:flex;align-items:center;gap:3px;background:#9BC8F2;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">320</span></div></div>
+  </div>
+
+  <div style="position:absolute;top:262px;left:24px;right:24px;font-size:10.5px;font-weight:800;color:#B4A996;text-align:center">Struck price is the Collection price. Every pick is 20% off. Long-press a slot to lock it.</div>
+
+  <div style="position:absolute;top:292px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;background:#fff;border:2px solid #F0E9DC;border-radius:20px;padding:13px 18px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#2E2822" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 12a8.2 8.2 0 1 1-2.5-5.9"></path><path d="M20.4 3.6v4.6h-4.6"></path></svg>
+      <span style="font-size:15px;font-weight:900">Reroll picks</span>
+    </div>
+    <span style="font-size:12px;font-weight:800;color:#96877F">Free · unlimited</span>
+  </div>
+
+  <div style="position:absolute;top:364px;left:24px;right:24px;font-size:18px;font-weight:900">Kin</div>
+  <div style="position:absolute;top:396px;left:20px;right:20px;display:flex;flex-wrap:wrap;gap:12px">
+    <div style="width:163px;background:#fff;border:2px solid #57C79B;border-radius:22px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center"><span style="font-size:9px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#57C79B;padding:2px 8px;border-radius:999px">UNCOMMON</span><svg width="86" height="77" style="margin-top:4px"><use href="#k-ember" width="86" height="77"></use></svg><div style="font-size:14.5px;font-weight:900">Ember</div><div style="font-size:10px;font-weight:900;color:#3E9E78;background:#DFF3E9;padding:3px 11px;border-radius:999px;margin-top:7px">OWNED · PILOT</div></div>
+    <div style="width:163px;background:#fff;border:2px solid #9BC8F2;border-radius:22px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center"><span style="font-size:9px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#9BC8F2;padding:2px 8px;border-radius:999px">RARE</span><svg width="86" height="77" style="margin-top:4px"><use href="#k-droplet" width="86" height="77"></use></svg><div style="font-size:14.5px;font-weight:900">Droplet</div><div style="display:flex;align-items:center;gap:6px;margin-top:7px"><span style="font-size:11px;font-weight:800;color:#B4A996;text-decoration:line-through">400</span><div style="display:flex;align-items:center;gap:4px;background:#9BC8F2;padding:3px 10px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">320</span></div></div></div>
+    <div style="width:163px;background:#fff;border:2px solid #9BC8F2;border-radius:22px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center"><span style="font-size:9px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#9BC8F2;padding:2px 8px;border-radius:999px">RARE</span><svg width="86" height="77" style="margin-top:4px"><use href="#k-sprout" width="86" height="77"></use></svg><div style="font-size:14.5px;font-weight:900">Sprout</div><div style="display:flex;align-items:center;gap:6px;margin-top:7px"><span style="font-size:11px;font-weight:800;color:#B4A996;text-decoration:line-through">500</span><div style="display:flex;align-items:center;gap:4px;background:#9BC8F2;padding:3px 10px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">400</span></div></div></div>
+    <div style="width:163px;background:#fff;border:2px solid #C3B2F0;border-radius:22px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center"><span style="font-size:9px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#C3B2F0;padding:2px 8px;border-radius:999px">EPIC</span><svg width="86" height="77" style="margin-top:4px"><use href="#k-wisp" width="86" height="77"></use></svg><div style="font-size:14.5px;font-weight:900">Wisp</div><div style="display:flex;align-items:center;gap:6px;margin-top:7px"><span style="font-size:11px;font-weight:800;color:#B4A996;text-decoration:line-through">800</span><div style="display:flex;align-items:center;gap:4px;background:#C3B2F0;padding:3px 10px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">640</span></div></div></div>
+  </div>
+
+  <div style="position:absolute;top:700px;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:18px;font-weight:900">Scenes</span><span style="font-size:11.5px;font-weight:800;color:#96877F">2 of 4</span></div>
+  <div style="position:absolute;top:732px;left:20px;right:20px;display:flex;gap:12px">
+    <div style="width:163px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:8px"><img src="scene-night.jpg" style="width:147px;height:74px;object-fit:cover;border-radius:14px;display:block" alt="Night in"></div>
+    <div style="width:163px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:8px"><img src="scene-meadow.jpg" style="width:147px;height:74px;object-fit:cover;border-radius:14px;display:block" alt="Meadow"></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom,rgba(250,245,236,0),#FAF5EC)"></div>
+</div>
+</div>
+<p class="dv-cap" data-cap>All five slots visible at once, TFT's bar rebuilt in cream: tier border, tier badge, struck full price above the discounted price. At 64pt a slot cannot carry more than that, so the legend under the row does the explaining once instead of five times. The reroll control sits under the row as a quiet outline button with no cost badge at all — "Free · unlimited" is the only thing where TFT puts a price.</p>
+</div>
+
+<div class="dv-opt" id="1f">
+<div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Shop · one slot locked</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="font-size:17px;font-weight:900">Shop</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08)"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span><span style="font-size:14px;font-weight:900">1,450</span></div>
+  </div>
+  <div style="position:absolute;top:104px;left:24px;right:24px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:18px;font-weight:900">Today's picks</span><span style="font-size:11.5px;font-weight:800;color:#96877F">New picks tomorrow</span></div>
+
+  <div style="position:absolute;top:140px;left:20px;right:20px;display:flex;gap:6px;align-items:flex-start">
+    <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.6"><svg width="52" height="47"><use href="#k-droplet" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">400</span><div style="display:flex;align-items:center;gap:3px;background:#9BC8F2;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">320</span></div></div>
+    <div style="flex:1;background:#FBF7F0;border:2px solid #57C79B;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.6"><div style="width:52px;height:47px;border-radius:11px;overflow:hidden"><img src="scene-meadow.jpg" style="width:52px;height:47px;object-fit:cover;display:block" alt="Meadow"></div><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">200</span><div style="display:flex;align-items:center;gap:3px;background:#57C79B;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">160</span></div></div>
+
+    <div style="flex:1.16;background:#fff;border:2.5px solid #C3B2F0;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;position:relative;margin-top:-6px;box-shadow:0 0 0 5px rgba(195,178,240,.28),0 4px 14px rgba(46,40,34,.10)">
+      <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:3px;background:#C3B2F0;padding:2px 8px;border-radius:999px">
+        <svg viewBox="0 0 24 24" width="9" height="9"><rect x="4.5" y="10.4" width="15" height="10.6" rx="3.8" fill="#2E2822"></rect><path d="M8.4 10.4V8.2a3.6 3.6 0 0 1 7.2 0v2.2" fill="none" stroke="#2E2822" stroke-width="2.5" stroke-linecap="round"></path></svg>
+        <span style="font-size:8px;font-weight:900;color:#2E2822">LOCKED</span>
+      </div>
+      <svg width="58" height="52" style="margin-top:4px"><use href="#k-wisp" width="58" height="52"></use></svg>
+      <span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">800</span>
+      <div style="display:flex;align-items:center;gap:3px;background:#C3B2F0;padding:2px 8px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">640</span></div>
+    </div>
+
+    <div style="flex:1;background:#FBF7F0;border:2px solid #FFC24B;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.6"><svg width="52" height="47"><use href="#k-comet" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">1,200</span><div style="display:flex;align-items:center;gap:3px;background:#FFC24B;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFF3D6;border:1.4px solid #A8761D"></span><span style="font-size:11px;font-weight:900">960</span></div></div>
+    <div style="flex:1;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.6"><svg width="52" height="47"><use href="#k-sprout" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">500</span><div style="display:flex;align-items:center;gap:3px;background:#9BC8F2;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">400</span></div></div>
+  </div>
+
+  <div style="position:absolute;top:270px;left:20px;right:20px;background:#F3EFF9;border-radius:18px;padding:12px 16px">
+    <div style="font-size:13px;font-weight:900;color:#6E5CA8">Wisp is held at 640</div>
+    <div style="font-size:11.5px;font-weight:700;color:#8874C9;margin-top:3px;text-wrap:pretty">A locked slot keeps its discount through every reroll and overnight into tomorrow's picks. Long-press again to release it.</div>
+  </div>
+
+  <div style="position:absolute;top:352px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;background:#fff;border:2px solid #F0E9DC;border-radius:20px;padding:13px 18px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#2E2822" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 12a8.2 8.2 0 1 1-2.5-5.9"></path><path d="M20.4 3.6v4.6h-4.6"></path></svg>
+      <span style="font-size:15px;font-weight:900">Reroll the other four</span>
+    </div>
+    <span style="font-size:12px;font-weight:800;color:#96877F">Free · unlimited</span>
+  </div>
+
+  <div style="position:absolute;top:428px;left:24px;right:24px;font-size:18px;font-weight:900">Kin</div>
+  <div style="position:absolute;top:460px;left:20px;right:20px;display:flex;gap:12px">
+    <div style="width:163px;background:#fff;border:2px solid #57C79B;border-radius:22px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center"><span style="font-size:9px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#57C79B;padding:2px 8px;border-radius:999px">UNCOMMON</span><svg width="86" height="77" style="margin-top:4px"><use href="#k-ember" width="86" height="77"></use></svg><div style="font-size:14.5px;font-weight:900">Ember</div><div style="font-size:10px;font-weight:900;color:#3E9E78;background:#DFF3E9;padding:3px 11px;border-radius:999px;margin-top:7px">OWNED · PILOT</div></div>
+    <div style="width:163px;background:#fff;border:2px solid #9BC8F2;border-radius:22px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center"><span style="font-size:9px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#9BC8F2;padding:2px 8px;border-radius:999px">RARE</span><svg width="86" height="77" style="margin-top:4px"><use href="#k-droplet" width="86" height="77"></use></svg><div style="font-size:14.5px;font-weight:900">Droplet</div><div style="display:flex;align-items:center;gap:6px;margin-top:7px"><span style="font-size:11px;font-weight:800;color:#B4A996;text-decoration:line-through">400</span><div style="display:flex;align-items:center;gap:4px;background:#9BC8F2;padding:3px 10px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">320</span></div></div></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(to bottom,rgba(250,245,236,0),#FAF5EC)"></div>
+</div>
+</div>
+<p class="dv-cap" data-cap>The lock is the only TFT control kept intact, because it can only help you. It reads by promotion, not by dimming: the locked slot lifts 6pt, goes white, gains a lavender halo and a tier-coloured LOCKED tab; the other four drop to 60%. The reroll button relabels itself so the exclusion is stated, not inferred. The lavender panel is copy, not a warning — no timer, no cost.</p>
+</div>
+
+<div class="dv-opt" id="1g">
+<div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>Shop · mid-reroll, frame ~180ms</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="font-size:17px;font-weight:900">Shop</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08)"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span><span style="font-size:14px;font-weight:900">1,450</span></div>
+  </div>
+  <div style="position:absolute;top:104px;left:24px;right:24px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:18px;font-weight:900">Today's picks</span><span style="font-size:11.5px;font-weight:800;color:#96877F">New picks tomorrow</span></div>
+
+  <div style="position:absolute;top:132px;left:20px;right:20px;height:132px;display:flex;gap:6px;align-items:flex-start">
+    <div style="flex:1;position:relative;height:118px">
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;opacity:.16;transform:translateY(7px) scale(.95)"></div>
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #A5CE6B;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.5;transform:translateY(9px) scale(.97)"><div style="width:52px;height:47px;border-radius:11px;overflow:hidden"><img src="scene-night.jpg" style="width:52px;height:47px;object-fit:cover;display:block" alt="Night in"></div><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">250</span><div style="display:flex;align-items:center;gap:3px;background:#57C79B;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">200</span></div></div>
+    </div>
+    <div style="flex:1;position:relative;height:118px">
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #57C79B;border-radius:16px;opacity:.30;transform:translateY(5px) scale(.96)"></div>
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.78;transform:translateY(4px)"><svg width="52" height="47"><use href="#k-sprout" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">500</span><div style="display:flex;align-items:center;gap:3px;background:#9BC8F2;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">400</span></div></div>
+    </div>
+
+    <div style="flex:1.16;background:#fff;border:2.5px solid #C3B2F0;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;position:relative;margin-top:-6px;box-shadow:0 0 0 7px rgba(195,178,240,.20),0 4px 14px rgba(46,40,34,.10);transform:scale(1.02)">
+      <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:3px;background:#C3B2F0;padding:2px 8px;border-radius:999px">
+        <svg viewBox="0 0 24 24" width="9" height="9"><rect x="4.5" y="10.4" width="15" height="10.6" rx="3.8" fill="#2E2822"></rect><path d="M8.4 10.4V8.2a3.6 3.6 0 0 1 7.2 0v2.2" fill="none" stroke="#2E2822" stroke-width="2.5" stroke-linecap="round"></path></svg>
+        <span style="font-size:8px;font-weight:900;color:#2E2822">LOCKED</span>
+      </div>
+      <svg width="58" height="52" style="margin-top:4px"><use href="#k-wisp" width="58" height="52"></use></svg>
+      <span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">800</span>
+      <div style="display:flex;align-items:center;gap:3px;background:#C3B2F0;padding:2px 8px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">640</span></div>
+    </div>
+
+    <div style="flex:1;position:relative;height:118px">
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #FFC24B;border-radius:16px;opacity:.44;transform:translateY(3px) scale(.97)"></div>
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.92;transform:translateY(1px)"><svg width="52" height="47"><use href="#k-droplet" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">400</span><div style="display:flex;align-items:center;gap:3px;background:#9BC8F2;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFC24B;border:1.4px solid #E8A62E"></span><span style="font-size:11px;font-weight:900">320</span></div></div>
+    </div>
+    <div style="flex:1;position:relative;height:118px">
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px;opacity:.06;transform:translateY(9px) scale(.94)"></div>
+      <div style="position:absolute;inset:0;background:#FBF7F0;border:2px solid #FFC24B;border-radius:16px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;opacity:.34;transform:translateY(12px) scale(.96)"><svg width="52" height="47"><use href="#k-comet" width="52" height="47"></use></svg><span style="font-size:9.5px;font-weight:800;color:#B4A996;text-decoration:line-through">1,200</span><div style="display:flex;align-items:center;gap:3px;background:#FFC24B;padding:2px 7px;border-radius:999px;margin-top:3px"><span style="width:9px;height:9px;border-radius:999px;background:#FFF3D6;border:1.4px solid #A8761D"></span><span style="font-size:11px;font-weight:900">960</span></div></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:280px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;background:#fff;border:2px solid #E5DDD0;border-radius:20px;padding:13px 18px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#B4A996" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(140deg)"><path d="M20.2 12a8.2 8.2 0 1 1-2.5-5.9"></path><path d="M20.4 3.6v4.6h-4.6"></path></svg>
+      <span style="font-size:15px;font-weight:900;color:#B4A996">Rerolling…</span>
+    </div>
+    <span style="font-size:12px;font-weight:800;color:#B4A996">Free · unlimited</span>
+  </div>
+
+  <div style="position:absolute;top:356px;left:24px;right:24px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:18px 20px">
+    <div style="font-size:15px;font-weight:900;margin-bottom:10px">Motion I intend</div>
+    <div style="font-size:12.5px;font-weight:700;color:#96877F;line-height:1.65;text-wrap:pretty">Tap reroll. The four unlocked slots run a 40ms stagger, left to right, 420ms total.<br><br>Each slot: the outgoing card sinks 6pt, scales to 0.96 and fades out over 120ms; the incoming card rises 10pt from beneath and fades in over 160ms, overshooting to 1.04 before settling on a soft spring. The 2pt tier border cross-fades between the two colours rather than cutting — that colour change is the only signal of what the new thing is worth, so it must be readable during the move.<br><br>The locked slot does not move. It gets one 1.02 pulse at 0ms so you can see it was skipped deliberately.<br><br>No spin, no reel, no card-back flip, no sound of chance. Rerolling is browsing a shelf, not pulling a lever.</div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Frozen at roughly 180ms so the stagger is legible: slot 1 still arriving, slot 4 nearly settled, slot 5 still leaving. The reroll button holds a rotating-icon "Rerolling…" state in muted rather than disabling, because there is no cost to protect against a double tap.</p>
+</div>
+
+<div class="dv-opt" id="1h">
+<div class="dv-olabel"><a class="dv-oid" href="#1h">1h</a>Shop · can't afford</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;opacity:.4">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff"></div><div style="font-size:17px;font-weight:900">Shop</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E"></span><span style="font-size:14px;font-weight:900">880</span></div>
+  </div>
+  <div style="position:absolute;top:132px;left:20px;right:20px;display:flex;gap:6px;opacity:.4">
+    <div style="flex:1;height:104px;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px"></div>
+    <div style="flex:1;height:104px;background:#FBF7F0;border:2px solid #57C79B;border-radius:16px"></div>
+    <div style="flex:1;height:104px;background:#FBF7F0;border:2px solid #C3B2F0;border-radius:16px"></div>
+    <div style="flex:1;height:104px;background:#fff;border:2.5px solid #FFC24B;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative"><svg width="52" height="47"><use href="#k-comet" width="52" height="47"></use></svg><span style="position:absolute;bottom:6px;font-size:9px;font-weight:900;color:#A8761D;background:#FFF3D6;padding:2px 7px;border-radius:999px">80 to go</span></div>
+    <div style="flex:1;height:104px;background:#FBF7F0;border:2px solid #9BC8F2;border-radius:16px"></div>
+  </div>
+  <div style="position:absolute;inset:0;background:rgba(46,40,34,.34)"></div>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;background:#FAF5EC;border-radius:28px 28px 0 0;padding:12px 24px 34px;box-shadow:0 -8px 30px rgba(46,40,34,.16)">
+    <div style="width:42px;height:5px;border-radius:999px;background:#E5DDD0;margin:0 auto 12px"></div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#FFC24B;padding:3px 9px;border-radius:999px">LEGENDARY</span>
+      <svg width="168" height="151" style="margin-top:4px"><use href="#k-comet" width="168" height="151"></use></svg>
+      <div style="font-size:25px;font-weight:900;letter-spacing:-.4px;margin-top:-4px">Comet</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <span style="font-size:14px;font-weight:800;color:#B4A996;text-decoration:line-through">1,200</span>
+        <div style="display:flex;align-items:center;gap:5px;background:#FFC24B;padding:5px 13px;border-radius:999px"><span style="width:14px;height:14px;border-radius:999px;background:#FFF3D6;border:2px solid #A8761D"></span><span style="font-size:15.5px;font-weight:900">960</span></div>
+      </div>
+    </div>
+
+    <div style="background:#DFF3E9;border-radius:22px;padding:16px 18px;margin-top:18px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <span style="font-size:16px;font-weight:900;color:#2E7A5B">80 coins to go</span>
+        <span style="font-size:12px;font-weight:800;color:#3E9E78">880 of 960</span>
+      </div>
+      <div style="height:9px;border-radius:999px;background:#fff;margin-top:10px;overflow:hidden"><div style="width:91.6%;height:9px;background:#57C79B;border-radius:999px"></div></div>
+      <div style="font-size:12.5px;font-weight:800;color:#3E9E78;margin-top:12px">That's <span style="color:#2E7A5B">3 more assignments finished</span> — or one 25-minute focus session and a lesson.</div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:14px;padding:16px;border-radius:22px;background:#FF6F61;box-shadow:0 6px 16px rgba(255,111,97,.32)">
+      <span style="font-size:16px;font-weight:900;color:#fff">Open today's tasks</span>
+    </div>
+    <div style="text-align:center;font-size:12px;font-weight:800;color:#96877F;margin-top:14px;text-wrap:pretty">Comet stays in the Collection at 1,200 forever, and comes back into the picks. Nothing here expires.</div>
+    <div style="text-align:center;font-size:14px;font-weight:900;color:#B4A996;margin-top:16px">Close</div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>The state I treated as the brief's real test. Nothing greys, nothing shakes, no "not enough coins" toast. Comet is drawn full size and full colour; the gap is stated as a mint success-coloured strip, not a red warning; and the number is converted into the work that closes it. The primary button goes where the coins are rather than nowhere, and the last line removes the reason to hurry.</p>
+</div>
+
+<div class="dv-opt" id="1i">
+<div class="dv-olabel"><a class="dv-oid" href="#1i">1i</a>Shop · Scenes section</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;top:52px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between">
+    <div style="width:38px;height:38px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="font-size:17px;font-weight:900">Shop</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;box-shadow:0 2px 8px rgba(46,40,34,.08)"><span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2.5px solid #E8A62E;flex:none"></span><span style="font-size:14px;font-weight:900">1,450</span></div>
+  </div>
+
+  <div style="position:absolute;top:104px;left:20px;right:20px;height:1px;background:#F0E9DC"></div>
+  <div style="position:absolute;top:118px;left:24px;right:24px;font-size:12px;font-weight:800;color:#B4A996">↑ Kin</div>
+
+  <div style="position:absolute;top:148px;left:24px;right:24px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:18px;font-weight:900">Scenes</span><span style="font-size:11.5px;font-weight:800;color:#96877F">2 of 4 owned</span></div>
+  <div style="position:absolute;top:182px;left:24px;right:24px;font-size:12px;font-weight:700;color:#96877F">The room your kin stands in, on this tab and on Home.</div>
+
+  <div style="position:absolute;top:214px;left:20px;right:20px;display:flex;flex-wrap:wrap;gap:12px">
+    <div style="width:163px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:9px 9px 12px;display:flex;flex-direction:column;align-items:center">
+      <img src="scene-dorm.jpg" style="width:145px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Study room">
+      <div style="font-size:14.5px;font-weight:900;margin-top:9px">Study room</div>
+      <div style="font-size:10px;font-weight:900;color:#96877F;background:#F6F1E6;padding:3px 11px;border-radius:999px;margin-top:7px">OWNED</div>
+    </div>
+    <div style="width:163px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:9px 9px 12px;display:flex;flex-direction:column;align-items:center">
+      <img src="scene-sunset.jpg" style="width:145px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Golden hour">
+      <div style="font-size:14.5px;font-weight:900;margin-top:9px">Golden hour</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:900;color:#3E9E78;background:#DFF3E9;padding:3px 11px;border-radius:999px;margin-top:7px"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#3E9E78" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>EQUIPPED</div>
+    </div>
+    <div style="width:163px;background:#FBF7F0;border:2px solid #57C79B;border-radius:22px;padding:8px 8px 11px;display:flex;flex-direction:column;align-items:center;position:relative">
+      <span style="position:absolute;top:-8px;right:8px;font-size:8.5px;font-weight:900;color:#2E2822;background:#57C79B;padding:2.5px 7px;border-radius:999px">IN TODAY'S PICKS</span>
+      <img src="scene-meadow.jpg" style="width:143px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Meadow">
+      <div style="font-size:14.5px;font-weight:900;margin-top:9px">Meadow</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:7px"><span style="font-size:11px;font-weight:800;color:#B4A996;text-decoration:line-through">200</span><div style="display:flex;align-items:center;gap:4px;background:#57C79B;padding:3px 10px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">160</span></div></div>
+    </div>
+    <div style="width:163px;background:#FBF7F0;border:2px solid #57C79B;border-radius:22px;padding:8px 8px 11px;display:flex;flex-direction:column;align-items:center">
+      <img src="scene-night.jpg" style="width:143px;height:88px;object-fit:cover;border-radius:15px;display:block" alt="Night in">
+      <div style="font-size:14.5px;font-weight:900;margin-top:9px">Night in</div>
+      <div style="display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #57C79B;padding:3px 10px;border-radius:999px;margin-top:7px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:12.5px;font-weight:900">250</span></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:602px;left:20px;right:20px;background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px 18px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;border-radius:999px;background:#F6F1E6;display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="15" height="15" fill="#96877F"><circle cx="12" cy="12" r="10" fill="none" stroke="#96877F" stroke-width="2.2"></circle><rect x="10.9" y="10" width="2.2" height="7.4" rx="1.1"></rect><circle cx="12" cy="7" r="1.4"></circle></svg></div>
+      <div style="flex:1">
+        <div style="font-size:14.5px;font-weight:900">How picks work</div>
+        <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:1px">Free rerolls, no timers, nothing exclusive.</div>
+      </div>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#B4A996" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+    </div>
+  </div>
+  <div style="position:absolute;top:700px;left:24px;right:24px;font-size:11.5px;font-weight:800;color:#B4A996;text-align:center;text-wrap:pretty">Coins come from finishing tasks, focus sessions and lessons. Never from grades.</div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Your four real scenes at their real prices. Scenes carry no tier — they are not kin — so the discount badge borrows the Uncommon mint only where a pick is live, and owned/equipped states use the existing mint pill from the current Shop. The card explaining the picks lives at the foot of the shop rather than behind an info glyph in the header.</p>
+</div>
+
+<div class="dv-opt" id="1j">
+<div class="dv-olabel"><a class="dv-oid" href="#1j">1j</a>Honesty panel · replaces TFT's odds table</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;inset:0;background:rgba(46,40,34,.34)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;background:#FAF5EC;border-radius:28px 28px 0 0;padding:12px 24px 34px;box-shadow:0 -8px 30px rgba(46,40,34,.16)">
+    <div style="width:42px;height:5px;border-radius:999px;background:#E5DDD0;margin:0 auto 18px"></div>
+    <div style="font-size:25px;font-weight:900;letter-spacing:-.4px">How picks work</div>
+    <div style="font-size:13px;font-weight:700;color:#96877F;margin-top:6px">The whole mechanic, in four lines.</div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+      <div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px;display:flex;gap:14px">
+        <div style="width:38px;height:38px;border-radius:13px;background:#F6F1E6;display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="19" height="19" fill="#96877F"><rect x="2.5" y="8" width="3.6" height="8" rx="1.4"></rect><rect x="7.6" y="6" width="3.6" height="12" rx="1.4"></rect><rect x="12.7" y="8" width="3.6" height="8" rx="1.4"></rect><rect x="17.8" y="6" width="3.6" height="12" rx="1.4"></rect></svg></div>
+        <div><div style="font-size:14.5px;font-weight:900">Five slots, drawn evenly</div><div style="font-size:12.5px;font-weight:700;color:#96877F;margin-top:3px;text-wrap:pretty">Picks come from everything in the Collection you don't own yet. A Legendary has exactly the same chance of showing up as a Common.</div></div>
+      </div>
+      <div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px;display:flex;gap:14px">
+        <div style="width:38px;height:38px;border-radius:13px;background:#FFF3D6;display:flex;align-items:center;justify-content:center;flex:none"><span style="font-size:13px;font-weight:900;color:#A8761D">20%</span></div>
+        <div><div style="font-size:14.5px;font-weight:900">A pick is a discount, nothing else</div><div style="font-size:12.5px;font-weight:700;color:#96877F;margin-top:3px;text-wrap:pretty">20% off the Collection price. Same kin, same stars, same everything. The struck-through number is what it costs the rest of the time.</div></div>
+      </div>
+      <div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px;display:flex;gap:14px">
+        <div style="width:38px;height:38px;border-radius:13px;background:#DFF3E9;display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#3E9E78" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 12a8.2 8.2 0 1 1-2.5-5.9"></path><path d="M20.4 3.6v4.6h-4.6"></path></svg></div>
+        <div><div style="font-size:14.5px;font-weight:900">Reroll costs nothing, ever</div><div style="font-size:12.5px;font-weight:700;color:#96877F;margin-top:3px;text-wrap:pretty">As many times as you like. Lock a slot and it survives every reroll, and tomorrow's draw too.</div></div>
+      </div>
+      <div style="background:#fff;border-radius:20px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px;display:flex;gap:14px">
+        <div style="width:38px;height:38px;border-radius:13px;background:#FFE9E5;display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="19" height="19" fill="#FF8A7E"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5V21l-8-4-8 4z"></path></svg></div>
+        <div><div style="font-size:14.5px;font-weight:900">Nothing ever leaves</div><div style="font-size:12.5px;font-weight:700;color:#96877F;margin-top:3px;text-wrap:pretty">No countdowns, no limited editions, no last chance. If you reroll past something you wanted, it's still in the Collection at full price and it can come back tomorrow.</div></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:800;color:#B4A996;margin-top:18px;text-align:center;text-wrap:pretty">Coins are earned by finishing things. Never by getting them right.</div>
+    <div style="text-align:center;font-size:15px;font-weight:900;color:#2E2822;margin-top:18px;padding:15px;background:#fff;border:2px solid #F0E9DC;border-radius:20px">Got it</div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>TFT publishes odds because its shop can take from you. Ours can't, so the panel publishes the absences instead — flat odds, no cost to reroll, nothing expiring. Written as four claims a student can check against the screen they just came from, not as terms.</p>
+</div>
+
+</div>
+</div>
+
+<div class="dv-grp">
+<div class="dv-ghd">D · Buying — the ceremony</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1k">
+<div class="dv-olabel"><a class="dv-oid" href="#1k">1k</a>Buy confirm</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;inset:0;background:rgba(46,40,34,.34)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;background:#FAF5EC;border-radius:28px 28px 0 0;padding:12px 24px 34px;box-shadow:0 -8px 30px rgba(46,40,34,.16)">
+    <div style="width:42px;height:5px;border-radius:999px;background:#E5DDD0;margin:0 auto 14px"></div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#C3B2F0;padding:3px 9px;border-radius:999px">EPIC</span>
+      <svg width="180" height="161" style="margin-top:4px"><use href="#k-wisp" width="180" height="161"></use></svg>
+      <div style="font-size:27px;font-weight:900;letter-spacing:-.5px;margin-top:-6px">Wisp</div>
+      <div style="font-size:12.5px;font-weight:800;color:#96877F;margin-top:2px">Starts at 1 star. You'll name it next.</div>
+    </div>
+
+    <div style="background:#fff;border-radius:22px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:16px 18px;margin-top:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">
+        <span style="font-size:13.5px;font-weight:800;color:#96877F">Collection price</span>
+        <span style="font-size:14px;font-weight:900;color:#B4A996;text-decoration:line-through">800</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">
+        <span style="font-size:13.5px;font-weight:800;color:#8874C9">Today's pick · 20% off</span>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:999px;background:#FFC24B;border:2px solid #E8A62E"></span><span style="font-size:16px;font-weight:900">640</span></div>
+      </div>
+      <div style="height:1px;background:#F0E9DC;margin:8px 0"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0">
+        <span style="font-size:13.5px;font-weight:800;color:#96877F">Wallet after</span>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:13px;height:13px;border-radius:999px;background:#FFC24B;border:2px solid #E8A62E"></span><span style="font-size:14px;font-weight:900">810</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:17px;border-radius:22px;background:#FF6F61;box-shadow:0 6px 16px rgba(255,111,97,.35)">
+      <span style="font-size:16.5px;font-weight:900;color:#fff">Adopt Wisp</span>
+      <span style="width:16px;height:16px;border-radius:999px;background:#FFC24B;border:2px solid #E8A62E"></span>
+      <span style="font-size:16.5px;font-weight:900;color:#fff">640</span>
+    </div>
+    <div style="text-align:center;font-size:14px;font-weight:900;color:#B4A996;margin-top:16px">Not now</div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Three numbers, in the order a student asks them: what it normally costs, what it costs now, what's left afterwards. That last line is Finch's "Sending a gift will cost 200" moved up into the sheet, because "wallet after" is the question the current shop never answered.</p>
+</div>
+
+<div class="dv-opt" id="1l">
+<div class="dv-olabel"><a class="dv-oid" href="#1l">1l</a>Arrival</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,#F3EFF9 0%,#FAF5EC 62%)"></div>
+  <div style="position:absolute;left:50%;top:334px;transform:translate(-50%,-50%);width:330px;height:330px;border-radius:999px;border:2px solid rgba(195,178,240,.30)"></div>
+  <div style="position:absolute;left:50%;top:334px;transform:translate(-50%,-50%);width:246px;height:246px;border-radius:999px;border:2px solid rgba(195,178,240,.44)"></div>
+  <div style="position:absolute;left:50%;top:334px;transform:translate(-50%,-50%);width:166px;height:166px;border-radius:999px;background:rgba(195,178,240,.18)"></div>
+
+  <span style="position:absolute;left:96px;top:196px;width:13px;height:13px;background:#FFC24B;transform:rotate(45deg)"></span>
+  <span style="position:absolute;right:88px;top:232px;width:10px;height:10px;background:#FF6F61;transform:rotate(45deg)"></span>
+  <span style="position:absolute;left:132px;top:404px;width:9px;height:9px;background:#57C79B;transform:rotate(45deg)"></span>
+  <span style="position:absolute;right:110px;top:412px;width:12px;height:12px;background:#C3B2F0;transform:rotate(45deg)"></span>
+  <span style="position:absolute;left:70px;top:318px;width:8px;height:8px;background:#F7A8B8;transform:rotate(45deg)"></span>
+  <span style="position:absolute;right:64px;top:330px;width:11px;height:11px;background:#FFC24B;transform:rotate(45deg)"></span>
+
+  <div style="position:absolute;left:0;right:0;top:222px;display:flex;justify-content:center">
+    <svg viewBox="0 0 1000 897" width="248" height="222" style="display:block;overflow:visible">
+      <ellipse cx="500" cy="880" rx="410" ry="48" fill="#101820" opacity=".08"></ellipse>
+      <use href="#k-wispd" width="1000" height="897"></use>
+    </svg>
+  </div>
+
+  <div style="position:absolute;left:24px;right:24px;top:486px;display:flex;flex-direction:column;align-items:center;gap:10px">
+    <span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#C3B2F0;padding:3px 10px;border-radius:999px">EPIC</span>
+    <div style="font-size:34px;font-weight:900;letter-spacing:-.8px">Wisp is here.</div>
+    <div style="font-size:14.5px;font-weight:700;color:#96877F;text-align:center;text-wrap:pretty">Your third kin. It's yours for good — nothing takes it back.</div>
+  </div>
+
+  <div style="position:absolute;left:24px;right:24px;top:648px;display:flex;align-items:center;justify-content:center;padding:17px;border-radius:22px;background:#FF6F61;box-shadow:0 6px 16px rgba(255,111,97,.35)">
+    <span style="font-size:16.5px;font-weight:900;color:#fff">Give it a name</span>
+  </div>
+  <div style="position:absolute;left:24px;right:24px;top:718px;text-align:center;font-size:13.5px;font-weight:900;color:#B4A996">Later</div>
+</div>
+</div>
+<p class="dv-cap" data-cap>The warmest moment in the app gets the whole screen and no chrome: no header, no wallet, no tab bar. Kin at 248pt on the approved delight face, three concentric lavender rings borrowed from the tier rather than a gradient wash, and flat 45°-rotated confetti squares in the palette exactly as the Home celebration already draws them. "Nothing takes it back" is the sentence that separates this from a gacha reveal.</p>
+</div>
+
+<div class="dv-opt" id="1m">
+<div class="dv-olabel"><a class="dv-oid" href="#1m">1m</a>Name your kin</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#fff">
+  <div style="position:absolute;top:120px;left:0;right:0;display:flex;justify-content:center">
+    <svg viewBox="0 0 1000 897" width="150" height="135" style="display:block;overflow:visible">
+      <ellipse cx="500" cy="878" rx="420" ry="46" fill="#101820" opacity=".08"></ellipse>
+      <use href="#k-wisp" width="1000" height="897"></use>
+    </svg>
+  </div>
+
+  <div style="position:absolute;top:290px;left:32px;right:32px;text-align:center">
+    <div style="font-size:21px;font-weight:900;letter-spacing:-.3px;line-height:1.3;text-wrap:pretty">What do you want to name your Wisp?</div>
+    <div style="font-size:14.5px;font-weight:700;color:#96877F;margin-top:10px">You can change this later.</div>
+  </div>
+
+  <div style="position:absolute;top:404px;left:24px;right:24px;height:58px;border-radius:18px;background:#F7F3EA;border:2px solid #F0E9DC;display:flex;align-items:center;padding:0 18px">
+    <span style="flex:1;text-align:center;font-size:19px;font-weight:900">Juno</span>
+    <svg viewBox="0 0 24 24" width="21" height="21" fill="#C9BEAC"><circle cx="12" cy="12" r="10"></circle><path d="M8.6 8.6l6.8 6.8M15.4 8.6l-6.8 6.8" stroke="#F7F3EA" stroke-width="2.4" stroke-linecap="round"></path></svg>
+  </div>
+
+  <div style="position:absolute;top:482px;left:24px;right:24px;display:flex;gap:12px">
+    <div style="flex:1;height:54px;border-radius:20px;background:#F7F3EA;border:2px solid #F0E9DC;display:flex;align-items:center;justify-content:center;gap:9px">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="#2E2822"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#2E2822" stroke-width="2.2"></rect><circle cx="8.5" cy="8.5" r="1.7"></circle><circle cx="15.5" cy="8.5" r="1.7"></circle><circle cx="12" cy="12" r="1.7"></circle><circle cx="8.5" cy="15.5" r="1.7"></circle><circle cx="15.5" cy="15.5" r="1.7"></circle></svg>
+      <span style="font-size:16px;font-weight:900">Shuffle</span>
+    </div>
+    <div style="flex:1.2;height:54px;border-radius:20px;background:#57C79B;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 14px rgba(87,199,155,.34)">
+      <span style="font-size:16px;font-weight:900;color:#fff">Next</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:560px;left:24px;right:24px;text-align:center;font-size:12px;font-weight:700;color:#B4A996;text-wrap:pretty">This name replaces "Wisp" on Home, in Ask Kin and on the adoption card.</div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Finch's flow almost verbatim, because it is already right: kin at the top, the question, the reassurance line, one big centred field, Shuffle on the left, commit on the right. Two changes — the commit button takes mint rather than coral, since naming is a completion not an action with a cost, and the field is pre-filled from Shuffle so tapping Next straight through is a valid answer. No fake keyboard drawn, per the house rule.</p>
+</div>
+
+<div class="dv-opt" id="1n">
+<div class="dv-olabel"><a class="dv-oid" href="#1n">1n</a>Adoption card · the keepsake</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#F1EADC">
+  <div style="position:absolute;top:56px;left:24px;right:24px;text-align:center;font-size:12px;font-weight:900;letter-spacing:.16em;color:#B4A996">SAVED TO YOUR COLLECTION</div>
+
+  <div style="position:absolute;top:96px;left:24px;right:24px;background:#FDFBF6;border-radius:26px;box-shadow:0 8px 28px rgba(46,40,34,.13);overflow:hidden">
+    <div style="height:8px;background:#C3B2F0"></div>
+    <div style="padding:18px 22px 24px;border:1px solid #F0E9DC;border-top:0;border-radius:0 0 26px 26px">
+      <div style="border:1.5px solid #EBE2D2;border-radius:18px;padding:20px 18px 22px;display:flex;flex-direction:column;align-items:center">
+        <div style="font-size:10px;font-weight:900;letter-spacing:.2em;color:#B4A996">CERTIFICATE OF ADOPTION</div>
+        <svg width="188" height="169" style="margin-top:10px"><use href="#k-wisp" width="188" height="169"></use></svg>
+        <div style="font-size:32px;font-weight:900;letter-spacing:-.7px;margin-top:-6px">Juno</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <span style="font-size:9.5px;font-weight:900;letter-spacing:.14em;color:#2E2822;background:#C3B2F0;padding:3px 9px;border-radius:999px">EPIC</span>
+          <span style="font-size:13px;font-weight:800;color:#96877F">Wisp</span>
+        </div>
+        <div style="display:flex;gap:4px;margin-top:12px">
+          <svg width="17" height="17"><use href="#st-on" width="17" height="17"></use></svg>
+          <svg width="17" height="17"><use href="#st-off" width="17" height="17"></use></svg>
+          <svg width="17" height="17"><use href="#st-off" width="17" height="17"></use></svg>
+        </div>
+        <div style="width:100%;height:1px;background:#F0E9DC;margin:18px 0 16px"></div>
+        <div style="font-size:12.5px;font-weight:800;color:#96877F">Adopted 31 August 2026</div>
+
+        <div style="display:flex;flex-wrap:wrap;width:100%;margin-top:16px">
+          <div style="width:50%;padding:8px 0;text-align:center"><div style="font-size:22px;font-weight:900;color:#DDD3C4">—</div><div style="font-size:10px;font-weight:800;color:#B4A996;margin-top:2px">days together</div></div>
+          <div style="width:50%;padding:8px 0;text-align:center"><div style="font-size:22px;font-weight:900;color:#DDD3C4">—</div><div style="font-size:10px;font-weight:800;color:#B4A996;margin-top:2px">assignments finished</div></div>
+          <div style="width:50%;padding:8px 0;text-align:center"><div style="font-size:22px;font-weight:900;color:#DDD3C4">—</div><div style="font-size:10px;font-weight:800;color:#B4A996;margin-top:2px">time focused</div></div>
+          <div style="width:50%;padding:8px 0;text-align:center"><div style="font-size:22px;font-weight:900;color:#DDD3C4">—</div><div style="font-size:10px;font-weight:800;color:#B4A996;margin-top:2px">lessons read</div></div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:#B4A996;margin-top:8px;text-align:center;text-wrap:pretty">These fill themselves in. None of them ever go down.</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+        <div style="display:flex;align-items:center;gap:7px">
+          <div style="width:20px;height:20px;border-radius:6px;background:#51CFA0"></div>
+          <span style="font-size:11.5px;font-weight:900;color:#96877F">Prepkin Canvas</span>
+        </div>
+        <span style="font-size:11px;font-weight:800;color:#C9BEAC">No. 003</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;bottom:44px;left:24px;right:24px;display:flex;gap:12px">
+    <div style="flex:1;height:52px;border-radius:20px;background:#fff;border:2px solid #F0E9DC;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#2E2822" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3"></path><path d="M7 8l5-5 5 5"></path><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"></path></svg><span style="font-size:15px;font-weight:900">Share</span></div>
+    <div style="flex:1;height:52px;border-radius:20px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 14px rgba(255,111,97,.32)"><span style="font-size:15px;font-weight:900;color:#fff">Meet Juno</span></div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Webkinz's certificate, built to be screenshotted: warmer paper than the app background, a double hairline frame, the tier as a top band so it reads at thumbnail size, and a serial number. The four together-since slots ship empty on purpose — em-dashes with labels, so the card is a promise on day one and a record at day two hundred. Same card, filled, is the body of <a class="dv-oid" href="#1d">1d</a>.</p>
+</div>
+
+<div class="dv-opt" id="1o">
+<div class="dv-olabel"><a class="dv-oid" href="#1o">1o</a>Star-up · 1★ → 2★</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,#F3EFF9 0%,#FAF5EC 58%)"></div>
+  <div style="position:absolute;left:0;right:0;top:196px;display:flex;justify-content:center">
+    <svg viewBox="0 0 1000 897" width="226" height="203" style="display:block;overflow:visible">
+      <ellipse cx="500" cy="882" rx="420" ry="46" fill="#101820" opacity=".09"></ellipse>
+      <use href="#k-wisp2" width="1000" height="897"></use>
+    </svg>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:414px;display:flex;justify-content:center">
+    <div style="display:flex;align-items:center;gap:9px;padding:9px 20px;border-radius:999px;background:#fff;box-shadow:0 4px 16px rgba(46,40,34,.12)">
+      <svg width="24" height="24"><use href="#st-on" width="24" height="24"></use></svg>
+      <div style="position:relative;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;width:52px;height:52px;border-radius:999px;background:rgba(255,194,75,.22)"></div>
+        <div style="position:absolute;width:38px;height:38px;border-radius:999px;background:rgba(255,194,75,.34)"></div>
+        <svg width="30" height="30" style="position:relative"><use href="#st-on" width="30" height="30"></use></svg>
+      </div>
+      <svg width="24" height="24"><use href="#st-off" width="24" height="24"></use></svg>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:32px;right:32px;top:494px;text-align:center">
+    <div style="font-size:31px;font-weight:900;letter-spacing:-.7px">Juno is 2 stars.</div>
+    <div style="font-size:14.5px;font-weight:700;color:#96877F;margin-top:10px;text-wrap:pretty">A little bigger, and a blush. One more star to go.</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:6px 14px;border-radius:999px;background:#FFF3D6">
+      <span style="width:14px;height:14px;border-radius:999px;background:#FFC24B;border:2px solid #E8A62E"></span>
+      <span style="font-size:13px;font-weight:900;color:#A8761D">100 spent</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:24px;right:24px;top:664px;display:flex;align-items:center;justify-content:center;padding:16px;border-radius:22px;background:#fff;border:2px solid #F0E9DC">
+    <span style="font-size:16px;font-weight:900">Nice</span>
+  </div>
+  <div style="position:absolute;left:24px;right:24px;top:730px;text-align:center;font-size:12px;font-weight:800;color:#B4A996">Third star costs 250 and adds the gold crown.</div>
+</div>
+</div>
+<p class="dv-cap" data-cap>"Lv 2" retired. The second pip lands with two concentric coin-tinted rings behind it — the pip scales 1.4 → 1.0 over 260ms while the kin runs one squash-and-settle, so the plate and the body move together. The cost is reported after the fact in a quiet coin pill rather than confirmed beforehand, and the next star is priced so the ladder stays visible.</p>
+</div>
+
+<div class="dv-opt" id="1p">
+<div class="dv-olabel"><a class="dv-oid" href="#1p">1p</a>Star-up · 2★ → 3★, the crown</div>
+<div class="dv-card">
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#FAF5EC">
+  <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 36%,#FFF3D6 0%,#FAF5EC 60%)"></div>
+  <div style="position:absolute;left:50%;top:308px;transform:translate(-50%,-50%);width:352px;height:352px;border-radius:999px;border:2px solid rgba(255,194,75,.26)"></div>
+  <div style="position:absolute;left:50%;top:308px;transform:translate(-50%,-50%);width:268px;height:268px;border-radius:999px;border:2px solid rgba(255,194,75,.40)"></div>
+  <div style="position:absolute;left:50%;top:308px;transform:translate(-50%,-50%);width:186px;height:186px;border-radius:999px;background:rgba(255,194,75,.20)"></div>
+
+  <span style="position:absolute;left:104px;top:174px;width:12px;height:12px;background:#FFC24B;transform:rotate(45deg)"></span>
+  <span style="position:absolute;right:96px;top:200px;width:9px;height:9px;background:#E8A62E;transform:rotate(45deg)"></span>
+  <span style="position:absolute;left:78px;top:300px;width:10px;height:10px;background:#FFC24B;transform:rotate(45deg)"></span>
+  <span style="position:absolute;right:70px;top:314px;width:11px;height:11px;background:#FFC24B;transform:rotate(45deg)"></span>
+
+  <div style="position:absolute;left:0;right:0;top:180px;display:flex;justify-content:center">
+    <svg viewBox="0 0 1000 897" width="264" height="237" style="display:block;overflow:visible">
+      <ellipse cx="500" cy="884" rx="420" ry="46" fill="#101820" opacity=".09"></ellipse>
+      <use href="#k-slime3d" width="1000" height="897"></use>
+    </svg>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:430px;display:flex;justify-content:center">
+    <div style="display:flex;align-items:center;gap:9px;padding:9px 20px;border-radius:999px;background:#fff;box-shadow:0 4px 16px rgba(46,40,34,.12)">
+      <svg width="26" height="26"><use href="#st-on" width="26" height="26"></use></svg>
+      <svg width="26" height="26"><use href="#st-on" width="26" height="26"></use></svg>
+      <div style="position:relative;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;width:58px;height:58px;border-radius:999px;background:rgba(255,194,75,.20)"></div>
+        <div style="position:absolute;width:42px;height:42px;border-radius:999px;background:rgba(255,194,75,.36)"></div>
+        <svg width="33" height="33" style="position:relative"><use href="#st-on" width="33" height="33"></use></svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:32px;right:32px;top:518px;text-align:center">
+    <div style="font-size:33px;font-weight:900;letter-spacing:-.8px">Moss wears the crown.</div>
+    <div style="font-size:14.5px;font-weight:700;color:#96877F;margin-top:10px;text-wrap:pretty">Three stars. That's the last one — Moss stays exactly like this from here.</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:6px 14px;border-radius:999px;background:#FFF3D6">
+      <span style="width:14px;height:14px;border-radius:999px;background:#FFC24B;border:2px solid #E8A62E"></span>
+      <span style="font-size:13px;font-weight:900;color:#A8761D">250 spent</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:24px;right:24px;top:696px;display:flex;align-items:center;justify-content:center;padding:17px;border-radius:22px;background:#FF6F61;box-shadow:0 6px 16px rgba(255,111,97,.35)">
+    <span style="font-size:16.5px;font-weight:900;color:#fff">Show me</span>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>The only moment in the tab that gets gold rings and coin-coloured confetti, because it is the top of the ladder and nothing follows it. Crown drops from −40pt with a −12° tilt and overshoots once; the third pip lands on the same frame. The copy closes the loop rather than teasing a next tier: three stars is the end, and the kin will look like this forever.</p>
+</div>
+
+</div>
+</div>
+
+<div class="dv-grp">
+<div class="dv-ghd">E · New art and the tier ramp</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1q" style="width:1120px">
+<div class="dv-olabel"><a class="dv-oid" href="#1q">1q</a>Four new kin + the starter, as flat vector · faces marked, not drawn</div>
+<div class="dv-card" style="width:1120px">
+<div style="width:1120px;padding:30px 26px 26px;background:#FAF5EC">
+  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px">
+    <span style="font-size:19px;font-weight:900">One blob, five silhouettes</span>
+    <span style="font-size:12px;font-weight:700;color:#96877F">No joints, no outline, no shading. Mitten bulges flow out of one continuous form. One signature feature up top.</span>
+  </div>
+  <div style="font-size:12px;font-weight:700;color:#96877F;margin-top:8px;text-wrap:pretty">The number under each name is its width÷height. They run <b style="color:#2E2822">0.7 · 0.9 · 1.1 · 1.2 · 1.4 · 1.5</b> — monotonic, so no two kin share a silhouette envelope. That spread is what makes the set separable at the 52pt size the picks row uses; the top feature only confirms what the outline already said.</div>
+  <div style="display:flex;gap:10px;margin-top:20px">
+
+    <div style="flex:1;background:#fff;border:2px solid #B4A996;border-radius:22px;padding:12px 12px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#B4A996;padding:2.5px 7px;border-radius:999px">COMMON</span><span style="font-size:11px;font-weight:900;color:#96877F">free</span></div>
+      <svg viewBox="0 0 1000 897" width="140" height="126" style="display:block;margin:8px auto 0">
+        <use href="#n-slime"></use>
+        <rect x="210" y="295" width="570" height="190" rx="24" fill="none" stroke="#101820" stroke-width="8" stroke-dasharray="26 20" opacity=".26"></rect>
+      </svg>
+      <div style="font-size:15px;font-weight:900;text-align:center;margin-top:6px">Slime</div>
+      <div style="font-size:10.5px;font-weight:800;color:#96877F;text-align:center">shipping art · unchanged · 1.1</div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:10px;line-height:1.5;text-wrap:pretty"><b style="color:#2E2822">At a glance:</b> the reference. Soft dome, droplet antenna leaning right, widest at the shoulders.</div>
+      <div style="font-size:9.5px;font-weight:800;color:#C9BEAC;margin-top:8px;font-family:ui-monospace,Menlo,monospace">face 1.0× @ 494,388</div>
+    </div>
+
+    <div style="flex:1;background:#fff;border:2px solid #57C79B;border-radius:22px;padding:12px 12px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#57C79B;padding:2.5px 7px;border-radius:999px">UNCOMMON</span><span style="font-size:11px;font-weight:900;color:#96877F">300</span></div>
+      <svg viewBox="0 0 1000 897" width="140" height="126" style="display:block;margin:8px auto 0">
+        <use href="#n-ember"></use>
+        <g transform="translate(500,400) scale(.62) translate(-494,-388)"><rect x="210" y="295" width="570" height="190" rx="24" fill="none" stroke="#101820" stroke-width="13" stroke-dasharray="26 20" opacity=".26"></rect></g>
+      </svg>
+      <div style="font-size:15px;font-weight:900;text-align:center;margin-top:6px">Ember</div>
+      <div style="font-size:10.5px;font-weight:800;color:#96877F;text-align:center">pink #F7A8B8 · 0.7</div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:10px;line-height:1.5;text-wrap:pretty"><b style="color:#2E2822">At a glance:</b> the tall one, and now genuinely so — a narrow column barely three-quarters as wide as it is tall, the slenderest kin in the set. Straight sides, a small seat, and a vertical flame tip curling back to the right.</div>
+      <div style="font-size:9.5px;font-weight:800;color:#C9BEAC;margin-top:8px;font-family:ui-monospace,Menlo,monospace">face 0.62× @ 500,400</div>
+    </div>
+
+    <div style="flex:1;background:#fff;border:2px solid #9BC8F2;border-radius:22px;padding:12px 12px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#9BC8F2;padding:2.5px 7px;border-radius:999px">RARE</span><span style="font-size:11px;font-weight:900;color:#96877F">400</span></div>
+      <svg viewBox="0 0 1000 897" width="140" height="126" style="display:block;margin:8px auto 0">
+        <use href="#n-droplet"></use>
+        <g transform="translate(500,530) scale(.88) translate(-494,-388)"><rect x="210" y="295" width="570" height="190" rx="24" fill="none" stroke="#101820" stroke-width="9" stroke-dasharray="26 20" opacity=".26"></rect></g>
+      </svg>
+      <div style="font-size:15px;font-weight:900;text-align:center;margin-top:6px">Droplet</div>
+      <div style="font-size:10.5px;font-weight:800;color:#96877F;text-align:center">sky #9BC8F2 · 1.5</div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:10px;line-height:1.5;text-wrap:pretty"><b style="color:#2E2822">At a glance:</b> the wide one — half again as wide as it is tall, and the lowest-sitting of the set. The only kin with no spike at all: three round ripple bumps across the crown instead.</div>
+      <div style="font-size:9.5px;font-weight:800;color:#C9BEAC;margin-top:8px;font-family:ui-monospace,Menlo,monospace">face 0.88× @ 500,530</div>
+    </div>
+
+    <div style="flex:1;background:#fff;border:2px solid #9BC8F2;border-radius:22px;padding:12px 12px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#9BC8F2;padding:2.5px 7px;border-radius:999px">RARE</span><span style="font-size:11px;font-weight:900;color:#96877F">500</span></div>
+      <svg viewBox="0 0 1000 897" width="140" height="126" style="display:block;margin:8px auto 0">
+        <use href="#n-sprout"></use>
+        <g transform="translate(500,405) scale(.8) translate(-494,-388)"><rect x="210" y="295" width="570" height="190" rx="24" fill="none" stroke="#101820" stroke-width="10" stroke-dasharray="26 20" opacity=".26"></rect></g>
+      </svg>
+      <div style="font-size:15px;font-weight:900;text-align:center;margin-top:6px">Sprout</div>
+      <div style="font-size:10.5px;font-weight:800;color:#96877F;text-align:center">leaf #A5CE6B · 0.9</div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:10px;line-height:1.5;text-wrap:pretty"><b style="color:#2E2822">At a glance:</b> the egg. Widest above the middle and tapering to a narrow seat, with two leaves forking off the crown in a V.</div>
+      <div style="font-size:9.5px;font-weight:800;color:#C9BEAC;margin-top:8px;font-family:ui-monospace,Menlo,monospace">face 0.80× @ 500,405</div>
+    </div>
+
+    <div style="flex:1;background:#fff;border:2px solid #C3B2F0;border-radius:22px;padding:12px 12px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#C3B2F0;padding:2.5px 7px;border-radius:999px">EPIC</span><span style="font-size:11px;font-weight:900;color:#96877F">800</span></div>
+      <svg viewBox="0 0 1000 897" width="140" height="126" style="display:block;margin:8px auto 0">
+        <use href="#n-wisp"></use>
+        <g transform="translate(500,430) scale(.80) translate(-494,-388)"><rect x="210" y="295" width="570" height="190" rx="24" fill="none" stroke="#101820" stroke-width="10" stroke-dasharray="26 20" opacity=".26"></rect></g>
+      </svg>
+      <div style="font-size:15px;font-weight:900;text-align:center;margin-top:6px">Wisp</div>
+      <div style="font-size:10.5px;font-weight:800;color:#96877F;text-align:center">lavender #C3B2F0 · 1.2</div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:10px;line-height:1.5;text-wrap:pretty"><b style="color:#2E2822">At a glance:</b> the only one without a flat bottom. Its base breaks into three deep lobes that hang well below the mitten bulges, so it reads as hovering even at 52pt. Its crown feature is a wide hood riding over the upper-left of the dome — a mass, not a spike, so it never competes with Ember's flame.</div>
+      <div style="font-size:9.5px;font-weight:800;color:#C9BEAC;margin-top:8px;font-family:ui-monospace,Menlo,monospace">face 0.80× @ 500,430</div>
+    </div>
+
+    <div style="flex:1;background:#fff;border:2px solid #FFC24B;border-radius:22px;padding:12px 12px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#FFC24B;padding:2.5px 7px;border-radius:999px">LEGENDARY</span><span style="font-size:11px;font-weight:900;color:#96877F">1,200</span></div>
+      <svg viewBox="0 0 1000 897" width="140" height="126" style="display:block;margin:8px auto 0">
+        <use href="#n-comet"></use>
+        <g transform="translate(560,490) scale(.75) translate(-494,-388)"><rect x="210" y="295" width="570" height="190" rx="24" fill="none" stroke="#101820" stroke-width="11" stroke-dasharray="26 20" opacity=".26"></rect></g>
+      </svg>
+      <div style="font-size:15px;font-weight:900;text-align:center;margin-top:6px">Comet</div>
+      <div style="font-size:10.5px;font-weight:800;color:#96877F;text-align:center">coin #FFC24B · tip #E8A62E · 1.4</div>
+      <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:10px;line-height:1.5;text-wrap:pretty"><b style="color:#2E2822">At a glance:</b> the asymmetric one, and the only kin whose signature is longer than its body — a tail-bulge sweeping back and up off the left shoulder, gold-tipped. Body sits forward of centre to balance it.</div>
+      <div style="font-size:9.5px;font-weight:800;color:#C9BEAC;margin-top:8px;font-family:ui-monospace,Menlo,monospace">face 0.75× @ 560,490</div>
+    </div>
+
+  </div>
+  <div style="font-size:12px;font-weight:700;color:#96877F;margin-top:20px;text-wrap:pretty">Dashed box = where the code-drawn face goes, at the transform printed under each kin: <code style="font:800 11px ui-monospace">translate(cx,cy) scale(s) translate(-494,-388)</code> applied to the existing <code style="font:800 11px ui-monospace">SlimeArt.face*</code> paths, so all nine approved expressions drop into every species with no new art. Bellies are the same 57%-toward-white blend <code style="font:800 11px ui-monospace">Slime.belly(for:)</code> already computes. Every one of these is a proposal for your approval as art — the slime at far left is the untouched traced original, shown at the same scale for comparison.</div>
+</div>
+</div>
+<p class="dv-cap" data-cap>Ember, Droplet and Sprout stop being recolours. Each silhouette differs on one axis you can name from a 40pt thumbnail — height, width, taper, base, asymmetry — so the tier ladder is legible in the picks row where the art is 52pt tall. Comet is the Legendary you picked.</p>
+</div>
+
+<div class="dv-opt" id="1r" style="width:520px">
+<div class="dv-olabel"><a class="dv-oid" href="#1r">1r</a>Tier ramp, applied to your tokens</div>
+<div class="dv-card" style="width:520px">
+<div style="width:520px;padding:26px 24px;background:#FAF5EC">
+  <div style="font-size:17px;font-weight:900">Where a tier is allowed to appear</div>
+  <div style="font-size:12px;font-weight:700;color:#96877F;margin-top:5px;text-wrap:pretty">Three places, never a large fill: the cost badge, the name plate, the 2pt card border. The kin stays the most saturated thing on screen.</div>
+
+  <div style="display:flex;gap:0;margin-top:18px;padding-bottom:8px;border-bottom:1px solid #F0E9DC">
+    <div style="width:126px;font-size:9.5px;font-weight:900;letter-spacing:.12em;color:#B4A996">TIER · PRICE</div>
+    <div style="width:104px;font-size:9.5px;font-weight:900;letter-spacing:.12em;color:#B4A996">PLATE</div>
+    <div style="width:104px;font-size:9.5px;font-weight:900;letter-spacing:.12em;color:#B4A996">COST BADGE</div>
+    <div style="flex:1;font-size:9.5px;font-weight:900;letter-spacing:.12em;color:#B4A996">2PT BORDER</div>
+  </div>
+
+  <div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid #F0E9DC">
+    <div style="width:126px"><div style="font-size:14px;font-weight:900">Common</div><div style="font-size:11px;font-weight:800;color:#96877F">0–150 · #B4A996</div></div>
+    <div style="width:104px"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#B4A996;padding:2.5px 7px;border-radius:999px">COMMON</span></div>
+    <div style="width:104px"><div style="display:inline-flex;align-items:center;gap:4px;background:#B4A996;padding:2px 9px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">0</span></div></div>
+    <div style="flex:1"><div style="height:34px;border:2px solid #B4A996;border-radius:12px;background:#fff"></div></div>
+  </div>
+  <div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid #F0E9DC">
+    <div style="width:126px"><div style="font-size:14px;font-weight:900">Uncommon</div><div style="font-size:11px;font-weight:800;color:#96877F">200–300 · #57C79B</div></div>
+    <div style="width:104px"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#57C79B;padding:2.5px 7px;border-radius:999px">UNCOMMON</span></div>
+    <div style="width:104px"><div style="display:inline-flex;align-items:center;gap:4px;background:#57C79B;padding:2px 9px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">300</span></div></div>
+    <div style="flex:1"><div style="height:34px;border:2px solid #57C79B;border-radius:12px;background:#fff"></div></div>
+  </div>
+  <div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid #F0E9DC">
+    <div style="width:126px"><div style="font-size:14px;font-weight:900">Rare</div><div style="font-size:11px;font-weight:800;color:#96877F">400–500 · #9BC8F2</div></div>
+    <div style="width:104px"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#9BC8F2;padding:2.5px 7px;border-radius:999px">RARE</span></div>
+    <div style="width:104px"><div style="display:inline-flex;align-items:center;gap:4px;background:#9BC8F2;padding:2px 9px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">400</span></div></div>
+    <div style="flex:1"><div style="height:34px;border:2px solid #9BC8F2;border-radius:12px;background:#fff"></div></div>
+  </div>
+  <div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid #F0E9DC">
+    <div style="width:126px"><div style="font-size:14px;font-weight:900">Epic</div><div style="font-size:11px;font-weight:800;color:#96877F">700–900 · #C3B2F0</div></div>
+    <div style="width:104px"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#C3B2F0;padding:2.5px 7px;border-radius:999px">EPIC</span></div>
+    <div style="width:104px"><div style="display:inline-flex;align-items:center;gap:4px;background:#C3B2F0;padding:2px 9px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFC24B;border:1.5px solid #E8A62E"></span><span style="font-size:11.5px;font-weight:900">800</span></div></div>
+    <div style="flex:1"><div style="height:34px;border:2px solid #C3B2F0;border-radius:12px;background:#fff"></div></div>
+  </div>
+  <div style="display:flex;align-items:center;padding:11px 0">
+    <div style="width:126px"><div style="font-size:14px;font-weight:900">Legendary</div><div style="font-size:11px;font-weight:800;color:#96877F">1200 · #FFC24B</div></div>
+    <div style="width:104px"><span style="font-size:8.5px;font-weight:900;letter-spacing:.13em;color:#2E2822;background:#FFC24B;padding:2.5px 7px;border-radius:999px">LEGENDARY</span></div>
+    <div style="width:104px"><div style="display:inline-flex;align-items:center;gap:4px;background:#FFC24B;padding:2px 9px;border-radius:999px"><span style="width:11px;height:11px;border-radius:999px;background:#FFF3D6;border:1.5px solid #A8761D"></span><span style="font-size:11.5px;font-weight:900">1,200</span></div></div>
+    <div style="flex:1"><div style="height:34px;border:2px solid #FFC24B;border-radius:12px;background:#fff"></div></div>
+  </div>
+
+  <div style="background:#fff;border-radius:18px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 16px;margin-top:16px">
+    <div style="font-size:13px;font-weight:900">Two rules that keep it low-chroma</div>
+    <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:6px;line-height:1.6;text-wrap:pretty">Plate and badge text is always ink <b style="color:#2E2822">#2E2822</b>, never white — all five tiers are light enough to carry it, so the type never changes weight or colour across the ramp. Legendary's coin disc inverts to <b style="color:#2E2822">#FFF3D6</b> on <b style="color:#2E2822">#A8761D</b> because a #FFC24B disc on a #FFC24B badge would vanish; that inversion is the only per-tier exception in the whole system.</div>
+  </div>
+  <div style="background:#fff;border-radius:18px;box-shadow:0 2px 8px rgba(46,40,34,.05);padding:14px 16px;margin-top:10px">
+    <div style="font-size:13px;font-weight:900">Unowned field, not grey</div>
+    <div style="font-size:11.5px;font-weight:700;color:#96877F;margin-top:6px;line-height:1.6;text-wrap:pretty">Owned cards are card white <b style="color:#2E2822">#FFFFFF</b>; unowned cards are cream <b style="color:#2E2822">#FBF7F0</b> — one step off the background instead of a desaturation. The kin's own colours are never touched, which is what makes <a class="dv-oid" href="#1c">1c</a> readable without a single lock.</div>
+  </div>
+</div>
+</div>
+<p class="dv-cap" data-cap>The ramp as tokens, so it can go straight into <code style="font:700 11px ui-monospace">ChibiSpecies.tier</code> and a <code style="font:700 11px ui-monospace">Theme.tier(_:)</code> helper. Prices sit inside your existing earn rates: a full day is 120–200 coins, so Uncommon is two days, Rare four, Epic a week, Legendary about ten days of finishing everything.</p>
+</div>
+
+</div>
+</div>
+
+<p class="dv-next">Try next: "the picks row needs bigger cards even if only 3.5 fit — show me <a class="dv-oid" href="#1e">1e</a> that way" · "<a class="dv-oid" href="#1h">1h</a> but the gap converts to focus minutes instead of assignments" · "give Comet a second silhouette option" · "add the Home speech-bubble and Ask Kin screens that use the new name"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:900},&quot;kinName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Moss&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;showCaptions&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+class Component extends DCLogic {
+  state = { careState: 'off', careMsg: 'Moss is glad you came by.' };
+
+  fire(msg) {
+    this.setState({ careState: 'off', careMsg: msg });
+    clearTimeout(this._a); clearTimeout(this._b);
+    this._a = setTimeout(() => this.setState({ careState: 'on' }), 30);
+    this._b = setTimeout(() => this.setState({ careState: 'off', careMsg: 'Moss is glad you came by.' }), 3200);
+  }
+
+  componentWillUnmount() { clearTimeout(this._a); clearTimeout(this._b); }
+
+  renderVals() {
+    const name = this.props.kinName ?? 'Moss';
+    return {
+      kinName: name,
+      capsMode: (this.props.showCaptions ?? true) ? 'on' : 'off',
+      careState: this.state.careState,
+      careMsg: this.state.careMsg,
+      onPet: () => this.fire(name + ' leans into it.'),
+      onFive: () => this.fire('Nailed it.'),
+      onSnack: () => this.fire('Crunch.'),
+    };
+  }
+}
+</script>
+</body>
+</html>

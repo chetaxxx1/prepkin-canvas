@@ -1,0 +1,8 @@
+r2.4 root40 k26 inf12 ccv29.6
+r2.4 root40 k42 inf16 ccv28.2
+r2.4 root52 k26 inf14 ccv28.1
+r2.4 root52 k42 inf14 ccv28.2
+r2.9 root40 k26 inf12 ccv38.3
+r2.9 root40 k42 inf12 ccv41.5
+r2.9 root52 k26 inf12 ccv37.0
+r2.9 root52 k42 inf14 ccv43.3

@@ -20,6 +20,16 @@ struct GameState: Codable, Equatable {
     var ownedScenes: Set<String> = ["dorm"]
     var completedLessons: Set<String> = []
 
+    /// How far into each deck the student has read, by lesson id. Drives Continue on
+    /// Learn, the current node on a track map, and where Resume puts you back.
+    /// Cleared on finish, so a finished lesson stops asking to be continued.
+    var deckProgress: [String: Int] = [:]
+    /// Hearted cards, newest first. Stored as pointers into the catalogue, never as
+    /// copies of the prose — rewriting a lesson updates what the student kept.
+    var savedCards: [SavedCard] = []
+    /// The tap-zone coach is shown once, ever.
+    var hasSeenTapCoach = false
+
     var templates: [TaskTemplate] = TaskTemplate.starterSet()
     var canvasItems: [CanvasItem] = []
     var canvasCourses: [CanvasCourse] = []
@@ -37,6 +47,40 @@ struct GameState: Codable, Equatable {
     /// spendable — the coins for a shift come out of the ledger like any other pay.
     var bestShift = 0
 
+    /// Lifetime totals for the Kin tab's "together since" strip.
+    ///
+    /// Stored, not derived from `Ledger.entries`, because the ledger folds lines
+    /// older than its window into the opening balance — a derived count would go
+    /// DOWN over time, and the one promise this strip makes is that it only goes up.
+    var lifetime = LifetimeStats()
+
+    /// Today's five shop picks, as `"kin:ember"` / `"scene:meadow"`.
+    var shopPicks: [String] = []
+    var shopPickDay: DayKey = DayKey(raw: "")
+    /// How many times today's row has been rerolled. Seeds the draw, and caps it at
+    /// `rerollsPerDay`. Resets with the row at the day boundary.
+    var rerollCount = 0
+    /// A slot the student is holding. Survives every reroll and the day boundary.
+    var lockedPick: String?
+
+    /// Daily Word record, kept here rather than derived from the ledger because the
+    /// ledger compacts lines older than 90 days and these should never go down.
+    var wordleSolved = 0
+    /// Fewest guesses ever. `nil` until the first solve.
+    var wordleBest: Int?
+    var wordleStreak = 0
+    /// The last day a word was solved, so the streak knows whether today continues it.
+    var wordleLastDay: DayKey?
+    /// Today's board, so leaving mid-puzzle and coming back finds the same guesses —
+    /// and a solved board stays solved instead of dealing the same word again.
+    var wordleGuesses: [String] = []
+    var wordleGuessDay: DayKey?
+
+    /// Number Line record. Rounds can be played any time; coins come once a day.
+    var numberLinePlayed = 0
+    /// Best round accuracy, 0–100. `nil` until the first round.
+    var numberLineBest: Int?
+
     /// The code the student types into the Chrome extension. Optional on purpose:
     /// nothing is created until they actually open the connect screen, and the app
     /// works fully without one.
@@ -49,6 +93,10 @@ struct GameState: Codable, Equatable {
         case ledger, owned, activeChibiID, sceneID, ownedScenes, completedLessons
         case templates, canvasItems, canvasCourses, currentDay, maxDayReached
         case settings, lastOpenedAt, pairingCode, lastCanvasSyncAt, bestShift
+        case deckProgress, savedCards, hasSeenTapCoach
+        case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick
+        case wordleSolved, wordleBest, wordleStreak, wordleLastDay, wordleGuesses, wordleGuessDay
+        case numberLinePlayed, numberLineBest
     }
 
     init() {}
@@ -78,6 +126,22 @@ struct GameState: Codable, Equatable {
         pairingCode = try c.decodeIfPresent(String.self, forKey: .pairingCode)
         lastCanvasSyncAt = try c.decodeIfPresent(Date.self, forKey: .lastCanvasSyncAt)
         bestShift = try c.decodeIfPresent(Int.self, forKey: .bestShift) ?? blank.bestShift
+        deckProgress = try c.decodeIfPresent([String: Int].self, forKey: .deckProgress) ?? blank.deckProgress
+        savedCards = try c.decodeIfPresent([SavedCard].self, forKey: .savedCards) ?? blank.savedCards
+        hasSeenTapCoach = try c.decodeIfPresent(Bool.self, forKey: .hasSeenTapCoach) ?? blank.hasSeenTapCoach
+        lifetime = try c.decodeIfPresent(LifetimeStats.self, forKey: .lifetime) ?? blank.lifetime
+        shopPicks = try c.decodeIfPresent([String].self, forKey: .shopPicks) ?? blank.shopPicks
+        shopPickDay = try c.decodeIfPresent(DayKey.self, forKey: .shopPickDay) ?? blank.shopPickDay
+        rerollCount = try c.decodeIfPresent(Int.self, forKey: .rerollCount) ?? blank.rerollCount
+        lockedPick = try c.decodeIfPresent(String.self, forKey: .lockedPick)
+        wordleSolved = try c.decodeIfPresent(Int.self, forKey: .wordleSolved) ?? blank.wordleSolved
+        wordleBest = try c.decodeIfPresent(Int.self, forKey: .wordleBest)
+        wordleStreak = try c.decodeIfPresent(Int.self, forKey: .wordleStreak) ?? blank.wordleStreak
+        wordleLastDay = try c.decodeIfPresent(DayKey.self, forKey: .wordleLastDay)
+        wordleGuesses = try c.decodeIfPresent([String].self, forKey: .wordleGuesses) ?? blank.wordleGuesses
+        wordleGuessDay = try c.decodeIfPresent(DayKey.self, forKey: .wordleGuessDay)
+        numberLinePlayed = try c.decodeIfPresent(Int.self, forKey: .numberLinePlayed) ?? blank.numberLinePlayed
+        numberLineBest = try c.decodeIfPresent(Int.self, forKey: .numberLineBest)
     }
 
     // MARK: - Day
@@ -166,10 +230,12 @@ struct GameState: Codable, Equatable {
             guard !isCanvasPaid(taskID) else { return 0 }
             let posted = ledger.post(CoinEntry(key: canvasKey(taskID), amount: reward,
                                                reason: .task, day: day, at: now))
+            if posted { lifetime.tasksFinished += 1; lifetime.canvasFinished += 1 }
             return posted ? reward : 0
         }
         let posted = ledger.post(CoinEntry(key: taskKey(taskID, on: day), amount: reward,
                                            reason: .task, day: day, at: now))
+        if posted { lifetime.tasksFinished += 1 }
         return posted ? reward : 0
     }
 
@@ -197,6 +263,7 @@ struct GameState: Codable, Equatable {
         let day = effectiveDay
         let ok = ledger.post(CoinEntry(key: "focus:\(sessionID)", amount: minutes,
                                        reason: .focus, units: minutes, day: day, at: now))
+        if ok { lifetime.focusMinutes += minutes }
         return ok ? minutes : 0
     }
 
@@ -210,22 +277,103 @@ struct GameState: Codable, Equatable {
     /// stamp, which a clock change could reset. `day` is the day the puzzle was
     /// dealt — a solve finished just past midnight still settles the word it was.
     @discardableResult
-    mutating func recordWordleWin(reward: Int = 30, day: DayKey? = nil, now: Date = Date()) -> Int {
+    mutating func recordWordleWin(reward: Int = 30, guesses: Int = 6, day: DayKey? = nil,
+                                  now: Date = Date(), calendar: Calendar = .current) -> Int {
         let day = day ?? effectiveDay
         let ok = ledger.post(CoinEntry(key: "wordle:\(day.raw)", amount: reward,
                                        reason: .wordle, day: day, at: now))
-        return ok ? reward : 0
+        guard ok else { return 0 }
+        wordleSolved += 1
+        wordleBest = min(wordleBest ?? guesses, guesses)
+        // Yesterday continues the streak; anything older starts it over at 1.
+        if let last = wordleLastDay, last == Self.dayBefore(day, calendar: calendar) {
+            wordleStreak += 1
+        } else if wordleLastDay != day {
+            wordleStreak = 1
+        }
+        wordleLastDay = day
+        return reward
+    }
+
+    /// The streak as it stands right now: a solve yesterday or today keeps it; a
+    /// gap of a day or more means it has already lapsed, whatever the counter says.
+    func wordleStreak(asOf day: DayKey? = nil, calendar: Calendar = .current) -> Int {
+        let day = day ?? effectiveDay
+        guard let last = wordleLastDay else { return 0 }
+        return (last == day || last == Self.dayBefore(day, calendar: calendar)) ? wordleStreak : 0
+    }
+
+    static func dayBefore(_ day: DayKey, calendar: Calendar = .current) -> DayKey? {
+        let parts = day.raw.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3,
+              let date = calendar.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2])),
+              let before = calendar.date(byAdding: .day, value: -1, to: date) else { return nil }
+        return DayKey(before, calendar: calendar)
     }
 
     var wordleClaimedToday: Bool { ledger.isClaimed("wordle:\(effectiveDay.raw)") }
 
+    /// A finished Number Line round. Paid once a day, whatever the accuracy — the
+    /// score is a number to beat, never the thing that decides the coins.
+    @discardableResult
+    mutating func recordNumberLineRound(accuracy: Int, reward: Int = 25, day: DayKey? = nil,
+                                        now: Date = Date()) -> Int {
+        let day = day ?? effectiveDay
+        numberLinePlayed += 1
+        numberLineBest = max(numberLineBest ?? 0, accuracy)
+        let ok = ledger.post(CoinEntry(key: "numberline:\(day.raw)", amount: reward,
+                                       reason: .numberLine, day: day, at: now))
+        return ok ? reward : 0
+    }
+
+    var numberLineClaimedToday: Bool { ledger.isClaimed("numberline:\(effectiveDay.raw)") }
+
+    /// Pays for a finished deck, once ever. A re-read is free to do and pays nothing,
+    /// which is the same rule every other earning path in the app follows.
     @discardableResult
     mutating func completeLesson(id: String, reward: Int, now: Date = Date()) -> Int {
         let day = effectiveDay
         let ok = ledger.post(CoinEntry(key: "lesson:\(id)", amount: reward,
                                        reason: .lesson, day: day, at: now))
-        if ok { completedLessons.insert(id) }
+        completedLessons.insert(id)
+        if ok { lifetime.lessonsRead += 1 }
+        // Finished decks don't ask to be continued.
+        deckProgress[id] = nil
         return ok ? reward : 0
+    }
+
+    // MARK: - Learn
+
+    /// Remembers how far in you got. Only ever moves forward within a session's
+    /// reading, so paging back doesn't make Continue offer you an earlier card.
+    mutating func setDeckProgress(_ lessonID: String, card index: Int) {
+        guard index > 0 else { deckProgress[lessonID] = nil; return }
+        deckProgress[lessonID] = max(deckProgress[lessonID] ?? 0, index)
+    }
+
+    func deckProgress(_ lessonID: String) -> Int { deckProgress[lessonID] ?? 0 }
+
+    func isSaved(lessonID: String, index: Int) -> Bool {
+        savedCards.contains { $0.lessonID == lessonID && $0.index == index }
+    }
+
+    /// Hearts or un-hearts a card. Returns the state it ended in, so the view can
+    /// bounce the heart only when something was actually saved.
+    @discardableResult
+    mutating func toggleSaved(lessonID: String, index: Int, now: Date = Date()) -> Bool {
+        if let i = savedCards.firstIndex(where: { $0.lessonID == lessonID && $0.index == index }) {
+            savedCards.remove(at: i)
+            return false
+        }
+        savedCards.insert(SavedCard(lessonID: lessonID, index: index, savedAt: now), at: 0)
+        return true
+    }
+
+    /// The only counter Learn shows. Counts up within a month and never resets to a
+    /// target you have to hit — there is no streak to break here.
+    func lessonsThisMonth(now: Date = Date(), calendar: Calendar = .current) -> Int {
+        guard let month = calendar.dateInterval(of: .month, for: now) else { return 0 }
+        return ledger.entries.filter { $0.reason == .lesson && month.contains($0.at) }.count
     }
 
     // MARK: - Spending
@@ -286,12 +434,18 @@ struct GameState: Codable, Equatable {
     }
 
     /// Un-checking is for things you told the app about. Canvas already knows.
+    /// Undoing a check-off takes its line out of the lifetime totals as well. That is
+    /// the one way a "together since" number can fall, and it is the honest one: the
+    /// student is saying the thing did not happen.
     mutating func uncomplete(taskID: String) {
         if let item = canvasItems.first(where: { $0.id == taskID }) {
             guard !item.isSubmitted else { return }
-            ledger.revoke(canvasKey(taskID))
-        } else {
-            ledger.revoke(taskKey(taskID, on: effectiveDay))
+            if ledger.revoke(canvasKey(taskID)) {
+                lifetime.tasksFinished = max(0, lifetime.tasksFinished - 1)
+                lifetime.canvasFinished = max(0, lifetime.canvasFinished - 1)
+            }
+        } else if ledger.revoke(taskKey(taskID, on: effectiveDay)) {
+            lifetime.tasksFinished = max(0, lifetime.tasksFinished - 1)
         }
     }
 

@@ -10,6 +10,10 @@ import UIKit
 struct SlimeView: View {
     var color: Color = Slime.body
     var level: Int
+    /// Which kin to draw. "slime" is the traced production art in `SlimeArt`; every
+    /// other id resolves to a silhouette in `KinArt`. Faces are shared — the same
+    /// nine approved code-drawn faces, fitted to each head.
+    var species: String = "slime"
     var animation: ChibiAnimation
     var size: CGFloat = 130
     /// Optional explicit face; nil derives it from `animation`.
@@ -62,29 +66,22 @@ struct SlimeView: View {
                     .offset(y: h * 0.47)
 
                 ZStack {
-                    TracedShape(subpaths: SlimeArt.body, deform: d).fill(color).frame(width: w, height: h)
-                    if let armAngle = dance.armAngle {
-                        SlimeArm(angleDeg: armAngle, stretch: dance.armStretch)
-                            .fill(color).frame(width: w, height: h)
-                    }
-                    TracedShape(subpaths: SlimeArt.belly, deform: d).fill(Slime.belly(for: color)).frame(width: w, height: h)
-                    TracedShape(subpaths: faceNow.art, deform: d).fill(Slime.ink).frame(width: w, height: h)
-
-                    if level >= 2 {
-                        HStack(spacing: w * 0.50) {
-                            Ellipse().fill(Slime.blush).frame(width: w * 0.11, height: h * 0.045)
-                            Ellipse().fill(Slime.blush).frame(width: w * 0.11, height: h * 0.045)
-                        }
-                        // cheeks sit at y ≈ 0.54 of the bbox; ride the squash
-                        // (the rigid tilt below carries them sideways)
-                        .offset(y: h * (0.04 + 0.46 * (1 - d.sy)))
-                    }
+                    character(w: w, h: h, d: d, dance: dance, face: faceNow)
+                    blush(w: w, h: h, d: d)
                     if animation == .celebrate || dance.face == .delight {
-                        Text("✨").font(.system(size: w * 0.22)).offset(x: w * 0.52, y: -h * 0.38)
-                        Text("✨").font(.system(size: w * 0.16)).offset(x: -w * 0.56, y: -h * 0.12)
+                        Spark().fill(Theme.coin)
+                            .frame(width: w * 0.20, height: w * 0.20)
+                            .offset(x: w * 0.52, y: -h * 0.38)
+                        Spark().fill(Theme.coin)
+                            .frame(width: w * 0.14, height: w * 0.14)
+                            .offset(x: -w * 0.56, y: -h * 0.12)
                     }
                     if faceNow == .sleep {
-                        Text("💤").font(.system(size: w * 0.2)).offset(x: w * 0.48, y: -h * 0.40)
+                        SleepZs().stroke(Slime.ink.opacity(0.55),
+                                         style: StrokeStyle(lineWidth: w * 0.022,
+                                                            lineCap: .round, lineJoin: .round))
+                            .frame(width: w * 0.20, height: w * 0.22)
+                            .offset(x: w * 0.48, y: -h * 0.40)
                     }
                 }
                 .rotationEffect(.degrees(dance.tilt), anchor: dance.spinAnchor)
@@ -102,6 +99,60 @@ struct SlimeView: View {
                 choreoStart = Date()
             default: break
             }
+        }
+    }
+
+    private var kinArt: KinArt.Species? { KinArt.all[species] }
+
+    /// The kin itself: accent, body, belly, face. Every body-coloured subpath is in one
+    /// path per fill, so the bulges read as one silhouette and never as parts.
+    @ViewBuilder
+    private func character(w: CGFloat, h: CGFloat, d: SlimeDeform,
+                           dance: SlimeDance.Frame, face: SlimeExpression) -> some View {
+        if let kin = kinArt {
+            ZStack {
+                if let accent = kin.accent, let rgb = kin.accentRGB {
+                    TracedShape(subpaths: accent, deform: d)
+                        .fill(Color(red: rgb.0, green: rgb.1, blue: rgb.2))
+                        .frame(width: w, height: h)
+                }
+                TracedShape(subpaths: kin.body, deform: d)
+                    .fill(color).frame(width: w, height: h)
+                TracedShape(subpaths: kin.belly, deform: d)
+                    .fill(Slime.belly(for: color)).frame(width: w, height: h)
+                TracedShape(subpaths: face.art, deform: d, fit: kin.faceFit)
+                    .fill(Slime.ink).frame(width: w, height: h)
+            }
+        } else {
+            ZStack {
+                TracedShape(subpaths: SlimeArt.body, deform: d)
+                    .fill(color).frame(width: w, height: h)
+                if let armAngle = dance.armAngle {
+                    SlimeArm(angleDeg: armAngle, stretch: dance.armStretch)
+                        .fill(color).frame(width: w, height: h)
+                }
+                TracedShape(subpaths: SlimeArt.belly, deform: d)
+                    .fill(Slime.belly(for: color)).frame(width: w, height: h)
+                TracedShape(subpaths: face.art, deform: d)
+                    .fill(Slime.ink).frame(width: w, height: h)
+            }
+        }
+    }
+
+    /// Cheeks ride the face: a smaller head gets smaller cheeks, and a head that sits
+    /// lower carries them down with it.
+    @ViewBuilder
+    private func blush(w: CGFloat, h: CGFloat, d: SlimeDeform) -> some View {
+        if level >= 2 {
+            let fs = kinArt?.faceScale ?? 1
+            let drop = (kinArt?.faceCY ?? KinArt.faceOriginY) - KinArt.faceOriginY
+            HStack(spacing: w * 0.50 * fs) {
+                Ellipse().fill(Slime.blush).frame(width: w * 0.11 * fs, height: h * 0.045 * fs)
+                Ellipse().fill(Slime.blush).frame(width: w * 0.11 * fs, height: h * 0.045 * fs)
+            }
+            // cheeks sit at y ≈ 0.54 of the bbox; ride the squash
+            // (the rigid tilt below carries them sideways)
+            .offset(y: h * (0.04 + 0.46 * (1 - d.sy) + drop))
         }
     }
 
@@ -618,16 +669,34 @@ enum SlimeSlump {
 /// Renders pre-traced cubic-bezier subpaths (unit coords over the character
 /// bounding box) scaled into the given rect. Each component is a single
 /// closed contour (no holes).
+/// Where a borrowed face sits on a head that is not the slime's: scale about the
+/// face's own centre, then move to that species' face position. Applied before the
+/// jelly deform, so a face squashes with the body it is on.
+struct KinFaceFit {
+    var scale: Double = 1
+    var cx: Double = KinArt.faceOriginX
+    var cy: Double = KinArt.faceOriginY
+
+    static let identity = KinFaceFit()
+    var isIdentity: Bool { scale == 1 && cx == KinArt.faceOriginX && cy == KinArt.faceOriginY }
+
+    func apply(_ x: Double, _ y: Double) -> (x: Double, y: Double) {
+        (cx + scale * (x - KinArt.faceOriginX), cy + scale * (y - KinArt.faceOriginY))
+    }
+}
+
 struct TracedShape: Shape {
     let subpaths: [[[Double]]]
     var deform: SlimeDeform = .neutral
+    var fit: KinFaceFit = .identity
 
     func path(in r: CGRect) -> Path {
         var p = Path()
         for segs in subpaths {
             guard let first = segs.first else { continue }
-            func pt(_ x: Double, _ y: Double) -> CGPoint {
-                let d = deform.apply(x: x, y: y)
+            func pt(_ x0: Double, _ y0: Double) -> CGPoint {
+                let f = fit.isIdentity ? (x: x0, y: y0) : fit.apply(x0, y0)
+                let d = deform.apply(x: f.x, y: f.y)
                 return CGPoint(x: r.minX + d.x * r.width, y: r.minY + d.y * r.height)
             }
             p.move(to: pt(first[0], first[1]))
@@ -883,5 +952,42 @@ enum SlimeArt {
             seg((cx + halfW, yr + t), (cx - halfW, yl + t)),
             seg((cx - halfW, yl + t), (cx - halfW, yl)),
         ]
+    }
+}
+
+
+/// A four-point sparkle with concave sides. Replaces the ✨ the mascot used to carry —
+/// emoji render in the system font, which is the one thing on screen not in the palette.
+struct Spark: Shape {
+    func path(in r: CGRect) -> Path {
+        let c = CGPoint(x: r.midX, y: r.midY)
+        let R = min(r.width, r.height) / 2
+        let w = R * 0.30
+        var p = Path()
+        p.move(to: CGPoint(x: c.x, y: c.y - R))
+        p.addQuadCurve(to: CGPoint(x: c.x + R, y: c.y), control: CGPoint(x: c.x + w, y: c.y - w))
+        p.addQuadCurve(to: CGPoint(x: c.x, y: c.y + R), control: CGPoint(x: c.x + w, y: c.y + w))
+        p.addQuadCurve(to: CGPoint(x: c.x - R, y: c.y), control: CGPoint(x: c.x - w, y: c.y + w))
+        p.addQuadCurve(to: CGPoint(x: c.x, y: c.y - R), control: CGPoint(x: c.x - w, y: c.y - w))
+        p.closeSubpath()
+        return p
+    }
+}
+
+/// Three rising z's, drawn rather than the 💤 emoji.
+struct SleepZs: Shape {
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        let sizes: [(CGFloat, CGFloat, CGFloat)] = [(0.00, 0.62, 0.38), (0.34, 0.30, 0.30), (0.62, 0.04, 0.22)]
+        for (x0, y0, s) in sizes {
+            let x = r.minX + x0 * r.width
+            let y = r.minY + y0 * r.height
+            let d = s * min(r.width, r.height)
+            p.move(to: CGPoint(x: x, y: y))
+            p.addLine(to: CGPoint(x: x + d, y: y))
+            p.addLine(to: CGPoint(x: x, y: y + d))
+            p.addLine(to: CGPoint(x: x + d, y: y + d))
+        }
+        return p
     }
 }

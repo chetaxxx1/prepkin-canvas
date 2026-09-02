@@ -77,6 +77,7 @@ function mapAssignments(raw, { host, course, now = Date.now() } = {}) {
       submittedAt,
       score: numberOrNull(a.submission?.score),
       pointsPossible: numberOrNull(a.points_possible),
+      gradedAt: a.submission?.graded_at ?? null,
       url: typeof a.html_url === 'string' ? a.html_url : null,
     }];
   });
@@ -133,6 +134,60 @@ function mapTodo(raw, host, now = Date.now()) {
   });
 }
 
+// MARK: - Grades over time
+
+/// The graded items in one course, oldest first, for the sparkline and the
+/// "recent" list under an expanded grade row. Only work that actually carries a
+/// score counts — an ungraded submission is not a data point.
+function mapGraded(raw, { limit = 24 } = {}) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .flatMap((a) => {
+      if (!a || a.id == null || !a.name) return [];
+      const score = numberOrNull(a.submission?.score);
+      const outOf = numberOrNull(a.points_possible);
+      if (score === null || !outOf) return [];
+      const at = a.submission?.graded_at ?? a.submission?.submitted_at ?? a.due_at ?? null;
+      return [{
+        title: a.name,
+        score,
+        outOf,
+        percent: Math.round((score / outOf) * 1000) / 10,
+        at,
+      }];
+    })
+    .sort((x, y) => String(x.at ?? '').localeCompare(String(y.at ?? '')))
+    .slice(-limit);
+}
+
+/// Assignment-group weights, from `GET /courses/:id/assignment_groups`.
+///
+/// Canvas only honours these when the course turns weighting on, so an
+/// unweighted course returns null rather than a set of numbers that look
+/// authoritative and are not. The what-if screen asks the student instead.
+function mapWeights(raw, { weighted = true } = {}) {
+  if (!weighted || !Array.isArray(raw)) return null;
+  const groups = raw.flatMap((g) => {
+    if (!g || g.id == null || !g.name) return [];
+    const weight = numberOrNull(g.group_weight);
+    return weight ? [{ id: String(g.id), name: g.name, weight }] : [];
+  });
+  return groups.length ? groups : null;
+}
+
+/// What you need on the remaining work to finish on `target`.
+///
+/// `weight` is the share of the grade still outstanding, as a percent. Returns
+/// null when there is nothing left to weigh, and can exceed 100 — the caller
+/// decides how to say that kindly.
+function requiredScore({ current, target, weight }) {
+  if (![current, target, weight].every((n) => typeof n === 'number')) return null;
+  if (weight <= 0 || weight > 100) return null;
+  const done = (100 - weight) / 100;
+  const needed = (target - current * done) / (weight / 100);
+  return Math.round(needed * 10) / 10;
+}
+
 // MARK: - Joining it up
 
 /// The per-course pass knows about submissions and grades, so it wins any tie.
@@ -149,7 +204,7 @@ function numberOrNull(value) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    mapCourses, mapAssignments, mapTodo, merge,
+    mapCourses, mapAssignments, mapTodo, merge, mapGraded, mapWeights, requiredScore,
     TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_AFTER_SUBMIT,
   };
 }

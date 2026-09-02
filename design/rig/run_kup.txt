@@ -1,0 +1,13 @@
+kup58 d60 r1.35  pit 14320/69  comp1 h0  x-115
+kup58 d85 r1.55  pit 17720/63  comp1 h0  x-87
+kup58 d105 r1.62  pit 12269/36  comp1 h0  x-20
+kup42 d60 r1.35  pit 15180/74  comp1 h0  x-115
+kup42 d85 r1.55  pit 18559/67  comp1 h0  x-87
+kup42 d105 r1.62  pit 13130/38  comp1 h0  x-20
+kup30 d60 r1.35  pit 15890/78  comp1 h0  x-115
+kup30 d85 r1.55  pit 18967/69  comp1 h0  x-86
+kup30 d105 r1.62  pit 13517/41  comp1 h0  x-20
+kup20 d60 r1.35  pit 16350/79  comp1 h0  x-116
+kup20 d85 r1.55  pit 19254/71  comp1 h0  x-86
+kup20 d105 r1.62  pit 13772/44  comp1 h0  x-20
+wrote diag_kup.png (653, 836)

@@ -1,0 +1,6 @@
+kup12 root46 tip58 inf16 ccv41.3
+kup12 root56 tip66 inf14 ccv34.1
+kup12 root40 tip52 inf12 ccv41.6
+kup20 root46 tip58 inf14 ccv43.6
+kup20 root56 tip66 inf14 ccv34.7
+kup20 root40 tip52 inf14 ccv43.9

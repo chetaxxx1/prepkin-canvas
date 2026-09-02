@@ -1,0 +1,2 @@
+frames rendered (456, 340)
+wave.gif

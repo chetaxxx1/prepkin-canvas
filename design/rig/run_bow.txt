@@ -1,0 +1,10 @@
+bow0.14 d105 slotW=36 area=11389 c1 h0
+bow0.24 d105 slotW=36 area=9888 c1 h0
+bow0.34 d105 slotW=36 area=9183 c1 h0
+bow0.14 d115 slotW=28 area=7146 c1 h0
+bow0.24 d115 slotW=28 area=5998 c1 h0
+bow0.34 d115 slotW=30 area=6020 c1 h0
+bow0.14 d125 slotW=26 area=2808 c1 h0
+bow0.24 d125 slotW=26 area=2828 c1 h0
+bow0.34 d125 slotW=26 area=2838 c1 h0
+wrote (870, 838) (927, 110)

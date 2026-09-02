@@ -1,0 +1,2 @@
+pivot(79,498)  tip(40,595)  r_root=47 r_tip=44  k=16  chord_u=0.30 inset=10
+rest XOR 0.41%   arm length 105 px  (pivot at 63% body height)

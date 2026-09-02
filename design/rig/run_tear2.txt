@@ -1,0 +1,15 @@
+rest fil_base=0.00  XOR=1.28%  {'inflections_body': 12, 'min_r_convex': 29.0, 'min_r_concave': 9.5, 'ripple_body': 1136.9}
+rest fil_base=0.35  XOR=1.70%  {'inflections_body': 12, 'min_r_convex': 33.9, 'min_r_concave': 21.5, 'ripple_body': 753.2}
+rest fil_base=0.55  XOR=1.84%  {'inflections_body': 12, 'min_r_convex': 36.8, 'min_r_concave': 35.6, 'ripple_body': 623.9}
+d75 r1.9 root66 tip50 inf18 ccv31.2 c1 h0
+d75 r1.9 root84 tip58 inf20 ccv32.4 c1 h0
+d75 r2.3 root66 tip50 inf18 ccv25.9 c1 h0
+d75 r2.3 root84 tip58 inf18 ccv26.6 c1 h0
+d95 r1.9 root66 tip50 inf12 ccv55.8 c1 h0
+d95 r1.9 root84 tip58 inf12 ccv55.2 c1 h0
+d95 r2.3 root66 tip50 inf14 ccv25.6 c1 h0
+d95 r2.3 root84 tip58 inf16 ccv26.3 c1 h0
+d115 r1.9 root66 tip50 inf14 ccv28.3 c1 h0
+d115 r1.9 root84 tip58 inf14 ccv30.0 c1 h0
+d115 r2.3 root66 tip50 inf14 ccv53.7 c1 h0
+d115 r2.3 root84 tip58 inf12 ccv47.0 c1 h0

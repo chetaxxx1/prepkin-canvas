@@ -1,0 +1,6 @@
+1 keep mittens (matches art)   rest  inflect=12  minR concave=9.4 convex=28.6  XOR=1.67%
+1 keep mittens (matches art)   hold  inflect=12  minR concave=13.8 convex=30.4  XOR=0.00%
+2 softened                     rest  inflect=12  minR concave=36.3 convex=36.3  XOR=2.10%
+2 softened                     hold  inflect=14  minR concave=36.8 convex=31.3  XOR=0.00%
+3 smooth blob                  rest  inflect=16  minR concave=104.3 convex=45.6  XOR=2.37%
+3 smooth blob                  hold  inflect=14  minR concave=67.1 convex=31.9  XOR=0.00%

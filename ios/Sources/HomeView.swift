@@ -5,7 +5,11 @@ import SwiftUI
 /// The one idea the whole screen hangs on: **the page background is the scene's own
 /// floor colour.** The illustration simply stops and the value carries on to the
 /// bottom of the screen, so there is no seam to hide — no gradient, no rounded card,
-/// no shadow. If the art ever changes, re-sample its bottom edge into `Scene0.floor`.
+/// no shadow. If the art ever changes, re-sample its bottom edge into `tankFloor`.
+///
+/// The scene is Sprout's fish tank, drawn by the same web page that draws Sprout —
+/// see `SproutView`. It replaces the room art, so a bought room no longer changes
+/// this screen.
 struct HomeView: View {
     @EnvironmentObject var state: AppState
 
@@ -13,8 +17,18 @@ struct HomeView: View {
     @State private var coinGain: Int?
     @State private var showDayEditor = false
     @State private var showShop = false
+    /// The web page has drawn the tank. Until then a flat floor with a still of the
+    /// kin stands in, so a cold launch is never a white block.
+    @State private var stageReady = false
 
-    private var scene: Scene0 { Scene0.find(state.sceneID) }
+    /// The tank Sprout lives in. `lagoon` is the original mint plate.
+    static let tank = "lagoon"
+    /// The tank art's own bottom edge, sampled from the last rows of
+    /// `tanks/ios/lagoon.png`. The page is painted this colour so the illustration
+    /// just stops and the value carries on — no gradient, no seam.
+    /// **Re-sample this whenever the tank art changes.**
+    static let tankFloor = Theme.hex(0xADE2CB)
+
     private var screenWidth: CGFloat { UIScreen.main.bounds.width }
     private var screenHeight: CGFloat { UIScreen.main.bounds.height }
     private var sceneHeight: CGFloat { min(screenWidth * 0.76, screenHeight * 0.35) }
@@ -37,12 +51,12 @@ struct HomeView: View {
                 }
                 .scrollIndicators(.hidden)
             }
-            .background(scene.floor.ignoresSafeArea())
+            .background(Self.tankFloor.ignoresSafeArea())
             .ignoresSafeArea(edges: .top)
-            // The scene art runs under the status bar. White content over the scrim
-            // reads on every scene; a per-scene flip does not, because averaging busy
-            // art still lands the clock on a dark bookshelf.
-            .preferredColorScheme(.dark)
+            // The tank is pale all the way up, so the clock and the header text are
+            // dark. The old dark scheme was for the room art, which was saturated
+            // enough to carry white.
+            .preferredColorScheme(.light)
             .task {
                 await state.syncCanvas()
                 showBubble(greeting)
@@ -51,7 +65,16 @@ struct HomeView: View {
                 DayEditorView().environmentObject(state).preferredColorScheme(.light)
             }
             .sheet(isPresented: $showShop) {
-                ShopView().environmentObject(state).preferredColorScheme(.light)
+                // The coin chip reaches the same shop the Kin tab pushes to, so there
+                // is one shop in the app rather than two that drift apart.
+                NavigationStack { KinShopView() }
+                    .environmentObject(state)
+                    .preferredColorScheme(.light)
+            }
+            // "Meet <kin>" on the adoption card: the shop sheet gets out of the way
+            // so the Kin tab underneath can show them.
+            .onChange(of: state.meetKinRequest) { _, new in
+                if new != nil { showShop = false }
             }
         }
     }
@@ -60,50 +83,64 @@ struct HomeView: View {
 
     private var sceneBlock: some View {
         ZStack(alignment: .top) {
-            // Square art, drawn at full screen width and anchored to the bottom, so
-            // the mascot's floor is always kept and only ceiling is trimmed.
-            Image(scene.asset)
-                .resizable()
-                .scaledToFill()
-                .frame(width: screenWidth, height: screenWidth)
-                .frame(width: screenWidth, height: sceneHeight, alignment: .bottom)
-                .clipped()
+            // Tank and character come from one opaque web view. Splitting them —
+            // native tank behind a see-through web view — is what the design would
+            // suggest, but a non-opaque WKWebView composites nothing at all, so the
+            // page has to paint the whole scene.
+            SproutView(speciesID: state.activeChibiID,
+                       level: state.activeChibi.level,
+                       animation: state.animation,
+                       radius: mascotSize * SproutView.radiusRatio,
+                       tank: Self.tank,
+                       placeholder: UIColor(Self.tankFloor),
+                       onReady: { ready in
+                           withAnimation(.easeOut(duration: 0.25)) { stageReady = ready }
+                       })
+                .frame(width: screenWidth, height: sceneHeight)
 
-            // A soft top scrim so the clock and the white chips stay readable over
-            // whatever the art happens to put up there. This is NOT the seam the
-            // handoff bans — that rule is about the bottom edge, which stays flat.
-            LinearGradient(colors: [.black.opacity(0.32), .clear],
-                           startPoint: .top, endPoint: .bottom)
-                .frame(height: chipsTop + 48)
-                .frame(maxHeight: .infinity, alignment: .top)
-                .allowsHitTesting(false)
-
-            // Drawn after the art and fully opaque. Finch dissolves rooms, never pets.
-            VStack(spacing: 4) {
-                if let text = bubble { speechBubble(text) }
-                mascot
+            if !stageReady {
+                Self.tankFloor
+                    .overlay(alignment: .bottom) {
+                        SproutImage(speciesID: state.activeChibiID,
+                                    level: state.activeChibi.level,
+                                    size: mascotSize)
+                            .padding(.bottom, sceneHeight * 0.07)
+                    }
+                    .frame(width: screenWidth, height: sceneHeight)
+                    .transition(.opacity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-            .padding(.bottom, 2)
-            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: bubble)
+
+            // Sprout is anchored by his feet, so the bubble clears the top of his
+            // tuft rather than sitting at a fixed height.
+            if let text = bubble {
+                speechBubble(text)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .padding(.bottom, mascotHeight + 8)
+            }
 
             chipsRow
         }
         .frame(width: screenWidth, height: sceneHeight)
-        .clipped()
+        // Deliberately NOT `.clipped()`. SwiftUI clipping masks the whole subtree,
+        // and a masked ancestor stops WKWebView's out-of-process layer from
+        // rendering — the tank and Sprout both vanish.
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2) { state.play(.peek) }
+        .onTapGesture {
+            state.play(.wave)
+            showBubble(greeting)
+        }
+        .onLongPressGesture { state.play(.dance) }
+        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: bubble)
     }
 
     private var chipsRow: some View {
         HStack(alignment: .top) {
             HStack(spacing: 8) {
-                Text(state.activeChibi.species.name)
+                Text(state.activeChibi.displayName)
                     .font(Theme.font(15, .black))
                     .foregroundStyle(Theme.ink)
-                Text("Lv \(state.activeChibi.level)")
-                    .font(Theme.font(11.5, .black))
-                    .foregroundStyle(Theme.mintDark)
-                    .padding(.horizontal, 9).padding(.vertical, 3)
-                    .background(Capsule().fill(Theme.mintSoft))
+                StarPips(level: state.activeChibi.level, size: 12, spacing: 3)
             }
             .sceneChip(leading: 15, trailing: 15)
 
@@ -166,30 +203,18 @@ struct HomeView: View {
         return prices.contains { state.coins >= $0 }
     }
 
-    /// 184 wide at Lv 3, per the handoff — trimmed when a real status bar leaves less
-    /// room above the floor than the 390×844 mock had (it budgeted 20pt of chrome; a
-    /// notched iPhone spends 99). Smaller chibi levels scale down inside SlimeView, so
-    /// upgrades stay visible.
+    /// 184 wide at Lv 3, per the handoff — trimmed when a real status bar leaves
+    /// less room above the floor than the 390×844 mock had (it budgeted 20pt of
+    /// chrome; a notched iPhone spends 99). Smaller chibi levels scale down inside
+    /// SproutView, so upgrades stay visible.
     private var mascotSize: CGFloat {
         let headroom = sceneHeight - chipsTop - 35 - 50   // chips, then a line of bubble
-        return min(184, screenWidth * 0.472, headroom * Slime.aspect)
+        return min(184, screenWidth * 0.472, headroom * SproutView.aspect)
     }
 
-    private var mascot: some View {
-        SlimeView(color: Theme.species(state.activeChibiID),
-                  level: state.activeChibi.level,
-                  animation: state.animation,
-                  size: mascotSize)
-            // SlimeView's frame is taller than the character. Collapse the slack on
-            // both sides so the feet land on the floor and the bubble sits on the head.
-            .padding(.vertical, -SlimeView.footInset(size: mascotSize,
-                                                     level: state.activeChibi.level))
-            .onTapGesture(count: 2) { state.play(.peek) }
-            .onTapGesture {
-                state.play(.wave)
-                showBubble(greeting)
-            }
-            .onLongPressGesture { state.play(.dance) }
+    /// How far the drawing reaches up from the tank floor.
+    private var mascotHeight: CGFloat {
+        mascotSize * SproutView.radiusRatio * SproutView.heightPerRadius
     }
 
     private func speechBubble(_ text: String) -> some View {
@@ -242,10 +267,10 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(levelLabel)
                     .font(Theme.font(12.5, .black))
-                    .foregroundStyle(Theme.onDarkWarm)
+                    .foregroundStyle(Theme.ink)
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(Color.black.opacity(0.22))
+                        Capsule().fill(Theme.ink.opacity(0.14))
                         Capsule().fill(Theme.coin)
                             .frame(width: max(0, geo.size.width * levelProgress))
                     }
@@ -255,15 +280,16 @@ struct HomeView: View {
         }
         .padding(.horizontal, 14).padding(.vertical, 11)
         .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
-            .fill(Color.black.opacity(0.17)))
+            .fill(Theme.ink.opacity(0.08)))
     }
 
     private var levelLabel: String {
         let chibi = state.activeChibi
-        guard let cost = chibi.nextUpgradeCost else { return "Lv \(chibi.level) · fully grown" }
+        let stars = chibi.level == 1 ? "1 star" : "\(chibi.level) stars"
+        guard let cost = chibi.nextUpgradeCost else { return "\(stars) · fully grown" }
         let left = max(0, cost - state.coins)
-        if left == 0 { return "Lv \(chibi.level) · ready for Lv \(chibi.level + 1)" }
-        return "Lv \(chibi.level) · \(left) to Lv \(chibi.level + 1)"
+        if left == 0 { return "\(stars) · ready for the next one" }
+        return "\(stars) · \(left) to the next"
     }
 
     private var levelProgress: Double {
@@ -277,17 +303,17 @@ struct HomeView: View {
         HStack(spacing: 9) {
             Image(systemName: "calendar")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.ink)
             Text(goalsLine)
                 .font(Theme.font(16, .black))
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.ink)
             Spacer(minLength: 8)
             Button { showDayEditor = true } label: {
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(.white.opacity(0.9))
+                    .foregroundStyle(Theme.ink.opacity(0.75))
                     .frame(width: 30, height: 30)
-                    .background(Circle().fill(Color.black.opacity(0.17)))
+                    .background(Circle().fill(Theme.ink.opacity(0.08)))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Edit your day")
@@ -420,10 +446,13 @@ private struct TaskRow: View {
                     .overlay(Circle().strokeBorder(Theme.tileRing, lineWidth: 1.5))
 
                 VStack(alignment: .leading, spacing: 1) {
+                    // Two lines, not one: three "Quiz - Computing Servi…" rows in a row
+                    // were the same string once truncated.
                     Text(task.title)
                         .font(Theme.font(15.5, .black))
                         .foregroundStyle(Theme.ink)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                     // Course and full due date only. The reward has its own column.
                     Text(subtitle)
                         .font(Theme.font(12.5, .bold))

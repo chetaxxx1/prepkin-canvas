@@ -83,7 +83,72 @@ struct CategoryIcon: View {
             case .labs:       flask
             case .study:      flashcards
             case .lifeCare:   waterGlass
+            case .walk:       sneaker
+            case .sleep:      moon
+            case .meal:       apple
             }
+        }
+    }
+
+    /// A walk — a sneaker, side on. Mint upper, cream sole, coral lace.
+    private var sneaker: some View {
+        ZStack(alignment: .topLeading) {
+            blob(Theme.hex(0x58CC9F)) { p in
+                p.go(3.2, 15.6); p.bend(6.0, 8.6, 3.2, 10.4); p.bend(10.4, 8.0, 8.4, 7.6)
+                p.bend(15.2, 11.4, 13.2, 9.0); p.bend(21.4, 15.0, 18.6, 12.8)
+                p.to(21.4, 17.2); p.to(3.2, 17.2); p.closeSubpath()
+            }
+            blob(Theme.hex(0xFFF1E0)) { p in
+                p.go(2.8, 16.6); p.to(21.6, 16.6); p.bend(21.0, 19.6, 21.8, 19.0)
+                p.to(3.6, 19.6); p.bend(2.8, 16.6, 2.6, 18.6); p.closeSubpath()
+            }
+            box(3.2, 17.9, 18.2, 0.9, 0.4, Theme.hex(0xE6DFD7))
+            box(9.0, 10.2, 1.4, 1.4, 0.7, Theme.hex(0xFF6F61))
+            box(11.0, 11.6, 1.4, 1.4, 0.7, Theme.hex(0xFF6F61))
+            box(13.0, 13.0, 1.4, 1.4, 0.7, Theme.hex(0xFF6F61))
+        }
+    }
+
+    /// Bedtime — a crescent moon and one star. Butter on nothing: the tile is the sky.
+    private var moon: some View {
+        ZStack(alignment: .topLeading) {
+            blob(Theme.hex(0xFFC24B)) { p in
+                p.go(14.6, 3.6)
+                p.addCurve(to: CGPoint(x: 14.6, y: 20.4),
+                           control1: CGPoint(x: 5.0, y: 5.6), control2: CGPoint(x: 5.0, y: 18.4))
+                p.addCurve(to: CGPoint(x: 14.6, y: 3.6),
+                           control1: CGPoint(x: 9.6, y: 17.6), control2: CGPoint(x: 9.6, y: 6.4))
+                p.closeSubpath()
+            }
+            blob(Theme.hex(0xFFD98A)) { p in
+                p.go(18.4, 5.2); p.to(19.2, 7.6); p.to(21.6, 8.4); p.to(19.2, 9.2)
+                p.to(18.4, 11.6); p.to(17.6, 9.2); p.to(15.2, 8.4); p.to(17.6, 7.6)
+                p.closeSubpath()
+            }
+        }
+    }
+
+    /// A meal — an apple. Coral body, leaf-green leaf, a highlight so it reads round.
+    private var apple: some View {
+        ZStack(alignment: .topLeading) {
+            blob(Theme.hex(0xE4735F)) { p in
+                p.go(12.0, 8.4)
+                p.addCurve(to: CGPoint(x: 4.2, y: 12.8),
+                           control1: CGPoint(x: 9.6, y: 6.2), control2: CGPoint(x: 4.2, y: 7.6))
+                p.addCurve(to: CGPoint(x: 12.0, y: 21.2),
+                           control1: CGPoint(x: 4.2, y: 17.8), control2: CGPoint(x: 8.0, y: 21.8))
+                p.addCurve(to: CGPoint(x: 19.8, y: 12.8),
+                           control1: CGPoint(x: 16.0, y: 21.8), control2: CGPoint(x: 19.8, y: 17.8))
+                p.addCurve(to: CGPoint(x: 12.0, y: 8.4),
+                           control1: CGPoint(x: 19.8, y: 7.6), control2: CGPoint(x: 14.4, y: 6.2))
+                p.closeSubpath()
+            }
+            box(11.3, 4.6, 1.4, 4.2, 0.7, Theme.hex(0x8A6A4A))
+            blob(Theme.hex(0x7FBF5A)) { p in
+                p.go(12.6, 6.8); p.bend(17.4, 4.2, 14.2, 4.0); p.bend(12.6, 6.8, 16.2, 7.4)
+                p.closeSubpath()
+            }
+            box(7.2, 11.0, 2.0, 3.6, 1.0, .white.opacity(0.45))
         }
     }
 
@@ -297,19 +362,10 @@ struct TabIcon: View {
 /// The Kin tab's face chip. The chip has to be dark: on a pale mint or peach the
 /// mascot sits at its own lightness and the crop reads as a colour swatch.
 struct KinChip: View {
-    var color: Color = Slime.body
+    var speciesID: String = "slime"
     var size: CGFloat = 28
 
     var body: some View {
-        let art = size * 1.36
-        return Circle()
-            .fill(Theme.kinChip)
-            .frame(width: size, height: size)
-            .overlay(alignment: .bottom) {
-                SlimeView(color: color, level: 3, animation: .idle, size: art)
-                    // Drop the body out of frame so the circle holds a face crop.
-                    .offset(y: size * 0.43 + SlimeView.footInset(size: art, level: 3))
-            }
-            .clipShape(Circle())
+        SproutFace(speciesID: speciesID, size: size)
     }
 }

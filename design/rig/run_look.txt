@@ -1,0 +1,9 @@
+A base0 R110       rest {'inflections_body': 14, 'min_r_convex': 35.0, 'min_r_concave': 13.1, 'ripple_body': 846.1}
+A base0 R110       hold {'inflections_body': 12, 'min_r_convex': 30.5, 'min_r_concave': 15.1, 'ripple_body': 585.4}
+B base1 R60        rest {'inflections_body': 12, 'min_r_convex': 45.3, 'min_r_concave': 54.5, 'ripple_body': 442.0}
+B base1 R60        hold {'inflections_body': 12, 'min_r_convex': 32.4, 'min_r_concave': 53.8, 'ripple_body': 448.6}
+C base1 R110       rest {'inflections_body': 14, 'min_r_convex': 44.5, 'min_r_concave': 77.5, 'ripple_body': 366.6}
+C base1 R110       hold {'inflections_body': 14, 'min_r_convex': 31.9, 'min_r_concave': 67.1, 'ripple_body': 375.6}
+D base1 R110 k34   rest {'inflections_body': 12, 'min_r_convex': 44.8, 'min_r_concave': 98.4, 'ripple_body': 338.8}
+D base1 R110 k34   hold {'inflections_body': 14, 'min_r_convex': 32.1, 'min_r_concave': 67.4, 'ripple_body': 358.8}
+done

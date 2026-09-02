@@ -84,6 +84,26 @@
 
   .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   #status { min-height: 17px; font-size: 12px; font-weight: 600; }
+
+  /* First run: three steps, every one skippable. */
+  .onb { display: flex; flex-direction: column; align-items: center; gap: 12px;
+         text-align: center; padding: 24px 16px 16px; }
+  .onb h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
+  .onb p { margin: 0; font-size: 14px; font-weight: 600; color: #8a7a66; max-width: 260px; }
+  .onb .detected { width: 100%; background: #f4f1ea; border-radius: 16px; padding: 12px;
+                   display: flex; align-items: center; gap: 8px; text-align: left; }
+  .onb .detected i { width: 8px; height: 8px; border-radius: 999px; background: #51cfa0; flex-shrink: 0; }
+  .onb .detected b { display: block; font-size: 14px; font-weight: 700; }
+  .onb .detected small { font-size: 12px; font-weight: 600; color: #8a7a66; }
+  .onb .dots { display: flex; gap: 6px; margin-top: 4px; }
+  .onb .dots i { width: 8px; height: 8px; border-radius: 999px; background: #e5dfd2; }
+  .onb .dots i.on { background: #51cfa0; }
+  .onb .skip { border: 0; background: none; cursor: pointer; font: inherit;
+               font-size: 12px; font-weight: 700; color: #8a7a66; }
+  .onb .pair { width: 100%; }
+  .coinchip { display: inline-flex; align-items: center; gap: 6px; background: #f4f1ea;
+              border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 800; }
+  [hidden] { display: none !important; }
   .ok  { color: #2e7d57; }
   .bad { color: #b0453c; }
 </style>
@@ -92,7 +112,11 @@
   <span id="slime" aria-hidden="true"></span>
   <h1>Prepkin</h1>
   <span class="ver" id="version"></span>
+  <span class="coinchip" id="coins" hidden></span>
 </div>
+
+<div id="onboarding" hidden></div>
+<div id="main">
 
 <div class="card">
   <p class="label">Connect your phone</p>
@@ -122,10 +146,13 @@
       <input type="checkbox" data-skin="cards" /><span class="sw"></span></label></li>
     <li><label><span class="name">Tidy sidebar</span>
       <input type="checkbox" data-skin="tidy" /><span class="sw"></span></label></li>
-    <li><label class="off"><span class="name">Dark mode</span><span class="soon">Soon</span>
-      <input type="checkbox" disabled /><span class="sw"></span></label></li>
+    <li><label><span class="name">Dark mode</span>
+      <input type="checkbox" data-skin="dark" /><span class="sw"></span></label></li>
   </ul>
 </div>
 
+</div>
+
 <script src="slime.js"></script>
+<script src="looks.js"></script>
 <script src="popup.js"></script>

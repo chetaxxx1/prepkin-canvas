@@ -1,0 +1,71 @@
+f  0 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 filletR=23.4
+f  8 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f  9 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f 10 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f 11 deg   1.3 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.3 
+f 12 deg   7.6 r1.01 comp1 h0 gap  0.0 inflect=14 minRccv=21.3 
+f 13 deg  20.6 r1.04 comp1 h0 gap  0.0 inflect=12 minRccv=27.0 
+f 14 deg  39.5 r1.13 comp1 h0 gap  0.0 inflect=14 minRccv=34.5 
+f 15 deg  64.7 r1.32 comp1 h0 gap  0.0 inflect=12 minRccv=22.7 filletR=73.4
+f 16 deg  86.8 r1.61 comp1 h0 gap 99.0 inflect=14 minRccv=22.3 
+f 17 deg 107.2 r2.00 comp1 h0 gap164.0 inflect=12 minRccv=23.2 
+f 18 deg 118.0 r2.36 comp1 h0 gap178.0 inflect=14 minRccv=25.2 
+f 19 deg 115.8 r2.55 comp1 h0 gap207.0 inflect=14 minRccv=29.9 
+f 20 deg 108.7 r2.61 comp1 h0 gap214.0 inflect=12 minRccv=42.2 
+f 21 deg 101.2 r2.63 comp1 h0 gap218.0 inflect=14 minRccv=49.2 
+f 23 deg  96.6 r2.68 comp1 h0 gap235.0 inflect=12 minRccv=32.0 
+f 25 deg 114.3 r2.74 comp1 h0 gap235.0 inflect=12 minRccv=46.7 filletR=23.4
+f 27 deg 120.1 r2.35 comp1 h0 gap174.0 inflect=12 minRccv=23.9 
+f 29 deg 114.4 r2.40 comp1 h0 gap183.0 inflect=14 minRccv=27.7 
+f 31 deg 100.7 r2.52 comp2 h0 gap241.0 inflect=14 minRccv=49.3 
+f 33 deg  88.4 r2.54 comp1 h0 gap206.0 inflect=12 minRccv=33.3 
+f 35 deg  94.3 r2.54 comp2 h0 gap247.0 inflect=12 minRccv=42.3 
+f 37 deg 117.8 r2.59 comp1 h0 gap217.0 inflect=12 minRccv=32.1 
+f 39 deg 123.3 r2.40 comp1 h0 gap183.0 inflect=16 minRccv=24.1 
+f 41 deg 113.3 r2.38 comp1 h0 gap180.0 inflect=14 minRccv=27.9 filletR=70.3
+f 43 deg  95.7 r2.54 comp2 h0 gap246.0 inflect=12 minRccv=45.3 
+f 45 deg  85.4 r2.52 comp1 h0 gap205.0 inflect=12 minRccv=31.1 
+f 47 deg 100.5 r2.48 comp2 h0 gap237.0 inflect=16 minRccv=50.1 
+f 49 deg 115.1 r2.39 comp1 h0 gap179.0 inflect=16 minRccv=25.9 
+f 51 deg 116.4 r2.45 comp1 h0 gap191.0 inflect=16 minRccv=27.4 
+f 53 deg 103.4 r2.64 comp1 h0 gap220.0 inflect=12 minRccv=51.4 
+f 55 deg  88.4 r2.61 comp1 h0 gap232.0 inflect=12 minRccv=27.0 
+f 57 deg 116.8 r2.56 comp1 h0 gap209.0 inflect=12 minRccv=31.0 filletR=23.4
+f 59 deg 124.7 r2.44 comp1 h0 gap185.0 inflect=14 minRccv=24.1 
+f 61 deg 114.4 r2.47 comp1 h0 gap193.0 inflect=16 minRccv=28.0 
+f 63 deg  94.8 r2.61 comp1 h0 gap221.0 inflect=12 minRccv=34.2 
+f 65 deg  84.5 r2.55 comp1 h0 gap213.0 inflect=14 minRccv=28.8 
+f 67 deg 103.7 r2.56 comp1 h0 gap209.0 inflect=12 minRccv=52.4 
+f 69 deg 114.3 r2.40 comp1 h0 gap183.0 inflect=14 minRccv=27.5 
+f 71 deg 119.8 r2.37 comp1 h0 gap177.0 inflect=14 minRccv=24.1 
+f 73 deg 117.2 r2.48 comp1 h0 gap194.0 inflect=14 minRccv=27.2 filletR=23.4
+f 75 deg  97.8 r2.51 comp2 h0 gap240.0 inflect=14 minRccv=56.1 
+f 77 deg  91.0 r2.55 comp1 h0 gap248.0 inflect=12 minRccv=39.5 
+f 79 deg  95.3 r2.59 comp2 h0 gap258.0 inflect=14 minRccv=38.3 
+f 81 deg 107.5 r2.60 comp1 h0 gap214.0 inflect=12 minRccv=48.2 
+f 83 deg 119.7 r2.57 comp1 h0 gap209.0 inflect=16 minRccv=27.9 
+f 85 deg 115.9 r2.44 comp1 h0 gap202.0 inflect=12 minRccv=30.0 
+f 87 deg 116.3 r2.48 comp1 h0 gap195.0 inflect=16 minRccv=27.8 
+f 89 deg 118.3 r2.63 comp1 h0 gap218.0 inflect=12 minRccv=32.4 filletR=68.8
+f 91 deg 102.3 r2.22 comp1 h0 gap195.0 inflect=16 minRccv=28.2 
+f 92 deg  87.6 r1.87 comp1 h0 gap115.0 inflect=12 minRccv=23.2 
+f 93 deg  69.2 r1.53 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f 94 deg  49.8 r1.27 comp1 h0 gap 46.0 inflect=12 minRccv=22.8 
+f 95 deg  33.2 r1.12 comp1 h0 gap  0.0 inflect=12 minRccv=39.5 
+f 96 deg  19.0 r1.04 comp1 h0 gap  0.0 inflect=12 minRccv=27.9 
+f 97 deg   9.2 r1.01 comp1 h0 gap  0.0 inflect=14 minRccv=21.6 
+f 98 deg   3.5 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.3 filletR=23.4
+f 99 deg   0.7 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.3 
+f100 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f101 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f102 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f103 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f108 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 
+f119 deg   0.0 r1.00 comp1 h0 gap  0.0 inflect=12 minRccv=21.5 filletR=23.4
+posed bbox [np.float64(-204.5), np.float64(-19.5), np.float64(886.6), np.float64(794.3)] -> canvas 1160 882 off [np.float64(681.4548856655854), np.float64(848.5090082264182)]
+start-vertex drift: max 1.9 px
+first vs last frame: max vertex delta 0.0 px
+wrote wave.json  64 keyframes  261352 bytes  192s
+frames rendered (446, 338)
+wave.gif
+DONE

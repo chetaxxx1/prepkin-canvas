@@ -1,0 +1,8 @@
+fit: (137.0, 460.0) (46.0, 581.0) 64.0 56.0 16.0
+kup16 fil80 d104 r2.4 XOR=10.91% cvL=74 slotW=100 filR=71 c1 h0
+kup16 fil130 d104 r2.4 XOR=11.31% cvL=66 slotW=95 filR=76 c1 h0
+kup26 fil80 d104 r2.4 XOR=11.00% cvL=71 slotW=97 filR=70 c1 h0
+kup26 fil130 d104 r2.4 XOR=11.42% cvL=66 slotW=93 filR=87 c1 h0
+REST d0 r1.0 XOR=1.13% cvL=24 slotW=46 filR=15 c1 h0
+mid d50 r1.7 XOR=8.75% cvL=20 slotW=134 filR=23 c1 h0
+ok

@@ -7,7 +7,14 @@ targets:
   PrepkinCanvas:
     type: application
     platform: iOS
-    sources: [Sources, Resources]
+    sources:
+      - Sources
+      - Resources
+      # Folder reference, not a group: the built Sprout page loads its assets by
+      # relative path (./assets/...), so the directory has to survive into the
+      # bundle instead of being flattened like Resources/ is.
+      - path: SproutWeb
+        type: folder
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prepkin.canvas

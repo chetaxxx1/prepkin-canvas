@@ -35,8 +35,7 @@ struct FocusView: View {
                 if phase == .ready { readyScreen } else { shiftScreen }
             }
             .background(phase == .ready ? Theme.paper : Theme.card)
-            .navigationTitle("Focus")
-            .toolbar(phase == .ready ? .visible : .hidden, for: .navigationBar)
+            .toolbar(.hidden, for: .navigationBar)
             .onReceive(ticker) { t in
                 now = t
                 if phase == .running && remaining <= 0 { finish() }
@@ -49,33 +48,65 @@ struct FocusView: View {
     // MARK: - Ready
 
     private var readyScreen: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
+            Text("Focus")
+                .font(Theme.font(34, .black))
+                .foregroundStyle(Theme.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             Spacer()
 
-            SlimeView(color: Theme.species(state.activeChibiID),
-                      level: state.activeChibi.level,
-                      animation: state.animation,
-                      size: 160)
+            SproutImage(speciesID: state.activeChibiID,
+                        level: state.activeChibi.level,
+                        animation: state.animation,
+                        size: 190)
 
             Text("\(minutes) min")
-                .font(Theme.font(56, .bold))
+                .font(Theme.font(56, .black))
                 .foregroundStyle(Theme.ink)
-            Stepper("Session length", value: $minutes, in: 5...120, step: 5)
-                .labelsHidden()
-            Text("Finish and earn \(minutes) coins.")
-                .font(.subheadline)
-                .foregroundStyle(Theme.muted)
+                .contentTransition(.numericText())
+                .animation(.snappy, value: minutes)
+                .padding(.top, 22)
+
+            // The common lengths are one tap; the stepper covers everything else.
+            HStack(spacing: 8) {
+                ForEach([25, 45, 60], id: \.self) { m in
+                    Button { minutes = m } label: {
+                        Text("\(m)")
+                            .font(Theme.font(14.5, .black))
+                            .foregroundStyle(minutes == m ? Theme.onDarkWarm : Theme.ink)
+                            .frame(width: 56, height: 36)
+                            .background(Capsule().fill(minutes == m ? Theme.ink : Theme.card)
+                                .shadow(color: .black.opacity(0.05), radius: 5, y: 2))
+                    }
+                    .buttonStyle(.plain)
+                }
+                Stepper("Session length", value: $minutes, in: 5...120, step: 5)
+                    .labelsHidden()
+            }
+            .padding(.top, 14)
+
+            HStack(spacing: 6) {
+                CoinDisc(size: 15)
+                Text("+\(minutes) coins for finishing")
+                    .font(Theme.font(13.5, .heavy))
+                    .foregroundStyle(Theme.coinDark)
+            }
+            .padding(.horizontal, 13).padding(.vertical, 8)
+            .background(Capsule().fill(Theme.coinSoft))
+            .padding(.top, 16)
 
             Spacer()
 
             Button { start() } label: {
                 Text("Start focus")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(Theme.coral))
+                    .font(Theme.font(17, .heavy))
+                    .foregroundStyle(Theme.onDarkWarm)
+                    .frame(maxWidth: .infinity).frame(height: 56)
+                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Theme.coral))
             }
+            .buttonStyle(PressStyle())
         }
         .padding(24)
         .padding(.bottom, 104)

@@ -1,0 +1,13 @@
+d95 r2.0 r_up40 slotW=129 area=34415 c1 h0 bbox=-84,0
+d95 r2.0 r_up48 slotW=59 area=16242 c1 h0 bbox=-94,0
+d95 r2.4 r_up40 slotW=66 area=18636 c1 h0 bbox=-124,0
+d95 r2.4 r_up48 slotW=67 area=18429 c1 h0 bbox=-133,0
+d95 r2.8 r_up40 slotW=72 area=20780 c1 h0 bbox=-164,0
+d95 r2.8 r_up48 slotW=73 area=20543 c1 h0 bbox=-173,0
+d110 r2.0 r_up40 slotW=36 area=10087 c1 h0 bbox=-14,0
+d110 r2.0 r_up48 slotW=36 area=10412 c1 h0 bbox=-24,0
+d110 r2.4 r_up40 slotW=39 area=12225 c1 h0 bbox=-40,0
+d110 r2.4 r_up48 slotW=40 area=12012 c1 h0 bbox=-49,0
+d110 r2.8 r_up40 slotW=44 area=13983 c1 h0 bbox=-66,0
+d110 r2.8 r_up48 slotW=46 area=13816 c1 h0 bbox=-75,0
+wrote (1306, 419) (708, 248)

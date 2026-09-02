@@ -1,0 +1,5 @@
+fillet=0 -> achieved r=22 px   pocket=26110  c1 h0
+fillet=80 -> achieved r=70 px   pocket=24710  c1 h0
+fillet=130 -> achieved r=23 px   pocket=23997  c1 h0
+fillet=180 -> achieved r=23 px   pocket=22936  c1 h0
+wrote zoom_armpit.png

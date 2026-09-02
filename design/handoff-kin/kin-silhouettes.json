@@ -1,0 +1,348 @@
+{
+  "_about": "Silhouette geometry for the four new/revised kin proposed in design_handoff_kin_tab. Coordinate space is identical to design/canvas/mascot-paths.json — a 1000 x 897 box, which is the slime's character bounding box (aspect 1.1145). Normalise by dividing x by 1000 and y by 897 to match SlimeArt's unit space.",
+  "_draw_order": "Draw shapes in array order: mitten bulges first (behind), then torso, then the signature feature, then the belly patch, then the face. All body-coloured shapes use the SAME fill with NO stroke, which is what makes the overlapping primitives read as one continuous silhouette. Never add an outline.",
+  "_face": "Faces are NOT new art. Apply the existing SlimeArt.faceIdle / faceDeadpan / faceJudging / faceDelight / faceSleep paths under the transform given per species: translate(cx,cy) scale(s) translate(-494,-388). 494,388 is the centre of the traced face bbox in this coordinate space.",
+  "_belly": "Belly fill is the existing Slime.belly(for:) blend — 57% toward white from the body colour. Values below are that blend precomputed. Belly width is 34-36% of total silhouette width in every species, matching the approved slime.",
+  "space": {
+    "width": 1000,
+    "height": 897
+  },
+  "slime": {
+    "tier": 1,
+    "tierName": "Common",
+    "price": 0,
+    "aspect": 1.1,
+    "body": "#51CFA0",
+    "belly": "#B1EDD4",
+    "status": "SHIPPING ART — do not modify. Listed for comparison only.",
+    "source": "design/canvas/mascot-paths.json and SlimeArt.body / SlimeArt.belly",
+    "signature": "Small droplet antenna, leaning right",
+    "face": {
+      "scale": 1.0,
+      "cx": 494,
+      "cy": 388,
+      "transform": "identity"
+    }
+  },
+  "ember": {
+    "tier": 2,
+    "tierName": "Uncommon",
+    "price": 300,
+    "aspect": 0.73,
+    "body": "#F7A8B8",
+    "belly": "#FCDAE1",
+    "readsAs": "The narrowest kin in the set. A tall column with straight sides and a small seat.",
+    "signature": "One vertical flame tip curling back to the right, 205 units tall",
+    "shapes": [
+      {
+        "role": "mitten-left",
+        "kind": "ellipse",
+        "cx": 268,
+        "cy": 700,
+        "rx": 74,
+        "ry": 78,
+        "fill": "body"
+      },
+      {
+        "role": "mitten-right",
+        "kind": "ellipse",
+        "cx": 732,
+        "cy": 700,
+        "rx": 74,
+        "ry": 78,
+        "fill": "body"
+      },
+      {
+        "role": "torso",
+        "kind": "path",
+        "fill": "body",
+        "d": "M500 200C620 200 700 300 700 470C700 640 730 872 700 880C640 890 360 890 300 880C270 872 300 640 300 470C300 300 380 200 500 200Z"
+      },
+      {
+        "role": "signature-flame",
+        "kind": "path",
+        "fill": "body",
+        "d": "M498 205C480 90 530 30 590 0C562 60 588 110 556 152C536 178 518 205 498 205Z"
+      },
+      {
+        "role": "belly",
+        "kind": "ellipse",
+        "cx": 500,
+        "cy": 775,
+        "rx": 111,
+        "ry": 82,
+        "fill": "belly"
+      }
+    ],
+    "face": {
+      "scale": 0.62,
+      "cx": 500,
+      "cy": 400,
+      "transform": "translate(500,400) scale(0.62) translate(-494,-388)"
+    },
+    "_fix": "Mitten lobes moved in and widened (cx 232->268, rx 58->74). At the old values the lobe ended at x=290 and the torso began at x=300 — a 10-unit gap, so the arms rendered as detached buttons."
+  },
+  "droplet": {
+    "tier": 3,
+    "tierName": "Rare",
+    "price": 400,
+    "aspect": 1.5,
+    "body": "#9BC8F2",
+    "belly": "#D4E7F9",
+    "readsAs": "The widest and lowest-sitting kin. Half again as wide as it is tall.",
+    "signature": "No spike at all — three round ripple bumps across the crown",
+    "shapes": [
+      {
+        "role": "mitten-left",
+        "kind": "ellipse",
+        "cx": 135,
+        "cy": 760,
+        "rx": 85,
+        "ry": 76,
+        "fill": "body"
+      },
+      {
+        "role": "mitten-right",
+        "kind": "ellipse",
+        "cx": 865,
+        "cy": 760,
+        "rx": 85,
+        "ry": 76,
+        "fill": "body"
+      },
+      {
+        "role": "torso",
+        "kind": "path",
+        "fill": "body",
+        "d": "M500 380C720 380 850 500 850 660C850 780 860 884 810 886C650 895 350 895 190 886C140 884 150 780 150 660C150 500 280 380 500 380Z"
+      },
+      {
+        "role": "signature-ripple-1",
+        "kind": "circle",
+        "cx": 400,
+        "cy": 372,
+        "r": 48,
+        "fill": "body"
+      },
+      {
+        "role": "signature-ripple-2",
+        "kind": "circle",
+        "cx": 500,
+        "cy": 352,
+        "r": 58,
+        "fill": "body"
+      },
+      {
+        "role": "signature-ripple-3",
+        "kind": "circle",
+        "cx": 600,
+        "cy": 372,
+        "r": 48,
+        "fill": "body"
+      },
+      {
+        "role": "belly",
+        "kind": "ellipse",
+        "cx": 500,
+        "cy": 790,
+        "rx": 155,
+        "ry": 88,
+        "fill": "belly"
+      }
+    ],
+    "face": {
+      "scale": 0.88,
+      "cx": 500,
+      "cy": 530,
+      "transform": "translate(500,530) scale(0.88) translate(-494,-388)"
+    }
+  },
+  "sprout": {
+    "tier": 3,
+    "tierName": "Rare",
+    "price": 500,
+    "aspect": 0.9,
+    "body": "#A5CE6B",
+    "belly": "#D8EABF",
+    "readsAs": "An egg — widest above the middle, tapering to a narrow seat.",
+    "signature": "Two pointed leaves forking off the crown in a V",
+    "shapes": [
+      {
+        "role": "mitten-left",
+        "kind": "ellipse",
+        "cx": 212,
+        "cy": 630,
+        "rx": 94,
+        "ry": 78,
+        "fill": "body"
+      },
+      {
+        "role": "mitten-right",
+        "kind": "ellipse",
+        "cx": 788,
+        "cy": 630,
+        "rx": 94,
+        "ry": 78,
+        "fill": "body"
+      },
+      {
+        "role": "torso",
+        "kind": "path",
+        "fill": "body",
+        "d": "M500 150C660 150 780 320 780 520C780 700 700 884 620 886C540 893 460 893 380 886C300 884 220 700 220 520C220 320 340 150 500 150Z"
+      },
+      {
+        "role": "signature-leaf-left",
+        "kind": "path",
+        "fill": "body",
+        "d": "M495 160C430 110 395 45 400 0C450 25 490 90 500 155Z"
+      },
+      {
+        "role": "signature-leaf-right",
+        "kind": "path",
+        "fill": "body",
+        "d": "M505 160C570 105 615 55 625 15C580 35 525 85 505 155Z"
+      },
+      {
+        "role": "belly",
+        "kind": "ellipse",
+        "cx": 500,
+        "cy": 758,
+        "rx": 130,
+        "ry": 92,
+        "fill": "belly"
+      }
+    ],
+    "face": {
+      "scale": 0.8,
+      "cx": 500,
+      "cy": 405,
+      "transform": "translate(500,405) scale(0.80) translate(-494,-388)"
+    }
+  },
+  "wisp": {
+    "tier": 4,
+    "tierName": "Epic",
+    "price": 800,
+    "aspect": 1.2,
+    "body": "#C3B2F0",
+    "belly": "#E5DEF9",
+    "readsAs": "The only kin without a flat bottom. Its base breaks into three deep lobes that hang well below the mitten bulges, so it reads as hovering.",
+    "signature": "A wide low cap flaring out past the body, like a mushroom. It is part of the torso path, not a shape laid over it, so there is no join to see. The body narrows under the cap and breaks into three hanging lobes.",
+    "shapes": [
+      {
+        "role": "mitten-left",
+        "kind": "ellipse",
+        "cx": 210,
+        "cy": 622,
+        "rx": 68,
+        "ry": 76,
+        "fill": "body"
+      },
+      {
+        "role": "mitten-right",
+        "kind": "ellipse",
+        "cx": 790,
+        "cy": 622,
+        "rx": 68,
+        "ry": 76,
+        "fill": "body"
+      },
+      {
+        "role": "torso-and-cap",
+        "kind": "path",
+        "fill": "body",
+        "d": "M120 468C120 320 290 214 500 214C710 214 880 320 880 468C880 522 838 550 778 554C786 622 774 692 740 728C700 746 674 668 626 672C576 676 586 800 500 812C414 824 420 690 366 686C312 682 300 748 260 728C226 692 214 622 222 554C162 550 120 522 120 468Z"
+      },
+      {
+        "role": "belly",
+        "kind": "ellipse",
+        "cx": 500,
+        "cy": 650,
+        "rx": 104,
+        "ry": 58,
+        "fill": "belly"
+      }
+    ],
+    "face": {
+      "scale": 0.8,
+      "cx": 500,
+      "cy": 430,
+      "transform": "translate(500,430) scale(0.80) translate(-494,-388)"
+    },
+    "blush": {
+      "note": "Level 2 blush needs repositioning for this species — the shared #blush geometry sits too wide.",
+      "transform": "translate(500,596) scale(0.78,1) translate(-500,-484.5)"
+    },
+    "_fix": "Hood replaced by a cap folded into the torso path. The old separate crescent crossed the dome outline, which is the exact join the blob rule forbids."
+  },
+  "comet": {
+    "tier": 5,
+    "tierName": "Legendary",
+    "price": 1200,
+    "aspect": 1.4,
+    "body": "#FFC24B",
+    "belly": "#FFE5B2",
+    "tipAccent": "#E8A62E",
+    "readsAs": "The only asymmetric kin, and the only one whose signature is longer than its body. Torso sits forward of centre to balance the tail.",
+    "signature": "A thick tail bulge sweeping back and up off the left shoulder, gold-tipped. It is widest where it leaves the body and tapers to the tip, so it flows out of the mass instead of being pinned to it.",
+    "shapes": [
+      {
+        "role": "signature-tail-tip",
+        "kind": "ellipse",
+        "cx": 150,
+        "cy": 372,
+        "rx": 54,
+        "ry": 50,
+        "fill": "tipAccent"
+      },
+      {
+        "role": "signature-tail",
+        "kind": "path",
+        "fill": "body",
+        "d": "M410 556C316 552 206 508 130 434C92 396 104 336 158 330C210 324 236 372 276 406C330 452 388 476 442 486C476 508 466 560 410 556Z"
+      },
+      {
+        "role": "mitten-left",
+        "kind": "ellipse",
+        "cx": 322,
+        "cy": 712,
+        "rx": 92,
+        "ry": 78,
+        "fill": "body"
+      },
+      {
+        "role": "mitten-right",
+        "kind": "ellipse",
+        "cx": 788,
+        "cy": 700,
+        "rx": 92,
+        "ry": 78,
+        "fill": "body"
+      },
+      {
+        "role": "torso",
+        "kind": "path",
+        "fill": "body",
+        "d": "M550 300C690 300 790 440 790 600C790 740 720 884 630 886C550 893 470 890 410 884C330 878 290 740 290 600C290 440 410 300 550 300Z"
+      },
+      {
+        "role": "belly",
+        "kind": "ellipse",
+        "cx": 545,
+        "cy": 738,
+        "rx": 150,
+        "ry": 92,
+        "fill": "belly"
+      }
+    ],
+    "face": {
+      "scale": 0.75,
+      "cx": 548,
+      "cy": 494,
+      "transform": "translate(548,494) scale(0.75) translate(-494,-388)"
+    },
+    "_fix": "Tail rebuilt as a tapered mass rooted deep in the shoulder; the old one was a constant-width sliver that read as a detached stick."
+  },
+  "_separation_rationale": "Width divided by height runs 0.7 (Ember) · 0.9 (Sprout) · 1.1 (Slime) · 1.2 (Wisp) · 1.4 (Comet) · 1.5 (Droplet). Monotonic, so no two kin share a silhouette envelope. This is the property that makes the set legible at the 52pt art size the shop picks row uses — the top feature only confirms what the outline already said. If you adjust any geometry, preserve the ordering."
+}

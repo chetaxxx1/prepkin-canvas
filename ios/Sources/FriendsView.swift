@@ -25,6 +25,23 @@ struct FriendsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    HStack(alignment: .top) {
+                        Text("Friends")
+                            .font(Theme.font(34, .black))
+                            .foregroundStyle(Theme.ink)
+                        Spacer()
+                        Button { showAddStub = true } label: {
+                            Image(systemName: "person.badge.plus")
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundStyle(Theme.ink)
+                                .frame(width: 42, height: 42)
+                                .background(Circle().fill(Theme.card)
+                                    .shadow(color: .black.opacity(0.06), radius: 6, y: 2))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Add a friend")
+                    }
+                    .padding(.horizontal, 8).padding(.top, 8)
                     stories
                     weeklyBoard
                     friendList
@@ -33,10 +50,7 @@ struct FriendsView: View {
                 .padding(.bottom, 104)
             }
             .background(Theme.paper)
-            .navigationTitle("Friends")
-            .toolbar {
-                Button("Add", systemImage: "person.badge.plus") { showAddStub = true }
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .alert("Friend sync isn't built yet", isPresented: $showAddStub) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -70,7 +84,8 @@ struct FriendsView: View {
                         .stroke(isYou ? Theme.muted.opacity(0.3) : Theme.coral, lineWidth: 2.5)
                         .frame(width: 64, height: 64)
                     Circle().fill(Theme.species(species).opacity(0.25)).frame(width: 56, height: 56)
-                    SlimeView(color: Theme.species(species), level: 1, animation: .idle, size: 34)
+                    SproutImage(speciesID: species, level: 3, size: 40)
+                        .offset(y: 3)
                         .allowsHitTesting(false)
                 }
                 Text(name).font(.caption).foregroundStyle(Theme.ink)
@@ -87,7 +102,7 @@ struct FriendsView: View {
             ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
                 HStack {
                     Text("\(i + 1)").font(.subheadline.bold()).foregroundStyle(Theme.muted).frame(width: 22)
-                    Circle().fill(Theme.species(row.1)).frame(width: 26, height: 26)
+                    SproutFace(speciesID: row.1, size: 26, plate: Theme.species(row.1).opacity(0.3))
                     Text(row.0)
                         .fontWeight(row.0 == "You" ? .bold : .regular)
                         .foregroundStyle(Theme.ink)
@@ -106,7 +121,7 @@ struct FriendsView: View {
             Text("Friends").font(.headline).foregroundStyle(Theme.ink).padding(.bottom, 6)
             ForEach(friends) { f in
                 HStack(spacing: 12) {
-                    SlimeView(color: Theme.species(f.species), level: 2, animation: .idle, size: 40)
+                    SproutImage(speciesID: f.species, level: 3, size: 40)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(f.name).font(.subheadline.weight(.semibold)).foregroundStyle(Theme.ink)
                         Text(f.status).font(.caption).foregroundStyle(Theme.muted)

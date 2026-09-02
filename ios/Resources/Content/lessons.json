@@ -1,60 +1,772 @@
 [
   {
     "id": "fin-1",
-    "emoji": "💸",
     "title": "Why compound interest wins",
-    "track": "Personal finance",
-    "pages": [
-      "Compound interest means you earn interest on your interest. Money grows faster the longer it sits.",
-      "Example: $1,000 at 8% per year. Year 1 you earn $80. Year 2 you earn $86 — because now the $80 is earning too.",
-      "The rule of 72: divide 72 by the interest rate to see how many years it takes to double. At 8%, that's 9 years.",
-      "The takeaway: starting at 18 instead of 28 can roughly double what you end up with. Time matters more than amount."
+    "track": "finance",
+    "figure": "compound",
+    "minutes": 3,
+    "blurb": "Interest lands on top of interest, so money grows faster the longer it sits. You'll see what $1,000 does at 8% a year, and the one-line trick for knowing when it doubles.",
+    "takeaway": "You learned why time matters more than amount.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Compound interest means you earn interest on your interest. Money grows faster the longer it sits."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Put $1,000 in an account paying 8% a year. Twelve months later it has grown by $80."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "$1,000 at 8% a year. Year 1 you earn $80. Year 2 you earn $86 — because now the $80 is earning too."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The rule of 72: divide 72 by the rate to see how many years it takes to double. At 8%, that's 9 years."
+      },
+      {
+        "kind": "example",
+        "body": "Two students both put away $200 a month. One starts at 18, the other at 28. By 60 the early one ends up with roughly twice as much."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Same $200 a month either way. The early start just hands interest more years to pile on itself."
+      },
+      {
+        "kind": "key",
+        "body": "Starting at 18 instead of 28 can roughly double what you end up with. Time matters more than amount."
+      },
+      {
+        "kind": "check",
+        "question": "Why does year 2 earn more than year 1?",
+        "choices": [
+          "You put in more money",
+          "Interest is now earning interest",
+          "The rate goes up each year"
+        ],
+        "answer": 1,
+        "why": "Interest is added to your balance, so the next year is worked out on a bigger number."
+      }
     ]
   },
   {
     "id": "fin-2",
-    "emoji": "🧾",
     "title": "Your first budget in 4 lines",
-    "track": "Personal finance",
-    "pages": [
-      "A budget is just a plan for money before you spend it. Four lines is enough to start.",
-      "50% needs, 30% wants, 20% savings. That's the 50/30/20 rule. It's a default, not a law.",
-      "Track one month first. Most people are shocked by one category. That category is your lever.",
-      "Automate the savings part. If it moves on payday, you never have to be disciplined."
+    "track": "finance",
+    "minutes": 2,
+    "blurb": "A budget is a plan you make before you spend, not a punishment you write after. Four lines is enough to start, and one of them does most of the work.",
+    "takeaway": "You learned that the savings line should move on its own.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A budget is just a plan for money before you spend it. Four lines is enough to start."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Half goes to needs — rent, food, the bus. That's the 50."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Thirty percent is wants. Not a moral failing, just a planned amount."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The last fifth is savings. That's the line that actually changes anything."
+      },
+      {
+        "kind": "example",
+        "body": "Track one month before you set the numbers. Most people are shocked by one category, and that category is your lever."
+      },
+      {
+        "kind": "key",
+        "body": "Automate the savings line. If it moves on payday, you never have to be disciplined."
+      },
+      {
+        "kind": "check",
+        "question": "Why automate savings instead of saving what's left over?",
+        "choices": [
+          "Banks pay more on automatic transfers",
+          "Nothing is left over at the end of the month",
+          "It raises your credit score"
+        ],
+        "answer": 1,
+        "why": "Money you can see is money you spend. Moving it first makes the plan happen without willpower."
+      }
+    ],
+    "figure": "budget"
+  },
+  {
+    "id": "fin-3",
+    "title": "What an emergency fund is for",
+    "track": "finance",
+    "minutes": 2,
+    "blurb": "The point of an emergency fund is not the interest. It's that a flat tyre stops being a crisis and starts being an errand.",
+    "takeaway": "You learned what cash is for when something breaks.",
+    "figure": "fork",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "An emergency fund is cash you keep boring on purpose. Not invested, not locked up. Just there."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "A $400 repair with the cash there is an errand. You pay it and forget it."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The same $400 on a card at 24% is a crisis that follows you into June."
+      },
+      {
+        "kind": "example",
+        "body": "Start with $500. That covers most of what actually goes wrong: a phone, a tyre, a co-pay."
+      },
+      {
+        "kind": "key",
+        "body": "An emergency fund buys you the right to say no to bad borrowing."
+      },
+      {
+        "kind": "check",
+        "question": "Why keep an emergency fund in plain cash instead of investing it?",
+        "choices": [
+          "Cash earns more than investments",
+          "You need it on the day you need it",
+          "Investing it is against the rules"
+        ],
+        "answer": 1,
+        "why": "Investments can be down exactly when your car breaks. The job of this money is to be available, not to grow."
+      }
+    ]
+  },
+  {
+    "id": "fin-4",
+    "title": "Credit scores, plainly",
+    "track": "finance",
+    "minutes": 2,
+    "blurb": "A credit score is a guess about whether you pay people back. Two of the five inputs do most of the work, and both are in your control.",
+    "takeaway": "You learned that paying on time beats paying it all.",
+    "figure": "gauge",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A credit score is one number that guesses how likely you are to pay back what you borrow."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "It runs from about 300 to 850. Most people sit somewhere in the middle."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Paying on time is the heaviest input by a distance. One late mark costs you for years."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Second is how much of your limit you use. Under 30% is the usual advice; under 10% is better."
+      },
+      {
+        "kind": "key",
+        "body": "Paying on time is worth more than paying it all off. One late payment costs more than a big balance."
+      },
+      {
+        "kind": "check",
+        "question": "You can only do one this month. Which helps your score more?",
+        "choices": [
+          "Pay the full balance a week late",
+          "Pay the minimum on time",
+          "Close an old card"
+        ],
+        "answer": 1,
+        "why": "Payment history is the heaviest single input. A late mark sits on your report for years; a carried balance does not."
+      }
+    ]
+  },
+  {
+    "id": "fin-5",
+    "title": "Good debt, bad debt",
+    "track": "finance",
+    "minutes": 2,
+    "blurb": "Debt isn't good or bad by nature. It's a price you pay for time, and the question is only ever whether you're buying something worth more than the price.",
+    "takeaway": "You learned to ask what the debt buys before you take it.",
+    "figure": "scale",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "All debt is renting money. The interest rate is the rent."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Rent is worth paying when the thing you bought is worth more later — a degree, a business."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "It almost never is when the thing shrinks: a night out, a phone, a weekend."
+      },
+      {
+        "kind": "key",
+        "body": "Ask one question: will this still be worth something when I finish paying for it?"
+      },
+      {
+        "kind": "check",
+        "question": "A credit card charges 24% a year. A savings account pays 4%. What should a spare $100 do first?",
+        "choices": [
+          "Go into savings",
+          "Pay down the card",
+          "Split evenly"
+        ],
+        "answer": 1,
+        "why": "Paying off 24% debt is a guaranteed 24% return. No savings account can beat that."
+      }
+    ]
+  },
+  {
+    "id": "fin-6",
+    "title": "Why index funds beat picking",
+    "track": "finance",
+    "minutes": 2,
+    "blurb": "Most professional stock pickers lose to a fund that buys everything and thinks about nothing. Here's why that keeps happening.",
+    "takeaway": "You learned why the boring fund keeps winning.",
+    "figure": "index",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "An index fund buys a slice of every company on a list, then does nothing else."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Picking one company means being right about that one, twice, for twenty years."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Over twenty years most professional pickers land behind the boring fund. Fees eat the difference."
+      },
+      {
+        "kind": "key",
+        "body": "The boring fund wins because it costs almost nothing and never panics."
+      },
+      {
+        "kind": "check",
+        "question": "Why do fees matter so much over 20 years?",
+        "choices": [
+          "Fees rise every year",
+          "Fees come out of the money that would have compounded",
+          "Fees are taxed twice"
+        ],
+        "answer": 1,
+        "why": "Every dollar in fees is a dollar that stops earning. Over decades a 1% fee quietly takes a large slice of the total."
+      }
     ]
   },
   {
     "id": "phil-1",
-    "emoji": "🏛️",
     "title": "Stoicism: control what you can",
-    "track": "Philosophy",
-    "pages": [
-      "Stoics split the world in two: things you control (your effort, your reactions) and things you don't (grades already posted, other people).",
-      "Epictetus: suffering comes from wanting to control the second group.",
-      "Practical version: before stressing, ask 'is this in my control?' If no, let it go. If yes, act on it today.",
-      "This is why the app pays for finishing tasks, not for grades. Effort is yours. Outcomes are only partly yours."
-    ]
+    "track": "philosophy",
+    "minutes": 2,
+    "blurb": "The Stoics split the world in two and told you to spend your energy on one half. It's two thousand years old and it maps almost exactly onto a bad exam week.",
+    "takeaway": "You learned to spend your energy on the half you control.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Stoics split the world in two: things you control, and things you don't."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Your effort and your reaction are the first group. Those are always yours."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "A posted grade, a curve, what somebody else scored — second group. Epictetus said suffering comes from trying to control those."
+      },
+      {
+        "kind": "example",
+        "body": "A grade is already up. Refreshing the page is the second group. Emailing to ask what you missed is the first."
+      },
+      {
+        "kind": "key",
+        "body": "Before you stress, ask: is this in my control? If no, let it go. If yes, act on it today."
+      },
+      {
+        "kind": "check",
+        "question": "Which of these is in the first group — the part you control?",
+        "choices": [
+          "The curve on the test",
+          "How many hours you study",
+          "What your friend scored"
+        ],
+        "answer": 1,
+        "why": "Your effort is yours. The curve and other people's scores are outcomes you can influence at best, never control."
+      }
+    ],
+    "figure": "control"
   },
   {
     "id": "phil-2",
-    "emoji": "🤔",
     "title": "The Socratic method",
-    "track": "Philosophy",
-    "pages": [
-      "Socrates taught by asking questions, not giving answers. Each question exposes what you assumed.",
-      "Try it on yourself: 'Why do I believe this?' three times in a row. Most beliefs run out of floor at question two.",
-      "It works on studying too: asking 'why is this the answer?' beats rereading notes."
+    "track": "philosophy",
+    "minutes": 2,
+    "blurb": "Socrates never told anyone the answer. He asked until they noticed they didn't have one — which turns out to be the fastest way to find out what you actually know.",
+    "takeaway": "You learned that asking why beats reading again.",
+    "figure": "why",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Socrates taught by asking questions, not giving answers. Start with something you believe."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Ask why once and you get a reason. That part is usually easy."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Ask why twice and most beliefs run out of floor. That is not a failure — that's the method working."
+      },
+      {
+        "kind": "key",
+        "body": "Asking why this is the answer beats rereading the answer."
+      },
+      {
+        "kind": "check",
+        "question": "Why does asking 'why' beat rereading your notes?",
+        "choices": [
+          "It takes less time",
+          "It forces you to produce the reason instead of recognise it",
+          "Notes are usually wrong"
+        ],
+        "answer": 1,
+        "why": "Recognising something feels like knowing it. Producing the reason from memory is the thing a test actually asks for."
+      }
+    ]
+  },
+  {
+    "id": "phil-3",
+    "title": "Occam's razor",
+    "track": "philosophy",
+    "minutes": 2,
+    "blurb": "The oldest debugging tool there is: when two explanations both fit, start with the one that assumes less. It isn't a law of nature, and that matters too.",
+    "takeaway": "You learned which explanation to test first.",
+    "figure": "razor",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Occam's razor: when two explanations fit the same facts, start with the one that assumes less."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Your code broke after you changed one line. That line is one assumption."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "A compiler bug is four. It might still be right — it is just more expensive to check."
+      },
+      {
+        "kind": "key",
+        "body": "The simplest explanation isn't the truest. It's the one worth checking first."
+      },
+      {
+        "kind": "check",
+        "question": "What does the razor actually tell you to do?",
+        "choices": [
+          "Believe the simplest answer",
+          "Test the simplest answer first",
+          "Ignore complicated answers"
+        ],
+        "answer": 1,
+        "why": "It ranks what to check, not what is true. A complicated explanation can still win once the simple one fails."
+      }
+    ]
+  },
+  {
+    "id": "phil-4",
+    "title": "The veil of ignorance",
+    "track": "philosophy",
+    "minutes": 2,
+    "blurb": "John Rawls' test for whether a rule is fair: design it before you know who you'll be under it.",
+    "takeaway": "You learned a test for whether a rule is actually fair.",
+    "figure": "veil",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "John Rawls asked: what rules would you write if you didn't know who you'd be under them?"
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "You keep everything you know about how the world works. You lose only who you are in it."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Then you get handed a life at random and have to live under the rule you just wrote."
+      },
+      {
+        "kind": "example",
+        "body": "Would you set the late-work policy the same way if you didn't know whether you'd be the student with a job after school?"
+      },
+      {
+        "kind": "key",
+        "body": "A fair rule is one you'd still write if you didn't know which side of it you'd land on."
+      },
+      {
+        "kind": "check",
+        "question": "What is the veil hiding from you?",
+        "choices": [
+          "The consequences of the rule",
+          "Which position in society you'll occupy",
+          "Who else is voting"
+        ],
+        "answer": 1,
+        "why": "You keep full knowledge of how the world works. You lose only the knowledge of who you'll be in it."
+      }
+    ]
+  },
+  {
+    "id": "phil-5",
+    "title": "The map is not the territory",
+    "track": "philosophy",
+    "minutes": 2,
+    "blurb": "Every model leaves things out on purpose. Trouble starts when you forget which things.",
+    "takeaway": "You learned to ask what a model left out.",
+    "figure": "map",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A map is useful because it leaves things out. A map with everything on it would be the size of the world."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Every model does this: a formula, a stereotype, a study guide. Something got cut to make it usable."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The skill is knowing what was cut — and whether you needed it."
+      },
+      {
+        "kind": "example",
+        "body": "A practice test predicts your real score well. It still can't tell you that you always slow down on the last section."
+      },
+      {
+        "kind": "key",
+        "body": "Ask what a model left out before you trust what it says."
+      },
+      {
+        "kind": "check",
+        "question": "What makes a map useful?",
+        "choices": [
+          "It shows everything",
+          "It leaves the right things out",
+          "It never changes"
+        ],
+        "answer": 1,
+        "why": "Detail is what makes a map unusable. The skill is knowing which detail was dropped and whether you needed it."
+      }
     ]
   },
   {
     "id": "study-1",
-    "emoji": "🧠",
     "title": "Spaced practice beats cramming",
-    "track": "Study skills",
-    "pages": [
-      "Ten minutes a day for six days beats one 60-minute cram. Same time, much more sticks.",
-      "Why: your brain strengthens a memory every time it almost forgets it, then recalls it.",
-      "Practice testing yourself is the strongest form. Rereading feels good and does almost nothing."
+    "track": "study",
+    "minutes": 2,
+    "blurb": "Same total hours, very different results. Splitting study across days works because forgetting a little is part of how remembering gets strong.",
+    "takeaway": "You learned that the gap between sessions does the work.",
+    "figure": "spacing",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "One long cram goes in fast and leaks just as fast. A week later almost none of it is there."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Split the same hour over six days and every session catches the memory just before it goes."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Your brain strengthens a memory each time it nearly forgets it, then pulls it back."
+      },
+      {
+        "kind": "key",
+        "body": "The gap between sessions is doing the work, not the sessions."
+      },
+      {
+        "kind": "check",
+        "question": "Why does leaving a gap between study sessions help?",
+        "choices": [
+          "You come back less tired",
+          "Partly forgetting makes the recall count for more",
+          "It spreads the boredom out"
+        ],
+        "answer": 1,
+        "why": "Effortful recall is what strengthens a memory. If nothing was forgotten, there is nothing to recall."
+      }
+    ]
+  },
+  {
+    "id": "study-2",
+    "title": "How to study for a science quiz",
+    "track": "study",
+    "minutes": 2,
+    "triggers": [
+      "study",
+      "labs"
+    ],
+    "blurb": "Science quizzes ask you to explain a mechanism, not to recognise a term. Three passes over two evenings does more than one long night with a highlighter.",
+    "takeaway": "You learned to draw the mechanism instead of highlighting it.",
+    "figure": "mechanism",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A science quiz almost never asks you to recognise a word. Highlighting the definition feels like work and isn't."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Draw the mechanism instead: two sides, which one is saltier, and which way the water goes."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "If you can draw it from memory, you can answer any wording of the question."
+      },
+      {
+        "kind": "example",
+        "body": "Don't memorise 'osmosis: movement of water'. Draw the two sides, mark which is saltier, then draw the arrow."
+      },
+      {
+        "kind": "key",
+        "body": "If you can draw the mechanism from memory, you're ready. Highlighting is not studying."
+      },
+      {
+        "kind": "check",
+        "question": "You have two evenings before the quiz. What's the better use of night one?",
+        "choices": [
+          "Reread the chapter carefully",
+          "Write what you remember, then check",
+          "Make a colour-coded sheet"
+        ],
+        "answer": 1,
+        "why": "Writing it first shows you the gaps. Rereading shows you familiar pages and hides what you don't know."
+      }
+    ]
+  },
+  {
+    "id": "study-3",
+    "title": "Active recall in ten minutes",
+    "track": "study",
+    "minutes": 2,
+    "triggers": [
+      "study"
+    ],
+    "blurb": "The single highest-value ten minutes in studying, and it needs no app, no cards, and no colour coding.",
+    "takeaway": "You learned to start with a blank page, every time.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Active recall means pulling something out of your head, not putting it back in."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The whole method: close everything, write what you remember, then check what you missed."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The part you missed is your entire study list. Everything else is already learned."
+      },
+      {
+        "kind": "key",
+        "body": "Blank page first, notes second. Always in that order."
+      },
+      {
+        "kind": "check",
+        "question": "Rereading your notes feels much easier than a blank page. Why is that a warning sign?",
+        "choices": [
+          "Easy means you already know it",
+          "Recognising is easier than remembering, and only one is tested",
+          "Notes are shorter than the textbook"
+        ],
+        "answer": 1,
+        "why": "Familiarity feels like knowledge. A blank page is uncomfortable precisely because it measures the thing a test measures."
+      }
+    ],
+    "figure": "recall"
+  },
+  {
+    "id": "study-4",
+    "title": "Mix the problems up",
+    "track": "study",
+    "minutes": 2,
+    "triggers": [
+      "problemSet"
+    ],
+    "blurb": "Doing twenty of the same problem type teaches you to run one method. Mixing them teaches you to pick one — which is the harder half.",
+    "takeaway": "You learned to practise choosing the method, not just running it.",
+    "figure": "interleave",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Most problem sets are blocked: four of type A, then four of type B."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "That trains running a method. Mixing them up trains choosing one, which is the harder half."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "On the test nothing is labelled. Practise the part that isn't labelled."
+      },
+      {
+        "kind": "example",
+        "body": "Do 5 of A, 5 of B, then shuffle 10 together. The shuffled ten are where the test actually lives."
+      },
+      {
+        "kind": "key",
+        "body": "On the test nothing is labelled. Practise the part that isn't labelled."
+      },
+      {
+        "kind": "check",
+        "question": "Why does mixed practice feel worse than blocked practice?",
+        "choices": [
+          "It takes longer",
+          "You make more mistakes while you're learning to choose",
+          "The problems are harder"
+        ],
+        "answer": 1,
+        "why": "Struggling to pick the right method is the skill being built. The mistakes are the training, not a sign it isn't working."
+      }
+    ]
+  },
+  {
+    "id": "study-5",
+    "title": "How to read a chapter once",
+    "track": "study",
+    "minutes": 2,
+    "triggers": [
+      "reading"
+    ],
+    "blurb": "Reading a chapter twice is usually reading it badly once, twice. Three moves make one pass enough.",
+    "takeaway": "You learned to read once, with a question in hand.",
+    "figure": "reading",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Before reading, turn every heading into a question. 'Cell division' becomes 'how does a cell divide?'"
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Now you're searching for an answer instead of scanning a page, and you notice it when it arrives."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "At the end, write four sentences with the book shut. That's your whole set of notes."
+      },
+      {
+        "kind": "key",
+        "body": "Reading twice is slower than reading once and answering."
+      },
+      {
+        "kind": "check",
+        "question": "Why turn headings into questions before you read?",
+        "choices": [
+          "It makes the chapter shorter",
+          "It gives you something to be looking for",
+          "It's easier to remember questions"
+        ],
+        "answer": 1,
+        "why": "A question turns reading from scanning into searching. You notice the answer when it arrives, instead of noticing nothing."
+      }
+    ]
+  },
+  {
+    "id": "study-6",
+    "title": "The five-minute start",
+    "track": "study",
+    "minutes": 2,
+    "triggers": [
+      "writing",
+      "problemSet"
+    ],
+    "blurb": "Procrastination is nearly always about starting, not about working. So make starting the only thing you commit to.",
+    "takeaway": "You learned to commit to starting and let finishing follow.",
+    "figure": "start",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Putting something off is almost always about starting it, not about doing it."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "So shrink the commitment to five minutes, and mean the part where you're allowed to stop."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Most of the time you don't stop. Starting was the hard part and it's behind you."
+      },
+      {
+        "kind": "example",
+        "body": "For an essay, the five minutes is opening the file and writing a bad first sentence. Bad is fine. It gets deleted."
+      },
+      {
+        "kind": "key",
+        "body": "Commit to starting, never to finishing. Finishing takes care of itself more often than you'd think."
+      },
+      {
+        "kind": "check",
+        "question": "Why does the five minutes have to be a real permission to stop?",
+        "choices": [
+          "Five minutes is enough for most work",
+          "If it's a trick, your brain stops falling for it",
+          "It keeps sessions short"
+        ],
+        "answer": 1,
+        "why": "The method works because starting is genuinely cheap. If stopping isn't allowed, starting costs the whole task again."
+      }
     ]
   }
 ]

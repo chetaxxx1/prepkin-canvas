@@ -1,0 +1,13 @@
+d95 r2.4 hug0.00 bow0.10 slotW=77 area=25084 c1 h0
+d95 r2.4 hug0.00 bow0.25 slotW=78 area=23030 c1 h0
+d95 r2.4 hug0.35 bow0.10 slotW=88 area=28230 c1 h0
+d95 r2.4 hug0.35 bow0.25 slotW=86 area=25757 c1 h0
+d95 r2.4 hug0.65 bow0.10 slotW=102 area=30834 c1 h0
+d95 r2.4 hug0.65 bow0.25 slotW=94 area=27774 c1 h0
+d105 r2.4 hug0.00 bow0.10 slotW=59 area=19889 c1 h0
+d105 r2.4 hug0.00 bow0.25 slotW=62 area=19190 c1 h0
+d105 r2.4 hug0.35 bow0.10 slotW=71 area=22639 c1 h0
+d105 r2.4 hug0.35 bow0.25 slotW=69 area=21122 c1 h0
+d105 r2.4 hug0.65 bow0.10 slotW=82 area=24710 c1 h0
+d105 r2.4 hug0.65 bow0.25 slotW=78 area=22598 c1 h0
+done

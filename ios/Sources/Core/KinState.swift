@@ -1,0 +1,260 @@
+import Foundation
+
+/// Lifetime totals behind the Kin tab's "together since" strip.
+///
+/// These are counted as the work happens rather than read back out of the ledger,
+/// because `Ledger` folds lines older than its window into the opening balance. A
+/// derived count would quietly shrink, and the whole promise of this strip is that
+/// nothing on it ever goes down on its own.
+struct LifetimeStats: Codable, Equatable {
+    var tasksFinished = 0
+    var canvasFinished = 0
+    var focusMinutes = 0
+    var lessonsRead = 0
+}
+
+/// One offer in the shop's picks row. A pick is a **discount**, never an item you can
+/// miss — everything here is also in the Collection at full price, forever.
+struct ShopPick: Identifiable, Equatable {
+    enum Kind: Equatable { case kin(ChibiSpecies), scene(Scene0) }
+
+    let id: String          // "kin:ember" / "scene:meadow"
+    let kind: Kind
+
+    /// Every pick is the same 20% off. There is no rare discount to chase.
+    static let discount = 0.20
+
+    var fullPrice: Int {
+        switch kind {
+        case .kin(let s): return s.price
+        case .scene(let s): return s.price
+        }
+    }
+    var price: Int { Int((Double(fullPrice) * (1 - Self.discount)).rounded()) }
+
+    var name: String {
+        switch kind {
+        case .kin(let s): return s.name
+        case .scene(let s): return s.name
+        }
+    }
+
+    /// Scenes borrow the tier ramp so one row can hold both kinds without a second
+    /// colour language: they band by price, exactly as kin do.
+    var tier: Int {
+        switch kind {
+        case .kin(let s): return s.tier
+        case .scene(let s):
+            switch s.price {
+            case 0..<200: return 1
+            case 200..<400: return 2
+            case 400..<700: return 3
+            case 700..<1100: return 4
+            default: return 5
+            }
+        }
+    }
+}
+
+// MARK: - Picks, locking and adoption
+
+extension GameState {
+
+    // MARK: Picks
+
+    static let pickSlots = 5
+
+    /// Everything the student does not own yet, kin first, then scenes. This is the
+    /// pool the row draws from, and it is also exactly the Collection minus what they
+    /// already have — so a reroll can never take away a thing they wanted.
+    var pickPool: [String] {
+        ChibiSpecies.catalog
+            .filter { s in !owned.contains { $0.speciesID == s.id } }
+            .map { "kin:\($0.id)" }
+        + Scene0.all
+            .filter { !ownedScenes.contains($0.id) }
+            .map { "scene:\($0.id)" }
+    }
+
+    func resolvePick(_ id: String) -> ShopPick? {
+        let parts = id.split(separator: ":", maxSplits: 1).map(String.init)
+        guard parts.count == 2 else { return nil }
+        switch parts[0] {
+        case "kin":
+            guard let s = ChibiSpecies.catalog.first(where: { $0.id == parts[1] }) else { return nil }
+            return ShopPick(id: id, kind: .kin(s))
+        case "scene":
+            guard let s = Scene0.all.first(where: { $0.id == parts[1] }) else { return nil }
+            return ShopPick(id: id, kind: .scene(s))
+        default: return nil
+        }
+    }
+
+    var picks: [ShopPick] { shopPicks.compactMap(resolvePick) }
+
+    /// Rolls the row over at the day boundary, and keeps it stable inside a day —
+    /// the same five come back after a relaunch, so nothing feels snatched away.
+    mutating func refreshPicksIfNeeded(now: Date = Date()) {
+        let day = effectiveDay
+        if shopPickDay != day {
+            shopPickDay = day
+            rerollCount = 0
+            drawPicks()
+        } else if shopPicks.isEmpty || shopPicks.contains(where: { !isStillAvailable($0) }) {
+            // Something in the row was bought. Backfill rather than leave a hole.
+            drawPicks()
+        }
+    }
+
+    /// Free, but three a day. Unlimited rerolls made "today's picks" mean nothing —
+    /// the row was whatever you shuffled to. Three keeps the discount honest and
+    /// still costs no coins.
+    static let rerollsPerDay = 3
+    var rerollsLeft: Int { max(0, Self.rerollsPerDay - rerollCount) }
+
+    @discardableResult
+    mutating func rerollPicks() -> Bool {
+        guard rerollsLeft > 0 else { return false }
+        rerollCount += 1
+        drawPicks()
+        return true
+    }
+
+    /// Holding a slot keeps its discount through every reroll and overnight into
+    /// tomorrow's row. The only shop control kept from TFT, because it is the only
+    /// one that can only help.
+    mutating func toggleLock(_ id: String) {
+        lockedPick = (lockedPick == id) ? nil : id
+    }
+
+    private func isStillAvailable(_ id: String) -> Bool { pickPool.contains(id) }
+
+    /// Drawn evenly over everything unowned — a Legendary has exactly the same chance
+    /// as a Common. There are no weights and no hidden odds table, which is what the
+    /// honesty panel says out loud.
+    private mutating func drawPicks() {
+        var pool = pickPool
+        var kept: [String] = []
+        if let locked = lockedPick, pool.contains(locked) {
+            kept.append(locked)
+            pool.removeAll { $0 == locked }
+        } else if lockedPick != nil, !pool.contains(lockedPick!) {
+            lockedPick = nil   // it was bought; stop holding a slot for it
+        }
+
+        var rng = SplitMix64(seed: Self.seed(day: shopPickDay, nonce: rerollCount))
+        var drawn: [String] = []
+        while !pool.isEmpty && drawn.count < Self.pickSlots - kept.count {
+            drawn.append(pool.remove(at: Int(rng.next() % UInt64(pool.count))))
+        }
+        shopPicks = kept + drawn
+    }
+
+    private static func seed(day: DayKey, nonce: Int) -> UInt64 {
+        var h: UInt64 = 0xcbf29ce484222325
+        for b in day.raw.utf8 { h = (h ^ UInt64(b)) &* 0x100000001b3 }
+        return h &+ UInt64(bitPattern: Int64(nonce)) &* 0x9E3779B97F4A7C15
+    }
+
+    // MARK: Buying a pick
+
+    /// What this id costs right now: the pick price if it is in today's row, the
+    /// Collection price otherwise. Never more than the Collection price.
+    func currentPrice(_ id: String) -> Int {
+        guard let pick = resolvePick(id) else { return 0 }
+        return shopPicks.contains(id) ? pick.price : pick.fullPrice
+    }
+
+    /// The gap to a purchase, stated as work rather than as a shortfall. Prefers
+    /// Canvas assignments because they are the biggest single line and the most
+    /// likely thing already waiting on the student's list.
+    func workToAfford(_ id: String) -> String? {
+        let gap = currentPrice(id) - ledger.balance
+        guard gap > 0 else { return nil }
+        let canvas = TaskKind.canvas.reward
+        let assignments = gap / canvas
+        if assignments >= 1 {
+            let rest = gap - assignments * canvas
+            let plural = assignments == 1 ? "assignment" : "assignments"
+            if rest <= 0 { return "That's \(assignments) more \(plural) finished." }
+            return "That's \(assignments) more \(plural) finished, and a lesson."
+        }
+        return "That's one lesson, or a 25-minute focus session."
+    }
+
+    // MARK: Adoption
+
+    /// Buys a kin at today's price and stamps the date it arrived. Naming happens
+    /// after, on its own screen, and can be skipped.
+    @discardableResult
+    mutating func adopt(_ species: ChibiSpecies, now: Date = Date()) -> Bool {
+        guard !owned.contains(where: { $0.speciesID == species.id }) else { return false }
+        let price = currentPrice("kin:\(species.id)")
+        guard ledger.post(CoinEntry(key: "species:\(species.id)", amount: -price,
+                                    reason: .species, day: effectiveDay, at: now)) else { return false }
+        owned.append(OwnedChibi(speciesID: species.id, level: 1, adoptedAt: now,
+                                statsAtAdoption: lifetime))
+        activeChibiID = species.id
+        if lockedPick == "kin:\(species.id)" { lockedPick = nil }
+        refreshPicksIfNeeded(now: now)
+        return true
+    }
+
+    mutating func rename(_ speciesID: String, to name: String) {
+        guard let i = owned.firstIndex(where: { $0.speciesID == speciesID }) else { return }
+        let clean = String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(14))
+        owned[i].name = clean.isEmpty ? nil : clean
+    }
+
+    /// Names offered by the Shuffle die. Short, soft, and none of them a person's
+    /// name, so a student never has to un-pick something that landed oddly.
+    static let shuffleNames = ["Moss", "Pip", "Bramble", "Tuck", "Sprig", "Bean",
+                              "Juniper", "Clover", "Pebble", "Wren", "Fig", "Marlow",
+                              "Nimbus", "Cricket", "Olive", "Bodhi"]
+
+    // MARK: Together since
+
+    /// Days including today, so a kin adopted this morning reads "Day 1", never 0.
+    func daysTogether(_ kin: OwnedChibi, now: Date = Date(), calendar: Calendar = .current) -> Int {
+        guard let from = kin.adoptedAt else { return 1 }
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: from),
+                                           to: calendar.startOfDay(for: now)).day ?? 0
+        return max(1, days + 1)
+    }
+
+    /// `nil` when Canvas has never been connected. The strip drops the cell rather
+    /// than printing a zero it has no way to earn.
+    /// What has happened since this kin arrived. The starter, and any kin from a
+    /// save older than the snapshot, get the whole history.
+    func stats(since kin: OwnedChibi) -> LifetimeStats {
+        guard let base = kin.statsAtAdoption else { return lifetime }
+        return LifetimeStats(tasksFinished: max(0, lifetime.tasksFinished - base.tasksFinished),
+                             canvasFinished: max(0, lifetime.canvasFinished - base.canvasFinished),
+                             focusMinutes: max(0, lifetime.focusMinutes - base.focusMinutes),
+                             lessonsRead: max(0, lifetime.lessonsRead - base.lessonsRead))
+    }
+
+    func canvasFinished(since kin: OwnedChibi) -> Int? {
+        canvasFinishedOrNil == nil ? nil : stats(since: kin).canvasFinished
+    }
+
+    var canvasFinishedOrNil: Int? {
+        (pairingCode == nil && canvasItems.isEmpty && lifetime.canvasFinished == 0)
+            ? nil : lifetime.canvasFinished
+    }
+}
+
+/// A small deterministic generator, so today's row is the same row after a relaunch.
+/// `SystemRandomNumberGenerator` would reshuffle the shop every time the view loaded.
+struct SplitMix64: RandomNumberGenerator {
+    private var state: UInt64
+    init(seed: UInt64) { state = seed }
+
+    mutating func next() -> UInt64 {
+        state = state &+ 0x9E3779B97F4A7C15
+        var z = state
+        z = (z ^ (z >> 30)) &* 0xBF58476D1CE4E5B9
+        z = (z ^ (z >> 27)) &* 0x94D049BB133111EB
+        return z ^ (z >> 31)
+    }
+}

@@ -12,7 +12,7 @@ import Foundation
 ///    on the main thread mid-animation.
 final class Store {
     /// Bump when `GameState`'s shape changes, and add a step to `migrate`.
-    static let currentVersion = 3
+    static let currentVersion = 4
 
     /// The v1 shape: the `snapshot2` blob in UserDefaults, from before there was a file.
     static let legacyDefaultsKey = "snapshot2"
@@ -86,6 +86,30 @@ final class Store {
         // v2 was the first file-based schema. v3 added Canvas courses, grades and
         // submission state; no step is needed for it, because `GameState` now
         // reads every field with a fallback, so a missing key is not an error.
+        //
+        // v4 added the Kin tab: a kin now knows when it arrived, and lifetime totals
+        // are counted as work happens instead of read back out of the ledger. Both
+        // need seeding, because a missing key here is not a zero — it is a fact the
+        // old file never wrote down.
+        if envelope.version < 4 {
+            let firstLine = state.ledger.entries.map(\.at).min() ?? Date()
+            for i in state.owned.indices where state.owned[i].adoptedAt == nil {
+                state.owned[i].adoptedAt = firstLine
+            }
+            // Only what the ledger still holds can be counted. Lines already folded
+            // into the opening balance are gone, so an old save starts its totals a
+            // little low rather than claiming a number it cannot show its work for.
+            if state.lifetime == LifetimeStats() {
+                for e in state.ledger.entries {
+                    switch e.reason {
+                    case .task: state.lifetime.tasksFinished += e.units
+                    case .focus: state.lifetime.focusMinutes += e.units
+                    case .lesson: state.lifetime.lessonsRead += e.units
+                    default: break
+                    }
+                }
+            }
+        }
         state.advance()
         return state
     }

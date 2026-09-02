@@ -1,0 +1,13 @@
+r34 b0.00 d110 slot med85 max142 rows41  pit11988/46 c1 h0
+r34 b0.14 d110 slot med84 max139 rows42  pit9341/32 c1 h0
+r44 b0.00 d110 slot med85 max154 rows49  pit12376/44 c1 h0
+r44 b0.14 d110 slot med84 max152 rows50  pit9748/33 c1 h0
+r34 b0.00 d128 slot med37 max73 rows28  pit5218/30 c1 h0
+r34 b0.14 d128 slot med36 max71 rows27  pit2800/22 c1 h0
+r44 b0.00 d128 slot med41 max92 rows29  pit4817/30 c1 h0
+r44 b0.14 d128 slot med42 max92 rows28  pit2918/26 c1 h0
+r34 b0.00 d145 slot med0 max0 rows0  pit2805/24 c1 h0
+r34 b0.14 d145 slot med0 max0 rows0  pit2904/26 c1 h0
+r44 b0.00 d145 slot med0 max0 rows0  pit2907/26 c1 h0
+r44 b0.14 d145 slot med0 max0 rows0  pit2896/26 c1 h0
+wrote (870, 627)

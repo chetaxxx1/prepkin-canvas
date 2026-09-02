@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDE7DC;font-family:Nunito,system-ui,sans-serif}
+a{color:#E4735F}a:hover{color:#FF6F61}
+.dv-turn{padding:44px 48px 40px;border-bottom:1px solid rgba(46,38,34,.10);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 26px}
+.dv-tid{font:800 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#2E2622;color:#FAF5EC;border-radius:4px;text-decoration:none}
+.dv-tname{font:800 13px/1.2 Nunito,sans-serif;color:#2E2622}
+.dv-opts{display:grid;grid-template-columns:repeat(4,390px);gap:44px 34px;align-items:start;justify-content:start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;width:390px;scroll-margin-top:16px}
+.dv-oid{font:800 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:800 12px/1.3 Nunito,sans-serif;color:#2E2622}
+.dv-note{margin:0;font:400 11.5px/1.55 Nunito,sans-serif;color:rgba(46,38,34,.6)}
+.dv-opt:target .dv-oid{background:#FF6F61;color:#fff}
+.dv-next{margin:30px 0 0;font:700 12px/1.6 Nunito,sans-serif;color:rgba(46,38,34,.55)}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1" style="width:1760px;box-sizing:border-box">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Learn v2 — micro-lesson reader, in the Prepkin system</span></div>
+
+<div class="dv-opts" style="display:grid;grid-template-columns:repeat(4,390px);gap:44px 34px;align-items:start;justify-content:start">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Learn (tab root)</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;inset:0;padding:46px 24px 0;box-sizing:border-box">
+<div style="display:flex;align-items:flex-start;justify-content:space-between">
+<div><div style="font-size:34px;font-weight:900;line-height:1;letter-spacing:-.01em">Learn</div><div style="margin-top:5px;font-size:13px;font-weight:700;color:#96877F">8 lessons this month</div></div>
+<div style="display:flex;align-items:center;gap:7px;background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:999px;padding:7px 13px 7px 9px"><svg width="19" height="19" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:15px;font-weight:800">1,130</span></div>
+</div>
+
+<div style="margin:14px 0 8px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">CONTINUE</div>
+<div style="background:#FFFFFF;border-radius:22px;padding:14px;display:flex;align-items:center;gap:13px">
+<div style="width:48px;height:48px;border-radius:14px;background:#FFF3D6;display:grid;place-items:center;flex:none"><svg width="26" height="26" viewBox="0 0 40 40"><rect x="5" y="23" width="8" height="12" rx="2.5" fill="#FFF3D6" stroke="#2E2822" strokeWidth="2.2"></rect><rect x="15" y="17" width="8" height="18" rx="2.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></rect><circle cx="28" cy="13" r="8" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></circle><path d="M28 8.5v9M25.5 11h5M25.5 14.5h5" stroke="#2E2822" strokeWidth="2.1" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;min-width:0">
+<div style="font-size:16.5px;font-weight:800;line-height:1.2">Why compound interest wins</div>
+<div style="margin-top:4px;font-size:12.5px;font-weight:700;color:#96877F">Card 3 of 8 · Personal finance</div>
+<div style="margin-top:9px;height:5px;border-radius:999px;background:#F0E9DC;overflow:hidden"><div style="width:37%;height:5px;border-radius:999px;background:#57C79B"></div></div>
+</div>
+<svg width="9" height="15" viewBox="0 0 9 15" style="flex:none"><path d="M1.6 1.6 7 7.5 1.6 13.4" stroke="#B4A996" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+
+<div style="margin:12px 0 7px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">BECAUSE OF YOUR WEEK</div>
+<div style="background:#FFFFFF;border-radius:22px;padding:14px;display:flex;align-items:center;gap:12px">
+<div style="flex:1;min-width:0">
+<div style="display:inline-flex;align-items:center;gap:6px;background:#FFE9E5;border-radius:999px;padding:5px 11px"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#FF6F61"></circle></svg><span style="font-size:11.5px;font-weight:800;color:#E4735F;letter-spacing:.02em">Bio quiz · Friday</span></div>
+<div style="margin-top:10px;font-size:17px;font-weight:800;line-height:1.22">How to study for a science quiz</div>
+<div style="margin-top:5px;font-size:12.5px;font-weight:700;color:#96877F">4 cards · 2 min · +20</div>
+</div>
+<div style="width:44px;height:44px;border-radius:999px;background:#FF6F61;display:grid;place-items:center;flex:none"><svg width="15" height="15" viewBox="0 0 16 16"><path d="M3 8h9M8.2 3.6 12.6 8l-4.4 4.4" stroke="#FFF6EF" strokeWidth="2.3" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+</div>
+
+<div style="margin:12px 0 7px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">TODAY'S CARD</div>
+<div style="background:#FFFFFF;border-radius:22px;padding:14px;display:flex;align-items:center;gap:13px">
+<div style="width:48px;height:48px;border-radius:14px;background:#DFF3E9;display:grid;place-items:center;flex:none"><svg width="24" height="24" viewBox="0 0 40 40"><path d="M12 5h11l8 8v22a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="#FFFFFF" stroke="#2E2822" strokeWidth="2.2" strokeLinejoin="round"></path><path d="M23 5v8h8" stroke="#2E2822" strokeWidth="2.2" fill="none" strokeLinejoin="round"></path><path d="M15 22h11M15 28h7" stroke="#2E2822" strokeWidth="2.2" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;min-width:0"><div style="font-size:16.5px;font-weight:800;line-height:1.2">Spaced practice beats cramming</div><div style="margin-top:4px;font-size:12.5px;font-weight:700;color:#96877F">3 cards · 2 min</div></div>
+<div style="background:#FFF3D6;border-radius:999px;padding:6px 11px;font-size:13px;font-weight:800;color:#A8761D;flex:none">+20</div>
+</div>
+
+<div style="margin:12px 0 7px;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">TRACKS</div>
+<div style="display:flex;gap:12px">
+<div style="width:150px;flex:none;background:#FFFFFF;border-radius:20px;padding:13px;box-sizing:border-box">
+<svg width="30" height="30" viewBox="0 0 40 40"><rect x="5" y="23" width="8" height="12" rx="2.5" fill="#FFF3D6" stroke="#2E2822" strokeWidth="2.2"></rect><rect x="15" y="17" width="8" height="18" rx="2.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></rect><circle cx="28" cy="13" r="8" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></circle><path d="M28 8.5v9M25.5 11h5M25.5 14.5h5" stroke="#2E2822" strokeWidth="2.1" strokeLinecap="round"></path></svg>
+<div style="margin-top:8px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px"><div style="font-size:14.5px;font-weight:800;line-height:1.2">Personal<br>finance</div><svg width="28" height="28" viewBox="0 0 36 36" style="flex:none"><circle cx="18" cy="18" r="13" fill="none" stroke="#F0E9DC" strokeWidth="4"></circle><circle cx="18" cy="18" r="13" fill="none" stroke="#57C79B" strokeWidth="4" strokeLinecap="round" strokeDasharray="30.6 81.7" transform="rotate(-90 18 18)"></circle></svg></div>
+<div style="margin-top:6px;font-size:12px;font-weight:800;color:#96877F">3 of 8</div>
+</div>
+<div style="width:150px;flex:none;background:#FFFFFF;border-radius:20px;padding:13px;box-sizing:border-box">
+<svg width="30" height="30" viewBox="0 0 40 40"><ellipse cx="20" cy="31" rx="13" ry="6" fill="#FFFFFF" stroke="#2E2822" strokeWidth="2.2"></ellipse><ellipse cx="20" cy="21" rx="9.5" ry="5.5" fill="#DFF3E9" stroke="#2E2822" strokeWidth="2.2"></ellipse><circle cx="20" cy="11" r="5.5" fill="#FFFFFF" stroke="#2E2822" strokeWidth="2.2"></circle></svg>
+<div style="margin-top:8px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px"><div style="font-size:14.5px;font-weight:800;line-height:1.2">Philosophy<br>&nbsp;</div><svg width="28" height="28" viewBox="0 0 36 36" style="flex:none"><circle cx="18" cy="18" r="13" fill="none" stroke="#F0E9DC" strokeWidth="4"></circle><circle cx="18" cy="18" r="13" fill="none" stroke="#57C79B" strokeWidth="4" strokeLinecap="round" strokeDasharray="20.4 81.7" transform="rotate(-90 18 18)"></circle></svg></div>
+<div style="margin-top:6px;font-size:12px;font-weight:800;color:#96877F">2 of 8</div>
+</div>
+<div style="width:150px;flex:none;background:#FFFFFF;border-radius:20px;padding:13px;box-sizing:border-box">
+<svg width="30" height="30" viewBox="0 0 40 40"><path d="M12 5h11l8 8v22a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="#FFFFFF" stroke="#2E2822" strokeWidth="2.2" strokeLinejoin="round"></path><path d="M23 5v8h8" stroke="#2E2822" strokeWidth="2.2" fill="none" strokeLinejoin="round"></path><path d="M15 22h11M15 28h7" stroke="#2E2822" strokeWidth="2.2" strokeLinecap="round"></path></svg>
+<div style="margin-top:8px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px"><div style="font-size:14.5px;font-weight:800;line-height:1.2">Study<br>skills</div><svg width="28" height="28" viewBox="0 0 36 36" style="flex:none"><circle cx="18" cy="18" r="13" fill="none" stroke="#F0E9DC" strokeWidth="4"></circle><circle cx="18" cy="18" r="13" fill="none" stroke="#57C79B" strokeWidth="4" strokeLinecap="round" strokeDasharray="10.2 81.7" transform="rotate(-90 18 18)"></circle></svg></div>
+<div style="margin-top:6px;font-size:12px;font-weight:800;color:#96877F">1 of 6</div>
+</div>
+</div>
+
+<div style="margin-top:12px;background:#FFFFFF;border-radius:18px;padding:11px 13px;display:flex;align-items:center;gap:12px">
+<div style="width:36px;height:36px;border-radius:12px;background:#FFE9E5;display:grid;place-items:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="#FF6F61"></path></svg></div>
+<div style="flex:1;font-size:15.5px;font-weight:800">Saved cards</div>
+<div style="font-size:13px;font-weight:800;color:#96877F">12</div>
+<svg width="9" height="15" viewBox="0 0 9 15" style="flex:none"><path d="M1.6 1.6 7 7.5 1.6 13.4" stroke="#B4A996" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+</div>
+<dc-import name="TabBar" active="learn" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">Replaces the flat track list. Emoji track icons are gone — drawn vector icons plus a progress ring. Tracks became a horizontal shelf so the two sections above it (Continue, Because of your week) get the top of the screen. <b>Without a Continue deck</b> the section is absent and Because of your week moves to the top; <b>without Canvas connected</b> Because of your week is absent and Today's card moves up — the screen never shows an empty state, it just gets shorter.</p>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Track map (pushed, tab bar hidden)</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:24px;right:24px;top:52px;display:flex;align-items:center;gap:12px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="flex:1;text-align:center;font-size:18px;font-weight:800">Personal finance</div>
+<div style="display:flex;align-items:center;gap:6px;background:#FFFFFF;border-radius:999px;padding:6px 11px 6px 8px;flex:none"><svg width="17" height="17" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:13.5px;font-weight:800">1,130</span></div>
+</div>
+<div style="position:absolute;left:0;right:0;top:100px;text-align:center;font-size:13px;font-weight:700;color:#96877F">3 of 8 done</div>
+<div style="position:absolute;left:0;right:0;top:140px;height:700px">
+<svg width="390" height="700" viewBox="0 0 390 700" style="position:absolute;inset:0">
+<path d="M105 40 C150 70 230 78 262 118 C240 165 160 168 112 208" stroke="#57C79B" strokeWidth="5" fill="none" strokeLinecap="round"></path>
+<path d="M112 208 C90 268 244 296 270 358 C296 414 150 400 112 440 C80 476 230 480 262 520 C290 556 150 556 118 596 C96 628 232 620 268 652" stroke="#E0D4C0" strokeWidth="5" fill="none" strokeLinecap="round" strokeDasharray="2 14"></path>
+</svg>
+<div style="position:absolute;left:75px;top:10px;width:60px;height:60px;border-radius:999px;background:#57C79B;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M5 12.6 9.8 17.4 19 7.6" stroke="#FFFFFF" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:232px;top:88px;width:60px;height:60px;border-radius:999px;background:#57C79B;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M5 12.6 9.8 17.4 19 7.6" stroke="#FFFFFF" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:74px;top:170px;width:76px;height:76px;border-radius:999px;background:#FF6F61;box-shadow:0 0 0 7px #FFE9E5;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M8 4.8 19 12 8 19.2Z" fill="#FFF6EF"></path></svg></div>
+<dc-import name="Slime" face="idle" level="3" hint-size="58px,58px" style="position:absolute;left:168px;top:186px;width:58px;height:58px"></dc-import>
+<div style="position:absolute;left:42px;top:262px;width:306px;box-sizing:border-box;background:#FFFFFF;border-radius:20px;padding:13px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(46,38,34,.07)">
+<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:800;line-height:1.2">Why compound interest wins</div><div style="margin-top:3px;font-size:12px;font-weight:700;color:#96877F">Card 3 of 8 · 3 min</div></div>
+<div style="background:#FF6F61;color:#FFF6EF;border-radius:999px;padding:9px 15px;font-size:13.5px;font-weight:800;flex:none">Resume</div>
+</div>
+<div style="position:absolute;left:240px;top:328px;width:60px;height:60px;border-radius:999px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center"><div style="width:11px;height:11px;border-radius:999px;background:#DDD2C0"></div></div>
+<div style="position:absolute;left:82px;top:410px;width:60px;height:60px;border-radius:999px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center"><div style="width:11px;height:11px;border-radius:999px;background:#DDD2C0"></div></div>
+<div style="position:absolute;left:232px;top:490px;width:60px;height:60px;border-radius:999px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center"><div style="width:11px;height:11px;border-radius:999px;background:#DDD2C0"></div></div>
+<div style="position:absolute;left:88px;top:566px;width:60px;height:60px;border-radius:999px;background:#FFFFFF;border:2px solid #F0E9DC;box-sizing:border-box;display:grid;place-items:center"><div style="width:11px;height:11px;border-radius:999px;background:#DDD2C0"></div></div>
+<div style="position:absolute;left:230px;top:614px;width:76px;text-align:center">
+<div style="width:76px;height:76px;border-radius:999px;background:#FFF3D6;border:3px dashed #E8A62E;box-sizing:border-box;display:grid;place-items:center;opacity:.9"><svg width="34" height="34" viewBox="0 0 40 40" style="opacity:.45"><rect x="5" y="23" width="8" height="12" rx="2.5" fill="#FFF3D6" stroke="#2E2822" strokeWidth="2.2"></rect><rect x="15" y="17" width="8" height="18" rx="2.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></rect><circle cx="28" cy="13" r="8" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></circle></svg></div>
+<div style="margin-top:8px;font-size:12px;font-weight:800;color:#A8761D">Track badge</div>
+</div>
+</div>
+</div>
+<p class="dv-note">No units, no padlocks, no XP header — one run of 8, three states (mint done / coral current / cream locked). The slime sits beside where you are, so the map reads as company rather than a ladder. Locked nodes are dots, not walls. Ends in the badge you keep, drawn as an outline until it is earned.</p>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Lesson preview sheet</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;inset:0;background:rgba(46,38,34,.42)"></div>
+<div style="position:absolute;left:0;right:0;top:118px;bottom:0;background:#FFFFFF;border-radius:28px 28px 0 0;padding:0 24px;box-sizing:border-box">
+<div style="position:absolute;left:50%;top:12px;width:44px;height:5px;border-radius:999px;background:#F0E9DC;transform:translateX(-50%)"></div>
+<div style="position:absolute;right:20px;top:24px;width:36px;height:36px;border-radius:999px;background:#FAF5EC;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#96877F" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="margin-top:74px;height:178px;background:#FAF5EC;border-radius:20px;padding:16px 14px;box-sizing:border-box">
+<dc-import name="CompoundFigure" step="5" hint-size="100%,146px" style="width:100%;height:146px"></dc-import>
+</div>
+<div style="margin-top:18px;display:inline-flex;background:#FFE9E5;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:800;color:#E4735F">Personal finance</div>
+<div style="margin-top:11px;font-size:27px;font-weight:900;line-height:1.14;letter-spacing:-.01em">Why compound interest wins</div>
+<div style="margin-top:20px;font-size:13.5px;font-weight:800">What you'll learn</div>
+<div style="margin-top:7px;font-size:15px;font-weight:700;line-height:1.5;color:#7C6F68;text-wrap:pretty">Interest lands on top of interest, so money grows faster the longer it sits. You'll see what $1,000 does at 8% a year, and the one-line trick for knowing when it doubles.</div>
+<div style="margin-top:18px;display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;color:#96877F"><span>3 min</span><span>·</span><span>8 cards</span><span>·</span><svg width="16" height="16" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="color:#A8761D">+20 coins</span></div>
+<div style="position:absolute;left:24px;right:24px;bottom:36px;height:58px;border-radius:22px;background:#FF6F61;color:#FFF6EF;font-size:18px;font-weight:800;display:grid;place-items:center">Start</div>
+</div>
+</div>
+<p class="dv-note">Answers "how big is this?" before you commit: the real figure as cover art, the track, three lines of plain what-you'll-learn, and the size of the commitment in one line. One Start button, no secondary actions competing with it.</p>
+</div>
+
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Lesson card — figure, reveal step 3 of 5</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;right:22px;top:52px;display:flex;align-items:center;gap:14px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;display:flex;gap:4px"><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:116px;height:404px;background:#FFFFFF;border-radius:22px;display:grid;place-items:center;padding:24px 20px;box-sizing:border-box">
+<dc-import name="CompoundFigure" step="3" hint-size="100%,230px" style="width:100%;height:230px"></dc-import>
+</div>
+<div style="position:absolute;left:24px;right:26px;top:556px;font-size:19.5px;font-weight:700;line-height:1.5;text-wrap:pretty">$1,000 at 8% a year. Year 1 you earn $80. Year 2 you earn $86 — because now the $80 is earning too.</div>
+<div style="position:absolute;left:22px;right:22px;bottom:34px;display:flex;align-items:center;gap:10px">
+<div style="flex:1;height:52px;background:#FFFFFF;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:26px">
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="none" stroke="#96877F" strokeWidth="2"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3.4v11M8 7.2l4-3.8 4 3.8M5 13.6v5.4a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-5.4" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 3v18M6 4.6h11l-2.2 4.2L17 13H6" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+<div style="height:52px;background:#FF6F61;border-radius:999px;display:flex;align-items:center;gap:9px;padding:0 18px 0 7px;flex:none">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFF6EF;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="wink" level="1" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<span style="font-size:15px;font-weight:800;color:#FFF6EF">Ask Kin</span>
+</div>
+</div>
+</div>
+<p class="dv-note">Figure on a white card takes the top half; copy is left-aligned at 19.5pt in 3 short lines instead of a centred paragraph. Reveal step 3 = the two coin chips and the elbow that shows the $80 now earning. Ask Kin carries the mascot, not a sparkle.</p>
+</div>
+
+<div class="dv-opt" id="1e">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Lesson card — key idea</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;right:22px;top:52px;display:flex;align-items:center;gap:14px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;display:flex;gap:4px"><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div></div>
+</div>
+<div style="position:absolute;left:24px;top:150px;font-size:12px;font-weight:800;letter-spacing:.14em;color:#96877F">KEY IDEA</div>
+<div style="position:absolute;left:20px;right:20px;top:190px;background:#DFF3E9;border-radius:26px;padding:32px 26px 36px;box-sizing:border-box">
+<div style="font-size:23px;font-weight:800;line-height:1.4;letter-spacing:.005em;color:#2E2622">STARTING AT 18 INSTEAD OF 28 CAN ROUGHLY DOUBLE WHAT YOU END UP WITH. TIME MATTERS MORE THAN AMOUNT.</div>
+</div>
+<dc-import name="Slime" face="delight" level="3" hint-size="132px,132px" style="position:absolute;left:-30px;top:556px;width:132px;height:132px"></dc-import>
+<div style="position:absolute;left:118px;top:600px;background:#FFFFFF;border-radius:18px 18px 18px 6px;padding:11px 15px;font-size:13.5px;font-weight:800;color:#7C6F68">Screenshot this one.</div>
+<div style="position:absolute;left:22px;right:22px;bottom:34px;display:flex;align-items:center;gap:10px">
+<div style="flex:1;height:52px;background:#FFFFFF;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:26px">
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="#FF6F61" stroke="#FF6F61" strokeWidth="2"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3.4v11M8 7.2l4-3.8 4 3.8M5 13.6v5.4a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-5.4" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 3v18M6 4.6h11l-2.2 4.2L17 13H6" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+<div style="height:52px;background:#FF6F61;border-radius:999px;display:flex;align-items:center;gap:9px;padding:0 18px 0 7px;flex:none">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFF6EF;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="wink" level="1" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<span style="font-size:15px;font-weight:800;color:#FFF6EF">Ask Kin</span>
+</div>
+</div>
+</div>
+<p class="dv-note">The screenshot card: no figure, the sentence set in a mint-soft panel with real air around it, and the slime leaning in from the edge so a shared screenshot carries the app's character. Heart shown already filled — this is the card people save.</p>
+</div>
+
+<div class="dv-opt" id="1f">
+<div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Lesson card — example</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;right:22px;top:52px;display:flex;align-items:center;gap:14px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;display:flex;gap:4px"><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div></div>
+</div>
+<div style="position:absolute;left:24px;top:150px;font-size:12px;font-weight:800;letter-spacing:.14em;color:#96877F">FOR EXAMPLE</div>
+<div style="position:absolute;left:24px;top:196px;width:210px;height:150px;background:#FFFFFF;border-radius:20px;display:grid;place-items:center;padding:14px;box-sizing:border-box">
+<svg width="168" height="116" viewBox="0 0 180 124">
+<path d="M12 104h156" stroke="#2E2822" strokeWidth="2" strokeLinecap="round"></path>
+<ellipse cx="52" cy="96" rx="21" ry="6.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2"></ellipse>
+<ellipse cx="52" cy="83" rx="21" ry="6.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2"></ellipse>
+<ellipse cx="52" cy="70" rx="21" ry="6.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2"></ellipse>
+<ellipse cx="52" cy="57" rx="21" ry="6.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2"></ellipse>
+<ellipse cx="52" cy="44" rx="21" ry="6.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2"></ellipse>
+<ellipse cx="130" cy="96" rx="21" ry="6.5" fill="#9BC8F2" stroke="#2E2822" strokeWidth="2"></ellipse>
+<ellipse cx="130" cy="83" rx="21" ry="6.5" fill="#9BC8F2" stroke="#2E2822" strokeWidth="2"></ellipse>
+<text x="52" y="122" textAnchor="middle" fontSize="14" fontWeight="800" fill="#2E2822" fontFamily="Nunito, sans-serif">from 18</text>
+<text x="130" y="122" textAnchor="middle" fontSize="14" fontWeight="800" fill="#2E2822" fontFamily="Nunito, sans-serif">from 28</text>
+</svg>
+</div>
+<div style="position:absolute;left:24px;right:26px;top:380px;font-size:19.5px;font-weight:700;line-height:1.5;text-wrap:pretty">Two students both put away $200 a month. One starts at 18, the other at 28. By 60 the early one ends up with roughly twice as much.</div>
+<div style="position:absolute;left:22px;right:22px;bottom:34px;display:flex;align-items:center;gap:10px">
+<div style="flex:1;height:52px;background:#FFFFFF;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:26px">
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="none" stroke="#96877F" strokeWidth="2"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3.4v11M8 7.2l4-3.8 4 3.8M5 13.6v5.4a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-5.4" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 3v18M6 4.6h11l-2.2 4.2L17 13H6" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+<div style="height:52px;background:#FF6F61;border-radius:999px;display:flex;align-items:center;gap:9px;padding:0 18px 0 7px;flex:none">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFF6EF;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="wink" level="1" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<span style="font-size:15px;font-weight:800;color:#FFF6EF">Ask Kin</span>
+</div>
+</div>
+</div>
+<p class="dv-note">Imprint's example card is a bare sentence on white. This one keeps the same short copy but earns its space with a small drawn spot — two stacks, same monthly amount, ten years apart — so the example is visible before it is read.</p>
+</div>
+
+<div class="dv-opt" id="1g">
+<div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>Lesson card — check, answered</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;right:22px;top:52px;display:flex;align-items:center;gap:14px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;display:flex;gap:4px"><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div></div>
+</div>
+<div style="position:absolute;left:24px;top:150px;font-size:12px;font-weight:800;letter-spacing:.14em;color:#96877F">QUICK CHECK</div>
+<div style="position:absolute;left:24px;right:26px;top:186px;font-size:21px;font-weight:800;line-height:1.32;text-wrap:pretty">Why does year 2 earn more than year 1?</div>
+<div style="position:absolute;left:20px;right:20px;top:280px;display:flex;flex-direction:column;gap:10px">
+<div style="background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:18px;padding:15px 16px;display:flex;align-items:center;gap:13px;box-sizing:border-box">
+<div style="width:22px;height:22px;border-radius:999px;border:2px solid #DDD2C0;flex:none"></div>
+<div style="flex:1;font-size:15.5px;font-weight:700;color:#7C6F68">You put in more money</div>
+<div style="font-size:11.5px;font-weight:800;color:#B4A996;flex:none">you picked</div>
+</div>
+<div style="background:#DFF3E9;border:2px solid #57C79B;border-radius:18px;padding:15px 16px;display:flex;align-items:center;gap:13px;box-sizing:border-box">
+<div style="width:22px;height:22px;border-radius:999px;background:#57C79B;display:grid;place-items:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M5 12.6 9.8 17.4 19 7.6" stroke="#FFFFFF" strokeWidth="3.6" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="flex:1;font-size:15.5px;font-weight:800">Interest is now earning interest</div>
+</div>
+<div style="background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:18px;padding:15px 16px;display:flex;align-items:center;gap:13px;box-sizing:border-box">
+<div style="width:22px;height:22px;border-radius:999px;border:2px solid #DDD2C0;flex:none"></div>
+<div style="flex:1;font-size:15.5px;font-weight:700;color:#7C6F68">The rate goes up each year</div>
+</div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:520px;background:#FFFFFF;border-radius:20px;padding:18px">
+<div style="font-size:16px;font-weight:700;line-height:1.5;color:#2E2622;text-wrap:pretty">Interest is added to your balance, so the next year is worked out on a bigger number.</div>
+<div style="margin-top:12px;font-size:12.5px;font-weight:800;color:#96877F">No coins for this one. Finishing the lesson pays.</div>
+</div>
+<div style="position:absolute;left:22px;right:22px;bottom:34px;display:flex;align-items:center;gap:10px">
+<div style="flex:1;height:52px;background:#FFFFFF;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:26px">
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="none" stroke="#96877F" strokeWidth="2"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3.4v11M8 7.2l4-3.8 4 3.8M5 13.6v5.4a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-5.4" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 3v18M6 4.6h11l-2.2 4.2L17 13H6" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+<div style="height:52px;background:#FF6F61;border-radius:999px;display:flex;align-items:center;gap:9px;padding:0 18px 0 7px;flex:none">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFF6EF;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="wink" level="1" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<span style="font-size:15px;font-weight:800;color:#FFF6EF">Ask Kin</span>
+</div>
+</div>
+</div>
+<p class="dv-note">A wrong pick is not marked wrong: the choice you tapped keeps a quiet "you picked" label, the right answer turns mint, and the reason appears underneath. No red, no X, no buzzer, and the card states out loud that the answer earns nothing — finishing does.</p>
+</div>
+
+<div class="dv-opt" id="1h">
+<div class="dv-olabel"><a class="dv-oid" href="#1h">1h</a>Tap-zone coach overlay (first lesson only)</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;right:22px;top:52px;display:flex;align-items:center;gap:14px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;display:flex;gap:4px"><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div><div style="flex:1;height:5px;border-radius:999px;background:#EFE7D9"></div></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:116px;height:404px;background:#FFFFFF;border-radius:22px;display:grid;place-items:center;padding:24px 20px;box-sizing:border-box">
+<dc-import name="CompoundFigure" step="1" hint-size="100%,230px" style="width:100%;height:230px"></dc-import>
+</div>
+<div style="position:absolute;left:24px;right:26px;top:556px;font-size:19.5px;font-weight:700;line-height:1.5">Compound interest means you earn interest on your interest. Money grows faster the longer it sits.</div>
+<div style="position:absolute;inset:0;background:rgba(46,38,34,.66)"></div>
+<div style="position:absolute;left:14px;top:126px;width:116px;bottom:250px;border:2px dashed rgba(255,246,239,.34);border-radius:22px"></div>
+<div style="position:absolute;left:146px;right:14px;top:126px;bottom:250px;border:2px dashed rgba(255,246,239,.34);border-radius:22px"></div>
+<div style="position:absolute;left:137px;top:150px;bottom:274px;width:2px;background:#57C79B;border-radius:999px"></div>
+<div style="position:absolute;left:20px;width:104px;top:330px;text-align:center;font-size:15px;font-weight:800;line-height:1.35;color:#FFF6EF">tap here<br>to go back</div>
+<div style="position:absolute;left:150px;right:20px;top:314px;text-align:center;font-size:21px;font-weight:800;line-height:1.32;color:#FFF6EF">tap here<br>to go forward</div>
+<div style="position:absolute;left:24px;right:24px;bottom:118px;display:flex;align-items:center;gap:12px">
+<dc-import name="Slime" face="wink" level="3" hint-size="78px,78px" style="width:78px;height:78px;flex:none"></dc-import>
+<div style="flex:1;font-size:15px;font-weight:800;line-height:1.45;color:#FFF6EF;text-wrap:pretty">Leave whenever you like — I'll keep your place.</div>
+</div>
+<div style="position:absolute;left:22px;right:22px;bottom:38px;height:56px;border-radius:22px;background:#FF6F61;color:#FFF6EF;font-size:17px;font-weight:800;display:grid;place-items:center">Got it</div>
+</div>
+<p class="dv-note">Same two zones as the reference, but the dark scrim carries the mascot and one line that removes the pressure rather than explaining the UI twice. Shown once, dismissed by one button.</p>
+</div>
+
+<div class="dv-opt" id="1i">
+<div class="dv-olabel"><a class="dv-oid" href="#1i">1i</a>Finish card</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;right:22px;top:52px;display:flex;align-items:center;gap:14px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;display:flex;gap:4px"><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div><div style="flex:1;height:5px;border-radius:999px;background:#57C79B"></div></div>
+</div>
+<div style="position:absolute;right:22px;top:108px;display:flex;align-items:center;gap:7px;background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:999px;padding:7px 13px 7px 9px"><svg width="19" height="19" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:15px;font-weight:800">1,130</span></div>
+<svg width="300" height="240" viewBox="0 0 300 240" style="position:absolute;right:8px;top:130px"><circle cx="252" cy="30" r="9" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6" opacity="0.35"></circle><circle cx="218" cy="66" r="11" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6" opacity="0.5"></circle><circle cx="176" cy="108" r="13" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6" opacity="0.68"></circle><circle cx="130" cy="150" r="15" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.8" opacity="0.85"></circle><circle cx="86" cy="186" r="17" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.8"></circle></svg>
+<dc-import name="Slime" face="delight" level="3" hint-size="200px,200px" style="position:absolute;left:95px;top:326px;width:200px;height:200px"></dc-import>
+<div style="position:absolute;left:32px;right:32px;top:566px;text-align:center;font-size:27px;font-weight:900;line-height:1.2;letter-spacing:-.01em">That's the lesson.</div>
+<div style="position:absolute;left:32px;right:32px;top:606px;text-align:center;font-size:13.5px;font-weight:700;color:#96877F">Why compound interest wins · 8 cards</div>
+<div style="position:absolute;left:22px;right:22px;bottom:38px;height:60px;border-radius:22px;background:#FF6F61;display:flex;align-items:center;justify-content:center;gap:10px">
+<span style="font-size:18px;font-weight:800;color:#FFF6EF">Finish</span>
+<span style="font-size:18px;font-weight:800;color:rgba(255,246,239,.55)">·</span>
+<svg width="19" height="19" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg>
+<span style="font-size:18px;font-weight:800;color:#FFF6EF">+20 coins</span>
+</div>
+</div>
+<p class="dv-note">Reward is attached to the act of finishing and nothing else. Coins arc from the slime up into the coin chip, so the chip is where the eye lands. The lesson title is a footnote here, not a headline.</p>
+</div>
+
+<div class="dv-opt" id="1j">
+<div class="dv-olabel"><a class="dv-oid" href="#1j">1j</a>Lesson complete → what next <span style="font-weight:400;color:rgba(46,38,34,.5)">(new)</span></div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="position:absolute;right:22px;top:52px;display:flex;align-items:center;gap:7px;background:#FFFFFF;border:1.5px solid #F0E9DC;border-radius:999px;padding:7px 13px 7px 9px"><svg width="19" height="19" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:15px;font-weight:800">1,150</span></div>
+<dc-import name="Slime" face="idle" level="3" hint-size="150px,150px" style="position:absolute;left:120px;top:150px;width:150px;height:150px"></dc-import>
+<div style="position:absolute;left:34px;right:34px;top:326px;text-align:center;font-size:24px;font-weight:800;line-height:1.34;text-wrap:pretty">You learned why time matters more than amount.</div>
+<div style="position:absolute;left:0;right:0;top:436px;display:flex;justify-content:center"><div style="display:flex;align-items:center;gap:8px;background:#FFF3D6;border-radius:999px;padding:10px 18px"><svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="#FFC24B" stroke="#E8A62E" strokeWidth="1.6"></circle></svg><span style="font-size:14.5px;font-weight:800;color:#A8761D">+20 coins for finishing</span></div></div>
+<div style="position:absolute;left:22px;right:22px;bottom:120px;background:#FFFFFF;border-radius:24px;padding:20px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.1em;color:#96877F">NEXT IN PERSONAL FINANCE</div>
+<div style="margin-top:9px;font-size:19px;font-weight:800;line-height:1.25">Your first budget in 4 lines</div>
+<div style="margin-top:5px;font-size:13px;font-weight:700;color:#96877F">4 cards · 2 min · +20</div>
+<div style="margin-top:16px;height:54px;border-radius:20px;background:#FF6F61;color:#FFF6EF;font-size:17px;font-weight:800;display:grid;place-items:center">Start</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:56px;text-align:center;font-size:14.5px;font-weight:800;color:#96877F">Not now</div>
+</div>
+<p class="dv-note">One warm screen instead of a dump back to the map: what you learned in one line, the coins, one forward move, one quiet way out. <b>When the lesson was picked for a Canvas assignment</b> the card becomes the other single move — "Focus 15 min on Bio quiz, due Friday" — same shape, same one button.</p>
+</div>
+
+<div class="dv-opt" id="1k">
+<div class="dv-olabel"><a class="dv-oid" href="#1k">1k</a>Saved cards — filled</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:112px;font-size:30px;font-weight:900;line-height:1;letter-spacing:-.01em">Saved cards</div>
+<div style="position:absolute;left:24px;top:150px;font-size:13px;font-weight:700;color:#96877F">12 cards you kept</div>
+<div style="position:absolute;left:20px;right:20px;top:196px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#FFFFFF;border-radius:20px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between"><div style="background:#FFF3D6;border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:800;color:#A8761D;letter-spacing:.04em">PERSONAL FINANCE</div><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="#FF6F61"></path></svg></div>
+<div style="margin-top:11px;font-size:16px;font-weight:700;line-height:1.45">Compound interest means you earn interest on your interest.</div>
+</div>
+<div style="background:#DFF3E9;border-radius:20px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:10.5px;font-weight:800;color:#3E9E78;letter-spacing:.14em">KEY IDEA</div><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="#FF6F61"></path></svg></div>
+<div style="margin-top:11px;font-size:15.5px;font-weight:800;line-height:1.42">TIME MATTERS MORE THAN AMOUNT.</div>
+</div>
+<div style="background:#FFFFFF;border-radius:20px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between"><div style="background:#DFF3E9;border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:800;color:#3E9E78;letter-spacing:.04em">STUDY SKILLS</div><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="#FF6F61"></path></svg></div>
+<div style="margin-top:11px;font-size:16px;font-weight:700;line-height:1.45">Spacing practice out beats one long session.</div>
+</div>
+<div style="background:#FFFFFF;border-radius:20px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between"><div style="background:#F5EFE3;border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:800;color:#96877F;letter-spacing:.04em">PHILOSOPHY</div><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="#FF6F61"></path></svg></div>
+<div style="margin-top:11px;font-size:16px;font-weight:700;line-height:1.45">You control your response, never the event.</div>
+</div>
+</div>
+<dc-import name="TabBar" active="learn" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">Saved cards keep the shape of the card they came from — a key idea stays mint and all-caps — so the deck reads as your own highlights rather than a list of rows. Sort controls dropped; newest first.</p>
+</div>
+
+<div class="dv-opt" id="1l">
+<div class="dv-olabel"><a class="dv-oid" href="#1l">1l</a>Saved cards — empty</div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;top:52px;width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center"><svg width="9" height="15" viewBox="0 0 9 15"><path d="M7.4 1.6 2 7.5l5.4 5.9" stroke="#2E2622" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg></div>
+<div style="position:absolute;left:24px;top:112px;font-size:30px;font-weight:900;line-height:1;letter-spacing:-.01em">Saved cards</div>
+<div style="position:absolute;left:24px;top:150px;font-size:13px;font-weight:700;color:#96877F">Nothing kept yet</div>
+<div style="position:absolute;left:66px;top:236px;width:258px;background:#FFFFFF;border-radius:20px;padding:18px;box-sizing:border-box;box-shadow:0 4px 16px rgba(46,38,34,.08)">
+<div style="height:11px;border-radius:999px;background:#F0E9DC"></div>
+<div style="margin-top:10px;height:11px;border-radius:999px;background:#F0E9DC"></div>
+<div style="margin-top:10px;height:11px;width:62%;border-radius:999px;background:#F0E9DC"></div>
+<div style="margin-top:20px;display:flex;justify-content:flex-end;position:relative">
+<svg width="26" height="26" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="#FF6F61"></path></svg>
+<div style="position:absolute;right:-11px;bottom:-11px;width:48px;height:48px;border-radius:999px;border:2px solid rgba(255,111,97,.45)"></div>
+<div style="position:absolute;right:-24px;bottom:-24px;width:74px;height:74px;border-radius:999px;border:2px solid rgba(255,111,97,.2)"></div>
+</div>
+</div>
+<dc-import name="Slime" face="idle" level="3" hint-size="104px,104px" style="position:absolute;left:22px;top:352px;width:104px;height:104px"></dc-import>
+<div style="position:absolute;left:32px;right:32px;top:494px;text-align:center;font-size:21px;font-weight:800;line-height:1.36;text-wrap:pretty">Tap the heart on a card you want to keep.</div>
+<div style="position:absolute;left:44px;right:44px;top:568px;text-align:center;font-size:15px;font-weight:700;line-height:1.5;color:#96877F">They land here, and Kin will bring one back to you now and then.</div>
+<dc-import name="TabBar" active="learn" hint-size="390px,170px"></dc-import>
+</div>
+<p class="dv-note">The empty state teaches the gesture by showing it: a card, a heart, a tap ripple. No tooltip voice, and the second line gives the deck a purpose instead of apologising for being empty.</p>
+</div>
+
+<div class="dv-opt" id="1m" style="width:390px">
+<div class="dv-olabel"><a class="dv-oid" href="#1m">1m</a>Figure accretion — live<span style="font-weight:400;color:rgba(46,38,34,.5)">· tap the right side to advance, left to go back</span></div>
+<div style="width:390px;height:844px;background:#FAF5EC;border-radius:38px;position:relative;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:#2E2622;box-shadow:0 6px 22px rgba(46,38,34,.13)">
+<div style="position:absolute;left:22px;right:22px;top:52px;display:flex;align-items:center;gap:14px">
+<div style="width:40px;height:40px;border-radius:999px;background:#FFFFFF;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#2E2622" strokeWidth="2.4" strokeLinecap="round"></path></svg></div>
+<div style="flex:1;display:flex;gap:4px"><sc-for list="{{ segs }}" as="seg" hint-placeholder-count="5"><div style="flex:1;height:5px;border-radius:999px;background:{{ seg.bg }}"></div></sc-for></div>
+</div>
+<div style="position:absolute;left:20px;right:20px;top:116px;height:404px;background:#FFFFFF;border-radius:22px;display:grid;place-items:center;padding:24px 20px;box-sizing:border-box">
+<dc-import name="CompoundFigure" step="{{ step }}" hint-size="100%,230px" style="width:100%;height:230px"></dc-import>
+</div>
+<div style="position:absolute;left:24px;top:534px;font-size:12px;font-weight:800;letter-spacing:.14em;color:#96877F">REVEAL {{ stepLabel }}</div>
+<div style="position:absolute;left:24px;right:26px;top:566px;font-size:19.5px;font-weight:700;line-height:1.5;text-wrap:pretty">{{ body }}</div>
+<div style="position:absolute;left:0;top:100px;width:130px;bottom:120px;cursor:pointer" onClick="{{ back }}"></div>
+<div style="position:absolute;left:130px;right:0;top:100px;bottom:120px;cursor:pointer" onClick="{{ fwd }}"></div>
+<div style="position:absolute;left:22px;right:22px;bottom:34px;display:flex;align-items:center;gap:10px">
+<div style="flex:1;height:52px;background:#FFFFFF;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:26px">
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 20.4S4 15.5 4 10.2A4.8 4.8 0 0 1 12 6.9a4.8 4.8 0 0 1 8 3.3c0 5.3-8 10.2-8 10.2Z" fill="none" stroke="#96877F" strokeWidth="2"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3.4v11M8 7.2l4-3.8 4 3.8M5 13.6v5.4a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-5.4" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+<svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 3v18M6 4.6h11l-2.2 4.2L17 13H6" fill="none" stroke="#96877F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+</div>
+<div style="height:52px;background:#FF6F61;border-radius:999px;display:flex;align-items:center;gap:9px;padding:0 18px 0 7px;flex:none">
+<div style="width:38px;height:38px;border-radius:999px;background:#FFF6EF;display:grid;place-items:center;overflow:hidden"><dc-import name="Slime" face="wink" level="1" hint-size="30px,30px" style="width:30px;height:30px;margin-top:5px"></dc-import></div>
+<span style="font-size:15px;font-weight:800;color:#FFF6EF">Ask Kin</span>
+</div>
+</div>
+</div>
+<p class="dv-note">One drawing, five reveals — nothing moves or disappears between cards, each tap only adds a layer. This is the artboard to build against.</p>
+</div>
+
+<div class="dv-opt" id="1n" style="width:814px;grid-column:span 2">
+<div class="dv-olabel"><a class="dv-oid" href="#1n">1n</a>Spec — reveal order and track icons</div>
+<div style="width:814px;box-sizing:border-box;background:#FFFFFF;border-radius:24px;padding:34px 36px;font-family:Nunito,system-ui,sans-serif;color:#2E2622">
+<div style="font-size:20px;font-weight:900">Compound interest figure — named layers, in reveal order</div>
+<div style="margin-top:6px;font-size:13.5px;font-weight:700;color:#96877F">One drawing across the deck. A step only ever adds; nothing repositions, recolours or disappears. 2pt ink outline <span style="font-family:ui-monospace,Menlo,monospace">#2E2822</span>, three fills only — coin <span style="font-family:ui-monospace,Menlo,monospace">#FFC24B</span>, leaf <span style="font-family:ui-monospace,Menlo,monospace">#A5CE6B</span>, sky <span style="font-family:ui-monospace,Menlo,monospace">#9BC8F2</span> — over paper.</div>
+<div style="margin-top:22px;display:flex;flex-direction:column;gap:2px">
+<div style="display:flex;gap:18px;padding:14px 0;border-top:1px solid #F0E9DC"><div style="width:74px;flex:none;font-size:13px;font-weight:900;color:#FF6F61">Card 1</div><div style="width:210px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:700">stack.base<br>ground.line<br>label.principal</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Three coin discs on a ground line, "$1,000" above. The figure bare.</div></div>
+<div style="display:flex;gap:18px;padding:14px 0;border-top:1px solid #F0E9DC"><div style="width:74px;flex:none;font-size:13px;font-weight:900;color:#FF6F61">Card 2</div><div style="width:210px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:700">curve.compound<br>chip.year1</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">The leaf curve grows out of the top of the stack; "+$80" chip lands on year 1.</div></div>
+<div style="display:flex;gap:18px;padding:14px 0;border-top:1px solid #F0E9DC"><div style="width:74px;flex:none;font-size:13px;font-weight:900;color:#FF6F61">Card 3</div><div style="width:210px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:700">chip.year2<br>link.elbow</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">"+$86" chip higher up the curve, joined back to the first chip by an elbow — the $80 is now earning.</div></div>
+<div style="display:flex;gap:18px;padding:14px 0;border-top:1px solid #F0E9DC"><div style="width:74px;flex:none;font-size:13px;font-weight:900;color:#FF6F61">Card 4</div><div style="width:210px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:700">line.double<br>tick.nineYears<br>pill.rule72</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">Dashed horizontal at twice the principal, dashed vertical where the curve crosses it, "9 years" under the axis, "72 ÷ 8 = 9" pill top-left.</div></div>
+<div style="display:flex;gap:18px;padding:14px 0;border-top:1px solid #F0E9DC;border-bottom:1px solid #F0E9DC"><div style="width:74px;flex:none;font-size:13px;font-weight:900;color:#FF6F61">Card 6</div><div style="width:210px;flex:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:700">curve.late<br>label.startAges</div><div style="flex:1;font-size:14px;font-weight:700;line-height:1.5">A second, sky curve starting ten years along the axis and finishing far lower; both curves get a start label. The whole lesson in one picture.</div></div>
+</div>
+<div style="margin-top:12px;font-size:13px;font-weight:700;color:#96877F">Cards 5 (example) and 7 (key idea) hold no figure; card 8 is the check. The figure card in <a class="dv-oid" href="#1d">1d</a> is card 3 — reveal step 3 of 5.</div>
+
+<div style="margin-top:38px;font-size:20px;font-weight:900">Track icons</div>
+<div style="margin-top:18px;display:flex;gap:16px">
+<div style="flex:1;background:#FAF5EC;border-radius:20px;padding:20px">
+<div style="width:64px;height:64px;border-radius:18px;background:#FFF3D6;display:grid;place-items:center"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="5" y="23" width="8" height="12" rx="2.5" fill="#FFF3D6" stroke="#2E2822" strokeWidth="2.2"></rect><rect x="15" y="17" width="8" height="18" rx="2.5" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></rect><circle cx="28" cy="13" r="8" fill="#FFC24B" stroke="#2E2822" strokeWidth="2.2"></circle><path d="M28 8.5v9M25.5 11h5M25.5 14.5h5" stroke="#2E2822" strokeWidth="2.1" strokeLinecap="round"></path></svg></div>
+<div style="margin-top:14px;font-size:15px;font-weight:800">Personal finance</div>
+<div style="margin-top:5px;font-size:13px;font-weight:700;line-height:1.5;color:#96877F">A coin rising off two bars. Money that grows, not money you hold — and it shares the coin the whole app already uses.</div>
+</div>
+<div style="flex:1;background:#FAF5EC;border-radius:20px;padding:20px">
+<div style="width:64px;height:64px;border-radius:18px;background:#DFF3E9;display:grid;place-items:center"><svg width="40" height="40" viewBox="0 0 40 40"><ellipse cx="20" cy="31" rx="13" ry="6" fill="#FFFFFF" stroke="#2E2822" strokeWidth="2.2"></ellipse><ellipse cx="20" cy="21" rx="9.5" ry="5.5" fill="#DFF3E9" stroke="#2E2822" strokeWidth="2.2"></ellipse><circle cx="20" cy="11" r="5.5" fill="#FFFFFF" stroke="#2E2822" strokeWidth="2.2"></circle></svg></div>
+<div style="margin-top:14px;font-size:15px;font-weight:800">Philosophy</div>
+<div style="margin-top:5px;font-size:13px;font-weight:700;line-height:1.5;color:#96877F">Three balanced stones. Thinking as something you stack carefully, rather than a Greek temple that belongs to somebody else.</div>
+</div>
+<div style="flex:1;background:#FAF5EC;border-radius:20px;padding:20px">
+<div style="width:64px;height:64px;border-radius:18px;background:#F5EFE3;display:grid;place-items:center"><svg width="40" height="40" viewBox="0 0 40 40"><path d="M12 5h11l8 8v22a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="#FFFFFF" stroke="#2E2822" strokeWidth="2.2" strokeLinejoin="round"></path><path d="M23 5v8h8" stroke="#2E2822" strokeWidth="2.2" fill="none" strokeLinejoin="round"></path><path d="M15 22h11M15 28h7" stroke="#2E2822" strokeWidth="2.2" strokeLinecap="round"></path></svg></div>
+<div style="margin-top:14px;font-size:15px;font-weight:800">Study skills</div>
+<div style="margin-top:5px;font-size:13px;font-weight:700;line-height:1.5;color:#96877F">A dog-eared note card. The thing a student actually makes when a method works, and it echoes the card format of the reader itself.</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "the check card should offer a second try" · "make the track map nodes bigger" · "show the Learn root with no Canvas connected"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;figureStart&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1,&quot;min&quot;:1,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Figure accretion demo (1m)&quot;},&quot;demoAutoplay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Figure accretion demo (1m)&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { step: Number(props.figureStart ?? 1) };
+  }
+  componentDidMount() {
+    if (this.props.demoAutoplay) {
+      this.t = setInterval(() => this.setState(s => ({ step: s.step >= 5 ? 1 : s.step + 1 })), 1800);
+    }
+  }
+  componentWillUnmount() { clearInterval(this.t); }
+  renderVals() {
+    const step = Math.min(5, Math.max(1, this.state.step));
+    const bodies = [
+      'Compound interest means you earn interest on your interest. Money grows faster the longer it sits.',
+      '$1,000 at 8% a year. Year 1 you earn $80.',
+      'Year 2 you earn $86 — because now the $80 is earning too.',
+      "The rule of 72: divide 72 by the rate to see how many years it takes to double. At 8%, that's 9 years.",
+      'Starting at 18 instead of 28 can roughly double what you end up with.'
+    ];
+    return {
+      step,
+      stepLabel: step + ' OF 5',
+      body: bodies[step - 1],
+      segs: [1, 2, 3, 4, 5].map(n => ({ bg: n <= step ? '#57C79B' : '#EFE7D9' })),
+      fwd: () => this.setState(s => ({ step: Math.min(5, s.step + 1) })),
+      back: () => this.setState(s => ({ step: Math.max(1, s.step - 1) }))
+    };
+  }
+}
+</script>
+</body>
+</html>
