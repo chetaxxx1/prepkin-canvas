@@ -1,16 +1,17 @@
 import SwiftUI
 
-/// Focus is a *shift*: Kin clocks into a delivery job and drives for as long as
-/// the student stays off their phone. Finishing pays 1 coin a minute; clocking
-/// out early pays for the minutes actually worked.
+/// Focus is a *shift*: Sprout clocks in and swims upstream in his own lagoon for
+/// as long as the student stays off their phone. Finishing pays 1 coin a minute;
+/// clocking out early pays for the minutes actually worked.
 ///
-/// The running screen follows `design/handoff/focus-shift-van/README.md`, with
-/// the handoff's amber-and-near-black chrome mapped onto the app's own tokens
-/// (coral action, coin yellow fill). Deviations are noted at each site.
+/// The running screen's layout follows `design/handoff/focus-shift-van/README.md`
+/// (chrome mapped onto the app's own tokens); the van scene it drew was replaced
+/// by `SwimSceneView` on 2026-09-03 — the kin is a fish, so the shift is a swim.
 struct FocusView: View {
     @EnvironmentObject var state: AppState
 
     @State private var minutes = 25
+    private var scene: Scene0 { Scene0.find(state.sceneID) }
     @State private var phase: Phase = .ready
     /// Shift time from legs already finished, plus when the current leg started.
     /// Split this way so a pause freezes both the clock and the scene, and a
@@ -26,8 +27,8 @@ struct FocusView: View {
 
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    /// A mile every 90 seconds, from the handoff.
-    private static let secondsPerMile: TimeInterval = 90
+    /// A length every 90 seconds. The scene's float passes Sprout on this tick.
+    private static let secondsPerMile: TimeInterval = SwimSceneView.secondsPerLength
 
     var body: some View {
         NavigationStack {
@@ -39,6 +40,11 @@ struct FocusView: View {
             .onReceive(ticker) { t in
                 now = t
                 if phase == .running && remaining <= 0 { finish() }
+            }
+            // The float has just passed: one bounce, off the same tick the count
+            // uses, so the two can never drift apart.
+            .onChange(of: miles) { old, new in
+                if phase == .running && new > old { state.play(.bounce) }
             }
             .onChange(of: phase) { _, new in state.hideTabBar = new != .ready }
             .onDisappear { state.hideTabBar = false }
@@ -56,10 +62,27 @@ struct FocusView: View {
 
             Spacer()
 
+            // Sprout on a still, low-contrast band of the student's own tank, so
+            // Focus reads as the same world as Home and Kin without a second live
+            // tank. Idle stays plain on purpose: the scene belongs to the shift
+            // (design/handoff/focus-shift-van).
             SproutImage(speciesID: state.activeChibiID,
                         level: state.activeChibi.level,
                         animation: state.animation,
                         size: 190)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    Image(scene.asset)
+                        .resizable()
+                        .scaledToFill()
+                        .opacity(0.5)
+                        .overlay(LinearGradient(
+                            colors: [Theme.paper, Theme.paper.opacity(0), Theme.paper.opacity(0), Theme.paper],
+                            startPoint: .top, endPoint: .bottom))
+                )
+                .clipped()
+                .padding(.horizontal, -24)
 
             Text("\(minutes) min")
                 .font(Theme.font(56, .black))
@@ -78,11 +101,16 @@ struct FocusView: View {
                             .frame(width: 56, height: 36)
                             .background(Capsule().fill(minutes == m ? Theme.ink : Theme.card)
                                 .shadow(color: .black.opacity(0.05), radius: 5, y: 2))
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
-                Stepper("Session length", value: $minutes, in: 5...120, step: 5)
-                    .labelsHidden()
+                // Our own − / + instead of a system Stepper: the system one takes its
+                // tint from the OS appearance, so it faded to nothing in dark mode
+                // on this forced-light page, and its 32pt buttons were under target.
+                stepButton("minus", label: "5 minutes shorter", enabled: minutes > 5) { minutes -= 5 }
+                stepButton("plus", label: "5 minutes longer", enabled: minutes < 120) { minutes += 5 }
             }
             .padding(.top, 14)
 
@@ -139,7 +167,7 @@ struct FocusView: View {
             .padding(.horizontal, 22)
             .padding(.top, 8)
 
-            Text("\(state.activeChibi.species.name) is on shift")
+            Text("\(state.activeChibi.displayName) is on shift")
                 .font(Theme.font(27 * k, .black))
                 .tracking(-0.8)
                 .foregroundStyle(Theme.ink)
@@ -186,27 +214,69 @@ struct FocusView: View {
             .padding(.horizontal, 22)
             .padding(.bottom, 26)
         }
-        // The handoff hands clock-out to a quit sheet that has not been designed
-        // yet; a confirmation dialog stands in and asks the same question.
-        .confirmationDialog("Clock out early?", isPresented: $confirmingClockOut,
-                            titleVisibility: .visible) {
-            Button(payLabel) { clockOut() }
-            Button("Keep working", role: .cancel) {}
-        } message: {
+        // The handoff's quit sheet. Dismissing it any way — the button, a tap
+        // outside — leaves the shift running, so only the pay button clocks out.
+        .sheet(isPresented: $confirmingClockOut) { quitSheet }
+    }
+
+    private var quitSheet: some View {
+        VStack(spacing: 0) {
+            Text("Clock out early?")
+                .font(Theme.font(22, .black))
+                .foregroundStyle(Theme.ink)
+                .padding(.top, 32)
+
             Text(paidMinutes > 0
                  ? "\(paidMinutes) min worked. That is what the shift pays."
                  : "The shift has not paid a minute yet.")
+                .font(Theme.font(15, .bold))
+                .lineSpacing(4)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Theme.hex(0x7C6F68))
+                .padding(.top, 10)
+                .padding(.horizontal, 8)
+
+            Spacer(minLength: 16)
+
+            Button { clockOut() } label: {
+                Text(payLabel)
+                    .font(Theme.font(16, .black))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, minHeight: 56)
+                    .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(Theme.coral))
+            }
+            .buttonStyle(PressStyle())
+
+            Button { confirmingClockOut = false } label: {
+                Text("Keep working")
+                    .font(Theme.font(14.5, .heavy))
+                    .foregroundStyle(Theme.bagInk)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+            }
+            .padding(.bottom, 10)
         }
+        .padding(.horizontal, 22)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Theme.paper)
+        .presentationDetents([.height(256)])
+        .presentationDragIndicator(.hidden)
+        .presentationCornerRadius(26)
     }
 
-    /// The scene runs off its own timeline so the wheels and road are smooth,
-    /// not once-a-second. Pausing the timeline freezes every part of the loop.
+    /// The scene runs off its own timeline so the water is smooth, not once-a-second.
     private func scene(_ k: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
-            TimelineView(.animation(paused: phase != .running)) { ctx in
-                ShiftSceneView(time: elapsed(at: ctx.date),
-                               bodyColor: Theme.species(state.activeChibiID),
-                               size: 250 * k)
+            // Always animating: the reef's own life (bubbles, fish, crabs) keeps
+            // moving while he sleeps. `elapsed` freezes on pause, so the floor holds.
+            TimelineView(.animation) { ctx in
+                SwimSceneView(time: elapsed(at: ctx.date),
+                              life: ctx.date.timeIntervalSinceReferenceDate,
+                              speciesID: state.activeChibiID,
+                              level: state.activeChibi.level,
+                              animation: state.animation,
+                              paused: phase == .paused,
+                              size: 250 * k)
             }
             if let task = pairedTask {
                 taskPill(task).offset(y: 6)
@@ -224,7 +294,7 @@ struct FocusView: View {
 
     private var bestShiftChip: some View {
         HStack(spacing: 6) {
-            parcelIcon
+            lengthsIcon
             Text("\(state.bestShift)")
                 .font(Theme.font(12.5, .black))
                 .foregroundStyle(Theme.ink)
@@ -237,15 +307,17 @@ struct FocusView: View {
         .background(Capsule().fill(Theme.checkFill))
     }
 
-    private var parcelIcon: some View {
-        RoundedRectangle(cornerRadius: 2, style: .continuous)
-            .fill(ShiftScene.parcel)
-            .frame(width: 12, height: 9)
-            .overlay(alignment: .leading) {
-                Rectangle().fill(ShiftScene.cream)
-                    .frame(width: 1.6)
-                    .offset(x: 5.2)
-            }
+    /// A best shift counts lengths, not coins. The chip used to wear the scene's
+    /// float, and the float is coin gold — beside a bare number that made the
+    /// record read as a wallet. These are the scene's own current lines instead:
+    /// water gone by, in the lagoon's green, which no one reads as pay.
+    private var lengthsIcon: some View {
+        VStack(alignment: .leading, spacing: 2.5) {
+            Capsule().fill(Theme.mintDark).frame(width: 13, height: 2)
+            Capsule().fill(Theme.mintDark).frame(width: 8, height: 2)
+            Capsule().fill(Theme.mintDark).frame(width: 11, height: 2)
+        }
+        .frame(width: 13, height: 11, alignment: .leading)
     }
 
     /// The handoff pairs the shift with a Canvas task and never wraps the pill, so
@@ -253,7 +325,7 @@ struct FocusView: View {
     /// keeps the pill hugging its content the way the frame draws it.
     private func taskPill(_ task: DailyTask) -> some View {
         HStack(spacing: 8) {
-            Circle().fill(ShiftScene.van).frame(width: 7, height: 7)
+            Circle().fill(Reef.float).frame(width: 7, height: 7)
             Text(clipped(task.title, to: 22))
                 .font(Theme.font(12.5, .black))
                 .foregroundStyle(Theme.ink)
@@ -314,11 +386,11 @@ struct FocusView: View {
                     .font(Theme.font(34 * k, .black))
                     .tracking(-1.4)
                     .foregroundStyle(Theme.ink)
-                Text(miles == 1 ? "mile driven" : "miles driven")
+                Text(miles == 1 ? "length swum" : "lengths swum")
                     .font(Theme.font(14.5 * k, .heavy))
                     .foregroundStyle(Theme.tabInk)
             }
-            Text("NEXT IN \(clockText(nextMileIn)) · BEST SHIFT \(state.bestShift)")
+            Text("NEXT IN \(clockText(nextMileIn))")
                 .font(Theme.font(11.5 * k, .heavy))
                 .tracking(0.3)
                 .foregroundStyle(Theme.bagInk)
@@ -345,6 +417,25 @@ struct FocusView: View {
         String(format: "%d:%02d", seconds / 60, seconds % 60)
     }
 
+    private func stepButton(_ symbol: String, label: String, enabled: Bool,
+                            _ action: @escaping () -> Void) -> some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            withAnimation(.snappy) { action() }
+        } label: {
+            Image(systemName: symbol)
+                .font(.system(size: 15, weight: .black))
+                .foregroundStyle(Theme.ink.opacity(enabled ? 1 : 0.3))
+                .frame(width: 44, height: 44)
+                .background(Circle().fill(Theme.card)
+                    .shadow(color: .black.opacity(0.05), radius: 5, y: 2))
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled)
+        .accessibilityLabel(label)
+    }
+
     // MARK: - Actions
 
     private func start() {
@@ -356,6 +447,7 @@ struct FocusView: View {
         // real piece of work rather than an anonymous timer.
         pairedTask = state.tasks.first { !$0.done }
         phase = .running
+        state.play(.wave)
     }
 
     private func pause() {
@@ -367,6 +459,7 @@ struct FocusView: View {
     private func resume() {
         legStart = Date()
         phase = .running
+        state.play(.startle)
     }
 
     private func finish() {
