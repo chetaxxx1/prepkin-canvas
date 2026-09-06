@@ -1,8 +1,9 @@
 import SwiftUI
 
 /// Focus is a *shift*: Sprout clocks in and swims upstream in his own lagoon for
-/// as long as the student stays off their phone. Finishing pays 1 coin a minute;
-/// clocking out early pays for the minutes actually worked.
+/// as long as the student stays off their phone. Finishing pays 1 coin a minute.
+/// Clocking out early pays nothing: the coins stay in the reef (Focus Friend's
+/// rule, George 2026-09-06). It is said plainly and never scolded.
 ///
 /// The running screen's layout follows `design/handoff/focus-shift-van/README.md`
 /// (chrome mapped onto the app's own tokens); the van scene it drew was replaced
@@ -91,9 +92,11 @@ struct FocusView: View {
                 .animation(.snappy, value: minutes)
                 .padding(.top, 22)
 
-            // The common lengths are one tap; the stepper covers everything else.
+            // Three lengths, the same three the Canvas extension offers, with 25
+            // already chosen. The − / + steppers came out on 2026-09-06: a second
+            // way to set the same number (design/hicks-law-plan.md).
             HStack(spacing: 8) {
-                ForEach([25, 45, 60], id: \.self) { m in
+                ForEach([15, 25, 45], id: \.self) { m in
                     Button { minutes = m } label: {
                         Text("\(m)")
                             .font(Theme.font(14.5, .black))
@@ -106,11 +109,6 @@ struct FocusView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                // Our own − / + instead of a system Stepper: the system one takes its
-                // tint from the OS appearance, so it faded to nothing in dark mode
-                // on this forced-light page, and its 32pt buttons were under target.
-                stepButton("minus", label: "5 minutes shorter", enabled: minutes > 5) { minutes -= 5 }
-                stepButton("plus", label: "5 minutes longer", enabled: minutes < 120) { minutes += 5 }
             }
             .padding(.top, 14)
 
@@ -227,8 +225,8 @@ struct FocusView: View {
                 .padding(.top, 32)
 
             Text(paidMinutes > 0
-                 ? "\(paidMinutes) min worked. That is what the shift pays."
-                 : "The shift has not paid a minute yet.")
+                 ? "\(paidMinutes) coin\(paidMinutes == 1 ? "" : "s") waiting for the end of this shift. Clock out now and they stay in the reef."
+                 : "Nothing is waiting yet. Coins are paid when the shift ends.")
                 .font(Theme.font(15, .bold))
                 .lineSpacing(4)
                 .multilineTextAlignment(.center)
@@ -239,7 +237,7 @@ struct FocusView: View {
             Spacer(minLength: 16)
 
             Button { clockOut() } label: {
-                Text(payLabel)
+                Text("Clock out early")
                     .font(Theme.font(16, .black))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, minHeight: 56)
@@ -284,11 +282,12 @@ struct FocusView: View {
         }
     }
 
-    private var payLabel: String {
+    /// Coins earned so far. They are only paid if the whole shift finishes.
+    private var waitingLine: String {
         switch paidMinutes {
-        case 0: return "Clock out — no pay yet"
-        case 1: return "Clock out — keep 1 coin"
-        default: return "Clock out — keep \(paidMinutes) coins"
+        case 0: return "Coins are paid when the shift ends"
+        case 1: return "1 coin waiting · paid when the shift ends"
+        default: return "\(paidMinutes) coins waiting · paid when the shift ends"
         }
     }
 
@@ -394,6 +393,9 @@ struct FocusView: View {
                 .font(Theme.font(11.5 * k, .heavy))
                 .tracking(0.3)
                 .foregroundStyle(Theme.bagInk)
+            Text(waitingLine)
+                .font(Theme.font(11.5 * k, .heavy))
+                .foregroundStyle(Theme.coinDark)
         }
     }
 
@@ -415,25 +417,6 @@ struct FocusView: View {
 
     private func clockText(_ seconds: Int) -> String {
         String(format: "%d:%02d", seconds / 60, seconds % 60)
-    }
-
-    private func stepButton(_ symbol: String, label: String, enabled: Bool,
-                            _ action: @escaping () -> Void) -> some View {
-        Button {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            withAnimation(.snappy) { action() }
-        } label: {
-            Image(systemName: symbol)
-                .font(.system(size: 15, weight: .black))
-                .foregroundStyle(Theme.ink.opacity(enabled ? 1 : 0.3))
-                .frame(width: 44, height: 44)
-                .background(Circle().fill(Theme.card)
-                    .shadow(color: .black.opacity(0.05), radius: 5, y: 2))
-                .contentShape(Circle())
-        }
-        .buttonStyle(.plain)
-        .disabled(!enabled)
-        .accessibilityLabel(label)
     }
 
     // MARK: - Actions
@@ -466,8 +449,10 @@ struct FocusView: View {
         settle(minutes: minutes, miles: Int(total / Self.secondsPerMile))
     }
 
+    /// Nothing is paid: the coins stay in the reef. The lengths still count,
+    /// because that number only ever goes up.
     private func clockOut() {
-        settle(minutes: paidMinutes, miles: miles)
+        settle(minutes: 0, miles: miles)
     }
 
     /// Pays wages, banks the miles, and hands the screen back to the ready state.
