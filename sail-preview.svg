@@ -1,0 +1,22 @@
+<svg viewBox="-80 -80 1140 1100" fill="none">
+  <g transform="translate(512 228)">
+    <path fill="#6BAFE0" stroke="#F5FBFE" stroke-width="12" stroke-linejoin="round" d="M -78 22 C -118 -2, -138 -52, -118 -112 C -104 -148, -62 -142, -48 -88 C -38 -50, -48 12, -78 22 Z"/>
+    <path fill="#6BAFE0" stroke="#F5FBFE" stroke-width="12" stroke-linejoin="round" d="M 78 22 C 118 -2, 138 -52, 118 -112 C 104 -148, 62 -142, 48 -88 C 38 -50, 48 12, 78 22 Z"/>
+  </g>
+  <g transform="translate(512 776)">
+    <path fill="#6BAFE0" stroke="#F5FBFE" stroke-width="12" stroke-linejoin="round" d="M 0 -20 C 16 16, 20 88, 14 168 C 8 248, -4 310, -14 342 C -8 310, -10 248, -12 168 C -14 88, -12 16, 0 -20 Z"/>
+  </g>
+  <g transform="translate(300 480) rotate(-18)">
+    <path fill="#6BAFE0" stroke="#F5FBFE" stroke-width="12" stroke-linejoin="round" d="M 80 4 C 10 -70, -80 -150, -180 -120 C -250 -96, -300 -50, -310 -16 C -304 24, -250 90, -170 118 C -90 108, 10 48, 80 4 Z"/>
+  </g>
+  <g transform="translate(724 480) rotate(18)">
+    <path fill="#6BAFE0" stroke="#F5FBFE" stroke-width="12" stroke-linejoin="round" d="M -80 4 C -10 -70, 80 -150, 180 -120 C 250 -96, 300 -50, 310 -16 C 304 24, 250 90, 170 118 C 90 108, -10 48, -80 4 Z"/>
+  </g>
+  <path fill="#6BAFE0" stroke="#F5FBFE" stroke-width="12" stroke-linejoin="round" d="M 430 232 C 470 248, 500 258, 512 258 C 524 258, 554 248, 594 232 C 680 278, 742 388, 762 480 C 742 590, 680 698, 594 750 C 554 768, 524 776, 512 778 C 500 776, 470 768, 430 750 C 344 698, 282 590, 262 480 C 282 388, 344 278, 430 232 Z"/>
+  <path fill="#D4EBF8" d="M 512 360 C 585 385, 650 460, 662 540 C 650 615, 585 680, 512 712 C 439 680, 374 615, 362 540 C 374 460, 439 385, 512 360 Z"/>
+  <ellipse cx="338" cy="368" rx="36" ry="18" fill="#F3B5A6" opacity="0.42"/>
+  <ellipse cx="686" cy="368" rx="36" ry="18" fill="#F3B5A6" opacity="0.42"/>
+  <circle cx="402" cy="332" r="60" fill="#121B22"/>
+  <circle cx="622" cy="332" r="60" fill="#121B22"/>
+  <path d="M 476 378 Q 512 410 548 378" fill="none" stroke="#121B22" stroke-width="10" stroke-linecap="round"/>
+</svg>

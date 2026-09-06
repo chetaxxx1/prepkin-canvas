@@ -69,11 +69,31 @@ struct KinView: View {
         ZStack(alignment: .bottom) {
             GeometryReader { _ in Color.clear }
                 .background(
-                    Image(scene.asset)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 470, alignment: .bottom)
-                        .clipped()
+                    // The tank plates are wide (4:3) and this stage is nearly
+                    // square, so filling it would crop the scenery off both
+                    // sides and leave only the empty centre. Fit to the width
+                    // instead and let the floor carry on underneath — the
+                    // plate's last rows are exactly `floor`, and the gradient
+                    // continues the painting's own ramp from there so the art
+                    // does not look like it stops on a flat block.
+                    // The plate is 4:3 fitted to the width, so it ends three
+                    // quarters of the way down its own width; the ramp starts
+                    // there rather than at the top of the stage, or it would
+                    // have drifted off the plate's last row by the time they
+                    // meet and reintroduce the step.
+                    GeometryReader { geo in
+                        LinearGradient(
+                            stops: [.init(color: scene.floor, location: 0),
+                                    .init(color: scene.floor,
+                                          location: min(1, geo.size.width * 0.75 / max(geo.size.height, 1))),
+                                    .init(color: scene.floorDeep, location: 1)],
+                            startPoint: .top, endPoint: .bottom)
+                    }
+                        .overlay(alignment: .top) {
+                            Image(scene.asset)
+                                .resizable()
+                                .scaledToFit()
+                        }
                 )
                 .overlay(
                     RadialGradient(colors: [.white.opacity(scene.isDark ? 0.0 : 0.30), .clear],
@@ -97,6 +117,7 @@ struct KinView: View {
                 namePlate
                 KinArtView(speciesID: kin.speciesID,
                            level: kin.level,
+                           skin: kin.skinID,
                            animation: state.animation,
                            size: isFirstRun ? 164 : 212)
                     .frame(height: isFirstRun ? 158 : 200)
@@ -111,6 +132,9 @@ struct KinView: View {
                     KinIcon(.shopDoor, size: 21, color: scene.isDark ? .white : Theme.ink)
                         .frame(width: 40, height: 40)
                         .background(GlassPill(onDark: scene.isDark, strong: false))
+                        .padding(2)
+                        .contentShape(Rectangle())
+                        .padding(-2)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Shop")
@@ -133,11 +157,11 @@ struct KinView: View {
     }
 
     private var idleCopy: String {
-        isFirstRun ? "This one is yours. It's free." : "\(kin.displayName) is glad you came by."
+        isFirstRun ? "This one is yours. It's free." : "\(kin.displayName) was fine without you. Mostly."
     }
 
     /// An unnamed kin gets a dashed invitation instead of a plate, because a plate
-    /// reading "Slime" looks like a label rather than a name.
+    /// reading "Moss" looks like a label rather than a name.
     @ViewBuilder private var namePlate: some View {
         if kin.isNamed {
             Text(kin.displayName)
@@ -194,16 +218,16 @@ struct KinView: View {
 
     // MARK: - Together since
 
-    /// Real numbers, and every one of them only ever goes up. On day one the strip
-    /// says so in words instead of printing three zeros, because a row of zeros reads
-    /// as failure on the one strip whose whole promise is that it climbs.
+    /// Real numbers, and every one of them only ever goes up. With nothing on it yet
+    /// the strip says the day out loud instead of printing three zeros, because a row
+    /// of zeros reads as failure on the one strip whose whole promise is that it climbs.
     /// Counted from the day this kin arrived, like its card.
     private var mine: LifetimeStats { state.game.stats(since: kin) }
 
     @ViewBuilder private var togetherStrip: some View {
         if mine == LifetimeStats() {
             VStack(spacing: 4) {
-                Text("Day 1 together")
+                Text("Day \(state.daysTogether(kin)) together")
                     .font(Theme.font(15, .black))
                     .foregroundStyle(Theme.ink)
                 Text("Finished assignments, focus time and lessons start showing up here.")
@@ -245,13 +269,16 @@ struct KinView: View {
     /// The Canvas cell is dropped rather than zeroed when Canvas was never connected —
     /// a hard 0 there is a number the student has no way to earn.
     private var cells: [(value: String, label: String)] {
-        var out: [(String, String)] = [("\(state.daysTogether(kin))", "days together")]
-        if let canvas = state.game.canvasFinished(since: kin) {
-            out.append(("\(canvas)", "assignments"))
+        let days = state.daysTogether(kin)
+        var out: [(String, String)] = [("\(days)", days == 1 ? "day together" : "days together")]
+        if let canvas = state.game.canvasFinished(since: kin), canvas > 0 {
+            out.append(("\(canvas)", canvas == 1 ? "assignment" : "assignments"))
         }
         let h = mine.focusMinutes / 60, m = mine.focusMinutes % 60
         out.append((h > 0 ? "\(h)h \(m)m" : "\(m)m", "focused"))
-        if out.count < 3 { out.append(("\(mine.lessonsRead)", "lessons")) }
+        if out.count < 3 {
+            out.append(("\(mine.lessonsRead)", mine.lessonsRead == 1 ? "lesson" : "lessons"))
+        }
         return out
     }
 
@@ -262,7 +289,9 @@ struct KinView: View {
             Button { showCollection = true } label: {
                 HStack(spacing: 8) {
                     KinIcon(.dock, size: 18, color: Theme.ink)
-                    Text(isFirstRun ? "Five more to meet" : "Collection")
+                    Text(isFirstRun
+                         ? "\(ChibiSpecies.catalog.count - state.owned.count) more to meet"
+                         : "Collection")
                         .font(Theme.font(15, .black)).foregroundStyle(Theme.ink)
                     Spacer()
                     Text("\(state.owned.count) of \(ChibiSpecies.catalog.count)")
@@ -270,26 +299,36 @@ struct KinView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .black)).foregroundStyle(Theme.dim)
                 }
+                .frame(minHeight: 44)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
-            HStack(spacing: 6) {
-                ForEach(ChibiSpecies.catalog) { species in
-                    let mine = state.ownedKin(species.id)
-                    Button { detail = species } label: {
-                        KinArtView(speciesID: species.id, level: mine?.level ?? 1, size: 42)
-                            .frame(height: 38)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 7)
-                            .background(RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                .fill(mine == nil ? Theme.unowned : Theme.hex(0xF6F1E6))
-                                .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                    .strokeBorder(borderColor(species), lineWidth: 2)))
+            // Fixed-width tiles in a rail that scrolls. With six species the row
+            // filled the card; at nine a plain HStack grew past the screen and
+            // dragged the whole tab's layout out with it.
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(ChibiSpecies.catalog) { species in
+                        let mine = state.ownedKin(species.id)
+                        Button { detail = species } label: {
+                            KinArtView(speciesID: species.id, level: mine?.level ?? 1,
+                                       skin: mine?.skinID ?? "classic", size: 42)
+                                .frame(width: 50, height: 38)
+                                .padding(.vertical, 7)
+                                .background(RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                    .fill(mine == nil ? Theme.unowned : Theme.hex(0xF6F1E6))
+                                    .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                        .strokeBorder(borderColor(species), lineWidth: 2)))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(mine.map { "\(species.name), \($0.level) of 3 stars" }
+                                            ?? "\(species.name), not met yet")
                     }
-                    .buttonStyle(.plain)
                 }
+                .padding(.horizontal, 16)
             }
+            .padding(.horizontal, -16)
 
             if isFirstRun {
                 Text("Finishing things earns coins. Nothing here ever expires.")

@@ -5,3 +5,7 @@ build/
 bridge/config.local.json
 extension/config.js
 ios/Resources/bridge-config.json
+dist/
+
+# Claude Code worktrees are copies of this repo, never content
+.claude/worktrees/

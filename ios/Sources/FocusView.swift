@@ -69,6 +69,7 @@ struct FocusView: View {
             // (design/handoff/focus-shift-van).
             SproutImage(speciesID: state.activeChibiID,
                         level: state.activeChibi.level,
+                        skin: state.activeChibi.skinID,
                         animation: state.animation,
                         size: 190)
                 .frame(maxWidth: .infinity)

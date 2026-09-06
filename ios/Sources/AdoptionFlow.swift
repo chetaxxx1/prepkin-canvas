@@ -361,7 +361,7 @@ struct AdoptionCard: View {
                     .font(Theme.font(10, .black)).tracking(2)
                     .foregroundStyle(Theme.muted)
 
-                KinArtView(speciesID: species.id, level: kin.level, size: 188)
+                KinArtView(speciesID: species.id, level: kin.level, skin: kin.skinID, size: 188)
                     .frame(height: 176)
 
                 Text(kin.displayName)
@@ -371,7 +371,11 @@ struct AdoptionCard: View {
 
                 HStack(spacing: 8) {
                     TierPlate(tier: species.tier, dense: true)
-                    Text(species.name).font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
+                    // The species line is what a name replaced. Under a kin still called
+                    // "Ember" it only prints Ember twice, so it waits until they differ.
+                    if kin.displayName.caseInsensitiveCompare(species.name) != .orderedSame {
+                        Text(species.name).font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
+                    }
                 }
 
                 StarPips(level: kin.level, size: 19, spacing: 6)
@@ -384,10 +388,13 @@ struct AdoptionCard: View {
                 }
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                    slot("\(daysTogether)", "days together", filled: true)
-                    slot(canvasFinished.map(String.init), "assignments")
+                    slot("\(daysTogether)",
+                         daysTogether == 1 ? "day together" : "days together", filled: true)
+                    slot(canvasFinished.map(String.init),
+                         canvasFinished == 1 ? "assignment" : "assignments")
                     slot(lifetime.focusMinutes > 0 ? focusText : nil, "focused")
-                    slot(lifetime.lessonsRead > 0 ? "\(lifetime.lessonsRead)" : nil, "lessons read")
+                    slot(lifetime.lessonsRead > 0 ? "\(lifetime.lessonsRead)" : nil,
+                         lifetime.lessonsRead == 1 ? "lesson read" : "lessons read")
                 }
                 .padding(.top, 4)
 

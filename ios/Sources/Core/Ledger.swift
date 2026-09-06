@@ -88,6 +88,21 @@ struct Ledger: Codable, Equatable {
         return s
     }
 
+    /// Coins earned inside one week, keyed off each line's protected `day` rather
+    /// than its wall-clock `at`.
+    ///
+    /// `stats(inWeekOf:)` above uses `at` and the device calendar, which is right for
+    /// a soft display on Home. League points decide a promotion, so they key off the
+    /// same day the clock-rollback guard already wrote — otherwise winding the date
+    /// back would move earnings into a week that has not happened yet. Spending is
+    /// skipped, as it is there: points are earned, never held.
+    func coinsEarned(inWeek week: WeekKey) -> Int {
+        entries.reduce(0) { sum, e in
+            guard e.amount > 0, WeekKey(e.day) == week else { return sum }
+            return sum + e.amount
+        }
+    }
+
     // MARK: - Writing
 
     /// Adds a line. Returns false and changes nothing if the key was already used,

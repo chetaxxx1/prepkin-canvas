@@ -84,6 +84,9 @@ struct LessonPreviewSheet: View {
                     .foregroundStyle(Theme.ink)
                     .frame(width: 36, height: 36)
                     .background(Circle().fill(Theme.paper))
+                    .padding(4)
+                    .contentShape(Rectangle())
+                    .padding(-4)
             }
             .accessibilityLabel("Close")
             .padding(.trailing, 20).padding(.top, 20)

@@ -1,0 +1,13 @@
+{
+  "path": "/api/v1/users/self/colors",
+  "status": 200,
+  "link": null,
+  "body": {
+    "custom_colors": {
+      "course_7": "#986C16",
+      "course_4": "#91349B",
+      "course_6": "#E1185C",
+      "course_5": "#D41E00"
+    }
+  }
+}

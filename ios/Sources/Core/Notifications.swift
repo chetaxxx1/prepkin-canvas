@@ -112,6 +112,13 @@ final class NotificationScheduler {
         return status == .authorized || status == .provisional
     }
 
+    /// A refusal, not merely "not on". `.notDetermined` — a fresh install nobody has
+    /// asked yet — is deliberately not denial, so a student who has never seen the
+    /// prompt is never shown a line about Settings.
+    func isDenied() async -> Bool {
+        await center.notificationSettings().authorizationStatus == .denied
+    }
+
     /// Replaces every pending reminder with the current plan. Cheap enough to call
     /// on each change, which is what keeps a finished task from still buzzing.
     func reschedule(for state: GameState) async {

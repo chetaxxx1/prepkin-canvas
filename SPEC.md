@@ -37,7 +37,11 @@ pattern in the motivation literature. Finishing is what gets paid.
   | `sleep` | nighttime, or no activity today |
 
 - **3 levels per chibi**, bought with coins (Lv1→2: 100, Lv2→3: 250). Levels are
-  visual evolutions (bigger, accessory, crown) — no stat changes, nothing gated.
+  visual evolutions — 1★ the pear, 2★ longer fins, 3★ Lumen (he glows) — no stat changes, nothing gated.
+- **Looks** are a second axis, per kin (`OwnedChibi.skinID`, default `classic`). A look
+  rides the same three stars rather than replacing them: Ninja is band at 1★, fin wraps
+  at 2★, and at 3★ the Lumen glow burns through the suit in the kin's colour. Nothing in
+  the app sets `skinID` yet — how a student earns a look is still open.
 - **Shop**: more chibi species purchasable with coins (300–500 each). Starter
   slime is free. Switching the active chibi is free.
 - v1 renders a placeholder box wired to the real animation state machine, so
@@ -69,8 +73,10 @@ Chrome extension  ──▶  bridge (TBD)  ──▶  iOS app
   it calls Canvas's own REST API (`/api/v1/users/self/todo`,
   `/api/v1/users/self/upcoming_events`) with the session — no password stored,
   no scraping fragile HTML. Stores results in `chrome.storage.local`.
-- **Bridge**: not built yet. Recommended: Supabase free tier. The app shows a
-  6-digit pairing code; the extension pushes tasks to that key; the app polls.
+- **Bridge**: built, on the Supabase free tier. The app shows an 8-character
+  pairing code and claims it on the bridge; the extension trades that code, once
+  and within fifteen minutes, for its own write token. Every read and write after
+  that needs a token, not the code. See `bridge/schema.sql`.
   No accounts, matching the Prepkin no-accounts position.
 - **iOS app**: SwiftUI. All state persists on device. Canvas data is a bonus
   feed, not a requirement — the app fully works with study + life tasks alone.
@@ -91,7 +97,7 @@ Chrome extension  ──▶  bridge (TBD)  ──▶  iOS app
 
 ## 5. Open questions (need George)
 
-1. Bridge choice: Supabase vs tiny custom server vs "export/import file" for v1.
+1. ~~Bridge choice~~ — settled: Supabase, token-authenticated pairing.
 2. Chibi art pipeline: commissioned sprite sheets vs Rive/Lottie vs AI-generated.
 3. Does completing a Canvas assignment auto-verify via the API (submission
    exists), or stay honor-system check-off?

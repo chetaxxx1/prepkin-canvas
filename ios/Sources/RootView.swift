@@ -3,22 +3,30 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var state: AppState
     @State private var tab: Tab = .home
+    /// `Theme.font` reads the system text size when a body runs; rebuilding the
+    /// tabs when it changes is what makes a Settings change show without a relaunch.
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The tab switch spring, or nothing at all under Reduce Motion.
+    private var switchAnimation: Animation? {
+        reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.75)
+    }
 
-    /// Six tabs, and **Shop is deliberately not one of them** — it opens from the coin
-    /// chip on Home, where the motivation already is.
+    /// Five tabs. **Shop is deliberately not one of them** — it opens from the coin
+    /// chip on Home, where the motivation already is. Games is not one either since
+    /// 2026-09-06: Daily Word and Number Line are the Play section on Learn
+    /// (design/hicks-law-plan.md), which took the bar from six to Apple's five.
     ///
-    /// Six is more than the usual iOS advice, and it works here for one reason: every
-    /// icon is a full-colour object, so a tab is found by silhouette and colour rather
-    /// than by parsing a grey glyph. If the icons are ever reduced to monochrome, this
-    /// bar has to be cut to four or five.
+    /// Every icon is a full-colour object, so a tab is found by silhouette and colour
+    /// rather than by parsing a grey glyph. If the icons are ever reduced to
+    /// monochrome, this bar has to be cut again.
     enum Tab: String, CaseIterable {
-        case home, focus, games, learn, friends, kin
+        case home, focus, learn, friends, kin
 
         var label: String {
             switch self {
             case .home: return "Home"
             case .focus: return "Focus"
-            case .games: return "Games"
             case .learn: return "Learn"
             case .friends: return "Friends"
             case .kin: return "Kin"
@@ -27,18 +35,27 @@ struct RootView: View {
     }
 
     var body: some View {
+        if state.firstRunDone {
+            tabs
+        } else {
+            FirstRunView()
+                .transition(.opacity)
+        }
+    }
+
+    private var tabs: some View {
         ZStack(alignment: .bottom) {
             Group {
                 switch tab {
                 case .home: HomeView()
                 case .focus: FocusView()
-                case .games: GamesView()
                 case .learn: LearnView()
                 case .friends: FriendsView()
                 case .kin: KinView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .id(typeSize)
 
             if !state.hideTabBar {
                 tabBar.transition(.move(edge: .bottom).combined(with: .opacity))
@@ -48,12 +65,17 @@ struct RootView: View {
         .background(Theme.paper.ignoresSafeArea())
         .onChange(of: state.meetKinRequest) { _, new in
             guard new != nil else { return }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) { tab = .kin }
+            withAnimation(switchAnimation) { tab = .kin }
             // Held for one beat so the Kin tab and the shop sheet both see it.
             Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(400))
                 state.meetKinRequest = nil
             }
+        }
+        .onChange(of: state.openFriendsRequest) { _, new in
+            guard new else { return }
+            withAnimation(switchAnimation) { tab = .friends }
+            Task { @MainActor in state.openFriendsRequest = false }
         }
     }
 
@@ -81,7 +103,7 @@ struct RootView: View {
         let active = t == tab
         return Button {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) { tab = t }
+            withAnimation(switchAnimation) { tab = t }
         } label: {
             VStack(spacing: 3) {
                 ZStack {
@@ -98,7 +120,7 @@ struct RootView: View {
                 .frame(height: 28)
 
                 Text(t.label)
-                    .font(Theme.font(10.5, active ? .black : .heavy))
+                    .font(Theme.fixedFont(10.5, active ? .black : .heavy))
                     .foregroundStyle(active ? Theme.tabActiveInk : Theme.tabInk)
             }
             .frame(maxWidth: .infinity)

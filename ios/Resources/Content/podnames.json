@@ -1,0 +1,38 @@
+{
+  "_comment": [
+    "The whole safety model for pod names. A student cannot type a name and cannot",
+    "choose one, so nothing protects them except these two lists. Every one of the",
+    "4096 pairs has to be safe on its own — no insult, no slur, no comment about a",
+    "body, nothing sexual — because the bridge will hand out pairs nobody read first.",
+    "",
+    "Rules used to curate, so an edit does not quietly undo them:",
+    "  - No adjectives about size, weight, shape, skin, colour or intelligence.",
+    "  - No adjectives that are an insult in any English-speaking country ('windy',",
+    "    'soft', 'balmy', 'dim' all read as jokes about a person somewhere).",
+    "  - No animals that are slang for a body part, a person, or an act (eel, clam,",
+    "    crab, shrimp, beaver, booby, whale, trout, urchin all cut for that reason).",
+    "  - No word that is a homophone of a slur (pollock was cut for that alone).",
+    "  - Nothing that echoes a league tier, so 'Quiet Reef' cannot be read as a rank.",
+    "Add a word only after checking it against every word in the other list."
+  ],
+  "adjectives": [
+    "Quiet", "Calm", "Steady", "Patient", "Gentle", "Kind", "Cheerful", "Merry",
+    "Sunny", "Clear", "Bright", "Fresh", "Crisp", "Cool", "Mild", "Still",
+    "Silent", "Hushed", "Snowy", "Frosty", "Tranquil", "Watchful", "Sunlit", "Moonlit",
+    "Starlit", "Early", "Brave", "Bold", "Eager", "Ready", "Keen", "Swift",
+    "Nimble", "Lively", "Spirited", "Curious", "Clever", "Thoughtful", "Careful", "Mindful",
+    "Honest", "Loyal", "Friendly", "Helpful", "Hopeful", "Joyful", "Peaceful", "Restful",
+    "Seaside", "Coastal", "Northern", "Southern", "Eastern", "Western", "Faraway", "Drifting",
+    "Sailing", "Roaming", "Wandering", "Rising", "Morning", "Evening", "Winter", "Autumn"
+  ],
+  "nouns": [
+    "Otter", "Heron", "Egret", "Tern", "Gull", "Osprey", "Albatross", "Pelican",
+    "Plover", "Sandpiper", "Kingfisher", "Curlew", "Petrel", "Cormorant", "Turtle", "Dolphin",
+    "Narwhal", "Seal", "Marlin", "Sailfish", "Herring", "Salmon", "Sturgeon", "Halibut",
+    "Seahorse", "Cuttlefish", "Nautilus", "Octopus", "Manta", "Stingray", "Harbor", "Cove",
+    "Inlet", "Atoll", "Fjord", "Shoal", "Sandbar", "Tide", "Current", "Eddy",
+    "Channel", "Crest", "Breaker", "Ripple", "Wave", "Surf", "Foam", "Mist",
+    "Drizzle", "Squall", "Gale", "Breeze", "Zephyr", "Thunder", "Cirrus", "Cumulus",
+    "Nimbus", "Aurora", "Beacon", "Lantern", "Compass", "Anchor", "Skiff", "Ferry"
+  ]
+}

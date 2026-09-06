@@ -1,0 +1,9 @@
+{
+  "path": "/api/v1/courses/4/module_item_sequence?asset_type=Assignment&asset_id=10&frame_external_urls=true",
+  "status": 200,
+  "link": null,
+  "body": {
+    "items": [],
+    "modules": []
+  }
+}

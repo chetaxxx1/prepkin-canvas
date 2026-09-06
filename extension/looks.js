@@ -35,72 +35,11 @@ const LOOK_ACCESSORIES = {
           fill="${c.tail}"/>`,
 };
 
-/// Every look. `tints` are the page-level variables a look is allowed to move:
-/// surfaces, borders and the accent. Type, layout and spacing never change, and
-/// course colours stay Canvas's own — students navigate by them.
-const LOOKS = [
-  {
-    id: 'classic', name: 'Classic Cream', price: 0, free: true,
-    swatch: '#F4F1EA', accessory: null,
-    tints: {},
-  },
-  {
-    id: 'woodland', name: 'Woodland', price: 300,
-    swatch: '#EDF1E6', accessory: 'sprout',
-    colors: { stem: '#4E6E3E', leafA: '#6B8F5A', leafB: '#84A96F' },
-    tints: {
-      '--pk-page': '#EDF1E6', '--pk-inset': '#E3EAD9', '--pk-line': '#DEE4D4',
-      '--pk-text-2': '#7C8468', '--pk-mint': '#6B8F5A', '--pk-mint-edge': '#547340',
-      '--pk-green': '#4E6E3E',
-      '--pk-mint-tint': 'rgba(107,143,90,.12)', '--pk-mint-tint-strong': 'rgba(107,143,90,.18)',
-      '--pk-mint-border': 'rgba(107,143,90,.35)',
-    },
-  },
-  {
-    id: 'beanie', name: 'Cozy Beanie', price: 300,
-    swatch: '#EDE9F2', accessory: 'beanie',
-    colors: { cap: '#7A6BA8', brim: '#635591' },
-    tints: {
-      '--pk-page': '#EDE9F2', '--pk-inset': '#E5E0EC', '--pk-line': '#DCD6E6',
-      '--pk-text-2': '#7A7288', '--pk-mint': '#7A6BA8', '--pk-mint-edge': '#5E5189',
-      '--pk-green': '#5E5189',
-      '--pk-mint-tint': 'rgba(122,107,168,.12)', '--pk-mint-tint-strong': 'rgba(122,107,168,.18)',
-      '--pk-mint-border': 'rgba(122,107,168,.35)',
-    },
-  },
-  {
-    id: 'tidepool', name: 'Tidepool', price: 450,
-    swatch: '#E4EFEE', accessory: 'glasses',
-    colors: { frame: '#2B6E68' },
-    tints: {
-      '--pk-page': '#E4EFEE', '--pk-inset': '#DAE8E6', '--pk-line': '#D0E0DE',
-      '--pk-text-2': '#6C8380', '--pk-mint': '#3E9089', '--pk-mint-edge': '#2B6E68',
-      '--pk-green': '#2B6E68',
-      '--pk-mint-tint': 'rgba(62,144,137,.12)', '--pk-mint-tint-strong': 'rgba(62,144,137,.18)',
-      '--pk-mint-border': 'rgba(62,144,137,.35)',
-    },
-  },
-  {
-    id: 'butterscotch', name: 'Butterscotch', price: 300,
-    swatch: '#F5EBDD', accessory: 'scarf',
-    colors: { wrap: '#C86E4B', tail: '#A9563A' },
-    tints: {
-      '--pk-page': '#F5EBDD', '--pk-inset': '#EEE1CE', '--pk-line': '#E5D7C2',
-      '--pk-text-2': '#8B7660', '--pk-mint': '#C86E4B', '--pk-mint-edge': '#A9563A',
-      '--pk-green': '#A9563A',
-      '--pk-mint-tint': 'rgba(200,110,75,.12)', '--pk-mint-tint-strong': 'rgba(200,110,75,.18)',
-      '--pk-mint-border': 'rgba(200,110,75,.35)',
-    },
-  },
-  {
-    // The one look that carries a whole theme: wearing it turns dark mode on.
-    id: 'nightshift', name: 'Night Shift', price: 500, dark: true,
-    swatch: '#2C322B', accessory: 'beanie',
-    colors: { cap: '#3E5A8C', brim: '#2E4368' },
-    tints: {},
-  },
-];
-
+/// The catalog itself lives in themes.js: a Look is a theme (paper pair,
+/// accent, card header, texture) plus one of the accessories above. The old
+/// names stay so the panel, the popup and the tests read one thing.
+if (typeof module !== 'undefined') Object.assign(globalThis, require('./themes.js'));
+const LOOKS = THEMES;
 const LOOKS_BY_ID = Object.fromEntries(LOOKS.map((l) => [l.id, l]));
 
 /// The accessory markup for a look, or '' for a bare slime.
@@ -111,12 +50,6 @@ function lookAccessorySVG(lookId) {
   return draw ? draw(look.colors ?? {}) : '';
 }
 
-/// Turns a look's tints into inline custom properties for a root element.
-function lookVars(lookId) {
-  const tints = LOOKS_BY_ID[lookId]?.tints ?? {};
-  return Object.entries(tints).map(([k, v]) => `${k}:${v}`).join(';');
-}
-
 if (typeof module !== 'undefined') {
-  module.exports = { LOOKS, LOOKS_BY_ID, LOOK_ACCESSORIES, lookAccessorySVG, lookVars };
+  module.exports = { LOOKS, LOOKS_BY_ID, LOOK_ACCESSORIES, lookAccessorySVG };
 }

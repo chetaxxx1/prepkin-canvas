@@ -14,16 +14,33 @@ import SwiftUI
 struct SproutImage: View {
     let speciesID: String
     var level: Int = 3
+    /// Which Sprout look the kin is wearing: `classic` or `ninja`.
+    var skin: String = "classic"
     var animation: ChibiAnimation = .idle
     var size: CGFloat
 
-    /// Drawn height of the three-star art as a fraction of the box width.
-    static let heightRatio: CGFloat = 0.738
+    /// Drawn height of the three-star art as a fraction of the box width, over
+    /// every kin in the catalogue. Droplet's headphones at stage III reach far
+    /// above the crown, so the shared crop is nearly square and every still
+    /// draws a little smaller than before. `capture_sprout.py` prints this value.
+    static let heightRatio: CGFloat = 0.999
 
     @State private var trigger = 0
 
+    /// Looks that have their own eighteen stills in the catalogue. A look that is
+    /// not here — Classic, or one whose stills are not captured yet — draws the
+    /// plain set rather than a blank frame.
+    static let looksWithStills: Set<String> = ["ninja"]
+
+    static func asset(speciesID: String, level: Int, skin: String) -> String {
+        let type = SproutView.type(speciesID)
+        // Looks exist for Sprout only; the edge-lane rigs have no Ninja stills.
+        let look = type == "sprout" && looksWithStills.contains(skin) ? "\(skin)-" : ""
+        return "\(type)-\(look)\(SproutView.coat(speciesID))-\(SproutView.evo(level))"
+    }
+
     var body: some View {
-        Image("sprout-\(SproutView.coat(speciesID))-\(SproutView.evo(level))")
+        Image(Self.asset(speciesID: speciesID, level: level, skin: skin))
             .resizable()
             .interpolation(.high)
             .scaledToFit()

@@ -101,7 +101,13 @@ final class StoreTests: XCTestCase {
         XCTAssertTrue(state.tasks.first { $0.id == "l-1" }!.done, "today's checkmarks carry over")
         XCTAssertFalse(state.tasks.first { $0.id == "s-1" }!.done)
         XCTAssertEqual(state.activeChibi.level, 2)
-        XCTAssertEqual(state.sceneID, "meadow")
+        // Pin the retirement itself, so a future edit to Scene0.retired trips this test
+        // instead of silently moving a scene she already paid for.
+        XCTAssertEqual(Scene0.retired["meadow"], "kelp",
+                       "this fixture is exercising the meadow-to-kelp retirement")
+        XCTAssertEqual(state.sceneID, "kelp", "meadow became the kelp scene in the Sprout rename")
+        XCTAssertEqual(state.ownedScenes, ["lagoon", "kelp"],
+                       "both land scenes she paid for came across as tanks")
         XCTAssertEqual(state.completedLessons, ["fin-1"])
     }
 

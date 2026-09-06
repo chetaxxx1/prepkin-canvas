@@ -64,7 +64,7 @@ final class ContentTests: XCTestCase {
     }
 
     func testTracksComeOutInCatalogueOrder() {
-        XCTAssertEqual(Catalog.tracks.map(\.id), ["finance", "philosophy", "study"])
+        XCTAssertEqual(Catalog.tracks.map(\.id), ["finance", "philosophy", "study", "psychology", "people"])
         for track in Catalog.tracks {
             XCTAssertFalse(Catalog.lessons(in: track.id).isEmpty)
         }
@@ -100,6 +100,29 @@ final class ContentTests: XCTestCase {
         XCTAssertFalse(Catalog.wordleAnswers.isEmpty, "words.json did not load")
         XCTAssertTrue(Catalog.wordleAnswers.allSatisfy { $0.count == 5 })
         XCTAssertEqual(Set(Catalog.wordleAnswers).count, Catalog.wordleAnswers.count)
+    }
+
+    /// A year of words, so the daily puzzle doesn't come back around.
+    func testThereAreEnoughWordsForAYear() {
+        XCTAssertGreaterThanOrEqual(Catalog.wordleAnswers.count, 365)
+    }
+
+    /// The one that would ruin someone's game: an answer the board refuses to accept
+    /// as a guess is a puzzle that cannot be solved.
+    func testEveryAnswerIsAlsoALegalGuess() {
+        XCTAssertGreaterThanOrEqual(Catalog.wordleGuesses.count, 5_000,
+                                    "guesses.json did not load")
+        for word in Catalog.wordleAnswers {
+            XCTAssertTrue(Catalog.wordleGuesses.contains(word),
+                          "\(word) is an answer but not in the guess list")
+        }
+    }
+
+    func testEveryGuessIsFiveUppercaseLetters() {
+        for word in Catalog.wordleGuesses {
+            XCTAssertEqual(word.count, 5, "\(word) is not five letters")
+            XCTAssertTrue(word.allSatisfy { $0.isLetter && $0.isUppercase }, word)
+        }
     }
 }
 

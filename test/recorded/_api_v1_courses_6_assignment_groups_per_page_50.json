@@ -1,0 +1,16 @@
+{
+  "path": "/api/v1/courses/6/assignment_groups?per_page=50",
+  "status": 200,
+  "link": "<https://localhost:8443/api/v1/courses/6/assignment_groups?page=1&per_page=50>; rel=\"current\",<https://localhost:8443/api/v1/courses/6/assignment_groups?page=1&per_page=50>; rel=\"first\",<https://localhost:8443/api/v1/courses/6/assignment_groups?page=1&per_page=50>; rel=\"last\"",
+  "body": [
+    {
+      "id": 6,
+      "name": "Assignments",
+      "position": 1,
+      "group_weight": 0,
+      "sis_source_id": null,
+      "integration_data": {},
+      "rules": {}
+    }
+  ]
+}

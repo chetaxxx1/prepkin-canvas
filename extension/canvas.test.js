@@ -1,8 +1,8 @@
 // Run with: node --test extension/canvas.test.js
 const test = require('node:test');
 const assert = require('node:assert');
-const { mapCourses, mapAssignments, mapTodo, merge, mapGraded, mapWeights, requiredScore,
-        DAYS_AHEAD, DAYS_OVERDUE } = require('./canvas.js');
+const { mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore,
+        DAYS_AHEAD, DAYS_OVERDUE, DAYS_NEW, safeColor, nextLink } = require('./canvas.js');
 
 const HOST = 'canvas.dartmouth.edu';
 const NOW = Date.parse('2026-09-01T12:00:00Z');
@@ -33,14 +33,45 @@ test('no grade yet is null, never zero', () => {
   assert.notEqual(c.score, 0);
 });
 
-test('a course you teach does not borrow the student score row', () => {
-  const [c] = mapCourses([{ id: 1, name: 'Lab', enrollments: [{ type: 'ta', computed_current_score: 100 }] }]);
-  assert.equal(c.score, 100, 'falls back to the only enrollment there is');
+test('a course you only TA or teach is not your coursework', () => {
+  // Found on the sandbox: the TA course's assignments were listed as homework.
+  assert.deepEqual(mapCourses([{ id: 1, name: 'Lab', enrollments: [{ type: 'ta', computed_current_score: 100 }] }]), []);
+  assert.deepEqual(mapCourses([{ id: 2, name: 'Lab', enrollments: [{ type: 'teacher' }] }]), []);
+  const [both] = mapCourses([{ id: 3, name: 'Lab', enrollments: [{ type: 'ta' }, { type: 'student', computed_current_score: 90 }] }]);
+  assert.equal(both.score, 90, 'a student who also TAs the same course keeps it');
 });
 
 test('a course with no colour set still maps', () => {
   const [c] = mapCourses([{ id: 9, name: 'History', enrollments: [] }], {});
   assert.equal(c.colorHex, null);
+});
+
+// MARK: - Courses from finished terms
+
+const term = (over = {}) => ({ id: 1, name: 'AP Physics', workflow_state: 'available',
+                               enrollments: [], ...over });
+
+test('a course whose term has ended is not this term\'s work', () => {
+  // "Thayer Welcome and Orientation 2020" — still an active enrolment, years dead.
+  const raw = [term({ id: 2020, name: 'Orientation 2020', term: { end_at: '2020-12-31T00:00:00Z' } })];
+  assert.deepEqual(mapCourses(raw, {}, { now: NOW }), []);
+});
+
+test('a term ending later this year is still current', () => {
+  const raw = [term({ term: { end_at: at(90) } })];
+  assert.equal(mapCourses(raw, {}, { now: NOW }).length, 1);
+});
+
+test('a course that is not available drops out', () => {
+  for (const state of ['completed', 'unpublished', 'deleted']) {
+    assert.deepEqual(mapCourses([term({ workflow_state: state })], {}, { now: NOW }), []);
+  }
+});
+
+test('a missing term or state is not evidence against a course', () => {
+  // Plenty of real courses have no term end date at all.
+  assert.equal(mapCourses([term({ term: {} })], {}, { now: NOW }).length, 1);
+  assert.equal(mapCourses([{ id: 3, name: 'Seminar', enrollments: [] }], {}, { now: NOW }).length, 1);
 });
 
 // MARK: - Which assignments show
@@ -64,6 +95,23 @@ test('long-dead overdue work drops off', () => {
 test('undated work is still owed', () => {
   // bucket=upcoming would silently drop this, which is why we filter ourselves.
   assert.equal(map([assignment({ due_at: null })]).length, 1);
+});
+
+test('an undated, unmarked leftover does not count as homework', () => {
+  const stale = assignment({ due_at: null, points_possible: null, created_at: at(-400) });
+  assert.deepEqual(map([stale]), [], 'an old practice quiz nobody ever set is not a task');
+  assert.deepEqual(map([{ ...stale, points_possible: 0 }]), [], 'zero points is no points');
+});
+
+test('an undated, unmarked assignment set this term is real work', () => {
+  const fresh = assignment({ due_at: null, points_possible: null, created_at: at(-(DAYS_NEW - 1)) });
+  assert.equal(map([fresh]).length, 1);
+  assert.equal(map([{ ...fresh, created_at: at(-(DAYS_NEW + 1)) }]).length, 0);
+});
+
+test('marks alone keep undated work on the list', () => {
+  // Something worth points is owed however long ago it was set up.
+  assert.equal(map([assignment({ due_at: null, points_possible: 20, created_at: at(-400) })]).length, 1);
 });
 
 // MARK: - Submission state
@@ -91,6 +139,35 @@ test('graded work counts as submitted and carries the score', () => {
 test('a zero is a real score and must not read as ungraded', () => {
   const [t] = map([assignment({ submission: { workflow_state: 'graded', graded_at: at(-1), score: 0 } })]);
   assert.equal(t.score, 0);
+});
+
+test('a zero entered for work never handed in is still owed, never paid', () => {
+  // Canvas marks it `graded` with no submission time. `missing` is only set
+  // once the due date passes, so it must not be what decides.
+  for (const [due, missing] of [[at(-3), true], [at(1), false]]) {
+    const [t] = map([assignment({ due_at: due, submission_types: ['online_text_entry'], submission: {
+      workflow_state: 'graded', submitted_at: null, graded_at: at(-1), score: 0, missing } })]);
+    assert.equal(t.submittedAt, null, 'not done');
+    assert.equal(t.score, 0, 'but the zero shows');
+  }
+});
+
+test('work graded on paper, with no online submission, counts as handed in', () => {
+  const [t] = map([assignment({ due_at: at(-2), submission_types: ['on_paper'], submission: {
+    workflow_state: 'graded', submitted_at: null, graded_at: at(-1), score: 18, missing: false } })]);
+  assert.ok(t.submittedAt, 'the grade is the proof it was turned in');
+});
+
+test('with no submission types at all, a grade alone does not count as handed in', () => {
+  const [t] = map([assignment({ due_at: at(-2), submission: {
+    workflow_state: 'graded', submitted_at: null, graded_at: at(-1), score: 18 } })]);
+  assert.equal(t.submittedAt, null, 'the safe side is not paying');
+});
+
+test('excused work is neither owed nor paid', () => {
+  const [t] = [...map([assignment({ due_at: at(-2), submission: {
+    workflow_state: 'graded', submitted_at: null, graded_at: at(-1), score: null, excused: true } })])];
+  assert.equal(t, undefined, 'it leaves the list');
 });
 
 test('work submitted a while ago stops taking up space', () => {
@@ -141,6 +218,18 @@ test('an undated sweep item is still owed', () => {
   assert.equal(t.title, 'Reading response');
 });
 
+test('the sweep stays inside the courses that survived the term filter', () => {
+  const raw = [
+    { type: 'submitting', course_id: 1, context_name: 'AP Physics',
+      quiz: { id: 20, title: 'Unit 3 quiz', due_at: at(1) } },
+    { type: 'submitting', course_id: 2020, context_name: 'Orientation 2020',
+      quiz: { id: 21, title: 'Welcome survey' } },
+  ];
+  const kept = mapTodo(raw, HOST, NOW, new Set(['1']));
+  assert.deepEqual(kept.map((t) => t.title), ['Unit 3 quiz']);
+  assert.equal(mapTodo(raw, HOST, NOW).length, 2, 'with no course list the sweep is unfiltered');
+});
+
 // MARK: - Merging the two passes
 
 test('the detailed pass wins, and the sweep only adds what it alone found', () => {
@@ -156,6 +245,36 @@ test('the detailed pass wins, and the sweep only adds what it alone found', () =
   assert.ok(merged.find((t) => t.id.endsWith('a99')), 'and the one only the sweep saw is kept');
 });
 
+test('the sweep does not bring back what the course pass dropped', () => {
+  // The course pass saw an old, undated, unmarked leftover and left it out.
+  // The to-do sweep lists it too; it must stay out.
+  const raw = [assignment({ id: 5, due_at: null, points_possible: null, created_at: at(-400) })];
+  const examined = examinedIds(raw, HOST);
+  const sweep = [{ id: 'c-canvas.dartmouth.edu-a5', title: 'Lab writeup', dueAt: null }];
+  assert.deepEqual(merge(map(raw), sweep, examined), []);
+  assert.equal(merge(map(raw), sweep).length, 1, 'without the examined set it would come back');
+});
+
+test('a quiz is not listed twice, once as an assignment and once as a quiz', () => {
+  const raw = [assignment({ id: 9, name: 'Unit 4 check', quiz_id: 5001 })];
+  const examined = examinedIds(raw, HOST);
+  const sweep = [{ id: 'c-canvas.dartmouth.edu-q5001', title: 'Unit 4 check', dueAt: at(2) }];
+  const out = merge(map(raw), sweep, examined);
+  assert.deepEqual(out.map((t) => t.id), ['c-canvas.dartmouth.edu-a9']);
+});
+
+test('examinedIds survives junk', () => {
+  assert.deepEqual([...examinedIds(null, HOST)], []);
+  assert.deepEqual([...examinedIds([null, {}, { id: 1 }], HOST)], ['c-canvas.dartmouth.edu-a1']);
+});
+
+test('a course says whether it weights its groups, when Canvas says', () => {
+  const [w] = mapCourses([{ id: 1, name: 'A', apply_assignment_group_weights: false }]);
+  assert.equal(w.weighted, false);
+  const [u] = mapCourses([{ id: 2, name: 'B' }]);
+  assert.equal('weighted' in u, false, 'silence is not a claim either way');
+});
+
 test('the list comes back in due order, undated last', () => {
   const items = merge(map([
     assignment({ id: 1, name: 'Later', due_at: at(5) }),
@@ -163,6 +282,48 @@ test('the list comes back in due order, undated last', () => {
     assignment({ id: 3, name: 'Whenever', due_at: null }),
   ]), []);
   assert.deepEqual(items.map((t) => t.title), ['Sooner', 'Later', 'Whenever']);
+});
+
+// MARK: - Colours reach a CSS sink
+
+test('a dashboard colour that is not a colour is dropped', () => {
+  // content.js puts this straight into style="background:...", where escaping
+  // the string is not enough: ; and ( are legal there.
+  assert.equal(safeColor('#FF6F61'), '#FF6F61');
+  assert.equal(safeColor('#abc'), '#abc');
+  assert.equal(safeColor('red;background-image:url(https://evil/?x=)'), null);
+  assert.equal(safeColor('url(javascript:alert(1))'), null);
+  for (const junk of [null, undefined, 42, {}, '', 'red']) assert.equal(safeColor(junk), null);
+});
+
+test('a course carries a bad colour as no colour, not as markup', () => {
+  const [c] = mapCourses([{ id: 1, name: 'Physics', enrollments: [] }],
+    { course_1: '#fff;background-image:url(https://evil/)' });
+  assert.equal(c.colorHex, null);
+});
+
+// MARK: - Paging cannot be steered off-origin
+
+const ORIGIN = 'https://canvas.dartmouth.edu';
+const link = (url) => `<${url}>; rel="next", <${ORIGIN}/x?page=1>; rel="first"`;
+
+test('a next page on the same school is followed', () => {
+  assert.equal(nextLink(link(`${ORIGIN}/api/v1/courses?page=2`), ORIGIN),
+    `${ORIGIN}/api/v1/courses?page=2`);
+});
+
+test('a next page pointing somewhere else is refused', () => {
+  // These fetches carry the student's Canvas cookies.
+  assert.equal(nextLink(link('https://evil.example/steal'), ORIGIN), null);
+  assert.equal(nextLink(link('http://canvas.dartmouth.edu/x'), ORIGIN), null, 'downgrade to http is off-origin');
+  assert.equal(nextLink(link('https://canvas.dartmouth.edu.evil.example/x'), ORIGIN), null);
+});
+
+test('nextLink survives a missing or unparseable header', () => {
+  assert.equal(nextLink(null, ORIGIN), null);
+  assert.equal(nextLink('', ORIGIN), null);
+  assert.equal(nextLink('<not a url>; rel="next"', ORIGIN), null);
+  assert.equal(nextLink(`<${ORIGIN}/x>; rel="prev"`, ORIGIN), null, 'only rel=next counts');
 });
 
 // MARK: - Bad input

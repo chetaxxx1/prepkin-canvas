@@ -63,6 +63,13 @@ private extension Path {
     mutating func bend(_ x: CGFloat, _ y: CGFloat, _ cx: CGFloat, _ cy: CGFloat) {
         addQuadCurve(to: CGPoint(x: x, y: y), control: CGPoint(x: cx, y: cy))
     }
+    mutating func arc(_ x: CGFloat, _ y: CGFloat,
+                      _ c1x: CGFloat, _ c1y: CGFloat,
+                      _ c2x: CGFloat, _ c2y: CGFloat) {
+        addCurve(to: CGPoint(x: x, y: y),
+                 control1: CGPoint(x: c1x, y: c1y),
+                 control2: CGPoint(x: c2x, y: c2y))
+    }
 }
 
 // MARK: - Task category icons
@@ -86,7 +93,70 @@ struct CategoryIcon: View {
             case .walk:       sneaker
             case .sleep:      moon
             case .meal:       apple
+            case .stretch:    stretchMat
+            case .outdoors:   leafSprig
+            case .connect:    phone
+            case .tidy:       deskTidy
             }
+        }
+    }
+
+    /// A stretch — a rolled mat, seen end on. Lilac roll, a mint core, one band.
+    private var stretchMat: some View {
+        ZStack(alignment: .topLeading) {
+            box(3.0, 7.4, 18.0, 9.2, 4.6, Theme.hex(0xB9A6E8))
+            dot(18.2, 12.0, 3.6, Theme.hex(0x9C86D6))
+            dot(18.2, 12.0, 1.7, Theme.hex(0xDFF3E9))
+            box(8.4, 7.4, 2.4, 9.2, 1.2, Theme.hex(0xFFF3E4).opacity(0.75))
+        }
+    }
+
+    /// Stepping outside — a leaf sprig with the sun behind it. Not the sneaker, which
+    /// belongs to the walk, and not a whole tree, which reads as scenery at 24pt.
+    private var leafSprig: some View {
+        ZStack(alignment: .topLeading) {
+            dot(16.8, 6.8, 4.4, Theme.hex(0xFFD98A))
+            blob(Theme.hex(0x7FBF5A)) { p in
+                p.go(11.6, 20.6)
+                p.bend(4.6, 8.6, 4.2, 15.4)
+                p.bend(11.6, 20.6, 11.4, 13.0)
+                p.closeSubpath()
+            }
+            blob(Theme.hex(0x63A544)) { p in
+                p.go(11.6, 20.6)
+                p.bend(18.8, 10.4, 18.6, 16.6)
+                p.bend(11.6, 20.6, 12.2, 14.6)
+                p.closeSubpath()
+            }
+            stroke(Theme.hex(0x4E7F35), 1.5) { p in
+                p.go(11.6, 21.4); p.to(11.6, 14.2)
+            }
+        }
+    }
+
+    /// Texting someone — a phone with one message on it. The screen carries the
+    /// colour so the object stays readable against the near-white tile.
+    private var phone: some View {
+        ZStack(alignment: .topLeading) {
+            box(6.4, 2.6, 11.2, 18.8, 3.0, Theme.hex(0x4A4038))
+            box(7.8, 4.6, 8.4, 14.0, 1.6, Theme.hex(0xE8F7F0))
+            box(9.2, 7.2, 5.6, 1.5, 0.75, Theme.hex(0x57C79B))
+            box(9.2, 10.2, 4.0, 1.5, 0.75, Theme.hex(0x9AD9C1))
+            box(9.5, 19.4, 5.0, 0.9, 0.45, Theme.hex(0x6E6259))
+        }
+    }
+
+    /// Tidying the desk — a desk edge with one book squared up on it, and a cup.
+    /// The point is the clear surface, so most of the glyph is the top.
+    private var deskTidy: some View {
+        ZStack(alignment: .topLeading) {
+            box(2.6, 13.4, 18.8, 2.6, 1.3, Theme.hex(0xC49A6C))
+            box(4.6, 16.0, 1.9, 5.2, 0.9, Theme.hex(0xA8804F))
+            box(17.5, 16.0, 1.9, 5.2, 0.9, Theme.hex(0xA8804F))
+            box(5.4, 7.2, 3.0, 6.2, 0.8, Theme.hex(0xE4735F))
+            box(8.8, 8.6, 2.6, 4.8, 0.8, Theme.hex(0x6BAFE0))
+            box(14.2, 9.4, 4.4, 4.0, 1.4, Theme.hex(0xFFF3E4))
+            box(14.2, 9.4, 4.4, 1.3, 0.65, Theme.hex(0xDDD2C0))
         }
     }
 
@@ -265,6 +335,26 @@ struct CategoryIcon: View {
 
 /// The object in a tab. Colour is what makes six tabs findable — each is a distinct
 /// hue family, so you look for a silhouette rather than parsing a grey glyph.
+/// The console that was the Games tab's icon, now the Play section's on Learn.
+/// Lavender, not mint — mint belongs to the mascot alone.
+struct PlayIcon: View {
+    var size: CGFloat = 27
+
+    var body: some View {
+        Ico(size: size) {
+            ZStack(alignment: .topLeading) {
+                box(2.4, 5.8, 19.2, 12.4, 4.4, Theme.hex(0x8172C9))
+                foot(2.4, 14.6, 19.2, 3.6, 4.4, Theme.hex(0x6354A6))
+                box(8.7, 8.2, 6.6, 5.0, 1.3, Theme.hex(0x2B2440))
+                box(5.1, 10.1, 2.6, 1.2, 0.6, Theme.hex(0xFFF1E0))
+                box(5.8, 9.4, 1.2, 2.6, 0.6, Theme.hex(0xFFF1E0))
+                dot(17.5, 9.9, 1.15, Theme.hex(0xFF6F61))
+                dot(19.4, 12.0, 1.15, Theme.hex(0xFFC24B))
+            }
+        }
+    }
+}
+
 struct TabIcon: View {
     let tab: RootView.Tab
     var size: CGFloat = 27
@@ -274,7 +364,6 @@ struct TabIcon: View {
             switch tab {
             case .home:    house
             case .focus:   hourglass
-            case .games:   console
             case .learn:   books
             case .friends: heads
             case .kin:     EmptyView()   // the Kin tab draws the mascot chip instead
@@ -319,19 +408,6 @@ struct TabIcon: View {
         }
     }
 
-    /// Games is lavender, not mint — mint belongs to the mascot alone.
-    private var console: some View {
-        ZStack(alignment: .topLeading) {
-            box(2.4, 5.8, 19.2, 12.4, 4.4, Theme.hex(0x8172C9))
-            foot(2.4, 14.6, 19.2, 3.6, 4.4, Theme.hex(0x6354A6))
-            box(8.7, 8.2, 6.6, 5.0, 1.3, Theme.hex(0x2B2440))
-            box(5.1, 10.1, 2.6, 1.2, 0.6, Theme.hex(0xFFF1E0))
-            box(5.8, 9.4, 1.2, 2.6, 0.6, Theme.hex(0xFFF1E0))
-            dot(17.5, 9.9, 1.15, Theme.hex(0xFF6F61))
-            dot(19.4, 12.0, 1.15, Theme.hex(0xFFC24B))
-        }
-    }
-
     private var books: some View {
         ZStack(alignment: .topLeading) {
             box(3.4, 16.4, 17.2, 4.0, 1.3, Theme.hex(0x2E6E9E))
@@ -367,5 +443,96 @@ struct KinChip: View {
 
     var body: some View {
         SproutFace(speciesID: speciesID, size: size)
+    }
+}
+
+// MARK: - Friends tab glyphs
+
+/// The clap on the Cheer button. One colour, so the button can tint it coral when
+/// idle and white once cheered without carrying two artworks.
+///
+/// Two mittens and three sparks, per `design/handoff-friends/Friends Tab.dc.html`.
+struct ClapGlyph: View {
+    var size: CGFloat = 22
+    var tint: Color
+
+    var body: some View {
+        Ico(size: size) {
+            stroke(tint, 1.8) { p in p.go(12, 2.2); p.to(12, 5.4) }
+            stroke(tint, 1.8) { p in p.go(7.2, 3.6); p.to(8.7, 6.4) }
+            stroke(tint, 1.8) { p in p.go(16.8, 3.6); p.to(15.3, 6.4) }
+            // Back hand, dimmed so the two mittens read apart at 22 pt.
+            blob(tint, backHand).opacity(0.72)
+            blob(tint, frontHand)
+            stroke(.white, 1.2) { p in
+                p.go(12.3, 17.6); p.arc(10.7, 15.8, 11.3, 16.5, 10.7, 15.8)
+            }
+            Ellipse().fill(.white).opacity(0.28)
+                .frame(width: 1.8, height: 3.2).offset(x: 13.3, y: 7.7)
+        }
+    }
+
+    private func backHand(_ p: inout Path) {
+        p.go(11.6, 9.2)
+        p.to(8.4, 7.4)
+        p.arc(5.6, 8.2, 7.4, 6.8, 6.2, 7.2)
+        p.to(3.4, 12)
+        p.arc(5.0, 19.2, 2.2, 14.4, 2.8, 17.4)
+        p.to(6.2, 20.2)
+        p.arc(10.5, 20.7, 7.4, 21.2, 9.1, 21.4)
+        p.to(11.8, 19.5)
+        p.closeSubpath()
+    }
+
+    private func frontHand(_ p: inout Path) {
+        p.go(10.6, 21.4)
+        p.arc(15.0, 19.2, 11.0, 21.2, 15.0, 19.2)
+        p.arc(18.4, 12.7, 17.3, 17.8, 18.6, 15.3)
+        p.to(18.1, 9.7)
+        p.arc(15.8, 7.8, 18.0, 8.5, 17.0, 7.7)
+        p.arc(14.1, 9.7, 14.8, 7.9, 14.1, 8.7)
+        p.to(14.1, 7.9)
+        p.arc(12.5, 6.3, 14.1, 7.0, 13.4, 6.3)
+        p.arc(10.9, 7.9, 11.6, 6.3, 10.9, 7.0)
+        p.to(10.9, 10.5)
+        p.to(8.9, 8.3)
+        p.arc(6.4, 8.2, 8.2, 7.6, 7.1, 7.5)
+        p.arc(6.4, 10.7, 5.7, 8.9, 5.7, 10.0)
+        p.to(9.9, 14.5)
+        p.closeSubpath()
+    }
+}
+
+/// The add-friend button's glyph — one apricot head with a coral plus badge.
+/// Stands in for SF `person.badge.plus`, which is the only stroked grey symbol
+/// that would have been left in this palette.
+struct AddFriendGlyph: View {
+    var size: CGFloat = 24
+
+    var body: some View {
+        Ico(size: size) {
+            blob(Theme.hex(0xE08E56)) { p in
+                p.go(2.6, 20.4)
+                p.arc(9.4, 14.4, 2.6, 16.6, 5.5, 14.4)
+                p.arc(16.2, 20.4, 13.3, 14.4, 16.2, 16.6)
+                p.closeSubpath()
+            }
+            dot(9.4, 8.6, 5.2, Theme.hex(0xF5AE79))
+            dot(9.4, 7.3, 4.0, Theme.hex(0xF8C199)).opacity(0.55)
+            dot(6.2, 10.1, 0.9, Theme.blush).opacity(0.65)
+            dot(12.6, 10.1, 0.9, Theme.blush).opacity(0.65)
+            dot(7.8, 8.4, 0.95, Theme.ink)
+            dot(11.0, 8.4, 0.95, Theme.ink)
+            dot(8.05, 8.1, 0.3, .white)
+            dot(11.25, 8.1, 0.3, .white)
+            stroke(Theme.ink, 0.95) { p in
+                p.go(8.4, 10.5); p.bend(10.4, 10.5, 9.4, 11.5)
+            }
+            dot(17.6, 16.4, 5.2, Theme.coralShade)
+            dot(17.6, 15.9, 5.2, Theme.coral)
+            dot(16.2, 14.2, 1.3, .white).opacity(0.28)
+            box(16.55, 12.6, 2.1, 6.6, 1.05, .white)
+            box(14.3, 14.85, 6.6, 2.1, 1.05, .white)
+        }
     }
 }

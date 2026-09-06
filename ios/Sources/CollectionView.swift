@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// The whole ladder, cheapest tier first — the price band *is* the progression, so
-/// nothing needs a lock to imply order.
+/// nothing needs a lock to imply order. Since 2026-09-06 the scenes are the second
+/// shelf here, so the Shop can open on its picks alone (design/hicks-law-plan.md).
 ///
 /// An unowned kin is drawn at full colour, named and priced. No padlocks, no `?`
 /// tiles, no silhouettes, no desaturation: you can always see exactly what you are
@@ -14,6 +15,9 @@ struct CollectionView: View {
 
     @State private var detail: ChibiSpecies?
 
+    enum Shelf { case kin, scenes }
+    @State private var shelf: Shelf = .kin
+
     private var tiers: [Int] {
         Array(Set(ChibiSpecies.catalog.map(\.tier))).sorted()
     }
@@ -21,21 +25,31 @@ struct CollectionView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text("\(state.owned.count) of \(ChibiSpecies.catalog.count) owned · nothing here is ever locked or hidden")
+                shelfPicker
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 4)
+
+                Text(shelf == .kin
+                     ? "\(state.owned.count) of \(ChibiSpecies.catalog.count) owned · nothing here is ever locked or hidden"
+                     : "\(state.ownedScenes.count) of \(Scene0.all.count) owned · the room behind your kin on the Kin tab")
                     .font(Theme.font(12, .heavy))
                     .foregroundStyle(Theme.muted)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 4)
 
-                ForEach(tiers, id: \.self) { tier in
-                    group(tier)
-                }
+                if shelf == .kin {
+                    ForEach(tiers, id: \.self) { tier in
+                        group(tier)
+                    }
 
-                Text("That's the whole ladder. It never gets longer and nothing on it ever leaves.")
-                    .font(Theme.font(11.5, .heavy))
-                    .foregroundStyle(Theme.dim)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 8)
+                    Text("That's the whole ladder. It never gets longer and nothing on it ever leaves.")
+                        .font(Theme.font(11.5, .heavy))
+                        .foregroundStyle(Theme.dim)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                } else {
+                    sceneGrid
+                }
             }
             .padding(.top, 8)
             .padding(.bottom, 40)
@@ -74,6 +88,48 @@ struct CollectionView: View {
         .padding(.horizontal, 20)
         .padding(.bottom, 10)
         .background(Theme.paper)
+    }
+
+    /// Two shelves, one selected. The same capsule pair Focus uses for its lengths.
+    private var shelfPicker: some View {
+        HStack(spacing: 8) {
+            shelfChip("Kin", .kin)
+            shelfChip("Scenes", .scenes)
+        }
+    }
+
+    private func shelfChip(_ label: String, _ value: Shelf) -> some View {
+        let on = shelf == value
+        return Button { withAnimation(.easeInOut(duration: 0.16)) { shelf = value } } label: {
+            Text(label)
+                .font(Theme.font(14.5, .black))
+                .foregroundStyle(on ? Theme.onDarkWarm : Theme.ink)
+                .frame(minWidth: 84, minHeight: 36)
+                .background(Capsule().fill(on ? Theme.ink : Theme.card)
+                    .shadow(color: .black.opacity(0.05), radius: 5, y: 2))
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(on ? [.isSelected, .isButton] : .isButton)
+    }
+
+    /// Home draws Sprout's tank now, so a scene only changes the Kin tab. The
+    /// subtitle above says so before anyone spends 200 coins expecting Home to change.
+    private var sceneGrid: some View {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
+                  spacing: 12) {
+            ForEach(Scene0.all) { scene in
+                SceneCard(scene: scene,
+                          owned: state.ownedScenes.contains(scene.id),
+                          equipped: state.sceneID == scene.id,
+                          price: state.currentPrice("scene:\(scene.id)"),
+                          gap: max(0, state.currentPrice("scene:\(scene.id)") - state.coins),
+                          onUse: { state.equipScene(scene.id) },
+                          onBuy: { state.buyScene(scene) })
+            }
+        }
+        .padding(.horizontal, 20)
     }
 
     @ViewBuilder private func group(_ tier: Int) -> some View {
@@ -183,7 +239,8 @@ struct KinDetailSheet: View {
                 .disabled(state.coins < cost)
 
                 if state.coins < cost {
-                    Text("\(cost - state.coins) coins to go. Nothing expires while you get there.")
+                    let short = cost - state.coins
+                    Text("\(short) \(short == 1 ? "coin" : "coins") to go. Nothing expires while you get there.")
                         .font(Theme.font(12, .bold)).foregroundStyle(Theme.muted)
                 }
             }
@@ -311,7 +368,7 @@ struct AffordPanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline) {
-                Text("\(gap) coins to go")
+                Text("\(gap) \(gap == 1 ? "coin" : "coins") to go")
                     .font(Theme.font(16, .black)).foregroundStyle(Theme.mintDark)
                 Spacer()
                 Text("\(balance) of \(price)")

@@ -211,7 +211,14 @@ final class SchemaGrowthTests: XCTestCase {
         let state = try Store.decoder.decode(GameState.self, from: Data(json.utf8))
         XCTAssertEqual(state.ledger.balance, 1130, "coins survive a schema change")
         XCTAssertEqual(state.activeChibi.level, 3)
-        XCTAssertEqual(state.sceneID, "night")
+        // The old room names became the Sprout tank scenes (Theme.swift): night is deep.
+        // Pinning the mapping here means a future edit to Scene0.retired trips this test
+        // instead of silently moving somebody's tank.
+        XCTAssertEqual(Scene0.retired["night"], "deep",
+                       "this save is exercising the night-to-deep retirement")
+        XCTAssertEqual(state.sceneID, "deep")
+        XCTAssertEqual(state.ownedScenes, ["lagoon", "deep"],
+                       "the scene she paid for came across as its tank")
         XCTAssertTrue(state.canvasCourses.isEmpty)
     }
 
@@ -220,5 +227,140 @@ final class SchemaGrowthTests: XCTestCase {
         XCTAssertEqual(state.ledger.balance, 0)
         XCTAssertEqual(state.activeChibiID, "slime")
         XCTAssertFalse(state.templates.isEmpty, "a save with nothing in it still gets the starter tasks")
+    }
+}
+
+/// The half of the bridge that runs the other way: what the laptop asks for, and
+/// what the phone pays. Before this existed the extension queued finished focus
+/// sessions and look purchases, pushed them, cleared them, and the phone never
+/// looked — so the coins it promised never arrived.
+final class BridgeRequestTests: XCTestCase {
+    private func request(_ kind: String, at seconds: TimeInterval,
+                         minutes: Int? = nil, lookId: String? = nil,
+                         price: Int? = nil) -> BridgeRequest {
+        BridgeRequest(kind: kind, taskId: kind == "focus" ? "c-a1" : nil,
+                      minutes: minutes, lookId: lookId, price: price,
+                      at: Date(timeIntervalSince1970: seconds))
+    }
+
+    /// Funds the ledger the way the app really would — several finished focus
+    /// sessions. One 400-minute session would be refused, and rightly so.
+    private func stateWithCoins(_ coins: Int) -> GameState {
+        var game = GameState()
+        var paid = 0, at = 1.0
+        while paid < coins {
+            let minutes = min(240, coins - paid)
+            game.applyBridgeRequests([request("focus", at: at, minutes: minutes)])
+            paid += minutes
+            at += 1
+        }
+        XCTAssertEqual(game.ledger.balance, coins)
+        // Reset the watermark so the test's own requests still count as new.
+        game.requestsAppliedAt = nil
+        return game
+    }
+
+    func testAFinishedFocusSessionIsPaid() {
+        var game = GameState()
+        game.applyBridgeRequests([request("focus", at: 100, minutes: 25)])
+        XCTAssertEqual(game.ledger.balance, 25, "a minute of focus is a coin")
+        XCTAssertEqual(game.lifetime.focusMinutes, 25)
+    }
+
+    func testTheSameRequestArrivingTwiceIsPaidOnce() {
+        // The extension re-sends until the phone confirms, so this is the normal
+        // case, not an edge case.
+        var game = GameState()
+        let session = request("focus", at: 100, minutes: 25)
+        game.applyBridgeRequests([session])
+        game.requestsAppliedAt = nil          // as if the confirmation was lost
+        game.applyBridgeRequests([session])
+        XCTAssertEqual(game.ledger.balance, 25, "the ledger key stops the second payment")
+    }
+
+    func testRequestsAlreadySettledAreSkipped() {
+        var game = GameState()
+        game.applyBridgeRequests([request("focus", at: 100, minutes: 25)])
+        game.applyBridgeRequests([request("focus", at: 100, minutes: 25),
+                                  request("focus", at: 200, minutes: 15)])
+        XCTAssertEqual(game.ledger.balance, 40, "only the newer session is paid")
+    }
+
+    func testBuyingALookSpendsTheCoinsAndRecordsIt() {
+        var game = stateWithCoins(400)
+        game.applyBridgeRequests([request("look", at: 500, lookId: "woodland", price: 300)])
+        XCTAssertEqual(game.ledger.balance, 100)
+        XCTAssertTrue(game.ownedLooks.contains("woodland"))
+    }
+
+    func testALookYouCannotAffordIsRefusedRatherThanOwed() {
+        var game = stateWithCoins(50)
+        game.applyBridgeRequests([request("look", at: 500, lookId: "tidepool", price: 450)])
+        XCTAssertEqual(game.ledger.balance, 50, "the ledger never overdraws")
+        XCTAssertFalse(game.ownedLooks.contains("tidepool"), "and it is not quietly handed over")
+    }
+
+    func testALookIsNotPaidForTwice() {
+        var game = stateWithCoins(700)
+        game.applyBridgeRequests([request("look", at: 500, lookId: "beanie", price: 300)])
+        game.applyBridgeRequests([request("look", at: 600, lookId: "beanie", price: 300)])
+        XCTAssertEqual(game.ledger.balance, 400, "already owned, so nothing more is charged")
+    }
+
+    func testNonsenseFromTheBridgeIsIgnoredRatherThanPaid() {
+        var game = stateWithCoins(1000)
+        let before = game.ledger.balance
+        game.applyBridgeRequests([
+            request("focus", at: 10, minutes: 100_000),        // a week of "focus"
+            request("focus", at: 11, minutes: -5),
+            request("look", at: 12, lookId: "", price: 10),
+            request("look", at: 13, lookId: "x", price: -900), // a purchase that pays you
+            request("wat", at: 14),
+        ])
+        XCTAssertEqual(game.ledger.balance, before, "none of that is a real request")
+        XCTAssertEqual(game.ownedLooks, ["classic"])
+    }
+
+    func testThePhoneReportsHowFarItHasPaid() {
+        // This is what lets the extension stop re-sending, and what stops a
+        // finished session falling down the gap between two pushes.
+        var game = GameState()
+        let newest = game.applyBridgeRequests([request("focus", at: 100, minutes: 25),
+                                               request("focus", at: 300, minutes: 15)])
+        XCTAssertEqual(newest, Date(timeIntervalSince1970: 300))
+        XCTAssertEqual(game.bridgeState.requestsAppliedAt, Date(timeIntervalSince1970: 300))
+        XCTAssertEqual(game.bridgeState.coins, 40)
+    }
+
+    func testTheWatermarkKeepsItsMilliseconds() {
+        // Found on the simulator: 12:06:26Z never retires a request stamped
+        // 12:06:26.126Z, so the laptop re-sent it on every push.
+        XCTAssertEqual(SupabaseCanvasClient.stamp(Date(timeIntervalSince1970: 26.126)),
+                       "1970-01-01T00:00:26.126Z")
+    }
+
+    func testTheExtensionsRequestsSurviveTheWire() throws {
+        let json = """
+        {"tasks":[],"courses":[],"requests":[
+          {"kind":"focus","taskId":"c-a1","minutes":25,"at":"2026-09-04T10:00:00Z"},
+          {"kind":"look","lookId":"woodland","price":300,"at":"2026-09-04T10:05:00Z"},
+          {"kind":"focus","minutes":15,"at":"not a date"}
+        ]}
+        """
+        let snapshot = try SupabaseCanvasClient.decode(Data(json.utf8))
+        XCTAssertEqual(snapshot.requests.count, 2, "a request with no readable time has no safe key")
+        XCTAssertEqual(snapshot.requests.first?.minutes, 25)
+        XCTAssertEqual(snapshot.requests.last?.lookId, "woodland")
+    }
+
+    func testUnpairingForgetsTheTokenAndTheWatermark() {
+        var game = GameState()
+        game.pairingCode = "ABCD-EFGH"
+        game.pairingToken = "secret"
+        game.applyBridgeRequests([request("focus", at: 100, minutes: 25)])
+        game.unpair()
+        XCTAssertNil(game.pairingToken, "the token must not outlive the pairing")
+        XCTAssertNil(game.requestsAppliedAt)
+        XCTAssertEqual(game.ledger.balance, 25, "coins already earned are kept")
     }
 }

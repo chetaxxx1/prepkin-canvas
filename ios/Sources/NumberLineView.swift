@@ -143,11 +143,16 @@ struct NumberLineView: View {
                 header
                 progressDots.padding(.top, 14)
                 if let prompt {
-                    kinLine(prompt).padding(.top, 14)
+                    // Every part of this block is a fixed height whether or not the
+                    // round is locked, so it can float in the middle of the space it
+                    // has instead of hugging the header with the button a screen away.
+                    // The two minimums match on purpose: unequal ones sit off-centre.
+                    Spacer(minLength: 14)
+                    kinLine(prompt)
                     promptCard(prompt).padding(.top, 16)
                     line(prompt).padding(.top, 26)
                     feedback(prompt).padding(.top, 18)
-                    Spacer(minLength: 8)
+                    Spacer(minLength: 14)
                     button(prompt).padding(.bottom, 30)
                 }
             }
@@ -373,7 +378,7 @@ struct NumberLineView: View {
                 Text(last >= 95 ? "Spot on" : (last >= 80 ? "Close" : "Off by \(prompt.format(off))"))
                     .font(Theme.font(15, .black))
                     .foregroundStyle(last >= 80 ? Theme.mintDark : Theme.ink)
-                Text("· \(last)")
+                Text("· \(last)/100")
                     .font(Theme.font(15, .heavy))
                     .foregroundStyle(Theme.muted)
             }
@@ -422,6 +427,7 @@ struct NumberLineView: View {
         VStack(spacing: 10) {
             SproutImage(speciesID: state.activeChibiID,
                         level: state.activeChibi.level,
+                        skin: state.activeChibi.skinID,
                         animation: accuracy >= 60 ? .celebrate : .bounce,
                         size: 120)
             Text("\(accuracy)% on the line.")

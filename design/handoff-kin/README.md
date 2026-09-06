@@ -81,8 +81,8 @@ Catalogue grows from 4 to 6 entries:
 | `wisp` | Wisp | 4 | 800 | `#C3B2F0` (existing) |
 | `comet` | Comet | 5 | 1200 | **NEW** `#FFC24B`, tail tip `#E8A62E` |
 
-Scenes are unchanged — the real four from `Theme.swift` are used throughout: Study room 0,
-Meadow 200, Golden hour 220, Night in 250.
+Scenes are the five tanks from `Theme.swift`: Lagoon 0, Reef 200, Kelp 220, Dusk 250, Deep 280.
+Sprout is a fish, so a scene is the water he lives in. The land rooms were retired on 2026-09-04.
 
 **Price sanity:** at the existing earn rates (Canvas task 30, study 20, life 10, lesson 20, daily
 word 30, plus focus) a full day is 120–200 coins. Uncommon is two days, Rare four, Epic a week,
@@ -298,8 +298,8 @@ the shared components above are the spec.
 | `1l` | Arrival | Full screen, no chrome |
 | `1m` | Name your kin | Finch's flow, no fake keyboard |
 | `1n` | Adoption card | The keepsake |
-| `1o` | Star-up 1★→2★ | Blush appears |
-| `1p` | Star-up 2★→3★ | Gold crown reveal |
+| `1o` | Star-up 1★→2★ | Fins lengthen |
+| `1p` | Star-up 2★→3★ | He gets dressed: the kin's costume (scholar, ninja, hoodie, baker, astronaut, racer, biker, pajamas) |
 | `1q` | New kin silhouette sheet | 1120pt wide; art proposals |
 | `1r` | Tier ramp spec | 520pt wide |
 | `2a` | Kin root on a dark scene | `Scene0.isDark == true` |
@@ -358,7 +358,7 @@ neglected.
 ### `1b` — Kin root, first run
 
 Deltas from `1a` only:
-- Scene is Study room. Wallet reads `0`. Kin is 1★ at 164×147, plain (no blush).
+- Scene is Lagoon. Wallet reads `0`. Kin is 1★ at 164×147, plain (no blush).
 - Name pill is replaced by a **dashed affordance**: `Theme.card` with a 2pt dashed `#E5DDD0`
   border, die icon + `"Name your kin"` 13.5/900 `muted`. Bubble: `"This one is yours. It's free."`
 - Care row gains a caption at top 522: `"Free, unlimited, always. No cooldown."`
@@ -507,7 +507,7 @@ like this from here."` CTA `"Show me"` (coral).
 
 ### `2a` — Dark scene
 
-`Scene0.isDark == true` (Night in) already exists in `Theme.swift` with a comment promising this
+`Scene0.isDark == true` (Deep) already exists in `Theme.swift` with a comment promising this
 treatment. Every pill over the scene flips to dark glass: `rgba(16,24,32,.54)` for controls,
 `.62` for the bubble / name / star plate, 1pt `rgba(255,255,255,.18)` border, 12pt blur, white
 type. **The coin disc keeps its brand colours** — it must be the same object across every scene.
@@ -616,7 +616,7 @@ the locked slot, seeded on `DayKey` so the row is stable within a day and identi
 
 ## Assets
 
-- `scene-dorm.jpg`, `scene-meadow.jpg`, `scene-sunset.jpg`, `scene-night.jpg` — copied from
+- `scene-lagoon.png`, `scene-reef.png`, `scene-kelp.png`, `scene-dusk.png`, `scene-deep.png` — cut from
   `design/canvas/`. Full-resolution originals are already in `ios/Resources/Assets.xcassets` and in
   `design/scenes/`. Use those; the JPGs here are only so the HTML renders.
 - `kin-silhouettes.json` — geometry for the four new/revised kin, in the same coordinate space as

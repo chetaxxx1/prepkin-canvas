@@ -1,0 +1,83 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>What BetterCampus themes touch</title>
+<style>
+  :root { --ink: #1b1d22; --ink-2: #5d6169; --paper: #f7f6f3; --line: #e2e0da; --mint: #1f8a63; --amber: #9a5b12; --pink: #b4287a; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 ui-rounded, "SF Pro Rounded", system-ui, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 28px 80px; }
+  h1 { font-size: 30px; letter-spacing: -.02em; margin: 0 0 6px; }
+  .sub { color: var(--ink-2); margin: 0 0 28px; }
+  h2 { font-size: 20px; margin: 44px 0 12px; }
+  figure { margin: 0 0 8px; }
+  figure img { width: 100%; border: 1px solid var(--line); border-radius: 10px; display: block; }
+  figcaption { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); border-top: 0; }
+  .have { color: var(--mint); font-weight: 700; }
+  .part { color: var(--amber); font-weight: 700; }
+  .no { color: var(--pink); font-weight: 700; }
+  .never { color: var(--ink-2); font-weight: 700; }
+  ol li { margin-bottom: 8px; }
+  .note { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 18px 0; }
+</style>
+<main>
+  <h1>What BetterCampus themes touch</h1>
+  <p class="sub">Their Chrome Web Store shots and theme pages, read on 2026-09-05, next to what Graffiti does today. Their art is theirs, kept here only as reference.</p>
+
+  <div class="grid">
+    <figure><img src="reference/bettercampus/store-1-make-canvas-home.png" alt=""><figcaption>Store shot 1. Top: their old look (card images only). Bottom: the current look replaces the whole shell.</figcaption></figure>
+    <figure><img src="reference/bettercampus/store-2-dream-theme.png" alt=""><figcaption>Store shot 2. A theme = page colour, surface colour, their own sidebar, a font, and a set of card images.</figcaption></figure>
+    <figure><img src="reference/bettercampus/store-4-cards.png" alt=""><figcaption>Store shot 4. Card: image, grade pill top-left, due list with done items struck through.</figcaption></figure>
+    <figure><img src="reference/bettercampus/ours-graffiti-dark.png" alt=""><figcaption>Ours, Graffiti on the sandbox. Wallpaper, four banners, course colour kept as a strip, Canvas's own nav.</figcaption></figure>
+  </div>
+
+  <h2>Every element a BetterCampus theme can set</h2>
+  <p class="sub">From their theme pages (each lists Background, Surface, Sidebar, Links, Text, a font, and N custom cards), their help docs, and the open-source repo.</p>
+  <table>
+    <tr><th>Element</th><th>BetterCampus</th><th>Prepkin today</th><th>Take it?</th></tr>
+    <tr><td>Page background colour</td><td>Any hex, light or dark</td><td class="have">Have. 12 papers, plus wallpaper on image themes</td><td>Done</td></tr>
+    <tr><td>Page background image / wallpaper</td><td>By URL, "daily images", GIFs</td><td class="have">Have. Bundled, never fetched</td><td>Done</td></tr>
+    <tr><td>Surface colour (cards, panels) separate from background</td><td>Yes</td><td class="part">Partly. Paper-2 tone, not chosen per theme</td><td>Yes, one field per theme</td></tr>
+    <tr><td>Text colour, link colour, border colour</td><td>Any hex each</td><td class="part">Accent only; ink comes from the paper for contrast</td><td>Links yes; body ink stays ours (readability)</td></tr>
+    <tr><td>Font</td><td>Any Google Font, per theme</td><td class="never">Never. Rule: no font-family on Canvas</td><td>No. Their serif look is the one thing we do not copy</td></tr>
+    <tr><td>Sidebar / global nav</td><td>Replaced by their own rail: colour or gradient, image, Widgets, Pages, Courses list, Perks</td><td class="no">Canvas's nav, dimmed only</td><td><b>Yes, the biggest visual gap.</b> Theme the rail (colour, gradient, wallpaper crop), keep every Canvas tab</td></tr>
+    <tr><td>Course card image</td><td>Per course by URL, up to 9 per theme; GIFs</td><td class="have">4 banners per theme, rotate by position</td><td>Yes: let the student pick which banner per course; 6 banners for the flagship themes</td></tr>
+    <tr><td>Card overlay colour / gradient cards</td><td>Pick a colour or gradient, or disable the overlay</td><td class="part">Course colour kept as a 6px strip</td><td>Maybe. A strip vs a tint toggle</td></tr>
+    <tr><td>Card shape: roundness, spacing, width, height, condensed</td><td>Sliders</td><td class="part">Compact toggle only</td><td>Roundness + spacing as two more toggles, cheap</td></tr>
+    <tr><td>Card extras: grade pill, due list on card, done struck through</td><td>Yes, all three</td><td class="part">Due line on card; grades live in the panel</td><td><b>Yes.</b> Grade pill on the card, we already have the score</td></tr>
+    <tr><td>Rename a course, custom card links</td><td>Yes</td><td class="no">No</td><td>Rename yes (local nickname). Links no</td></tr>
+    <tr><td>Dark mode: full custom, scheduled, follows OS</td><td>Yes</td><td class="have">Light / Dark / Auto, every theme has both</td><td>Done</td></tr>
+    <tr><td>Header: search box, page title style</td><td>Their own header with search</td><td class="no">Canvas's header</td><td>No. Search is Canvas's job</td></tr>
+    <tr><td>Right rail: progress ring, week calendar, due soon</td><td>Yes</td><td class="part">Today block on top of the dashboard, panel for the rest</td><td>Partly. A "this week" ring in the Today block</td></tr>
+    <tr><td>Remove school logo, hide Recent Feedback, colour-coded tab icons</td><td>Toggles</td><td class="part">Logo-dup and todo-dup rules on the receipt</td><td>Hide Recent Feedback as a receipt row</td></tr>
+    <tr><td>Widgets: breathe, quotes, timer, music, agenda, notepad</td><td>Sidebar widgets</td><td class="part">Focus timer in the panel</td><td>Notepad maybe. Music no</td></tr>
+    <tr><td>GPA: current, weighted, cumulative; edit credits</td><td>Yes, on the dashboard</td><td class="part">Current + weighted (Honors / AP chips)</td><td>Cumulative needs past terms typed in. Later</td></tr>
+    <tr><td>Community themes: browse, like, share, create + export</td><td>Yes, thousands, free tier limited</td><td class="no">16 bundled, coins to unlock</td><td>No network by design. Ship more bundled themes instead</td></tr>
+  </table>
+
+  <div class="note">
+    <b>What their theme actually is, in one line:</b> five colours (background, surface, sidebar, links, text), one font, and a folder of card images. Everything else is a toggle that applies to every theme.
+  </div>
+
+  <h2>Ranked: what to build next</h2>
+  <ol>
+    <li><b>Theme the nav rail.</b> Colour or gradient per theme, wallpaper crop for image themes. Every Canvas tab stays, in the same place. This one change makes a screenshot read as "themed" the way theirs does.</li>
+    <li><b>Grade pill on the course card.</b> Top-left of the banner, from the same score the panel shows. Off when the school hides grades.</li>
+    <li><b>Pick a banner per course.</b> Three-dot menu on the card, choose one of the theme's banners. Six banners for Graffiti and the next flagship themes.</li>
+    <li><b>Surface + links colours per theme.</b> Two more fields in themes.js. Body ink stays computed for contrast.</li>
+    <li><b>Course nickname.</b> "BIO 101" instead of the registrar's title. Local, shown on cards and in the panel.</li>
+    <li><b>Card roundness and spacing.</b> Two toggles next to Compact pages.</li>
+  </ol>
+
+  <h2>What we keep doing differently, on purpose</h2>
+  <ol>
+    <li>No font swap. Their serif look is pretty in a screenshot and slower to read for two hours.</li>
+    <li>Canvas's nav stays Canvas's. We colour it, we never replace it, so nothing a teacher points to is missing.</li>
+    <li>No URLs, no Pinterest links, no daily images. Art ships inside the extension. Zero requests leave the laptop.</li>
+    <li>Course colour survives as the strip. Students learn "red is Physics" and we do not take that away.</li>
+  </ol>
+
+  <p class="sub">Sources: chromewebstore.google.com listing (BetterCampus, prev. BetterCanvas), bettercampus.com/themes and three theme pages (JujutsuManga, red&amp;blue aesthetic, aura canvas), support.bettercampus.com "create theme", github.com/UseBetterCanvas/bettercanvas README, bettercampuss.com customization guide.</p>
+</main>

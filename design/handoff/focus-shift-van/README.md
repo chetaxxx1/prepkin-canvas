@@ -74,14 +74,21 @@ Animation: bob 1.1s ease-in-out · wheels 0.8s linear · dashes 0.55s linear · 
 
 Shipped as `ios/Sources/FocusView.swift` (running screen) + `ios/Sources/ShiftSceneView.swift` (the van scene). `bestShift` added to `GameState`. All 70 unit tests pass.
 
-Five deliberate deviations, each marked in the code:
+Six deliberate deviations, each marked in the code:
 
 1. **Palette mapped to the app, not the handoff.** Layout, spacing and timing are followed exactly, but the near-black button became `Theme.coral` and the amber fill became `Theme.coin`, so Focus matches every other tab. The van keeps its amber — `Theme.coinBorder` (#E8A62E) is a hair off the handoff's #DE9A22 and reads the same. The cream scene colours are illustration-only and live in `ShiftScene`, not `Theme`.
 2. **No Strict / Sound off segment.** Neither setting exists in the app, and the handoff makes both display-only during a shift. The row carries the live best-shift chip alone rather than two dead controls.
-3. **No quit sheet.** Clock-out uses a native confirmation dialog until that frame is designed. It asks the same question and states the pay.
+3. **~~No quit sheet.~~** Built 2026-09-03: a bottom sheet in the app's own furniture (paper ground, 26pt sheet radius, coral 56pt pay button, "Keep working" text button below). Tapping outside keeps the shift running. The shift's clock and scene keep running behind it.
 4. **No milestone tick on the progress bar.** There are no breaks inside a shift yet.
 5. **Task pill strings are cut to length.** Real Canvas course names are sentences ("Thayer Welcome and Orientation"), so the pill shows the course *code* only when the sync gives a short one, and the title is clipped at 22 characters. Keeps the pill hugging its content the way the frame draws it.
 
 Economy unchanged: 1 coin a minute, as the app already paid. The handoff's proposed 10/20/30 flat rates are marked "pending confirmation" there and were not applied. Clocking out early now pays for minutes worked — previously it paid nothing.
 
 The scene is scaled as a whole below 844pt so it degrades on an iPhone SE instead of clipping. Session end still returns to the ready screen; the finish report screen the handoff mentions does not exist yet, and neither does the Live Activity.
+
+6. **Best shift appears once, and not in coin gold.** The handoff prints the record
+   twice — in the top chip and again in "NEXT IN 1:24 · BEST SHIFT 11" under the count.
+   It now lives only in the chip, since the header row exists for it and the caption
+   belongs to the live count. The van's parcel icon had become the swim's float, which
+   is `Theme.coin`; the chip now wears three of the scene's current lines in
+   `Theme.mintDark`, so a lengths record cannot be misread as pay.

@@ -1,7 +1,7 @@
 {
-  "//": "Copy this file to bridge/config.local.json and fill in the two values from Supabase → Project Settings → API.",
+  "//": "Copy this file to bridge/config.local.json and fill in the two values from Supabase -> Project Settings -> API.",
   "//url": "Project URL, looks like https://abcdefghijkl.supabase.co",
   "url": "",
-  "//anonKey": "The 'anon public' key. NOT the service_role key — that one is a real secret and must never leave Supabase.",
-  "anonKey": ""
+  "//publishableKey": "The publishable (anon) key. NOT the service_role key \u2014 that one is a real secret and must never leave Supabase.",
+  "publishableKey": ""
 }

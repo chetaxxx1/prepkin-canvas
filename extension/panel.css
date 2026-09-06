@@ -1,0 +1,395 @@
+/* The buddy panel's own styles.
+ *
+ * These live in a closed shadow root, not in the Canvas page. That is why the
+ * selectors here are bare: nothing outside the root can see, restyle or read
+ * what is inside it. Colours arrive as custom properties from skin.css, so the
+ * paper the student picked reaches the panel and the panel never disagrees
+ * with the page.
+ *
+ * The rules of the house are in DESIGN.md: one family, one accent, hairlines
+ * between rows, a block is recessed or raised but never a card in a card,
+ * 150–220ms ease-out-quint, and every number can only go up.
+ */
+:host {
+  position: fixed; right: 18px; bottom: 18px; z-index: 2147483000;
+  font: 14px/1.4 ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Segoe UI", sans-serif;
+  color: var(--pk-text);
+  display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+  --pk-ease: cubic-bezier(.22, 1, .36, 1);
+}
+*, *::before, *::after { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 2px solid var(--pk-mint); outline-offset: 2px;
+}
+
+/* ---- The launcher: the buddy, at rest, bottom right ----------------------- */
+.pk-tab {
+  position: relative; width: 64px; height: 64px; border: 0; cursor: pointer;
+  background: var(--pk-card); border-radius: 50%;
+  box-shadow: 0 4px 16px var(--pk-shadow), inset 0 0 0 1px var(--pk-line);
+  display: grid; place-items: center; padding: 0;
+  transition: transform .18s var(--pk-ease), box-shadow .18s var(--pk-ease);
+}
+.pk-tab:hover { transform: translateY(-2px); box-shadow: 0 8px 22px var(--pk-shadow), inset 0 0 0 1px var(--pk-line); }
+.pk-tab:active { transform: translateY(0); }
+.pk-count {
+  position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px;
+  padding: 0 6px; border-radius: 10px;
+  background: var(--pk-mint); color: #101820; font-size: 12px; font-weight: 800;
+  border: 2px solid var(--pk-page);
+  display: grid; place-items: center;
+}
+
+/* ---- The panel shell ------------------------------------------------------ */
+.pk-panel {
+  order: -1; width: 360px; max-height: min(74vh, 700px); overflow-y: auto;
+  background: var(--pk-card); border-radius: 20px; padding: 0;
+  box-shadow: 0 18px 44px var(--pk-shadow), inset 0 0 0 1px var(--pk-line);
+  animation: pk-in .2s var(--pk-ease);
+  overscroll-behavior: contain;
+}
+@keyframes pk-in { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---- The head: the buddy speaks, then the day in one line ---------------- */
+.pk-head {
+  background: var(--pk-inset); padding: 18px 18px 16px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.pk-head.worried { background: var(--pk-amber-tint); }
+.pk-hero { display: flex; align-items: center; gap: 14px; }
+.pk-hero > svg { flex-shrink: 0; }
+.pk-bubble { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.pk-bubble strong { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; }
+.pk-bubble span { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-text-mid); }
+
+.pk-chips { display: flex; align-items: center; gap: 10px; }
+.pk-coins {
+  display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer;
+  background: var(--pk-ink); color: var(--pk-on-ink); border-radius: 999px;
+  padding: 6px 12px; font-size: 13px; font-weight: 800;
+  transition: transform .15s var(--pk-ease);
+}
+.pk-coins:hover { transform: translateY(-1px); }
+.pk-donechip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--pk-green);
+}
+.pk-head.worried .pk-donechip { color: var(--pk-amber-text); }
+.pk-chips .pk-label { margin-left: auto; }
+
+.pk-label {
+  font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--pk-text-2);
+}
+.pk-label.green { color: var(--pk-green); }
+
+/* Daily progress, the buddy riding the fill edge. It only ever moves right. */
+.pk-track { position: relative; height: 8px; border-radius: 999px; background: var(--pk-track); }
+.pk-track > i {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  border-radius: 999px; background: var(--pk-mint); display: block;
+  transition: width .4s var(--pk-ease);
+}
+.pk-rider { position: absolute; top: -12px; transform: translateX(-50%); transition: left .4s var(--pk-ease); }
+
+/* ---- Body ------------------------------------------------------------------ */
+.pk-body { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+
+.pk-filters { display: flex; gap: 6px; }
+.pk-filters button {
+  border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  font-size: 13px; font-weight: 700; background: var(--pk-inset); color: var(--pk-text-2);
+  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease);
+}
+.pk-filters button:hover { color: var(--pk-text); }
+.pk-filters button em { font-style: normal; opacity: .7; margin-left: 4px; }
+.pk-filters button.on { background: var(--pk-mint-tint-strong); color: var(--pk-green); font-weight: 800; }
+.pk-filters button.on em { opacity: .65; }
+.pk-filters button.on.amber { background: var(--pk-amber-tint); color: var(--pk-amber-text); }
+
+/* Sub-view header (week planner, what-if, looks) */
+.pk-viewhead { display: flex; align-items: center; gap: 10px; }
+.pk-back {
+  border: 0; background: none; cursor: pointer; padding: 4px; display: flex;
+  color: var(--pk-green); border-radius: 8px;
+}
+.pk-back:hover { background: var(--pk-inset); }
+.pk-viewhead h2 { margin: 0; font-size: 16px; line-height: 20px; font-weight: 800; letter-spacing: -.01em; }
+.pk-viewhead .pk-meta { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--pk-text-2); display: inline-flex; gap: 4px; align-items: center; }
+
+/* ---- Next up: the one accent block on the surface ------------------------- */
+.pk-next {
+  background: var(--pk-mint-tint); border-radius: 16px;
+  box-shadow: inset 0 0 0 1px var(--pk-mint-border);
+  padding: 12px 12px 12px 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.pk-next .pk-row { display: flex; align-items: center; gap: 10px; }
+.pk-next .pk-row > div { flex-grow: 1; min-width: 0; }
+.pk-next b { display: block; font-size: 14px; line-height: 20px; font-weight: 800; }
+.pk-next small { font-size: 13px; font-weight: 600; color: var(--pk-text-mid); }
+
+/* The press button: mint, with an edge that gives under the thumb. */
+.pk-start,
+.pk-press {
+  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: var(--pk-mint); color: #101820 !important; text-decoration: none !important;
+  font-size: 14px; font-weight: 800; border-radius: 12px; padding: 8px 16px;
+  box-shadow: 0 3px 0 var(--pk-mint-edge); cursor: pointer;
+  transition: transform .08s var(--pk-ease), box-shadow .08s var(--pk-ease), filter .15s var(--pk-ease);
+}
+.pk-start:hover, .pk-press:hover { filter: brightness(1.04); }
+.pk-start:active, .pk-press:active { transform: translateY(3px); box-shadow: 0 0 0 var(--pk-mint-edge); }
+.pk-press.wide { width: 100%; }
+.pk-press:disabled { opacity: .5; cursor: default; transform: none; }
+.pk-start.soft { background: var(--pk-soft); color: #33291f !important; box-shadow: 0 3px 0 var(--pk-soft-edge); }
+.pk-start.soft:active { box-shadow: 0 0 0 var(--pk-soft-edge); }
+
+.pk-focusrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.pk-focusrow span { font-size: 13px; font-weight: 700; color: var(--pk-text-2); margin-right: 2px; }
+.pk-mins {
+  border: 0; box-shadow: inset 0 0 0 1px var(--pk-line-soft); background: var(--pk-card);
+  color: var(--pk-text-2); border-radius: 999px; padding: 5px 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease);
+}
+.pk-mins:hover { color: var(--pk-text); }
+.pk-mins.on { background: var(--pk-mint-tint-strong); box-shadow: inset 0 0 0 1px var(--pk-mint-border); color: var(--pk-green); font-weight: 800; }
+.pk-mins.go { color: var(--pk-text); font-weight: 800; }
+.pk-lenchange { border: 0; background: none; padding: 4px 6px; font-size: 13px; font-weight: 700; color: var(--pk-green); cursor: pointer; }
+.pk-lenchange:hover { text-decoration: underline; }
+.pk-lenopts { display: none; gap: 6px; }
+.pk-focusrow.open .pk-lenopts { display: inline-flex; }
+
+/* ---- Rows: a list is a list --------------------------------------------- */
+.pk-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.pk-list li {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; min-height: 44px;
+  border-top: 1px solid var(--pk-line);
+}
+.pk-list li:first-child { border-top: 0; }
+.pk-list li > .pk-dot {
+  flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px;
+  background: var(--pk-circle);
+}
+.pk-list li.overdue > .pk-dot { background: var(--pk-card); box-shadow: inset 0 0 0 2px var(--pk-coin); }
+.pk-list li > .pk-tick { flex-shrink: 0; display: flex; }
+.pk-list li > .pk-bar { flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px; }
+.pk-list li > div { flex-grow: 1; min-width: 0; }
+.pk-list b {
+  display: block; font-size: 14px; line-height: 20px; font-weight: 700;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pk-list small { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-text-2); }
+.pk-list li.overdue small { color: var(--pk-amber-text); }
+.pk-list li.done b { color: var(--pk-text-3); text-decoration: line-through; text-decoration-color: var(--pk-circle); font-weight: 600; }
+.pk-list .pk-pts { flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
+.pk-plus {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;
+  background: var(--pk-amber-tint); color: var(--pk-amber-text);
+  border-radius: 999px; padding: 4px 9px; font-size: 13px; font-weight: 800;
+}
+.pk-list li.empty {
+  border-top: 0; background: var(--pk-inset); border-radius: 12px; justify-content: center;
+  font-size: 13px; font-weight: 600; color: var(--pk-text-2); padding: 14px;
+}
+
+/* ---- Week planner --------------------------------------------------------- */
+.pk-week {
+  background: var(--pk-inset); border-radius: 16px; padding: 12px 14px;
+  display: flex; justify-content: space-between;
+}
+.pk-week div { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.pk-week i { width: 12px; height: 12px; border-radius: 999px; background: var(--pk-track); display: block; }
+.pk-week i.full { background: var(--pk-mint); }
+.pk-week i.today { background: var(--pk-card); box-shadow: inset 0 0 0 2px var(--pk-mint); }
+.pk-week span { font-size: 11px; font-weight: 800; color: var(--pk-text-2); }
+.pk-week div.is-today span { color: var(--pk-green); }
+.pk-group { display: flex; align-items: center; gap: 8px; padding-top: 4px; }
+.pk-group .pk-count-txt { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
+
+/* ---- Grades: rows, a bar under each, one open at a time ------------------- */
+.pk-grades { display: flex; flex-direction: column; }
+.pk-grade { display: flex; flex-direction: column; gap: 6px; cursor: pointer; padding: 10px 0; border-top: 1px solid var(--pk-line); }
+.pk-grade:first-child { border-top: 0; }
+.pk-grade .pk-row { display: flex; align-items: center; gap: 10px; }
+.pk-grade .pk-cdot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px; }
+.pk-grade b {
+  flex-grow: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 700;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pk-grade .pk-pct { font-size: 14px; font-weight: 800; }
+.pk-grade .pk-letter { width: 22px; text-align: right; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
+.pk-grade .pk-chev { flex-shrink: 0; display: flex; color: var(--pk-text-2); transition: transform .18s var(--pk-ease); }
+.pk-grade .pk-mini { height: 4px; border-radius: 999px; background: var(--pk-track); margin-left: 20px; position: relative; }
+.pk-grade .pk-mini > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; display: block; }
+.pk-grade.open { background: var(--pk-inset); border-radius: 12px; padding: 12px; gap: 10px; border-top: 0; margin-top: 4px; }
+.pk-spark { display: block; width: 100%; height: 36px; }
+.pk-spark path { stroke-dasharray: 1000; stroke-dashoffset: 0; animation: pk-draw .5s var(--pk-ease); }
+@keyframes pk-draw { from { stroke-dashoffset: 1000; } }
+.pk-recent { display: flex; flex-direction: column; gap: 4px; }
+.pk-recent div { display: flex; gap: 8px; font-size: 13px; }
+.pk-recent div span { flex-grow: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-recent div em { font-style: normal; font-weight: 700; color: var(--pk-text-2); }
+.pk-grades hr { border: 0; height: 1px; background: var(--pk-line); margin: 6px 0 0; }
+.pk-gpa { display: flex; align-items: center; padding-top: 10px; }
+.pk-gpa b { flex-grow: 1; font-size: 14px; font-weight: 800; }
+.pk-gpa strong { font-size: 16px; font-weight: 900; color: var(--pk-green); }
+.pk-gpa.weighted { padding-top: 2px; }
+.pk-gpa.weighted b { font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
+.pk-gpa.weighted strong { font-size: 14px; }
+.pk-grade .pk-level {
+  flex-shrink: 0; font-size: 10px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase;
+  color: var(--pk-text-2); border: 1px solid var(--pk-line); border-radius: 999px; padding: 1px 6px;
+}
+.pk-levels { display: flex; gap: 4px; margin-left: 20px; }
+.pk-levels button {
+  flex: 1; border: 1px solid var(--pk-line); background: transparent; color: var(--pk-text-2);
+  border-radius: 999px; padding: 5px 0; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: background .15s var(--pk-ease), color .15s var(--pk-ease);
+}
+.pk-levels button[aria-checked="true"] { background: var(--pk-ink); color: var(--pk-on-ink); border-color: var(--pk-ink); }
+.pk-foot { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-text-3); }
+.pk-foot.center { text-align: center; }
+
+/* ---- What-if -------------------------------------------------------------- */
+.pk-context { background: var(--pk-inset); border-radius: 16px; padding: 12px 14px; display: flex; gap: 12px; }
+.pk-context div { display: flex; flex-direction: column; gap: 2px; }
+.pk-context div:last-child { margin-left: auto; text-align: right; }
+.pk-context small { font-size: 13px; font-weight: 600; color: var(--pk-text-2); }
+.pk-context b { font-size: 16px; font-weight: 800; }
+.pk-targets { display: flex; gap: 6px; }
+.pk-targets button {
+  flex: 1; border: 0; border-radius: 999px; padding: 8px 0; cursor: pointer;
+  background: var(--pk-inset); color: var(--pk-text-2); font-size: 14px; font-weight: 700;
+  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease);
+}
+.pk-targets button.on { background: var(--pk-mint-tint-strong); color: var(--pk-green); font-weight: 800; }
+.pk-result {
+  background: var(--pk-mint-tint); border-radius: 16px;
+  box-shadow: inset 0 0 0 1px var(--pk-mint-border);
+  padding: 16px 14px; display: flex; align-items: center; gap: 12px;
+}
+.pk-result > svg { flex-shrink: 0; }
+.pk-result div { display: flex; flex-direction: column; gap: 4px; }
+.pk-result b { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; }
+.pk-result small { font-size: 13px; font-weight: 600; color: var(--pk-text-mid); }
+.pk-weightask { display: flex; gap: 8px; align-items: center; }
+.pk-weightask input {
+  width: 72px; border: 0; box-shadow: inset 0 0 0 1px var(--pk-line-soft);
+  background: var(--pk-card); color: var(--pk-text); border-radius: 10px;
+  padding: 8px 10px; font: inherit; font-size: 14px; font-weight: 700; text-align: center;
+}
+.pk-weightask input:focus { box-shadow: inset 0 0 0 2px var(--pk-mint); outline: none; }
+
+/* ---- Looks: six papers, a swatch is the honest preview -------------------- */
+.pk-shop { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pk-look {
+  border: 0; border-radius: 16px; padding: 12px 10px 10px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  box-shadow: inset 0 0 0 1px var(--pk-line);
+  transition: transform .15s var(--pk-ease), box-shadow .15s var(--pk-ease);
+}
+.pk-look:hover { transform: translateY(-1px); }
+.pk-look.wearing { box-shadow: inset 0 0 0 2px var(--pk-mint); }
+.pk-look b { font-size: 14px; font-weight: 800; color: inherit; margin-top: 2px; }
+.pk-look small { font-size: 11px; font-weight: 700; color: inherit; opacity: .72; display: flex; align-items: center; gap: 4px; }
+.pk-look small.pk-paper { font-weight: 600; letter-spacing: .01em; }
+.pk-look.wearing small:not(.pk-paper) { color: #2e7d57; opacity: 1; }
+.pk-look.on-dark.wearing small:not(.pk-paper) { color: #7fddb8; }
+.pk-look small.price { color: #a0722b; opacity: 1; }
+.pk-look.on-dark small.price { color: #ecb35c; }
+
+.pk-sheet {
+  border-radius: 16px; background: var(--pk-inset); padding: 20px 16px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+}
+.pk-well { width: 120px; height: 96px; border-radius: 16px; display: grid; place-items: center; }
+.pk-sheet b { font-size: 16px; font-weight: 800; }
+.pk-sheet .pk-paper { font-size: 13px; font-weight: 600; color: var(--pk-text-2); }
+.pk-sheet .pk-cost { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
+.pk-sheet .pk-no { border: 0; background: none; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--pk-text-2); padding: 6px 10px; border-radius: 8px; }
+.pk-sheet .pk-no:hover { background: var(--pk-card); }
+
+/* ---- Focus timer ----------------------------------------------------------- */
+.pk-timer {
+  order: -2; width: 280px; background: var(--pk-card); border-radius: 20px;
+  padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px;
+  box-shadow: 0 18px 44px var(--pk-shadow), inset 0 0 0 1px var(--pk-line);
+}
+.pk-timer.done { align-items: center; text-align: center; }
+.pk-timer .pk-row { display: flex; align-items: center; gap: 12px; }
+.pk-timer .pk-clock { font-size: 36px; font-weight: 800; line-height: 1.05; letter-spacing: -.02em; }
+.pk-timer small { font-size: 13px; font-weight: 600; color: var(--pk-text-2); }
+.pk-timer .pk-thin { height: 6px; border-radius: 999px; background: var(--pk-track); position: relative; }
+.pk-timer .pk-thin > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--pk-mint); display: block; transition: width 1s linear; }
+.pk-timer .pk-give {
+  border: 0; background: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  color: var(--pk-text-2); text-align: center; line-height: 1.35; padding: 6px; border-radius: 8px;
+}
+.pk-timer .pk-give:hover { background: var(--pk-inset); }
+.pk-timer b { font-size: 16px; font-weight: 800; }
+
+/* ---- Motion off ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .pk-panel, .pk-spark path { animation: none; }
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}
+
+/* A look tile shows the page it makes: a scrap of paper with one card. */
+.pk-preview { position: relative; width: 100%; height: 64px; display: block; }
+.pk-preview > span { position: absolute; left: 8px; right: 8px; top: 8px; height: 48px; border-radius: 6px; border: 1px solid; display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; }
+.pk-preview > span i { display: block; width: 28%; height: 4px; border-radius: 2px; }
+.pk-preview > span em { display: block; width: 70%; height: 3px; border-radius: 2px; opacity: .55; }
+.pk-preview > span em + em { width: 45%; }
+.pk-preview > svg { position: absolute; right: 10px; bottom: 0; }
+
+/* The focus ring around the buddy. */
+.pk-ring { position: relative; width: 72px; height: 72px; flex-shrink: 0; display: grid; place-items: center; }
+.pk-ring > svg { position: absolute; inset: 0; }
+.pk-ring circle:last-child { transition: stroke-dashoffset 1s linear; }
+.pk-timer .pk-row > .pk-mins { margin-left: auto; align-self: flex-start; }
+/* An image theme's tile shows its wallpaper; the preview card floats on it. */
+.pk-look.has-art .pk-preview > span { box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
+.pk-look.has-art b, .pk-look.has-art small { text-shadow: 0 1px 0 rgba(255, 255, 255, .35); }
+.pk-look.has-art.on-dark b, .pk-look.has-art.on-dark small { text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
+/* The banner picker in a worn image theme's sheet. */
+.pk-banners { width: 100%; display: flex; flex-direction: column; gap: 8px; padding-top: 6px; border-top: 1px solid var(--pk-line); text-align: left; }
+.pk-bannerrow b { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.pk-thumbs button {
+  height: 28px; border: 2px solid transparent; border-radius: 8px; cursor: pointer; padding: 0;
+  background-size: cover; background-position: center; transition: transform .15s var(--pk-ease);
+}
+.pk-thumbs button:hover { transform: translateY(-1px); }
+.pk-thumbs button[aria-pressed="true"] { border-color: var(--pk-ink); }
+
+/* Own tasks, nicknames and search. */
+.pk-listfoot { display: flex; gap: 8px; margin: 6px 0 14px; }
+.pk-add { flex: 1; border: 1px dashed var(--pk-line); background: transparent; color: var(--pk-text-2); border-radius: 12px; padding: 8px 10px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.pk-add:hover { color: var(--pk-text); border-color: var(--pk-text-2); }
+.pk-add kbd, .pk-kbd { font: inherit; font-size: 11px; font-weight: 800; padding: 1px 5px; border-radius: 5px; border: 1px solid var(--pk-line); color: var(--pk-text-2); }
+.pk-viewhead .pk-kbd { margin-left: auto; }
+.pk-list li.own .pk-done { flex-shrink: 0; border: 0; border-radius: 999px; padding: 6px 10px; background: var(--pk-mint); color: #101820; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.pk-x { flex-shrink: 0; border: 0; background: transparent; color: var(--pk-text-2); font: inherit; font-size: 18px; line-height: 1; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
+.pk-x:hover { background: var(--pk-inset); color: var(--pk-text); }
+.pk-form { display: flex; flex-direction: column; gap: 10px; }
+.pk-form input, .pk-form select, .pk-search, .pk-rename input {
+  width: 100%; box-sizing: border-box; border: 1px solid var(--pk-line); border-radius: 12px; padding: 10px 12px;
+  background: var(--pk-card); color: var(--pk-text); font: inherit; font-size: 14px; font-weight: 600;
+}
+.pk-form input:focus, .pk-form select:focus, .pk-search:focus, .pk-rename input:focus { outline: 2px solid var(--pk-mint); outline-offset: 0; border-color: transparent; }
+.pk-formrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pk-rename { display: flex; gap: 6px; margin-left: 20px; }
+.pk-rename input { padding: 7px 10px; font-size: 13px; }
+.pk-rename button { flex-shrink: 0; border: 1px solid var(--pk-line); background: transparent; color: var(--pk-text); border-radius: 999px; padding: 0 12px; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.pk-search { margin-bottom: 10px; font-size: 15px; }
+.pk-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 260px; }
+.pk-results li a { display: flex; flex-direction: column; gap: 2px; padding: 9px 10px; border-radius: 10px; color: inherit; text-decoration: none; }
+.pk-results li a b { font-size: 14px; font-weight: 700; }
+.pk-results li a small { font-size: 12px; color: var(--pk-text-2); }
+.pk-results li.on a, .pk-results li a:hover { background: var(--pk-inset); }
+.pk-results li.empty { padding: 12px 10px; color: var(--pk-text-2); font-size: 13px; }

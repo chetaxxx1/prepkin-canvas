@@ -189,8 +189,10 @@ final class Store {
         state.owned = old.owned.isEmpty ? [OwnedChibi(speciesID: "slime", level: 1)] : old.owned
         state.activeChibiID = old.activeChibiID
         state.completedLessons = old.completedLessons
-        state.sceneID = old.sceneID ?? "dorm"
-        state.ownedScenes = old.ownedScenes ?? ["dorm"]
+        // Land scenes became tanks; `Scene0.find` maps a retired id onto its tank.
+        state.sceneID = Scene0.find(old.sceneID ?? "").id
+        state.ownedScenes = Set((old.ownedScenes ?? []).map { Scene0.find($0).id })
+        state.ownedScenes.insert(Scene0.all[0].id)
         state.currentDay = today
         state.maxDayReached = today
 

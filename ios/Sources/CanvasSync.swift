@@ -54,15 +54,61 @@ struct CanvasCourse: Codable, Equatable, Identifiable {
     }
 }
 
+/// Something the extension did on the laptop and wants paying for: a focus
+/// session that finished, or a look bought in its shop. The app's ledger decides
+/// whether it happens — this is only the request.
+///
+/// `at` is what makes it idempotent. The extension keeps re-sending a request
+/// until the phone says it applied it, so the same one can arrive many times and
+/// must only ever be paid once.
+struct BridgeRequest: Codable, Equatable {
+    let kind: String
+    var taskId: String?
+    var minutes: Int?
+    var lookId: String?
+    var price: Int?
+    let at: Date
+
+    /// The ledger key. Same request, same key, one payment ever.
+    var ledgerKey: String {
+        let stamp = ISO8601DateFormatter().string(from: at)
+        switch kind {
+        case "focus": return "bridge:focus:\(taskId ?? "-"):\(stamp)"
+        case "look":  return "bridge:look:\(lookId ?? "-"):\(stamp)"
+        default:      return "bridge:\(kind):\(stamp)"
+        }
+    }
+}
+
 /// One push from the extension.
 struct CanvasSnapshot: Equatable {
     var tasks: [CanvasItem] = []
     var courses: [CanvasCourse] = []
+    var requests: [BridgeRequest] = []
+}
+
+/// What the phone publishes back, so the extension's shop can show a real
+/// balance instead of a guess.
+struct BridgeState: Codable, Equatable {
+    var coins: Int
+    var owned: [String]
+    /// The newest request the phone has actually paid. The extension drops
+    /// everything up to here and keeps re-sending the rest — which is why a
+    /// finished focus session can no longer fall down the gap between a push the
+    /// bridge accepted and a phone that never read it.
+    var requestsAppliedAt: Date?
 }
 
 /// The bridge to Canvas data.
 protocol CanvasSyncClient {
     func fetchTodo() async throws -> CanvasSnapshot
+    /// Publishes the coin balance and owned looks. Silent no-op for clients that
+    /// have no bridge behind them.
+    func pushState(_ state: BridgeState) async throws
+}
+
+extension CanvasSyncClient {
+    func pushState(_ state: BridgeState) async throws {}
 }
 
 enum BridgeError: Error, Equatable {
@@ -79,11 +125,15 @@ enum BridgeError: Error, Equatable {
 /// the key shipped in the app cannot list the table or see anyone else's row.
 struct SupabaseCanvasClient: CanvasSyncClient {
     let code: String
+    /// This phone's own token, handed out once by `claim_code` when the code was
+    /// made. The code alone opens nothing: it is only good for the few minutes it
+    /// takes a laptop to pair, and reads need this.
+    let token: String
     var config: BridgeConfig = .shared
     var session: URLSession = .shared
 
-    func fetchTodo() async throws -> CanvasSnapshot {
-        guard config.isConfigured, let endpoint = config.endpoint("fetch_todo") else {
+    private func call(_ function: String, _ body: [String: Any]) async throws -> Data {
+        guard config.isConfigured, let endpoint = config.endpoint(function) else {
             throw BridgeError.notConfigured
         }
         var request = URLRequest(url: endpoint)
@@ -91,14 +141,50 @@ struct SupabaseCanvasClient: CanvasSyncClient {
         request.setValue(config.publishableKey, forHTTPHeaderField: "apikey")
         request.setValue("Bearer \(config.publishableKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(["p_code": code])
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
         request.timeoutInterval = 15
 
         let (data, response) = try await session.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200..<300).contains(status) else { throw BridgeError.server(status: status) }
+        return data
+    }
 
-        return try Self.decode(data)
+    func fetchTodo() async throws -> CanvasSnapshot {
+        try Self.decode(try await call("fetch_todo", ["p_code": code, "p_token": token]))
+    }
+
+    func pushState(_ state: BridgeState) async throws {
+        var payload: [String: Any] = ["coins": state.coins, "owned": state.owned]
+        if let at = state.requestsAppliedAt {
+            payload["requestsAppliedAt"] = Self.stamp(at)
+        }
+        _ = try await call("push_state", ["p_code": code, "p_token": token, "p_state": payload])
+    }
+
+    /// The "paid up to" watermark, with milliseconds. The extension stamps each
+    /// request to the millisecond and retires the ones at or before this; a
+    /// whole-second stamp here sat just before the request it was answering,
+    /// so nothing was ever retired and every push carried the whole queue again.
+    static func stamp(_ date: Date) -> String {
+        fractionalISO.string(from: date)
+    }
+
+    /// Called once, when the app first shows a code. Returns this phone's token,
+    /// or nil if somebody already holds that code and a new one should be rolled.
+    static func claimCode(_ code: String, config: BridgeConfig = .shared,
+                          session: URLSession = .shared) async throws -> String? {
+        let client = SupabaseCanvasClient(code: code, token: "", config: config, session: session)
+        let data = try await client.call("claim_code", ["p_code": code])
+        let text = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard text != "null", !text.isEmpty else { return nil }
+        return (try? JSONDecoder().decode(String.self, from: data)) ?? text.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+    }
+
+    /// Unpairing takes the row with it, rather than leaving a student's
+    /// coursework readable for another month.
+    func deletePairing() async throws {
+        _ = try await call("delete_pairing", ["p_code": code, "p_token": token])
     }
 
     /// `null` means no row: stay quiet and leave whatever the app already has.
@@ -112,12 +198,29 @@ struct SupabaseCanvasClient: CanvasSyncClient {
         if trimmed.hasPrefix("[") {
             return CanvasSnapshot(tasks: try decoder.decode([WireItem].self, from: data).map(\.item))
         }
+        struct WireRequest: Decodable {
+            let kind: String
+            var taskId: String?
+            var minutes: Int?
+            var lookId: String?
+            var price: Int?
+            var at: String?
+        }
         struct Payload: Decodable {
             var tasks: [WireItem]?
             var courses: [CanvasCourse]?
+            var requests: [WireRequest]?
         }
         let payload = try decoder.decode(Payload.self, from: data)
-        return CanvasSnapshot(tasks: (payload.tasks ?? []).map(\.item), courses: payload.courses ?? [])
+        // A request with an unreadable timestamp has no idempotency key worth
+        // trusting, so it is dropped rather than risking paying it twice.
+        let requests: [BridgeRequest] = (payload.requests ?? []).compactMap { r in
+            guard let at = date(from: r.at) else { return nil }
+            return BridgeRequest(kind: r.kind, taskId: r.taskId, minutes: r.minutes,
+                                 lookId: r.lookId, price: r.price, at: at)
+        }
+        return CanvasSnapshot(tasks: (payload.tasks ?? []).map(\.item),
+                              courses: payload.courses ?? [], requests: requests)
     }
 
     /// One task as the wire carries it. The extension deliberately keeps an

@@ -1,0 +1,6 @@
+{
+  "path": "/api/v1/courses/4/lti_apps/launch_definitions?placements%5B%5D=assignment_view",
+  "status": 200,
+  "link": "<https://localhost:8443/api/v1/courses/4/lti_apps/launch_definitions?placements%5B%5D=assignment_view&page=first&per_page=10>; rel=\"current\",<https://localhost:8443/api/v1/courses/4/lti_apps/launch_definitions?placements%5B%5D=assignment_view&page=first&per_page=10>; rel=\"first\",<https://localhost:8443/api/v1/courses/4/lti_apps/launch_definitions?placements%5B%5D=assignment_view&page=first&per_page=10>; rel=\"last\"",
+  "body": []
+}

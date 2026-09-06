@@ -1,0 +1,25 @@
+{
+  "path": "/api/v1/courses/5/activity_stream/summary",
+  "status": 200,
+  "link": null,
+  "body": [
+    {
+      "type": "DiscussionTopic",
+      "notification_category": null,
+      "count": 2,
+      "unread_count": 2
+    },
+    {
+      "type": "Message",
+      "notification_category": "Due Date",
+      "count": 4,
+      "unread_count": 0
+    },
+    {
+      "type": "Submission",
+      "notification_category": null,
+      "count": 1,
+      "unread_count": 1
+    }
+  ]
+}

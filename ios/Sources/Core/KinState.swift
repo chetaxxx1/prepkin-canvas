@@ -93,7 +93,7 @@ extension GameState {
     var picks: [ShopPick] { shopPicks.compactMap(resolvePick) }
 
     /// Rolls the row over at the day boundary, and keeps it stable inside a day —
-    /// the same five come back after a relaunch, so nothing feels snatched away.
+    /// the same row comes back after a relaunch, so nothing feels snatched away.
     mutating func refreshPicksIfNeeded(now: Date = Date()) {
         let day = effectiveDay
         if shopPickDay != day {
@@ -111,6 +111,13 @@ extension GameState {
     /// still costs no coins.
     static let rerollsPerDay = 3
     var rerollsLeft: Int { max(0, Self.rerollsPerDay - rerollCount) }
+
+    /// Whether a reroll could actually change the row.
+    ///
+    /// Late on, when there is less left to own than the row has slots, every draw
+    /// is the same draw. Spending one of three free rerolls to watch nothing move
+    /// is worse than not offering it, so the Shop asks this first.
+    var rerollCanChange: Bool { pickPool.count > Self.pickSlots }
 
     @discardableResult
     mutating func rerollPicks() -> Bool {
@@ -222,8 +229,6 @@ extension GameState {
         return max(1, days + 1)
     }
 
-    /// `nil` when Canvas has never been connected. The strip drops the cell rather
-    /// than printing a zero it has no way to earn.
     /// What has happened since this kin arrived. The starter, and any kin from a
     /// save older than the snapshot, get the whole history.
     func stats(since kin: OwnedChibi) -> LifetimeStats {
@@ -239,7 +244,11 @@ extension GameState {
     }
 
     var canvasFinishedOrNil: Int? {
-        (pairingCode == nil && canvasItems.isEmpty && lifetime.canvasFinished == 0)
+        // A code on its own is only an invitation — the app mints one the moment the
+        // connect screen opens, so keying off `pairingCode` counted a student as
+        // connected before any laptop had ever answered, and printed a hard 0 they
+        // had no way to earn. A received list is the real test.
+        (lastCanvasSyncAt == nil && canvasItems.isEmpty && lifetime.canvasFinished == 0)
             ? nil : lifetime.canvasFinished
     }
 }

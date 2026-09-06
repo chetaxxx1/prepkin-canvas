@@ -21,6 +21,11 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        # Light only, app-wide. The paper, tank plates and kin art are tuned for
+        # cream; a real dark paper is a queued handoff, not a token swap. This key
+        # also reaches UIKit-hosted views and the web view, which
+        # .preferredColorScheme never did.
+        INFOPLIST_KEY_UIUserInterfaceStyle: Light
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_VERSION: "5.9"
         CODE_SIGNING_ALLOWED: NO

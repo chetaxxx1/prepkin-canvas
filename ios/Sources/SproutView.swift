@@ -18,7 +18,12 @@ import WebKit
 /// cp dist/index.html dist/favicon.svg ios/SproutWeb/
 /// cp dist/assets/* ios/SproutWeb/assets/
 /// cp dist/tanks/ios/* ios/SproutWeb/tanks/ios/
+/// cp -R dist/badges ios/SproutWeb/badges
+/// cp -R dist/costumes ios/SproutWeb/costumes
 /// ```
+/// `costumes/` holds the stage III costume layers (cut from renders of the rig);
+/// without it three-star kin stand there undressed. `badges/` is the retired
+/// belly-emblem art, kept so the dormant code still resolves.
 /// Copy `tanks/ios/` with the bundle — Home asks the page to paint the tank
 /// (`?tank=lagoon`) because a see-through WKWebView composites nothing at all.
 /// Skip the full-screen playground plates; they are not used in embed.
@@ -27,11 +32,20 @@ struct SproutView: UIViewRepresentable {
     var speciesID: String
     /// 1–3, mapped onto Sprout's three evolutions.
     var level: Int
+    /// Which Sprout look the kin is wearing: `classic` or `ninja`.
+    var skin: String = "classic"
     var animation: ChibiAnimation
     /// Stage-3 body radius in points. The page sizes the drawing from this
     /// rather than filling the view, because the view is deliberately larger
     /// than the character to give the jumping emotes room.
     var radius: CGFloat
+    /// Where the student last asked him to swim, as a fraction of this view:
+    /// `(0,0)` top-left, `(1,1)` bottom-right. Fractions rather than points
+    /// because the page lays itself out in CSS pixels that do not line up with
+    /// the view's points, and because only the page knows how far the drawing
+    /// reaches — it trims the target to what fits. Set a new value to send him;
+    /// he stops where he arrives.
+    var swimTo: CGPoint?
     /// Tank plate to draw behind him. The page then paints the whole scene, so
     /// the web view can stay opaque — a see-through WKWebView composites
     /// nothing at all, which leaves the character invisible.
@@ -39,19 +53,72 @@ struct SproutView: UIViewRepresentable {
     /// Painted under the page until it draws, so a cold launch is never a white
     /// block where the tank will be.
     var placeholder: UIColor = .white
+    /// Reduce Motion, pushed to the page on ready and on change. The page also
+    /// reads the system setting itself; this is the belt to that brace.
+    var reduceMotion: Bool = false
     /// Fires with `true` once the page has drawn, `false` when a look change
     /// forces a reload. Lets the host cover the view until then.
     var onReady: ((Bool) -> Void)? = nil
+    /// Fires with the band the page will actually let him into, whenever the page
+    /// reports its layout. Read it rather than assume: the page trims every `swimTo`
+    /// to this, so a host that lays something out above him and does not trim the
+    /// same way draws above a fish who never got that high.
+    var onLayout: ((Band) -> Void)? = nil
 
-    /// Drawn width, fins included, as a multiple of drawn height.
-    static let aspect: CGFloat = 1.4162
-    /// Stage-3 body radius as a fraction of the drawn width.
-    static let radiusRatio: CGFloat = 0.2846
-    /// Drawn height as a multiple of the stage-3 radius. He is anchored by his
-    /// feet, so this is how far up from the floor the top of his tuft lands.
-    static let heightPerRadius: CGFloat = 2.48
+    /// The strip of the view his steering point is allowed into, top and bottom as
+    /// fractions of the view's height. Fractions, not the CSS pixels the message
+    /// carries, because the fraction is the one number that means the same thing on
+    /// both sides of the bridge.
+    struct Band: Equatable {
+        var top: CGFloat
+        var bottom: CGFloat
+    }
+
+    /// Drawn width, fins included, as a multiple of drawn height. From the
+    /// Sprout build's `reach` for the three-star drawing (long fins, belly badge):
+    /// 640 + 680 wide by 470 + 380 tall, in art units.
+    static let aspect: CGFloat = 1.5529
+    /// Stage-3 body radius as a fraction of the drawn width: 849 / (1320 × 2.52).
+    static let radiusRatio: CGFloat = 0.2552
+    /// Drawn height as a multiple of the stage-3 radius: 850 × 2.52 / 849. This is
+    /// the whole drawing; `riseRatio` says how much of it stands above the point the
+    /// page steers by.
+    static let heightPerRadius: CGFloat = 2.523
+    /// How much of the drawn height sits above the steering point: 470 of the 850 art
+    /// units in `aspect`. The other 380 hang below it.
+    static let riseRatio: CGFloat = 0.5529
+
+    /// Home is the only host, and the page takes about a second to boot, so one
+    /// web view and one coordinator live for the whole run. Leaving the tab
+    /// detaches the view; coming back re-attaches the same one, already drawn,
+    /// instead of loading the page again and flashing the placeholder.
+    private enum Shared {
+        static var webView: WKWebView?
+        static let coordinator = Coordinator()
+    }
 
     func makeUIView(context: Context) -> WKWebView {
+        if let view = Shared.webView {
+            view.removeFromSuperview()
+            context.coordinator.onReady = onReady
+            context.coordinator.onLayout = onLayout
+            // The page is already up, but this host starts covered and has to be
+            // told so, and handed the band it reported the first time round — the
+            // coordinator outlives the host, so a new host would otherwise have no
+            // band at all until the page happened to lay out again.
+            // Deferred: SwiftUI is mid-update while it builds the view.
+            if context.coordinator.ready {
+                let ready = onReady
+                let layout = onLayout
+                let band = context.coordinator.band
+                DispatchQueue.main.async {
+                    ready?(true)
+                    if let band { layout?(band) }
+                }
+            }
+            return view
+        }
+
         let controller = WKUserContentController()
         controller.add(context.coordinator, name: "riverSprite")
 
@@ -60,6 +127,7 @@ struct SproutView: UIViewRepresentable {
         config.setURLSchemeHandler(SproutSchemeHandler(), forURLScheme: SproutSchemeHandler.scheme)
 
         let view = WKWebView(frame: .zero, configuration: config)
+        view.navigationDelegate = context.coordinator
         view.scrollView.isScrollEnabled = false
         // The view sits under the status bar. Left automatic, the scroll view
         // hands the page a safe-area inset and the tank stops short of the
@@ -68,17 +136,26 @@ struct SproutView: UIViewRepresentable {
         view.isUserInteractionEnabled = false
         view.backgroundColor = placeholder
         view.scrollView.backgroundColor = placeholder
+        // Both of the above are invisible while the view is opaque, and it has to
+        // stay opaque. This is the base WebKit actually paints before the document
+        // has a background of its own, so a reload or a killed web content process
+        // shows the tank floor rather than white.
+        view.underPageBackgroundColor = placeholder
 
         let look = currentLook
         context.coordinator.look = look
         context.coordinator.onReady = onReady
+        context.coordinator.onLayout = onLayout
+        context.coordinator.reduceMotion = reduceMotion
         view.load(URLRequest(url: look.url))
+        Shared.webView = view
         return view
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
         let coordinator = context.coordinator
         coordinator.onReady = onReady
+        coordinator.onLayout = onLayout
         // Coat, evolution and size are read once at boot, so a change to any of
         // them is a reload rather than something pushed in like an emote.
         let look = currentLook
@@ -91,20 +168,37 @@ struct SproutView: UIViewRepresentable {
             return
         }
 
+        if coordinator.reduceMotion != reduceMotion {
+            coordinator.reduceMotion = reduceMotion
+            if coordinator.ready {
+                webView.evaluateJavaScript("window.RiverSprite.setReduceMotion(\(reduceMotion))")
+            }
+        }
+
+        if let swimTo, swimTo != coordinator.lastSwim {
+            coordinator.lastSwim = swimTo
+            coordinator.send("window.RiverSprite.goTo(\(swimTo.x), \(swimTo.y))", to: webView)
+
+        }
+
         guard animation != coordinator.lastAnimation else { return }
         coordinator.lastAnimation = animation
         coordinator.send(Self.script(for: animation), to: webView)
     }
 
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    // The coordinator is the page's message handler and remembers what the page
+    // has been told, so it has to outlive the host along with the web view.
+    func makeCoordinator() -> Coordinator { Shared.coordinator }
 
     private var currentLook: Look {
-        Look(coat: Self.coat(speciesID), evo: Self.evo(level), radius: radius, tank: tank)
+        Look(type: Self.type(speciesID), coat: Self.coat(speciesID), evo: Self.evo(level), skin: skin, radius: radius, tank: tank)
     }
 
     struct Look: Equatable {
+        var type: String
         var coat: String
         var evo: String
+        var skin: String
         var radius: CGFloat
         var tank: String
 
@@ -115,8 +209,10 @@ struct SproutView: UIViewRepresentable {
             components.path = "/index.html"
             components.queryItems = [
                 URLQueryItem(name: "embed", value: "1"),
+                URLQueryItem(name: "type", value: type),
                 URLQueryItem(name: "coat", value: coat),
                 URLQueryItem(name: "evo", value: evo),
+                URLQueryItem(name: "skin", value: skin),
                 URLQueryItem(name: "radius", value: String(format: "%.2f", radius)),
                 URLQueryItem(name: "tank", value: tank),
             ]
@@ -126,12 +222,16 @@ struct SproutView: UIViewRepresentable {
 
     /// Buffers the first emote until the page reports `ready`, so an animation
     /// played during launch is not swallowed.
-    final class Coordinator: NSObject, WKScriptMessageHandler {
+    final class Coordinator: NSObject, WKScriptMessageHandler, WKNavigationDelegate {
         var lastAnimation: ChibiAnimation?
+        var lastSwim: CGPoint?
         var look: Look?
         var ready = false
         var pending: String?
         var onReady: ((Bool) -> Void)?
+        var reduceMotion = false
+        var band: Band?
+        var onLayout: ((Band) -> Void)?
 
         func send(_ script: String, to webView: WKWebView) {
             guard ready else {
@@ -143,14 +243,39 @@ struct SproutView: UIViewRepresentable {
 
         func userContentController(_ controller: WKUserContentController,
                                    didReceive message: WKScriptMessage) {
+            // `ready` and `layout` both carry the page's own measurements — `w`/`h`
+            // and the rectangle he may occupy, all in CSS pixels. They are passed on
+            // as fractions of `h`: a host laying something out around him must never
+            // be handed pixels it would have to assume match the view's points.
             guard let body = message.body as? [String: Any],
-                  body["event"] as? String == "ready" else { return }
+                  let event = body["event"] as? String else { return }
+            if let h = body["h"] as? Double, h > 0,
+               let top = body["top"] as? Double,
+               let bottom = body["bottom"] as? Double {
+                let reported = Band(top: CGFloat(top / h), bottom: CGFloat(bottom / h))
+                if reported != band {
+                    band = reported
+                    onLayout?(reported)
+                }
+            }
+            guard event == "ready" else { return }
             ready = true
+            message.webView?.evaluateJavaScript("window.RiverSprite.setReduceMotion(\(reduceMotion))")
             onReady?(true)
             if let script = pending, let webView = message.webView {
                 pending = nil
                 webView.evaluateJavaScript(script)
             }
+        }
+
+        /// Under memory pressure iOS kills the web content process and the view
+        /// goes blank, or keeps a stale corner of the tank. Load the page again
+        /// and cover it until it reports ready, as on a look change.
+        func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+            ready = false
+            onReady?(false)
+            guard let look else { return }
+            webView.load(URLRequest(url: look.url))
         }
     }
 
@@ -160,16 +285,26 @@ struct SproutView: UIViewRepresentable {
     /// unrecognised stay mint, which is Sprout's default.
     static func coat(_ speciesID: String) -> String {
         switch speciesID {
-        case "ember", "mochi": return "coral"
-        case "droplet", "puff": return "sky"
-        case "wisp": return "lilac"
+        case "ember", "mochi", "axolotl-coral": return "coral"
+        case "droplet", "puff", "orca": return "sky"
+        case "wisp", "axolotl": return "lilac"
         case "comet": return "butter"
         case "sprout": return "peach"
         default: return "mint"
         }
     }
 
-    /// Chibi level onto the three-star line. Stage 3 is the full Sprout.
+    /// Which Sprout-repo type draws the kin. Everything on the original ladder is
+    /// a Sprout coat; the edge-lane kin are their own rigs (`?type=`).
+    static func type(_ speciesID: String) -> String {
+        switch speciesID {
+        case "orca": return "orca"
+        case "axolotl", "axolotl-coral": return "axolotl"
+        default: return "sprout"
+        }
+    }
+
+    /// Chibi level onto the three-star line: 1 the pear, 2 long fins, 3 belly badge.
     static func evo(_ level: Int) -> String { String(min(max(level, 1), 3)) }
 
     /// Prepkin's animation set onto Sprout's 15 emotes.
@@ -224,10 +359,21 @@ final class SproutSchemeHandler: NSObject, WKURLSchemeHandler {
             return
         }
 
-        task.didReceive(URLResponse(url: url,
-                                    mimeType: Self.mimeType(file.pathExtension),
-                                    expectedContentLength: data.count,
-                                    textEncodingName: "utf-8"))
+        // `no-store`, and an `HTTPURLResponse` to carry it. A plain `URLResponse`
+        // has no headers, so WKWebView cached the page — and because the URL never
+        // changes, a rebuilt bundle kept being answered from that cache. The app
+        // shipped new art and new script and the web view ran neither.
+        let response = HTTPURLResponse(
+            url: url,
+            statusCode: 200,
+            httpVersion: "HTTP/1.1",
+            headerFields: ["Content-Type": Self.mimeType(file.pathExtension),
+                           "Content-Length": String(data.count),
+                           "Cache-Control": "no-store"])
+        task.didReceive(response ?? URLResponse(url: url,
+                                                mimeType: Self.mimeType(file.pathExtension),
+                                                expectedContentLength: data.count,
+                                                textEncodingName: "utf-8"))
         task.didReceive(data)
         task.didFinish()
     }

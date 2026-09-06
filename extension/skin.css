@@ -1,473 +1,604 @@
-/* Prepkin skin for Canvas.
+/* Receipt — the Prepkin page skin for Canvas.
  *
- * Everything is scoped under a class on <html>, so switching it off is one
- * classList.remove and nothing is left behind. Canvas ships its own theme per
- * school, so these rules override colours and never layout — a school with an
- * unusual theme ends up plain, not broken.
+ * The whole skin hangs off classes on <html>: `pk-on` turns it on, `pk-dark`
+ * picks the dark paper, `pk-paper-<stock>` picks which paper, and every rule is
+ * gated on `:not(.pk-back-<key>)` so "Put back" in the popup switches exactly
+ * one thing off. Take every class away and the page is Canvas, unchanged.
  *
- * Every colour goes through a custom property. That is what lets dark mode and
- * a "look" both work: dark mode swaps the whole set, a look overrides a few of
- * them inline. Course colours are never in here — they come from Canvas and
- * students navigate by them.
+ * Rules of the house (design/canvas-skin/SPEC-RECEIPT.md):
+ *  - never `font-family`, never a radius Canvas did not use, no shadow, no lift;
+ *  - never any property on a button: no rule below selects `button`, `.btn`,
+ *    `[type=submit]` or `[role=button]`, so the submit button is always the
+ *    school's own and always visible (extension/canvas.test.js lints this);
+ *  - never `--ic-brand-*`, the hero's opacity, the title span's colour, a
+ *    course colour, `.ic-flash-error`, `#skip_navigation_link`, `.ic-sidebar-logo`;
+ *  - never a selector containing `css-`.
  */
 
-.prepkin-cards,
+/* ---- Tokens: declared once, on html.pk-on, inherited by everything -------- */
+
+html.pk-on {
+  --pk-paper: #F7F6F3;  --pk-paper-2: #FFFFFF; --pk-paper-sunk: #EFEDE8;
+  --pk-ink: #1B1F24;    --pk-ink-2: #454B54;   --pk-rule: #E3E0D9;   --pk-mark: #2F6BAA;
+  /* the seven the Look never moves */
+  --pk-link: var(--pk-mark);
+  --pk-visited: var(--pk-ink-2);
+  --pk-focus: #2F6BAA;
+  --pk-amber-ink: #8A5A12; --pk-amber-tint: rgba(222, 154, 34, .14);
+  --pk-amber-rule: #D9A441;
+  --pk-hover: var(--pk-paper-sunk);
+  --pk-seam: var(--pk-rule);
+  color-scheme: light;
+}
+html.pk-on.pk-dark {
+  --pk-paper: #17191D;  --pk-paper-2: #1E2126; --pk-paper-sunk: #121417;
+  --pk-ink: #E6E8EA;    --pk-ink-2: #B4BAC1;   --pk-rule: #2C3037;   --pk-mark: #6FA8DC;
+  --pk-focus: #7FB2E0;
+  --pk-amber-ink: #E0B25C; --pk-amber-tint: rgba(236, 179, 92, .14);
+  --pk-amber-rule: #B58A3A;
+  color-scheme: dark;
+}
+
+/* The six papers. A Look swaps one of these classes and nothing else. */
+html.pk-on.pk-paper-newsprint { --pk-paper: #F7F6F3; --pk-paper-2: #FFFFFF; --pk-paper-sunk: #EFEDE8; --pk-ink: #1B1F24; --pk-ink-2: #454B54; --pk-rule: #E3E0D9; --pk-mark: #2F6BAA; }
+html.pk-on.pk-paper-manila    { --pk-paper: #F2EAD9; --pk-paper-2: #FBF6EC; --pk-paper-sunk: #E9DFC9; --pk-ink: #33291F; --pk-ink-2: #5E5142; --pk-rule: #E5D7C2; --pk-mark: #9A4A30; }
+html.pk-on.pk-paper-bond      { --pk-paper: #F4F6F8; --pk-paper-2: #FFFFFF; --pk-paper-sunk: #E9EDF1; --pk-ink: #12171C; --pk-ink-2: #3E464F; --pk-rule: #DDE3E9; --pk-mark: #1F5FA8; }
+html.pk-on.pk-paper-vellum    { --pk-paper: #EFE7D8; --pk-paper-2: #F6F1E6; --pk-paper-sunk: #E5DBC8; --pk-ink: #3C3730; --pk-ink-2: #635C51; --pk-rule: #DED3BE; --pk-mark: #57534A; }
+html.pk-on.pk-paper-carbon    { --pk-paper: #17191D; --pk-paper-2: #1E2126; --pk-paper-sunk: #121417; --pk-ink: #E6E8EA; --pk-ink-2: #B4BAC1; --pk-rule: #2C3037; --pk-mark: #6FA8DC; }
+html.pk-on.pk-paper-blueprint { --pk-paper: #161B22; --pk-paper-2: #1C232C; --pk-paper-sunk: #11151B; --pk-ink: #DDE4EC; --pk-ink-2: #A9B4C2; --pk-rule: #29323D; --pk-mark: #7FB2E0; }
+html.pk-on.pk-paper-rose      { --pk-paper: #F8EEF0; --pk-paper-2: #FDF7F8; --pk-paper-sunk: #F1E3E7; --pk-ink: #2A2024; --pk-ink-2: #5C4A52; --pk-rule: #EAD9DE; --pk-mark: #A8455F; }
+html.pk-on.pk-paper-lavender  { --pk-paper: #F1EEF8; --pk-paper-2: #F8F6FC; --pk-paper-sunk: #E7E2F2; --pk-ink: #24212E; --pk-ink-2: #534D63; --pk-rule: #DCD6EA; --pk-mark: #6A4FB0; }
+html.pk-on.pk-paper-sage      { --pk-paper: #EEF3EC; --pk-paper-2: #F6F9F5; --pk-paper-sunk: #E2EAE0; --pk-ink: #1E2620; --pk-ink-2: #4A5A4E; --pk-rule: #D7E1D6; --pk-mark: #33704B; }
+html.pk-on.pk-paper-sky       { --pk-paper: #EDF3F8; --pk-paper-2: #F6F9FC; --pk-paper-sunk: #E1EAF2; --pk-ink: #1B2430; --pk-ink-2: #465464; --pk-rule: #D5E0EA; --pk-mark: #2C6FA8; }
+html.pk-on.pk-paper-ink       { --pk-paper: #131824; --pk-paper-2: #1A2030; --pk-paper-sunk: #0E121B; --pk-ink: #E4E8F0; --pk-ink-2: #AEB6C6; --pk-rule: #28303F; --pk-mark: #8FB8EA; }
+html.pk-on.pk-paper-moss      { --pk-paper: #161C18; --pk-paper-2: #1D2520; --pk-paper-sunk: #10150F; --pk-ink: #E4EAE4; --pk-ink-2: #AEBBB0; --pk-rule: #2B352E; --pk-mark: #8CCDA6; }
+
+/* The buddy panel inherits the paper. Its own names stay for panel.css; the
+ * fallbacks are what it shows when the skin is off. */
 #prepkin-buddy {
-  --pk-page: #f0eee9;
-  --pk-card: #ffffff;
-  --pk-inset: #f4f1ea;
-  --pk-row: #ffffff;
-  --pk-line: #eae5da;
-  --pk-line-soft: #e5dfd2;
-  --pk-text: #33291f;
-  --pk-text-mid: #5e5142;
-  --pk-text-2: #8a7a66;
+  --pk-page: var(--pk-paper, #f0eee9);
+  --pk-card: var(--pk-paper-2, #ffffff);
+  --pk-inset: var(--pk-paper-sunk, #f4f1ea);
+  --pk-row: var(--pk-paper-2, #ffffff);
+  --pk-line: var(--pk-rule, #eae5da);
+  --pk-line-soft: var(--pk-rule, #e5dfd2);
+  --pk-text: var(--pk-ink, #33291f);
+  --pk-text-mid: var(--pk-ink-2, #5e5142);
+  --pk-text-2: var(--pk-ink-2, #8a7a66);
   --pk-text-3: #a8977f;
-  --pk-mint: #51cfa0;
-  --pk-mint-edge: #35a87d;
-  --pk-soft: #b1edd4;
-  --pk-soft-edge: #8ad1b4;
+  --pk-mint: #51cfa0;  --pk-mint-edge: #35a87d;
+  --pk-soft: #b1edd4;  --pk-soft-edge: #8ad1b4;
   --pk-green: #2e7d57;
-  --pk-ink: #101820;
   --pk-on-ink: #fff7e8;
-  --pk-coin: #de9a22;
-  --pk-coin-ring: #fff9ec;
+  --pk-coin: #de9a22;  --pk-coin-ring: #fff9ec;
   --pk-amber-text: #a0722b;
   --pk-circle: #c9bca4;
-  --pk-track: #e5dfd2;
+  --pk-track: var(--pk-rule, #e5dfd2);
   --pk-mint-tint: rgba(81, 207, 160, .12);
   --pk-mint-tint-strong: rgba(81, 207, 160, .16);
   --pk-mint-border: rgba(81, 207, 160, .35);
   --pk-amber-tint: rgba(222, 154, 34, .14);
   --pk-shadow: rgba(51, 41, 31, .22);
 }
-
-/* Warm charcoal with a green-brown cast — not neutral grey. The slime never
- * recolours; only surfaces and text invert. */
-.prepkin-dark.prepkin-cards,
-.prepkin-dark #prepkin-buddy {
-  --pk-page: #1b1f1b;
-  --pk-card: #242923;
-  --pk-inset: #2c322b;
-  --pk-row: #262c26;
-  --pk-line: #3b423a;
-  --pk-line-soft: #3b423a;
-  --pk-text: #f4f1ea;
-  --pk-text-mid: #d3cabb;
-  --pk-text-2: #bdb2a0;
+html.pk-dark #prepkin-buddy {
   --pk-text-3: #8f887b;
   --pk-green: #7fddb8;
-  --pk-on-ink: #f4f1ea;
-  --pk-coin: #ecb35c;
-  --pk-coin-ring: #101820;
+  /* The ink chip flips: light chip, dark text. */
+  --pk-on-ink: #101820;
+  --pk-coin: #ecb35c;  --pk-coin-ring: #101820;
   --pk-amber-text: #ecb35c;
   --pk-circle: #5a6156;
-  --pk-track: #3b423a;
   --pk-mint-tint: rgba(81, 207, 160, .1);
   --pk-mint-tint-strong: rgba(81, 207, 160, .18);
   --pk-mint-border: rgba(81, 207, 160, .3);
   --pk-amber-tint: rgba(236, 179, 92, .14);
   --pk-shadow: rgba(0, 0, 0, .45);
-  color-scheme: dark;
 }
 
-/* ---- The Canvas page itself -------------------------------------------- */
+/* ---- paper: the page's ground and ink --------------------------------------
+ * Put back → the school's own colours, everything else still applies. */
 
-.prepkin-cards body,
-.prepkin-cards #application,
-.prepkin-cards #wrapper,
-.prepkin-cards #main,
-.prepkin-cards .ic-Layout-contentWrapper,
-.prepkin-cards .ic-Layout-columns,
-.prepkin-cards #content,
-.prepkin-cards #right-side-wrapper,
-.prepkin-cards #right-side {
-  background-color: var(--pk-page) !important;
-  color: var(--pk-text) !important;
+html.pk-on:not(.pk-back-paper) body,
+html.pk-on:not(.pk-back-paper) #application,
+html.pk-on:not(.pk-back-paper) #wrapper,
+html.pk-on:not(.pk-back-paper) #main,
+html.pk-on:not(.pk-back-paper) .ic-Layout-contentWrapper,
+html.pk-on:not(.pk-back-paper) .ic-Layout-columns,
+html.pk-on:not(.pk-back-paper) #content,
+html.pk-on:not(.pk-back-paper) #right-side-wrapper,
+html.pk-on:not(.pk-back-paper) #right-side {
+  background-color: var(--pk-paper) !important;
+  color: var(--pk-ink) !important;
+}
+/* Links inside the content columns take the paper's mark. The three scoped
+ * variables are Canvas's own link mechanism, so hover keeps working. */
+html.pk-on:not(.pk-back-paper) #content,
+html.pk-on:not(.pk-back-paper) #right-side-wrapper,
+html.pk-on:not(.pk-back-paper) #left-side,
+html.pk-on:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs {
+  --ic-link-color: var(--pk-link);
+  --ic-link-color-darkened-10: var(--pk-link);
+  --ic-link-color-lightened-10: var(--pk-link);
+}
+html.pk-on:not(.pk-back-paper) #content { font-variant-numeric: tabular-nums lining-nums; }
+html.pk-on:not(.pk-back-paper) #breadcrumbs a { color: var(--pk-link) !important; }
+html.pk-on:not(.pk-back-paper) #content h1, html.pk-on:not(.pk-back-paper) #content h2,
+html.pk-on:not(.pk-back-paper) #content h3, html.pk-on:not(.pk-back-paper) #content h4,
+html.pk-on:not(.pk-back-paper) #content p, html.pk-on:not(.pk-back-paper) #content li,
+html.pk-on:not(.pk-back-paper) #content td, html.pk-on:not(.pk-back-paper) #content th,
+html.pk-on:not(.pk-back-paper) #content label,
+html.pk-on:not(.pk-back-paper) #right-side h2, html.pk-on:not(.pk-back-paper) #right-side p,
+html.pk-on:not(.pk-back-paper) #right-side li, html.pk-on:not(.pk-back-paper) #right-side b {
+  color: var(--pk-ink);
+}
+/* Surfaces that Canvas leaves white: cards, module rows, tables, fields.
+ * Never a button. */
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard,
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header,
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header_content,
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__action-container,
+html.pk-on:not(.pk-back-paper) .context_module,
+html.pk-on:not(.pk-back-paper) .ig-row,
+html.pk-on:not(.pk-back-paper) .ig-header,
+html.pk-on:not(.pk-back-paper) #grades_summary,
+html.pk-on:not(.pk-back-paper) #grades_summary tr,
+html.pk-on:not(.pk-back-paper) .ic-app-course-menu,
+html.pk-on:not(.pk-back-paper) #section-tabs,
+html.pk-on:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs,
+html.pk-on:not(.pk-back-paper) #breadcrumbs,
+html.pk-on:not(.pk-back-paper) .header-bar,
+html.pk-on:not(.pk-back-paper) [class*="textInput__facade"],
+html.pk-on:not(.pk-back-paper) [class*="-pill"],
+html.pk-on:not(.pk-back-paper) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+html.pk-on:not(.pk-back-paper) select,
+html.pk-on:not(.pk-back-paper) textarea {
+  background-color: var(--pk-paper-2) !important;
+  color: var(--pk-ink) !important;
+  border-color: var(--pk-rule) !important;
+}
+/* A hairline instead of a shadow. No `transition` is written anywhere: Canvas
+ * has JS waiting on transitionend, and the reduced-motion block below owns
+ * durations. `color-scheme` follows the paper so scrollbars and unstyled form
+ * fields match; every Canvas button carries its own colours, so it is untouched. */
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard { box-shadow: none !important; border: 1px solid var(--pk-rule) !important; border-radius: 16px !important; overflow: hidden !important; }
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard:hover { transform: none !important; box-shadow: none !important; }
+/* One text stack under the band: name, code, due line, then Canvas's action
+ * row. Canvas floats the name box up over the band with rounded corners; that
+ * is what made the card look like parts stuck together. */
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header { padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header_content {
+  position: static !important; margin: 0 !important; padding: 14px 16px 0 !important; border-radius: 0 !important; background: none !important;
+}
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header-title {
+  font-size: 15px !important; line-height: 20px !important; font-weight: 900 !important; letter-spacing: -.01em !important;
+  color: var(--pk-ink) !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden !important; white-space: normal !important; text-wrap: pretty;
+}
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header-title span { color: var(--pk-ink) !important; font-weight: 900 !important; }
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header-subtitle {
+  margin-top: 2px !important; font-size: 12px !important; line-height: 16px !important; font-weight: 700 !important;
+  letter-spacing: .04em !important; text-transform: uppercase !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
+}
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header-subtitle,
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header-term { color: var(--pk-ink-2) !important; }
+/* Canvas's action row: its icons in order, spaced and tinted, never hidden. */
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__action-container {
+  overflow: visible !important; display: flex !important; align-items: center !important; gap: 2px !important;
+  margin-top: 14px !important; padding: 8px 10px 10px 8px !important; border-top: 1px solid var(--pk-rule) !important;
+}
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__action {
+  position: relative !important; width: 32px !important; height: 32px !important; display: grid !important; place-items: center !important;
+  border-radius: 8px !important; color: var(--pk-ink-2) !important;
+}
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__action:hover { background-color: var(--pk-paper-sunk) !important; }
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__action-badge {
+  position: absolute !important; top: -3px !important; right: -4px !important; min-width: 16px !important; height: 16px !important;
+  padding: 0 4px !important; border-radius: 8px !important; background: #51CFA0 !important; color: #101820 !important;
+  font-size: 10px !important; font-weight: 900 !important; line-height: 16px !important; text-align: center !important;
+}
+/* Inks Canvas hardcodes near-black, which vanish on a dark paper. Titles in
+ * module and assignment rows, group headers, the dashboard heading. The title
+ * span on a card keeps its inline course colour — nothing here selects it. */
+html.pk-on:not(.pk-back-paper) .ig-row .ig-title,
+html.pk-on:not(.pk-back-paper) .ig-header .ig-header-title,
+html.pk-on:not(.pk-back-paper) .ig-header .name,
+html.pk-on:not(.pk-back-paper) .ig-header h2,
+html.pk-on:not(.pk-back-paper) .ig-header h3,
+html.pk-on:not(.pk-back-paper) #dashboard_header_container h1,
+html.pk-on:not(.pk-back-paper) #dashboard_header_container h2,
+html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__title { color: var(--pk-ink) !important; }
+/* The sticky Dashboard bar is the same paper as the page, with one hairline
+ * under it. Canvas paints it white, which on paper reads as a slab. */
+html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout {
+  background-color: var(--pk-paper) !important; border-bottom: 1px solid var(--pk-rule) !important; box-shadow: none !important;
+}
+html.pk-on:not(.pk-back-paper) .ig-row:hover { background-color: var(--pk-hover) !important; }
+/* The list containers behind module and assignment groups are painted white by
+ * Canvas; they take the page paper so the rows read as cards on it. */
+html.pk-on:not(.pk-back-paper) .item-group-container,
+html.pk-on:not(.pk-back-paper) #context_modules { background-color: var(--pk-paper) !important; }
+/* The dashboard heading is an InstUI Heading; `data-cid` is its stable hook. */
+html.pk-on:not(.pk-back-paper) #dashboard_header_container [data-cid="Heading"] { color: var(--pk-ink) !important; }
+/* Never the login page, never the flash bar, never the global nav rail: those
+ * are the school's identity and Canvas's own signals. Nothing above selects them. */
+
+/* ---- A theme's texture on the page ground, in the paper's ink, faint ---- */
+html.pk-on.pk-textured:not(.pk-back-paper) body,
+html.pk-on.pk-textured:not(.pk-back-paper) #application,
+html.pk-on.pk-textured:not(.pk-back-paper) #wrapper,
+html.pk-on.pk-textured:not(.pk-back-paper) #main,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-Layout-contentWrapper,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-Layout-columns,
+html.pk-on.pk-textured:not(.pk-back-paper) #content,
+html.pk-on.pk-textured:not(.pk-back-paper) #right-side-wrapper,
+html.pk-on.pk-textured:not(.pk-back-paper) #right-side {
+  /* Every layer that carries the paper carries the texture, pinned to the
+   * viewport so the tiles line up through the nesting. */
+  background-image: var(--pk-texture, none) !important;
+  background-attachment: fixed !important;
+}
+/* ---- A theme's wash over the course colour band. The band's own colour and
+ * opacity stay; the wash is a second layer that fades in from the right. */
+html.pk-on.pk-head-wash:not(.pk-back-hero) .ic-DashboardCard__header_hero {
+  background-image: linear-gradient(90deg, transparent 20%, var(--pk-accent-wash, transparent)) !important;
 }
 
-.prepkin-cards a:not(.btn):not(.Button) { color: var(--pk-green) !important; }
+/* ---- An image theme: the wallpaper under a paper wash, four banners across
+ * the cards, the course colour kept as a strip under each banner. The wash is
+ * what keeps text readable; cards stay opaque paper on top of it. ---------- */
+html.pk-on.pk-art:not(.pk-back-paper) body {
+  background-image: linear-gradient(var(--pk-paper-wash), var(--pk-paper-wash)), var(--pk-wallpaper) !important;
+  background-size: auto, cover !important; background-attachment: fixed !important; background-position: center !important;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #application,
+html.pk-on.pk-art:not(.pk-back-paper) #wrapper,
+html.pk-on.pk-art:not(.pk-back-paper) #main,
+html.pk-on.pk-art:not(.pk-back-paper) .ic-Layout-contentWrapper,
+html.pk-on.pk-art:not(.pk-back-paper) .ic-Layout-columns,
+html.pk-on.pk-art:not(.pk-back-paper) #content,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side-wrapper,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side { background-color: transparent !important; }
+/* Off the dashboard, the page's lists and prose sit on a paper panel with the
+ * wallpaper in the margins around it; on the dashboard the cards and the
+ * sidebar are the panels. */
+html.pk-on.pk-art:not(.pk-back-paper) #content:not(:has(#DashboardCard_Container, #dashboard, .ic-Dashboard-header)) {
+  background-color: var(--pk-paper) !important; border-radius: 12px !important;
+  padding: 20px 24px !important; margin: 12px 24px 24px 0 !important;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #right-side {
+  background-color: var(--pk-paper) !important; border-radius: 12px !important; padding: 16px !important; margin-top: 12px !important;
+}
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard__header_hero {
+  /* The banner covers all but the bottom 6px, where the card's own inline
+   * course colour shows through as a strip. Its opacity is still Canvas's. */
+  /* Canvas's own 146px, so the art reads as a picture and not a stripe. The
+   * 3:1 banner is scaled to 140px tall and cropped at the sides; the last 6px
+   * is the course colour. */
+  height: 146px !important; background-size: auto 140px !important; background-position: top center !important;
+  background-repeat: no-repeat !important;
+}
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+1) .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-1) !important; }
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+2) .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-2) !important; }
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+3) .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-3) !important; }
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+4) .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-4) !important; }
+/* A banner the student picked for a course outranks the rotation. */
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-1 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-1) !important; }
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-2 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-2) !important; }
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-3 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-3) !important; }
+html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-4 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-4) !important; }
 
-/* Dark mode has to reach further than the warm theme: Canvas leaves a lot of
- * surfaces white, and a half-darkened page is worse than none. Canvas's own top
- * header is deliberately left alone. */
-.prepkin-dark h1, .prepkin-dark h2, .prepkin-dark h3, .prepkin-dark h4,
-.prepkin-dark .ic-Dashboard-header__title,
-.prepkin-dark label, .prepkin-dark p, .prepkin-dark li,
-.prepkin-dark td, .prepkin-dark th {
-  color: var(--pk-text) !important;
+/* The grade: the last thing in Canvas's action row, right-aligned, a stat and
+ * not a sticker. No fill, no border. */
+html.pk-on:not(.pk-back-card-grade) .pk-card-grade {
+  margin-left: auto; padding: 0 6px; font-size: 14px; line-height: 32px; font-weight: 900; letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums; color: var(--pk-ink);
 }
-.prepkin-dark .ic-app-course-menu,
-.prepkin-dark #section-tabs,
-.prepkin-dark .ic-app-nav-toggle-and-crumbs,
-.prepkin-dark .ic-Action-header,
-.prepkin-dark .Button--secondary,
-.prepkin-dark .ui-widget-content,
-.prepkin-dark .ig-list,
-.prepkin-dark .ig-row,
-.prepkin-dark .context_module,
-.prepkin-dark .item-group-condensed,
-.prepkin-dark .PlannerItem-styles__container,
-.prepkin-dark table,
-.prepkin-dark input:not([type="checkbox"]):not([type="radio"]),
-.prepkin-dark select,
-.prepkin-dark textarea {
-  background-color: var(--pk-card) !important;
-  color: var(--pk-text) !important;
-  border-color: var(--pk-line) !important;
-}
-.prepkin-dark .ic-Login, .prepkin-dark iframe { background: initial !important; }
+html.pk-back-card-grade .pk-card-grade { display: none; }
 
-/* Course cards: rounder, warm 1px inset border instead of the hairline, a
- * gentle lift on hover. Canvas paints the hero strip with the colour you
- * picked, so that is left alone. */
-.prepkin-cards .ic-DashboardCard {
-  background-color: var(--pk-card) !important;
-  border: 0 !important;
-  border-radius: 16px !important;
-  overflow: hidden !important;
-  box-shadow: inset 0 0 0 1px var(--pk-line) !important;
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-.prepkin-cards .ic-DashboardCard:hover {
-  transform: translateY(-3px);
-  box-shadow: inset 0 0 0 1px var(--pk-line), 0 12px 26px var(--pk-shadow) !important;
-}
-.prepkin-cards .ic-DashboardCard__header,
-.prepkin-cards .ic-DashboardCard__action-container {
-  background-color: var(--pk-card) !important;
-}
-.prepkin-cards .ic-DashboardCard__header_hero { height: 8px !important; opacity: 1 !important; }
-.prepkin-cards .ic-DashboardCard__header_image { border-radius: 0 !important; }
-.prepkin-cards .ic-DashboardCard__header-title span { color: var(--pk-text) !important; font-weight: 800 !important; }
-.prepkin-cards .ic-DashboardCard__header-subtitle,
-.prepkin-cards .ic-DashboardCard__header-term { color: var(--pk-text-2) !important; }
+/* ---- hero: the colour band on a card, 8px --------------------------------
+ * Height only. Its opacity is a student's accessibility preference. */
+/* 48 = 12px inset + Canvas's 36px menu button, so the three-dot button always
+ * lands on colour and never on paper. */
+html.pk-on:not(.pk-back-hero) .ic-DashboardCard__header_hero { height: 72px !important; border-radius: 0 !important; }
+html.pk-on:not(.pk-back-hero) .ic-DashboardCard__header_image { border-radius: 0 !important; }
 
-/* Sidebar cleanup: drop the items nobody opens, keep the ones you do. */
-.prepkin-tidy #global_nav_help_link,
-.prepkin-tidy .ic-app-header__logomark-container { display: none !important; }
-.prepkin-tidy #global_nav_courses_link .menu-item__badge { display: none !important; }
+/* ---- logo-dup: the same mark twice on one page ----------------------------
+ * Only when content.js has seen both; the sidebar copy is the one kept. */
+html.pk-on.pk-logo-dup:not(.pk-back-logo-dup) .ic-app-header__logomark-container { display: none; }
 
-/* ---- The slime and its panel ------------------------------------------- */
-/* Scoped to #prepkin-buddy and using its own font stack, so a school's theme
- * cannot reach in and restyle it. Nunito renders when installed; the stack
- * falls back warm rather than fetching fonts from inside someone's LMS. */
+/* ---- todo-dup: two To Do lists → one ----------------------------------- */
+html.pk-on.pk-todo-dup:not(.pk-back-todo-dup) ul.right-side-list.to-do-list { display: none; }
 
-#prepkin-buddy {
-  position: fixed; right: 18px; bottom: 18px; z-index: 2147483000;
-  font: 14px/1.4 "Nunito", "Trebuchet MS", "Segoe UI", -apple-system, sans-serif;
-  color: var(--pk-text);
-  display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
-  -webkit-font-smoothing: antialiased;
-}
-#prepkin-buddy *, #prepkin-buddy *::before, #prepkin-buddy *::after { box-sizing: border-box; }
-#prepkin-buddy button { font: inherit; color: inherit; }
+/* ---- coming-up: every row, no "N more" --------------------------------- */
+html.pk-on:not(.pk-back-coming-up) .events_list.coming_up li.event[style*="display: none"],
+html.pk-on:not(.pk-back-coming-up) .events_list.coming_up li.event[style*="display:none"] { display: list-item !important; }
+html.pk-on:not(.pk-back-coming-up) .events_list.coming_up a.more_link { display: none; }
 
-/* Floating tab */
-#prepkin-buddy .pk-tab {
-  position: relative; width: 64px; height: 64px; border: 0; cursor: pointer;
-  background: var(--pk-card); border-radius: 50%;
-  box-shadow: 0 4px 16px var(--pk-shadow);
-  display: grid; place-items: center; padding: 0;
-  transition: transform .18s ease;
-}
-#prepkin-buddy .pk-tab:hover { transform: translateY(-2px) scale(1.04); }
-#prepkin-buddy .pk-count {
-  position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px;
-  padding: 0 5px; border-radius: 10px;
-  background: var(--pk-mint); color: #33291f; font-size: 12px; font-weight: 800;
-  border: 2px solid var(--pk-page);
-  display: grid; place-items: center;
+/* ---- nav-dim: four low-use course tabs, demoted by ink, never hidden ----- */
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.files,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.outcomes,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.conferences,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.collaborations { opacity: .58; }
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.files:hover,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.outcomes:hover,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.conferences:hover,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.collaborations:hover,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.files:focus,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.outcomes:focus,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.conferences:focus,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.collaborations:focus,
+html.pk-on:not(.pk-back-nav-dim) #section-tabs a.active { opacity: 1; }
+/* The active course tab is set in Canvas's own near-black; on a dark paper it
+ * takes the paper's ink. Colour only, on a link, never on a button. */
+html.pk-on.pk-dark:not(.pk-back-paper) #section-tabs a.active { color: var(--pk-ink) !important; }
+
+/* ---- module-sticky: the module header stays while you scroll ------------
+ * Inside an overflow ancestor this degrades to static: a plain header. */
+html.pk-on:not(.pk-back-module-sticky) .context_module .ig-header.header {
+  position: sticky; top: 0; z-index: 2;
+  border-bottom: 1px solid var(--pk-rule);
 }
 
-/* Panel shell */
-#prepkin-buddy .pk-panel {
-  order: -1; width: 360px; max-height: min(72vh, 680px); overflow-y: auto;
-  background: var(--pk-card); border-radius: 20px; padding: 0;
-  box-shadow: 0 18px 44px var(--pk-shadow);
-  animation: pk-in .2s ease-out;
+/* ---- due-column: thirty due dates in one strip you read straight down ---- */
+html.pk-on:not(.pk-back-due-column) .context_module .due_date_display {
+  display: inline-block; min-width: 8.5rem; text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
 }
-@keyframes pk-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+
+/* ---- word-paste: dark only; the inks Word actually emits ---------------- */
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:#000000" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: #000000" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:#000;" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: #000;" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:black" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: black" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:rgb(0,0,0)" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: rgb(0, 0, 0)" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:windowtext" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: windowtext" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:#1f497d" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: #1f497d" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:#333333" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: #333333" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:#222222" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: #222222" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:#1a1a1a" i],
+html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color: #1a1a1a" i] {
+  color: var(--pk-ink) !important;
+}
+html.pk-on.pk-dark:not(.pk-back-paper) .user_content { color: var(--pk-ink); }
+
+/* ---- seam: dark only; a frame that belongs to another company ------------
+ * A rule and a veil on the wrapper, never on a proctoring launch. */
+html.pk-on.pk-dark:not(.pk-back-seam) .tool_content_wrapper {
+  border: 1px solid var(--pk-seam);
+  filter: brightness(.88);
+}
+
+/* ---- today: the summary at the top of the dashboard (content.js) --------
+ * In the page, so it is only titles, counts and dates; grades stay in the
+ * panel's closed root. */
+#pk-today {
+  margin: 0 0 20px; padding: 14px 16px 14px 18px; border-radius: 16px;
+  background: var(--pk-paper-2); border: 1px solid var(--pk-rule); color: var(--pk-ink);
+  display: grid; grid-template-columns: auto 1fr auto; gap: 8px 16px; align-items: center;
+  font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+#pk-today .pk-t-buddy { display: flex; align-items: center; }
+#pk-today .pk-t-say { min-width: 0; }
+#pk-today .pk-t-say b { display: block; font-size: 16px; line-height: 20px; font-weight: 800; letter-spacing: -.01em; }
+#pk-today .pk-t-say small { display: block; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-today .pk-t-counts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+#pk-today .pk-t-counts span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
+  background: var(--pk-paper-sunk); font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
+#pk-today .pk-t-counts span b { color: var(--pk-ink); font-weight: 800; }
+#pk-today .pk-t-counts span.amber { color: var(--pk-amber-ink); }
+#pk-today .pk-t-counts span.amber b { color: var(--pk-amber-ink); }
+#pk-today .pk-t-next { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid var(--pk-rule); }
+#pk-today .pk-t-next i { flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px; background: var(--pk-ink-2); }
+#pk-today .pk-t-next i.amber { background: var(--pk-paper-2); box-shadow: inset 0 0 0 2px var(--pk-amber-rule); }
+#pk-today .pk-t-next > div { flex-grow: 1; min-width: 0; }
+#pk-today .pk-t-next b { display: block; font-size: 14px; line-height: 20px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pk-today .pk-t-next small { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-today .pk-t-next small.amber { color: var(--pk-amber-ink); }
+#pk-today .pk-t-actions { display: flex; gap: 6px; flex-shrink: 0; }
+#pk-today .pk-t-actions a, #pk-today .pk-t-actions span[role="button"] {
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; user-select: none;
+  padding: 7px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; text-decoration: none !important;
+  background: var(--pk-paper-sunk); color: var(--pk-ink) !important; border: 1px solid var(--pk-rule);
+}
+#pk-today .pk-t-actions a.start { background: #51CFA0; color: #101820 !important; border-color: #51CFA0; box-shadow: 0 2px 0 #35A87D; }
+#pk-today .pk-t-actions a:focus-visible, #pk-today .pk-t-actions span:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+html.pk-back-today #pk-today { display: none; }
+@media (max-width: 700px) { #pk-today { grid-template-columns: auto 1fr; } #pk-today .pk-t-counts { grid-column: 1 / -1; justify-content: flex-start; } }
+
+/* ---- card-due: the next due line on a course card (content.js) ----------- */
+.pk-card-due {
+  margin: 12px 16px 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+  color: var(--pk-ink, inherit);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pk-card-due.is-none { font-weight: 400; color: var(--pk-ink-2, inherit); }
+/* Up to three rows under a small "Due" label: pending first, handed-in work
+ * struck through, the overdue row on an amber tint. */
+.pk-card-due .pk-due-label { display: block; font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-ink-2, inherit); margin-bottom: 4px; }
+.pk-due-row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; padding: 2px 0; }
+.pk-due-row .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-due-row .d { flex: none; font-weight: 600; font-size: 12px; color: var(--pk-ink-2, inherit); font-variant-numeric: tabular-nums; }
+.pk-due-row.done { font-weight: 500; color: var(--pk-ink-2, inherit); }
+.pk-due-row.done .t { text-decoration: line-through; text-decoration-color: var(--pk-rule, currentColor); }
+.pk-due-row.overdue { margin: 0 -6px; padding: 3px 6px; border-radius: 6px; background: var(--pk-amber-tint, rgba(222, 154, 34, .14)); color: var(--pk-amber-ink, #8A5A12); }
+.pk-due-row.overdue .d { color: inherit; }
+html.pk-back-card-due .pk-card-due { display: none; }
+
+/* ---- Show me: a dashed outline on everything the receipt names ------------ */
+html.pk-on.pk-show .ic-DashboardCard__header_hero,
+html.pk-on.pk-show .ic-sidebar-logo,
+html.pk-on.pk-show .Sidebar__TodoListContainer,
+html.pk-on.pk-show .events_list.coming_up,
+html.pk-on.pk-show #section-tabs a.files,
+html.pk-on.pk-show #section-tabs a.outcomes,
+html.pk-on.pk-show #section-tabs a.conferences,
+html.pk-on.pk-show #section-tabs a.collaborations,
+html.pk-on.pk-show .context_module .ig-header.header,
+html.pk-on.pk-show .context_module .due_date_display,
+html.pk-on.pk-show .tool_content_wrapper,
+html.pk-on.pk-show .pk-card-due,
+html.pk-on.pk-show #pk-today,
+html.pk-on.pk-show #prepkin-buddy {
+  outline: 1.5px dashed var(--pk-mark) !important;
+  outline-offset: 3px;
+  transition: outline-color 160ms cubic-bezier(.2, 0, 0, 1);
+}
+
+/* ---- Reduced motion: Receipt owns the block ----------------------------
+ * Durations go to 0.01ms, never `none`, because Canvas has JS waiting on
+ * transitionend. No iteration-count: that would freeze Canvas's spinners. */
 @media (prefers-reduced-motion: reduce) {
-  #prepkin-buddy .pk-panel { animation: none; }
-  #prepkin-buddy .pk-tab { transition: none; }
+  html.pk-on *, html.pk-on *::before, html.pk-on *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Header zone — inset, or amber-tinted when something is overdue */
-#prepkin-buddy .pk-head {
-  background: var(--pk-inset); padding: 16px 16px 18px;
-  display: flex; flex-direction: column; gap: 14px;
-}
-#prepkin-buddy .pk-head.worried { background: #f6ead6; }
-.prepkin-dark #prepkin-buddy .pk-head.worried { background: #34301f; }
-#prepkin-buddy .pk-hero { display: flex; align-items: flex-start; gap: 14px; }
-#prepkin-buddy .pk-hero > svg { flex-shrink: 0; margin-top: -2px; }
-#prepkin-buddy .pk-bubble {
-  position: relative; flex-grow: 1; background: var(--pk-card); border-radius: 14px;
-  padding: 10px 14px; box-shadow: inset 0 0 0 1px var(--pk-line);
-  display: flex; flex-direction: column; gap: 2px;
-}
-#prepkin-buddy .pk-bubble::before {
-  content: ""; position: absolute; left: -8px; top: 22px;
-  border: 6px solid transparent; border-right-color: var(--pk-card); border-left: 0;
-}
-#prepkin-buddy .pk-bubble strong { font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
-#prepkin-buddy .pk-bubble span { font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
+/* MARK: - Compact pages. A toggle, not a receipt row: it moves nothing and
+ * hides nothing, it only asks Canvas's lists and cards for less air. */
+/* Canvas lays cards out with a 36px top-left margin on each card and a -36px
+ * margin on their container. Keep that shape, just tighter, or the first row
+ * slides under the sticky Dashboard header. */
+html.pk-on.pk-dense .ic-DashboardCard { width: 220px !important; margin: 20px 0 0 20px !important; }
+html.pk-on.pk-dense .ic-DashboardCard__box__container { margin: -20px 0 0 -20px !important; }
+html.pk-on.pk-dense:not(.pk-back-hero) .ic-DashboardCard__header_hero { height: 56px !important; }
+html.pk-on.pk-dense.pk-art:not(.pk-back-hero) .ic-DashboardCard__header_hero { height: 110px !important; background-size: auto 104px !important; }
+html.pk-on.pk-dense:not(.pk-back-paper) .ic-DashboardCard__header_content { padding: 12px 14px 0 !important; }
+html.pk-on.pk-dense:not(.pk-back-paper) .ic-DashboardCard__header-title { font-size: 14px !important; line-height: 18px !important; }
+html.pk-on.pk-dense:not(.pk-back-paper) .ic-DashboardCard__header-subtitle { font-size: 11px !important; line-height: 14px !important; }
+html.pk-on.pk-dense .pk-card-due { margin: 10px 14px 0; font-size: 12px; line-height: 16px; }
+html.pk-on.pk-dense .pk-card-due.overdue { margin: 8px 10px 0; padding: 5px 8px; }
+html.pk-on.pk-dense:not(.pk-back-paper) .ic-DashboardCard__action-container { min-height: 0 !important; gap: 0 !important; margin-top: 12px !important; padding: 6px 8px 8px 6px !important; }
+html.pk-on.pk-dense .pk-card-grade { padding: 0 4px; font-size: 13px; }
+html.pk-on.pk-dense .ig-row { padding-top: 4px !important; padding-bottom: 4px !important; }
+html.pk-on.pk-dense .ig-header { padding-top: 6px !important; padding-bottom: 6px !important; }
+html.pk-on.pk-dense .context_module_item { padding-top: 6px !important; padding-bottom: 6px !important; }
+html.pk-on.pk-dense .context_module .header { padding: 8px 12px !important; }
+html.pk-on.pk-dense #assignments .assignment { padding-top: 6px !important; padding-bottom: 6px !important; }
+html.pk-on.pk-dense #right-side .Sidebar__TodoListContainer li, html.pk-on.pk-dense #right-side .coming_up li { padding-top: 6px !important; padding-bottom: 6px !important; }
+html.pk-on.pk-dense #pk-today { padding: 10px 14px !important; margin-bottom: 12px !important; }
+html.pk-on.pk-dense .ic-Layout-contentMain h1, html.pk-on.pk-dense .ic-Layout-contentMain h2.ic-Dashboard-header__title { margin-bottom: 8px !important; }
 
-#prepkin-buddy .pk-chips { display: flex; align-items: center; gap: 8px; }
-#prepkin-buddy .pk-coins {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--pk-ink); color: var(--pk-on-ink); border-radius: 999px;
-  padding: 5px 12px; font-size: 12px; font-weight: 800;
+/* MARK: - The left menu, in the theme's rail colour. Painted on the rail,
+ * the logo block and the active tab only; the school's brand variables stay
+ * untouched, so badges, the avatar ring and the flyout keep the school's
+ * colours. Every tab stays where it is. */
+html.pk-on:not(.pk-back-rail) #header,
+html.pk-on:not(.pk-back-rail) .ic-app-header__main-navigation,
+html.pk-on:not(.pk-back-rail) .ic-app-header__logomark-container { background-color: var(--pk-rail) !important; }
+/* The active item is a paper tab, so it reads in dark too. */
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .ic-app-header__menu-list-link { background-color: var(--pk-paper) !important; }
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .ic-icon-svg { fill: var(--pk-rail-active) !important; }
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .menu-item__text { color: var(--pk-rail-active) !important; }
+/* An image theme: the wallpaper shows through the rail under a wash of it. */
+html.pk-on.pk-art:not(.pk-back-rail):not(.pk-back-paper) #header {
+  background-image: var(--pk-rail-image) !important; background-size: cover !important;
+  background-position: left center !important; background-attachment: fixed !important;
 }
-#prepkin-buddy .pk-donechip {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--pk-card); border-radius: 999px; padding: 5px 12px;
-  font-size: 12px; font-weight: 800; color: var(--pk-green);
-  box-shadow: inset 0 0 0 1px var(--pk-line);
-}
-#prepkin-buddy .pk-head.worried .pk-donechip { color: var(--pk-amber-text); }
-#prepkin-buddy .pk-chips .pk-label { margin-left: auto; }
+html.pk-on.pk-art:not(.pk-back-rail):not(.pk-back-paper) .ic-app-header__main-navigation,
+html.pk-on.pk-art:not(.pk-back-rail):not(.pk-back-paper) .ic-app-header__logomark-container { background-color: transparent !important; }
 
-#prepkin-buddy .pk-label {
-  font-size: 11px; font-weight: 800; letter-spacing: .06em;
-  text-transform: uppercase; color: var(--pk-text-2);
+/* MARK: - Everywhere: surfaces, not pages. What BetterCampus gets right is
+ * that a theme reaches Calendar, Inbox, the courses table and a quiz without
+ * per-page work, because it paints kinds of surface. Same idea here, with our
+ * lines kept: never a button, never a font, InstUI reached by the stable end of
+ * its class names and never by the hash. All under the paper row's Put back. */
+html.pk-on:not(.pk-back-paper) .ic-app-main-content,
+html.pk-on:not(.pk-back-paper) .ic-Layout-watermark,
+html.pk-on:not(.pk-back-paper) #not_right_side,
+html.pk-on:not(.pk-back-paper) .ic-Layout-contentWrapper { background-color: transparent !important; }
+/* Boxes Canvas paints white: toolbars, tables, tabs, dialogs, calendar cells,
+ * quiz headers, syllabus, rosters, avatars, check boxes. */
+html.pk-on:not(.pk-back-paper) .box,
+html.pk-on:not(.pk-back-paper) .content-box,
+html.pk-on:not(.pk-back-paper) .ic-Table,
+html.pk-on:not(.pk-back-paper) .ui-widget-content,
+html.pk-on:not(.pk-back-paper) .ui-dialog,
+html.pk-on:not(.pk-back-paper) .ui-tabs,
+html.pk-on:not(.pk-back-paper) .tab-content,
+html.pk-on:not(.pk-back-paper) .ic-item-row,
+html.pk-on:not(.pk-back-paper) .item-group-container,
+html.pk-on:not(.pk-back-paper) .assignment-group,
+html.pk-on:not(.pk-back-paper) .ic-Action-header,
+html.pk-on:not(.pk-back-paper) #calendar_header,
+html.pk-on:not(.pk-back-paper) .calendar_header,
+html.pk-on:not(.pk-back-paper) .fc-view,
+html.pk-on:not(.pk-back-paper) .fc-day,
+html.pk-on:not(.pk-back-paper) .fc-widget-content,
+html.pk-on:not(.pk-back-paper) #calendar-list,
+html.pk-on:not(.pk-back-paper) .ic-notification,
+html.pk-on:not(.pk-back-paper) .alert,
+html.pk-on:not(.pk-back-paper) .quiz-header,
+html.pk-on:not(.pk-back-paper) .quiz_score,
+html.pk-on:not(.pk-back-paper) .roster,
+html.pk-on:not(.pk-back-paper) #syllabus,
+html.pk-on:not(.pk-back-paper) .syllabus,
+html.pk-on:not(.pk-back-paper) .discussion-topic,
+html.pk-on:not(.pk-back-paper) .entry-content,
+html.pk-on:not(.pk-back-paper) [class*="checkboxFacade__facade"],
+html.pk-on:not(.pk-back-paper) [class*="radioInput__facade"],
+html.pk-on:not(.pk-back-paper) [class*="-view--inlineBlock-avatar"],
+html.pk-on:not(.pk-back-paper) .ic-avatar {
+  background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
 }
-#prepkin-buddy .pk-label.green { color: var(--pk-green); }
+/* Sunk surfaces: table heads and calendar day headers. */
+html.pk-on:not(.pk-back-paper) .ic-Table th,
+html.pk-on:not(.pk-back-paper) .fc-widget-header,
+html.pk-on:not(.pk-back-paper) .fc-day-header {
+  background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
+}
+/* Only Canvas's own tables: a table inside a teacher's page keeps every
+ * colour the teacher chose. */
+html.pk-on:not(.pk-back-paper) .ic-Table td,
+html.pk-on:not(.pk-back-paper) .fc-widget-content td { border-color: var(--pk-rule) !important; color: var(--pk-ink) !important; }
+/* Words: headings and body in ink, links in the theme mark. InstUI's text
+ * class ends in "-text" whatever its hash; its links end in "-view-link". */
+html.pk-on:not(.pk-back-paper) #content h1, html.pk-on:not(.pk-back-paper) #content h2,
+html.pk-on:not(.pk-back-paper) #content h3, html.pk-on:not(.pk-back-paper) #content h4,
+html.pk-on:not(.pk-back-paper) #content [class*="-view-heading"],
+html.pk-on:not(.pk-back-paper) #content [class*="-text"]:not([class*="-view-link"]),
+html.pk-on:not(.pk-back-paper) #right-side [class*="-text"]:not([class*="-view-link"]) { color: var(--pk-ink) !important; }
+/* Plain links already follow --ic-link-color (set above); InstUI links do not. */
+html.pk-on:not(.pk-back-paper) #content [class*="-view-link"],
+html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--pk-link) !important; }
 
-/* Daily progress with the slime riding the fill edge */
-#prepkin-buddy .pk-track {
-  position: relative; height: 10px; border-radius: 999px; background: var(--pk-track);
+/* MARK: - This week: our rail card at the top of the sidebar (content.js). */
+#pk-week {
+  margin: 0 0 20px; padding: 14px 16px; border-radius: 16px;
+  background: var(--pk-paper-2); border: 1px solid var(--pk-rule); color: var(--pk-ink);
+  font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
 }
-#prepkin-buddy .pk-track > i {
-  position: absolute; left: 0; top: 0; bottom: 0;
-  border-radius: 999px; background: var(--pk-mint); display: block;
-  transition: width .4s ease;
-}
-#prepkin-buddy .pk-rider { position: absolute; top: -11px; transform: translateX(-50%); transition: left .4s ease; }
-
-/* Body */
-#prepkin-buddy .pk-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
-
-#prepkin-buddy .pk-filters { display: flex; gap: 8px; }
-#prepkin-buddy .pk-filters button {
-  border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer;
-  font-size: 12px; font-weight: 700; background: var(--pk-inset); color: var(--pk-text-2);
-}
-#prepkin-buddy .pk-filters button em { font-style: normal; opacity: .7; margin-left: 4px; }
-#prepkin-buddy .pk-filters button.on {
-  background: var(--pk-mint-tint-strong); color: var(--pk-green); font-weight: 800;
-}
-#prepkin-buddy .pk-filters button.on em { opacity: .65; }
-#prepkin-buddy .pk-filters button.on.amber { background: var(--pk-amber-tint); color: var(--pk-amber-text); }
-
-/* Sub-view header (week planner, what-if, looks) */
-#prepkin-buddy .pk-viewhead { display: flex; align-items: center; gap: 10px; }
-#prepkin-buddy .pk-back {
-  border: 0; background: none; cursor: pointer; padding: 2px; display: flex;
-  color: var(--pk-green);
-}
-#prepkin-buddy .pk-viewhead h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
-#prepkin-buddy .pk-viewhead .pk-meta { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--pk-text-2); }
-
-/* Next up hero card */
-#prepkin-buddy .pk-next {
-  background: var(--pk-mint-tint); border-radius: 16px;
-  box-shadow: inset 0 0 0 1px var(--pk-mint-border);
-  padding: 12px 12px 12px 14px; display: flex; flex-direction: column; gap: 8px;
-}
-#prepkin-buddy .pk-next .pk-row { display: flex; align-items: center; gap: 10px; }
-#prepkin-buddy .pk-next .pk-row > div { flex-grow: 1; min-width: 0; }
-#prepkin-buddy .pk-next b { display: block; font-size: 14px; font-weight: 800; }
-#prepkin-buddy .pk-next small { font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
-
-/* The pressable mint button — the extension's signature affordance */
-#prepkin-buddy .pk-start,
-#prepkin-buddy .pk-press {
-  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
-  border: 0; background: var(--pk-mint); color: #101820 !important; text-decoration: none !important;
-  font-size: 14px; font-weight: 800; border-radius: 12px; padding: 8px 16px;
-  box-shadow: 0 3px 0 var(--pk-mint-edge); cursor: pointer;
-  transition: transform .08s ease, box-shadow .08s ease;
-}
-#prepkin-buddy .pk-start:active,
-#prepkin-buddy .pk-press:active { transform: translateY(3px); box-shadow: 0 0 0 var(--pk-mint-edge); }
-#prepkin-buddy .pk-press.wide { width: 100%; }
-/* The worried state keeps a soft edge rather than the mint press. */
-#prepkin-buddy .pk-start.soft {
-  background: var(--pk-soft); color: #33291f !important; box-shadow: 0 3px 0 var(--pk-soft-edge);
-}
-#prepkin-buddy .pk-start.soft:active { box-shadow: 0 0 0 var(--pk-soft-edge); }
-
-/* Focus row inside the Next-up card */
-#prepkin-buddy .pk-focusrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-#prepkin-buddy .pk-focusrow span { font-size: 12px; font-weight: 700; color: var(--pk-text-2); }
-#prepkin-buddy .pk-mins {
-  border: 0; box-shadow: inset 0 0 0 1px var(--pk-line-soft); background: var(--pk-card);
-  color: var(--pk-text-2); border-radius: 999px; padding: 6px 10px;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-}
-#prepkin-buddy .pk-mins.on {
-  background: var(--pk-mint-tint-strong); box-shadow: inset 0 0 0 1px var(--pk-mint-border);
-  color: var(--pk-green); font-weight: 800;
-}
-
-/* Task rows */
-#prepkin-buddy .pk-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-#prepkin-buddy .pk-list li {
-  background: var(--pk-row); border-radius: 16px; box-shadow: inset 0 0 0 1px var(--pk-line);
-  padding: 12px; display: flex; align-items: center; gap: 10px;
-}
-#prepkin-buddy .pk-list li > .pk-dot {
-  flex-shrink: 0; width: 18px; height: 18px; border-radius: 999px;
-  box-shadow: inset 0 0 0 2px var(--pk-circle);
-}
-#prepkin-buddy .pk-list li.overdue > .pk-dot { box-shadow: inset 0 0 0 2px var(--pk-coin); }
-#prepkin-buddy .pk-list li > .pk-tick { flex-shrink: 0; display: flex; }
-#prepkin-buddy .pk-list li > .pk-bar { flex-shrink: 0; width: 3px; height: 32px; border-radius: 2px; }
-#prepkin-buddy .pk-list li > div { flex-grow: 1; min-width: 0; }
-#prepkin-buddy .pk-list b {
-  display: block; font-size: 14px; font-weight: 600;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-#prepkin-buddy .pk-list small { font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
-#prepkin-buddy .pk-list li.overdue small { color: var(--pk-amber-text); }
-#prepkin-buddy .pk-list li.done b { color: var(--pk-text-3); text-decoration: line-through; }
-#prepkin-buddy .pk-list .pk-pts { flex-shrink: 0; font-size: 12px; font-weight: 700; color: var(--pk-text-2); }
-#prepkin-buddy .pk-plus {
-  flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;
-  background: var(--pk-amber-tint); color: var(--pk-amber-text);
-  border-radius: 999px; padding: 4px 9px; font-size: 12px; font-weight: 800;
-}
-#prepkin-buddy .pk-list li.empty {
-  box-shadow: none; background: var(--pk-inset); justify-content: center;
-  font-size: 12px; font-weight: 600; color: var(--pk-text-2);
-}
-
-/* Week planner */
-#prepkin-buddy .pk-week {
-  background: var(--pk-inset); border-radius: 16px; padding: 10px 12px;
-  display: flex; justify-content: space-between;
-}
-#prepkin-buddy .pk-week div { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-#prepkin-buddy .pk-week i { width: 12px; height: 12px; border-radius: 999px; background: var(--pk-track); display: block; }
-#prepkin-buddy .pk-week i.full { background: var(--pk-mint); }
-#prepkin-buddy .pk-week i.today { background: var(--pk-card); box-shadow: inset 0 0 0 2px var(--pk-mint); }
-#prepkin-buddy .pk-week span { font-size: 11px; font-weight: 800; color: var(--pk-text-2); }
-#prepkin-buddy .pk-week div.is-today span { color: var(--pk-green); }
-#prepkin-buddy .pk-group { display: flex; align-items: center; gap: 8px; }
-#prepkin-buddy .pk-group .pk-count-txt { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--pk-text-2); }
-
-/* Grades */
-#prepkin-buddy .pk-grades {
-  background: var(--pk-inset); border-radius: 16px; padding: 12px;
-  display: flex; flex-direction: column; gap: 10px;
-}
-#prepkin-buddy .pk-grade { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
-#prepkin-buddy .pk-grade .pk-row { display: flex; align-items: center; gap: 8px; }
-#prepkin-buddy .pk-grade .pk-cdot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 999px; }
-#prepkin-buddy .pk-grade b {
-  flex-grow: 1; min-width: 0; font-size: 14px; font-weight: 600;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-#prepkin-buddy .pk-grade .pk-pct { font-size: 14px; font-weight: 800; }
-#prepkin-buddy .pk-grade .pk-letter { width: 22px; text-align: right; font-size: 12px; font-weight: 700; color: var(--pk-text-2); }
-#prepkin-buddy .pk-grade .pk-chev { flex-shrink: 0; display: flex; color: var(--pk-text-2); }
-#prepkin-buddy .pk-grade .pk-mini { height: 5px; border-radius: 999px; background: var(--pk-track); margin-left: 16px; position: relative; }
-#prepkin-buddy .pk-grade .pk-mini > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; display: block; }
-#prepkin-buddy .pk-grade.open {
-  background: var(--pk-card); border-radius: 12px; padding: 12px; gap: 10px;
-}
-#prepkin-buddy .pk-grade.open b { font-weight: 700; }
-#prepkin-buddy .pk-spark { display: block; width: 100%; height: 36px; }
-#prepkin-buddy .pk-spark path { stroke-dasharray: 1000; stroke-dashoffset: 0; animation: pk-draw .5s ease-out; }
-@keyframes pk-draw { from { stroke-dashoffset: 1000; } }
-@media (prefers-reduced-motion: reduce) { #prepkin-buddy .pk-spark path { animation: none; } }
-#prepkin-buddy .pk-recent { display: flex; flex-direction: column; gap: 4px; }
-#prepkin-buddy .pk-recent div { display: flex; gap: 8px; font-size: 12px; }
-#prepkin-buddy .pk-recent div span { flex-grow: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#prepkin-buddy .pk-recent div em { font-style: normal; font-weight: 700; color: var(--pk-text-2); }
-#prepkin-buddy .pk-grades hr { border: 0; height: 1px; background: var(--pk-line-soft); margin: 0; }
-#prepkin-buddy .pk-gpa { display: flex; align-items: center; }
-#prepkin-buddy .pk-gpa b { flex-grow: 1; font-size: 14px; font-weight: 800; }
-#prepkin-buddy .pk-gpa strong { font-size: 16px; font-weight: 900; color: var(--pk-green); }
-#prepkin-buddy .pk-foot { font-size: 11px; font-weight: 600; color: var(--pk-text-3); }
-#prepkin-buddy .pk-foot.center { text-align: center; }
-
-/* What-if */
-#prepkin-buddy .pk-context {
-  background: var(--pk-inset); border-radius: 16px; padding: 12px; display: flex; gap: 12px;
-}
-#prepkin-buddy .pk-context div { display: flex; flex-direction: column; gap: 2px; }
-#prepkin-buddy .pk-context div:last-child { margin-left: auto; text-align: right; }
-#prepkin-buddy .pk-context small { font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
-#prepkin-buddy .pk-context b { font-size: 16px; font-weight: 800; }
-#prepkin-buddy .pk-targets { display: flex; gap: 8px; }
-#prepkin-buddy .pk-targets button {
-  flex: 1; border: 0; border-radius: 999px; padding: 8px 0; cursor: pointer;
-  background: var(--pk-inset); color: var(--pk-text-2); font-size: 14px; font-weight: 700;
-}
-#prepkin-buddy .pk-targets button.on {
-  background: var(--pk-mint-tint-strong); color: var(--pk-green); font-weight: 800;
-}
-#prepkin-buddy .pk-result {
-  background: var(--pk-mint-tint); border-radius: 16px;
-  box-shadow: inset 0 0 0 1px var(--pk-mint-border);
-  padding: 16px 12px; display: flex; align-items: center; gap: 12px;
-}
-#prepkin-buddy .pk-result > svg { flex-shrink: 0; }
-#prepkin-buddy .pk-result div { display: flex; flex-direction: column; gap: 4px; }
-#prepkin-buddy .pk-result b { font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
-#prepkin-buddy .pk-result small { font-size: 12px; font-weight: 600; color: var(--pk-text-mid); }
-#prepkin-buddy .pk-weightask { display: flex; gap: 8px; align-items: center; }
-#prepkin-buddy .pk-weightask input {
-  width: 72px; border: 0; box-shadow: inset 0 0 0 1px var(--pk-line-soft);
-  background: var(--pk-card); color: var(--pk-text); border-radius: 10px;
-  padding: 8px 10px; font: inherit; font-size: 14px; font-weight: 700; text-align: center;
-}
-
-/* Looks shop */
-#prepkin-buddy .pk-shop { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-#prepkin-buddy .pk-look {
-  border: 0; border-radius: 16px; padding: 10px; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  box-shadow: inset 0 0 0 1px var(--pk-line);
-}
-#prepkin-buddy .pk-look.wearing { box-shadow: inset 0 0 0 2px var(--pk-mint); }
-#prepkin-buddy .pk-look b { font-size: 14px; font-weight: 700; color: #33291f; }
-#prepkin-buddy .pk-look small { font-size: 12px; font-weight: 800; color: #8a7a66; display: flex; align-items: center; gap: 4px; }
-#prepkin-buddy .pk-look.wearing small { color: #2e7d57; }
-#prepkin-buddy .pk-look small.price { color: #a0722b; }
-#prepkin-buddy .pk-look.on-dark b { color: #f4f1ea; }
-#prepkin-buddy .pk-look.on-dark small { color: #bdb2a0; }
-
-/* Confirm sheet over the shop */
-#prepkin-buddy .pk-sheet {
-  border-radius: 16px; background: var(--pk-card); padding: 20px 16px 16px;
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-  box-shadow: inset 0 0 0 1px var(--pk-line);
-}
-#prepkin-buddy .pk-well {
-  width: 120px; height: 96px; border-radius: 16px; display: grid; place-items: center;
-}
-#prepkin-buddy .pk-sheet b { font-size: 16px; font-weight: 800; }
-#prepkin-buddy .pk-sheet .pk-cost { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--pk-text-2); }
-#prepkin-buddy .pk-sheet .pk-no { border: 0; background: none; cursor: pointer; font-size: 12px; font-weight: 700; color: var(--pk-text-2); }
-
-/* Focus timer */
-#prepkin-buddy .pk-timer {
-  width: 280px; background: var(--pk-card); border-radius: 20px;
-  padding: 16px 14px 14px; display: flex; flex-direction: column; gap: 10px;
-  box-shadow: 0 18px 44px var(--pk-shadow);
-}
-#prepkin-buddy .pk-timer.done { align-items: center; text-align: center; }
-#prepkin-buddy .pk-timer .pk-row { display: flex; align-items: center; gap: 12px; }
-#prepkin-buddy .pk-timer .pk-clock { font-size: 36px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
-#prepkin-buddy .pk-timer small { font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
-#prepkin-buddy .pk-timer .pk-thin { height: 6px; border-radius: 999px; background: var(--pk-track); position: relative; }
-#prepkin-buddy .pk-timer .pk-thin > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--pk-mint); display: block; }
-#prepkin-buddy .pk-timer .pk-give {
-  border: 0; background: none; cursor: pointer; font-size: 12px; font-weight: 700;
-  color: var(--pk-text-2); text-align: center; line-height: 1.35;
-}
-#prepkin-buddy .pk-timer b { font-size: 16px; font-weight: 800; }
+#pk-week .pk-w-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+#pk-week .pk-w-head b { font-size: 15px; font-weight: 800; letter-spacing: -.01em; }
+#pk-week .pk-w-head small { font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-week .pk-w-ring { position: relative; width: 96px; height: 96px; margin: 0 auto 10px; }
+#pk-week .pk-w-ring svg { display: block; }
+#pk-week .pk-w-centre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+#pk-week .pk-w-centre b { font-size: 20px; font-weight: 900; letter-spacing: -.02em; }
+#pk-week .pk-w-centre small { font-size: 11px; font-weight: 700; color: var(--pk-ink-2); margin-top: 3px; text-transform: uppercase; letter-spacing: .06em; }
+#pk-week .pk-w-legend { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+#pk-week .pk-w-legend li { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 600; }
+#pk-week .pk-w-legend i { flex: none; width: 8px; height: 8px; border-radius: 999px; background: var(--pk-mark); }
+#pk-week .pk-w-legend span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pk-week .pk-w-legend b { font-weight: 800; color: var(--pk-ink-2); }
+#pk-week .pk-w-empty { margin: 0 0 10px; font-size: 13px; line-height: 18px; color: var(--pk-ink-2); }
+#pk-week .pk-w-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid var(--pk-rule); font-size: 12px; line-height: 16px; font-weight: 700; color: var(--pk-ink-2); }
+#pk-week .pk-w-foot .streak { color: var(--pk-ink); }
+#pk-week .pk-w-foot .more { color: var(--pk-link); cursor: pointer; }
+#pk-week .pk-w-foot .more:hover { text-decoration: underline; }
+html.pk-back-week #pk-week { display: none; }

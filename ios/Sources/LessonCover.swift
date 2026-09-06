@@ -22,8 +22,9 @@ struct LessonCover: View {
         ZStack {
             if usesFigure {
                 // The figure paints its own field to the edges, so the cover is tinted
-                // whatever its shape.
-                LessonFigure(id: lesson.figure, step: 9)
+                // whatever its shape. Small covers show only the first reveal: the hero
+                // object reads as art, while a fully labelled figure at 132pt is noise.
+                LessonFigure(id: lesson.figure, step: height < 160 ? 1 : 9)
             } else {
                 TrackTint.soft(lesson.trackID)
                 TrackIcon(trackID: lesson.trackID, size: min(height * 0.5, 64))

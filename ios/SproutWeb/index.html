@@ -11,8 +11,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="theme-color" content="#dff3ea" />
     <title>Sprout</title>
-    <script type="module" crossorigin src="./assets/index-DpkuWADz.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BQ63fhrd.css">
+    <script type="module" crossorigin src="./assets/index-ws6Xe1Rq.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D09tduuK.css">
   </head>
   <body>
     <canvas id="stage" aria-label="Sprout mascot playground"></canvas>
@@ -23,7 +23,20 @@
         <p class="kicker">iOS companion mascot</p>
         <h1 id="kind-name">Sprout III</h1>
         <div id="status" class="status">Idle</div>
+        <button type="button" id="collection-btn" class="collection-btn">Collection</button>
       </header>
+      <div id="collection" hidden>
+        <div class="collection-sheet">
+          <header class="collection-head">
+            <div>
+              <h2>Collection</h2>
+              <p>4 little legends</p>
+            </div>
+            <button type="button" id="collection-close" class="collection-close">Close</button>
+          </header>
+          <div class="collection-grid" id="collection-grid"></div>
+        </div>
+      </div>
       <p id="hint" class="hint">Drag to swim around · tap to call</p>
       <div class="tray">
       <div class="picks">
@@ -34,22 +47,36 @@
           <button type="button" class="kind-swatch" data-kind="sail" title="Sail" aria-label="Sail">
             Sail
           </button>
+          <button type="button" class="kind-swatch" data-kind="orca" title="Orca" aria-label="Orca">
+            Orca
+          </button>
+          <button type="button" class="kind-swatch" data-kind="axolotl" title="Axolotl" aria-label="Axolotl">
+            Axolotl
+          </button>
+        </div>
+        <div class="skins" role="radiogroup" aria-label="Look">
+          <button type="button" class="kind-swatch active" data-skin="classic" title="Classic" aria-label="Classic">
+            Classic
+          </button>
+          <button type="button" class="kind-swatch" data-skin="ninja" title="Ninja" aria-label="Ninja">
+            Ninja
+          </button>
         </div>
         <div class="evos" role="radiogroup" aria-label="Evolution">
-          <button type="button" class="evo-swatch" data-evo="1" title="Stage I — small and plain" aria-label="Evolution I">
+          <button type="button" class="evo-swatch" data-evo="1" title="Stage I — the pear" aria-label="Evolution I">
             <span class="evo-pip evo-pip-1" aria-hidden="true"></span>
             <span>I</span>
           </button>
-          <button type="button" class="evo-swatch" data-evo="2" title="Stage II — a feature unlocks" aria-label="Evolution II">
+          <button type="button" class="evo-swatch" data-evo="2" title="Stage II — long fins" aria-label="Evolution II">
             <span class="evo-pip evo-pip-2" aria-hidden="true"></span>
             <span>II</span>
           </button>
-          <button type="button" class="evo-swatch active" data-evo="3" title="Stage III — finished look" aria-label="Evolution III">
+          <button type="button" class="evo-swatch active" data-evo="3" title="Stage III — Lumen" aria-label="Evolution III">
             <span class="evo-pip evo-pip-3" aria-hidden="true"></span>
             <span>III</span>
           </button>
         </div>
-      </div>
+        </div>
         <div class="tanks" role="radiogroup" aria-label="Fish tank">
           <button type="button" class="tank-swatch active" data-tank="lagoon" title="Lagoon" aria-label="Lagoon" style="--tank-a:#9ed9c4;--tank-b:#c8ead8;--tank-c:#f3f0c4"></button>
           <button type="button" class="tank-swatch" data-tank="reef" title="Reef" aria-label="Reef" style="--tank-a:#f0b896;--tank-b:#f8d4bc;--tank-c:#ffe8d0"></button>

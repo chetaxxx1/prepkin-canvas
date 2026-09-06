@@ -768,5 +768,1188 @@
         "why": "The method works because starting is genuinely cheap. If stopping isn't allowed, starting costs the whole task again."
       }
     ]
+  },
+  {
+    "id": "psy-1",
+    "title": "Your brain holds about four things",
+    "track": "psychology",
+    "figure": "slots",
+    "minutes": 2,
+    "triggers": [
+      "study",
+      "problemSet"
+    ],
+    "blurb": "Working memory is the scratchpad you think with, and it is tiny. You'll see why a phone on the desk costs you a slot, and the one trick that makes four slots feel like more.",
+    "takeaway": "You learned why one open tab is a study tool.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Working memory is the scratchpad you think with. It holds about four things at once, and that's it."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Every open loop takes a slot. The song stuck in your head. The text you haven't answered. The phone face up on the desk."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "When a fifth thing arrives, something falls off. Usually it's the thing you were trying to learn."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The trick is chunking: pack several items into one. 8675309 is seven things. 867-5309 is two."
+      },
+      {
+        "kind": "example",
+        "body": "Before a problem set, write the three formulas on a sticky note. Now they live on paper, and the slots are free for the actual problem."
+      },
+      {
+        "kind": "key",
+        "body": "Four slots. Everything you carry in your head is sitting in one of them."
+      },
+      {
+        "kind": "check",
+        "question": "Why does a phone face up on the desk hurt studying?",
+        "choices": [
+          "It makes the room brighter",
+          "It keeps a slot busy even when it's silent",
+          "It only hurts if it buzzes"
+        ],
+        "answer": 1,
+        "why": "An unfinished thing stays open in your head. It sits in a slot whether or not the phone makes a sound."
+      }
+    ]
+  },
+  {
+    "id": "psy-2",
+    "title": "Why you can't stop scrolling",
+    "track": "psychology",
+    "figure": "refresh",
+    "minutes": 2,
+    "blurb": "Feeds are built on the same trick as slot machines: a reward that only sometimes comes. You'll see why 'sometimes' hooks harder than 'always', and the one setting that breaks the loop.",
+    "takeaway": "You learned that 'sometimes' is the hook.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Pull down to refresh. Something might be there. Something might not. That uncertainty is the whole design."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Most pulls give you nothing. Then one gives you a like, a reply, a good post. You keep pulling for the next one."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "A reward that comes every time gets boring fast. A reward that comes sometimes keeps you pulling longest. Slot machines run on exactly this."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The fix isn't willpower. Kill the surprise. With notifications off, nothing arrives unannounced, so there's no pull to answer."
+      },
+      {
+        "kind": "example",
+        "body": "Pigeons taught to peck for a seed every time stopped when the seed stopped. Pigeons rewarded at random kept pecking for hours."
+      },
+      {
+        "kind": "key",
+        "body": "The feed isn't fun. It's uncertain. Uncertainty is what you're hooked on."
+      },
+      {
+        "kind": "check",
+        "question": "Which reward keeps a habit going the longest?",
+        "choices": [
+          "One that comes every time",
+          "One that comes at random",
+          "One that comes on a schedule"
+        ],
+        "answer": 1,
+        "why": "A random reward means every pull could be the one. There's never a moment where stopping feels safe."
+      }
+    ]
+  },
+  {
+    "id": "psy-3",
+    "title": "The sunk cost trap",
+    "track": "psychology",
+    "figure": "sunk",
+    "minutes": 2,
+    "blurb": "You paid for the ticket, so you sit through the bad movie. That's the trap. You'll see why money already spent shouldn't vote, and how to catch yourself doing it.",
+    "takeaway": "You learned that only the future gets a vote.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You paid $15 for the movie. Twenty minutes in, it's bad. Do you stay?"
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The $15 is gone either way. Stay or leave, you don't get it back. It shouldn't get a vote."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The next 90 minutes are still yours. That's the only thing the decision is about."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Sunk cost is when the past votes anyway. 'I've already put so much into this' is the sound it makes."
+      },
+      {
+        "kind": "example",
+        "body": "Three semesters into a major you hate. The credits are spent. The question is only whether the next three are worth it."
+      },
+      {
+        "kind": "key",
+        "body": "Money and time already spent are gone in every version of the future. Only what's ahead gets a vote."
+      },
+      {
+        "kind": "check",
+        "question": "What's the right question when you're 20 minutes into a bad movie?",
+        "choices": [
+          "Was the ticket worth it?",
+          "Is the next 90 minutes worth it?",
+          "How much did I pay?"
+        ],
+        "answer": 1,
+        "why": "The ticket is spent whatever you do. The only thing you still control is the time ahead."
+      }
+    ]
+  },
+  {
+    "id": "psy-4",
+    "title": "Confirmation bias",
+    "track": "psychology",
+    "figure": "filter",
+    "minutes": 2,
+    "blurb": "Your brain lets in what agrees with you and waves off what doesn't. You'll see the filter at work, and the one question that gets around it.",
+    "takeaway": "You learned to look for what would prove you wrong.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Facts come at you all day. Some fit what you already think. Some don't."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The ones that fit sail through. They feel obviously true, so you remember them."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The ones that don't fit get a harder look, a shrug, or no look at all. You forget them by dinner."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "So you end up more sure, not more right. The only way around it is to go looking for the fact that would prove you wrong."
+      },
+      {
+        "kind": "example",
+        "body": "You think your friend is mad at you. You'll notice the short text and miss the two normal ones. Ask instead: what would I see if they weren't?"
+      },
+      {
+        "kind": "key",
+        "body": "You don't test beliefs by finding support. You test them by hunting for the thing that would break them."
+      },
+      {
+        "kind": "check",
+        "question": "What's the best way to check whether a belief is true?",
+        "choices": [
+          "Collect examples that support it",
+          "Look for what would disprove it",
+          "Ask people who agree with you"
+        ],
+        "answer": 1,
+        "why": "Support is easy to find for almost anything. A belief that survives a real attempt to break it has earned something."
+      }
+    ]
+  },
+  {
+    "id": "psy-5",
+    "title": "Nobody is watching you that closely",
+    "track": "psychology",
+    "figure": "spotlight",
+    "minutes": 2,
+    "blurb": "The spotlight effect: you feel like everyone noticed, and they didn't. You'll see the study where people overestimated by half, and why it happens.",
+    "takeaway": "You learned that everyone is in their own spotlight.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You walk in wearing something embarrassing. It feels like a spotlight is on you and the whole room is looking."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "But everyone else is standing in their own spotlight. They're busy with how they look."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "In a famous study, students wore an embarrassing shirt into a room. They guessed half the room noticed. About a quarter actually did."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "You overestimate by about double. The stumble, the wrong answer, the bad haircut. Half the people you think saw it didn't."
+      },
+      {
+        "kind": "key",
+        "body": "You are the main character of your day only. Everyone else is the main character of theirs."
+      },
+      {
+        "kind": "check",
+        "question": "How many people noticed the embarrassing shirt, compared to the guess?",
+        "choices": [
+          "About the same",
+          "About half as many",
+          "About twice as many"
+        ],
+        "answer": 1,
+        "why": "Students guessed around half the room. About a quarter noticed. We overrate how much others see."
+      }
+    ]
+  },
+  {
+    "id": "psy-6",
+    "title": "The habit loop",
+    "track": "psychology",
+    "figure": "loop",
+    "minutes": 2,
+    "blurb": "Every habit has three parts, and only one of them is the part you see. You'll find the cue and reward hiding around a habit, and learn to swap the middle instead of fighting all three.",
+    "takeaway": "You learned to swap the routine, not fight the loop.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A habit is a loop with three parts. It runs on its own, which is why it's so hard to fight head on."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The cue is the trigger. You sit down on your bed after school. That's the cue."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The routine is what you do. Phone comes out, feed opens. This is the only part you notice."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The reward is what you get. Twenty minutes of not thinking about anything. The loop runs to get this."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "You can't delete a cue or a reward. But you can swap the middle. Same bed, same twenty minutes off, different thing in your hand."
+      },
+      {
+        "kind": "key",
+        "body": "Keep the cue. Keep the reward. Swap only the routine in between."
+      },
+      {
+        "kind": "check",
+        "question": "Which part of the loop can you actually change?",
+        "choices": [
+          "The cue",
+          "The routine",
+          "The reward"
+        ],
+        "answer": 1,
+        "why": "The cue will keep showing up and you'll still want the reward. The routine between them is the part you get to pick."
+      }
+    ]
+  },
+  {
+    "id": "psy-7",
+    "title": "Say 'I'm excited', not 'calm down'",
+    "track": "psychology",
+    "figure": "arousal",
+    "minutes": 2,
+    "triggers": [
+      "study"
+    ],
+    "blurb": "Nerves and excitement feel the same in the body. You'll see why 'calm down' fails, and the two words that turned a racing heart into a better test score.",
+    "takeaway": "You learned to relabel nerves instead of fighting them.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Racing heart. Sweaty hands. Fast breathing. Your body does exactly this before a test, a speech, or a first date."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Call it anxiety and your brain reads it as a threat. Now you're nervous about being nervous."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Call it excitement and nothing in the body changes. Same heart rate, same hands. Only the label moved."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "'Calm down' asks your body to do the impossible. 'I'm excited' asks it to do nothing. That's why it works."
+      },
+      {
+        "kind": "example",
+        "body": "In one study, people said either 'I'm calm' or 'I'm excited' before singing karaoke. The excited group scored about 80%. The calm group scored about 53%."
+      },
+      {
+        "kind": "key",
+        "body": "Your body can't tell nervous from excited. So tell it which one it is."
+      },
+      {
+        "kind": "check",
+        "question": "Why does 'I'm excited' beat 'calm down'?",
+        "choices": [
+          "It slows your heart",
+          "It changes the label, not the body",
+          "It distracts you"
+        ],
+        "answer": 1,
+        "why": "The racing heart stays. Calling it excitement stops you fighting it and points the energy somewhere useful."
+      }
+    ]
+  },
+  {
+    "id": "ppl-1",
+    "title": "Ask for an extension the right way",
+    "track": "people",
+    "figure": "email",
+    "minutes": 2,
+    "triggers": [
+      "writing",
+      "labs",
+      "reading"
+    ],
+    "blurb": "Teachers say yes to a good extension email far more often than students think. You'll build the four-line version: what, when, the specific ask, and proof you've started.",
+    "takeaway": "You learned the four lines that get a yes.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "An extension email has four lines. Send it before the deadline, not after. That one detail changes the answer more than anything else."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Line one: what and when. 'The bio lab report is due Friday.' No story yet."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Line two: the ask, with a date. 'Could I turn it in Monday at 8am?' A specific date is easy to say yes to. 'A few more days' is not."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Line three: proof you've started. 'I've attached my draft with the first two sections done.' This is what separates you from the ones who haven't begun."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Line four: thanks, and stop. No paragraph about why. If they want the reason, they'll ask."
+      },
+      {
+        "kind": "key",
+        "body": "Ask early. Name a date. Show the draft. Skip the story."
+      },
+      {
+        "kind": "check",
+        "question": "Which detail matters most in an extension request?",
+        "choices": [
+          "A detailed reason",
+          "Sending it before the due date",
+          "Apologising a lot"
+        ],
+        "answer": 1,
+        "why": "Before the deadline it's a request. After, it's an excuse. Teachers treat the two very differently."
+      }
+    ]
+  },
+  {
+    "id": "ppl-2",
+    "title": "How to say no",
+    "track": "people",
+    "figure": "no",
+    "minutes": 2,
+    "blurb": "A clean no is short, kind, and doesn't invite a negotiation. You'll see the three-part shape, and why a long excuse is the thing that gets you talked back into it.",
+    "takeaway": "You learned that a short no is the kind one.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Saying no feels rude, so most people bury it in a long excuse. The excuse is the problem, not the no."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Part one: something warm. 'Thanks for thinking of me.' It's true, and it costs nothing."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Part two: the no, plain. 'I can't this weekend.' No 'maybe', no 'I'll try'. A soft no gets treated as a yes."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Part three, if you want it: what you can do. 'But I'm free Tuesday.' Now it's an offer, not a rejection."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "What you leave out: the reason. Every reason is a door. 'I have homework' gets 'do it after'. No reason, no door."
+      },
+      {
+        "kind": "key",
+        "body": "Warm, then no, then an offer. The excuse is what gets you talked back in."
+      },
+      {
+        "kind": "check",
+        "question": "Why skip the reason when you say no?",
+        "choices": [
+          "Reasons are rude",
+          "Every reason can be argued with",
+          "It makes you seem busy"
+        ],
+        "answer": 1,
+        "why": "A reason turns your no into a problem to solve. 'I have homework' invites 'do it later'. A plain no has nothing to push on."
+      }
+    ]
+  },
+  {
+    "id": "ppl-3",
+    "title": "Listen so people feel heard",
+    "track": "people",
+    "figure": "echo",
+    "minutes": 2,
+    "blurb": "When a friend is upset, the instinct is to fix it or cheer them up. Both make it worse. You'll learn the one move that works: say back what you heard, then ask.",
+    "takeaway": "You learned to reflect before you fix.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A friend says: 'I completely bombed that test.' What you say next decides whether they keep talking."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "'You'll be fine' feels kind. It isn't. It tells them the feeling was wrong, and the conversation ends."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Try saying back what you heard: 'Sounds like it really got to you.' Nothing fixed. Nothing judged. They feel heard, and they keep going."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Then ask, don't advise. 'What part went wrong?' Advice comes later, if they want it. Most of the time they don't."
+      },
+      {
+        "kind": "key",
+        "body": "Reflect it back. Then ask. Fixing can wait, and usually isn't wanted."
+      },
+      {
+        "kind": "check",
+        "question": "A friend says they bombed a test. What's the best first reply?",
+        "choices": [
+          "'You'll be fine, you always are'",
+          "'Sounds like it really got to you'",
+          "'Next time start studying earlier'"
+        ],
+        "answer": 1,
+        "why": "Saying back what you heard shows you listened. The other two close the conversation, one with comfort and one with a lecture."
+      }
+    ]
+  },
+  {
+    "id": "ppl-4",
+    "title": "Small talk without the panic",
+    "track": "people",
+    "figure": "ladder",
+    "minutes": 2,
+    "blurb": "You don't need good stories. You need follow-up questions. You'll see the ladder that turns 'where are you from' into a real conversation, and the study on why askers get liked.",
+    "takeaway": "You learned that follow-ups do the work.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Small talk feels hard because you think you need something interesting to say. You don't. You need the next question."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Start anywhere. 'Where are you from?' Boring is fine. It's the bottom rung, not the whole ladder."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Then climb: ask about their answer. 'What do you like about it?' Now they're talking about something they care about."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Climb again. 'How did you get into that?' Three rungs in, it's a real conversation, and you've said almost nothing."
+      },
+      {
+        "kind": "example",
+        "body": "Researchers watched hundreds of first conversations. The people who asked more follow-up questions were consistently rated more likeable."
+      },
+      {
+        "kind": "key",
+        "body": "You don't need a good story. You need the next question about theirs."
+      },
+      {
+        "kind": "check",
+        "question": "What made people more likeable in first conversations?",
+        "choices": [
+          "Telling better stories",
+          "Asking follow-up questions",
+          "Talking about shared interests"
+        ],
+        "answer": 1,
+        "why": "Follow-up questions show you listened to the last answer. That's what people remember, not your stories."
+      }
+    ]
+  },
+  {
+    "id": "ppl-5",
+    "title": "A real apology has three parts",
+    "track": "people",
+    "figure": "apology",
+    "minutes": 2,
+    "blurb": "'Sorry you feel that way' isn't an apology, and everyone can tell. You'll see the three parts a real one needs, and the two words that quietly cancel it.",
+    "takeaway": "You learned what makes 'sorry' land.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A real apology has three parts. Most people do one and wonder why it didn't work."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Part one: name what you did. 'I told people what you said in private.' Specific. No 'if I did anything'."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Part two: name what it cost them. 'That made it hard to trust me.' This is the part people skip, and the part that matters."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Part three: what changes. 'I'm not going to repeat things you tell me.' An apology without this is just a description."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "The two words that cancel all of it: 'but' and 'if'. 'I'm sorry, but' means 'I'm not sorry'. 'Sorry if' means 'this is your problem'."
+      },
+      {
+        "kind": "key",
+        "body": "What I did. What it cost you. What changes. No but, no if."
+      },
+      {
+        "kind": "check",
+        "question": "What does 'I'm sorry if you were hurt' actually say?",
+        "choices": [
+          "A full apology",
+          "That the hurt is their problem, not yours",
+          "That you'll change"
+        ],
+        "answer": 1,
+        "why": "'If' puts the feeling in doubt. It sounds like an apology, but it doesn't own anything."
+      }
+    ]
+  },
+  {
+    "id": "fin-7",
+    "title": "Where your paycheck goes",
+    "track": "finance",
+    "figure": "paycheck",
+    "minutes": 2,
+    "blurb": "Your first paycheck is smaller than the number you agreed to. You'll see exactly who takes what from $1,000, and why some of it comes back in April.",
+    "takeaway": "You learned the difference between gross and take-home.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You earn $1,000 in a month. That's your gross pay. It's not what lands in your account."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Social Security takes 6.2%. That's $62. It funds payments to retired people, and one day, to you."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Medicare takes 1.45%. That's $14.50. Together with Social Security, these are called FICA, and almost every worker pays them."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Income tax varies. It depends on the W-4 form you filled out and your state. For a student earning this little, often $0 to $100 of the $1,000."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "What's left is your net pay, or take-home. Around $825 to $925 of the $1,000. If too much tax was taken, you get it back as a refund after you file."
+      },
+      {
+        "kind": "key",
+        "body": "Gross is what you earned. Net is what you get. The gap is FICA plus income tax."
+      },
+      {
+        "kind": "check",
+        "question": "Which of these does every worker pay, no matter what?",
+        "choices": [
+          "State income tax",
+          "Social Security and Medicare",
+          "A refund"
+        ],
+        "answer": 1,
+        "why": "FICA comes off almost every paycheck at fixed rates. Income tax depends on your state and your form, and some people owe none."
+      }
+    ]
+  },
+  {
+    "id": "fin-8",
+    "title": "Tax brackets aren't what you think",
+    "track": "finance",
+    "figure": "brackets",
+    "minutes": 3,
+    "blurb": "Moving into a higher bracket never costs you money. You'll see how brackets work like stacked buckets, and why a raise is always worth taking.",
+    "takeaway": "You learned that only the top slice pays the top rate.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Tax brackets are stacked buckets. Your taxable income (your pay minus the standard deduction) fills them from the bottom up. Each bucket has its own rate."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The first $11,925 you earn is taxed at 10%. That's the bottom bucket. Everyone's first dollars go here."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The next chunk, up to $48,475, is taxed at 12%. Only the money in this bucket pays 12%. The bottom bucket still pays 10%."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Above that, up to $103,350, the rate is 22%. Have $50,000 of taxable income and only about $1,500 of it is in this bucket. The rest sits in the cheaper ones below."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "So a raise that pushes you into a higher bracket only taxes the new dollars higher. You never take home less by earning more."
+      },
+      {
+        "kind": "example",
+        "body": "Someone with $50,000 of taxable income doesn't pay 22% of $50,000. They pay 10% on the first bucket, 12% on the second, and 22% on the ~$1,500 that spills over. About $6,000 total, not $11,000."
+      },
+      {
+        "kind": "key",
+        "body": "Only the dollars above the line pay the higher rate. A raise never costs you money."
+      },
+      {
+        "kind": "check",
+        "question": "You have $50,000 of taxable income and the 22% bracket starts at $48,475. How much is taxed at 22%?",
+        "choices": [
+          "All $50,000",
+          "About $1,500",
+          "None of it"
+        ],
+        "answer": 1,
+        "why": "Only the money above the bracket line, about $1,525, pays 22%. Everything below it stays in the cheaper buckets."
+      }
+    ]
+  },
+  {
+    "id": "fin-9",
+    "title": "A Roth IRA at 18",
+    "track": "finance",
+    "figure": "jar",
+    "minutes": 2,
+    "blurb": "It's a jar where money grows for decades and comes out with no tax at all. You'll see why starting at 18 beats starting at 30 by a mile, and the one rule for opening one.",
+    "takeaway": "You learned why the early jar wins.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A Roth IRA is a jar for retirement money. Money you already paid tax on goes in. Then it grows for decades."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Inside the jar, growth is never taxed. The $2,000 you put in could become $20,000, and you owe nothing on the extra."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "After 59½, and once the account is five years old, it all comes out tax-free. And the money you put in, not the growth, can come out any time without penalty."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The one rule: you need earned income. A summer job counts. Babysitting money counts if you report it. You can put in up to $7,000 a year, or everything you earned if that's less."
+      },
+      {
+        "kind": "example",
+        "body": "Put in $2,000 a year for seven years, 18 to 24, then stop forever. At 7% growth, that's about $250,000 at 65. Start at 30 and you'd need to save for decades to catch up."
+      },
+      {
+        "kind": "key",
+        "body": "The jar rewards years, not amounts. Seven years at 18 can beat thirty years later."
+      },
+      {
+        "kind": "check",
+        "question": "What do you need before you can open a Roth IRA?",
+        "choices": [
+          "To be 21",
+          "Money you earned from work",
+          "A full-time job"
+        ],
+        "answer": 1,
+        "why": "Any earned income counts, including a summer job. Age and hours don't matter, only that the money came from work."
+      }
+    ]
+  },
+  {
+    "id": "fin-10",
+    "title": "Why a dollar shrinks",
+    "track": "finance",
+    "figure": "burrito",
+    "minutes": 2,
+    "blurb": "Inflation is why the burrito that cost $8 now costs $10. You'll see what that does to cash sitting still, and why a savings account has to beat it to keep up.",
+    "takeaway": "You learned why cash sitting still loses.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "In 2020 this burrito cost $8. Same burrito, same place."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "In 2025 it costs about $10. Prices across everything rose roughly a quarter in those five years. That's inflation."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Your $8 didn't change. But now it buys about four-fifths of a burrito. The number stayed. The dollar shrank."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Cash under a mattress loses around 3% of its buying power a year, in a normal year. A savings account paying 4% stays a bit ahead. One paying 0.1% doesn't."
+      },
+      {
+        "kind": "key",
+        "body": "A dollar is a claim on stuff. If stuff gets pricier, the dollar gets smaller."
+      },
+      {
+        "kind": "check",
+        "question": "You keep $500 in cash for five years. What happens to it?",
+        "choices": [
+          "Nothing, it's still $500",
+          "It buys less than it used to",
+          "It grows a little"
+        ],
+        "answer": 1,
+        "why": "The bills say $500, but prices went up around it. The same cash buys fewer burritos than it did."
+      }
+    ]
+  },
+  {
+    "id": "phil-6",
+    "title": "The trolley problem",
+    "track": "philosophy",
+    "figure": "trolley",
+    "minutes": 2,
+    "blurb": "A runaway trolley, five people, one lever. You'll see why most people pull it, why most people won't push, and what that says about how we judge doing versus letting happen.",
+    "takeaway": "You learned that doing and allowing feel different, even when the math is the same.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A trolley is running down the track with no brakes. Ahead, the track forks."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "On the main track, five people who can't move. If nothing happens, the trolley hits them."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "On the side track, one person. You're standing at the lever. Pull it and the trolley turns."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Most people pull. One death instead of five. Simple math. But change one detail and the answer flips."
+      },
+      {
+        "kind": "example",
+        "body": "Same trolley, same five people. Now you're on a bridge and the only way to stop it is to push a large man off, onto the track. One death instead of five. Most people won't push."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "The numbers are identical. What changed is whether you used a person as the tool. The math says one. Your gut says the lever and the push are not the same act."
+      },
+      {
+        "kind": "key",
+        "body": "Five versus one is easy. Doing versus allowing is what we actually argue about."
+      },
+      {
+        "kind": "check",
+        "question": "What's the difference between the lever and the bridge?",
+        "choices": [
+          "More people die on the bridge",
+          "On the bridge you use a person as the tool",
+          "The lever is a machine"
+        ],
+        "answer": 1,
+        "why": "Both save five by losing one. On the bridge, the one person is the means of stopping the trolley. That's what most people can't do."
+      }
+    ]
+  },
+  {
+    "id": "phil-7",
+    "title": "The ship of Theseus",
+    "track": "philosophy",
+    "figure": "ship",
+    "minutes": 2,
+    "blurb": "Replace every plank on a ship, one at a time. Is it the same ship? You'll see the puzzle, the twist that makes it worse, and why your phone and your body are in it too.",
+    "takeaway": "You learned that 'same' is a choice, not a fact.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "The Greeks kept the hero Theseus's ship in the harbour for centuries. Wood rots. So they replaced the planks as they went."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "One plank at a time. After a while, a third of the ship is new wood. Still his ship? Sure, feels like it."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Eventually every plank has been swapped. Not one piece of the original is left. Same ship?"
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The twist: someone saved all the old planks and rebuilt them into a second ship. Now there are two. Which one is Theseus's?"
+      },
+      {
+        "kind": "example",
+        "body": "Your phone with a new screen, a new battery, and a new back. Same phone? Most of the cells in your body get replaced over the years. Same you?"
+      },
+      {
+        "kind": "key",
+        "body": "Same is not a fact about the thing. It's a rule we choose. Pick the rule, and the puzzle answers itself."
+      },
+      {
+        "kind": "check",
+        "question": "Why is the rebuilt ship of old planks such a problem?",
+        "choices": [
+          "Old wood is weaker",
+          "Now two ships can each claim to be the original",
+          "It's not seaworthy"
+        ],
+        "answer": 1,
+        "why": "One ship has the history. The other has the material. Each has a real claim, and 'same' can't mean both."
+      }
+    ]
+  },
+  {
+    "id": "phil-8",
+    "title": "Plato's cave",
+    "track": "philosophy",
+    "figure": "cave",
+    "minutes": 2,
+    "blurb": "Prisoners chained to a wall, watching shadows, sure the shadows are the world. You'll see the oldest thought experiment about what's real, and why walking out hurts.",
+    "takeaway": "You learned why leaving the cave hurts before it helps.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Picture people chained in a cave since birth, facing the back wall. They can't turn around."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "On the wall, shadows move. To the prisoners, the shadows are the world. They name them, predict them, argue about them."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Behind them, a fire, and people carrying objects past it. The shadows are just those objects. The prisoners have never seen the real things."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "One prisoner gets loose and climbs out. The sunlight hurts. Everything looks wrong at first. When he comes back to explain, the others think he's gone mad."
+      },
+      {
+        "kind": "example",
+        "body": "A feed shows you a version of people: highlights, arguments, the worst clip of someone's day. It's easy to forget those are shadows of people, not the people."
+      },
+      {
+        "kind": "key",
+        "body": "The first taste of something real feels worse than the shadow. That's not a sign you were wrong to look."
+      },
+      {
+        "kind": "check",
+        "question": "Why do the prisoners think the freed one has gone mad?",
+        "choices": [
+          "He's lying to them",
+          "The shadows are all they've ever known",
+          "He can't describe the sun"
+        ],
+        "answer": 1,
+        "why": "The shadows are their whole world. Anyone claiming there's something more real must be broken."
+      }
+    ]
+  },
+  {
+    "id": "study-7",
+    "title": "Notes you'll actually reread",
+    "track": "study",
+    "figure": "cornell",
+    "minutes": 2,
+    "triggers": [
+      "study",
+      "reading"
+    ],
+    "blurb": "Most notes get written once and never opened. You'll set up a page with three zones, so the notes quiz you later instead of just sitting there.",
+    "takeaway": "You learned to make notes that test you.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "One page, three zones. Draw the lines before class starts. It takes ten seconds."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The big zone on the right is for class. Write what's said, fast and messy. Don't fix it live."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The thin column on the left is for after class. Turn each chunk of notes into a question. 'What does the mitochondria do?'"
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The strip at the bottom is one sentence that sums up the page. If you can't write it, you didn't get the class yet."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "To study: cover the right side. Read the questions on the left. Answer out loud. Uncover and check. That's a quiz you built yourself."
+      },
+      {
+        "kind": "key",
+        "body": "Notes that can't quiz you are just a transcript. Add the question column."
+      },
+      {
+        "kind": "check",
+        "question": "What goes in the left column?",
+        "choices": [
+          "Neat copies of the notes",
+          "Questions the notes answer",
+          "Page numbers"
+        ],
+        "answer": 1,
+        "why": "The left column turns the page into a test. Cover the right side and the questions are all you see."
+      }
+    ]
+  },
+  {
+    "id": "study-8",
+    "title": "Explain it to a twelve-year-old",
+    "track": "study",
+    "figure": "feynman",
+    "minutes": 2,
+    "triggers": [
+      "study",
+      "labs"
+    ],
+    "blurb": "If you can't explain it simply, you don't know it yet. You'll use a blank page and plain words to find exactly where your understanding runs out.",
+    "takeaway": "You learned where your understanding runs out.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Take a blank page. Write the topic at the top. Photosynthesis, say."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Now explain it in words a twelve-year-old would follow. No terms you'd have to define. 'The plant catches sunlight and uses it to turn air and water into sugar.'"
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Keep going until you hit a spot where the words go vague. 'And then it... does something with the light?' That's the gap. That's the exact thing you don't know yet."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Go back to the textbook for that one gap only. Fill it, then rewrite the sentence plainly. Repeat until there's no vague spot left."
+      },
+      {
+        "kind": "key",
+        "body": "Big words hide gaps. Plain words find them."
+      },
+      {
+        "kind": "check",
+        "question": "What does it mean when your explanation goes vague?",
+        "choices": [
+          "You need a bigger word",
+          "You found the exact thing you don't know",
+          "The topic is too hard"
+        ],
+        "answer": 1,
+        "why": "Vague words are where understanding runs out. That spot tells you what to go back and learn."
+      }
+    ]
+  },
+  {
+    "id": "study-9",
+    "title": "Sleep is part of studying",
+    "track": "study",
+    "figure": "sleep",
+    "minutes": 2,
+    "triggers": [
+      "study",
+      "sleep"
+    ],
+    "blurb": "Your brain files what you learned while you sleep. You'll see what happens in the early and late hours of the night, and why an all-nighter throws away the studying you did.",
+    "takeaway": "You learned that the night does the filing.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You study, then you sleep. Most people think the learning stopped when the book closed. It didn't."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Sleep runs in cycles, about ninety minutes each. Five or so in a full night."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The deep sleep comes early in the night. The best evidence says this is when the day's facts get moved from short-term storage into long-term."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "The dream-heavy sleep comes late. This is when the brain connects new things to what you already knew."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Cut the night to four hours and you keep the filing but lose the connecting. Skip the night and you lose both. Studying at 3am is writing to a drive that won't save."
+      },
+      {
+        "kind": "example",
+        "body": "In studies, people who learned something and then slept remembered more the next day than people who learned it and stayed up, even with the same hours of study."
+      },
+      {
+        "kind": "key",
+        "body": "Sleep isn't the break from studying. It's the last step of it."
+      },
+      {
+        "kind": "check",
+        "question": "What does an all-nighter before a test cost you?",
+        "choices": [
+          "Nothing if you drink coffee",
+          "The filing your brain does overnight",
+          "Only your mood"
+        ],
+        "answer": 1,
+        "why": "The facts you crammed never get moved to long-term storage. You read them, but they don't stick."
+      }
+    ]
+  },
+  {
+    "id": "study-10",
+    "title": "The first minute of a test",
+    "track": "study",
+    "figure": "exam",
+    "minutes": 2,
+    "triggers": [
+      "study"
+    ],
+    "blurb": "Most people start on question one and run out of time on question eight. You'll spend the first sixty seconds differently, and get the easy points before the hard ones eat the clock.",
+    "takeaway": "You learned to spend the first minute looking, not writing.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "The test lands on your desk. Don't touch question one yet."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Spend sixty seconds reading every question. Just reading. Now you know what's coming and roughly how long you have per point."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Do the ones you're sure about first. Every easy point is worth the same as a hard one, and it's yours in two minutes instead of ten."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Mark the hard ones and skip them. Not stuck, just later. Coming back fresh, with the easy points banked, often makes a hard one look smaller."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Come back with the time you have left, and with the easy points already banked. A hard question you run out of time on costs nothing now."
+      },
+      {
+        "kind": "key",
+        "body": "Skim it all. Bank the easy points. Then spend what's left on the hard ones."
+      },
+      {
+        "kind": "check",
+        "question": "Why skip a hard question instead of pushing through it?",
+        "choices": [
+          "Hard questions are worth less",
+          "It keeps the easy points from running out of time",
+          "You'll never get it anyway"
+        ],
+        "answer": 1,
+        "why": "A hard question can eat ten minutes and three easy questions with it. Bank the easy ones first, then come back."
+      }
+    ]
   }
 ]

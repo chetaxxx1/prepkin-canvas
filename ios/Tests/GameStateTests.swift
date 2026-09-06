@@ -183,6 +183,20 @@ final class GameStateTests: XCTestCase {
         XCTAssertEqual(s.tasks[1].id, "c-2")
     }
 
+    func testCanvasCopiesOfTheSameQuizCollapseToOneRow() {
+        var s = fresh(on: day1)
+        let now = Date()
+        s.applyCanvas(CanvasSnapshot(tasks: [
+            CanvasItem(id: "c-1", title: "Safety Quiz", courseName: "Orientation", dueAt: nil),
+            CanvasItem(id: "c-2", title: "Safety Quiz", courseName: "Orientation", dueAt: nil),
+            CanvasItem(id: "c-3", title: "Safety Quiz", courseName: "Orientation", dueAt: nil),
+            // Same title, different week: a real second piece of work.
+            CanvasItem(id: "c-4", title: "Weekly Quiz", courseName: "Math", dueAt: now),
+            CanvasItem(id: "c-5", title: "Weekly Quiz", courseName: "Math", dueAt: now.addingTimeInterval(604_800)),
+        ]))
+        XCTAssertEqual(s.tasks.filter { $0.kind == .canvas }.map(\.id), ["c-4", "c-5", "c-1"])
+    }
+
     func testResyncingCanvasKeepsWhatWasAlreadyCheckedOff() {
         var s = fresh(on: day1)
         let item = CanvasItem(id: "c-1", title: "Problem set", courseName: "Physics", dueAt: nil)
@@ -287,6 +301,15 @@ final class LearnStateTests: XCTestCase {
         XCTAssertEqual(s.savedCards.count, 1)
     }
 
+    func testFlaggingACardKeepsEveryReportNewestFirst() {
+        var s = GameState()
+        s.reportCard(lessonID: "fin-1", index: 2, reason: .typo)
+        s.reportCard(lessonID: "fin-1", index: 2, reason: .wrong)
+        XCTAssertEqual(s.cardReports.count, 2)
+        XCTAssertEqual(s.cardReports.first?.reason, .wrong)
+        XCTAssertEqual(s.cardReports.first?.cardIndex, 2)
+    }
+
     func testLessonsThisMonthCountsOnlyLessons() {
         var s = GameState()
         s.completeLesson(id: "fin-1", reward: 20)
@@ -307,12 +330,14 @@ final class LearnStateTests: XCTestCase {
         var s = GameState()
         s.setDeckProgress("fin-1", card: 3)
         s.toggleSaved(lessonID: "fin-1", index: 6)
+        s.reportCard(lessonID: "fin-1", index: 4, reason: .other)
         s.hasSeenTapCoach = true
 
         let data = try Store.encoder.encode(s)
         let back = try Store.decoder.decode(GameState.self, from: data)
         XCTAssertEqual(back.deckProgress("fin-1"), 3)
         XCTAssertTrue(back.isSaved(lessonID: "fin-1", index: 6))
+        XCTAssertEqual(back.cardReports.first?.reason, .other)
         XCTAssertTrue(back.hasSeenTapCoach)
     }
 
@@ -323,5 +348,46 @@ final class LearnStateTests: XCTestCase {
         XCTAssertTrue(s.savedCards.isEmpty)
         XCTAssertFalse(s.hasSeenTapCoach)
         XCTAssertEqual(s.deckProgress("fin-1"), 0)
+    }
+
+    // MARK: - Friends
+
+    /// The tab must never invent people. A fresh state has no friends, and a
+    /// pending code is kept once and can be taken back.
+    func testFriendsStartEmptyAndPendingCodesRoundTrip() throws {
+        var s = GameState()
+        XCTAssertTrue(s.friends.isEmpty)
+        XCTAssertTrue(s.pendingFriendCodes.isEmpty)
+
+        s.addPendingFriendCode("ABCD-EFGH")
+        s.addPendingFriendCode("ABCD-EFGH")
+        XCTAssertEqual(s.pendingFriendCodes, ["ABCD-EFGH"])
+
+        let back = try Store.decoder.decode(GameState.self, from: Store.encoder.encode(s))
+        XCTAssertEqual(back.pendingFriendCodes, ["ABCD-EFGH"])
+        XCTAssertTrue(back.friends.isEmpty)
+
+        s.removePendingFriendCode("ABCD-EFGH")
+        XCTAssertTrue(s.pendingFriendCodes.isEmpty)
+    }
+
+    // MARK: - First run
+
+    /// A fresh install starts at the first run; a save from before the first run
+    /// existed belongs to someone already using the app and skips it.
+    func testFirstRunIsOnlyForFreshInstalls() throws {
+        XCTAssertFalse(GameState().firstRunDone)
+        XCTAssertFalse(GameState().firstRunOffersDone)
+
+        let old = #"{"activeChibiID": "slime", "sceneID": "dorm"}"#.data(using: .utf8)!
+        let existing = try Store.decoder.decode(GameState.self, from: old)
+        XCTAssertTrue(existing.firstRunDone)
+        XCTAssertTrue(existing.firstRunOffersDone)
+
+        var fresh = GameState()
+        fresh.firstRunDone = true
+        let back = try Store.decoder.decode(GameState.self, from: Store.encoder.encode(fresh))
+        XCTAssertTrue(back.firstRunDone)
+        XCTAssertFalse(back.firstRunOffersDone)
     }
 }

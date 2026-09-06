@@ -159,10 +159,23 @@ enum Catalog {
         .map { $0.uppercased() }
         .filter { $0.count == 5 }
 
+    /// Every word the board will accept as a guess. Much wider than the answers —
+    /// a student should be able to burn a try on any real word, not only on the 901
+    /// we're willing to make a puzzle out of. The answers are folded in, so a
+    /// degraded guesses.json can never make the day's word unguessable.
+    static let wordleGuesses: Set<String> = {
+        let loaded = load("guesses", fallback: fallbackGuesses)
+            .map { $0.uppercased() }
+            .filter { $0.count == 5 }
+        return Set(loaded).union(wordleAnswers)
+    }()
+
     private static let trackNames = [
         "finance": "Personal finance",
         "philosophy": "Philosophy",
         "study": "Study skills",
+        "psychology": "Psychology",
+        "people": "People skills",
     ]
 
     /// Every track the catalogue actually uses, in the order it first appears. A
@@ -211,6 +224,8 @@ enum Catalog {
     }
 
     private static let fallbackWords = ["SLIME", "STUDY", "FOCUS", "LEARN", "BRAVE"]
+
+    private static let fallbackGuesses = fallbackWords
 
     private static let fallbackLessons: [Lesson] = []
 }

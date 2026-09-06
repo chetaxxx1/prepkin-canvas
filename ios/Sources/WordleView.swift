@@ -6,8 +6,14 @@ import SwiftUI
 final class WordleGame: ObservableObject {
     /// Word list lives in Resources/Content/words.json.
     static var answers: [String] { Catalog.wordleAnswers }
+    /// The much wider list of words a guess is allowed to be, from guesses.json.
+    static var allowedGuesses: Set<String> { Catalog.wordleGuesses }
 
     enum TileState { case empty, absent, present, correct }
+
+    /// Why a submit did or didn't land. The board shakes on both refusals, but only
+    /// a real word costs a try.
+    enum Submission { case accepted, tooShort, notAWord }
 
     let target: String
     @Published var guesses: [String] = []
@@ -64,13 +70,17 @@ final class WordleGame: ObservableObject {
         current.removeLast()
     }
 
-    /// Returns true when a guess was accepted.
+    /// A guess only costs a try when it's five letters *and* a word on the list.
     @discardableResult
-    func submit(onWin: (Int) -> Void) -> Bool {
-        guard !finished else { return false }
+    func submit(onWin: (Int) -> Void) -> Submission {
+        guard !finished else { return .tooShort }
         guard current.count == 5 else {
             shake.toggle()
-            return false
+            return .tooShort
+        }
+        guard Self.allowedGuesses.contains(current) else {
+            shake.toggle()
+            return .notAWord
         }
         guesses.append(current)
         if current == target {
@@ -81,7 +91,7 @@ final class WordleGame: ObservableObject {
             finished = true
         }
         current = ""
-        return true
+        return .accepted
     }
 
     /// Wordle coloring with duplicate-letter handling.
@@ -139,6 +149,9 @@ struct WordleView: View {
     @State private var alreadyClaimed = false
     @State private var shakeOffset: CGFloat = 0
     @State private var wrongGuess = 0
+    /// Bumped on every rejected guess. The bubble reads off it so two bad words in a
+    /// row restart the 1.5 s rather than the second one inheriting the first's timer.
+    @State private var notAWord = 0
 
     private static let butter = Theme.hex(0xFFC94D)
     private static let inkOnButter = Theme.hex(0x3A2A05)
@@ -253,6 +266,7 @@ struct WordleView: View {
     }
 
     private var kinCopy: String {
+        if notAWord > 0 { return "Not in the word list." }
         if game.won { return game.guesses.count <= 2 ? "Show-off." : "Knew you'd get it." }
         if game.finished { return "It was \(game.target). Tomorrow's is kinder." }
         switch game.guesses.count {
@@ -379,9 +393,22 @@ struct WordleView: View {
     }
 
     private func submit() {
-        guard game.submit(onWin: rewardWin) else { return }
-        state.saveWordleGuesses(game.guesses, for: game.dealtDay)
-        UIImpactFeedbackGenerator(style: game.finished ? .medium : .light).impactOccurred()
+        switch game.submit(onWin: rewardWin) {
+        case .tooShort:
+            return
+        case .notAWord:
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            notAWord += 1
+            let shown = notAWord
+            // Clears itself, and only if no newer refusal has taken over the bubble.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                if notAWord == shown { notAWord = 0 }
+            }
+        case .accepted:
+            notAWord = 0
+            state.saveWordleGuesses(game.guesses, for: game.dealtDay)
+            UIImpactFeedbackGenerator(style: game.finished ? .medium : .light).impactOccurred()
+        }
     }
 
     /// No day stamp to keep here — the ledger's `wordle:<day>` key is what makes
@@ -398,6 +425,7 @@ struct WordleView: View {
         VStack(spacing: 10) {
             SproutImage(speciesID: state.activeChibiID,
                         level: state.activeChibi.level,
+                        skin: state.activeChibi.skinID,
                         animation: game.won ? .celebrate : .slump,
                         size: 120)
             Text(game.won ? "Solved in \(game.guesses.count)." : "It was \(game.target).")

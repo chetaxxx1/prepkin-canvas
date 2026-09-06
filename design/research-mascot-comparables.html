@@ -1,0 +1,215 @@
+<title>Sprout Comparables</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+  :root {
+    --ground: #F3F1EA;
+    --card: #FFFFFF;
+    --ink: #1C2426;
+    --muted: #6A7371;
+    --rule: #DDD8CB;
+    --accent: #3F8F76;
+    --accent-soft: #DCEFE7;
+    --warn: #A87A22;
+    --warn-soft: #F5EAD1;
+    --neutral-soft: #ECE9E0;
+    --link: #2F6F5C;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #171B1C; --card: #1F2527; --ink: #ECEFEC; --muted: #9AA5A2; --rule: #2E3639;
+      --accent: #6FC3A6; --accent-soft: #223A33; --warn: #D9A94A; --warn-soft: #3A3120;
+      --neutral-soft: #2A3033; --link: #8AD3BA;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #171B1C; --card: #1F2527; --ink: #ECEFEC; --muted: #9AA5A2; --rule: #2E3639;
+    --accent: #6FC3A6; --accent-soft: #223A33; --warn: #D9A94A; --warn-soft: #3A3120;
+    --neutral-soft: #2A3033; --link: #8AD3BA;
+  }
+  body { background: var(--ground); color: var(--ink); font-family: "Nunito Sans", "Avenir Next", "Segoe UI", sans-serif; font-size: 16px; line-height: 1.55; margin: 0; padding: 40px 24px 80px; }
+  a { color: var(--link); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent); text-underline-offset: 2px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .prose { max-width: 68ch; }
+  h1 { font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 40px; line-height: 1.1; letter-spacing: -0.015em; margin: 0 0 10px; text-wrap: balance; }
+  h2 { font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 26px; margin: 48px 0 12px; letter-spacing: -0.01em; }
+  h3 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 28px 0 8px; font-weight: 700; }
+  p { margin: 0 0 12px; }
+  .eyebrow { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+  .lede { font-size: 19px; line-height: 1.5; color: var(--ink); max-width: 62ch; }
+  .verdict { background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 12px; padding: 18px 22px; margin: 24px 0 8px; max-width: 72ch; }
+  .verdict p:last-child { margin: 0; }
+  ul { padding-left: 20px; margin: 0 0 12px; }
+  li { margin-bottom: 6px; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
+  table { border-collapse: collapse; width: 100%; min-width: 900px; font-size: 14px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 12px 14px; border-bottom: 1px solid var(--rule); background: var(--card); position: sticky; top: 0; }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td.name { font-weight: 700; white-space: nowrap; }
+  td.name small { display: block; font-weight: 400; color: var(--muted); white-space: normal; }
+  .num { font-variant-numeric: tabular-nums; }
+  .chip { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .chip.strong { background: var(--accent-soft); color: var(--accent); }
+  .chip.est { background: var(--neutral-soft); color: var(--muted); }
+  .chip.weak { background: var(--warn-soft); color: var(--warn); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 16px 0; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; }
+  .card h4 { margin: 0 0 6px; font-size: 16px; }
+  .card p { font-size: 14px; color: var(--ink); margin: 0 0 6px; }
+  .card .src { font-size: 13px; color: var(--muted); }
+  .moves { counter-reset: move; list-style: none; padding: 0; margin: 16px 0; display: grid; gap: 12px; }
+  .moves li { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 18px 14px 58px; position: relative; margin: 0; }
+  .moves li::before { counter-increment: move; content: counter(move); position: absolute; left: 18px; top: 14px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; display: grid; place-items: center; font-family: "Fraunces", serif; }
+  .moves b { display: block; margin-bottom: 4px; }
+  .moves .why { font-size: 14px; color: var(--muted); }
+  .faces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 6px; max-width: 720px; }
+  .faces figure { margin: 0; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 12px; text-align: center; }
+  .faces svg { width: 100%; height: auto; display: block; }
+  .faces figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .sources { font-size: 14px; columns: 2; column-gap: 32px; }
+  .sources li { break-inside: avoid; }
+  @media (max-width: 700px) { .sources { columns: 1; } .faces { grid-template-columns: 1fr; } h1 { font-size: 32px; } }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Prepkin · mascot research · 4 September 2026</div>
+  <h1>Who Sprout has to win over, and what they already buy</h1>
+  <p class="lede">Comparables for 16 to 22 year olds: the companion apps they keep, the characters they spend on, and the games whose art they don't call childish. Every number links to its source. Marketing claims are flagged.</p>
+
+  <div class="verdict">
+    <p><strong>Verdict.</strong> Sprout's body is fine for university students. Limbless round blobs are the most age-neutral shape in the market: Squishmallows' fastest-growing buyers are adults, Among Us and Fall Guys are beans, Kirby is a ball. What dates him is the face, the coat and the voice. Big high eyes plus blush is the baby formula from the science. Candy pastels read toy aisle. Earnest cheer reads kids' app.</p>
+    <p>The products that hold 18 to 24 all pair a cute base with one adult counterweight: deadpan tone (Duolingo, Gudetama), an ugly edge (Labubu, Kuromi), restraint (Miffy, Notion), or a collecting economy (Pop Mart, Animal Crossing skins). Sprout needs one of those. He currently has none.</p>
+  </div>
+
+  <h2>Companion apps students actually keep</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>App</th><th>Who uses it</th><th>Evidence</th><th>The character</th><th>What keeps it from reading childish</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Focus Friend<small>Hank Green, 2025</small></td><td class="num">#1 US App Store Aug 2025, 2M+ downloads, Google Play App of the Year 2025. Heavy student and ADHD use in reviews. <a href="https://techcrunch.com/2025/08/18/hank-greens-focus-friend-app-is-climbing-the-app-store-charts-and-its-extremely-cute">TechCrunch</a>, <a href="https://appbot.co/blog/how-hank-greens-focus-riend-app-winning-hearts-ratings/">Appbot</a></td><td><span class="chip strong">Strong</span></td><td>A bean. Dot eyes, no blush, almost no detail. Knits while you focus.</td><td>Simpler than Finch's bird. Non-judging voice: Green says it "isn't about virtue or judgement". Named skins (Coffee Bean, Kitty Bean) instead of stages.</td></tr>
+        <tr><td class="name">Duolingo<small>Duo, Lily</small></td><td class="num">About 60% of US learners under 30, near 50/50 gender. <a href="https://sqmagazine.co.uk/duolingo-statistics/">SQ Magazine (secondary)</a></td><td><span class="chip est">Estimate</span></td><td>Flat vector, saturated green, big eyes with an asymmetric droopy eyelid. Lily is "moody, emo". <a href="https://uxplanet.org/about-duolingos-grumpy-3-eyed-owl-1e36c455e7ab">UX Planet</a></td><td>Tone. Sarcastic and unhinged. "Duo died" (Feb 2025) drove a 25,560% mention spike, tracked by <a href="https://www.meltwater.com/en/blog/duolingo-dead-mascot-campaign">Meltwater</a>. Proof cuteness is not the hook. The attitude is.</td></tr>
+        <tr><td class="name">Finch<small>self-care bird</small></td><td class="num">About 75% women, mostly 25 to 35. <a href="https://www.similarweb.com/app/apple/1528595748/">Similarweb</a>, <a href="https://app.sensortower.com/overview/1528595748?country=US">Sensor Tower</a></td><td><span class="chip est">Estimate</span></td><td>Baby bird, round, big dot eyes, pastel, chubby. Earnest therapeutic voice.</td><td>Mostly it doesn't. A reviewer's first read was "a kid's game… a touch infantile" (<a href="https://www.polyglossic.com/finch-tiny-bird-big-habits-review/">Polyglossic</a>). Outfits and furniture bought with earned stones carry it. This is the closest thing to Sprout today, and it skews female and older.</td></tr>
+        <tr><td class="name">Habitica</td><td class="num">18 to 24 is the largest bracket, 51/49 male to female. <a href="https://www.similarweb.com/website/habitica.com/">Similarweb</a></td><td><span class="chip est">Estimate</span></td><td>8-bit RPG avatar. Zero cute signals, no blush.</td><td>Holds the exact target with no cuteness at all. Gear, pets and mounts as loot.</td></tr>
+        <tr><td class="name">Forest</td><td class="num">60M+ users, exam-season use in student reviews. <a href="https://warwick.ac.uk/services/library/using/productivity-tools/forest/">Warwick Library</a></td><td><span class="chip strong">Strong</span></td><td>No face. A tree.</td><td>Removes the character entirely. Tree species as cosmetics.</td></tr>
+        <tr><td class="name">Pokémon Sleep</td><td class="num">25 to 34 largest bracket (42%), 6:4 male. <a href="https://automaton-media.com/en/news/pokemon-sleep-has-over-a-million-monthly-users-in-japan-doubling-us-figures/">Automaton</a></td><td><span class="chip est">Estimate</span></td><td>Existing IP.</td><td>Nostalgia, not design. Not a useful proxy for a new character.</td></tr>
+        <tr><td class="name">Study Together</td><td class="num">500K to 1M students on Discord. <a href="https://every.to/cybernaut/how-one-student-built-a-study-discord-community-with-150k-members-in-15-months">Every</a></td><td><span class="chip strong">Strong</span></td><td>No mascot.</td><td>Body-doubling with real people. A real competing preference at university age.</td></tr>
+        <tr><td class="name">Bluebook<small>College Board</small></td><td class="num">1.4 stars from 907 ratings. <a href="https://apps.apple.com/app/id1645016851">App Store</a></td><td><span class="chip weak">Confounded</span></td><td>No mascot, paper-test look.</td><td>Zero personality earns no goodwill, but the rating is about test stress, not art.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend"><span><span class="chip strong">Strong</span> primary or independently tracked</span><span><span class="chip est">Estimate</span> third-party analytics or secondary press</span><span><span class="chip weak">Confounded</span> real number, weak inference</span></div>
+
+  <h2>Characters 16 to 24s spend their own money on</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Character</th><th>Buyers</th><th>Evidence</th><th>The formula</th><th>Why they say it isn't childish</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Labubu<small>Pop Mart</small></td><td class="num">60%+ female. 25 to 34 largest, 18 to 24 about 24% of site visitors. Pop Mart: "Gen Z and millennials, not kids." <a href="https://www.cnbc.com/2025/07/16/chinese-toymaker-pop-mart-shares-slide-after-strong-earnings-forecast.html">CNBC</a>, <a href="https://www.statista.com/statistics/1612767/pop-mart-website-visitors-age-group/">Statista</a></td><td><span class="chip strong">Strong</span></td><td>Small mischievous eyes, jagged teeth, elf ears, muted browns and olives, plush texture.</td><td>Ugly-cute. The edge is the point.</td></tr>
+        <tr><td class="name">Squishmallows</td><td class="num">18+ is the fastest-growing, biggest-spending segment. Sales up 40% in two years on adult buying. <a href="https://www.entrepreneur.com/business-news/squishmallows-hottest-toy-on-market-adults-driving-sales/455339">Entrepreneur, citing Jazwares</a></td><td><span class="chip strong">Strong</span></td><td>No limbs, sphere body, dot eyes, tiny stitched mouth, pastel.</td><td>"A stress ball you can hug." Dorm decor. The blob body is age-neutral.</td></tr>
+        <tr><td class="name">Sanrio<small>Kuromi, Cinnamoroll</small></td><td class="num">Record revenue credited to Gen Z. Hello Kitty's share fell from 60.6% (2016) to 37.3% as Kuromi rose. <a href="https://corporate.sanrio.co.jp/en/ir/finance/highlight/">Sanrio IR</a>, <a href="https://www.cnbc.com/2026/08/12/hello-kitty-sanrio-shares-plunge-following-earnings-.html">CNBC</a></td><td><span class="chip strong">Strong</span></td><td>No mouth on Hello Kitty, so the owner projects the mood. Kuromi is the same round body in black and purple with a punk twist.</td><td>"Cute but not sweet." Irony you can wear.</td></tr>
+        <tr><td class="name">Sonny Angel, Smiski</td><td class="num">Core buyers are women in their 20s (maker). Blind-box buyers 62% female, 18 to 35. <a href="https://www.thecrimson.com/article/2024/10/3/blind-box-trinket-smiski-collectible-trend/">Harvard Crimson</a></td><td><span class="chip est">Estimate</span></td><td>Blank or mouthless face, nude pastels, matte vinyl, tiny prop hats.</td><td>Sold as desk decor and "inner child", not toys. Blind box makes it a hobby.</td></tr>
+        <tr><td class="name">Kidult market</td><td class="num">Adults are 25 to 30% of US toy sales, about $9B a year, growth split evenly by gender. <a href="https://www.circana.com/post/global-toy-sales-stabilize-in-2024-collectibles-fan-favorites-and-smart-spending-shape-the-market">Circana</a></td><td><span class="chip strong">Strong</span></td><td>Collectible and premium, not mass.</td><td>Toys as "emotional anchors" (<a href="https://www.marketingbrew.com/stories/2025/07/24/labubus-hot-wheels-kidults-market-growth">Marketing Brew</a>).</td></tr>
+        <tr><td class="name">Animal Crossing<small>New Horizons</small></td><td class="num">43% of buyers 25 to 34, 20% 19 to 24, near 50/50 gender. <a href="https://www.nintendolife.com/news/2020/09/most_animal_crossing_new_horizons_players_are_in_their_20s_and_30s">Nintendo Life, CEDEC 2020</a></td><td><span class="chip strong">Strong</span></td><td>Big heads, big eyes, ball hands.</td><td>Endless customization turns cute into a personal aesthetic project.</td></tr>
+        <tr><td class="name">Fall Guys, Among Us</td><td class="num">Fall Guys about a third 18 to 24, average age about 23. Among Us mostly 20 to 30. <a href="https://expertbeacon.com/what-is-the-average-age-of-a-fall-guys-player/">ExpertBeacon</a>, <a href="https://headphonesaddict.com/among-us-statistics/">aggregator</a></td><td><span class="chip weak">Weak</span></td><td>Beans. No limbs at rest, dot eyes or a visor, flat color-block skins.</td><td>They read as avatars, not characters. Slapstick and streamer culture, not sweetness.</td></tr>
+        <tr><td class="name">Cult of the Lamb, Hollow Knight</td><td class="num">Cult of the Lamb 4.5M sold, rated 18+. Silksong 7M in three months, buyers overlap Elden Ring. <a href="https://www.vgchartz.com/article/462837/cult-of-the-lamb-sales-top-45-million-units/">VGChartz</a>, <a href="https://www.tweaktown.com/news/109417/hollow-knight-silksong-sells-7-million-copies-since-launch-with-millions-of-game-pass-players/index.html">TweakTown</a></td><td><span class="chip strong">Strong</span></td><td>Round cute bugs and a soft lamb in dark, muted, painterly worlds.</td><td>Juxtaposition. Cute shape, grown-up setting. The developers say so outright.</td></tr>
+        <tr><td class="name">Cozy games</td><td class="num">53% of players 18 to 29 in one survey. 45 to 55% female. <a href="https://www.ypulse.com/article/2023/04/12/subculture-series-the-cozy-gamer-aesthetic/">YPulse</a>, <a href="https://sago.com/en/resources/insights/the-rise-of-cozy-gaming-across-borders/">Sago</a></td><td><span class="chip est">Estimate</span></td><td>Soft, muted, low-stakes.</td><td>Adult and women-led. The pastel-soft register does skew female. Duolingo and Habitica show tone and game framing pull men back.</td></tr>
+        <tr><td class="name">Gudetama<small>Sanrio</small></td><td class="num">Designed for overworked millennials. <a href="https://eyeondesign.aiga.org/marketing-melancholy-sanrios-newest-character-is-a-sad-egg/">AIGA Eye on Design</a></td><td><span class="chip strong">Strong</span></td><td>A cute yolk with total apathy. Never smiles.</td><td>Burnout relatability, not baby appeal. Very on-topic for an exam app.</td></tr>
+        <tr><td class="name">Notion, Slack, Miffy</td><td class="num">Design-system cases, no buyer data.</td><td><span class="chip est">Qualitative</span></td><td>Monochrome or two-tone, minimal faces, no gradients, tiny dot eyes.</td><td>Restraint reads as design, not cartoon. Notion's figures are "a mirror, not a portrait" (<a href="https://www.jannivalkealahti.com/fieldnotes/illustrated-mascot-humanizing-the-brand">case study</a>).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>The science of "looks like a baby"</h2>
+  <div class="prose">
+    <p>Lorenz's baby schema, tested with modern methods, says the same three things every time. Bigger eyes, a rounder face and a larger forehead raise cuteness ratings and the urge to look after the thing. That is exactly what you do not want for someone who is 20 and paying for SAT prep.</p>
+    <ul>
+      <li><strong>Glocker et al. 2009.</strong> Enlarging eyes, forehead and face roundness on infant photos raised cuteness and caretaking motivation, and lit up the brain's reward centre. <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1439-0310.2008.01603.x">Ethology</a></li>
+      <li><strong>Borgi et al. 2014.</strong> The effect works on dogs and cats too, and viewers' gaze goes straight to the eyes. So the eyes are where age is read. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4019884/">Frontiers in Psychology</a></li>
+      <li><strong>Nittono's two-layer model.</strong> "Cute" is an emotional response plus a social frame. Adults feel it for objects that are not babies. Kawaii is not the same as childish. The frame around it decides. <a href="https://intellectdiscover.com/content/journals/10.1386/eapc.2.1.79_1">East Asian Journal of Popular Culture</a></li>
+    </ul>
+    <p>One correction to what I showed you earlier. In the baby schema, infants have eyes set <em>below</em> the head's midline under a big forehead. Adults' eyes sit at the midline. So the reliable lever is eye size and blush, not pushing the eyes down. On Sprout the pear is the whole body, so where "the midline" sits is a judgment call. Treat eye position as something to test, not a rule.</p>
+  </div>
+
+  <div class="faces" aria-label="Three face treatments">
+    <figure>
+      <svg viewBox="0 0 200 170" role="img" aria-label="Current Sprout face">
+        <path d="M100 18 C138 18 168 46 176 98 C182 138 160 158 100 158 C40 158 18 138 24 98 C32 46 62 18 100 18 Z" fill="#58CC9F"/>
+        <circle cx="70" cy="76" r="13" fill="#121B22"/><circle cx="130" cy="76" r="13" fill="#121B22"/>
+        <ellipse cx="52" cy="90" rx="10" ry="5" fill="#F4B3C0" opacity="0.7"/><ellipse cx="148" cy="90" rx="10" ry="5" fill="#F4B3C0" opacity="0.7"/>
+        <path d="M91 82 Q100 90 109 82" stroke="#121B22" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <ellipse cx="100" cy="130" rx="34" ry="17" fill="#B8EED4"/>
+      </svg>
+      <figcaption>Now. Big eyes, blush, mint. The Finch register.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 200 170" role="img" aria-label="Smaller eyes, less blush">
+        <path d="M100 18 C138 18 168 46 176 98 C182 138 160 158 100 158 C40 158 18 138 24 98 C32 46 62 18 100 18 Z" fill="#58CC9F"/>
+        <circle cx="68" cy="78" r="10" fill="#121B22"/><circle cx="132" cy="78" r="10" fill="#121B22"/>
+        <ellipse cx="52" cy="92" rx="9" ry="4.5" fill="#F4B3C0" opacity="0.25"/><ellipse cx="148" cy="92" rx="9" ry="4.5" fill="#F4B3C0" opacity="0.25"/>
+        <path d="M92 84 Q100 90 108 84" stroke="#121B22" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="100" cy="130" rx="34" ry="17" fill="#B8EED4"/>
+      </svg>
+      <figcaption>Eyes 20% smaller and wider, blush almost off. The Focus Friend register.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 200 170" role="img" aria-label="Muted coat, deadpan">
+        <path d="M100 18 C138 18 168 46 176 98 C182 138 160 158 100 158 C40 158 18 138 24 98 C32 46 62 18 100 18 Z" fill="#6FB59A"/>
+        <circle cx="68" cy="78" r="10" fill="#121B22"/><circle cx="132" cy="78" r="10" fill="#121B22"/>
+        <path d="M93 86 H107" stroke="#121B22" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="100" cy="130" rx="34" ry="17" fill="#CFE8DA"/>
+      </svg>
+      <figcaption>Plus a sage coat and a flat resting mouth. The Gudetama register.</figcaption>
+    </figure>
+  </div>
+
+  <h2>What this means for Sprout</h2>
+  <p class="prose">Ranked by how much evidence sits behind each move. The first three are safe. The last three are bets.</p>
+  <ol class="moves">
+    <li><b>Change the voice before the art.</b>Dry, short, a little deadpan, never a shame spiral. No exclamation points. <span class="why">Duolingo holds 60% under-30s on attitude, not softness. Focus Friend's whole pitch is "no judgement". Gudetama was designed for burnout.</span></li>
+    <li><b>Eyes about 20% smaller, set a touch wider. Blush down to almost nothing.</b>Keep the dot style. <span class="why">Every baby-schema study points at eye size. Labubu, Sonny Angel, Miffy and Notion's figures all have small simple eyes. Finch's big-eyed bird is the one comp that got called infantile.</span></li>
+    <li><b>Sell looks and collect them. Stop calling stages "evolutions".</b>Ninja is the right axis. Add blind-box style drops of coats and badges. <span class="why">Pop Mart, Sonny Angel, Animal Crossing and Fall Guys all turn cute into a collecting hobby. Collecting reframes a toy as a habit adults admit to.</span></li>
+    <li><b>Mute the coats by about 20% and let tanks go darker.</b>Sage, not mint. Ochre, not butter. One saturated accent per kin. <span class="why">Labubu, capybara, Hollow Knight and cozy games all sit in muted palettes. The counterexample is Duolingo, which stays bright because the tone carries it.</span></li>
+    <li><b>Give him one edge.</b>A side-eye idle. A flat mouth at rest. A weird trait that is only his. <span class="why">Kuromi's punk, Labubu's teeth, Pikmin's eeriness, Cult of the Lamb's horror. Each is a cute base with one thing that is not sweet. Sprout is all sweet.</span></li>
+    <li><b>Keep the body exactly as it is.</b>Do not add limbs or a face-and-body split. <span class="why">Limbless blobs are the most age-neutral shape in the data: Squishmallows' adult boom, Among Us, Fall Guys, Kirby. This is the one thing already right.</span></li>
+  </ol>
+
+  <h3>Gender note</h3>
+  <p class="prose">The soft pastel companion register skews female: Finch is about 75% women, cozy games 45 to 55% female, Sonny Angel buyers 62% female. The comps that hold men at the same age do it with humour (Duolingo, near 50/50), loot and competition (Habitica, 51/49), or slapstick (Fall Guys). Moves 1, 3 and 5 are what keep the boys.</p>
+
+  <h3>What I could not verify</h3>
+  <ul class="prose">
+    <li>Duolingo's "under 30" share and its post-campaign download lifts come from secondary write-ups, not a filing.</li>
+    <li>Fall Guys and Among Us age splits are from aggregator sites. Treat as directional.</li>
+    <li>No demographic data surfaced for Kirby, Pikmin, Miffy, Pusheen or the capybara trend. Their entries are qualitative.</li>
+    <li>Focus Friend user quotes are paraphrased from review aggregators, not pulled verbatim.</li>
+  </ul>
+
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li><a href="https://techcrunch.com/2025/08/18/hank-greens-focus-friend-app-is-climbing-the-app-store-charts-and-its-extremely-cute">TechCrunch, Focus Friend climbs the charts (Aug 2025)</a></li>
+    <li><a href="https://techcrunch.com/2025/11/18/hank-greens-focus-friend-is-google-plays-app-of-the-year">TechCrunch, Google Play App of the Year 2025</a></li>
+    <li><a href="https://www.meltwater.com/en/blog/duolingo-dead-mascot-campaign">Meltwater, Duo died campaign tracking</a></li>
+    <li><a href="https://fortune.com/2025/02/12/duolingo-kills-duo-owl-mascot">Fortune, Duolingo kills Duo</a></li>
+    <li><a href="https://blog.duolingo.com/building-character/">Duolingo, Building character</a></li>
+    <li><a href="https://blog.duolingo.com/shape-language-duolingos-art-style/">Duolingo, Shape language</a></li>
+    <li><a href="https://www.similarweb.com/app/apple/1528595748/">Similarweb, Finch</a></li>
+    <li><a href="https://www.similarweb.com/website/habitica.com/">Similarweb, Habitica</a></li>
+    <li><a href="https://www.cnbc.com/2025/07/16/chinese-toymaker-pop-mart-shares-slide-after-strong-earnings-forecast.html">CNBC, Pop Mart</a></li>
+    <li><a href="https://www.statista.com/statistics/1612767/pop-mart-website-visitors-age-group/">Statista, Pop Mart visitors by age</a></li>
+    <li><a href="https://www.entrepreneur.com/business-news/squishmallows-hottest-toy-on-market-adults-driving-sales/455339">Entrepreneur, Squishmallows adult sales</a></li>
+    <li><a href="https://corporate.sanrio.co.jp/en/ir/finance/highlight/">Sanrio investor highlights</a></li>
+    <li><a href="https://www.circana.com/post/global-toy-sales-stabilize-in-2024-collectibles-fan-favorites-and-smart-spending-shape-the-market">Circana, 2024 toy sales</a></li>
+    <li><a href="https://www.nintendolife.com/news/2020/09/most_animal_crossing_new_horizons_players_are_in_their_20s_and_30s">Nintendo Life, Animal Crossing player ages</a></li>
+    <li><a href="https://www.nintendo.com/us/whatsnew/ask-the-developer-vol-10-pikmin-4-part-1/">Nintendo, Ask the Developer: Pikmin 4</a></li>
+    <li><a href="https://www.gamedeveloper.com/design/interview-corralling-the-inherent-cuteness-of-cult-of-the-lamb">Game Developer, Cult of the Lamb interview</a></li>
+    <li><a href="https://eyeondesign.aiga.org/marketing-melancholy-sanrios-newest-character-is-a-sad-egg/">AIGA Eye on Design, Gudetama</a></li>
+    <li><a href="https://www.creativebloq.com/design/branding/mascots-are-back-but-not-as-you-know-them">Creative Bloq, Mascots are back</a></li>
+    <li><a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1439-0310.2008.01603.x">Glocker et al. 2009, Ethology</a></li>
+    <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4019884/">Borgi et al. 2014, Frontiers in Psychology</a></li>
+    <li><a href="https://intellectdiscover.com/content/journals/10.1386/eapc.2.1.79_1">Nittono, two-layer model of kawaii</a></li>
+    <li><a href="https://www.ypulse.com/article/2023/04/12/subculture-series-the-cozy-gamer-aesthetic/">YPulse, cozy gamer aesthetic</a></li>
+    <li><a href="https://www.thecrimson.com/article/2024/10/3/blind-box-trinket-smiski-collectible-trend/">Harvard Crimson, blind-box trend</a></li>
+    <li><a href="https://www.jannivalkealahti.com/fieldnotes/illustrated-mascot-humanizing-the-brand">Notion illustration case study</a></li>
+  </ul>
+</div>

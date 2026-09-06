@@ -1,0 +1,8 @@
+{
+  "path": "/api/v1/release_notes/unread_count",
+  "status": 200,
+  "link": null,
+  "body": {
+    "unread_count": 0
+  }
+}

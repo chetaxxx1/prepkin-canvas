@@ -1,0 +1,13 @@
+{
+  "path": "/api/v1/courses/7/activity_stream/summary",
+  "status": 200,
+  "link": null,
+  "body": [
+    {
+      "type": "Message",
+      "notification_category": "Due Date",
+      "count": 1,
+      "unread_count": 0
+    }
+  ]
+}

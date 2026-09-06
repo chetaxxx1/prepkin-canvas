@@ -1,0 +1,8 @@
+{
+  "path": "/api/v1/users/3/colors/course_4?hexcode=91349B",
+  "status": 200,
+  "link": null,
+  "body": {
+    "hexcode": "#91349B"
+  }
+}

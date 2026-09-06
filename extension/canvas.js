@@ -19,22 +19,37 @@ const DAYS_OVERDUE = 7;
 /// Work you just handed in still shows briefly, so the app can tick it off and
 /// pay for it rather than having it silently vanish.
 const DAYS_AFTER_SUBMIT = 3;
+/// How new an undated, unmarked assignment has to be to count as real work
+/// rather than a leftover somebody never cleaned up.
+const DAYS_NEW = 60;
 
 const SUBMITTED_STATES = ['submitted', 'graded', 'pending_review'];
+/// Ways of handing work in through Canvas itself. Anything else — on paper,
+/// in class, "no submission" — is graded without a submission row ever
+/// getting a time.
+const ONLINE_TYPES = ['online_text_entry', 'online_url', 'online_upload', 'media_recording',
+  'student_annotation', 'online_quiz', 'discussion_topic', 'external_tool'];
 
 const DAY = 86_400_000;
 
 // MARK: - Courses
 
 /// Course list, current grade, and the dashboard colour, from
-/// `GET /courses?include[]=total_scores` plus `GET /users/self/colors`.
-function mapCourses(raw, colors = {}) {
+/// `GET /courses?enrollment_state=active&include[]=total_scores&include[]=term`
+/// plus `GET /users/self/colors`.
+function mapCourses(raw, colors = {}, { now = Date.now() } = {}) {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((course) => {
     if (!course || course.id == null || !course.name) return [];
-    // total_scores puts the score on the student's own enrollment row.
-    const enrollment = (course.enrollments ?? []).find((e) => e.type === 'student')
-      ?? (course.enrollments ?? [])[0];
+    if (!isCurrentTerm(course, now)) return [];
+    // total_scores puts the score on the student's own enrollment row. A course
+    // you are only in as a TA, teacher or observer is not your coursework: its
+    // assignments are somebody else's homework and its grade is not yours. When
+    // Canvas lists no enrollments at all there is no evidence either way, so
+    // the course stays.
+    const enrollments = course.enrollments ?? [];
+    const enrollment = enrollments.find((e) => e.type === 'student') ?? null;
+    if (enrollments.length && !enrollment) return [];
     return [{
       id: String(course.id),
       name: course.name,
@@ -43,9 +58,27 @@ function mapCourses(raw, colors = {}) {
       // answer — "no grade yet" is not the same as a zero.
       score: numberOrNull(enrollment?.computed_current_score),
       grade: enrollment?.computed_current_grade ?? null,
-      colorHex: colors[`course_${course.id}`] ?? null,
+      colorHex: safeColor(colors[`course_${course.id}`]),
+      // Only when Canvas says so either way; absent means "assume weighted".
+      ...(typeof course.apply_assignment_group_weights === 'boolean'
+        ? { weighted: course.apply_assignment_group_weights } : {}),
     }];
   });
+}
+
+/// Canvas leaves you enrolled in a course forever, so `enrollment_state=active`
+/// alone still hands back a class that finished years ago — and with it every
+/// undated quiz nobody ever took. The term's end date and the course's own
+/// state are what actually say "this is over".
+///
+/// A missing field is not evidence against a course: plenty of courses have no
+/// term end date at all, so absence means keep, never drop.
+function isCurrentTerm(course, now) {
+  if (course.workflow_state != null && course.workflow_state !== 'available') return false;
+  const ends = course.term?.end_at;
+  if (!ends) return true;
+  const at = Date.parse(ends);
+  return Number.isFinite(at) ? at > now : true;
 }
 
 // MARK: - Assignments
@@ -61,9 +94,16 @@ function mapAssignments(raw, { host, course, now = Date.now() } = {}) {
   return raw.flatMap((a) => {
     if (!a || a.id == null || !a.name) return [];
 
-    const submittedAt = submissionTime(a.submission);
+    // Excused work is neither owed nor done: nothing to do, nothing to pay.
+    if (a.submission?.excused === true) return [];
+    const submittedAt = submissionTime(a.submission, a.submission_types);
     const dueAt = a.due_at ?? null;
     if (!isWorthShowing({ dueAt, submittedAt, now })) return [];
+    // Undated work carrying no marks is far more often a leftover — an old
+    // practice quiz, a placeholder — than something you owe. Recent work gets
+    // the benefit of the doubt. The course is current by construction: the
+    // caller only walks courses mapCourses kept.
+    if (!dueAt && !numberOrNull(a.points_possible) && !createdRecently(a.created_at, now)) return [];
 
     return [{
       // Host keeps two schools apart, the letter keeps an assignment from
@@ -85,9 +125,29 @@ function mapAssignments(raw, { host, course, now = Date.now() } = {}) {
 
 /// Canvas reports an unsubmitted assignment as a submission row in state
 /// `unsubmitted`, so the state is what counts, not whether the row exists.
-function submissionTime(submission) {
+///
+/// A `graded` row with no submission time means the teacher entered a mark
+/// for something never handed in through Canvas. For work done offline — on
+/// paper, in class — the grade is the proof it was turned in. For anything
+/// that should have come in online it is a zero for missing work (Canvas only
+/// sets `missing` once the due date has passed, so that flag alone is not
+/// enough), and paying for it would reward skipping the work.
+function submissionTime(submission, types) {
   if (!submission || !SUBMITTED_STATES.includes(submission.workflow_state)) return null;
-  return submission.submitted_at ?? submission.graded_at ?? null;
+  if (submission.submitted_at) return submission.submitted_at;
+  return expectsOnline(types) ? null : (submission.graded_at ?? null);
+}
+
+/// Missing or empty types are read as online: the safe side is not paying.
+function expectsOnline(types) {
+  if (!Array.isArray(types) || !types.length) return true;
+  return types.some((t) => ONLINE_TYPES.includes(t));
+}
+
+function createdRecently(createdAt, now) {
+  if (!createdAt) return false;
+  const at = Date.parse(createdAt);
+  return Number.isFinite(at) && now - at <= DAYS_NEW * DAY;
 }
 
 function isWorthShowing({ dueAt, submittedAt, now }) {
@@ -110,10 +170,14 @@ function isWorthShowing({ dueAt, submittedAt, now }) {
 /// Filtered through the same date window as the per-course pass — with
 /// `ungraded_quizzes` included, the feed can surface a quiz months out, and a
 /// syllabus full of May deadlines must not bury this week here either.
-function mapTodo(raw, host, now = Date.now()) {
+/// `courseIds`, when given, is the set of courses the term filter kept. The
+/// sweep is the one call that crosses every enrolment you have, concluded ones
+/// included, so without it a 2020 course walks back in through the side door.
+function mapTodo(raw, host, now = Date.now(), courseIds = null) {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((item) => {
     if (!item || item.type !== TODO_TYPE_TO_DO) return [];
+    if (courseIds && !courseIds.has(String(item.course_id ?? ''))) return [];
     const source = item.assignment ?? item.quiz;
     if (!source || source.id == null) return [];
     const title = source.name ?? source.title;
@@ -188,14 +252,57 @@ function requiredScore({ current, target, weight }) {
   return Math.round(needed * 10) / 10;
 }
 
+// MARK: - Paging
+
+/// The `next` link out of Canvas's `Link` header, or null when there isn't one.
+///
+/// The header is data from the server and these fetches carry the student's
+/// cookies, so a next-page link pointing off `origin` is refused. That is either
+/// a misconfigured Canvas or somebody steering a credentialed read; neither is
+/// worth following.
+function nextLink(header, origin) {
+  if (!header) return null;
+  for (const part of header.split(',')) {
+    const m = part.match(/<([^>]+)>\s*;\s*rel="next"/);
+    if (!m) continue;
+    try {
+      return new URL(m[1]).origin === origin ? m[1] : null;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
 // MARK: - Joining it up
 
+/// Every id the per-course pass looked at, kept or dropped — and for a quiz,
+/// the quiz's own key too. The sweep must not bring back work that pass
+/// deliberately left out, nor list a quiz a second time under its quiz id.
+function examinedIds(raw, host, into = new Set()) {
+  if (!Array.isArray(raw)) return into;
+  for (const a of raw) {
+    if (!a || a.id == null) continue;
+    into.add(`c-${host}-a${a.id}`);
+    if (a.quiz_id != null) into.add(`c-${host}-q${a.quiz_id}`);
+  }
+  return into;
+}
+
 /// The per-course pass knows about submissions and grades, so it wins any tie.
-/// The to-do sweep only adds what it alone found.
-function merge(detailed, fallback) {
-  const seen = new Set(detailed.map((t) => t.id));
+/// The to-do sweep only adds what that pass never saw — a course whose
+/// assignment list failed to load, say.
+function merge(detailed, fallback, examined = new Set()) {
+  const seen = new Set([...examined, ...detailed.map((t) => t.id)]);
   return [...detailed, ...fallback.filter((t) => !seen.has(t.id))]
     .sort((a, b) => (a.dueAt ?? '9999') .localeCompare(b.dueAt ?? '9999'));
+}
+
+/// A dashboard colour goes straight into a `style="background:…"` attribute, so
+/// it has to be a colour and nothing else. Escaping the string is not enough —
+/// `;` and `(` are legal there and would let a second declaration ride along.
+function safeColor(value) {
+  return typeof value === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(value) ? value : null;
 }
 
 function numberOrNull(value) {
@@ -204,7 +311,7 @@ function numberOrNull(value) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    mapCourses, mapAssignments, mapTodo, merge, mapGraded, mapWeights, requiredScore,
-    TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_AFTER_SUBMIT,
+    mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore, safeColor, nextLink,
+    TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_AFTER_SUBMIT, DAYS_NEW,
   };
 }

@@ -7,6 +7,12 @@
 
 const SYNC_ALARM = 'prepkin-sync';
 
+/// No request may hang a sync. A school behind a dead SSO hop, or a bridge that
+/// accepts the connection and never answers, used to stall syncAll forever —
+/// and with it every other school. Canvas answers a page in well under this.
+const FETCH_TIMEOUT_MS = 20_000;
+const withTimeout = (init = {}) => ({ ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+
 // bridge/apply-config.sh writes config.js. Without it the extension still reads
 // Canvas; it just has nowhere to send the list.
 importScripts('canvas.js');
@@ -37,25 +43,39 @@ chrome.runtime.onStartup.addListener(() => {
 /// site only gets one after you press Connect and Chrome grants the permission.
 async function registerFor(origin) {
   const id = `prepkin-${new URL(origin).hostname}`;
-  try { await chrome.scripting.unregisterContentScripts({ ids: [id] }); } catch {}
+  try { await chrome.scripting.unregisterContentScripts({ ids: [id, `${id}-boot`] }); } catch {}
   try {
-    await chrome.scripting.registerContentScripts([{
-      id,
-      matches: [`${origin}/*`],
-      // canvas.js rides along because the what-if screen does its arithmetic with
-      // the same requiredScore() the worker uses. One source of truth beats two.
-      js: ['slime.js', 'looks.js', 'canvas.js', 'content.js'],
-      css: ['skin.css'],
-      runAt: 'document_end',
-    }]);
+    await chrome.scripting.registerContentScripts([
+      {
+        // Before first paint: the stylesheet and the classes it hangs off, so a
+        // dark paper never flashes white and the school's theme never paints first.
+        id: `${id}-boot`,
+        matches: [`${origin}/*`],
+        js: ['receipt.js', 'themes.js', 'art/manifest.js', 'looks.js', 'boot.js'],
+        css: ['skin.css'],
+        runAt: 'document_start',
+      },
+      {
+        id,
+        matches: [`${origin}/*`],
+        // canvas.js rides along because the what-if screen does its arithmetic with
+        // the same requiredScore() the worker uses. One source of truth beats two.
+        // receipt.js, themes.js, art/manifest.js and looks.js already ran at
+        // document_start (the boot set) in this same world; naming them twice
+        // redeclared their constants on every page.
+        js: ['slime.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'],
+        runAt: 'document_end',
+      },
+    ]);
   } catch (e) {
     console.warn('Prepkin: could not inject into', origin, e);
   }
 }
 
 async function unregisterFor(origin) {
+  const id = `prepkin-${new URL(origin).hostname}`;
   try {
-    await chrome.scripting.unregisterContentScripts({ ids: [`prepkin-${new URL(origin).hostname}`] });
+    await chrome.scripting.unregisterContentScripts({ ids: [id, `${id}-boot`] });
   } catch {}
 }
 
@@ -70,10 +90,26 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 // Syncing when you land on a connected Canvas keeps the phone close to current
 // without polling anyone's server every minute.
+//
+// Rate-limited per school, because one sync is not one request: it is the course
+// list, the colours, then two calls per course, each paged. Clicking around
+// Canvas for a minute would otherwise fire hundreds of credentialed requests at
+// a school's server, which is indistinguishable from scraping and is exactly
+// what gets an extension blocked district-wide.
+const TAB_SYNC_GAP_MS = 10 * 60_000;
+
+async function syncOnVisit(origin) {
+  const { visitSyncs = {} } = await chrome.storage.local.get('visitSyncs');
+  const last = visitSyncs[origin] ?? 0;
+  if (Date.now() - last < TAB_SYNC_GAP_MS) return;
+  await chrome.storage.local.set({ visitSyncs: { ...visitSyncs, [origin]: Date.now() } });
+  syncNow(origin);
+}
+
 chrome.tabs.onUpdated.addListener(async (_id, info, tab) => {
   if (info.status !== 'complete' || !tab.url) return;
   const origin = originOf(tab.url);
-  if (origin && (await connectedOrigins()).includes(origin)) syncNow(origin);
+  if (origin && (await connectedOrigins()).includes(origin)) syncOnVisit(origin);
 });
 
 // MARK: - Focus timer
@@ -94,6 +130,16 @@ async function focusStart({ taskId, title, url, minutes }) {
   return focus;
 }
 
+/// Five more minutes on a running session. Time only ever goes up.
+async function focusExtend() {
+  const { focus } = await chrome.storage.local.get('focus');
+  if (focus?.state !== 'running') return focus;
+  const next = { ...focus, durationMin: focus.durationMin + 5, endsAt: focus.endsAt + 5 * 60_000 };
+  await chrome.storage.local.set({ focus: next });
+  chrome.alarms.create(FOCUS_ALARM, { when: next.endsAt });
+  return next;
+}
+
 /// Giving up costs nothing — no coins lost, no record kept, no nagging.
 async function focusStop() {
   chrome.alarms.clear(FOCUS_ALARM);
@@ -108,9 +154,46 @@ async function focusDone() {
   syncAll();
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+/// Which senders may ask for what.
+///
+/// `setup` messages change what the extension is connected to, so only our own
+/// pages (the popup) may send them. `page` messages come from the buddy panel,
+/// so they must arrive from a tab on a school you actually connected — a page
+/// can dispatch a synthetic click at the panel's own buttons, and without this
+/// any connected site could drive the timer or file spend requests.
+const SETUP_MESSAGES = ['register', 'forget', 'sync-now', 'verify-canvas', 'pair'];
+
+async function senderMayAsk(type, sender) {
+  if (!sender || sender.id !== chrome.runtime.id) return false;
+  if (SETUP_MESSAGES.includes(type)) {
+    return !sender.tab && (sender.url ?? '').startsWith(chrome.runtime.getURL(''));
+  }
+  // Only the page itself, never a frame inside it: an embedded tool on the same
+  // origin is somebody else's code.
+  if (!sender.tab || sender.frameId !== 0) return false;
+  const origin = originOf(sender.url ?? '');
+  return !!origin && (await connectedOrigins()).includes(origin);
+}
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (!msg || typeof msg.type !== 'string') return;
+  // The gate is async, so every branch below answers through this one promise.
+  senderMayAsk(msg.type, sender)
+    .then((ok) => {
+      if (!ok) return sendResponse({ ok: false, error: 'Not allowed.' });
+      handleMessage(msg, sendResponse);
+    })
+    .catch(() => sendResponse({ ok: false, error: 'Not allowed.' }));
+  return true; // keep the channel open for the async reply
+});
+
+function handleMessage(msg, sendResponse) {
   if (msg.type === 'focus-start') {
     focusStart(msg).then(sendResponse);
+    return true;
+  }
+  if (msg.type === 'focus-extend') {
+    focusExtend().then(sendResponse);
     return true;
   }
   if (msg.type === 'focus-stop' || msg.type === 'focus-clear') {
@@ -123,6 +206,9 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     return true;
   }
   if (msg.type === 'sync-now') {
+    // Deliberately not rate-limited: this is the button a student presses when
+    // the phone looks stale, and making it do nothing would be worse than the
+    // requests it costs.
     (msg.origin ? syncNow(msg.origin) : syncAll()).then(sendResponse);
     return true; // keep the message channel open for the async reply
   }
@@ -138,7 +224,11 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     forgetOrigin(msg.origin).then(sendResponse);
     return true;
   }
-});
+  if (msg.type === 'pair') {
+    bindWriter(msg.code).then(sendResponse);
+    return true;
+  }
+}
 
 /// Disconnecting a school also takes its already-synced work back off the phone
 /// and the page overlay — revoking the permission alone would leave the last
@@ -179,16 +269,24 @@ async function connectedOrigins() {
 /// from the hostname — plenty of schools do not have "canvas" in their domain.
 async function isCanvas(origin) {
   try {
-    const res = await fetch(`${origin}/api/v1/users/self`, {
+    const res = await fetch(`${origin}/api/v1/users/self`, withTimeout({
       credentials: 'include',
       headers: { Accept: 'application/json' },
-    });
+    }));
     if (res.status === 401 || res.status === 403) {
       return { ok: false, error: 'That is Canvas, but you are logged out.' };
     }
     if (!res.ok) return { ok: false, error: 'That page does not look like Canvas.' };
-    const me = await res.json();
-    return me && me.id ? { ok: true, name: me.name } : { ok: false, error: 'That page does not look like Canvas.' };
+    const me = await res.json().catch(() => null);
+    // Any site can serve `{"id":1}`. Canvas's own user object always carries the
+    // name trio, and its course list is always an array — two signals a site
+    // pretending to be Canvas has to fake on purpose, not by accident.
+    const looksLikeUser = me && me.id != null
+      && (typeof me.sortable_name === 'string' || typeof me.short_name === 'string');
+    if (!looksLikeUser) return { ok: false, error: 'That page does not look like Canvas.' };
+    const courses = await getJSON(`${origin}/api/v1/courses?per_page=1`);
+    if (!Array.isArray(courses)) return { ok: false, error: 'That page does not look like Canvas.' };
+    return { ok: true, name: me.name };
   } catch {
     return { ok: false, error: 'Could not reach that site.' };
   }
@@ -236,29 +334,72 @@ async function send(fresh) {
   // The page overlay reads lastPayload, so the slime knows what you owe even
   // when the phone is in another room.
   await chrome.storage.local.set({ lastResults: results, lastPayload: payload });
-  const pushed = await pushToBridge(payload);
-  // A push the bridge accepted means the phone can see the requests.
-  if (pushed.ok && requests.length) await chrome.storage.local.set({ requests: [] });
+  // The panel reads grades from lastPayload, on this machine. The bridge gets a
+  // narrower copy: per-item scores and group weights never leave the laptop,
+  // because nothing on the phone reads them and they are the most identifying
+  // thing here.
+  const { graded, weights, ...forBridge } = payload;
+  const pushed = await pushToBridge(forBridge);
+  // Requests deliberately stay queued. A push the bridge accepted only means the
+  // row was written — the phone may not read it before the next push overwrites
+  // it, and clearing here is how finished focus sessions used to vanish. They
+  // are retired in pullWallet(), once the phone says it actually paid them.
   await pullWallet();
   return finish(pushed, payload.tasks.length);
 }
 
-/// The phone's side of the bridge: the coin balance and which looks are owned.
-/// Absent until the app publishes it — the shop says so rather than inventing
-/// a number.
-async function pullWallet() {
-  const { pairingCode } = await chrome.storage.local.get('pairingCode');
-  if (!pairingCode || !bridge) return;
+/// Trades the code the student typed for this laptop's write token.
+///
+/// The code is only good for the few minutes after the app shows it, and only
+/// the first laptop in gets a token — so a stranger who guesses a code later
+/// can neither read the list nor overwrite it. The token is what every push
+/// uses from then on; the code is never sent again.
+async function bindWriter(code) {
+  if (!bridge) return { ok: false, error: 'Extension is missing config.js.' };
   try {
-    const res = await fetch(`${bridge.url}/rest/v1/rpc/fetch_state`, {
+    const res = await fetch(`${bridge.url}/rest/v1/rpc/bind_writer`, withTimeout({
       method: 'POST',
       headers: {
         apikey: bridge.key,
         Authorization: `Bearer ${bridge.key}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ p_code: pairingCode }),
-    });
+      body: JSON.stringify({ p_code: code }),
+    }));
+    // 404 here is the bridge itself, not the code: the pairing functions are
+    // missing, which means bridge/schema.sql was never run on this project.
+    if (res.status === 404) return { ok: false, error: 'The bridge is out of date. Prepkin has to update it — try again later.' };
+    if (!res.ok) return { ok: false, error: 'That code is not one the app is offering.' };
+    const token = await res.json().catch(() => null);
+    if (typeof token !== 'string' || !token) {
+      return {
+        ok: false,
+        error: 'That code has expired or is already paired to another laptop. Tap New code in the app.',
+      };
+    }
+    await chrome.storage.local.set({ pairingCode: code, writerToken: token });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Could not reach the bridge.' };
+  }
+}
+
+/// The phone's side of the bridge: the coin balance and which looks are owned.
+/// Absent until the app publishes it — the shop says so rather than inventing
+/// a number.
+async function pullWallet() {
+  const { pairingCode, writerToken } = await chrome.storage.local.get(['pairingCode', 'writerToken']);
+  if (!pairingCode || !writerToken || !bridge) return;
+  try {
+    const res = await fetch(`${bridge.url}/rest/v1/rpc/fetch_state`, withTimeout({
+      method: 'POST',
+      headers: {
+        apikey: bridge.key,
+        Authorization: `Bearer ${bridge.key}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ p_code: pairingCode, p_token: writerToken }),
+    }));
     if (!res.ok) return;
     const state = await res.json();
     if (!state || typeof state.coins !== 'number') return;
@@ -270,18 +411,39 @@ async function pullWallet() {
         owned: Array.isArray(state.owned) ? state.owned : (wallet.owned ?? ['classic']),
       },
     });
+    // Everything the phone has paid for can stop being re-sent. Anything newer
+    // stays queued until it says otherwise.
+    const paidUpTo = Date.parse(state.requestsAppliedAt ?? '');
+    if (Number.isFinite(paidUpTo)) {
+      await changeRequests((requests) => {
+        const still = requests.filter((r) => !(Date.parse(r.at) <= paidUpTo));
+        return still.length === requests.length ? requests : still;
+      });
+    }
   } catch {
     // A bridge that is down is not worth a broken panel.
   }
 }
 
+/// The request queue is read-modify-write in storage, and two writers at once —
+/// a focus session ending while the wallet pull retires paid ones — would drop
+/// whichever wrote first. Every change goes through this one chain.
+let requestsLock = Promise.resolve();
+function changeRequests(change) {
+  const run = requestsLock.then(async () => {
+    const { requests = [] } = await chrome.storage.local.get('requests');
+    const next = change(requests);
+    if (next !== requests) await chrome.storage.local.set({ requests: next });
+  });
+  requestsLock = run.catch(() => {});
+  return run;
+}
+
 /// Queued for the next sync rather than sent on the spot, so a click never
 /// waits on the network and a flaky connection cannot drop the request.
-async function queueRequest(request) {
-  const { requests = [] } = await chrome.storage.local.get('requests');
-  await chrome.storage.local.set({
-    requests: [...requests, { ...request, at: new Date().toISOString() }].slice(-50),
-  });
+function queueRequest(request) {
+  return changeRequests((requests) =>
+    [...requests, { ...request, at: new Date().toISOString() }].slice(-50));
 }
 
 /// Everything one school knows, in three or so calls: the courses you are in
@@ -292,9 +454,14 @@ async function queueRequest(request) {
 /// anything the per-course pass missed, at the cost of no grade detail.
 async function readSchool(origin) {
   const host = new URL(origin).hostname;
+  // What this school looked like last time, so one course that fails to load —
+  // a 429 from a throttling school, a flaky page — keeps its last good work
+  // rather than vanishing from the phone until the next sync.
+  const { lastResults = {} } = await chrome.storage.local.get('lastResults');
+  const previous = lastResults[origin] ?? null;
 
   const [rawCourses, rawColors] = await Promise.all([
-    getPaged(origin, '/api/v1/courses?enrollment_state=active&include[]=total_scores&per_page=100'),
+    getPaged(origin, '/api/v1/courses?enrollment_state=active&include[]=total_scores&include[]=term&per_page=100'),
     getJSON(`${origin}/api/v1/users/self/colors`),
   ]);
   if (rawCourses === null) return null; // logged out, or not Canvas any more
@@ -303,12 +470,21 @@ async function readSchool(origin) {
 
   const graded = {};
   const weights = {};
+  const examined = new Set();
   const perCourse = await Promise.all(courses.map(async (course) => {
     const raw = await getPaged(
       origin,
       `/api/v1/courses/${course.id}/assignments?include[]=submission&order_by=due_at&per_page=100`
     );
-    if (!raw) return [];
+    if (!raw) {
+      if (!previous) return [];
+      graded[course.id] = previous.graded?.[course.id] ?? [];
+      weights[course.id] = previous.weights?.[course.id] ?? null;
+      const kept = previous.tasks.filter((t) => t.courseId === course.id);
+      for (const t of kept) examined.add(t.id);
+      return kept;
+    }
+    examinedIds(raw, host, examined);
     // The same rows feed the task list and the grade sparkline — one fetch read
     // two ways, rather than asking Canvas twice for the same assignments.
     graded[course.id] = mapGraded(raw);
@@ -318,12 +494,15 @@ async function readSchool(origin) {
   }));
 
   const rawTodo = await getPaged(origin, '/api/v1/users/self/todo?per_page=100&include[]=ungraded_quizzes');
+  // The sweep sees every enrolment, so hold it to the same courses the term
+  // filter kept — otherwise a concluded class returns through the back door.
+  const courseIds = new Set(courses.map((c) => c.id));
 
   return {
     courses,
     graded,
     weights,
-    tasks: merge(perCourse.flat(), rawTodo ? mapTodo(rawTodo, host) : []),
+    tasks: merge(perCourse.flat(), rawTodo ? mapTodo(rawTodo, host, Date.now(), courseIds) : [], examined),
   };
 }
 
@@ -332,10 +511,10 @@ async function readSchool(origin) {
 /// single bad endpoint cannot take the whole sync down.
 async function getJSON(url) {
   try {
-    const res = await fetch(url, {
+    const res = await fetch(url, withTimeout({
       credentials: 'include',
       headers: { Accept: 'application/json' },
-    });
+    }));
     return res.ok ? await res.json() : null;
   } catch {
     return null;
@@ -355,44 +534,51 @@ async function getPaged(origin, path) {
   for (let page = 0; page < MAX_PAGES && url; page += 1) {
     let res;
     try {
-      res = await fetch(url, { credentials: 'include', headers: { Accept: 'application/json' } });
+      res = await fetch(url, withTimeout({ credentials: 'include', headers: { Accept: 'application/json' } }));
     } catch { return out; }
     if (!res.ok) return out;
     const body = await res.json().catch(() => null);
     if (!Array.isArray(body)) return out ?? body;
     out = (out ?? []).concat(body);
-    url = nextLink(res.headers.get('Link'));
+    url = nextLink(res.headers.get('Link'), origin);
   }
   return out;
-}
-
-function nextLink(header) {
-  if (!header) return null;
-  for (const part of header.split(',')) {
-    const m = part.match(/<([^>]+)>\s*;\s*rel="next"/);
-    if (m) return m[1];
-  }
-  return null;
 }
 
 /// Hands the list to the bridge, keyed by the pairing code and nothing else —
 /// no name, no account, no Canvas credentials.
 async function pushToBridge(payload) {
-  const { pairingCode } = await chrome.storage.local.get('pairingCode');
+  const { pairingCode, writerToken } = await chrome.storage.local.get(['pairingCode', 'writerToken']);
   if (!pairingCode) return { ok: false, error: 'No pairing code yet.' };
+  if (!writerToken) return { ok: false, error: 'Not paired yet — paste the code from the app.' };
   if (!bridge) return { ok: false, error: 'Extension is missing config.js.' };
 
   try {
-    const res = await fetch(`${bridge.url}/rest/v1/rpc/push_todo`, {
+    const res = await fetch(`${bridge.url}/rest/v1/rpc/push_todo`, withTimeout({
       method: 'POST',
       headers: {
         apikey: bridge.key,
         Authorization: `Bearer ${bridge.key}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ p_code: pairingCode, p_todo: payload }),
-    });
-    return res.ok ? { ok: true } : { ok: false, error: `Bridge returned ${res.status}.` };
+      body: JSON.stringify({ p_code: pairingCode, p_token: writerToken, p_todo: payload }),
+    }));
+    if (res.ok) return { ok: true };
+    // The bridge raises for two different reasons and answers 400 to both, so
+    // the message is what tells them apart. Only a dead pairing loses the
+    // token; a list too big to send is an error to show, not a reason to
+    // make the student pair again.
+    const message = String((await res.json().catch(() => null))?.message ?? '');
+    if (message.includes('too large')) {
+      return { ok: false, error: 'Too much to send. Disconnect a school you are done with, then Sync now.' };
+    }
+    // The phone unpaired, or the row expired. Say so plainly and drop the dead
+    // token, so the popup asks for a fresh code instead of retrying forever.
+    if (res.status === 404 || (res.status === 400 && message.includes('not paired'))) {
+      await chrome.storage.local.remove('writerToken');
+      return { ok: false, error: 'Your phone unpaired this laptop. Tap New code in the app and paste it here.' };
+    }
+    return { ok: false, error: `Bridge returned ${res.status}.` };
   } catch {
     return { ok: false, error: 'Could not reach the bridge.' };
   }

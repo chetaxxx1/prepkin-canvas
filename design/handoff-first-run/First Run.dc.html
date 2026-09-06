@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#F0EEE9;font-family:Nunito,ui-rounded,system-ui,sans-serif;color:#2E2622}a{color:#E4735F}a:hover{color:#C4523F}input{font-family:inherit}input::placeholder{color:#B6A79E}@keyframes kinBounce{0%{transform:translateY(0) scale(1,1)}12%{transform:translateY(0) scale(1.06,.92)}40%{transform:translateY(-14px) scale(.96,1.06)}70%{transform:translateY(0) scale(1,1)}85%{transform:translateY(-4px)}100%{transform:translateY(0)}}@keyframes coinFly{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:1;transform:translate(0,-10px) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.5)}}@keyframes gainUp{0%{opacity:0;transform:translateY(14px)}25%{opacity:1;transform:translateY(0)}75%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}@keyframes hatchIn{0%{opacity:0;transform:translateY(18px) scale(.94)}100%{opacity:1;transform:translateY(0) scale(1)}}@keyframes cardIn{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}@keyframes bubbleIn{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}</style></helmet>
+<div style="display:flex;gap:40px;padding:40px 44px;align-items:flex-start">
+<div style="width:300px;flex:none;display:flex;flex-direction:column;gap:14px;font-size:12.5px;line-height:1.5;color:rgba(46,38,34,.7)">
+<div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:#96877F">FIRST RUN · HANDOFF</div>
+<div style="font-size:20px;font-weight:900;color:#2E2622;letter-spacing:-.3px">Hatch, pick three, first check-off</div>
+<p style="margin:0">Two screens, then Home. Nothing is asked for until one task is checked. The prototype on the right is live: type a name, tap rows, check a task off. The chips below it jump to each state for review.</p>
+<p style="margin:0"><b style="color:#2E2622">Assumptions.</b> The default kin is the starter <i>slime</i> (ChibiSpecies.catalog[0]), one star. Sprout stills are web art, so every mascot here is a box labeled KIN at the size SproutImage would render. Tab icons and category icons are named placeholders in their dominant colour from PrepkinIcons.swift.</p>
+<p style="margin:0"><b style="color:#2E2622">Reasoning.</b> Screen 1 is the only commitment: a name. Screen 2 is only tapping. Home lands with the three rows already there, and the kin's bubble points at the checkbox. Coins fly to the wallet chip because the chip is also the shop door. Offers arrive as cards from the kin, never as screens, and never before the first check.</p>
+<p style="margin:0">Colour tokens, reused components, state and copy are in <b style="color:#2E2622">README.md</b>.</p>
+<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+<div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:#96877F">JUMP TO STATE</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+<sc-for list="{{ jumps }}" as="j" hint-placeholder-count="8"><button onClick="{{ j.go }}" style="border:0;cursor:pointer;font:700 12px Nunito,sans-serif;padding:6px 10px;border-radius:999px;background:{{ j.bg }};color:{{ j.fg }}">{{ j.label }}</button></sc-for>
+</div>
+</div>
+</div>
+
+<div style="width:402px;height:874px;flex:none;position:relative;border-radius:56px;overflow:hidden;background:{{ pageBg }};box-shadow:0 0 0 10px #1c1a19,0 0 0 12px #3a3634,0 30px 60px rgba(0,0,0,.25);font-family:Nunito,ui-rounded,system-ui,sans-serif" data-screen-label="{{ screenLabel }}">
+<div style="position:absolute;top:0;left:0;right:0;height:59px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 34px 0 42px;pointer-events:none"><span style="font-weight:800;font-size:16px;color:#2E2622;margin-top:-4px">9:41</span><div style="position:absolute;left:50%;top:11px;transform:translateX(-50%);width:126px;height:37px;border-radius:20px;background:#0b0b0b"></div><div style="display:flex;gap:6px;align-items:center;margin-top:-4px"><div style="width:18px;height:11px;border-radius:2px;border:2px solid #2E2622;position:relative"><div style="position:absolute;inset:2px;background:#2E2622;border-radius:1px"></div></div></div></div>
+
+<!-- SCREEN 1 · Hatch and name -->
+<sc-if value="{{ isHatch }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#FAF5EC;display:flex;flex-direction:column;align-items:center;padding:99px 28px 0">
+<div style="flex:1"></div>
+<div style="width:180px;height:180px;border-radius:32px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;animation:hatchIn .6s cubic-bezier(.2,.8,.2,1) both"><div style="width:160px;height:118px;border-radius:22px;background:#DFF3E9;border:2px dashed #57C79B;display:flex;align-items:center;justify-content:center;font:800 13px ui-monospace,Menlo,monospace;letter-spacing:2px;color:#3E9E78">KIN 160</div></div>
+<div style="height:28px"></div>
+<div style="font-size:26px;font-weight:900;letter-spacing:-.5px;text-align:center;line-height:1.2;text-wrap:pretty">What do you want to name your kin?</div>
+<div style="height:8px"></div>
+<div style="font-size:15px;font-weight:600;color:#96877F">You can change this later.</div>
+<div style="height:24px"></div>
+<input value="{{ name }}" onChange="{{ setName }}" placeholder="Name" maxLength="14" style="width:100%;height:56px;border:0;outline:0;border-radius:18px;background:#fff;box-shadow:0 8px 11px rgba(46,38,34,.05);padding:0 18px;font-size:20px;font-weight:800;color:#2E2622;text-align:center">
+<div style="height:12px"></div>
+<div style="width:100%;display:flex;gap:10px">
+<button onClick="{{ shuffle }}" style="flex:1;height:56px;border:0;cursor:pointer;border-radius:28px;background:#F4EDE1;display:flex;align-items:center;justify-content:center;gap:8px;color:#2E2622;font:700 17px Nunito,sans-serif"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"></rect><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"></circle><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"></circle></svg>Shuffle</button>
+<button onClick="{{ next }}" disabled="{{ nameEmpty }}" style="flex:1;height:56px;border:0;cursor:pointer;border-radius:28px;background:#FF6F61;opacity:{{ nextOpacity }};color:#fff;font:700 17px Nunito,sans-serif;box-shadow:0 8px 10px {{ nextShadow }};transition:opacity .2s">Next</button>
+</div>
+<div style="flex:1.6"></div>
+</div>
+</sc-if>
+
+<!-- SCREEN 2 · Pick three for today -->
+<sc-if value="{{ isPick }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:#FAF5EC;display:flex;flex-direction:column">
+<div style="padding:99px 22px 0;display:flex;flex-direction:column;gap:16px">
+<div style="font-size:34px;font-weight:900;letter-spacing:-.9px;line-height:1.1">Pick three for today</div>
+<div style="display:flex;gap:16px;align-items:center;padding:18px;background:#fff;border-radius:28px;box-shadow:0 8px 11px rgba(46,38,34,.05)">
+<div style="width:92px;height:92px;flex:none;border-radius:24px;background:#FAF5EC;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px"><div style="width:84px;height:62px;border-radius:14px;background:#DFF3E9;border:2px dashed #57C79B;display:flex;align-items:center;justify-content:center;font:800 11px ui-monospace,Menlo,monospace;letter-spacing:1.5px;color:#3E9E78">KIN 84</div></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<div style="display:flex;gap:10px;align-items:center;justify-content:space-between"><span style="font-size:17px;font-weight:700;letter-spacing:-.2px;white-space:nowrap">{{ pickedLabel }}</span><span style="display:flex;gap:5px;align-items:center;padding:5px 10px;border-radius:14px;background:#FFF6E4;color:#B07A16;font-size:14px;font-weight:700;white-space:nowrap"><span style="width:14px;height:14px;border-radius:50%;background:#FFC24B;box-shadow:inset 0 0 0 2px #E8A62E"></span>{{ coinsToday }}</span></div>
+<div style="font-size:15px;font-weight:600;color:#96877F;line-height:1.35;margin-top:4px">Tap what fits. {{ kinName }} keeps you company.</div>
+<div style="height:10px;border-radius:5px;background:#F0E9DC;margin-top:12px;overflow:hidden"><div style="height:100%;border-radius:5px;background:#57C79B;width:{{ progress }};transition:width .3s ease"></div></div>
+</div>
+</div>
+</div>
+<div style="flex:1;overflow:auto;padding:22px 22px 140px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none">
+<div style="font-size:12px;font-weight:700;letter-spacing:1.5px;color:#96877F;padding:0 0 0 4px">STUDY IDEAS</div>
+<sc-for list="{{ studyRows }}" as="r" hint-placeholder-count="4">
+<div onClick="{{ r.onTap }}" style="display:flex;gap:14px;align-items:center;padding:13px 16px;background:#fff;border-radius:24px;cursor:pointer;box-shadow:0 0 0 2.5px {{ r.ring }} inset,0 8px 11px {{ r.shadow }};transition:box-shadow .18s ease">
+<div style="width:50px;height:50px;flex:none;border-radius:17px;background:{{ r.tileBg }};display:flex;align-items:center;justify-content:center;font:800 8px ui-monospace,Menlo,monospace;text-align:center;line-height:1.2;color:{{ r.tileFg }}">{{ r.cat }}</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.2">{{ r.title }}</div><div style="display:flex;gap:5px;align-items:center;color:#B07A16;font-size:12.5px;font-weight:700"><span style="width:12.5px;height:12.5px;border-radius:50%;background:#FFC24B;box-shadow:inset 0 0 0 1.75px #E8A62E"></span>+{{ r.reward }} coins</div></div>
+<div style="width:30px;height:30px;flex:none;border-radius:50%;background:{{ r.discBg }};box-shadow:inset 0 0 0 2.5px {{ r.discRing }};display:flex;align-items:center;justify-content:center;transition:background .18s ease"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ r.discInk }}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"></path></svg></div>
+</div>
+</sc-for>
+<div style="font-size:12px;font-weight:700;letter-spacing:1.5px;color:#96877F;padding:14px 0 0 4px">LIFE CARE</div>
+<sc-for list="{{ lifeRows }}" as="r" hint-placeholder-count="8">
+<div onClick="{{ r.onTap }}" style="display:flex;gap:14px;align-items:center;padding:13px 16px;background:#fff;border-radius:24px;cursor:pointer;box-shadow:0 0 0 2.5px {{ r.ring }} inset,0 8px 11px {{ r.shadow }};transition:box-shadow .18s ease">
+<div style="width:50px;height:50px;flex:none;border-radius:17px;background:{{ r.tileBg }};display:flex;align-items:center;justify-content:center;font:800 8px ui-monospace,Menlo,monospace;text-align:center;line-height:1.2;color:{{ r.tileFg }}">{{ r.cat }}</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.2">{{ r.title }}</div><div style="display:flex;gap:5px;align-items:center;color:#B07A16;font-size:12.5px;font-weight:700"><span style="width:12.5px;height:12.5px;border-radius:50%;background:#FFC24B;box-shadow:inset 0 0 0 1.75px #E8A62E"></span>+{{ r.reward }} coins</div></div>
+<div style="width:30px;height:30px;flex:none;border-radius:50%;background:{{ r.discBg }};box-shadow:inset 0 0 0 2.5px {{ r.discRing }};display:flex;align-items:center;justify-content:center;transition:background .18s ease"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ r.discInk }}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"></path></svg></div>
+</div>
+</sc-for>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:24px 28px 48px;background:linear-gradient(rgba(250,245,236,0),#FAF5EC 40%)"><button onClick="{{ goHome }}" disabled="{{ cantContinue }}" style="width:100%;height:56px;border:0;cursor:pointer;border-radius:28px;background:#FF6F61;opacity:{{ continueOpacity }};color:#fff;font:700 17px Nunito,sans-serif;box-shadow:0 8px 10px {{ continueShadow }};transition:opacity .2s">Continue</button></div>
+</div>
+</sc-if>
+
+<!-- HOME · Day 1 -->
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:#ADE2CB;display:flex;flex-direction:column">
+<div style="position:relative;height:305px;flex:none;display:flex;align-items:flex-end;justify-content:center;padding-bottom:21px">
+<div style="position:absolute;top:64px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:flex-start;z-index:5">
+<div style="display:flex;gap:8px;align-items:center;padding:8px 15px;border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 3px 6px rgba(40,25,35,.16)"><span style="font-size:15px;font-weight:900">{{ kinName }}</span><span style="display:flex;gap:3px"><span style="width:12px;height:12px;background:#FFC24B;clip-path:polygon(50% 7%,62% 33%,91% 37%,70% 56%,76% 85%,50% 71%,24% 85%,30% 56%,9% 37%,38% 33%)"></span><span style="width:12px;height:12px;background:#DDD3C4;clip-path:polygon(50% 7%,62% 33%,91% 37%,70% 56%,76% 85%,50% 71%,24% 85%,30% 56%,9% 37%,38% 33%)"></span><span style="width:12px;height:12px;background:#DDD3C4;clip-path:polygon(50% 7%,62% 33%,91% 37%,70% 56%,76% 85%,50% 71%,24% 85%,30% 56%,9% 37%,38% 33%)"></span></span></div>
+<div style="position:relative">
+<div style="display:flex;gap:7px;align-items:center;padding:8px 13px 8px 11px;border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 3px 6px rgba(40,25,35,.16)"><span style="width:19px;height:19px;border-radius:50%;background:#FFC24B;box-shadow:inset 0 0 0 2.7px #E8A62E"></span><span style="font-size:16px;font-weight:900;min-width:12px;text-align:center">{{ coins }}</span><span style="width:1px;height:16px;background:#E9E1D6"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="#8A7869"><path d="M7 8V6a5 5 0 0 1 10 0v2h2.2a1 1 0 0 1 1 .9l.8 11A2 2 0 0 1 19 22H5a2 2 0 0 1-2-1.9l.8-11.2a1 1 0 0 1 1-.9zm2 0h6V6a3 3 0 0 0-6 0z"></path></svg></div>
+<sc-if value="{{ hasGain }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-26px;right:12px;font-size:15px;font-weight:900;color:#A8761D;animation:gainUp 1.6s ease both">{{ gain }}</div></sc-if>
+</div>
+</div>
+<div style="position:absolute;left:24px;right:24px;top:118px;display:flex;justify-content:center;z-index:4"><div style="padding:9px 16px;border-radius:16px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.12);font-size:14px;font-weight:700;white-space:nowrap;animation:bubbleIn .35s cubic-bezier(.3,.7,.3,1.2) both">{{ bubble }}</div></div>
+{{ kin }}
+</div>
+{{ fly }}
+<div style="display:flex;flex-direction:column;gap:12px;padding:12px 18px 10px;flex:none">
+<div style="display:flex;gap:11px;align-items:center;padding:11px 14px;border-radius:18px;background:rgba(46,38,34,.08)"><div style="width:32px;height:32px;border-radius:11px;background:#FFC24B;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="#7A4A12"><path d="M13 2 4 14h6l-1 8 9-12h-6z"></path></svg></div><div style="flex:1;display:flex;flex-direction:column;gap:5px"><span style="font-size:12.5px;font-weight:900">{{ levelLabel }}</span><div style="height:7px;border-radius:4px;background:rgba(46,38,34,.14);overflow:hidden"><div style="height:100%;border-radius:4px;background:#FFC24B;width:{{ levelProgress }};transition:width .4s ease"></div></div></div></div>
+<div style="display:flex;gap:9px;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E2622" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span style="font-size:16px;font-weight:900;flex:1">{{ goalsLine }}</span><div style="width:30px;height:30px;border-radius:50%;background:rgba(46,38,34,.08);display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(46,38,34,.75)" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path><circle cx="9" cy="6" r="2" fill="#ADE2CB"></circle><circle cx="15" cy="12" r="2" fill="#ADE2CB"></circle><circle cx="8" cy="18" r="2" fill="#ADE2CB"></circle></svg></div></div>
+</div>
+<div style="flex:1;overflow:auto;padding:0 14px 110px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none">
+<sc-if value="{{ showNotify }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px;padding:16px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);margin-bottom:6px;animation:cardIn .35s ease both">
+<div style="display:flex;gap:12px;align-items:center"><div style="width:44px;height:44px;flex:none;border-radius:50%;background:#E8F7F0;display:flex;align-items:center;justify-content:center;font:800 8px ui-monospace,Menlo,monospace;letter-spacing:1px;color:#3E9E78">KIN 34</div><div style="font-size:15.5px;font-weight:900;line-height:1.3;text-wrap:pretty">Want {{ kinName }} to check in tomorrow evening?</div></div>
+<div style="display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:#FAF5EC"><div style="width:30px;height:30px;flex:none;border-radius:8px;background:#3E2C28;display:flex;align-items:center;justify-content:center;font:800 6px ui-monospace,Menlo,monospace;color:#fff">KinChip</div><div style="flex:1;min-width:0;display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="font-weight:900">From {{ kinName }}</span><span style="font-weight:600;color:#96877F">7:30 PM</span></div><div style="font-size:12.5px;font-weight:600;color:#2E2622">How did today go?</div></div></div>
+<div style="display:flex;gap:10px"><button onClick="{{ notifyYes }}" style="flex:1;height:44px;border:0;cursor:pointer;border-radius:22px;background:#FF6F61;color:#fff;font:700 15px Nunito,sans-serif">Yes please</button><button onClick="{{ notifyNo }}" style="flex:1;height:44px;border:0;cursor:pointer;border-radius:22px;background:#F4EDE1;color:#96877F;font:700 15px Nunito,sans-serif">Not now</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ showCanvas }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px;padding:16px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);margin-bottom:6px;animation:cardIn .35s ease both">
+<div style="display:flex;gap:12px;align-items:center"><div style="width:44px;height:44px;flex:none;border-radius:50%;background:#E8F7F0;display:flex;align-items:center;justify-content:center;font:800 8px ui-monospace,Menlo,monospace;letter-spacing:1px;color:#3E9E78">KIN 34</div><div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:15.5px;font-weight:900;line-height:1.3">Want your Canvas homework here?</div><div style="font-size:12.5px;font-weight:700;color:#96877F">Takes a laptop. Canvas tasks pay 30.</div></div></div>
+<div style="display:flex;gap:10px"><button onClick="{{ canvasYes }}" style="flex:1;height:44px;border:0;cursor:pointer;border-radius:22px;background:#FF6F61;color:#fff;font:700 15px Nunito,sans-serif">Show me</button><button onClick="{{ canvasNo }}" style="flex:1;height:44px;border:0;cursor:pointer;border-radius:22px;background:#F4EDE1;color:#96877F;font:700 15px Nunito,sans-serif">Not now</button></div>
+</div>
+</sc-if>
+<sc-for list="{{ tasks }}" as="t" hint-placeholder-count="3">
+<div onClick="{{ t.onTap }}" style="display:flex;gap:12px;align-items:center;padding:10px 13px;min-height:44px;background:#fff;border-radius:20px;cursor:pointer;box-shadow:0 2px 3px rgba(40,20,18,.07);opacity:{{ t.opacity }};transition:opacity .2s">
+<div style="width:42px;height:42px;flex:none;border-radius:50%;background:#FDF9F4;box-shadow:inset 0 0 0 1.5px #EDE1D3;display:flex;align-items:center;justify-content:center;font:800 7.5px ui-monospace,Menlo,monospace;color:#96877F;text-align:center;line-height:1.2">{{ t.cat }}</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><div style="font-size:15.5px;font-weight:900;line-height:1.2">{{ t.title }}</div><div style="font-size:12.5px;font-weight:700;color:#96877F">{{ t.subtitle }}</div></div>
+<div style="display:flex;gap:10px;align-items:center"><span style="display:flex;gap:3px;align-items:center;font-size:13px;font-weight:900;color:#A8761D"><span style="width:13px;height:13px;border-radius:50%;background:#FFC24B;box-shadow:inset 0 0 0 1.8px #E8A62E"></span>{{ t.reward }}</span><div style="width:33px;height:33px;border-radius:11px;background:{{ t.boxBg }};box-shadow:inset 0 0 0 2.5px {{ t.boxBorder }};display:flex;align-items:center;justify-content:center;transition:background .2s"><sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"></path></svg></sc-if></div></div>
+</div>
+</sc-for>
+<div style="display:flex;gap:12px;align-items:center;padding:10px 13px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);margin-top:6px"><div style="width:42px;height:42px;flex:none;border-radius:50%;background:#E4735F;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.5" fill="#fff"></circle></svg></div><div style="flex:1;display:flex;flex-direction:column;gap:1px"><div style="font-size:15.5px;font-weight:900">Grade calculator</div><div style="font-size:12.5px;font-weight:700;color:#96877F">What do I need on the final?</div></div><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B4A996" stroke-width="3" stroke-linecap="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+</div>
+<!-- RootView tab bar -->
+<div style="position:absolute;left:0;right:0;bottom:0;height:90px;background:#FFFDF8;box-shadow:0 -6px 11px rgba(40,20,18,.06),0 -.5px 0 rgba(46,38,34,.08);display:flex;align-items:flex-start;gap:2px;padding:6px 4px 0;z-index:20">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;border-radius:16px;background:#FFE0DA"><div style="width:27px;height:27px;border-radius:7px;background:#E4735F;display:flex;align-items:center;justify-content:center;font:800 6px ui-monospace,Menlo,monospace;color:#fff">TabIcon</div><span style="font-size:10.5px;font-weight:900;color:#C24A3E">Home</span></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px"><div style="width:27px;height:27px;border-radius:7px;background:#F0A02A;opacity:.82;display:flex;align-items:center;justify-content:center;font:800 6px ui-monospace,Menlo,monospace;color:#fff">TabIcon</div><span style="font-size:10.5px;font-weight:800;color:#6E5F53">Focus</span></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px"><div style="width:27px;height:27px;border-radius:7px;background:#8172C9;opacity:.82;display:flex;align-items:center;justify-content:center;font:800 6px ui-monospace,Menlo,monospace;color:#fff">TabIcon</div><span style="font-size:10.5px;font-weight:800;color:#6E5F53">Games</span></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px"><div style="width:27px;height:27px;border-radius:7px;background:#4FA6D6;opacity:.82;display:flex;align-items:center;justify-content:center;font:800 6px ui-monospace,Menlo,monospace;color:#fff">TabIcon</div><span style="font-size:10.5px;font-weight:800;color:#6E5F53">Learn</span></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px"><div style="width:27px;height:27px;border-radius:7px;background:#F5AE79;opacity:.82;display:flex;align-items:center;justify-content:center;font:800 6px ui-monospace,Menlo,monospace;color:#fff">TabIcon</div><span style="font-size:10.5px;font-weight:800;color:#6E5F53">Friends</span></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px"><div style="width:28px;height:28px;border-radius:50%;background:#3E2C28;display:flex;align-items:center;justify-content:center;font:800 6px ui-monospace,Menlo,monospace;color:#fff">KinChip</div><span style="font-size:10.5px;font-weight:800;color:#6E5F53">Kin</span></div>
+</div>
+</div>
+<!-- iOS permission dialog (fires only after Yes please) -->
+<sc-if value="{{ showIOS }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center"><div style="width:270px;border-radius:14px;background:rgba(245,245,245,.98);overflow:hidden;font-family:-apple-system,system-ui,sans-serif;text-align:center"><div style="padding:20px 16px 18px;display:flex;flex-direction:column;gap:4px"><div style="font-size:17px;font-weight:600;color:#000">“Prepkin” Would Like to Send You Notifications</div><div style="font-size:13px;color:#000;line-height:1.3">Notifications may include alerts, sounds, and icon badges. These can be configured in Settings.</div></div><div style="display:flex;border-top:.5px solid rgba(0,0,0,.2)"><button onClick="{{ iosDeny }}" style="flex:1;height:44px;border:0;background:none;cursor:pointer;font:400 17px -apple-system,system-ui,sans-serif;color:#007AFF;border-right:.5px solid rgba(0,0,0,.2)">Don’t Allow</button><button onClick="{{ iosAllow }}" style="flex:1;height:44px;border:0;background:none;cursor:pointer;font:600 17px -apple-system,system-ui,sans-serif;color:#007AFF">Allow</button></div></div></div>
+</sc-if>
+<!-- DayEditorView sheet, opened at the pairing card -->
+<sc-if value="{{ showSheet }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.3)"><div style="position:absolute;left:0;right:0;bottom:0;top:54px;border-radius:40px 40px 0 0;background:#FAF5EC;display:flex;flex-direction:column;animation:cardIn .3s ease both">
+<div style="height:24px;display:flex;align-items:center;justify-content:center"><div style="width:38px;height:5px;border-radius:3px;background:#E2D8C6"></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:2px 22px 16px"><span style="font-size:34px;font-weight:900;letter-spacing:-.9px">Your day</span><button onClick="{{ closeSheet }}" style="height:44px;padding:0 24px;border:0;cursor:pointer;border-radius:22px;background:#FF6F61;color:#fff;font:700 17px Nunito,sans-serif;box-shadow:0 6px 8px rgba(255,111,97,.32)">Done</button></div>
+<div style="padding:0 22px;display:flex;flex-direction:column">
+<div style="display:flex;gap:10px;align-items:center;padding:0 0 12px"><div style="width:28px;height:28px;border-radius:10px;background:#E8F7F0;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3FA681" stroke-width="2.5" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg></div><span style="font-size:22px;font-weight:800;letter-spacing:-.3px">Canvas</span></div>
+<div style="display:flex;flex-direction:column;padding:18px;background:#fff;border-radius:26px;box-shadow:0 8px 11px rgba(46,38,34,.05)">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="display:flex;gap:4px;align-items:center"><span style="width:27px;height:44px;border-radius:11px;background:#FAF5EC;display:flex;align-items:center;justify-content:center;font:700 20px ui-monospace,Menlo,monospace">4</span><span style="width:27px;height:44px;border-radius:11px;background:#FAF5EC;display:flex;align-items:center;justify-content:center;font:700 20px ui-monospace,Menlo,monospace">8</span><span style="width:27px;height:44px;border-radius:11px;background:#FAF5EC;display:flex;align-items:center;justify-content:center;font:700 20px ui-monospace,Menlo,monospace">2</span><span style="width:12px;height:3px;border-radius:2px;background:#E2D8C6"></span><span style="width:27px;height:44px;border-radius:11px;background:#FAF5EC;display:flex;align-items:center;justify-content:center;font:700 20px ui-monospace,Menlo,monospace">7</span><span style="width:27px;height:44px;border-radius:11px;background:#FAF5EC;display:flex;align-items:center;justify-content:center;font:700 20px ui-monospace,Menlo,monospace">1</span><span style="width:27px;height:44px;border-radius:11px;background:#FAF5EC;display:flex;align-items:center;justify-content:center;font:700 20px ui-monospace,Menlo,monospace">5</span></div><div style="width:44px;height:44px;border-radius:15px;background:#FDECEA;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.5" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg></div></div>
+<div style="height:1px;background:#F0E9DC;margin:18px 0"></div>
+<div style="font-size:15px;font-weight:600;color:#96877F;line-height:1.4">Type this into the Prepkin extension in Chrome.</div>
+</div>
+<div style="font-size:13px;font-weight:600;color:#B4A996;padding:14px 4px 0;line-height:1.4">The rest of the sheet is unchanged: Add your own, Presets, Reminders.</div>
+</div>
+</div></div>
+</sc-if>
+<!-- Session two soft wall (only if accounts arrive) -->
+<sc-if value="{{ showSave }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:50;background:rgba(46,38,34,.28);display:flex;align-items:flex-end;padding:0 14px 104px"><div style="width:100%;display:flex;flex-direction:column;gap:14px;padding:18px;background:#fff;border-radius:24px;box-shadow:0 8px 24px rgba(46,38,34,.18);animation:cardIn .35s ease both">
+<div style="display:flex;gap:12px;align-items:center"><div style="width:44px;height:44px;flex:none;border-radius:50%;background:#E8F7F0;display:flex;align-items:center;justify-content:center;font:800 8px ui-monospace,Menlo,monospace;letter-spacing:1px;color:#3E9E78">KIN 34</div><div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:17px;font-weight:900;letter-spacing:-.2px">Save {{ kinName }}’s progress</div><div style="font-size:13px;font-weight:700;color:#96877F;line-height:1.35">Everything stays on this phone either way.</div></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><button onClick="{{ saveNow }}" style="height:52px;border:0;cursor:pointer;border-radius:26px;background:#FF6F61;color:#fff;font:700 17px Nunito,sans-serif;box-shadow:0 8px 10px rgba(255,111,97,.3)">Save</button><button onClick="{{ saveLater }}" style="height:44px;border:0;cursor:pointer;border-radius:22px;background:transparent;color:#96877F;font:700 15px Nunito,sans-serif">Later</button></div>
+</div></div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { screen: 'hatch', name: '', shuffleI: -1, picked: [], tasks: [], coins: 0, bubble: 'Tap one when it\'s done.', gain: null, bounce: 0, fly: 0, offer: null, notify: null, iosDialog: false, sheet: false, session: 1, saveWall: false };
+  names = ["Moss","Pip","Bramble","Tuck","Sprig","Bean","Juniper","Clover","Pebble","Wren","Fig","Marlow","Nimbus","Cricket","Olive","Bodhi"];
+  presets = [
+    {id:'s-1',title:'20 min SAT practice',kind:'study',cat:'study'},
+    {id:'s-2',title:"Review today's notes",kind:'study',cat:'study'},
+    {id:'s-3',title:'Read 10 pages',kind:'study',cat:'reading'},
+    {id:'s-4',title:'Redo one question you got wrong',kind:'study',cat:'study'},
+    {id:'l-1',title:'Drink a glass of water',kind:'life',cat:'lifeCare'},
+    {id:'l-2',title:'10 minute walk',kind:'life',cat:'walk'},
+    {id:'l-3',title:'In bed by 11',kind:'life',cat:'sleep'},
+    {id:'l-4',title:'Eat breakfast',kind:'life',cat:'meal'},
+    {id:'l-5',title:'5 minute stretch',kind:'life',cat:'walk'},
+    {id:'l-6',title:'Step outside',kind:'life',cat:'walk'},
+    {id:'l-7',title:'Text someone you like',kind:'life',cat:'lifeCare'},
+    {id:'l-8',title:'Tidy your desk',kind:'life',cat:'lifeCare'},
+  ];
+  reward = { study: 20, life: 10, canvas: 30 };
+  tint = { reading:['#ECEFFC','#6B79D8'], study:['#FDF0E4','#E08A3C'], lifeCare:['#E6F3FA','#4A9CC4'], walk:['#E8F7F0','#3FA681'], sleep:['#F2ECFB','#8A6FC4'], meal:['#FDECEA','#E8574A'] };
+  displayName() { return this.state.name.trim() || 'Slime'; }
+  go(patch) { this.setState(patch); }
+  toggleTask(id) {
+    const t = this.state.tasks.find(x => x.id === id);
+    if (!t) return;
+    if (t.done) { this.setState(s => ({ tasks: s.tasks.map(x => x.id === id ? {...x, done:false} : x), coins: s.coins - this.reward[t.kind] })); return; }
+    const r = this.reward[t.kind];
+    const first = !this.state.tasks.some(x => x.done);
+    this.setState(s => ({ tasks: s.tasks.map(x => x.id === id ? {...x, done:true} : x), coins: s.coins + r, gain: r, bounce: s.bounce + 1, fly: s.fly + 1,
+      bubble: s.tasks.filter(x => !x.done).length === 1 ? 'All three done. ' + this.displayName() + ' is very pleased.' : 'That\'s ' + r + ' coins in the wallet.' }));
+    clearTimeout(this._g); this._g = setTimeout(() => this.setState({ gain: null }), 1600);
+    if (first) { clearTimeout(this._o); this._o = setTimeout(() => this.setState({ offer: 'notify' }), 1500); }
+  }
+  renderVals() {
+    const s = this.state, name = this.displayName();
+    const picked = new Set(s.picked);
+    const mk = (p, active, onTap) => ({ id:p.id, title:p.title, reward:this.reward[p.kind], active, ring: active ? '#57C79B' : 'transparent', shadow: active ? 'rgba(87,199,155,.14)' : 'rgba(46,38,34,.05)', discBg: active ? '#57C79B' : '#F4F0EB', discRing: active ? 'transparent' : '#E6DFD7', discInk: active ? '#fff' : 'transparent', tileBg:this.tint[p.cat][0], tileFg:this.tint[p.cat][1], cat:p.cat, onTap });
+    const pickRow = p => mk(p, picked.has(p.id), () => this.setState(st => { const a = st.picked.includes(p.id) ? st.picked.filter(i => i !== p.id) : (st.picked.length < 3 ? [...st.picked, p.id] : st.picked); return { picked: a }; }));
+    const coinsToday = [...picked].reduce((a, id) => a + this.reward[this.presets.find(p => p.id === id).kind], 0);
+    const left = s.tasks.filter(t => !t.done).length, any = s.tasks.some(t => t.done);
+    const fly = s.fly ? React.createElement('div', { key: s.fly, style: { position:'absolute', left: 200, top: 420, zIndex: 40, pointerEvents:'none' } },
+      [0,1,2].map(i => React.createElement('div', { key:i, style: { position:'absolute', width:16, height:16, borderRadius:'50%', background:'#FFC24B', boxShadow:'inset 0 0 0 2.2px #E8A62E', '--dx': (150 + i*8) + 'px', '--dy': (-330 - i*6) + 'px', animation: 'coinFly .9s cubic-bezier(.3,.7,.3,1) ' + (i*0.08) + 's both' } }))) : null;
+    const kin = React.createElement('div', { key: s.bounce, style: { width: 140, height: 103, borderRadius: 20, background: 'rgba(255,255,255,.55)', border: '2px dashed #3E9E78', display:'flex', alignItems:'center', justifyContent:'center', font:'800 12px ui-monospace,Menlo,monospace', letterSpacing: 2, color:'#3E9E78', transformOrigin:'bottom center', animation: s.bounce ? 'kinBounce .5s cubic-bezier(.3,.7,.3,1) both' : 'none' } }, 'KIN 140');
+    const J = (label, patch, hot) => ({ label, go: () => this.setState(patch), bg: hot ? '#2E2622' : 'rgba(46,38,34,.08)', fg: hot ? '#fff' : '#2E2622' });
+    const home = (extra) => Object.assign({ screen:'home', picked:['s-1','l-1','l-3'], tasks:[{id:'s-1',title:'20 min SAT practice',kind:'study',cat:'study',done:false},{id:'l-1',title:'Drink a glass of water',kind:'life',cat:'lifeCare',done:false},{id:'l-3',title:'In bed by 11',kind:'life',cat:'sleep',done:false}], coins:0, gain:null, offer:null, notify:null, iosDialog:false, sheet:false, saveWall:false, session:1, bubble:"Tap one when it's done." }, extra);
+    const done1 = { tasks:[{id:'s-1',title:'20 min SAT practice',kind:'study',cat:'study',done:true},{id:'l-1',title:'Drink a glass of water',kind:'life',cat:'lifeCare',done:false},{id:'l-3',title:'In bed by 11',kind:'life',cat:'sleep',done:false}], coins:20 };
+    return {
+      isHatch: s.screen === 'hatch', isPick: s.screen === 'pick', isHome: s.screen === 'home',
+      screenLabel: s.screen === 'hatch' ? '1 Hatch and name' : s.screen === 'pick' ? '2 Pick three' : 'Home Day 1',
+      pageBg: s.screen === 'home' ? '#ADE2CB' : '#FAF5EC',
+      name: s.name, nameEmpty: !s.name.trim(), nextOpacity: s.name.trim() ? 1 : .4, nextShadow: s.name.trim() ? 'rgba(255,111,97,.3)' : 'transparent',
+      setName: e => this.setState({ name: e.target.value.slice(0, 14) }),
+      shuffle: () => this.setState(st => { const i = (st.shuffleI + 1 + Math.floor(Math.random() * 3)) % this.names.length; return { shuffleI: i, name: this.names[i] }; }),
+      next: () => this.setState({ screen: 'pick' }),
+      kinName: name,
+      studyRows: this.presets.filter(p => p.kind === 'study').map(pickRow),
+      lifeRows: this.presets.filter(p => p.kind === 'life').map(pickRow),
+      pickedLabel: picked.size === 0 ? 'Nothing picked yet' : picked.size + ' of 3 picked', coinsToday: coinsToday + ' today', progress: (picked.size / 3 * 100) + '%',
+      canContinue: picked.size === 3, continueOpacity: picked.size === 3 ? 1 : .4, continueShadow: picked.size === 3 ? 'rgba(255,111,97,.3)' : 'transparent', cantContinue: picked.size !== 3,
+      goHome: () => this.setState(st => ({ screen:'home', tasks: this.presets.filter(p => st.picked.includes(p.id)).map(p => ({...p, done:false})), coins:0, bubble:"Tap one when it's done." })),
+      tasks: s.tasks.map(t => ({ ...t, reward: this.reward[t.kind], subtitle: t.kind === 'life' ? 'Life care' : 'Study', opacity: t.done ? .62 : 1, boxBg: t.done ? '#6FC79E' : '#F4F0EB', boxBorder: t.done ? 'transparent' : '#E6DFD7', onTap: () => this.toggleTask(t.id) })),
+      coins: s.coins, gain: s.gain ? '+' + s.gain : '', hasGain: !!s.gain, bubble: s.bubble, kin, fly,
+      goalsLine: left === 0 ? 'All goals done today' : left === 1 ? '1 goal left today' : left + ' goals left today',
+      levelLabel: '1 star · ' + Math.max(0, 100 - s.coins) + ' to the next', levelProgress: Math.min(100, s.coins) + '%',
+      showNotify: s.offer === 'notify' && !s.iosDialog, showCanvas: s.offer === 'canvas', showIOS: s.iosDialog, showSheet: s.sheet, showSave: s.saveWall,
+      notifyYes: () => this.setState({ iosDialog: true }), notifyNo: () => this.setState({ notify: 'later', offer: 'canvas' }),
+      iosAllow: () => this.setState({ iosDialog: false, notify: 'on', offer: 'canvas' }), iosDeny: () => this.setState({ iosDialog: false, notify: 'off', offer: 'canvas' }),
+      canvasYes: () => this.setState({ sheet: true, offer: null }), canvasNo: () => this.setState({ offer: null }),
+      closeSheet: () => this.setState({ sheet: false }),
+      saveLater: () => this.setState({ saveWall: false }), saveNow: () => this.setState({ saveWall: false }),
+      notifyLine: s.notify === 'on' ? 'Evening check-in on' : '',
+      jumps: [
+        J('1 · Hatch, empty', { screen:'hatch', name:'' }, s.screen === 'hatch' && !s.name),
+        J('1 · Named', { screen:'hatch', name:'Pip' }, s.screen === 'hatch' && !!s.name),
+        J('2 · Pick, none', { screen:'pick', picked:[] }, s.screen === 'pick' && !picked.size),
+        J('2 · Three picked', { screen:'pick', picked:['s-1','l-1','l-3'] }, s.screen === 'pick' && picked.size === 3),
+        J('Home · Day 1', home(), s.screen === 'home' && !any && !s.offer && !s.saveWall),
+        J('Home · First check', home(Object.assign({ gain:20, bounce:s.bounce+1, fly:s.fly+1, bubble:"That's 20 coins in the wallet." }, done1)), s.screen === 'home' && any && !s.offer && !s.saveWall && !s.sheet),
+        J('Home · Notifications card', home(Object.assign({ offer:'notify', bubble:"That's 20 coins in the wallet." }, done1)), s.offer === 'notify' && !s.iosDialog),
+        J('Home · iOS dialog', home(Object.assign({ offer:'notify', iosDialog:true }, done1)), s.iosDialog),
+        J('Home · Canvas card', home(Object.assign({ offer:'canvas', notify:'on' }, done1)), s.offer === 'canvas'),
+        J('Your day · pairing', home(Object.assign({ sheet:true, notify:'on' }, done1)), s.sheet),
+        J('Session 2 · Save wall', home(Object.assign({ saveWall:true, session:2, notify:'on', bubble:'Good to see you again.' }, done1)), s.saveWall),
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

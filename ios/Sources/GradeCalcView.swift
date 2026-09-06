@@ -91,7 +91,7 @@ struct GradeCalcView: View {
 
     private var bubble: String {
         switch needed {
-        case ...0: "Nothing left to do!"
+        case ...0: "Nothing left to do. Rare."
         case ..<60: "You got this, easy."
         case ..<75: "Looking good."
         case ..<85: "Study week time."
@@ -220,6 +220,7 @@ struct GradeCalcView: View {
             // for the handoff's placeholder bird.
             SproutImage(speciesID: state.activeChibiID,
                         level: state.activeChibi.level,
+                        skin: state.activeChibi.skinID,
                         size: 112)
         }
         .padding(.top, 6)

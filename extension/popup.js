@@ -7,6 +7,17 @@ const sitesEl = document.getElementById('sites');
 document.getElementById('slime').innerHTML = slimeAt(36);
 document.getElementById('version').textContent = `v${chrome.runtime.getManifest().version}`;
 
+// For testing: five taps on the version number own every theme. A paired
+// phone's wallet replaces this the next time it syncs.
+let versionTaps = 0;
+document.getElementById('version').addEventListener('click', async () => {
+  if (++versionTaps < 5) return;
+  versionTaps = 0;
+  const { wallet } = await chrome.storage.local.get('wallet');
+  await chrome.storage.local.set({ wallet: { ...(wallet ?? {}), coins: 9999, owned: LOOKS.map((l) => l.id), wearing: wallet?.wearing ?? 'classic' } });
+  show('Testing: every theme unlocked.', 'ok');
+});
+
 const CHECK_SVG = `
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
     <circle cx="8" cy="8" r="8" fill="#51CFA0"/>
@@ -133,9 +144,16 @@ document.getElementById('save').addEventListener('click', async () => {
   const code = normalize(codeInput.value);
   if (!code) return show('That code should be 8 letters and numbers.', 'bad');
   codeInput.value = code;
-  await chrome.storage.local.set({ pairingCode: code });
-  show('Saved. Syncing…');
+  show('Pairing…');
+  // The code is traded for this laptop's own token, once. After that the code
+  // is spent, and nobody who guesses it later can read or change anything.
+  const paired = await chrome.runtime.sendMessage({ type: 'pair', code });
+  if (!paired?.ok) return show(paired?.error ?? 'Could not pair.', 'bad');
+  show('Paired. Syncing…');
   report(await chrome.runtime.sendMessage({ type: 'sync-now' }));
+  showPairing();
+  loadBuddy();
+  speak();
 });
 
 document.getElementById('resync').addEventListener('click', async () => {
@@ -153,20 +171,238 @@ document.querySelectorAll('[data-skin]').forEach((box) => {
     await chrome.storage.local.set({
       skin: { ...SKIN_DEFAULTS, ...(skin ?? {}), [box.dataset.skin]: box.checked },
     });
+    applyPopupSkin();
+    setTimeout(loadReceipt, 250);
   });
 });
 
-chrome.storage.local.get('skin').then(({ skin }) => {
+async function syncToggles() {
+  const { skin } = await chrome.storage.local.get('skin');
   const current = { ...SKIN_DEFAULTS, ...(skin ?? {}) };
   document.querySelectorAll('[data-skin]').forEach((box) => {
     box.checked = !!current[box.dataset.skin];
   });
+  const mode = current.mode ?? (current.dark ? 'dark' : 'light');
+  document.querySelectorAll('#mode [data-mode]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === mode)));
+}
+syncToggles();
+
+/// Light, dark, or the OS's choice. The resolved `dark` is written alongside
+/// so every reader keeps its one boolean.
+document.querySelectorAll('#mode [data-mode]').forEach((b) => b.addEventListener('click', async () => {
+  const mode = b.dataset.mode;
+  const { skin } = await chrome.storage.local.get('skin');
+  const dark = mode === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : mode === 'dark';
+  await chrome.storage.local.set({ skin: { ...SKIN_DEFAULTS, ...(skin ?? {}), mode, dark } });
+  await syncToggles();
+  applyPopupSkin();
+  setTimeout(loadReceipt, 250);
+}));
+
+// MARK: - Due next
+//
+// Today across every class, from what the laptop last synced. The one screen
+// worth opening; the pairing card sits under it. Amber says "still counts";
+// nothing here is ever red.
+
+/// "in 2h 10m" for the next thing due within a day. Never a countdown that
+/// alarms: past due reads "still counts", not a negative number.
+/// The buddy is on the page, not in here. When the front tab is a connected
+/// Canvas with the buddy on, one button opens its panel and closes this.
+async function loadBuddy() {
+  const el = document.getElementById('buddy');
+  const tab = await activeCanvasTab();
+  const { skin } = await chrome.storage.local.get('skin');
+  el.hidden = !tab || skin?.mascot === false;
+  el.dataset.tab = tab?.id ?? '';
+}
+document.getElementById('open-buddy').addEventListener('click', async () => {
+  const id = Number(document.getElementById('buddy').dataset.tab);
+  if (!id) return;
+  const r = await chrome.tabs.sendMessage(id, { type: 'open-buddy' }).catch(() => null);
+  if (r?.ok) window.close(); else show('Reload the Canvas tab first.', 'bad');
+});
+loadBuddy();
+
+// MARK: - The receipt
+//
+// The page in front of the student lists what Prepkin took, fixed and added
+// there. Every row has one button that reverses it, and the choice is kept.
+
+const receiptEl = document.getElementById('receipt');
+
+async function activeCanvasTab() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id || !tab.url?.startsWith('https://')) return null;
+  const origins = await connectedOrigins();
+  return origins.includes(new URL(tab.url).origin) ? tab : null;
+}
+
+async function loadReceipt() {
+  const tab = await activeCanvasTab();
+  let r = null;
+  if (tab) {
+    try { r = await chrome.tabs.sendMessage(tab.id, { type: 'receipt' }); } catch { r = null; }
+  }
+  receiptEl.hidden = !r;
+  if (!r) return;
+  document.getElementById('receipt-page').textContent = r.page;
+  document.getElementById('show-me').hidden = !r.rows.length || !!r.off;
+  const off = document.getElementById('receipt-off');
+  const lists = document.getElementById('receipt-lists');
+  if (r.off || !r.on) {
+    off.textContent = r.off ?? 'Quiet Canvas is off. Turn it on below and this page gets its receipt.';
+    off.hidden = false;
+    lists.hidden = true;
+    return;
+  }
+  off.hidden = true;
+  lists.hidden = false;
+
+  // The one decision, first: how much is live, and one button for all of it.
+  const live = r.rows.filter((x) => !x.back).length;
+  document.getElementById('receipt-count').textContent =
+    live === 0 ? 'Nothing changed on this page' : `${live} change${live === 1 ? '' : 's'} on this page`;
+  const putAll = document.getElementById('put-all');
+  putAll.textContent = live ? 'Put it all back' : 'Take it all again';
+  putAll.onclick = () => putAllBack(r.rows, live > 0);
+
+  const sections = [
+    ['taken', 'receipt-taken', 'Nothing was taken from this page.'],
+    ['fixed', 'receipt-fixed', 'Nothing to fix here.'],
+    ['added', 'receipt-added', null],
+  ];
+  // The first group with a live row opens; the rest fold to a header and count.
+  if (!receiptOpen.size) {
+    const first = sections.find(([kind]) => r.rows.some((x) => x.kind === kind && !x.back)) ?? sections[0];
+    receiptOpen.add(first[0]);
+  }
+  for (const [kind, id, empty] of sections) {
+    const ul = document.getElementById(id);
+    ul.replaceChildren();
+    const rows = r.rows.filter((x) => x.kind === kind);
+    const grp = ul.parentElement;
+    grp.hidden = kind === 'added' && !rows.length;
+    grp.classList.toggle('open', receiptOpen.has(kind));
+    const head = grp.querySelector('.grp-head');
+    head.setAttribute('aria-expanded', String(receiptOpen.has(kind)));
+    head.querySelector('em').textContent = rows.length ? String(rows.filter((x) => !x.back).length) : '';
+    head.onclick = () => {
+      if (receiptOpen.has(kind)) receiptOpen.delete(kind); else receiptOpen.add(kind);
+      grp.classList.toggle('open', receiptOpen.has(kind));
+      head.setAttribute('aria-expanded', String(receiptOpen.has(kind)));
+    };
+    if (!rows.length) {
+      ul.append(Object.assign(document.createElement('li'), { className: 'none', textContent: empty }));
+      continue;
+    }
+    for (const row of rows) {
+      const li = document.createElement('li');
+      li.className = row.back ? 'back' : '';
+      li.dataset.key = row.key;
+      const span = document.createElement('span');
+      span.textContent = row.label;
+      const btn = document.createElement('button');
+      btn.className = 'put';
+      btn.textContent = row.back ? row.undo : row.putBack;
+      btn.addEventListener('click', () => putBack(row, !row.back));
+      li.append(span, btn);
+      ul.append(li);
+    }
+  }
+}
+
+/// Which receipt groups are unfolded, for as long as the popup is open.
+const receiptOpen = new Set();
+
+/// Remembered forever, per key. A row with `opt` is one of the student's own
+/// switches (grades on cards, compact pages, the buddy): "back" means off.
+async function putBack(row, back) {
+  if (row.opt) {
+    const { skin } = await chrome.storage.local.get('skin');
+    await chrome.storage.local.set({ skin: { ...SKIN_DEFAULTS, ...(skin ?? {}), [row.opt]: !back } });
+    await syncToggles();
+  } else {
+    const { putBack: map = {} } = await chrome.storage.local.get('putBack');
+    const next = { ...map };
+    if (back) next[row.key] = true; else delete next[row.key];
+    await chrome.storage.local.set({ putBack: next });
+  }
+  setTimeout(loadReceipt, 250);
+}
+
+/// Every live row on this page at once, and the exact reverse. What was live is
+/// kept as a snapshot so "Take it all again" restores that, not a default set.
+async function putAllBack(rows, back) {
+  const stored = await chrome.storage.local.get(['putBack', 'skin', 'putAllUndo']);
+  const map = { ...(stored.putBack ?? {}) };
+  const skin = { ...SKIN_DEFAULTS, ...(stored.skin ?? {}) };
+  if (back) {
+    const snapshot = { keys: [], opts: [] };
+    for (const row of rows) {
+      if (row.back) continue;
+      if (row.opt) { snapshot.opts.push(row.opt); skin[row.opt] = false; }
+      else { snapshot.keys.push(row.key); map[row.key] = true; }
+    }
+    await chrome.storage.local.set({ putBack: map, skin, putAllUndo: snapshot });
+  } else {
+    const undo = stored.putAllUndo ?? {};
+    const keys = undo.keys ?? rows.filter((r) => !r.opt).map((r) => r.key);
+    const opts = undo.opts ?? rows.filter((r) => r.opt && SKIN_DEFAULTS[r.opt]).map((r) => r.opt);
+    for (const k of keys) delete map[k];
+    for (const o of opts) skin[o] = true;
+    await chrome.storage.local.set({ putBack: map, skin, putAllUndo: null });
+  }
+  await syncToggles();
+  applyPopupSkin();
+  setTimeout(loadReceipt, 250);
+}
+
+document.getElementById('show-me').addEventListener('click', async () => {
+  const tab = await activeCanvasTab();
+  if (tab) chrome.tabs.sendMessage(tab.id, { type: 'show-me' }).catch(() => {});
 });
 
-chrome.storage.local.get(['pairingCode', 'lastSync']).then(({ pairingCode, lastSync }) => {
+loadReceipt();
+
+/// Linked phones do not need the field in the way; a new code is one click.
+async function showPairing() {
+  const { pairingCode, writerToken, lastSync } = await chrome.storage.local.get(['pairingCode', 'writerToken', 'lastSync']);
   if (pairingCode) codeInput.value = pairingCode;
+  const linked = !!(pairingCode && writerToken);
+  document.getElementById('linked').hidden = !linked;
+  document.getElementById('pair-box').hidden = linked;
+  document.getElementById('relink').hidden = !linked;
   report(lastSync);
+}
+showPairing();
+document.getElementById('relink').addEventListener('click', () => {
+  document.getElementById('linked').hidden = true;
+  document.getElementById('pair-box').hidden = false;
+  document.getElementById('relink').hidden = true;
+  codeInput.value = '';
+  codeInput.focus();
 });
+
+// MARK: - Dark, and the buddy's voice
+
+async function applyPopupSkin() {
+  const { skin } = await chrome.storage.local.get('skin');
+  const dark = skin?.mode === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : !!skin?.dark;
+  document.body.classList.toggle('dark', dark);
+}
+applyPopupSkin();
+
+/// The same words the panel uses, from the same day.
+async function speak() {
+  const { lastPayload, onboarded } = await chrome.storage.local.get(['lastPayload', 'onboarded']);
+  if (!lastPayload?.tasks || !onboarded) return;
+  const said = voice(buckets(lastPayload.tasks, new Date()));
+  document.getElementById('say-head').textContent = said.headline;
+  document.getElementById('say-sub').textContent = said.subline;
+  document.getElementById('slime').innerHTML = slimeAt(36, said.face);
+}
+speak();
 
 // MARK: - Coin balance
 
@@ -178,7 +414,6 @@ chrome.storage.local.get('wallet').then(({ wallet }) => {
   chip.innerHTML = COIN_SVG;
   chip.append(String(wallet.coins));
   chip.hidden = false;
-  document.getElementById('version').hidden = true;
 });
 
 // MARK: - First run
@@ -229,7 +464,7 @@ function onboardingStep(step) {
     const host = tabOrigin ? new URL(tabOrigin).hostname : null;
     onbEl.innerHTML = `<div class="onb">
       <h2>Connect your school</h2>
-      <p>So Prepkin can read your assignments — nothing gets changed or posted.</p>
+      <p>So Prepkin can read your assignments. Nothing gets changed or posted.</p>
       ${host
         ? `<div class="detected"><i></i><div><b>You're on ${host}</b>
              <small>We'll ask Chrome for permission next.</small></div></div>
@@ -249,10 +484,10 @@ function onboardingStep(step) {
   }
   onbEl.innerHTML = `<div class="onb">
     <h2>Link your phone</h2>
-    <p>Coins and focus sessions sync with the Prepkin app. Optional.</p>
+    <p>Coins and focus time go to the Prepkin app. Optional.</p>
     <div class="detected" style="justify-content:center;gap:12px">
       ${slimeAt(40)}
-      <small style="max-width:150px">The code lives in the app under Today → the sliders button.</small>
+      <small style="max-width:150px">In the app: Today, then the sliders button.</small>
     </div>
     <div class="pair">
       <input id="onb-code" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off" spellcheck="false"
@@ -267,9 +502,27 @@ function onboardingStep(step) {
   </div>`;
   document.getElementById('onb-link').addEventListener('click', async () => {
     const code = normalize(document.getElementById('onb-code').value);
-    if (code) await chrome.storage.local.set({ pairingCode: code });
     await finishOnboarding();
-    if (code) report(await chrome.runtime.sendMessage({ type: 'sync-now' }));
+    speak();
+    if (!code) return show('That code should be 8 letters and numbers.', 'bad');
+    codeInput.value = code;
+    // Same trade as the Save button: the code buys this laptop's token, once.
+    const paired = await chrome.runtime.sendMessage({ type: 'pair', code });
+    if (!paired?.ok) return show(paired?.error ?? 'Could not pair.', 'bad');
+    // The moment it worked: the buddy, a line, a tick, the phone.
+    onbEl.hidden = false; mainEl.hidden = true;
+    onbEl.innerHTML = `<div class="onb">
+      <div class="linked-moment">${slimeAt(48, 'faceDelight')}<span class="line"></span>
+        <span class="tick"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5 L6.5 11.5 L12.5 5" stroke="#101820" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="line"></span><svg width="26" height="40" viewBox="0 0 26 40" aria-hidden="true"><rect x="1" y="1" width="24" height="38" rx="5" fill="none" stroke="#51cfa0" stroke-width="2"/><rect x="9" y="33" width="8" height="2" rx="1" fill="#51cfa0"/></svg></div>
+      <h2>Linked</h2><p>Coins and focus time now go to your phone.</p></div>`;
+    await new Promise((r) => setTimeout(r, 1100));
+    onbEl.hidden = true; mainEl.hidden = false;
+    show('Paired. Syncing…');
+    report(await chrome.runtime.sendMessage({ type: 'sync-now' }));
+    showPairing();
+    loadBuddy();
+    speak();
   });
   document.getElementById('onb-done').addEventListener('click', finishOnboarding);
 }

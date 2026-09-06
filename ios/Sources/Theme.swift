@@ -93,17 +93,33 @@ enum Theme {
     }
 
     /// The handoff calls for Nunito; SF Pro Rounded is the sanctioned native stand-in.
+    /// Reading sizes (20pt and under) follow the system text size, capped at 1.3×
+    /// so the tank, the tab bar and the fixed-height cards survive. Display sizes
+    /// (the 56pt timer, 34pt page titles) stay put. This is "large", not the
+    /// accessibility sizes; the release checklist says so. One function, so the
+    /// cap moves in one place.
     static func font(_ size: CGFloat, _ weight: Font.Weight) -> Font {
+        .system(size: size <= 20 ? size * readingScale : size, weight: weight, design: .rounded)
+    }
+
+    /// For the few labels that must never grow: the tab bar, chips inside the tank.
+    static func fixedFont(_ size: CGFloat, _ weight: Font.Weight) -> Font {
         .system(size: size, weight: weight, design: .rounded)
+    }
+
+    static var readingScale: CGFloat {
+        let s = UIFontMetrics(forTextStyle: .body).scaledValue(for: 17) / 17
+        return min(max(s, 1), 1.3)
     }
 
     static func species(_ id: String) -> Color {
         switch id {
         // Sprout's coat bodies (`palettes.ts` in the Sprout repo), so a tint drawn
         // next to the character is the character's own colour.
-        case "ember", "mochi": return hex(0xE07A72)   // coral
+        case "ember", "mochi", "axolotl-coral": return hex(0xE07A72)   // coral
         case "droplet", "puff": return hex(0x6BAFE0)  // sky
-        case "wisp": return hex(0xB08EE0)             // lilac
+        case "wisp", "axolotl": return hex(0xB08EE0)  // lilac
+        case "orca": return hex(0x46566A)             // the orca's fixed charcoal
         case "sprout": return hex(0xE9A07C)           // peach
         case "comet": return hex(0xE4C45C)            // butter
         default: return hex(0x58CC9F)                 // mint
@@ -125,23 +141,43 @@ struct Scene0: Identifiable, Equatable {
     let asset: String
     /// True when the art is dark, so overlaid pills flip to a light-on-dark treatment.
     let isDark: Bool
-    /// The art's own bottom edge, sampled from the last rows of the asset. Home paints
-    /// the whole page this colour, so the illustration just stops and the value carries
-    /// on — no gradient, no seam. **Re-sample this whenever the art changes.**
+    /// The art's own bottom edge, sampled from the last rows of the asset. The page
+    /// starts at this value so the illustration hands over without a step.
+    /// **Re-sample this whenever the art changes** (`scripts/cut_ios_tanks.py` prints it).
     let floor: Color
+    /// Where the page has drifted to by the bottom of the screen. The paintings keep
+    /// getting slightly deeper toward the viewer, so freezing the ramp at the handoff
+    /// told the eye a new surface started there even though the colour matched. This
+    /// continues the ramp, clamped to about 5 points of CIELAB lightness so the hue
+    /// cannot slide. Printed alongside `floor` by the same script.
+    let floorDeep: Color
 
+    /// Sprout is a fish, so a scene is the water he lives in. These are the five
+    /// tank plates from the Sprout build, cut for the phone: `scenes/…` in the
+    /// asset catalogue for the still, the same art under `SproutWeb/tanks/ios/`
+    /// for the live Home tank. The ids match the web build's tank ids.
     static let all: [Scene0] = [
-        Scene0(id: "dorm", name: "Study room", price: 0, asset: "scene-dorm",
-               isDark: false, floor: Theme.hex(0xEF6C53)),
-        Scene0(id: "meadow", name: "Meadow", price: 200, asset: "scene-meadow",
-               isDark: false, floor: Theme.hex(0x515B18)),
-        Scene0(id: "sunset", name: "Golden hour", price: 220, asset: "scene-sunset",
-               isDark: false, floor: Theme.hex(0xB44417)),
-        Scene0(id: "night", name: "Night in", price: 250, asset: "scene-night",
-               isDark: true, floor: Theme.hex(0x80423F)),
+        Scene0(id: "lagoon", name: "Lagoon", price: 0, asset: "scene-lagoon",
+               isDark: false, floor: Theme.hex(0xE4EFD9), floorDeep: Theme.hex(0xDBE6D0)),
+        Scene0(id: "reef", name: "Reef", price: 200, asset: "scene-reef",
+               isDark: false, floor: Theme.hex(0xF2B389), floorDeep: Theme.hex(0xE3A57C)),
+        Scene0(id: "kelp", name: "Kelp", price: 220, asset: "scene-kelp",
+               isDark: false, floor: Theme.hex(0xC8A840), floorDeep: Theme.hex(0xB99B33)),
+        Scene0(id: "dusk", name: "Dusk", price: 250, asset: "scene-dusk",
+               isDark: false, floor: Theme.hex(0xBC87B4), floorDeep: Theme.hex(0xAE7AA6)),
+        Scene0(id: "deep", name: "Deep", price: 280, asset: "scene-deep",
+               isDark: true, floor: Theme.hex(0x3B7AB1), floorDeep: Theme.hex(0x2A6EA3)),
     ]
 
-    static func find(_ id: String) -> Scene0 { all.first { $0.id == id } ?? all[0] }
+    /// The land scenes this replaced. A save that still names one lands on the
+    /// tank closest to it in mood, so nobody loses a scene they paid for.
+    static let retired: [String: String] = [
+        "dorm": "lagoon", "meadow": "kelp", "sunset": "reef", "night": "deep",
+    ]
+
+    static func find(_ id: String) -> Scene0 {
+        all.first { $0.id == id } ?? all.first { $0.id == retired[id] } ?? all[0]
+    }
 }
 
 struct CardStyle: ViewModifier {

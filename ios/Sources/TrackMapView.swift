@@ -144,7 +144,8 @@ struct TrackMapView: View {
                 }
                 Spacer(minLength: 0)
                 SproutImage(speciesID: state.activeChibiID,
-                            level: state.activeChibi.level, size: 72)
+                            level: state.activeChibi.level,
+                            skin: state.activeChibi.skinID, size: 72)
                     .offset(y: -4)
             }
 

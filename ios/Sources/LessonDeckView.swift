@@ -22,6 +22,10 @@ struct LessonDeckView: View {
     @State private var answers: [Int: Int] = [:]
     @State private var showCoach = false
     @State private var askKin = false
+    /// The flag sheet, and which reason is picked inside it. The reason is cleared
+    /// with the sheet, so the next card starts blank.
+    @State private var reporting = false
+    @State private var reportReason: CardReportReason?
     @State private var finished = false
     @State private var paid = 0
     /// One 0→1 value per flying coin, so they can be staggered.
@@ -39,6 +43,14 @@ struct LessonDeckView: View {
     private var isFinish: Bool { index >= cards.count }
     private var card: LessonCard? { isFinish ? nil : cards[index] }
 
+    /// The deck's last card is a quick check, so stepping past it *is* finishing.
+    /// The button waits for the answer: offered before one is locked it would be a
+    /// way past the single question that makes the lesson stick.
+    private var showsFinish: Bool {
+        guard let card, index == cards.count - 1 else { return false }
+        return card.kind != .check || answers[index] != nil
+    }
+
     var body: some View {
         ZStack {
             Theme.paper.ignoresSafeArea()
@@ -53,6 +65,9 @@ struct LessonDeckView: View {
         .animation(.easeOut(duration: 0.22), value: finished)
         .onAppear { showCoach = !state.hasSeenTapCoach }
         .sheet(isPresented: $askKin) { askKinSheet }
+        .sheet(isPresented: $reporting, onDismiss: { reportReason = nil }) { reportSheet }
+        // Clears the 52pt bottom bar rather than sitting on top of the heart.
+        .kinToast(state.toast, bottom: 68)
     }
 
     // MARK: - Deck
@@ -64,14 +79,28 @@ struct LessonDeckView: View {
                 content(in: geo.size)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .opacity(showCoach ? 0.2 : 1)
-                    // The zones sit *behind* the content, so a button on a card — an
-                    // answer row, Finish, the heart — still wins the tap.
+                    // Only the quick check has anything to press. On every other
+                    // card the figure and the copy used to swallow the tap, so
+                    // "tap here to go forward" only worked on the blank strip
+                    // under the sentence.
+                    .allowsHitTesting(card?.kind == .check)
+                    // The zones sit *behind* the content, so on the check card an
+                    // answer row still wins the tap and the space around it advances.
                     .background(alignment: .leading) { tapZones }
             }
-            if !isFinish { bottomBar }
+            if showsFinish { finishButton }
+            if !isFinish {
+                bottomBar
+                    // The coach owns the screen while it is up. Dimming the bar the same
+                    // amount as the card stops the bar glowing through a 70% scrim, and
+                    // nothing behind the coach can be pressed by accident.
+                    .opacity(showCoach ? 0.2 : 1)
+                    .allowsHitTesting(!showCoach)
+            }
         }
         .overlay { if showCoach { coachOverlay } }
         .overlay(alignment: .topTrailing) { coinArc }
+        .animation(.easeOut(duration: 0.2), value: showsFinish)
     }
 
     private var topBar: some View {
@@ -334,14 +363,26 @@ struct LessonDeckView: View {
 
     // MARK: - Bottom bar
 
+    /// The bar's whole block: the 52pt capsule plus its 8/4 padding. The coach
+    /// overlay lifts its own copy by exactly this, so "Got it" never lands on the heart.
+    private static let barBlock: CGFloat = 52 + 8 + 4
+
+    /// One pill, not two. Reading on is the primary move, so a coral Ask Kin beside the
+    /// tools made the smallest promise the loudest thing on the card — and the panel
+    /// behind it can only say Kin doesn't read the card. Kin now sits inside the same
+    /// white bar as save/share/flag, split by the divider the Home chip uses, and keeps
+    /// the mascot rather than becoming a fourth grey glyph.
     private var bottomBar: some View {
-        HStack(spacing: 10) {
-            HStack(spacing: 26) {
+        HStack(spacing: 0) {
+            // 44pt squares at a 6pt gap keep the old 50pt pitch between glyphs.
+            HStack(spacing: 6) {
                 Button(action: toggleSave) {
                     Image(systemName: isSaved ? "heart.fill" : "heart")
                         .font(.system(size: 21, weight: .semibold))
                         .foregroundStyle(isSaved ? Theme.coral : Theme.muted)
                         .scaleEffect(heartPop ? 1.15 : 1)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .accessibilityLabel(isSaved ? "Remove from saved cards" : "Save this card")
 
@@ -349,33 +390,76 @@ struct LessonDeckView: View {
                     Image(systemName: "square.and.arrow.up")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundStyle(Theme.muted)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
 
-                Button {} label: {
+                Button { reporting = true } label: {
                     Image(systemName: "flag")
                         .font(.system(size: 19, weight: .semibold))
                         .foregroundStyle(Theme.muted)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .accessibilityLabel("Report a problem with this card")
             }
-            .frame(maxWidth: .infinity).frame(height: 52)
-            .background(Capsule().fill(Theme.card))
+            .frame(maxWidth: .infinity)
+
+            Rectangle()
+                .fill(Theme.chipDivider)
+                .frame(width: 1, height: 22)
 
             Button { askKin = true } label: {
-                HStack(spacing: 9) {
-                    SlimeAvatar(speciesID: state.activeChibiID, size: 38)
+                HStack(spacing: 8) {
+                    SlimeAvatar(speciesID: state.activeChibiID, size: 30)
                     Text("Ask Kin")
                         .font(Theme.font(15, .heavy))
-                        .foregroundStyle(Theme.onDarkWarm)
+                        .foregroundStyle(Theme.ink)
                 }
-                .padding(.leading, 7).padding(.trailing, 18)
+                .padding(.horizontal, 16)
                 .frame(height: 52)
-                .background(Capsule().fill(Theme.coral))
+                // The button no longer paints its own background, so without this the
+                // gap between the face and the label would not be tappable.
+                .contentShape(Rectangle())
             }
             .buttonStyle(PressStyle())
         }
+        .frame(height: 52)
+        .background(Capsule().fill(Theme.card))
         .padding(.horizontal, 20)
         .padding(.top, 8).padding(.bottom, 4)
+    }
+
+    /// The reward rides on the button because that is where the decision gets made.
+    /// A re-read pays nothing, so the coin pill drops rather than promise coins the
+    /// ledger will not post.
+    private var finishButton: some View {
+        let pays = !state.completedLessons.contains(lesson.id)
+        return Button(action: advance) {
+            HStack(spacing: 9) {
+                Text("Finish")
+                    .font(Theme.font(17, .heavy))
+                    .foregroundStyle(Theme.onDarkWarm)
+                if pays {
+                    HStack(spacing: 5) {
+                        CoinDisc(size: 12)
+                        Text("+\(lesson.reward)")
+                            .font(Theme.font(13.5, .black))
+                            .foregroundStyle(Theme.onDarkWarm)
+                    }
+                    .padding(.horizontal, 9).padding(.vertical, 4)
+                    .background(Capsule().fill(Theme.onDarkWarm.opacity(0.2)))
+                }
+            }
+            .frame(maxWidth: .infinity).frame(height: 54)
+            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Theme.coral))
+        }
+        .buttonStyle(PressStyle())
+        .accessibilityLabel(pays ? "Finish lesson, earns \(lesson.reward) coins"
+                                 : "Finish lesson")
+        .padding(.horizontal, 20).padding(.top, 12)
+        .transition(.opacity)
     }
 
     private var isSaved: Bool {
@@ -388,15 +472,15 @@ struct LessonDeckView: View {
         return card.kind == .check ? card.question : card.body
     }
 
-    /// Ask Kin is drawn so the reader's layout is right, and says plainly that it
-    /// can't answer yet rather than pretending to.
+    /// Ask Kin is drawn so the reader's layout is right, and says plainly what it
+    /// does today rather than pretending to answer the card.
     private var askKinSheet: some View {
         VStack(spacing: 16) {
             slime(size: 120, expression: .wink)
-            Text("Kin can't answer yet")
+            Text("Kin is cheering, not explaining")
                 .font(Theme.font(22, .black))
                 .foregroundStyle(Theme.ink)
-            Text("Asking about the card you're on is coming. For now the quick check at the end of the deck is the part that makes it stick.")
+            Text("Kin doesn't read the card you're on, so the quick check at the end of the deck is the part that makes it stick.")
                 .font(Theme.font(15, .bold))
                 .lineSpacing(6)
                 .multilineTextAlignment(.center)
@@ -407,6 +491,95 @@ struct LessonDeckView: View {
         .background(Theme.paper)
         .presentationDetents([.height(370)])
         .presentationCornerRadius(28)
+    }
+
+    // MARK: - Report
+
+    /// The flag sheet. Same paper-and-capsule furniture as Ask Kin, so flagging a
+    /// card doesn't feel like a different app. It never says "send": the flag is
+    /// written to `GameState.cardReports` on this phone and there is no backend
+    /// to receive it, so promising a person will read it would be a lie.
+    private var reportSheet: some View {
+        VStack(spacing: 14) {
+            Text("Something wrong with this card?")
+                .font(Theme.font(21, .black))
+                .foregroundStyle(Theme.ink)
+                .multilineTextAlignment(.center)
+                .padding(.top, 30)
+
+            Text("Flags stay on this phone for now. Nothing gets sent anywhere.")
+                .font(Theme.font(14, .bold))
+                .lineSpacing(5)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Theme.hex(0x7C6F68))
+                .padding(.horizontal, 6)
+
+            VStack(spacing: 10) {
+                ForEach(CardReportReason.allCases) { reason in
+                    reasonRow(reason)
+                }
+            }
+
+            Spacer(minLength: 0)
+
+            Button(action: flagCard) {
+                Text("Flag it")
+                    .font(Theme.font(17, .heavy))
+                    .foregroundStyle(Theme.onDarkWarm)
+                    .frame(maxWidth: .infinity).frame(height: 54)
+                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(Theme.coral))
+                    .opacity(reportReason == nil ? 0.45 : 1)
+            }
+            .buttonStyle(PressStyle())
+            .disabled(reportReason == nil)
+            .padding(.bottom, 26)
+        }
+        .padding(.horizontal, 22)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Theme.paper)
+        .presentationDetents([.height(440)])
+        .presentationCornerRadius(28)
+    }
+
+    private func reasonRow(_ reason: CardReportReason) -> some View {
+        let picked = reportReason == reason
+        return Button { reportReason = reason } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(picked ? Theme.mint : Color.clear)
+                        .overlay(Circle().strokeBorder(picked ? .clear : Theme.hex(0xDDD2C0),
+                                                       lineWidth: 2))
+                        .frame(width: 22, height: 22)
+                    if picked {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .black))
+                            .foregroundStyle(.white)
+                    }
+                }
+                Text(reason.label)
+                    .font(Theme.font(15.5, picked ? .heavy : .bold))
+                    .foregroundStyle(picked ? Theme.ink : Theme.hex(0x7C6F68))
+                Spacer(minLength: 6)
+            }
+            .padding(.horizontal, 16).padding(.vertical, 15)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(picked ? Theme.mintSoft : Theme.card))
+            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(picked ? Theme.mint : Theme.hairline,
+                              lineWidth: picked ? 2 : 1.5))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func flagCard() {
+        guard let card, let reason = reportReason else { return }
+        state.reportCard(lessonID: lesson.id, index: card.index, reason: reason)
+        reporting = false
+        state.show("Good catch. Flagged on this phone.")
     }
 
     // MARK: - Coach overlay
@@ -422,7 +595,9 @@ struct LessonDeckView: View {
                 zoneHint("tap here\nto go forward", 21)
             }
             .padding(.horizontal, 14)
-            .padding(.top, 46).padding(.bottom, 210)
+            // Both coach blocks ride the same lift, so the slime and its line keep
+            // sitting below the dashed zones instead of landing inside them.
+            .padding(.top, 46).padding(.bottom, 210 + Self.barBlock)
 
             VStack(spacing: 18) {
                 Spacer()
@@ -447,7 +622,9 @@ struct LessonDeckView: View {
                             .fill(Theme.coral))
                 }
                 .buttonStyle(PressStyle())
-                .padding(.horizontal, 24).padding(.bottom, 30)
+                // The overlay's bottom edge is the bar's bottom edge, so the button has
+                // to clear the whole bar block to keep the air it was designed with.
+                .padding(.horizontal, 24).padding(.bottom, 30 + Self.barBlock)
             }
         }
         .transition(.opacity)
@@ -536,6 +713,7 @@ struct LessonDeckView: View {
                        expression: SlimeExpression? = .idle) -> some View {
         SproutImage(speciesID: state.activeChibiID,
                     level: state.activeChibi.level,
+                    skin: state.activeChibi.skinID,
                     animation: animation, size: size)
     }
 
@@ -580,6 +758,7 @@ struct LessonCompleteView: View {
 
             SproutImage(speciesID: state.activeChibiID,
                         level: state.activeChibi.level,
+                        skin: state.activeChibi.skinID,
                         animation: .celebrate, size: 170)
                 .padding(.top, 18)
 

@@ -1,0 +1,296 @@
+<title>Sprout III Badges</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Nunito:wght@500;700&display=swap">
+<style>
+  :root {
+    --ground: #F6F4EE;
+    --card: #FFFFFF;
+    --ink: #1F2A2B;
+    --muted: #6E7A78;
+    --line: #E4E0D6;
+    --accent: #2F9D86;
+    --accent-ink: #FFFFFF;
+    --pill: #ECE8DE;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #15191B;
+      --card: #1F2628;
+      --ink: #ECF1EE;
+      --muted: #97A3A0;
+      --line: #2C3538;
+      --accent: #58CC9F;
+      --accent-ink: #12211B;
+      --pill: #273032;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #15191B;
+    --card: #1F2628;
+    --ink: #ECF1EE;
+    --muted: #97A3A0;
+    --line: #2C3538;
+    --accent: #58CC9F;
+    --accent-ink: #12211B;
+    --pill: #273032;
+  }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Nunito", "Avenir Next", "Segoe UI", sans-serif;
+    font-size: 15px;
+    margin: 0;
+    padding: 32px 24px 56px;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; margin-bottom: 24px; }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 34px;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+    text-wrap: balance;
+  }
+  .sub { color: var(--muted); margin: 0; max-width: 60ch; line-height: 1.45; }
+  .toggle { display: inline-flex; background: var(--pill); border-radius: 999px; padding: 4px; gap: 2px; }
+  .toggle button {
+    font: inherit; font-weight: 700; font-size: 13px;
+    border: 0; border-radius: 999px; padding: 8px 16px;
+    background: transparent; color: var(--muted); cursor: pointer;
+  }
+  .toggle button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px 14px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .card svg { width: 100%; height: auto; display: block; }
+  .card .name { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .card .name b { font-size: 15px; }
+  .card .name span { color: var(--muted); font-size: 13px; }
+  h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600; font-size: 22px;
+    margin: 36px 0 4px;
+  }
+  .note { color: var(--muted); margin: 0 0 14px; line-height: 1.45; max-width: 64ch; }
+  .alts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .alts .card { padding: 10px 10px 8px; }
+  .mascot-svg .eye-happy, .mascot-svg .eye-sleep, .mascot-svg .mouth.open, .mascot-svg .mouth.o, .mascot-svg .mouth.flat { display: none; }
+  @media (prefers-reduced-motion: no-preference) { .card { transition: transform .15s ease; } .card:hover { transform: translateY(-2px); } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Sprout III badges</h1>
+      <p class="sub">Stage III drops the glowing stomach. Each kin earns a belly badge instead. Green grows a sapling, the Ninja carries a shuriken, Coral gets a flame. Same body, same face, long fins from stage II.</p>
+    </div>
+    <div class="toggle" role="group" aria-label="Badge style">
+      <button id="mode-badge" aria-pressed="true">Badge on the belly</button>
+      <button id="mode-body" aria-pressed="false">Mark on the body</button>
+    </div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <h2>Coral, other options</h2>
+  <p class="note">You said to figure the red one out. Flame is my pick. These are the runners-up.</p>
+  <div class="alts" id="alts"></div>
+</div>
+
+<script>
+const PAL = {
+  mint:   { body:'#58CC9F', belly:'#B8EED4', blush:'#F4B3C0', rim:'#F4FFFC', accent:'#2f9d86' },
+  sky:    { body:'#6BAFE0', belly:'#D4EBF8', blush:'#F3B5A6', rim:'#F5FBFE', accent:'#3d7eab' },
+  peach:  { body:'#E9A07C', belly:'#F8E0D2', blush:'#E07A90', rim:'#FFF8F4', accent:'#c46d4e' },
+  lilac:  { body:'#B08EE0', belly:'#E6D9F6', blush:'#EFA8B8', rim:'#FBF7FE', accent:'#7d5aa8' },
+  butter: { body:'#E4C45C', belly:'#F6ECC4', blush:'#E99286', rim:'#FFFBF0', accent:'#b8942e' },
+  coral:  { body:'#E07A72', belly:'#F6D4CE', blush:'#D46A9A', rim:'#FFF6F4', accent:'#c45c56' },
+};
+const SUIT = '#1C1F24', SUIT_BELLY = '#3A3F46';
+
+function star(cx, cy, r, ri, fill) {
+  const pts = [];
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5;
+    const rr = i % 2 ? ri : r;
+    pts.push((cx + rr * Math.cos(a)).toFixed(1) + ',' + (cy + rr * Math.sin(a)).toFixed(1));
+  }
+  return `<polygon points="${pts.join(' ')}" fill="${fill}"/>`;
+}
+
+// Every icon is drawn in a 200x200 box centred on 0,0. p = main colour, s = detail colour, bg = what sits behind it.
+const ICONS = {
+  plant: (p, s) => `
+    <path d="M 0 96 C -4 62 -2 24 0 -14" stroke="${p}" stroke-width="22" stroke-linecap="round" fill="none"/>
+    <path fill="${p}" d="M -2 34 C -32 34 -72 14 -90 -20 C -52 -24 -14 -4 -2 34 Z"/>
+    <path fill="${p}" d="M 2 8 C 32 8 72 -12 90 -46 C 52 -50 14 -30 2 8 Z"/>
+    <path fill="${p}" d="M 0 -12 C -24 -36 -22 -78 0 -100 C 22 -78 24 -36 0 -12 Z"/>
+    <path d="M -10 20 C -30 12 -52 0 -70 -14" stroke="${s}" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M 10 -6 C 30 -14 52 -26 70 -40" stroke="${s}" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M 0 -20 L 0 -84" stroke="${s}" stroke-width="5" stroke-linecap="round" fill="none"/>`,
+  shuriken: (p, s, bg) => `
+    <g transform="rotate(22)">
+      <polygon points="0,-96 23,-23 96,0 23,23 0,96 -23,23 -96,0 -23,-23" fill="#AEB6BE"/>
+      <polygon points="0,-96 23,-23 96,0 23,23 0,96 -23,23 -96,0 -23,-23" fill="#D9DFE5" transform="scale(0.7)"/>
+      <circle r="17" fill="${bg}"/>
+    </g>`,
+  flame: (p, s) => `
+    <path fill="${p}" d="M 0 -100 C 28 -62 72 -28 72 24 C 72 68 40 100 0 100 C -40 100 -72 68 -72 24 C -72 -4 -58 -22 -46 -40 C -42 -18 -30 -8 -18 -12 C -30 -44 -18 -74 0 -100 Z"/>
+    <path fill="${s}" d="M 2 -22 C 18 -2 42 16 42 46 C 42 72 24 92 2 92 C -20 92 -38 72 -38 46 C -38 30 -28 20 -20 10 C -18 24 -8 30 -2 28 C -10 10 -6 -6 2 -22 Z"/>`,
+  wave: (p, s) => `
+    <path fill="${p}" d="M -100 62 L -100 34 C -66 -6 -26 -24 18 -28 C 54 -32 76 -56 84 -94 C 104 -54 98 -10 68 18 C 54 31 38 37 22 39 C 48 43 74 52 100 62 Z"/>
+    <path fill="${s}" d="M 24 -4 C 44 -12 58 -30 64 -56 C 70 -34 62 -10 46 4 Z"/>
+    <path d="M -92 84 C -56 68 -20 68 20 80 C 50 88 76 86 98 78" stroke="${p}" stroke-width="12" stroke-linecap="round" fill="none"/>`,
+  sun: (p, s) => {
+    let rays = '';
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4;
+      rays += `<line x1="${(62 * Math.cos(a)).toFixed(1)}" y1="${(62 * Math.sin(a)).toFixed(1)}" x2="${(92 * Math.cos(a)).toFixed(1)}" y2="${(92 * Math.sin(a)).toFixed(1)}"/>`;
+    }
+    return `<circle r="40" fill="${p}"/><circle r="22" fill="${s}"/><g stroke="${p}" stroke-width="15" stroke-linecap="round">${rays}</g>`;
+  },
+  moon: (p, s) => `
+    <g transform="translate(18 0)">
+      <path fill="${p}" d="M 30 -92 A 92 92 0 1 0 30 92 A 112 112 0 0 1 30 -92 Z"/>
+      ${star(50, -46, 26, 11, p)}
+      ${star(70, 30, 13, 6, p)}
+    </g>`,
+  bolt: (p, s) => `
+    <polygon fill="${p}" points="18,-100 -64,12 -12,12 -30,100 64,-16 10,-16"/>`,
+  heart: (p, s) => `
+    <path fill="${p}" d="M 0 92 C -40 62 -96 22 -96 -30 C -96 -66 -70 -90 -45 -90 C -25 -90 -8 -78 0 -60 C 8 -78 25 -90 45 -90 C 70 -90 96 -66 96 -30 C 96 22 40 62 0 92 Z"/>
+    <path fill="${s}" d="M -58 -26 C -62 -46 -52 -64 -36 -66 C -46 -56 -50 -42 -50 -30 Z"/>`,
+  sparkle: (p, s) => `
+    <path fill="${p}" d="M 0 -100 C 8 -40 40 -8 100 0 C 40 8 8 40 0 100 C -8 40 -40 8 -100 0 C -40 -8 -8 -40 0 -100 Z"/>
+    <g transform="translate(66 -62) scale(0.32)"><path fill="${p}" d="M 0 -100 C 8 -40 40 -8 100 0 C 40 8 8 40 0 100 C -8 40 -40 8 -100 0 C -40 -8 -8 -40 0 -100 Z"/></g>`,
+  mountain: (p, s) => `
+    <path fill="${p}" d="M -100 84 L -32 -52 L 0 -6 L 26 -42 L 100 84 Z"/>
+    <path fill="${s}" d="M -32 -52 L -14 -22 L -4 -30 L 8 -18 L 0 -6 Z"/>
+    <circle cx="56" cy="-62" r="14" fill="${p}"/>`,
+};
+
+function sprout({ coat, ninja, icon, mode, key }) {
+  const pal = PAL[coat];
+  const body = ninja ? SUIT : pal.body;
+  const bellyFill = ninja ? SUIT_BELLY : pal.belly;
+  const badge = mode === 'badge';
+  // Badge mode: icon in coat colour on the pale belly. Body mode: pale icon straight on the coat.
+  let p, s, bg;
+  if (ninja) { p = '#D9DFE5'; s = '#AEB6BE'; bg = badge ? SUIT_BELLY : SUIT; }
+  else if (badge) { p = pal.body; s = pal.belly; bg = pal.belly; }
+  else { p = pal.belly; s = pal.body; bg = pal.body; }
+  const scale = badge ? 0.98 : 1.22;
+  const K = key;
+  return `
+<svg class="mascot-svg" viewBox="-160 40 1320 830" fill="none" overflow="visible" aria-hidden="true">
+  <defs>
+    <filter id="outline-${K}" x="-320" y="-160" width="1620" height="1180" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="6" result="wide"/>
+      <feFlood flood-color="${pal.rim}" result="rim"/>
+      <feComposite in="rim" in2="wide" operator="in" result="outline"/>
+      <feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="finl-${K}"><use href="#fin-l-${K}"/></clipPath>
+    <clipPath id="finr-${K}"><use href="#fin-r-${K}"/></clipPath>
+    <clipPath id="bodyclip-${K}"><path d="M 512 94 C 600 94 670 116 722 174 C 774 232 830 338 854 458 C 878 578 876 698 826 792 C 786 850 640 850 512 850 C 384 850 238 850 198 792 C 148 698 146 578 170 458 C 194 338 250 232 302 174 C 354 116 424 94 512 94 Z"/></clipPath>
+  </defs>
+  <g filter="url(#outline-${K})">
+    <g transform="translate(318 452)">
+      <path id="fin-l-${K}" fill="${body}" d="M 85 0 C 75 -24, 19 -54, -94 -82 C -216 -110, -338 -64, -441 4 C -495 42, -488 104, -404 116 C -291 110, -179 68, -94 50 C 19 30, 75 22, 85 0 Z"/>
+      ${ninja ? `<g clip-path="url(#finl-${K})">
+        <path fill="#C43B3B" d="M -256 -196 C -282 -70, -286 60, -282 226 L -414 230 C -410 60, -414 -68, -388 -198 Z"/>
+        <path fill="#9E2F2F" d="M -256 -196 C -282 -70, -286 60, -282 226 L -302 227 C -306 60, -302 -70, -276 -197 Z"/>
+        <path fill="#9E2F2F" d="M -414 230 C -410 60, -414 -68, -388 -198 L -369 -199 C -395 -68, -391 60, -395 231 Z"/>
+        <g fill="none" stroke="#9E2F2F" stroke-width="6" opacity="0.85"><path d="M -315 -190 C -338 -70, -342 60, -338 226"/><path d="M -356 -194 C -378 -70, -382 60, -378 228"/></g>
+        <path fill="#E05A5A" d="M -292 -104 C -320 -116, -352 -114, -378 -98 C -352 -84, -320 -86, -292 -74 Z"/>
+        <g transform="translate(-336 30) rotate(-13)"><rect x="-36" y="-22" width="72" height="44" rx="11" fill="#5F666E"/><rect x="-29" y="-16" width="58" height="29" rx="8" fill="#D4DAE0"/><circle cx="-21" cy="-7" r="3.1" fill="#3A4046"/><circle cx="21" cy="-7" r="3.1" fill="#3A4046"/><circle cx="-21" cy="8" r="3.1" fill="#3A4046"/><circle cx="21" cy="8" r="3.1" fill="#3A4046"/></g>
+      </g>` : ''}
+    </g>
+    <g transform="translate(706 452)">
+      <path id="fin-r-${K}" fill="${body}" d="M -85 0 C -75 -24, -19 -54, 94 -82 C 216 -110, 338 -64, 441 4 C 495 42, 488 104, 404 116 C 291 110, 179 68, 94 50 C -19 30, -75 22, -85 0 Z"/>
+      ${ninja ? `<g clip-path="url(#finr-${K})">
+        <path fill="#C43B3B" d="M 256 -196 C 282 -70, 286 60, 282 226 L 414 230 C 410 60, 414 -68, 388 -198 Z"/>
+        <path fill="#9E2F2F" d="M 256 -196 C 282 -70, 286 60, 282 226 L 302 227 C 306 60, 302 -70, 276 -197 Z"/>
+        <path fill="#9E2F2F" d="M 414 230 C 410 60, 414 -68, 388 -198 L 369 -199 C 395 -68, 391 60, 395 231 Z"/>
+        <g fill="none" stroke="#9E2F2F" stroke-width="6" opacity="0.85"><path d="M 315 -190 C 338 -70, 342 60, 338 226"/><path d="M 356 -194 C 378 -70, 382 60, 378 228"/></g>
+        <path fill="#E05A5A" d="M 292 -104 C 320 -116, 352 -114, 378 -98 C 352 -84, 320 -86, 292 -74 Z"/>
+        <g transform="translate(336 30) rotate(13)"><rect x="-36" y="-22" width="72" height="44" rx="11" fill="#5F666E"/><rect x="-29" y="-16" width="58" height="29" rx="8" fill="#D4DAE0"/><circle cx="-21" cy="-7" r="3.1" fill="#3A4046"/><circle cx="21" cy="-7" r="3.1" fill="#3A4046"/><circle cx="-21" cy="8" r="3.1" fill="#3A4046"/><circle cx="21" cy="8" r="3.1" fill="#3A4046"/></g>
+      </g>` : ''}
+    </g>
+    <path fill="${body}" d="M 512 94 C 600 94 670 116 722 174 C 774 232 830 338 854 458 C 878 578 876 698 826 792 C 786 850 640 850 512 850 C 384 850 238 850 198 792 C 148 698 146 578 170 458 C 194 338 250 232 302 174 C 354 116 424 94 512 94 Z"/>
+  </g>
+
+  ${badge ? `<ellipse cx="512" cy="660" rx="182" ry="128" fill="${bellyFill}"/>` : ''}
+  <g transform="translate(512 ${badge ? 662 : 660}) scale(${scale})">${ICONS[icon](p, s, bg)}</g>
+
+  ${ninja ? `<g>
+    <rect x="188" y="298" width="648" height="154" rx="77" fill="${pal.body}" clip-path="url(#bodyclip-${K})"/>
+    <g clip-path="url(#bodyclip-${K})" fill="none" stroke-linecap="butt">
+      <path stroke="#C43B3B" stroke-width="62" d="M 108 289 C 288 231, 736 231, 916 289"/>
+      <path stroke="#9E2F2F" stroke-width="12" d="M 108 313 C 288 255, 736 255, 916 313"/>
+      <path stroke="#E05A5A" stroke-width="14" d="M 108 266 C 288 208, 736 208, 916 266"/>
+      <g stroke="none"><rect x="455" y="221" width="114" height="50" rx="12" fill="#5F666E"/><rect x="463" y="228" width="98" height="33" rx="8" fill="#D4DAE0"/><circle cx="474" cy="236" r="3.7" fill="#3A4046"/><circle cx="550" cy="236" r="3.7" fill="#3A4046"/><circle cx="474" cy="253" r="3.7" fill="#3A4046"/><circle cx="550" cy="253" r="3.7" fill="#3A4046"/></g>
+    </g>
+    <g transform="translate(240 284)">
+      <g filter="url(#outline-${K})">
+        <path fill="#C43B3B" d="M 6 2 C -16 -16, -58 -44, -108 -48 C -130 -50, -140 -24, -116 -12 C -88 2, -36 12, 10 12 Z"/>
+        <path fill="#C43B3B" d="M 8 10 C -14 30, -56 68, -94 102 C -114 118, -100 140, -74 122 C -42 100, -4 44, 12 16 Z"/>
+        <ellipse cx="8" cy="6" rx="16" ry="13" fill="#C43B3B"/>
+      </g>
+      <path fill="#9E2F2F" d="M 0 2 C -24 -10, -64 -28, -100 -30 C -108 -30, -110 -22, -96 -18 C -70 -12, -28 4, 4 8 Z"/>
+      <path fill="#9E2F2F" d="M 2 12 C -20 30, -56 64, -86 92 C -94 100, -88 108, -74 98 C -46 78, -10 36, 6 16 Z"/>
+      <ellipse cx="6" cy="4" rx="9" ry="7" fill="#E05A5A"/>
+    </g>
+  </g>` : ''}
+
+  <g transform="translate(512 90)" filter="url(#outline-${K})">
+    <path fill="${pal.body}" d="M 1 8 C 16 -10 36 -40 56 -56 C 68 -64 84 -52 76 -36 C 68 -18 30 4 6 14 Z"/>
+    <path fill="${pal.body}" d="M -2 10 C -16 -4 -28 -28 -22 -46 C -18 -56 -2 -54 4 -40 C 10 -22 8 2 0 12 Z"/>
+  </g>
+
+  <g>
+    <ellipse cx="272" cy="424" rx="42" ry="22" fill="${pal.blush}" opacity="0.55"/>
+    <ellipse cx="752" cy="424" rx="42" ry="22" fill="${pal.blush}" opacity="0.55"/>
+    <circle cx="362" cy="371" r="63" fill="#121B22"/>
+    <circle cx="661" cy="371" r="63" fill="#121B22"/>
+    <path d="M 468 392 Q 512 430 556 392" fill="none" stroke="#121B22" stroke-width="10" stroke-linecap="round"/>
+  </g>
+</svg>`;
+}
+
+const KINS = [
+  { coat: 'mint',   icon: 'plant',    name: 'Mint',   what: 'sapling' },
+  { coat: 'mint',   icon: 'shuriken', name: 'Ninja',  what: 'shuriken', ninja: true },
+  { coat: 'coral',  icon: 'flame',    name: 'Coral',  what: 'flame' },
+  { coat: 'sky',    icon: 'wave',     name: 'Sky',    what: 'wave' },
+  { coat: 'peach',  icon: 'sun',      name: 'Peach',  what: 'sun' },
+  { coat: 'lilac',  icon: 'moon',     name: 'Lilac',  what: 'moon and stars' },
+  { coat: 'butter', icon: 'bolt',     name: 'Butter', what: 'bolt' },
+];
+const ALTS = [
+  { coat: 'coral', icon: 'heart',    name: 'Coral', what: 'heart' },
+  { coat: 'coral', icon: 'sparkle',  name: 'Coral', what: 'spark' },
+  { coat: 'coral', icon: 'mountain', name: 'Coral', what: 'summit' },
+];
+
+let mode = 'badge';
+function card(k, i, prefix) {
+  return `<div class="card">${sprout({ coat: k.coat, ninja: !!k.ninja, icon: k.icon, mode, key: prefix + i })}
+    <div class="name"><b>${k.name}</b><span>III · ${k.what}</span></div></div>`;
+}
+function render() {
+  document.getElementById('grid').innerHTML = KINS.map((k, i) => card(k, i, 'k')).join('');
+  document.getElementById('alts').innerHTML = ALTS.map((k, i) => card(k, i, 'a')).join('');
+  document.getElementById('mode-badge').setAttribute('aria-pressed', String(mode === 'badge'));
+  document.getElementById('mode-body').setAttribute('aria-pressed', String(mode === 'body'));
+}
+document.getElementById('mode-badge').onclick = () => { mode = 'badge'; render(); };
+document.getElementById('mode-body').onclick = () => { mode = 'body'; render(); };
+render();
+</script>

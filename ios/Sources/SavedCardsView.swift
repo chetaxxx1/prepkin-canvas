@@ -33,10 +33,11 @@ struct SavedCardsView: View {
                     .padding(.horizontal, 20).padding(.top, 24)
                 }
             }
-            .padding(.bottom, 120)
+            .padding(.bottom, 60)
         }
         .background(Theme.paper)
         .toolbar(.hidden, for: .navigationBar)
+        .hidesTabBar()
     }
 
     private var header: some View {
@@ -106,6 +107,8 @@ struct SavedCardsView: View {
         switch id {
         case "finance": return (Theme.coinSoft, Theme.coinDark)
         case "study": return (Theme.mintSoft, Theme.mintDark)
+        case "psychology": return (Theme.hex(0xE6F0FB), Theme.hex(0x3D6FA8))
+        case "people": return (Theme.coralSoft, Theme.coralDeep)
         default: return (Theme.hex(0xF5EFE3), Theme.muted)
         }
     }
@@ -143,7 +146,8 @@ struct SavedCardsView: View {
 
             HStack {
                 SproutImage(speciesID: state.activeChibiID,
-                            level: state.activeChibi.level, size: 104)
+                            level: state.activeChibi.level,
+                            skin: state.activeChibi.skinID, size: 104)
                 Spacer()
             }
             .padding(.leading, 2).padding(.top, 6)

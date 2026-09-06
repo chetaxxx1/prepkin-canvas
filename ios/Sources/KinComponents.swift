@@ -100,6 +100,8 @@ struct KinCostBadge: View {
             Text("\(price)")
                 .font(Theme.font(compact ? 11 : 12.5, .black))
                 .foregroundStyle(Theme.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
         }
         .padding(.horizontal, compact ? 7 : 10)
         .padding(.vertical, compact ? 2 : 3)
@@ -124,7 +126,7 @@ struct WalletChip: View {
         HStack(spacing: 6) {
             CoinDisc(size: compact ? 16 : 18)
             Text("\(coins)")
-                .font(Theme.font(compact ? 14 : 15, .black))
+                .font(Theme.fixedFont(compact ? 14 : 15, .black))
                 .foregroundStyle(onDark ? .white : Theme.ink)
                 .contentTransition(.numericText())
                 .animation(.snappy, value: coins)
@@ -163,6 +165,8 @@ struct GlassPill: View {
 struct KinArtView: View {
     let speciesID: String
     var level: Int = 1
+    /// Which Sprout look the kin is wearing: `classic` or `ninja`.
+    var skin: String = "classic"
     var animation: ChibiAnimation = .idle
     var expression: SlimeExpression? = nil
     var size: CGFloat
@@ -170,7 +174,7 @@ struct KinArtView: View {
     var body: some View {
         // Sprout since 2026-09-02. `expression` is kept on the signature so call
         // sites did not have to change; the stills carry one face.
-        SproutImage(speciesID: speciesID, level: level, animation: animation, size: size)
+        SproutImage(speciesID: speciesID, level: level, skin: skin, animation: animation, size: size)
     }
 }
 
@@ -187,7 +191,8 @@ struct KinCard: View {
 
     var body: some View {
         VStack(spacing: 7) {
-            KinArtView(speciesID: species.id, level: owned?.level ?? 1, size: artSize)
+            KinArtView(speciesID: species.id, level: owned?.level ?? 1,
+                       skin: owned?.skinID ?? "classic", size: artSize)
                 .frame(height: artSize * 0.92)
 
             Text(owned?.displayName ?? species.name)
@@ -231,7 +236,8 @@ struct KinRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            KinArtView(speciesID: species.id, level: owned?.level ?? 1, size: 64)
+            KinArtView(speciesID: species.id, level: owned?.level ?? 1,
+                       skin: owned?.skinID ?? "classic", size: 64)
                 .frame(width: 64, height: 57)
 
             VStack(alignment: .leading, spacing: 2) {

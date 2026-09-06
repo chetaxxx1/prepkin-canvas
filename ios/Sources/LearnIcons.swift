@@ -18,6 +18,8 @@ struct TrackIcon: View {
             switch trackID {
             case "finance": finance
             case "philosophy": philosophy
+            case "psychology": psychology
+            case "people": people
             default: study
             }
         }
@@ -45,6 +47,37 @@ struct TrackIcon: View {
             oval(20, 31, 13, 6, Theme.card)
             oval(20, 21, 9.5, 5.5, Theme.card)
             circle(20, 11, 5.5, Theme.card)
+        }
+    }
+
+    /// A bulb with a filament: the moment something clicks, in the sky family.
+    private var psychology: some View {
+        ZStack(alignment: .topLeading) {
+            rounded(14, 24, 12, 10, 3, Theme.card)
+            circle(20, 15, 11, Theme.hex(0x9BC8F2))
+            line(2.2) { p in
+                p.go(20, 24); p.to(20, 17)
+                p.go(16, 37); p.to(24, 37)
+            }
+            circle(20, 14.5, 2.6, Theme.card)
+        }
+    }
+
+    /// Two speech bubbles, one answering the other, in the coral family.
+    private var people: some View {
+        ZStack(alignment: .topLeading) {
+            fill(Theme.card) { p in
+                p.go(9, 7); p.to(25, 7); p.corner(28, 10, 28, 7); p.to(28, 18); p.corner(25, 21, 28, 21)
+                p.to(15, 21); p.to(10, 26); p.to(10, 21); p.corner(6, 18, 6, 21); p.to(6, 10)
+                p.corner(9, 7, 6, 7); p.closeSubpath()
+            }
+            line(2.2) { p in
+                p.go(9, 7); p.to(25, 7); p.corner(28, 10, 28, 7); p.to(28, 18); p.corner(25, 21, 28, 21)
+                p.to(15, 21); p.to(10, 26); p.to(10, 21); p.corner(6, 18, 6, 21); p.to(6, 10)
+                p.corner(9, 7, 6, 7); p.closeSubpath()
+            }
+            rounded(16, 22, 19, 13, 5, Theme.coral)
+            line(2.2) { p in p.go(31, 35); p.to(31, 38); p.to(27, 35) }
         }
     }
 
@@ -161,6 +194,8 @@ enum TrackTint {
         switch id {
         case "finance": return Theme.coinSoft
         case "study": return Theme.mintSoft
+        case "psychology": return Theme.hex(0xE6F0FB)
+        case "people": return Theme.coralSoft
         default: return Theme.hex(0xEDE7FB)
         }
     }
@@ -170,6 +205,8 @@ enum TrackTint {
         switch id {
         case "finance": return Theme.coin
         case "study": return Theme.mint
+        case "psychology": return Theme.hex(0x9BC8F2)
+        case "people": return Theme.coral
         default: return Theme.hex(0xC3B2F0)
         }
     }
@@ -179,6 +216,8 @@ enum TrackTint {
         switch id {
         case "finance": return Theme.coinDark
         case "study": return Theme.mintDark
+        case "psychology": return Theme.hex(0x3D6FA8)
+        case "people": return Theme.coralDeep
         default: return Theme.hex(0x6B5CA5)
         }
     }

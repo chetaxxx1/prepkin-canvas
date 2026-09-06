@@ -1,0 +1,59 @@
+{
+  "path": "/api/v1/courses?per_page=1",
+  "status": 200,
+  "link": "<https://localhost:8443/api/v1/courses?page=1&per_page=1>; rel=\"current\",<https://localhost:8443/api/v1/courses?page=2&per_page=1>; rel=\"next\",<https://localhost:8443/api/v1/courses?page=1&per_page=1>; rel=\"first\",<https://localhost:8443/api/v1/courses?page=4&per_page=1>; rel=\"last\"",
+  "body": [
+    {
+      "id": 4,
+      "name": "AP Physics C: Mechanics",
+      "course_code": "PHYS-C-1",
+      "account_id": 1,
+      "created_at": "2026-09-05T11:03:56Z",
+      "start_at": null,
+      "default_view": "modules",
+      "enrollment_term_id": 1,
+      "is_public": false,
+      "grading_standard_id": null,
+      "root_account_id": 1,
+      "uuid": "ygfDvOYtwkrwJeWu5HhEycsTCTOmuyIHituUdpDH",
+      "license": null,
+      "grade_passback_setting": null,
+      "end_at": null,
+      "public_syllabus": false,
+      "public_syllabus_to_auth": false,
+      "storage_quota_mb": 500,
+      "is_public_to_auth_users": false,
+      "homeroom_course": false,
+      "course_color": null,
+      "friendly_name": null,
+      "apply_assignment_group_weights": false,
+      "calendar": {
+        "ics": "https://localhost:8443/feeds/calendars/course_ygfDvOYtwkrwJeWu5HhEycsTCTOmuyIHituUdpDH.ics"
+      },
+      "time_zone": "America/Denver",
+      "blueprint": false,
+      "template": false,
+      "enrollments": [
+        {
+          "type": "student",
+          "role": "StudentEnrollment",
+          "role_id": 3,
+          "user_id": 3,
+          "enrollment_state": "active",
+          "limit_privileges_to_course_section": false
+        },
+        {
+          "type": "student",
+          "role": "StudentEnrollment",
+          "role_id": 3,
+          "user_id": 3,
+          "enrollment_state": "active",
+          "limit_privileges_to_course_section": false
+        }
+      ],
+      "hide_final_grades": false,
+      "workflow_state": "available",
+      "restrict_enrollments_to_course_dates": false
+    }
+  ]
+}

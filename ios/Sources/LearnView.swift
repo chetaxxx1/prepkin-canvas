@@ -66,6 +66,11 @@ struct LearnView: View {
                         trackShelf
                     }
 
+                    VStack(alignment: .leading, spacing: 12) {
+                        playTitle
+                        playTiles
+                    }
+
                     savedRow
                 }
                 .padding(.top, 4)
@@ -91,6 +96,8 @@ struct LearnView: View {
                 switch route {
                 case .track(let id): TrackMapView(trackID: id, onRead: open)
                 case .saved: SavedCardsView(onRead: open)
+                case .dailyWord: WordleView()
+                case .numberLine: NumberLineView()
                 }
             }
         }
@@ -193,6 +200,9 @@ struct LearnView: View {
             .padding(.horizontal, 20)
         }
         .buttonStyle(PressStyle())
+        // Without this VoiceOver reads the cover's figure captions ("osmosis:
+        // movement of water, you can highlight this…") and never the lesson.
+        .accessibilityLabel("Resume \(lesson.title), card \(card + 1) of \(lesson.cards.count)")
     }
 
     // MARK: - Picks
@@ -312,6 +322,99 @@ struct LearnView: View {
         .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Theme.card))
     }
 
+    // MARK: - Play
+
+    /// Daily Word and Number Line, moved here from the Games tab on 2026-09-06 so
+    /// the tab bar could drop to five (design/hicks-law-plan.md). Two tiles, no
+    /// hero: the one big thing on this screen stays the lesson.
+    private var playTitle: some View {
+        HStack(alignment: .top, spacing: 10) {
+            PlayIcon(size: 28).padding(.top, 1)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Play")
+                    .font(Theme.font(19, .black))
+                    .foregroundStyle(Theme.ink)
+                Text("A word a day, and ten quick numbers")
+                    .font(Theme.font(13, .bold))
+                    .foregroundStyle(Theme.muted)
+            }
+        }
+        .padding(.horizontal, 24)
+    }
+
+    private var playTiles: some View {
+        HStack(spacing: 12) {
+            NavigationLink(value: LearnRoute.dailyWord) {
+                playTile(name: "Daily Word", line: dailyWordLine,
+                         fill: Theme.hex(0xFFC94D), ink: Theme.hex(0x3A2A05)) {
+                    Text("A").font(Theme.font(16, .black)).foregroundStyle(Theme.hex(0x7A5C1E))
+                }
+            }
+            .buttonStyle(PressStyle(scale: 0.97))
+            .accessibilityLabel("Daily Word, \(dailyWordLine)")
+
+            NavigationLink(value: LearnRoute.numberLine) {
+                playTile(name: "Number Line", line: numberLineLine,
+                         fill: Theme.hex(0x9B7BEA), ink: Theme.hex(0x2A1A57)) {
+                    Text("7").font(Theme.font(16, .black)).foregroundStyle(Theme.hex(0x6B4FBF))
+                }
+            }
+            .buttonStyle(PressStyle(scale: 0.97))
+            .accessibilityLabel("Number Line, \(numberLineLine)")
+        }
+        .padding(.horizontal, 20)
+    }
+
+    /// The Games rail card, at half the screen width.
+    private func playTile<G: View>(name: String, line: String, fill: Color, ink: Color,
+                                   @ViewBuilder glyph: () -> G) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            RoundedRectangle(cornerRadius: 11, style: .continuous)
+                .fill(Theme.card)
+                .frame(width: 34, height: 34)
+                .overlay { glyph() }
+            Spacer(minLength: 10)
+            Text(name)
+                .font(Theme.font(17, .black))
+                .tracking(-0.3)
+                .foregroundStyle(ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+            Text(line)
+                .font(Theme.font(10.5, .black))
+                .foregroundStyle(ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .padding(.top, 5)
+        }
+        .padding(13)
+        .frame(maxWidth: .infinity, minHeight: 118, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous).fill(fill)
+                .overlay(alignment: .topTrailing) {
+                    Circle().fill(.white.opacity(0.18)).frame(width: 70, height: 70)
+                        .offset(x: 16, y: -16)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        )
+    }
+
+    private var dailyWordLine: String {
+        let guesses = state.wordleGuesses(for: state.game.effectiveDay)
+        if state.wordleClaimedToday {
+            return guesses.count == 1 ? "Solved, first try" : "Solved in \(guesses.count)"
+        }
+        if guesses.count >= 6 { return "See the answer" }
+        return "Word \(WordleGame.puzzleNumber()) · +30"
+    }
+
+    private var numberLineLine: String {
+        if state.numberLineClaimedToday {
+            return state.game.numberLineBest.map { "Best \($0)% · play again" } ?? "Play again"
+        }
+        return "Ten quick ones · +25"
+    }
+
     private var savedRow: some View {
         NavigationLink(value: LearnRoute.saved) {
             HStack(spacing: 13) {
@@ -382,6 +485,8 @@ struct LearnView: View {
 enum LearnRoute: Hashable {
     case track(String)
     case saved
+    case dailyWord
+    case numberLine
 }
 
 // MARK: - Small pieces

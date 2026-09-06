@@ -35,12 +35,18 @@ struct ChibiSpecies: Identifiable, Codable, Equatable {
 extension ChibiSpecies {
     /// The whole ladder. It never gets longer and nothing on it ever leaves.
     static let catalog: [ChibiSpecies] = [
-        ChibiSpecies(id: "slime",   name: "Slime",   price: 0,    tier: 1),
+        ChibiSpecies(id: "slime",   name: "Moss",    price: 0,    tier: 1),
         ChibiSpecies(id: "ember",   name: "Ember",   price: 300,  tier: 2),
         ChibiSpecies(id: "droplet", name: "Droplet", price: 400,  tier: 3),
         ChibiSpecies(id: "sprout",  name: "Sprout",  price: 500,  tier: 3),
         ChibiSpecies(id: "wisp",    name: "Wisp",    price: 800,  tier: 4),
         ChibiSpecies(id: "comet",   name: "Comet",   price: 1200, tier: 5),
+        // Lane 3, "edge" (2026-09-04): two new Sprout-repo types on the same pear rig.
+        // Names are placeholders until George picks. `axolotl-coral` is the same
+        // rig in the coral coat.
+        ChibiSpecies(id: "orca",          name: "Orca",  price: 900,  tier: 4),
+        ChibiSpecies(id: "axolotl",       name: "Axel",  price: 700,  tier: 4),
+        ChibiSpecies(id: "axolotl-coral", name: "Rosa",  price: 700,  tier: 4),
     ]
 
     static func find(_ id: String) -> ChibiSpecies {
@@ -61,14 +67,18 @@ struct OwnedChibi: Codable, Equatable {
     /// from here, so a kin adopted this morning does not claim last month's work.
     /// `nil` on older saves, which read as "since the beginning".
     var statsAtAdoption: LifetimeStats?
+    /// The Sprout look this kin wears — `classic` or `ninja`. Per kin, not per
+    /// account, so one kin in the suit does not put every kin in it.
+    var skinID: String = "classic"
 
     init(speciesID: String, level: Int, name: String? = nil, adoptedAt: Date? = nil,
-         statsAtAdoption: LifetimeStats? = nil) {
+         statsAtAdoption: LifetimeStats? = nil, skinID: String = "classic") {
         self.speciesID = speciesID
         self.level = level
         self.name = name
         self.adoptedAt = adoptedAt
         self.statsAtAdoption = statsAtAdoption
+        self.skinID = skinID
     }
 
     var species: ChibiSpecies { ChibiSpecies.find(speciesID) }
@@ -82,7 +92,7 @@ struct OwnedChibi: Codable, Equatable {
 
     // MARK: Codable
 
-    private enum CodingKeys: String, CodingKey { case speciesID, level, name, adoptedAt }
+    private enum CodingKeys: String, CodingKey { case speciesID, level, name, adoptedAt, skinID }
 
     /// Tolerant, for the same reason `GameState`'s decoder is: a save written before
     /// `name` and `adoptedAt` existed must still load. The synthesized decoder would
@@ -94,6 +104,7 @@ struct OwnedChibi: Codable, Equatable {
         level = try c.decodeIfPresent(Int.self, forKey: .level) ?? 1
         name = try c.decodeIfPresent(String.self, forKey: .name)
         adoptedAt = try c.decodeIfPresent(Date.self, forKey: .adoptedAt)
+        skinID = try c.decodeIfPresent(String.self, forKey: .skinID) ?? "classic"
     }
 }
 
@@ -142,6 +153,10 @@ enum TaskCategory: String, Codable, CaseIterable {
     case reading, writing, problemSet, labs, study, lifeCare
     /// Life care, by object. `lifeCare` (the water glass) is the fallback.
     case walk, sleep, meal
+    /// Five life presets used to collapse onto two glyphs — every unmapped one fell
+    /// through to the water glass, so "Text someone you like" and "Tidy your desk"
+    /// both poured a drink. One object each, and the fallback means what it says.
+    case stretch, outdoors, connect, tidy
 
     /// Checked in this order — "Ch. 5 Problem Set" has to land on the ruler, not the
     /// book, and "20 min SAT practice" on flashcards, not the ruler.
@@ -159,10 +174,17 @@ enum TaskCategory: String, Codable, CaseIterable {
 
     /// Life presets get their own object each; "Drink a glass of water" keeps the
     /// glass and anything unrecognised falls back to it.
+    /// First match wins, so the narrow words come before the broad ones: "stretch"
+    /// and "outside" used to sit in `.walk` and swallowed two presets that are not
+    /// walks.
     private static let lifeKeywords: [(TaskCategory, [String])] = [
-        (.walk,  ["walk", "run", "steps", "stretch", "gym", "workout", "outside"]),
-        (.sleep, ["bed", "sleep", "phone down", "lights", "wind down"]),
-        (.meal,  ["breakfast", "lunch", "dinner", "eat", "meal", "snack", "fruit"]),
+        (.walk,     ["walk", "run", "steps", "gym", "workout"]),
+        (.stretch,  ["stretch", "yoga", "mobility", "foam roll"]),
+        (.outdoors, ["outside", "outdoors", "fresh air", "sunlight", "sunshine"]),
+        (.sleep,    ["bed", "sleep", "phone down", "lights", "wind down"]),
+        (.connect,  ["text", "call", "message", "someone", "friend", "family"]),
+        (.tidy,     ["tidy", "desk", "clean", "clear", "make your bed", "laundry"]),
+        (.meal,     ["breakfast", "lunch", "dinner", "eat", "meal", "snack", "fruit"]),
     ]
 
     static func of(_ task: DailyTask) -> TaskCategory {
@@ -194,4 +216,35 @@ struct SavedCard: Codable, Equatable, Identifiable {
     let savedAt: Date
 
     var id: String { "\(lessonID)#\(index)" }
+}
+
+// MARK: - Card reports
+
+/// Why a student flagged a card. Raw values are written to the save file, so they
+/// are stable strings rather than the display copy.
+enum CardReportReason: String, Codable, CaseIterable, Identifiable {
+    case typo
+    case wrong
+    case other
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .typo: return "Typo"
+        case .wrong: return "Wrong or misleading"
+        case .other: return "Other"
+        }
+    }
+}
+
+/// A card the student flagged as broken. Kept on the device — there is nowhere to
+/// send it yet — and points at the catalogue the same way `SavedCard` does.
+struct CardReport: Codable, Equatable, Identifiable {
+    let lessonID: String
+    let cardIndex: Int
+    let reason: CardReportReason
+    let date: Date
+
+    var id: String { "\(lessonID)#\(cardIndex)@\(date.timeIntervalSince1970)" }
 }

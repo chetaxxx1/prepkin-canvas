@@ -8,16 +8,25 @@ import SwiftUI
 struct DayEditorView: View {
     @EnvironmentObject var state: AppState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var newTitle = ""
     @State private var copied = false
     @State private var newKind: TaskKind = .study
     @State private var newRecurrence: Recurrence = .daily
     @FocusState private var typing: Bool
+    @State private var isEditingMine = false
+    @State private var confirmingRemoveID: String?
+    /// Which preset lists are unfolded past their first three.
+    @State private var expanded: Set<TaskKind> = []
+
+    /// Read from iOS's own answer, never from the switch, so a fresh install —
+    /// which has never been asked — stays quiet.
+    @State private var remindersBlocked = false
 
     /// Sheet-only tokens. The rest of the app's cream, ink, muted, coral and mint
     /// are already `Theme`'s; these six are this handoff's own and are matched 1:1.
-    private enum D {
+    enum D {
         static let placeholder = Theme.hex(0xB6A79E)
         static let field = Theme.hex(0xF4EDE1)     // segmented-control track
         static let trackOff = Theme.hex(0xE6DDCE)  // toggle, off
@@ -72,13 +81,13 @@ struct DayEditorView: View {
                             .rotationEffect(.degrees(45))
                     }
                     if !mine.isEmpty {
-                        eyebrow("YOUR TASKS", top: 0)
-                        rows(mine)
+                        mineEyebrow
+                        rows(mine, editable: isEditingMine)
                     }
                     eyebrow("STUDY IDEAS", top: mine.isEmpty ? 0 : 24)
-                    rows(presets(.study))
+                    presetRows(.study)
                     eyebrow("LIFE CARE", top: 24)
-                    rows(presets(.life))
+                    presetRows(.life)
                     sectionHeader("Reminders", tint: D.mintTint) {
                         Image(systemName: "bell.fill")
                             .font(.system(size: 12, weight: .bold))
@@ -97,7 +106,19 @@ struct DayEditorView: View {
         .background(Theme.paper)
         .presentationDragIndicator(.hidden)
         .presentationBackground(Theme.paper)
-        .task { state.ensurePairingCode() }
+        .task {
+            state.ensurePairingCode()
+            remindersBlocked = await NotificationScheduler.shared.isDenied()
+        }
+        .onChange(of: mine.isEmpty) { _, empty in
+            if empty { isEditingMine = false; confirmingRemoveID = nil }
+        }
+        // Coming back from Settings is the only way this can change while the
+        // sheet is up, so the note clears itself instead of going stale.
+        .onChange(of: scenePhase) { _, new in
+            guard new == .active else { return }
+            Task { remindersBlocked = await NotificationScheduler.shared.isDenied() }
+        }
     }
 
     // MARK: - Chrome
@@ -160,6 +181,41 @@ struct DayEditorView: View {
             .padding(.bottom, 10)
     }
 
+    /// The one eyebrow that carries a button. STUDY IDEAS and LIFE CARE never do.
+    /// EDIT swaps each custom row's toggle for a minus, so no row grows a button
+    /// it only needs once.
+    private var mineEyebrow: some View {
+        HStack(spacing: 0) {
+            Text("YOUR TASKS")
+                .font(Theme.font(12, .bold))
+                .kerning(1.5)
+                .foregroundStyle(Theme.muted)
+                .padding(.leading, 4)
+            Spacer(minLength: 0)
+            Button {
+                withAnimation(.easeInOut(duration: 0.18)) {
+                    isEditingMine.toggle()
+                    confirmingRemoveID = nil
+                }
+            } label: {
+                Text(isEditingMine ? "DONE" : "EDIT")
+                    .font(Theme.font(12, .bold))
+                    .kerning(1.5)
+                    .foregroundStyle(Theme.coral)
+                    // A 44pt target, taken back out of the layout so the eyebrow
+                    // keeps its own height.
+                    .padding(.horizontal, 8)
+                    .frame(height: 44)
+                    .contentShape(Rectangle())
+                    .padding(.horizontal, -8)
+                    .padding(.vertical, -14)
+            }
+            .buttonStyle(.plain)
+            .padding(.trailing, 4)
+        }
+        .padding(.bottom, 10)
+    }
+
     // MARK: - Kin companion
 
     private var kinCard: some View {
@@ -170,6 +226,7 @@ struct DayEditorView: View {
                 .overlay(
                     SproutImage(speciesID: state.activeChibiID,
                                 level: state.activeChibi.level,
+                                skin: state.activeChibi.skinID,
                                 size: 84)
                         .padding(.bottom, 6)
                 )
@@ -180,11 +237,16 @@ struct DayEditorView: View {
                         .kerning(-0.2)
                         .foregroundStyle(Theme.ink)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                    Spacer(minLength: 0)
+                        // Same three-child spacing trap as FirstRunView's copy of
+                        // this card: the Spacer cost a second 10pt gap and pushed the
+                        // label just under the scale floor, so it truncated.
+                        .minimumScaleFactor(0.55)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     coinChip("\(coinsToday) today", size: 14).fixedSize()
                 }
-                Text("Pick a few things. Kin keeps you company.")
+                Text(picked.isEmpty
+                     ? "A quiet day is fine. \(state.activeChibi.displayName) is still here."
+                     : "Pick a few things. \(state.activeChibi.displayName) keeps you company.")
                     .font(Theme.font(15, .semibold))
                     .foregroundStyle(Theme.muted)
                     .lineSpacing(2)
@@ -237,13 +299,17 @@ struct DayEditorView: View {
                             Text(String(ch))
                                 .font(.system(size: 20, weight: .bold, design: .monospaced))
                                 .foregroundStyle(Theme.ink)
-                                .frame(width: 27, height: 44)
+                                // Ranged, not rigid: eight fixed 27pt tiles plus the
+                                // dash overflow a 402pt phone by a few points, and an
+                                // over-wide row makes the ScrollView centre the whole
+                                // column and draw the page a few points off-centre.
+                                .frame(minWidth: 20, maxWidth: 27, minHeight: 44, maxHeight: 44)
                                 .background(RoundedRectangle(cornerRadius: 11, style: .continuous)
                                     .fill(Theme.paper))
                         }
                     }
                 }
-                Spacer(minLength: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 Button {
                     UIPasteboard.general.string = state.pairingCode
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -261,7 +327,7 @@ struct DayEditorView: View {
             hairline.padding(.vertical, 18)
             Text(state.isBridgeConfigured
                  ? "Type this into the Prepkin extension in Chrome."
-                 : "This build has no bridge set up, so Canvas tasks are sample data.")
+                 : "This build is not connected to Canvas, so the tasks here are sample data.")
                 .font(Theme.font(15, .semibold))
                 .foregroundStyle(Theme.muted)
                 .lineSpacing(2)
@@ -274,11 +340,11 @@ struct DayEditorView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 11) {
                 Circle()
-                    .fill(Theme.mint)
+                    .fill(linkDot)
                     .frame(width: 11, height: 11)
-                    .overlay(Circle().strokeBorder(Theme.mint.opacity(0.16), lineWidth: 4)
+                    .overlay(Circle().strokeBorder(linkDot.opacity(0.16), lineWidth: 4)
                         .padding(-4))
-                Text("Connected")
+                Text(linkTitle)
                     .font(Theme.font(17, .bold))
                     .foregroundStyle(Theme.ink)
                 Text(syncLine)
@@ -294,11 +360,15 @@ struct DayEditorView: View {
                     Text("Check now")
                         .font(Theme.font(17, .bold))
                         .foregroundStyle(Theme.ink)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 Button { state.unpair() } label: {
                     Text("Disconnect")
                         .font(Theme.font(17, .bold))
                         .foregroundStyle(Theme.muted)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 Spacer(minLength: 0)
             }
@@ -314,10 +384,29 @@ struct DayEditorView: View {
         .background(cardBackground(26))
     }
 
+    /// Dot and title follow `canvasLink`, never the paired flag. No amber here:
+    /// PRODUCT.md keeps amber for "still counts", and a missed check loses nothing.
+    private var linkDot: Color {
+        switch state.canvasLink {
+        case .connected, .notSetUp: return Theme.mint   // notSetUp = not checked yet this launch
+        case .waitingForLaptop, .offline: return Theme.dim
+        }
+    }
+    private var linkTitle: String {
+        switch state.canvasLink {
+        case .connected, .notSetUp: return "Connected"
+        case .waitingForLaptop: return "Waiting for your laptop"
+        case .offline: return "Showing your last list"
+        }
+    }
     private var syncLine: String {
-        if let status = state.canvasStatus { return "· \(status)" }
-        guard let at = state.lastCanvasSyncAt else { return "" }
-        return "· list received \(at.formatted(.relative(presentation: .named)))"
+        switch state.canvasLink {
+        case .waitingForLaptop: return "· nothing received yet"
+        case .offline: return "· could not check just now"
+        case .connected, .notSetUp:
+            guard let at = state.lastCanvasSyncAt else { return "" }
+            return "· list received \(at.formatted(.relative(presentation: .named)))"
+        }
     }
 
     // MARK: - Add your own
@@ -331,6 +420,7 @@ struct DayEditorView: View {
                     .overlay(
                         SproutImage(speciesID: state.activeChibiID,
                                     level: state.activeChibi.level,
+                                    skin: state.activeChibi.skinID,
                                     size: 34)
                             .padding(.bottom, 4)
                     )
@@ -388,6 +478,12 @@ struct DayEditorView: View {
             }
             .buttonStyle(.plain)
             .disabled(!canAdd)
+            if !canAdd {
+                Text("Type a task first.")
+                    .font(Theme.font(13, .heavy))
+                    .foregroundStyle(Theme.muted)
+                    .frame(maxWidth: .infinity)
+            }
         }
         .padding(20)
         .background(cardBackground(26))
@@ -423,21 +519,70 @@ struct DayEditorView: View {
 
     // MARK: - Task rows
 
-    private func rows(_ templates: [TaskTemplate]) -> some View {
+    private func rows(_ templates: [TaskTemplate], editable: Bool = false) -> some View {
         VStack(spacing: 10) {
             ForEach(templates) { t in
-                row(t)
+                row(t, editable: editable && !t.isPreset)
             }
         }
     }
 
-    private func row(_ t: TaskTemplate) -> some View {
-        let tint = rowTint(t)
+    /// Three presets per kind, plus any past the third that are already on, then
+    /// one quiet row for the rest. Twelve equal toggles at once was the densest
+    /// choice in the app (design/hicks-law-plan.md).
+    private func presetRows(_ kind: TaskKind) -> some View {
+        let all = presets(kind)
+        let open = expanded.contains(kind)
+        let shown = open ? all : Array(all.prefix(3)) + all.dropFirst(3).filter(\.isActive)
+        let hidden = all.count - shown.count
+        return VStack(spacing: 10) {
+            rows(shown)
+            if hidden > 0 || open {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.18)) {
+                        if open { expanded.remove(kind) } else { expanded.insert(kind) }
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(open ? "Show fewer" : "\(hidden) more")
+                            .font(Theme.font(14, .heavy))
+                        Image(systemName: open ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 11, weight: .black))
+                    }
+                    .foregroundStyle(Theme.muted)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(open ? "Show fewer presets" : "Show \(hidden) more presets")
+            }
+        }
+    }
+
+    private func row(_ t: TaskTemplate, editable: Bool = false) -> some View {
+        let tint = Self.rowTint(t)
+        let confirming = editable && confirmingRemoveID == t.id
         return HStack(spacing: 14) {
+            if editable {
+                Circle()
+                    .fill(D.coralTint)
+                    .frame(width: 32, height: 32)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 2, style: .continuous)
+                            .fill(Theme.coral)
+                            .frame(width: 12, height: 3)
+                    )
+                    // Trim the spacing so the row does not get wider in edit mode.
+                    .padding(.trailing, -4)
+                    .contentShape(Circle())
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.18)) { confirmingRemoveID = t.id }
+                    }
+            }
             RoundedRectangle(cornerRadius: 17, style: .continuous)
                 .fill(tint.bg)
                 .frame(width: 50, height: 50)
-                .overlay(CategoryIcon(category: category(t), size: 30))
+                .overlay(CategoryIcon(category: Self.category(t), size: 30))
             VStack(alignment: .leading, spacing: 4) {
                 Text(t.title)
                     .font(Theme.font(17, .bold))
@@ -445,7 +590,9 @@ struct DayEditorView: View {
                     .foregroundStyle(Theme.ink)
                     .lineLimit(2)
                 HStack(spacing: 8) {
-                    coinChip("+\(t.kind.reward) coins", size: 12.5)
+                    // Fixed so the chips never wrap inside themselves when Remove
+                    // takes the trailing edge.
+                    coinChip("+\(t.kind.reward) coins", size: 12.5).fixedSize()
                     HStack(spacing: 4) {
                         Image(systemName: t.recurrence == .daily
                               ? "arrow.triangle.2.circlepath" : "1.circle")
@@ -454,10 +601,32 @@ struct DayEditorView: View {
                             .font(Theme.font(12.5, .bold))
                     }
                     .foregroundStyle(D.placeholder)
+                    .fixedSize()
                 }
             }
-            Spacer(minLength: 0)
-            pillToggle(on: t.isActive)
+            // The text column takes every point the tile, minus and trailing
+            // control leave, so a title only wraps when it truly cannot fit.
+            .frame(maxWidth: .infinity, alignment: .leading)
+            if confirming {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.18)) {
+                        state.deleteTask(t.id)
+                        confirmingRemoveID = nil
+                    }
+                } label: {
+                    Text("Remove")
+                        .font(Theme.font(14, .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .frame(height: 32)
+                        .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Theme.coral))
+                        .shadow(color: Theme.coral.opacity(0.32), radius: 6, y: 4)
+                }
+                .buttonStyle(.plain)
+            } else if !editable {
+                pillToggle(on: t.isActive)
+            }
         }
         .padding(.vertical, 13)
         .padding(.horizontal, 16)
@@ -472,8 +641,15 @@ struct DayEditorView: View {
                 )
         )
         .contentShape(Rectangle())
-        .onTapGesture { state.setTemplate(t.id, active: !t.isActive) }
+        .onTapGesture {
+            if editable {
+                withAnimation(.easeInOut(duration: 0.18)) { confirmingRemoveID = nil }
+            } else {
+                state.setTemplate(t.id, active: !t.isActive)
+            }
+        }
         .animation(.easeInOut(duration: 0.18), value: t.isActive)
+        .animation(.easeInOut(duration: 0.18), value: editable)
         .contextMenu {
             if !t.isPreset {
                 Button("Delete", role: .destructive) { state.deleteTask(t.id) }
@@ -494,19 +670,23 @@ struct DayEditorView: View {
             }
     }
 
-    private func category(_ t: TaskTemplate) -> TaskCategory {
+    static func category(_ t: TaskTemplate) -> TaskCategory {
         TaskCategory.of(DailyTask(id: t.id, title: t.title, kind: t.kind))
     }
 
-    /// One tile tint per object, from the handoff's preset list.
-    private func rowTint(_ t: TaskTemplate) -> (bg: Color, fg: Color) {
+    /// One tile tint per object, from the handoff's preset list. Shared with the
+    /// first run's pick screen, which draws the same rows.
+    static func rowTint(_ t: TaskTemplate) -> (bg: Color, fg: Color) {
         switch category(t) {
         case .reading:            return (Theme.hex(0xECEFFC), Theme.hex(0x6B79D8))
         case .writing, .problemSet, .labs, .study:
             return (Theme.hex(0xFDF0E4), Theme.hex(0xE08A3C))
         case .lifeCare:           return (Theme.hex(0xE6F3FA), Theme.hex(0x4A9CC4))
-        case .walk:               return (D.mintTint, D.mintIcon)
+        case .walk, .stretch:     return (D.mintTint, D.mintIcon)
+        case .outdoors:           return (Theme.hex(0xE9F5E2), Theme.hex(0x6BA04A))
         case .sleep:              return (Theme.hex(0xF2ECFB), Theme.hex(0x8A6FC4))
+        case .connect:            return (Theme.hex(0xFDF0E4), Theme.hex(0xE08A3C))
+        case .tidy:               return (Theme.hex(0xEFEFEA), Theme.hex(0x8A8577))
         case .meal:               return (D.coralTint, Theme.hex(0xE8574A))
         }
     }
@@ -521,7 +701,16 @@ struct DayEditorView: View {
         VStack(spacing: 14) {
             settingRow("Reminders", isOn: Binding(
                 get: { state.settings.remindersEnabled },
-                set: { on in Task { await state.setRemindersEnabled(on) } }))
+                set: { on in
+                    Task { @MainActor in
+                        await state.setRemindersEnabled(on)
+                        remindersBlocked = await NotificationScheduler.shared.isDenied()
+                    }
+                }))
+
+            if remindersBlocked && !state.settings.remindersEnabled {
+                blockedNote
+            }
 
             if state.settings.remindersEnabled {
                 hairline
@@ -554,6 +743,33 @@ struct DayEditorView: View {
         }
         .padding(20)
         .background(cardBackground(26))
+        .animation(.easeInOut(duration: 0.18), value: remindersBlocked)
+    }
+
+    /// Only after iOS has been asked and told no. Says what is true and leaves the
+    /// door open — the row stays tappable, so allowing it in Settings and coming
+    /// back just works.
+    private var blockedNote: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Notifications are off for Prepkin in iOS Settings, so this switch can't turn them on yet.")
+                .font(Theme.font(15, .semibold))
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+                .lineSpacing(2)
+            Button {
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                UIApplication.shared.open(url)
+            } label: {
+                Text("Open Settings")
+                    .font(Theme.font(15, .bold))
+                    .foregroundStyle(Theme.coral)
+                    .padding(.horizontal, 16)
+                    .frame(height: 38)
+                    .background(Capsule().fill(D.coralTint))
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func settingRow(_ title: String, isOn: Binding<Bool>) -> some View {
@@ -564,8 +780,14 @@ struct DayEditorView: View {
             Spacer(minLength: 0)
             Button { isOn.wrappedValue.toggle() } label: {
                 pillToggle(on: isOn.wrappedValue)
+                    .padding(.vertical, 6)
+                    .contentShape(Rectangle())
+                    .padding(.vertical, -6)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(title)
+            .accessibilityValue(isOn.wrappedValue ? "On" : "Off")
+            .accessibilityAddTraits(.isToggle)
             .animation(.easeInOut(duration: 0.18), value: isOn.wrappedValue)
         }
     }

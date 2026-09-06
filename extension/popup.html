@@ -1,158 +1,255 @@
 <!doctype html>
 <meta charset="utf-8" />
 <style>
+  /* The popup: today across every class, then the receipt for the page you are
+   * on, then the phone and the switches. One family, one accent, hairlines
+   * between rows. Tokens follow DESIGN.md; dark follows the student's switch. */
+  :root {
+    --paper: #F7F6F3; --card: #FFFFFF; --inset: #EFEDE8; --line: #E3E0D9;
+    --ink: #1B1F24; --ink-2: #454B54; --ink-3: #8A8F97;
+    --mint: #51CFA0; --mint-edge: #35A87D; --mint-tint: rgba(81, 207, 160, .14); --green: #2E7D57;
+    --coin: #DE9A22; --amber: #8A5A12; --amber-tint: rgba(222, 154, 34, .14);
+    --bad: #8A5A12;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    color-scheme: light;
+  }
+  body.dark {
+    --paper: #17191D; --card: #1E2126; --inset: #121417; --line: #2C3037;
+    --ink: #E6E8EA; --ink-2: #B4BAC1; --ink-3: #7E8590;
+    --green: #7FDDB8; --coin: #ECB35C; --amber: #E0B25C; --bad: #E0B25C;
+    color-scheme: dark;
+  }
   body {
-    font: 13px/1.45 "Nunito", "Trebuchet MS", "Segoe UI", -apple-system, sans-serif;
-    width: 340px; margin: 0; padding: 16px; box-sizing: border-box;
-    background: #fff; color: #33291f; -webkit-font-smoothing: antialiased;
+    font: 14px/20px ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Segoe UI", sans-serif;
+    width: 360px; margin: 0; padding: 0 0 12px; box-sizing: border-box;
+    background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
   }
   * { box-sizing: border-box; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+  [hidden] { display: none !important; }
 
-  .head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .head h1 { font-size: 16px; font-weight: 900; letter-spacing: -.01em; margin: 0; flex-grow: 1; }
-  .head .ver { font-size: 11px; font-weight: 700; color: #a8977f; }
+  /* The head: the buddy speaks. */
+  .head { display: flex; align-items: center; gap: 12px; padding: 16px 16px 12px; }
+  .head #slime { flex-shrink: 0; display: flex; }
+  .head .say { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .head .say strong { font-size: 16px; line-height: 20px; font-weight: 800; letter-spacing: -.01em;
+                      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .head .say span { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--ink-2); }
+  .head h1 { font-size: 16px; font-weight: 800; letter-spacing: -.01em; margin: 0; flex-grow: 1; }
+  .coinchip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; background: var(--ink); color: var(--paper);
+              border-radius: 999px; padding: 5px 10px; font-size: 13px; font-weight: 800; }
+  .ver { font-size: 11px; font-weight: 700; color: var(--ink-3); }
 
+  section { padding: 0 16px; }
   .label {
-    font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
-    color: #8a7a66; margin: 0 0 8px;
+    font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink-2); margin: 14px 0 6px;
   }
-  .card { background: #f4f1ea; border-radius: 16px; padding: 14px; margin-bottom: 14px; }
-  .card.outline { background: #fff; box-shadow: inset 0 0 0 1px #eae5da; padding: 0; }
-  .hint { font-size: 12px; font-weight: 600; color: #8a7a66; margin: 2px 0 10px; }
+  .label.first { margin-top: 4px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .card { background: var(--card); border-radius: 16px; box-shadow: inset 0 0 0 1px var(--line); }
+  .card.outline { padding: 0; }
+  .hint { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--ink-2); margin: 0 0 10px; }
 
-  .pair { display: flex; gap: 8px; }
+  /* The buddy lives on the page; the popup only points at it. */
+  .buddy .hint { margin: 8px 2px 0; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+
+  /* The receipt. */
+  .receipt .row { margin: 14px 0 6px; }
+  .receipt .row .label { margin: 0; }
+  /* One line and one button first; the three groups fold under it. */
+  .receipt .sum { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 14px 6px;
+                  font-size: 14px; line-height: 18px; font-weight: 800; }
+  .receipt .grp-head { display: flex; align-items: center; gap: 6px; width: 100%; border: 0; background: none; cursor: pointer;
+                       margin: 0; padding: 10px 14px 4px; font: inherit; font-size: 11px; line-height: 14px; font-weight: 800;
+                       letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); text-align: left; }
+  .receipt .grp-head em { font-style: normal; color: var(--ink-3); }
+  .receipt .grp-head::after { content: ""; margin-left: auto; width: 6px; height: 6px; border-right: 2px solid var(--ink-3);
+                              border-bottom: 2px solid var(--ink-3); transform: rotate(-45deg); transition: transform 150ms var(--ease); }
+  .receipt .grp-head[aria-expanded="true"]::after { transform: rotate(45deg); }
+  .receipt .grp-head:focus-visible { outline: 2px solid var(--mint); outline-offset: -2px; border-radius: 8px; }
+  .receipt .grp:not(.open) ul { display: none; }
+  .receipt ul { list-style: none; margin: 0; padding: 0 14px; }
+  .receipt li { display: flex; justify-content: space-between; align-items: center; gap: 8px;
+                padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; line-height: 16px; font-weight: 600; }
+  .receipt li.none { color: var(--ink-3); font-weight: 500; border-top: 0; padding-top: 2px; }
+  .receipt li.back span { text-decoration: line-through; text-decoration-color: var(--line); color: var(--ink-3);
+                          transition: color 140ms var(--ease); }
+  .receipt .put { flex: none; border: 0; background: var(--inset); border-radius: 999px; padding: 4px 10px;
+                  font: inherit; font-size: 12px; font-weight: 800; color: var(--ink); cursor: pointer;
+                  transition: background-color 150ms var(--ease); }
+  .receipt .put:hover { background: var(--line); }
+  .receipt .foot, .looks .foot { margin: 0; padding: 10px 14px 12px; font-size: 13px; line-height: 16px; color: var(--ink-3); font-weight: 600; }
+  .receipt .note { font-size: 13px; line-height: 18px; color: var(--ink-2); padding: 12px 14px; font-weight: 600; }
+  .receipt .summary { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+
+  /* Phone, schools, switches: the quiet part. */
+  .pair { display: flex; gap: 8px; padding: 12px 14px 14px; }
   input#code {
-    flex-grow: 1; min-width: 0; padding: 10px 12px; font-size: 13px; font-weight: 700;
+    flex-grow: 1; min-width: 0; padding: 9px 12px; font-size: 14px; font-weight: 700;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    letter-spacing: .18em; text-transform: uppercase; text-align: center;
-    background: #fff; border: 0; box-shadow: inset 0 0 0 1px #eae5da;
-    border-radius: 12px; color: #33291f; outline: none;
+    letter-spacing: .16em; text-transform: uppercase; text-align: center;
+    background: var(--card); border: 0; box-shadow: inset 0 0 0 1px var(--line);
+    border-radius: 12px; color: var(--ink); outline: none;
   }
-  input#code:focus { box-shadow: inset 0 0 0 2px #51cfa0; }
+  input#code:focus { box-shadow: inset 0 0 0 2px var(--mint); }
+  .linked { display: flex; align-items: center; gap: 10px; padding: 11px 14px; font-size: 13px; font-weight: 700; }
+  .linked b { flex-grow: 1; }
+  .linked small { font-weight: 600; color: var(--ink-2); }
 
   button.mint {
     flex-shrink: 0; border: 0; cursor: pointer; padding: 9px 16px;
-    font: inherit; font-size: 13px; font-weight: 800;
-    background: #51cfa0; color: #101820; border-radius: 12px;
-    box-shadow: 0 3px 0 #35a87c;
+    font: inherit; font-size: 14px; font-weight: 800;
+    background: var(--mint); color: #101820; border-radius: 12px;
+    box-shadow: 0 3px 0 var(--mint-edge);
+    transition: transform 80ms var(--ease), box-shadow 80ms var(--ease);
   }
-  button.mint:active { transform: translateY(2px); box-shadow: 0 1px 0 #35a87c; }
-  button.mint:disabled { opacity: .5; box-shadow: 0 3px 0 #35a87c; transform: none; cursor: default; }
-  button.mint.wide { width: 100%; margin: 0 0 16px; }
-
+  button.mint:active { transform: translateY(3px); box-shadow: 0 0 0 var(--mint-edge); }
+  button.mint:disabled { opacity: .5; box-shadow: 0 3px 0 var(--mint-edge); transform: none; cursor: default; }
+  button.mint.wide { width: 100%; margin: 8px 0 0; }
   button.link {
-    border: 0; background: none; cursor: pointer; padding: 4px;
-    font: inherit; font-size: 12px; font-weight: 800; color: #2e7d57;
+    border: 0; background: none; cursor: pointer; padding: 4px 6px; border-radius: 8px;
+    font: inherit; font-size: 13px; font-weight: 800; color: var(--green);
   }
+  button.link:hover { background: var(--inset); }
 
   .sites { margin: 0; padding: 0; list-style: none; }
-  .sites li { display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
-  .sites li + li { border-top: 1px solid #eae5da; }
+  .sites li { display: flex; align-items: center; gap: 10px; padding: 11px 14px; min-height: 44px; }
+  .sites li + li { border-top: 1px solid var(--line); }
   .sites .who { flex-grow: 1; min-width: 0; }
-  .sites .who b { display: block; font-size: 13px; font-weight: 700; }
-  .sites .who small { font-size: 11px; font-weight: 600; color: #8a7a66; }
-  .sites li.none { font-size: 12px; font-weight: 600; color: #8a7a66; }
-  .sites button.x {
-    border: 0; background: none; cursor: pointer; padding: 2px 4px;
-    font: inherit; font-size: 14px; color: #a8977f; line-height: 1;
-  }
-  .sites button.x:hover { color: #b0453c; }
+  .sites .who b { display: block; font-size: 14px; font-weight: 700; }
+  .sites .who small { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+  .sites li.none { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+  .sites button.x { border: 0; background: none; cursor: pointer; padding: 4px 8px; border-radius: 8px;
+                    font: inherit; font-size: 16px; color: var(--ink-3); line-height: 1; }
+  .sites button.x:hover { background: var(--inset); color: var(--ink); }
 
   .toggles { margin: 0; padding: 0; list-style: none; }
-  .toggles li { display: flex; align-items: center; gap: 8px; padding: 11px 14px; }
-  .toggles li + li { border-top: 1px solid #eae5da; }
-  .toggles .name { flex-grow: 1; font-size: 13px; font-weight: 700; }
-  .toggles .soon {
-    background: #f4f1ea; color: #a8977f; border-radius: 999px; padding: 2px 8px;
-    font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
-  }
+  .toggles li { display: flex; align-items: center; gap: 8px; padding: 0 14px; }
+  .toggles li + li { border-top: 1px solid var(--line); }
+  .toggles .name { flex-grow: 1; font-size: 14px; font-weight: 700; }
   .toggles input { position: absolute; opacity: 0; pointer-events: none; }
-  .toggles label { display: flex; align-items: center; gap: 8px; width: 100%; cursor: pointer; }
-  .toggles label.off { cursor: default; }
-  .toggles .sw {
-    flex-shrink: 0; width: 38px; height: 22px; border-radius: 999px;
-    background: #e5dfd2; position: relative; transition: background .15s ease;
-  }
-  .toggles .sw::after {
-    content: ""; position: absolute; left: 2px; top: 2px; width: 18px; height: 18px;
-    border-radius: 999px; background: #fff; box-shadow: 0 1px 2px rgba(51, 41, 31, .25);
-    transition: left .15s ease;
-  }
-  .toggles input:checked + .sw { background: #51cfa0; }
+  .toggles label { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; cursor: pointer; }
+  .toggles .sw { flex-shrink: 0; width: 38px; height: 22px; border-radius: 999px; background: var(--line); position: relative;
+                 transition: background-color 150ms var(--ease); }
+  .toggles .sw::after { content: ""; position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; border-radius: 999px;
+                        background: var(--card); box-shadow: 0 1px 2px rgba(0, 0, 0, .2); transition: left 150ms var(--ease); }
+  .toggles input:checked + .sw { background: var(--mint); }
   .toggles input:checked + .sw::after { left: 18px; }
-  .toggles label.off .sw { opacity: .55; }
+  .toggles input:focus-visible + .sw { outline: 2px solid var(--mint); outline-offset: 2px; }
+  .toggles li.modes { min-height: 44px; }
+  .seg { display: inline-flex; background: var(--inset); border-radius: 999px; padding: 2px; gap: 2px; }
+  .seg button { border: 0; background: none; border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 13px;
+                font-weight: 700; color: var(--ink-2); cursor: pointer; transition: background-color 150ms var(--ease), color 150ms var(--ease); }
+  .seg button[aria-checked="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .onb .linked-moment { display: flex; align-items: center; gap: 12px; justify-content: center; padding: 8px 0; }
+  .onb .linked-moment .line { width: 44px; height: 2px; background: var(--mint); border-radius: 2px; }
+  .onb .linked-moment .tick { width: 28px; height: 28px; border-radius: 999px; background: var(--mint); display: grid; place-items: center; }
 
-  .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  #status { min-height: 17px; font-size: 12px; font-weight: 600; }
+  #status { min-height: 16px; font-size: 13px; line-height: 16px; font-weight: 600; padding: 6px 16px 0; }
+  .ok  { color: var(--green); }
+  .bad { color: var(--bad); }
+  .foot-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 0; }
 
   /* First run: three steps, every one skippable. */
-  .onb { display: flex; flex-direction: column; align-items: center; gap: 12px;
-         text-align: center; padding: 24px 16px 16px; }
+  .onb { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 24px 16px 16px; }
   .onb h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
-  .onb p { margin: 0; font-size: 14px; font-weight: 600; color: #8a7a66; max-width: 260px; }
-  .onb .detected { width: 100%; background: #f4f1ea; border-radius: 16px; padding: 12px;
+  .onb p { margin: 0; font-size: 14px; font-weight: 600; color: var(--ink-2); max-width: 260px; }
+  .onb .detected { width: 100%; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); border-radius: 16px; padding: 12px;
                    display: flex; align-items: center; gap: 8px; text-align: left; }
-  .onb .detected i { width: 8px; height: 8px; border-radius: 999px; background: #51cfa0; flex-shrink: 0; }
+  .onb .detected i { width: 8px; height: 8px; border-radius: 999px; background: var(--mint); flex-shrink: 0; }
   .onb .detected b { display: block; font-size: 14px; font-weight: 700; }
-  .onb .detected small { font-size: 12px; font-weight: 600; color: #8a7a66; }
+  .onb .detected small { font-size: 13px; font-weight: 600; color: var(--ink-2); }
   .onb .dots { display: flex; gap: 6px; margin-top: 4px; }
-  .onb .dots i { width: 8px; height: 8px; border-radius: 999px; background: #e5dfd2; }
-  .onb .dots i.on { background: #51cfa0; }
-  .onb .skip { border: 0; background: none; cursor: pointer; font: inherit;
-               font-size: 12px; font-weight: 700; color: #8a7a66; }
-  .onb .pair { width: 100%; }
-  .coinchip { display: inline-flex; align-items: center; gap: 6px; background: #f4f1ea;
-              border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 800; }
-  [hidden] { display: none !important; }
-  .ok  { color: #2e7d57; }
-  .bad { color: #b0453c; }
+  .onb .dots i { width: 8px; height: 8px; border-radius: 999px; background: var(--line); }
+  .onb .dots i.on { background: var(--mint); }
+  .onb .skip { border: 0; background: none; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+  .onb .pair { width: 100%; padding: 0; }
+  .onb small { font-size: 13px; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
 </style>
 
 <div class="head">
   <span id="slime" aria-hidden="true"></span>
-  <h1>Prepkin</h1>
-  <span class="ver" id="version"></span>
+  <div class="say" id="say"><strong id="say-head">Prepkin</strong><span id="say-sub">Your Canvas, quieter.</span></div>
   <span class="coinchip" id="coins" hidden></span>
 </div>
 
 <div id="onboarding" hidden></div>
 <div id="main">
 
-<div class="card">
-  <p class="label">Connect your phone</p>
-  <p class="hint">Open the app, tap the sliders on Today, and copy the code it shows you.</p>
-  <div class="pair">
-    <input id="code" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off" spellcheck="false" />
-    <button id="save" class="mint">Save</button>
+<section class="buddy" id="buddy" hidden>
+  <button id="open-buddy" class="mint wide">Open the buddy on this page</button>
+  <p class="hint">Your day, focus and grades live with the buddy. This popup is the extension: what it changed here, and its settings.</p>
+</section>
+
+<section class="receipt" id="receipt" hidden>
+  <div class="row">
+    <p class="label">Receipt · <span id="receipt-page">This page</span></p>
+    <button id="show-me" class="link">Show me</button>
   </div>
-</div>
+  <div class="card outline">
+    <div id="receipt-off" class="note" hidden></div>
+    <div id="receipt-lists">
+      <div class="sum"><b id="receipt-count"></b><button id="put-all" class="put"></button></div>
+      <div class="grp" data-kind="taken"><button class="grp-head" aria-expanded="false">Taken off this page<em></em></button><ul id="receipt-taken"></ul></div>
+      <div class="grp" data-kind="fixed"><button class="grp-head" aria-expanded="false">Fixed on this page<em></em></button><ul id="receipt-fixed"></ul></div>
+      <div class="grp" data-kind="added"><button class="grp-head" aria-expanded="false">Added to this page<em></em></button><ul id="receipt-added"></ul></div>
+      <p class="foot">Everything here is one click from coming back.</p>
+    </div>
+  </div>
+</section>
 
-<p class="label">Connected schools</p>
-<div class="card outline">
-  <ul class="sites" id="sites"></ul>
-</div>
-<div class="row">
-  <button id="resync" class="link">Sync now</button>
-  <div id="status"></div>
-</div>
-<button id="connect" class="mint wide" hidden></button>
+<section class="phone">
+  <div class="row"><p class="label">Your phone</p><button id="relink" class="link" hidden>Use a new code</button></div>
+  <div class="card outline">
+    <div class="linked" id="linked" hidden><b>Linked</b><small>Coins and focus time go to the app.</small></div>
+    <div id="pair-box">
+      <p class="hint" style="padding:12px 14px 0;margin:0">Open the app, tap the sliders on Today, and type the code it shows.</p>
+      <div class="pair">
+        <input id="code" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off" spellcheck="false" />
+        <button id="save" class="mint">Save</button>
+      </div>
+    </div>
+  </div>
+</section>
 
-<p class="label">Appearance</p>
-<div class="card outline">
-  <ul class="toggles">
-    <li><label><span class="name">Buddy on Canvas pages</span>
-      <input type="checkbox" data-skin="mascot" /><span class="sw"></span></label></li>
-    <li><label><span class="name">Warm theme &amp; cards</span>
-      <input type="checkbox" data-skin="cards" /><span class="sw"></span></label></li>
-    <li><label><span class="name">Tidy sidebar</span>
-      <input type="checkbox" data-skin="tidy" /><span class="sw"></span></label></li>
-    <li><label><span class="name">Dark mode</span>
-      <input type="checkbox" data-skin="dark" /><span class="sw"></span></label></li>
-  </ul>
-</div>
+<section class="schools">
+  <div class="row"><p class="label">Schools</p><button id="resync" class="link">Sync now</button></div>
+  <div class="card outline">
+    <ul class="sites" id="sites"></ul>
+  </div>
+  <button id="connect" class="mint wide" hidden></button>
+</section>
+
+<section class="looks">
+  <p class="label">Canvas</p>
+  <div class="card outline">
+    <ul class="toggles">
+      <li><label><span class="name">Quiet Canvas, with a receipt</span>
+        <input type="checkbox" data-skin="cards" /><span class="sw"></span></label></li>
+      <li class="modes"><span class="name">Paper</span>
+        <div class="seg" id="mode" role="radiogroup" aria-label="Paper">
+          <button type="button" data-mode="light" role="radio">Light</button>
+          <button type="button" data-mode="dark" role="radio">Dark</button>
+          <button type="button" data-mode="auto" role="radio">Auto</button>
+        </div></li>
+    </ul>
+    <p class="foot">Grades on cards, compact pages and the buddy live on the receipt above.</p>
+  </div>
+</section>
+
+<div id="status"></div>
+<div class="foot-row"><span class="ver" id="version"></span></div>
 
 </div>
 
 <script src="slime.js"></script>
+<script src="themes.js"></script>
+<script src="art/manifest.js"></script>
 <script src="looks.js"></script>
+<script src="day.js"></script>
 <script src="popup.js"></script>
