@@ -240,6 +240,12 @@ function killReason({ forcedColors = false, prefersContrast = false, envHighCont
   return null;
 }
 
+/// Whether this page script no longer owns the page, either because its
+/// extension context is gone or a newer instance has taken over.
+function shouldStepAside({ mine, current, alive }) {
+  return !alive || (!!current && current !== mine);
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle };
+  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, shouldStepAside };
 }

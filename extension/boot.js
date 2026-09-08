@@ -15,7 +15,7 @@
     });
     document.documentElement.classList.add(...classes);
     if (classes.length) {
-      const style = document.createElement('style');
+      const style = document.getElementById('pk-theme-vars') ?? document.createElement('style');
       style.id = 'pk-theme-vars';
       const look = LOOKS_BY_ID[s.wallet?.wearing] ?? LOOKS_BY_ID.classic;
       style.textContent = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)));
@@ -23,5 +23,7 @@
     }
   } catch {
     // No storage, no skin. The page is Canvas, unchanged.
+    for (const name of [...document.documentElement.classList]) if (name.startsWith('pk-')) document.documentElement.classList.remove(name);
+    document.querySelectorAll('#pk-theme-vars').forEach((el) => el.remove());
   }
 })();

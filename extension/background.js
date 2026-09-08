@@ -6,6 +6,9 @@
 // school.instructure.com go through exactly the same path.
 
 const SYNC_ALARM = 'prepkin-sync';
+const UPDATE_WAITING = 'updateWaiting';
+const BOOT_SCRIPTS = ['receipt.js', 'themes.js', 'art/manifest.js', 'looks.js', 'boot.js'];
+const CONTENT_SCRIPTS = ['slime.js', 'podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'];
 
 /// No request may hang a sync. A school behind a dead SSO hop, or a bridge that
 /// accepts the connection and never answers, used to stall syncAll forever —
@@ -25,15 +28,26 @@ try {
   console.warn('Prepkin: no config.js — run bridge/apply-config.sh');
 }
 
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
+  await chrome.storage.local.remove(UPDATE_WAITING);
   await registerAll();
+  if (reason === 'update') await reinjectOpenTabs();
 });
 // Re-created on every browser start too — creating an alarm that already
 // exists is a cheap no-op, and a lost alarm would otherwise stay lost.
 chrome.runtime.onStartup.addListener(() => {
   chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
   registerAll();
+});
+
+chrome.runtime.onUpdateAvailable.addListener(async () => {
+  const { focus } = await chrome.storage.local.get('focus');
+  if (focus?.state === 'running') {
+    await chrome.storage.local.set({ [UPDATE_WAITING]: true });
+    return;
+  }
+  chrome.runtime.reload();
 });
 
 // MARK: - Putting the skin on a page
@@ -51,7 +65,7 @@ async function registerFor(origin) {
         // dark paper never flashes white and the school's theme never paints first.
         id: `${id}-boot`,
         matches: [`${origin}/*`],
-        js: ['receipt.js', 'themes.js', 'art/manifest.js', 'looks.js', 'boot.js'],
+        js: BOOT_SCRIPTS,
         css: ['skin.css'],
         runAt: 'document_start',
       },
@@ -63,7 +77,7 @@ async function registerFor(origin) {
         // receipt.js, themes.js, art/manifest.js and looks.js already ran at
         // document_start (the boot set) in this same world; naming them twice
         // redeclared their constants on every page.
-        js: ['slime.js', 'podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'],
+        js: CONTENT_SCRIPTS,
         runAt: 'document_end',
       },
     ]);
@@ -81,6 +95,22 @@ async function unregisterFor(origin) {
 
 async function registerAll() {
   for (const origin of await connectedOrigins()) await registerFor(origin);
+}
+
+/// Put both page entry points back into tabs that were already open when an
+/// update landed. Their supporting scripts are already in the isolated world.
+async function reinjectOpenTabs() {
+  const origins = new Set(await connectedOrigins());
+  const tabs = await chrome.tabs.query({});
+  for (const tab of tabs) {
+    if (tab.id == null || !origins.has(originOf(tab.url ?? ''))) continue;
+    try {
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: BOOT_SCRIPTS });
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: CONTENT_SCRIPTS });
+    } catch (e) {
+      console.warn('Prepkin: could not put the page back on', tab.url, e);
+    }
+  }
 }
 
 chrome.alarms.onAlarm.addListener((alarm) => {
@@ -130,6 +160,15 @@ async function focusStart({ taskId, title, url, minutes }) {
   return focus;
 }
 
+/// Apply a waiting update once the timer no longer owns the session.
+async function reloadAfterFocus() {
+  const { focus, [UPDATE_WAITING]: waiting } = await chrome.storage.local.get(['focus', UPDATE_WAITING]);
+  if (!waiting || focus?.state === 'running') return false;
+  await chrome.storage.local.remove(UPDATE_WAITING);
+  chrome.runtime.reload();
+  return true;
+}
+
 /// Five more minutes on a running session. Time only ever goes up.
 async function focusExtend() {
   const { focus } = await chrome.storage.local.get('focus');
@@ -144,6 +183,7 @@ async function focusExtend() {
 async function focusStop() {
   chrome.alarms.clear(FOCUS_ALARM);
   await chrome.storage.local.set({ focus: { state: 'idle' } });
+  await reloadAfterFocus();
 }
 
 async function focusDone() {
@@ -151,7 +191,7 @@ async function focusDone() {
   if (focus?.state !== 'running') return;
   await chrome.storage.local.set({ focus: { ...focus, state: 'done' } });
   await queueRequest({ kind: 'focus', taskId: focus.taskId, minutes: focus.durationMin });
-  syncAll();
+  if (!(await reloadAfterFocus())) syncAll();
 }
 
 /// Which senders may ask for what.

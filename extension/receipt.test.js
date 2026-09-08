@@ -3,9 +3,25 @@ const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
-const { PAPERS, RULES, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason } = require('./receipt.js');
+const { PAPERS, RULES, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason, shouldStepAside } = require('./receipt.js');
 const { SELECTORS } = require('./selectors.js');
 const { LOOKS } = require('./looks.js');
+
+test('a page script steps aside only when it is orphaned or replaced', () => {
+  assert.equal(shouldStepAside({ mine: 'a', current: 'a', alive: true }), false);
+  assert.equal(shouldStepAside({ mine: 'a', current: '', alive: true }), false);
+  assert.equal(shouldStepAside({ mine: 'a', current: 'b', alive: true }), true);
+  assert.equal(shouldStepAside({ mine: 'a', current: 'a', alive: false }), true);
+});
+
+test('every runtime call in the page script has an alive guard', () => {
+  const lines = fs.readFileSync(path.join(__dirname, 'content.js'), 'utf8').split('\n');
+  const runtimeCall = /chrome\.runtime\.(?:sendMessage|getURL)\(/;
+  for (let index = 0; index < lines.length; index += 1) {
+    if (!runtimeCall.test(lines[index])) continue;
+    assert.match(`${lines[index - 1] ?? ''}\n${lines[index]}`, /\balive\(\)/, `runtime call on line ${index + 1}`);
+  }
+});
 
 // MARK: - Papers
 
