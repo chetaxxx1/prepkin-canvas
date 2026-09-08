@@ -735,7 +735,7 @@ struct DayEditorView: View {
                     set: state.setComeBackReminders))
             }
 
-            Text("Nothing here counts a streak or warns you about losing anything.")
+            Text("Nothing here is a countdown, and nothing warns you about losing something.")
                 .font(Theme.font(15, .semibold))
                 .foregroundStyle(Theme.muted)
                 .frame(maxWidth: .infinity, alignment: .leading)
