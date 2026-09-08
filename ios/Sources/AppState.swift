@@ -165,7 +165,12 @@ final class AppState: ObservableObject {
             game.applyBridgeRequests(snapshot.requests)
             let state = game.bridgeState
             Task { try? await client.pushState(state) }
-            canvasStatus = nil
+            if let version = snapshot.extensionVersion,
+               CanvasSnapshot.isOlder(version, than: CanvasSnapshot.minimumExtensionVersion) {
+                canvasStatus = "Update Prepkin for Canvas in Chrome to keep getting your work."
+            } else {
+                canvasStatus = nil
+            }
             canvasLink = .connected
             rescheduleReminders()
             // New homework just dropped in — a startled "whoa!", but never

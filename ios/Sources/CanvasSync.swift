@@ -85,6 +85,20 @@ struct CanvasSnapshot: Equatable {
     var tasks: [CanvasItem] = []
     var courses: [CanvasCourse] = []
     var requests: [BridgeRequest] = []
+    var extensionVersion: String? = nil
+
+    static let minimumExtensionVersion = "0.6.0"
+
+    static func isOlder(_ a: String, than b: String) -> Bool {
+        let left = a.split(separator: ".", omittingEmptySubsequences: false).map { Int($0) ?? 0 }
+        let right = b.split(separator: ".", omittingEmptySubsequences: false).map { Int($0) ?? 0 }
+        for index in 0..<max(left.count, right.count) {
+            let l = index < left.count ? left[index] : 0
+            let r = index < right.count ? right[index] : 0
+            if l != r { return l < r }
+        }
+        return false
+    }
 }
 
 /// What the phone publishes back, so the extension's shop can show a real
@@ -240,6 +254,7 @@ struct SupabaseCanvasClient: CanvasSyncClient {
             var at: String?
         }
         struct Payload: Decodable {
+            var version: String?
             var tasks: [WireItem]?
             var courses: [CanvasCourse]?
             var requests: [WireRequest]?
@@ -253,7 +268,8 @@ struct SupabaseCanvasClient: CanvasSyncClient {
                                  lookId: r.lookId, price: r.price, at: at)
         }
         return CanvasSnapshot(tasks: (payload.tasks ?? []).map(\.item),
-                              courses: payload.courses ?? [], requests: requests)
+                              courses: payload.courses ?? [], requests: requests,
+                              extensionVersion: payload.version)
     }
 
     /// One task as the wire carries it. The extension deliberately keeps an
