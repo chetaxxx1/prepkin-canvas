@@ -5,11 +5,11 @@
 
 if (typeof module !== 'undefined') {
   // Under node the sibling scripts are modules, not page globals.
-  Object.assign(globalThis, require('./receipt.js'), require('./themes.js'), require('./art/manifest.js'), require('./selectors.js'), require('./looks.js'), require('./canvas.js'), require('./day.js'));
+  Object.assign(globalThis, require('./receipt.js'), require('./themes.js'), require('./art/manifest.js'), require('./selectors.js'), require('./looks.js'), require('./canvas.js'), require('./day.js'), require('./podnames.js'));
 }
 
 const ROOT_ID = 'prepkin-buddy';
-const DEFAULTS = { dark: false, cards: true, tidy: true, mascot: true, focusMinutes: 25 };
+const DEFAULTS = { dark: false, cards: true, tidy: true, mascot: true, focusMinutes: 25, search: true };
 
 /// Matches TaskKind.canvas.reward in the app, so the "+30" here is the same 30
 /// coins the phone actually pays for a verified submission.
@@ -19,15 +19,30 @@ const COIN_REWARD = 30;
 
 /// Everything the panel needs to redraw itself. `data` is the last sync, `wallet`
 /// is what the phone told us about coins and looks, `ui` is where the student is.
+/// The view the last render drew, so the scroll position is kept within a view
+/// and dropped when the student moves to a different one.
+let prevView = 'panel';
+/// Whether the panel was open on the last draw, so focus moves in once, on the
+/// draw that opened it, and never again while the student is typing.
+let wasOpen = false;
 const ui = {
   open: false, view: 'panel', filter: null, expanded: null,
   target: null, askWeight: null, sheet: null,
+  planning: null, courseFilter: 'all',
 };
 let data = { tasks: [], courses: [], graded: {}, weights: {} };
 /// Names the student gave courses, by course id, and tasks they added
 /// themselves. Both live in this browser only: Canvas and the phone never see them.
 let nicknames = {};
 let ownTasks = [];
+/// When the student said they will actually sit down and do a task: task id to
+/// a local date, `YYYY-MM-DD`. A due date is when the work is owed; this is the
+/// only place that knows when it will be done. It never leaves this browser and
+/// is never pushed to the phone.
+let plans = {};
+/// The grade a student is aiming for in a class, by course id, as the cutoff
+/// percentage behind a letter. Their own number, kept here.
+let targets = {};
 
 /// The last sync plus the student's own tasks, with nicknames applied to every
 /// course name. The payload itself is never changed, so nothing invented is
@@ -160,7 +175,7 @@ function receiptForPage() {
     on: !!skin.cards,
     rows: killed || !skin.cards ? [] : receiptRows({
       present: (k) => document.querySelectorAll(SELECTORS[k].sel).length,
-      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: !!skin.cardGrades, dense: !!skin.dense, nicknames: Object.keys(nicknames).length,
+      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: !!skin.cardGrades, dense: !!skin.dense, nicknames: Object.keys(nicknames).length, search: skin.search !== false,
       stock: stockFor(look, !!skin.dark), putBack,
     }),
   };
@@ -223,6 +238,46 @@ function chevronSVG(dir = 'right') {
 
 // The buddy's voice lives in day.js, shared with the popup.
 
+// MARK: - Work dates
+//
+// Canvas knows when a thing is owed. Nothing in Canvas asks when you will do
+// it, which is the question students actually get wrong.
+
+function dayKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function dayFromKey(k) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(k ?? ''));
+  if (!m) return null;
+  const [y, mo, day] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const d = new Date(y, mo - 1, day);
+  // JS rolls a bad date forward rather than refusing it, so 2026-13-40 becomes
+  // next February. Only a date that reads back the same is a date.
+  if (d.getFullYear() !== y || d.getMonth() !== mo - 1 || d.getDate() !== day) return null;
+  return d;
+}
+
+/// The day a task sits on in the planner: the day it was planned for, and
+/// otherwise the day it is due. Work with neither sits under "No due date".
+function planDay(t, planned = plans) {
+  const p = dayFromKey(planned[t.id]);
+  if (p) return p;
+  const due = t.dueAt ? new Date(t.dueAt) : null;
+  return due && !isNaN(due) ? startOfDay(due) : null;
+}
+
+/// What buckets() asks for: the day a task was planned, or null.
+const plannedOn = (t) => dayFromKey(plans[t.id]);
+
+/// True when the student moved this one off the day it is due.
+function isMoved(t, planned = plans) {
+  const p = dayFromKey(planned[t.id]);
+  if (!p) return false;
+  const due = t.dueAt ? new Date(t.dueAt) : null;
+  return !due || isNaN(due) || !sameLocalDay(p, due);
+}
+
 // MARK: - Grades
 
 /// Canvas does not know which classes are Honors or AP, so the student says.
@@ -277,6 +332,59 @@ function targetsFor(score) {
   return LETTERS.slice(start, start + 4);
 }
 
+/// What the missing zeros are worth, and — only when the arithmetic can be
+/// checked — what handing them in would do to the class percentage.
+///
+/// We hold at most the last two dozen graded items, and a course that weights
+/// its groups does not average that way. So the percentage is recomputed from
+/// what we hold and only spoken when it lands on the number Canvas itself
+/// reports. When it does not, the points are the whole of what we say. A grade
+/// nobody can check is exactly the kind of number this app does not print.
+function missingCost(missed, courses = data.courses ?? [], gradedBy = data.graded ?? {}) {
+  const byCourse = new Map();
+  for (const t of missed) {
+    const k = String(t.courseId);
+    if (!byCourse.has(k)) byCourse.set(k, []);
+    byCourse.get(k).push(t);
+  }
+  const out = [];
+  for (const [id, items] of byCourse) {
+    const course = courses.find((c) => String(c.id) === id);
+    const points = items.reduce((n, t) => n + (Number(t.pointsPossible) || 0), 0);
+    const row = { courseId: id, name: course?.name ?? items[0].courseName ?? '', count: items.length, points, from: null, to: null };
+    const held = gradedBy[id] ?? [];
+    const den = held.reduce((n, g) => n + (Number(g.outOf) || 0), 0);
+    const num = held.reduce((n, g) => n + (Number(g.score) || 0), 0);
+    if (course && typeof course.score === 'number' && den > 0 && points > 0
+        && Math.abs((num / den) * 100 - course.score) <= 0.5) {
+      const marked = new Set(held.map((g) => g.id));
+      let top = num, bottom = den;
+      for (const t of items) {
+        const p = Number(t.pointsPossible) || 0;
+        if (!p) continue;
+        // A zero the teacher entered is already in the bottom half; work never
+        // marked at all is in neither.
+        top += p;
+        if (!marked.has(t.id)) bottom += p;
+      }
+      row.from = Math.round(course.score * 10) / 10;
+      row.to = Math.round((top / bottom) * 100);
+    }
+    out.push(row);
+  }
+  return out.sort((a, b) => b.points - a.points);
+}
+
+/// One line per class, in plain points. No exclamation, no red.
+function missingCostLines(missed) {
+  return missingCost(missed).map((r) => {
+    const worth = `${r.points} point${r.points === 1 ? '' : 's'} in ${escapeHTML(r.name)}`;
+    return r.to === null
+      ? `<div class="pk-foot">Worth ${worth}.</div>`
+      : `<div class="pk-foot">Worth ${worth} — enough to move it from ${r.from}% to about ${r.to}%.</div>`;
+  }).join('');
+}
+
 // MARK: - Small pieces
 
 /// Only ever link to what Canvas itself handed us.
@@ -318,7 +426,7 @@ function taskRow(t, { now, state }) {
     <li class="${overdue ? 'overdue' : ''}">
       <span class="pk-dot"${!overdue && color ? ` style="background:${escapeHTML(color)}"` : ''}></span>
       <div><b>${escapeHTML(t.title)}</b>
-           <small>${escapeHTML(t.courseName)} · ${dueLabel(t, now)}</small></div>
+           <small>${escapeHTML(t.courseName)} · ${dueLabel(t, now)}${isMoved(t) ? ' · you planned this' : ''}</small></div>
       ${overdue ? startButton(t, true) : ''}
     </li>`;
 }
@@ -332,13 +440,42 @@ function plannerRow(t, now) {
   const time = due && !isNaN(due)
     ? due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
     : 'anytime';
+  const moved = isMoved(t);
+  const dueWord = due && !isNaN(due)
+    ? (sameLocalDay(due, now) ? 'due today' : `due ${due.toLocaleDateString([], { weekday: 'short' })}`)
+    : 'no due date';
+  const sub = t.submittedAt ? 'submitted' : moved ? `${escapeHTML(t.courseName)} · ${dueWord}` : `${escapeHTML(t.courseName)} · ${time}`;
   return `
-    <li class="${t.submittedAt ? 'done' : ''}">
+    <li class="${t.submittedAt ? 'done' : ''}${moved ? ' moved' : ''}"${t.submittedAt ? '' : ` draggable="true" data-drag="${escapeHTML(t.id)}"`}>
       <span class="pk-bar" style="background:${escapeHTML(color)}"></span>
       ${t.submittedAt ? `<span class="pk-tick">${checkSVG(16)}</span>` : ''}
       <div><b>${escapeHTML(t.title)}</b>
-           <small>${escapeHTML(t.courseName)} · ${t.submittedAt ? 'submitted' : time}</small></div>
-      ${t.pointsPossible ? `<span class="pk-pts">${t.pointsPossible} pts</span>` : ''}
+           <small>${t.submittedAt ? `${escapeHTML(t.courseName)} · submitted` : sub}</small></div>
+      ${t.submittedAt ? (t.pointsPossible ? `<span class="pk-pts">${t.pointsPossible} pts</span>` : '')
+        : `<button class="pk-planbtn${plans[t.id] ? ' on' : ''}" data-plan-open="${escapeHTML(t.id)}"
+             aria-expanded="${ui.planning === t.id}"
+             aria-label="When will you do ${escapeHTML(t.title)}?">${plans[t.id] ? 'Moved' : 'Plan'}</button>`}
+    </li>
+    ${ui.planning === t.id ? planPicker(t, now) : ''}`;
+}
+
+/// Seven days from today, plus a way back. One tap, no calendar, no times —
+/// the question is only which day you will sit down, and a time you invent at
+/// 11 PM is a time you will not keep.
+function planPicker(t, now) {
+  const chips = Array.from({ length: 7 }, (_, i) => {
+    const d = startOfDay(new Date(now.getTime() + i * DAY_MS));
+    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString([], { weekday: 'short' });
+    const on = plans[t.id] === dayKey(d);
+    return `<button type="button" role="radio" aria-checked="${on}" class="${on ? 'on' : ''}"
+      data-plan-set="${escapeHTML(t.id)}" data-plan-day="${dayKey(d)}"
+      aria-label="${label}, ${d.toLocaleDateString([], { month: 'long', day: 'numeric' })}">${label}</button>`;
+  }).join('');
+  return `
+    <li class="pk-planpick" role="radiogroup" aria-label="What day will you do ${escapeHTML(t.title)}?">
+      <span class="pk-planlead" aria-hidden="true">Do it on</span>
+      ${chips}
+      ${plans[t.id] ? `<button class="clear" data-plan-clear="${escapeHTML(t.id)}">Back to its due date</button>` : ''}
     </li>`;
 }
 
@@ -351,14 +488,15 @@ function panelView(b, said, now) {
   const nextUp = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
 
   const rows =
-    filter === 'overdue' ? b.overdue.filter((t) => t !== nextUp).map((t) => taskRow(t, { now, state: 'overdue' }))
+    filter === 'missed' ? b.missed.map((t) => taskRow(t, { now, state: 'overdue' }))
+    : filter === 'overdue' ? b.overdue.filter((t) => t !== nextUp).map((t) => taskRow(t, { now, state: 'overdue' }))
     : [
         ...b.today.filter((t) => t !== nextUp).map((t) => taskRow(t, { now, state: 'todo' })),
         ...b.doneToday.map((t) => taskRow(t, { now, state: 'done' })),
       ];
 
   const filterBtn = (key, label, count, amber) => `
-    <button data-filter="${key}" class="${filter === key ? `on${amber ? ' amber' : ''}` : ''}">
+    <button data-filter="${key}" aria-pressed="${filter === key}" class="${filter === key ? `on${amber ? ' amber' : ''}` : ''}">
       ${label}<em>${count}</em>
     </button>`;
 
@@ -367,11 +505,14 @@ function panelView(b, said, now) {
       ${filterBtn('today', 'Today', totalToday, false)}
       ${filterBtn('week', 'This week', b.week.length, false)}
       ${filterBtn('overdue', 'Overdue', b.overdue.length, true)}
+      ${b.missed.length ? filterBtn('missed', 'Missing', b.missed.length, true) : ''}
     </div>
-    ${nextUp ? nextUpCard(nextUp, now) : ''}
+    ${filter === 'missed' ? `<div class="pk-foot">Work the school marked missing. Old, and it still counts — teachers take late work more often than students ask.</div>${missingCostLines(b.missed)}` : ''}
+    ${filter === 'missed' ? '' : nextUp ? nextUpCard(nextUp, now) : ''}
     <ul class="pk-list">${rows.join('') || (nextUp ? '' : '<li class="empty">Nothing here. Enjoy it.</li>')}</ul>
     <div class="pk-listfoot"><button class="pk-add" data-view="addtask">+ Add a task</button><button class="pk-add" data-view="search">Search <kbd>⌘K</kbd></button></div>
     ${gradesCard()}
+    ${leagueCard()}
     <div class="pk-foot center">What Prepkin changed on this page, and its settings, are in the toolbar button.</div>`;
 }
 
@@ -396,6 +537,80 @@ function nextUpCard(t, now) {
         <button class="pk-lenchange" data-len-toggle="1" aria-expanded="${ui.lengthOpen ? 'true' : 'false'}">${ui.lengthOpen ? 'minutes' : 'change'}</button>
         <span class="pk-lenopts">${mins}</span>
       </div>
+    </div>`;
+}
+
+// MARK: - The league, the way the phone draws it
+//
+// Six depths of water, shallowest first. KEEP IN STEP WITH LeagueTier and its
+// colours in ios/Sources/Core/LeagueState.swift and ios/Sources/LeagueView.swift.
+const TIERS = [
+  { id: 'tidepool', name: 'Tidepool', water: 'Sunlit rock pools at the tide line.', color: '#8FDCCB', edge: '#3E9E8C', ink: '#1B1F24' },
+  { id: 'shallows', name: 'Shallows', water: 'Sand you can still stand on.', color: '#4FBDC6', edge: '#2A8C95', ink: '#1B1F24' },
+  { id: 'reef', name: 'Reef', water: 'Warm water over living coral.', color: '#3A9FBF', edge: '#226F8C', ink: '#1B1F24' },
+  { id: 'kelp', name: 'Kelp', water: 'Green forest, light in columns.', color: '#1F767E', edge: '#0F4F55', ink: '#FBF4EA' },
+  { id: 'openwater', name: 'Open water', water: 'No bottom under you.', color: '#1D5787', edge: '#123B5D', ink: '#FBF4EA' },
+  { id: 'deep', name: 'Deep', water: 'Cold, quiet, a long way down.', color: '#173A60', edge: '#0E2440', ink: '#FBF4EA' },
+];
+/// The kin stills the phone draws on its board, level three, shipped in the
+/// zip. An unknown species gets Mint rather than a broken image.
+const KIN_SPECIES = ['butter', 'coral', 'lilac', 'mint', 'peach', 'sky'];
+function kinFace(species, size = 28) {
+  const id = KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
+  const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL ? chrome.runtime.getURL(`art/kin/${id}.webp`) : `art/kin/${id}.webp`;
+  return `<span class="pk-kin" style="width:${size}px;height:${size}px;background-image:url('${url}')" aria-hidden="true"></span>`;
+}
+function tierOf(league) { return TIERS[Math.max(0, Math.min(TIERS.length - 1, Number(league?.tier) || 0))]; }
+
+/// The pennant: a flag with a fold, the app's shape at panel size.
+function pennantSVG(tier, h = 20, earned = true) {
+  const w = Math.round(h * 1.5);
+  const fill = earned ? tier.color : 'none';
+  return `<svg width="${w}" height="${h}" viewBox="0 0 30 20" aria-hidden="true">
+    <path d="M1 1 H29 L22 10 L29 19 H1 Z" fill="${fill}" stroke="${tier.edge}" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M1 1 L8 10 L1 19 Z" fill="${earned ? tier.edge : 'none'}" opacity="${earned ? 1 : 0}"/>
+  </svg>`;
+}
+
+/// Nothing to say without a phone. With one: the tier, the week so far and the
+/// bar, then the pod, best first, with the student's own row marked.
+function leagueCard() {
+  const league = wallet.league;
+  if (!league) {
+    return `
+      <span class="pk-label">League</span>
+      <div class="pk-league empty">${pennantSVG(TIERS[0], 22, false)}<div><b>Your league lives on your phone.</b><small>Link it in the toolbar popup and it shows up here.</small></div></div>`;
+  }
+  const tier = tierOf(league);
+  const points = Math.max(0, Number(league.points) || 0);
+  const bar = typeof league.bar === 'number' ? league.bar : null;
+  const toGo = bar === null ? null : Math.max(0, bar - points);
+  const pct = bar ? Math.min(100, Math.round((points / bar) * 100)) : 100;
+  const board = Array.isArray(league.board) ? league.board : null;
+  const rows = board ? board.slice(0, 20).map((m, i) => `
+      <li class="${m.you ? 'you' : ''}">
+        <span class="pk-rank">${i + 1}</span>
+        ${kinFace(m.species)}
+        <b>${escapeHTML(m.you ? 'You' : podName(m.adjective, m.noun))}</b>
+        <span class="pk-pts">${escapeHTML(String(Math.max(0, Number(m.points) || 0)))}</span>
+      </li>`).join('') : '';
+  return `
+    <span class="pk-label">League</span>
+    <div class="pk-league" style="--tier:${tier.color};--tier-edge:${tier.edge};--tier-ink:${tier.ink}">
+      <div class="pk-league-head">
+        ${pennantSVG(tier, 34, true)}
+        <div><b>${tier.name}</b><small>${tier.water}</small></div>
+      </div>
+      <div class="pk-league-week">
+        <b>${points} earned this week</b>
+        ${bar !== null ? `<div class="pk-league-bar"><i style="width:${pct}%"></i></div>
+        <small>${toGo === 0 ? `Bar cleared. ${TIERS[TIERS.indexOf(tier) + 1]?.name ?? ''} next week.` : `${toGo} to go for ${TIERS[TIERS.indexOf(tier) + 1]?.name ?? 'the next tier'}`}</small>`
+        : '<small>Deep is the last one. Nothing below it, and nothing to lose.</small>'}
+      </div>
+      ${board === null ? '<div class="pk-league-note">No pod this week. Join one from the app to swim with strangers.</div>'
+        : board.length <= 1 ? '<div class="pk-league-note">Only you at this tier this week. The bar is the same bar.</div>'
+        : `<ol class="pk-league-board">${rows}</ol>`}
+      <div class="pk-foot">A quiet week keeps you where you are. Nothing here ever moves you down.</div>
     </div>`;
 }
 
@@ -431,10 +646,14 @@ function gradeRow(c) {
       <span class="pk-chev">${chevronSVG(open ? 'up' : 'down')}</span>
     </div>`;
 
+  const aim = targets[c.id] ?? null;
+  const aimLetter = aim === null ? null : (LETTERS.find(([, cut]) => cut === aim)?.[0] ?? null);
+
   if (!open) {
     return `<div class="pk-grade" data-course="${escapeHTML(c.id)}">
       ${head}
-      ${pct === null ? '' : `<div class="pk-mini"><i style="width:${pct}%;background:${escapeHTML(color)}"></i></div>`}
+      ${pct === null ? '' : `<div class="pk-mini"><i style="width:${pct}%;background:${escapeHTML(color)}"></i>${
+        aim === null ? '' : `<u style="left:${Math.max(0, Math.min(100, aim))}%" title="Aiming for ${escapeHTML(aimLetter ?? '')}"></u>`}</div>`}
     </div>`;
   }
 
@@ -442,7 +661,9 @@ function gradeRow(c) {
     ${head}
     ${sparkline(graded, color)}
     ${recent.length ? `<div class="pk-recent">${recent.map((g) => `
-      <div><span>${escapeHTML(g.title)}</span><em>${g.score}/${g.outOf}</em></div>`).join('')}</div>` : ''}
+      <div><span>${escapeHTML(g.title)}</span>${
+        typeof g.classMean === 'number' ? `<i>class ${g.classMean}</i>` : ''
+      }<em>${g.score}/${g.outOf}</em></div>`).join('')}</div>` : ''}
     <div class="pk-rename">
       <input type="text" maxlength="40" placeholder="Nickname, like BIO 101" data-rename="${escapeHTML(c.id)}" value="${escapeHTML(nicknames[c.id] ?? '')}" aria-label="Nickname for ${escapeHTML(c.fullName ?? c.name)}">
       <button type="button" data-rename-save="${escapeHTML(c.id)}">Save</button>
@@ -451,9 +672,78 @@ function gradeRow(c) {
       ${Object.keys(LEVELS).map((k) => `<button type="button" role="radio" data-level="${k}" data-level-course="${escapeHTML(c.id)}"
         aria-checked="${(levels[c.id] ?? 'regular') === k}">${LEVEL_NAMES[k]}</button>`).join('')}
     </div>
+    ${pct === null ? '' : `
+    <div class="pk-aim" role="radiogroup" aria-label="Grade you are aiming for in ${escapeHTML(c.name)}">
+      <span class="pk-aimlead" aria-hidden="true">Aiming for</span>
+      ${targetsFor(pct).map(([letter, cut]) => `<button type="button" role="radio" aria-checked="${aim === cut}"
+        class="${aim === cut ? 'on' : ''}" data-aim="${cut}" data-aim-course="${escapeHTML(c.id)}"
+        aria-label="${letter}, ${cut} percent">${letter}</button>`).join('')}
+      ${aim === null ? '' : `<button class="clear" data-aim-clear="${escapeHTML(c.id)}">Clear</button>`}
+    </div>
+    ${aim === null ? '' : `<div class="pk-foot">${
+      pct >= aim
+        ? `You are at ${pct}%, ${Math.round((pct - aim) * 10) / 10} above ${escapeHTML(aimLetter ?? '')}. Keep it there.`
+        : `${Math.round((aim - pct) * 10) / 10} points of average to reach ${escapeHTML(aimLetter ?? '')}. Still counts.`
+    }</div>`}`}
+    <button class="pk-press wide" data-open-course="${escapeHTML(c.id)}"
+        style="font-size:12px;padding:8px 10px">See every assignment</button>
     ${pct === null ? '' : `<button class="pk-press wide" data-whatif="${escapeHTML(c.id)}"
         style="font-size:12px;padding:8px 10px">What do I need on the final?</button>`}
   </div>`;
+}
+
+/// Everything this class has that we already fetched: what is graded, what the
+/// school marked missing, what is still ahead. Canvas hides the same list behind
+/// four clicks and a page load.
+function courseView(now) {
+  const c = data.courses.find((x) => x.id === ui.expanded);
+  if (!c) return panelViewFallback();
+  const filter = ui.courseFilter ?? 'all';
+  const tasks = (data.tasks ?? []).filter((t) => String(t.courseId) === String(c.id));
+  const graded = (data.graded?.[c.id] ?? []).slice().reverse();
+
+  const missing = tasks.filter((t) => t.missing && !t.submittedAt);
+  const upcoming = tasks.filter((t) => !t.submittedAt && !t.missing);
+  // A zero the teacher entered for work never handed in is both missing and a
+  // grade. It belongs in Missing, where something can still be done about it.
+  const missingIds = new Set(missing.map((t) => t.id));
+  const gradedOnly = graded.filter((g) => !missingIds.has(g.id));
+
+  const gradedRow = (g) => `
+    <li>
+      <div><b>${escapeHTML(g.title)}</b>
+           <small>${g.percent}%${typeof g.classMean === 'number' ? ` · class ${g.classMean}` : ''}</small></div>
+      <span class="pk-pts">${g.score}/${g.outOf}</span>
+    </li>`;
+  const gradedRows = graded.map(gradedRow).join('');
+  const gradedOnlyRows = gradedOnly.map(gradedRow).join('');
+  const taskRows = (list, amber) => list.map((t) => `
+    <li class="${amber ? 'overdue' : ''}">
+      <div><b>${escapeHTML(t.title)}</b><small>${escapeHTML(dueLabel(t, now))}</small></div>
+      ${startButton(t, true)}
+    </li>`).join('');
+
+  const body =
+    filter === 'graded' ? (gradedRows || '<li class="empty">Nothing marked yet.</li>')
+    : filter === 'missing' ? (taskRows(missing, true) || '<li class="empty">Nothing missing. Good.</li>')
+    : filter === 'upcoming' ? (taskRows(upcoming, false) || '<li class="empty">Nothing ahead.</li>')
+    : (taskRows(missing, true) + taskRows(upcoming, false) + gradedOnlyRows) || '<li class="empty">Nothing here yet.</li>';
+
+  const chip = (key, label, n) => `<button data-cfilter="${key}" aria-pressed="${filter === key}" class="${filter === key ? 'on' : ''}">${label}<em>${n}</em></button>`;
+  return `
+    <div class="pk-viewhead">
+      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
+      <h2>${escapeHTML(c.name)}</h2>
+      <span class="pk-meta">${typeof c.score === 'number' ? `${c.score}%` : ''}</span>
+    </div>
+    <div class="pk-filters">
+      ${chip('all', 'All', missing.length + upcoming.length + gradedOnly.length)}
+      ${chip('graded', 'Graded', graded.length)}
+      ${chip('missing', 'Missing', missing.length)}
+      ${chip('upcoming', 'Upcoming', upcoming.length)}
+    </div>
+    <ul class="pk-list">${body}</ul>
+    <div class="pk-foot">What Canvas handed over, nothing added. Older work drops off Canvas's own list, not ours.</div>`;
 }
 
 function freshness() {
@@ -497,15 +787,18 @@ function resultsHTML(query) {
 }
 
 function weekView(b, now) {
+  // Not b.missed: a month-old zero under a heading that says "Friday" reads as
+  // this Friday. Old missing work has its own list on the panel.
   const all = [...b.overdue, ...b.today, ...b.week, ...b.doneToday];
-  const dated = all.filter((t) => t.dueAt && !isNaN(new Date(t.dueAt)));
-  const undated = all.filter((t) => !dated.includes(t));
+  // Grouped by the day the work sits on, which is the day it was planned for
+  // when the student moved it, and the day it is due when they did not.
+  const placed = all.map((t) => ({ t, day: planDay(t) })).filter((x) => x.day);
+  const undated = all.filter((t) => !planDay(t));
 
   const groups = new Map();
-  for (const t of dated.sort((x, y) => x.dueAt.localeCompare(y.dueAt))) {
-    const due = new Date(t.dueAt);
-    const key = due.toDateString();
-    if (!groups.has(key)) groups.set(key, { date: due, items: [] });
+  for (const { t, day } of placed.sort((x, y) => x.day - y.day || String(x.t.dueAt ?? '').localeCompare(String(y.t.dueAt ?? '')))) {
+    const key = day.toDateString();
+    if (!groups.has(key)) groups.set(key, { date: day, items: [] });
     groups.get(key).items.push(t);
   }
 
@@ -514,27 +807,33 @@ function weekView(b, now) {
     : sameLocalDay(d, tomorrow) ? 'Tomorrow'
     : d.toLocaleDateString([], { weekday: 'long' });
 
-  // Seven dots from Monday: filled when that day's work is all in.
+  // Seven dots from Monday: filled when that day's work is all in. Each one is
+  // also where a dragged task lands, so the whole week is a set of drop targets.
   const monday = new Date(now);
   monday.setHours(0, 0, 0, 0);
   monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
   const strip = Array.from({ length: 7 }, (_, i) => {
     const day = new Date(monday.getTime() + i * DAY_MS);
-    const items = dated.filter((t) => sameLocalDay(new Date(t.dueAt), day));
+    const items = placed.filter((x) => sameLocalDay(x.day, day)).map((x) => x.t);
     const isToday = sameLocalDay(day, now);
     const full = items.length && items.every((t) => t.submittedAt);
-    return `<div class="${isToday ? 'is-today' : ''}">
+    return `<div class="${isToday ? 'is-today' : ''}" data-drop="${dayKey(day)}">
       <i class="${isToday ? 'today' : full ? 'full' : ''}"></i>
       <span>${'MTWTFSS'[i]}</span></div>`;
   }).join('');
 
   const done = all.filter((t) => t.submittedAt).length;
-  const groupBlocks = [...groups.values()].map((g) => `
+  const groupBlocks = [...groups.values()].map((g) => {
+    const owed = g.items.filter((t) => !isMoved(t)).length;
+    const moved = g.items.length - owed;
+    const count = [owed ? `${owed} due` : '', moved ? `${moved} planned` : ''].filter(Boolean).join(' · ');
+    return `
     <div class="pk-group">
       <span class="pk-label${sameLocalDay(g.date, now) ? ' green' : ''}">${heading(g.date)}</span>
-      <span class="pk-count-txt">${g.items.length} due</span>
+      <span class="pk-count-txt">${count}</span>
     </div>
-    <ul class="pk-list">${g.items.map((t) => plannerRow(t, now)).join('')}</ul>`).join('');
+    <ul class="pk-list" data-drop="${dayKey(g.date)}">${g.items.map((t) => plannerRow(t, now)).join('')}</ul>`;
+  }).join('');
 
   return `
     <div class="pk-viewhead">
@@ -543,6 +842,7 @@ function weekView(b, now) {
       <span class="pk-meta">${all.length} tasks · ${done} done</span>
     </div>
     <div class="pk-week">${strip}</div>
+    <div class="pk-foot">Drag a task onto a day, or press Plan, to say when you will do it. The due date does not move.</div>
     ${groupBlocks || '<ul class="pk-list"><li class="empty">Nothing scheduled. Enjoy it.</li></ul>'}
     ${undated.length ? `
       <div class="pk-group">
@@ -768,8 +1068,17 @@ const BANNER_COUNT = 4;
 
 /// The rows a card shows under "Due": up to three, pending first (overdue,
 /// then soonest, then undated), then the latest handed-in work, struck.
+/// Work the school marked missing more than a week ago. It belongs in the
+/// panel's Missing list, never written into the school's own page: a card that
+/// leads with a three-week-old zero has buried the thing due tonight.
+function isStaleMissing(t, now = new Date()) {
+  if (!t.missing || t.submittedAt || !t.dueAt) return false;
+  const due = Date.parse(t.dueAt);
+  return Number.isFinite(due) && (startOfDay(now) - startOfDay(new Date(due))) / DAY_MS > MISSED_AFTER_DAYS;
+}
+
 function dueRowsFor(courseId, now = new Date()) {
-  const mine = data.tasks.filter((t) => String(t.courseId) === String(courseId));
+  const mine = data.tasks.filter((t) => String(t.courseId) === String(courseId) && !isStaleMissing(t, now));
   const time = (t) => { const d = t.dueAt ? new Date(t.dueAt) : null; return d && !isNaN(d) ? d.getTime() : Infinity; };
   const pending = mine.filter((t) => !t.submittedAt).sort((a, b) => time(a) - time(b)).slice(0, 3);
   const done = mine.filter((t) => t.submittedAt).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 3 - pending.length);
@@ -789,7 +1098,7 @@ function dueShort(t, now) {
 
 function nextUpFor(courseId, now = new Date()) {
   const pending = data.tasks
-    .filter((t) => String(t.courseId) === String(courseId) && !t.submittedAt)
+    .filter((t) => String(t.courseId) === String(courseId) && !t.submittedAt && !isStaleMissing(t, now))
     .map((t) => ({ t, due: t.dueAt ? new Date(t.dueAt) : null }))
     .filter((x) => !x.due || !isNaN(x.due));
   if (!pending.length) return null;
@@ -904,7 +1213,7 @@ function renderToday() {
     return;
   }
   const now = new Date();
-  const b = buckets(data.tasks, now);
+  const b = buckets(data.tasks, now, plannedOn);
   const said = voice(b);
   const next = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
   const key = JSON.stringify([said.headline, b.overdue.length, b.today.length, b.week.length, b.doneToday.length, next?.id, next?.dueAt]);
@@ -949,6 +1258,36 @@ function renderToday() {
   if (existing) existing.replaceWith(box); else container.before(box);
 }
 
+// MARK: - Search, in the corner of every page
+//
+// One pill at the end of the page's title bar: the dashboard header, or the
+// breadcrumb strip on every other page. It opens the buddy on search; so does
+// Command-K.
+
+const SEARCH_ID = 'pk-search';
+
+function renderSearchChip() {
+  const existing = document.getElementById(SEARCH_ID);
+  const bar = document.querySelector('#dashboard_header_container .ic-Dashboard-header__layout') ?? document.querySelector('.ic-app-nav-toggle-and-crumbs');
+  if (!bar || !skin.cards || killed || skin.search === false || !skin.mascot || !shadow) { existing?.remove(); return; }
+  if (existing && existing.parentElement === bar) return;
+  existing?.remove();
+  const chip = el('span', '', null);
+  chip.id = SEARCH_ID;
+  chip.setAttribute('role', 'button'); chip.tabIndex = 0; chip.setAttribute('aria-label', 'Search Canvas, Command K');
+  const glass = document.createElementNS(SVG_NS, 'svg');
+  glass.setAttribute('viewBox', '0 0 16 16'); glass.setAttribute('width', '15'); glass.setAttribute('height', '15'); glass.setAttribute('aria-hidden', 'true');
+  const c = document.createElementNS(SVG_NS, 'circle'); c.setAttribute('cx', '7'); c.setAttribute('cy', '7'); c.setAttribute('r', '4.5'); c.setAttribute('fill', 'none'); c.setAttribute('stroke', 'currentColor'); c.setAttribute('stroke-width', '2');
+  const l = document.createElementNS(SVG_NS, 'path'); l.setAttribute('d', 'M10.5 10.5 L14 14'); l.setAttribute('stroke', 'currentColor'); l.setAttribute('stroke-width', '2'); l.setAttribute('stroke-linecap', 'round');
+  glass.append(c, l);
+  const mac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform ?? '');
+  chip.append(glass, el('span', '', 'Search'), el('kbd', '', mac ? '⌘K' : 'Ctrl K'));
+  const openSearch = () => { ui.open = true; ui.view = 'search'; ui.query = ''; ui.sheet = null; render(); };
+  chip.addEventListener('click', openSearch);
+  chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSearch(); } });
+  bar.append(chip);
+}
+
 // MARK: - This week, at the top of the sidebar
 //
 // Our own rail: a ring of the week's work by course, the streak, and a way
@@ -962,13 +1301,15 @@ function renderWeek() {
   const existing = document.getElementById(WEEK_ID);
   const onDashboard = /^\/(dashboard)?\/?$/.test(location.pathname);
   const side = document.getElementById('right-side');
-  if (!onDashboard || !side || !skin.cards || killed || putBack.week || !data.tasks?.length) {
+  // Shown from the first sync on, even with nothing due: the empty week and
+  // the streak are still the student's.
+  if (!onDashboard || !side || !skin.cards || killed || putBack.week || !(data.tasks?.length || data.at)) {
     existing?.remove();
     return;
   }
   const now = new Date();
   const w = weekStats(data.tasks, now);
-  const key = JSON.stringify([w.start.getTime(), w.total, w.done, w.streak, w.byCourse.map((c) => [c.courseId, c.total, c.done])]);
+  const key = JSON.stringify([w.start.getTime(), w.total, w.done, w.streak, w.byCourse.map((c) => [c.courseId, c.total, c.done]), wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.league?.bar ?? null, wallet.league?.board?.length ?? null, wallet.league?.board?.findIndex?.((m) => m.you) ?? null]);
   if (existing && existing.dataset.key === key) return;
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1023,6 +1364,47 @@ function renderWeek() {
   } else {
     box.append(el('p', 'pk-w-empty', 'Nothing due this week. Good week for a head start.'));
   }
+  if (wallet.league) {
+    // The league on the page itself: the tier, how far to the next one, and
+    // where the student stands in the pod. Numbers only; the names stay in
+    // the buddy's closed root.
+    const L = wallet.league;
+    const tier = tierOf(L);
+    const next = TIERS[TIERS.indexOf(tier) + 1] ?? null;
+    const pts = Math.max(0, Number(L.points) || 0);
+    const bar = typeof L.bar === 'number' ? L.bar : null;
+    const toGo = bar === null ? null : Math.max(0, bar - pts);
+    const box2 = el('div', 'pk-w-league');
+    box2.setAttribute('role', 'button'); box2.tabIndex = 0;
+    box2.style.setProperty('--tier', tier.color); box2.style.setProperty('--tier-edge', tier.edge);
+    const lhead = el('div', 'head');
+    const flag = document.createElementNS(SVG_NS, 'svg');
+    flag.setAttribute('viewBox', '0 0 30 20'); flag.setAttribute('width', '30'); flag.setAttribute('height', '20'); flag.setAttribute('aria-hidden', 'true');
+    const cloth = document.createElementNS(SVG_NS, 'path');
+    cloth.setAttribute('d', 'M1 1 H29 L22 10 L29 19 H1 Z'); cloth.setAttribute('fill', tier.color); cloth.setAttribute('stroke', tier.edge); cloth.setAttribute('stroke-width', '1.5'); cloth.setAttribute('stroke-linejoin', 'round');
+    const fold = document.createElementNS(SVG_NS, 'path');
+    fold.setAttribute('d', 'M1 1 L8 10 L1 19 Z'); fold.setAttribute('fill', tier.edge);
+    flag.append(cloth, fold);
+    const names = el('div');
+    names.append(el('b', '', tier.name), el('small', '', tier.water));
+    lhead.append(flag, names);
+    const climb = el('div', 'climb');
+    if (bar === null) climb.append(el('b', '', `${pts} this week. Deep is the last one.`));
+    else {
+      climb.append(el('b', '', toGo === 0 ? `Bar cleared. ${next?.name ?? ''} next week.` : `${toGo} to go for ${next?.name ?? 'the next tier'}`));
+      const track = el('div', 'track'); const fill = el('i'); fill.style.width = `${Math.min(100, Math.round((pts / bar) * 100))}%`; track.append(fill);
+      climb.append(track, el('small', '', `${pts} of ${bar} this week`));
+    }
+    const board = Array.isArray(L.board) ? L.board : null;
+    const rank = board ? board.findIndex((m) => m.you) + 1 : 0;
+    const ordinal = (n) => `${n}${['th', 'st', 'nd', 'rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4 || 0] ?? 'th'}`;
+    const pod = el('small', 'pod', board === null ? 'No pod this week' : board.length <= 1 ? 'Only you in the pod this week' : rank ? `${ordinal(rank)} of ${board.length} in your pod` : `${board.length} in your pod`);
+    box2.append(lhead, climb, pod);
+    const openLeague = () => { ui.open = true; ui.view = 'panel'; ui.sheet = null; render(); };
+    box2.addEventListener('click', openLeague);
+    box2.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLeague(); } });
+    box.insertBefore(box2, head.nextSibling);
+  }
   const foot = el('div', 'pk-w-foot');
   foot.append(el('span', w.streak ? 'streak' : '', w.streak ? `${w.streak} day${w.streak === 1 ? '' : 's'} in a row` : 'Start a streak today'));
   const more = el('span', 'more', 'See the week');
@@ -1046,13 +1428,14 @@ function refreshPage() {
   decorateCards();
   renderToday();
   renderWeek();
+  renderSearchChip();
 }
 function watchPage() {
   if (pageObserver) return;
   const schedule = () => { clearTimeout(pageTimer); pageTimer = setTimeout(refreshPage, 200); };
   // Our own nodes — the buddy's host and the card lines — must not count as
   // the page changing, or every pass would schedule the next one forever.
-  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === TODAY_ID || n.id === WEEK_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${TODAY_ID}, #${WEEK_ID}, .${CARD_DUE_CLASS}`));
+  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === TODAY_ID || n.id === WEEK_ID || n.id === SEARCH_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${TODAY_ID}, #${WEEK_ID}, #${SEARCH_ID}, .${CARD_DUE_CLASS}`));
   pageObserver = new MutationObserver((records) => {
     const theirs = records.some((r) => !ours(r.target) || [...r.addedNodes, ...r.removedNodes].some((n) => !ours(n)));
     if (theirs) schedule();
@@ -1066,11 +1449,11 @@ function watchPage() {
 // MARK: - Render
 
 function render() {
-  if (shadow) { shadow.host.toggleAttribute('data-open', ui.open); shadow.host.dataset.view = ui.view; }
+  if (shadow) { shadow.host.toggleAttribute('data-open', ui.open); shadow.host.dataset.view = ui.view; shadow.host.dataset.league = wallet.league ? tierOf(wallet.league).id : ''; }
   if (!shadow) return;
   const root = shadow;
   const now = new Date();
-  const b = buckets(data.tasks ?? [], now);
+  const b = buckets(data.tasks ?? [], now, plannedOn);
   const said = voice(b);
   const totalToday = b.today.length + b.doneToday.length;
   const pct = totalToday ? Math.round((b.doneToday.length / totalToday) * 100) : 100;
@@ -1082,10 +1465,17 @@ function render() {
     : ui.view === 'addtask' ? addTaskView()
     : ui.view === 'search' ? searchView()
     : ui.view === 'whatif' ? whatIfView()
+    : ui.view === 'course' ? courseView(now)
     : ui.view === 'looks' ? looksView()
     : panelView(b, said, now);
 
   const showHeader = ui.view === 'panel';
+
+  // Every control redraws the whole panel, so without this a chip near the
+  // bottom — a class level, a grade to aim for — throws the student back to the
+  // top of the list and looks like it did nothing.
+  const keepScroll = ui.view === prevView ? (root.querySelector('.pk-panel')?.scrollTop ?? 0) : 0;
+  prevView = ui.view;
 
   root.innerHTML = `
     ${focus.state !== 'idle' ? focusCard() : ''}
@@ -1093,7 +1483,7 @@ function render() {
       ${slimeSVG(said.face, 44)}
       ${urgent ? `<span class="pk-count" aria-hidden="true">${urgent}</span>` : ''}
     </button>
-    <div class="pk-panel" id="pk-panel" role="dialog" aria-label="Prepkin" ${ui.open ? '' : 'hidden'}>
+    <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Prepkin" tabindex="-1" ${ui.open ? '' : 'hidden'}>
       ${showHeader ? `
       <div class="pk-head${said.worried ? ' worried' : ''}">
         <div class="pk-hero">
@@ -1121,6 +1511,12 @@ function render() {
   // back costs nothing and never refetches.
   root.prepend(styleEl);
   wire(root);
+  const scroller = root.querySelector('.pk-panel');
+  if (scroller && keepScroll) scroller.scrollTop = keepScroll;
+  // Opening the panel moves focus into it. Without this a keyboard has to tab
+  // back through the whole Canvas page to reach what it just opened.
+  if (ui.open && !wasOpen && scroller) scroller.focus({ preventScroll: true });
+  wasOpen = ui.open;
 }
 
 async function saveNickname(root, courseId) {
@@ -1141,11 +1537,42 @@ if (typeof window !== 'undefined' && typeof chrome !== 'undefined' && chrome.sto
   }, true);
 }
 
+/// One task, one day, or none. Kept out of the payload the phone reads: the
+/// app has its own day, and a plan the student made on a laptop at 11 PM is
+/// nobody else's business.
+async function setPlan(id, key) {
+  const next = { ...plans };
+  if (key) next[id] = key; else delete next[id];
+  plans = next;
+  ui.planning = null;
+  await chrome.storage.local.set({ plans });
+  render();
+  // The strip at the top of the dashboard counts the same day the panel does,
+  // so it has to be redrawn here: nothing else in this tab will.
+  renderToday();
+}
+
 function wire(root) {
   root.querySelector('.pk-tab')?.addEventListener('click', () => {
     ui.open = !ui.open;
     if (!ui.open) { ui.view = 'panel'; ui.sheet = null; }
     render();
+  });
+  // Escape closes the panel wherever you are inside it, and hands focus back to
+  // the buddy rather than dropping it on the page behind.
+  root.querySelector('.pk-panel')?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    e.stopPropagation();
+    // One layer at a time, and only the layers that sit on top of a view: a
+    // sheet, then an open day picker. Escape has always closed the buddy from
+    // anywhere else, and it still does — a view is not a layer.
+    if (ui.sheet) { ui.sheet = null; render(); return; }
+    if (ui.planning) { ui.planning = null; render(); return; }
+    ui.open = false;
+    ui.view = 'panel';
+    ui.sheet = null;
+    render();
+    shadow?.querySelector('.pk-tab')?.focus();
   });
   root.querySelectorAll('[data-rename-save]').forEach((el) => el.addEventListener('click', () => saveNickname(root, el.dataset.renameSave)));
   root.querySelectorAll('[data-rename]').forEach((el) => el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); saveNickname(root, el.dataset.rename); } }));
@@ -1204,6 +1631,60 @@ function wire(root) {
     banners = { ...banners, [id]: banners[id] === n ? undefined : n };
     await chrome.storage.local.set({ banners });
     decorateCards(); render();
+  }));
+  root.querySelectorAll('[data-plan-open]').forEach((el) => el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const id = el.dataset.planOpen;
+    ui.planning = ui.planning === id ? null : id;
+    render();
+  }));
+  root.querySelectorAll('[data-plan-set]').forEach((el) => el.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    await setPlan(el.dataset.planSet, el.dataset.planDay);
+  }));
+  root.querySelectorAll('[data-plan-clear]').forEach((el) => el.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    await setPlan(el.dataset.planClear, null);
+  }));
+  // Dragging is the quick way for a mouse; the Plan button is the same move for
+  // a keyboard, a phone, or anyone who cannot drag. Neither is the only way in.
+  root.querySelectorAll('[data-drag]').forEach((el) => {
+    el.addEventListener('dragstart', (e) => {
+      e.dataTransfer?.setData('text/plain', el.dataset.drag);
+      if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+  });
+  root.querySelectorAll('[data-drop]').forEach((el) => {
+    el.addEventListener('dragover', (e) => { e.preventDefault(); el.classList.add('over'); });
+    el.addEventListener('dragleave', () => el.classList.remove('over'));
+    el.addEventListener('drop', async (e) => {
+      e.preventDefault(); el.classList.remove('over');
+      const id = e.dataTransfer?.getData('text/plain');
+      if (id) await setPlan(id, el.dataset.drop);
+    });
+  });
+  root.querySelectorAll('[data-aim]').forEach((el) => el.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    targets = { ...targets, [el.dataset.aimCourse]: Number(el.dataset.aim) };
+    await chrome.storage.local.set({ targets });
+    render();
+  }));
+  root.querySelectorAll('[data-aim-clear]').forEach((el) => el.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const next = { ...targets }; delete next[el.dataset.aimClear];
+    targets = next;
+    await chrome.storage.local.set({ targets });
+    render();
+  }));
+  root.querySelectorAll('[data-open-course]').forEach((el) => el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    ui.expanded = el.dataset.openCourse; ui.view = 'course'; ui.courseFilter = 'all';
+    render();
+  }));
+  root.querySelectorAll('[data-cfilter]').forEach((el) => el.addEventListener('click', () => {
+    ui.courseFilter = el.dataset.cfilter; render();
   }));
   root.querySelectorAll('[data-level]').forEach((el) => el.addEventListener('click', async (e) => {
     e.stopPropagation();
@@ -1328,11 +1809,13 @@ function panelStyle(host) {
 
 async function mount() {
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'nicknames', 'ownTasks']);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'nicknames', 'ownTasks', 'plans', 'targets']);
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
   data = composeData(stored.lastPayload ?? null, ownTasks, nicknames);
   levels = stored.levels ?? {};
+  plans = stored.plans ?? {};
+  targets = stored.targets ?? {};
   banners = stored.banners ?? {};
   putBack = stored.putBack ?? {};
   wallet = { ...wallet, ...(stored.wallet ?? {}) };
@@ -1343,6 +1826,7 @@ async function mount() {
   decorateCards();
   renderToday();
   renderWeek();
+  renderSearchChip();
   watchPage();
 
   document.getElementById(ROOT_ID)?.remove();
@@ -1369,13 +1853,17 @@ async function mount() {
 
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
-  module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank,
+  module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, TIERS, tierOf, kinFace, KIN_SPECIES,
                      _setData: (d) => { data = d; } };
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.nicknames || changes.ownTasks) mount();
+    // Not plans, levels or targets: the tab that set one has already redrawn,
+    // and a remount here would throw the student back to the top of the panel
+    // they just tapped in.
+
   });
   // The popup asks this page for its receipt, and asks it to show what it changed.
   chrome.runtime.onMessage.addListener((msg, sender, respond) => {

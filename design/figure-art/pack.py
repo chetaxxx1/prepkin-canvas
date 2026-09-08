@@ -135,10 +135,13 @@ def raster_outline_pt(im, scale):
 
 # Which field each scene sits on, so its background can be recoloured to match exactly.
 FIELD = {
-    0xFFF4DC: ["slots", "sunk", "paycheck", "brackets", "jar", "burrito"],
-    0xEAF4E0: ["filter", "cornell", "feynman", "exam"],
-    0xE6F0FB: ["refresh", "loop", "arousal", "trolley", "sleep"],
-    0xFFEDE7: ["email", "no", "echo", "ladder", "apology"],
+    0xFFF4DC: ["slots", "sunk", "paycheck", "brackets", "jar", "burrito",
+               "work-offer", "work-second", "work-both-in", "work-doubled", "work-refused"],
+    0xEAF4E0: ["filter", "cornell", "feynman", "exam",
+               "raise-timing", "work-calendar", "work-evidence"],
+    0xE6F0FB: ["refresh", "loop", "arousal", "trolley", "sleep", "trolley-split"],
+    0xFFEDE7: ["email", "no", "echo", "ladder", "apology",
+               "work-question", "work-handback", "work-band", "work-careers"],
     0xEDE7FB: ["spotlight", "ship", "cave"],
 }
 FIELD_OF = {i: hexv for hexv, ids in FIELD.items() for i in ids}

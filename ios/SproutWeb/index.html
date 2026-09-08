@@ -11,8 +11,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="theme-color" content="#dff3ea" />
     <title>Sprout</title>
-    <script type="module" crossorigin src="./assets/index-ws6Xe1Rq.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-D09tduuK.css">
+    <script type="module" crossorigin src="./assets/index-BNxkfOWm.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DocfcZzS.css">
   </head>
   <body>
     <canvas id="stage" aria-label="Sprout mascot playground"></canvas>
@@ -37,7 +37,7 @@
           <div class="collection-grid" id="collection-grid"></div>
         </div>
       </div>
-      <p id="hint" class="hint">Drag to swim around · tap to call</p>
+      <p id="hint" class="hint">Drag to swim around · tap to call · [ ] to flip costumes</p>
       <div class="tray">
       <div class="picks">
         <div class="kinds" role="radiogroup" aria-label="Type">
@@ -62,6 +62,7 @@
             Ninja
           </button>
         </div>
+        <div class="costumes" id="costumes" role="radiogroup" aria-label="Costume" hidden></div>
         <div class="evos" role="radiogroup" aria-label="Evolution">
           <button type="button" class="evo-swatch" data-evo="1" title="Stage I — the pear" aria-label="Evolution I">
             <span class="evo-pip evo-pip-1" aria-hidden="true"></span>

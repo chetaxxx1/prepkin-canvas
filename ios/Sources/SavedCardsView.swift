@@ -109,6 +109,7 @@ struct SavedCardsView: View {
         case "study": return (Theme.mintSoft, Theme.mintDark)
         case "psychology": return (Theme.hex(0xE6F0FB), Theme.hex(0x3D6FA8))
         case "people": return (Theme.coralSoft, Theme.coralDeep)
+        case "work": return (Theme.hex(0xEEF6E0), Theme.hex(0x5A7A2E))
         default: return (Theme.hex(0xF5EFE3), Theme.muted)
         }
     }

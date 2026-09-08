@@ -1,0 +1,6 @@
+{
+  "path": "/api/v1/planner/items?start_date=2026-08-23T06%3A00%3A00.000Z&filter=incomplete_items&order=asc&per_page=14&context_codes%5B%5D=course_6&context_codes%5B%5D=user_3",
+  "status": 200,
+  "link": "<https://localhost:8443/api/v1/planner/items?context_codes%5B%5D=course_6&context_codes%5B%5D=user_3&filter=incomplete_items&order=asc&start_date=2026-08-23T06%3A00%3A00.000Z&page=first&per_page=14>; rel=\"current\",<https://localhost:8443/api/v1/planner/items?context_codes%5B%5D=course_6&context_codes%5B%5D=user_3&filter=incomplete_items&order=asc&start_date=2026-08-23T06%3A00%3A00.000Z&page=first&per_page=14>; rel=\"first\",<https://localhost:8443/api/v1/planner/items?context_codes%5B%5D=course_6&context_codes%5B%5D=user_3&filter=incomplete_items&order=asc&start_date=2026-08-23T06%3A00%3A00.000Z&page=first&per_page=14>; rel=\"last\"",
+  "body": []
+}

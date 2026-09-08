@@ -2,7 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const { mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore,
-        DAYS_AHEAD, DAYS_OVERDUE, DAYS_NEW, safeColor, nextLink } = require('./canvas.js');
+        DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_NEW, safeColor, nextLink } = require('./canvas.js');
 
 const HOST = 'canvas.dartmouth.edu';
 const NOW = Date.parse('2026-09-01T12:00:00Z');
@@ -382,4 +382,44 @@ test('requiredScore refuses nonsense rather than guessing', () => {
   assert.equal(requiredScore({ current: null, target: 90, weight: 30 }), null);
   assert.equal(requiredScore({ current: 80, target: 90, weight: 0 }), null);
   assert.equal(requiredScore({ current: 80, target: 90, weight: 140 }), null);
+});
+
+// MARK: - Missing work
+
+test('work the school marked missing outlives the overdue window', () => {
+  const old = { due_at: at(-(DAYS_OVERDUE + 14)), submission_types: ['online_upload'] };
+  const [kept] = map([assignment({ ...old, submission: { workflow_state: 'unsubmitted', missing: true } })]);
+  assert.ok(kept, 'three weeks late is exactly the thing you need to find');
+  assert.equal(kept.missing, true);
+
+  const dropped = map([assignment({ ...old, submission: { workflow_state: 'unsubmitted', missing: false } })]);
+  assert.equal(dropped.length, 0, 'without the flag, the old window still applies');
+});
+
+test('missing work stops showing after a term, not forever', () => {
+  const raw = assignment({ due_at: at(-(DAYS_MISSING + 1)), submission_types: ['online_upload'],
+    submission: { workflow_state: 'unsubmitted', missing: true } });
+  assert.equal(map([raw]).length, 0);
+});
+
+test('handing it in clears missing, whatever Canvas still says', () => {
+  const [t] = map([assignment({ due_at: at(-3), submission_types: ['online_upload'],
+    submission: { workflow_state: 'submitted', submitted_at: at(-1), missing: true } })]);
+  assert.equal(t.missing, false);
+});
+
+test('the class average rides along only when Canvas publishes one', () => {
+  const graded = (stats) => mapGraded([{ id: 4, name: 'Quiz', points_possible: 20,
+    submission: { score: 18, graded_at: at(-1) }, ...(stats ? { score_statistics: stats } : {}) }])[0];
+  assert.equal(graded({ mean: 14.28 }).classMean, 14.3, 'rounded to one place, like the score');
+  assert.equal(graded(null).classMean, null, 'a class too small to publish stays blank');
+});
+
+test('a graded row carries the same id as its task, so a missing zero is not listed twice', () => {
+  const raw = assignment({ id: 15, due: at(-9), submission_types: ['online_upload'],
+    sub: undefined, submission: { workflow_state: 'graded', submitted_at: null, graded_at: at(-8), score: 0, missing: true } });
+  const [t] = mapAssignments([raw], { host: HOST, course: COURSE, now: NOW });
+  const [g] = mapGraded([raw], { host: HOST });
+  assert.equal(t.missing, true);
+  assert.equal(g.id, t.id);
 });

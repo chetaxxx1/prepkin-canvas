@@ -300,6 +300,16 @@ final class BridgeRequestTests: XCTestCase {
         XCTAssertFalse(game.ownedLooks.contains("tidepool"), "and it is not quietly handed over")
     }
 
+    func testTheBridgeStateCarriesTheLeagueAsPlainNumbers() {
+        let game = stateWithCoins(50)
+        let league = game.bridgeState.league
+        XCTAssertEqual(league?.tier, game.league.tier.rawValue)
+        XCTAssertEqual(league?.points, game.leaguePoints)
+        XCTAssertEqual(league?.bar, LeagueRules.bar(for: game.league.tier))
+        XCTAssertEqual(league?.week, game.league.weekStart.raw)
+        XCTAssertNil(league?.board, "no pod this week, so no strangers on the laptop")
+    }
+
     func testALookIsNotPaidForTwice() {
         var game = stateWithCoins(700)
         game.applyBridgeRequests([request("look", at: 500, lookId: "beanie", price: 300)])

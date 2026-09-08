@@ -420,7 +420,24 @@ struct GameState: Codable, Equatable {
     /// What the extension is told after a sync.
     var bridgeState: BridgeState {
         BridgeState(coins: ledger.balance, owned: Array(ownedLooks).sorted(),
-                    requestsAppliedAt: requestsAppliedAt)
+                    requestsAppliedAt: requestsAppliedAt, league: bridgeLeague)
+    }
+
+    /// The league flattened for the laptop. The board rides along only when the pod
+    /// is this week's, so a stale week's strangers never show up on a Canvas page.
+    var bridgeLeague: BridgeLeague {
+        let pod = league.lastPod.flatMap { $0.week == league.weekStart ? $0 : nil }
+        return BridgeLeague(
+            tier: league.tier.rawValue,
+            points: leaguePoints,
+            bar: LeagueRules.bar(for: league.tier),
+            week: league.weekStart.raw,
+            pennants: league.pennants.map(\.rawValue).sorted(),
+            board: pod.map { $0.members.map {
+                BridgeLeagueMember(you: $0.isYou, adjective: $0.adjective, noun: $0.noun,
+                                   points: $0.points, level: $0.level,
+                                   species: $0.speciesID, look: $0.lookID)
+            } })
     }
 
     /// Keeps the best single shift. Miles are cosmetic, so this is a plain max with

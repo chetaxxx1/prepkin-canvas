@@ -21,7 +21,7 @@
       {
         "kind": "figure",
         "step": 3,
-        "body": "$1,000 at 8% a year. Year 1 you earn $80. Year 2 you earn $86 — because now the $80 is earning too."
+        "body": "$1,000 at 8% a year. Year 1 you earn $80. Year 2 you earn $86. That's because now the $80 is earning too."
       },
       {
         "kind": "figure",
@@ -70,7 +70,7 @@
       {
         "kind": "figure",
         "step": 2,
-        "body": "Half goes to needs — rent, food, the bus. That's the 50."
+        "body": "Half goes to needs. Rent, food, the bus. That's the 50."
       },
       {
         "kind": "figure",
@@ -210,14 +210,34 @@
         "body": "All debt is renting money. The interest rate is the rent."
       },
       {
+        "kind": "example",
+        "body": "A rate is just a price. 24% a year means if you owe $1,000 for a year, $240 of that is the fee for owing it. Nothing you bought got better. That's rent."
+      },
+      {
         "kind": "figure",
         "step": 2,
-        "body": "Rent is worth paying when the thing you bought is worth more later — a degree, a business."
+        "body": "Rent is worth paying when the thing you bought is worth more later. A degree. A business."
+      },
+      {
+        "kind": "example",
+        "body": "Careful with that one though. A degree is worth it if you finish it and it leads somewhere. Debt for a course you drop out of is the same debt with none of the payoff."
       },
       {
         "kind": "figure",
         "step": 3,
         "body": "It almost never is when the thing shrinks: a night out, a phone, a weekend."
+      },
+      {
+        "kind": "example",
+        "body": "Here's what that looks like. Put $1,000 on a card at 24% and pay the $25 minimum. It takes almost seven years. You pay back $2,032 in total. Half of that is rent on a night you already forgot."
+      },
+      {
+        "kind": "example",
+        "body": "If you owe on more than one thing, write them all down with their rates. Pay the minimum on every one. Then throw every spare dollar at the highest rate. That order saves you the most money, every time."
+      },
+      {
+        "kind": "example",
+        "body": "Watch out for the deal that isn't one. Zero percent for twelve months is still debt with a deadline. Some of those charge you all the skipped interest at once if you're late or still owe anything at the end."
       },
       {
         "kind": "key",
@@ -251,14 +271,34 @@
         "body": "An index fund buys a slice of every company on a list, then does nothing else."
       },
       {
+        "kind": "example",
+        "body": "First, what a fund is. It's a big bucket lots of people put money into. The bucket buys things. You own a slice of the bucket. An index fund's rule is the simplest one there is: buy everything on the list, then leave it alone."
+      },
+      {
         "kind": "figure",
         "step": 2,
         "body": "Picking one company means being right about that one, twice, for twenty years."
       },
       {
+        "kind": "example",
+        "body": "Twice, because you have to buy at the right time and sell at the right time. Getting one of those right is luck. Getting both right, over and over, is what full-time professionals are paid to do. Most of them fail at it."
+      },
+      {
         "kind": "figure",
         "step": 3,
         "body": "Over twenty years most professional pickers land behind the boring fund. Fees eat the difference."
+      },
+      {
+        "kind": "example",
+        "body": "Fees sound tiny and aren't. Put $10,000 in for twenty years at 7% and you end up with about $38,700. Charge 1% a year in fees and it's about $32,100. That 1% quietly took $6,600, which is 17% of everything you made."
+      },
+      {
+        "kind": "example",
+        "body": "So when you look at a fund, find the number called the expense ratio. That's the yearly fee. Broad index funds are often under 0.1%. Anything over 1% needs to explain itself."
+      },
+      {
+        "kind": "example",
+        "body": "The other mistake is checking it. The fund will drop, sometimes a lot. Selling then is how you lock the loss in. The boring plan only works if you're boring about it."
       },
       {
         "kind": "key",
@@ -298,7 +338,7 @@
       {
         "kind": "figure",
         "step": 3,
-        "body": "A posted grade, a curve, what somebody else scored — second group. Epictetus said suffering comes from trying to control those."
+        "body": "A posted grade, a curve, what somebody else scored. All second group. Epictetus said suffering comes from trying to control those."
       },
       {
         "kind": "example",
@@ -310,7 +350,7 @@
       },
       {
         "kind": "check",
-        "question": "Which of these is in the first group — the part you control?",
+        "question": "Which of these is in the first group, the part you control?",
         "choices": [
           "The curve on the test",
           "How many hours you study",
@@ -337,14 +377,34 @@
         "body": "Socrates taught by asking questions, not giving answers. Start with something you believe."
       },
       {
+        "kind": "example",
+        "body": "Socrates was a teacher in Athens about 2,400 years ago. He wrote nothing down. His method was to keep asking people to explain what they'd just said. Either it held up, or it didn't."
+      },
+      {
         "kind": "figure",
         "step": 2,
         "body": "Ask why once and you get a reason. That part is usually easy."
       },
       {
+        "kind": "example",
+        "body": "Try it on something small. 'I should use flashcards.' Why? 'Because they help me remember.' Why do they? 'Because I test myself.' Why does testing work? Three questions in, you either know or you've found the hole."
+      },
+      {
         "kind": "figure",
         "step": 3,
-        "body": "Ask why twice and most beliefs run out of floor. That is not a failure — that's the method working."
+        "body": "Ask why twice and most beliefs run out of floor. That is not a failure. That's the method working."
+      },
+      {
+        "kind": "example",
+        "body": "It feels bad, and it's supposed to. Finding out you can't explain something you were sure about is uncomfortable. That discomfort is the only reliable sign you've found something worth studying."
+      },
+      {
+        "kind": "example",
+        "body": "Use it on your own notes. Cover the page and ask why the answer is the answer. If you can only say what the answer is, you've memorised a shape and not an idea."
+      },
+      {
+        "kind": "example",
+        "body": "One warning. This is a tool for checking your own thinking, not for winning arguments. Asking someone why five times in a row doesn't make you Socrates. It makes you annoying."
       },
       {
         "kind": "key",
@@ -378,14 +438,34 @@
         "body": "Occam's razor: when two explanations fit the same facts, start with the one that assumes less."
       },
       {
+        "kind": "example",
+        "body": "It's named after William of Ockham. He was a monk who argued you shouldn't invent extra things to explain something if you don't need them. A razor because it shaves off what you don't need."
+      },
+      {
         "kind": "figure",
         "step": 2,
         "body": "Your code broke after you changed one line. That line is one assumption."
       },
       {
+        "kind": "example",
+        "body": "Count the assumptions and the choice makes itself. 'I typed it wrong' assumes one thing. 'The compiler has a bug nobody else has hit' assumes four. Both could be true. One is far cheaper to check."
+      },
+      {
         "kind": "figure",
         "step": 3,
-        "body": "A compiler bug is four. It might still be right — it is just more expensive to check."
+        "body": "A compiler bug is four. It might still be right. It is just more expensive to check."
+      },
+      {
+        "kind": "example",
+        "body": "So the razor is an order, not an answer. Check the cheap one first. If it holds, you're done in a minute. If it doesn't, you've lost a minute and you now know something."
+      },
+      {
+        "kind": "example",
+        "body": "The common misuse is treating simplest as truest. Sometimes the weird explanation is the real one. The razor doesn't say it's wrong. It says check the boring one before you spend a day on the interesting one."
+      },
+      {
+        "kind": "example",
+        "body": "Try it the next time something breaks. Write the two explanations down. Count what each one needs to be true. Test the smaller number first, every time."
       },
       {
         "kind": "key",
@@ -471,7 +551,7 @@
       {
         "kind": "figure",
         "step": 3,
-        "body": "The skill is knowing what was cut — and whether you needed it."
+        "body": "The skill is knowing what was cut, and whether you needed it."
       },
       {
         "kind": "example",
@@ -509,14 +589,34 @@
         "body": "One long cram goes in fast and leaks just as fast. A week later almost none of it is there."
       },
       {
+        "kind": "example",
+        "body": "Spacing just means splitting the time you were going to spend anyway. Not more hours. The same hour, cut into pieces, with days in between them."
+      },
+      {
         "kind": "figure",
         "step": 2,
         "body": "Split the same hour over six days and every session catches the memory just before it goes."
       },
       {
+        "kind": "example",
+        "body": "So one hour on Sunday becomes ten minutes on Monday, Tuesday, Wednesday, Thursday, Friday and Saturday. Identical hour. Nothing extra. The only thing that changed is the gaps."
+      },
+      {
         "kind": "figure",
         "step": 3,
         "body": "Your brain strengthens a memory each time it nearly forgets it, then pulls it back."
+      },
+      {
+        "kind": "example",
+        "body": "Which is why cramming feels better and works worse. When it's all fresh, recalling is easy, so you feel like you know it. The ease is the problem. Nothing had to be pulled back."
+      },
+      {
+        "kind": "example",
+        "body": "To actually do it, put the sessions in your calendar the day you get the material. Ten minutes each. If you wait until you feel like scheduling them, the test will arrive first."
+      },
+      {
+        "kind": "example",
+        "body": "If the test is tomorrow, this lesson can't save you. Cram, then space the next one. The method only pays when there's time between sessions."
       },
       {
         "kind": "key",
@@ -601,14 +701,34 @@
         "body": "Active recall means pulling something out of your head, not putting it back in."
       },
       {
+        "kind": "example",
+        "body": "There's a difference between knowing something and recognising it. You recognise a face you can't name. Rereading notes trains recognising. Exams ask you to name."
+      },
+      {
         "kind": "figure",
         "step": 2,
         "body": "The whole method: close everything, write what you remember, then check what you missed."
       },
       {
+        "kind": "example",
+        "body": "Ten minutes, for real. Two minutes shutting the laptop and the notes. Five minutes writing everything you can remember on a blank page. Three minutes opening the notes and marking what wasn't there."
+      },
+      {
         "kind": "figure",
         "step": 3,
         "body": "The part you missed is your entire study list. Everything else is already learned."
+      },
+      {
+        "kind": "example",
+        "body": "This is why rereading fools people. It feels smooth and quick, and that smoothness gets mistaken for knowing. A blank page feels awful because it's actually measuring you."
+      },
+      {
+        "kind": "example",
+        "body": "You don't need materials for it. Walking to class, try to list the four things from the last lecture. Whatever you can't get is what you open the notes to later."
+      },
+      {
+        "kind": "example",
+        "body": "The mistake is checking too early. If you peek the second it gets hard, you've turned it back into reading. Sit in the blank for a bit. That struggle is the part that works."
       },
       {
         "kind": "key",
@@ -694,14 +814,34 @@
         "body": "Before reading, turn every heading into a question. 'Cell division' becomes 'how does a cell divide?'"
       },
       {
+        "kind": "example",
+        "body": "The reason is simple. Reading with no question is just moving your eyes over a page and hoping. A question gives your brain something to look for, so it notices when the answer shows up."
+      },
+      {
         "kind": "figure",
         "step": 2,
         "body": "Now you're searching for an answer instead of scanning a page, and you notice it when it arrives."
       },
       {
+        "kind": "example",
+        "body": "Do it out loud with the contents page first. Six headings become six questions. That takes about two minutes and it's the whole setup."
+      },
+      {
         "kind": "figure",
         "step": 3,
         "body": "At the end, write four sentences with the book shut. That's your whole set of notes."
+      },
+      {
+        "kind": "example",
+        "body": "Shut is the important word. If the book is open you'll copy, and copying feels like working while teaching you nothing. Four sentences from memory beats two pages of transcription."
+      },
+      {
+        "kind": "example",
+        "body": "If a section has no headings, use the first line of each paragraph instead. Same trick. You're just looking for what this bit is trying to tell me."
+      },
+      {
+        "kind": "example",
+        "body": "The mistake is highlighting. A highlighter marks what looked important while you were reading. That's a decision you make before you understand anything. It also leaves you with a yellow page and no answers."
       },
       {
         "kind": "key",
@@ -1585,52 +1725,64 @@
     "track": "philosophy",
     "figure": "trolley",
     "minutes": 2,
-    "blurb": "A runaway trolley, five people, one lever. You'll see why most people pull it, why most people won't push, and what that says about how we judge doing versus letting happen.",
-    "takeaway": "You learned that doing and allowing feel different, even when the math is the same.",
+    "blurb": "A runaway trolley, five people, one lever. You'll see why almost everyone pulls it, why almost nobody pushes, and why that gap is the question behind self-driving cars and every triage rule.",
+    "takeaway": "You learned that how a harm happens changes the answer, even when the count doesn't.",
     "cards": [
       {
         "kind": "figure",
         "step": 1,
-        "body": "A trolley is running down the track with no brakes. Ahead, the track forks."
+        "body": "A trolley is running down the track. The brakes are gone. Ahead, the track forks."
       },
       {
         "kind": "figure",
         "step": 2,
-        "body": "On the main track, five people who can't move. If nothing happens, the trolley hits them."
+        "body": "On the main track, five people who can't get out of the way. If nobody does anything, the trolley hits all five."
       },
       {
         "kind": "figure",
         "step": 3,
-        "body": "On the side track, one person. You're standing at the lever. Pull it and the trolley turns."
+        "body": "On the side track, one person. You're standing at the lever. Pull it and the trolley turns. One dies instead of five."
       },
       {
         "kind": "figure",
         "step": 4,
-        "body": "Most people pull. One death instead of five. Simple math. But change one detail and the answer flips."
+        "body": "Most people say pull. One instead of five. It feels like arithmetic. Now change one detail."
       },
       {
         "kind": "example",
-        "body": "Same trolley, same five people. Now you're on a bridge and the only way to stop it is to push a large man off, onto the track. One death instead of five. Most people won't push."
+        "body": "Same runaway trolley, same five people. This time you're on a bridge over the track, next to a large stranger. The only way to stop it is to push him off, into its path. Still one death instead of five. Almost nobody pushes."
       },
       {
         "kind": "figure",
         "step": 5,
-        "body": "The numbers are identical. What changed is whether you used a person as the tool. The math says one. Your gut says the lever and the push are not the same act."
+        "body": "Ask people both versions and the answers split hard. Same trade, same count, wildly different verdict."
+      },
+      {
+        "kind": "example",
+        "body": "Here's the difference. At the lever, the one person dies because of where they were standing. On the bridge, you use him as the thing that stops the trolley. In the first, the death is a side effect. In the second, it's the tool."
+      },
+      {
+        "kind": "example",
+        "body": "Philosophers have a name for that line. There's harm you cause on the way to doing good. And there's harm you use to do the good. Those get judged differently. You may not agree with the line. Nearly everyone's gut draws it anyway."
+      },
+      {
+        "kind": "example",
+        "body": "This isn't just a puzzle. A self-driving car has to be told what to do when a crash is coming. An emergency room has to decide who gets treated first. Somebody writes those rules, and this is the argument they're having."
       },
       {
         "kind": "key",
-        "body": "Five versus one is easy. Doing versus allowing is what we actually argue about."
+        "body": "Five versus one is the easy part. What we actually argue about is whether a person was used."
       },
       {
         "kind": "check",
-        "question": "What's the difference between the lever and the bridge?",
+        "question": "A hospital could save five patients by taking the organs of one healthy visitor. Almost everyone says no. Which version is that like?",
         "choices": [
-          "More people die on the bridge",
-          "On the bridge you use a person as the tool",
-          "The lever is a machine"
+          "The bridge, because the one person is the means",
+          "The lever, because it's still one for five",
+          "Neither, the numbers are different"
         ],
-        "answer": 1,
-        "why": "Both save five by losing one. On the bridge, the one person is the means of stopping the trolley. That's what most people can't do."
+        "answer": 0,
+        "why": "The count is the same trade as the lever. But the visitor isn't in the way of anything. He's the tool you'd be using, which is what the bridge case is really testing."
       }
     ]
   },
@@ -1949,6 +2101,959 @@
         ],
         "answer": 1,
         "why": "A hard question can eat ten minutes and three easy questions with it. Bank the easy ones first, then come back."
+      }
+    ]
+  },
+  {
+    "id": "psy-8",
+    "title": "Why $900 feels cheap",
+    "track": "psychology",
+    "figure": "anchor",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "The first price you see quietly sets what every price after it feels like. It's called anchoring, and you'll watch it move the same jacket by $450.",
+    "takeaway": "You learned that the first number drags every number after it.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Two stores. Same jacket. The only difference is which price you happen to see first."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "At Store A the first tag you see says $1,200. You haven't looked at the jacket yet. That number is already in your head."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Ask what you'd pay for the jacket and you land near $900. Not cheap. Just cheaper than the number already in your head."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Store B has the same jacket. The first tag here is $300. Now $450 feels like plenty to pay."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Same jacket, two answers, $450 apart. Nothing changed but the number you saw first."
+      },
+      {
+        "kind": "example",
+        "body": "Researchers spun a wheel, then asked people about the countries in the UN. Is the share of them in Africa higher or lower than the wheel's number? Then they had to name the real share. People who saw 65 guessed about 45%. People who saw 10 guessed about 25%."
+      },
+      {
+        "kind": "key",
+        "body": "The first number is not information. It's an anchor someone else dropped. Bring your own before you look."
+      },
+      {
+        "kind": "check",
+        "question": "You're asking for pay at a summer job. Who ends up setting the range?",
+        "choices": [
+          "Whoever says a number first",
+          "Whoever talks longer",
+          "Whoever needs it more"
+        ],
+        "answer": 0,
+        "why": "The first number said out loud becomes the spot everyone argues around. So have your own number ready before you hear theirs."
+      }
+    ]
+  },
+  {
+    "id": "psy-9",
+    "title": "Why they're a jerk and you're just busy",
+    "track": "psychology",
+    "figure": "blame",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "Their mistake means they're careless, but your mistake means it was a bad week. You'll see why the same act lands in two different boxes, and the one question that evens it out.",
+    "takeaway": "You learned that you judge them by what they did, and yourself by what you meant.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Something goes wrong. Your brain has two boxes to put the cause in. The person, or the situation. Every explanation lands in one of them."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "A classmate snaps at you in the hall. You file it under person. They're rude. That's the box you reach for first."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The next day you snap at someone. You file it under situation. You barely slept and you were already late. Same act, other box."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Here's why the boxes split. You see your whole day. You saw one moment of theirs. The bad news they got at lunch never reached you."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "The fix is one question. What's their situation? You're not excusing them. You're checking the box you skipped."
+      },
+      {
+        "kind": "example",
+        "body": "In a 1967 study, students read an essay praising Fidel Castro. They were told the writer had been handed that side and had no choice. They still leaned toward thinking the writer meant it. Psychologists call this the fundamental attribution error."
+      },
+      {
+        "kind": "key",
+        "body": "You judge them by what they did. You judge yourself by what you meant."
+      },
+      {
+        "kind": "check",
+        "question": "A classmate bombs a test. You bomb the same test. How does the error usually go?",
+        "choices": [
+          "They didn't study, and you had a bad week",
+          "Neither of you studied",
+          "You both had a bad week"
+        ],
+        "answer": 0,
+        "why": "The bias leans one way. Their score becomes who they are. Yours becomes what was going on."
+      }
+    ]
+  },
+  {
+    "id": "psy-10",
+    "title": "Losing $20 hurts twice as much",
+    "track": "psychology",
+    "figure": "sting",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "Losing $20 hurts more than finding $20 feels good. You'll see why an even bet feels unfair, and how that quietly bends your choices.",
+    "takeaway": "You learned that losing hurts about twice as much as winning.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "This meter shows how money feels. The middle line is even. The same twenty dollars can push you up or down."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "You find $20 on the sidewalk. That's a real lift. The meter goes up, but not all the way."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "You lose $20 out of your pocket. Same amount, about twice the sting. It sinks the meter all the way down."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "So an even $20 coin flip feels like a bad deal. Most people want about $40 on the win side before they take it. Twice the size, just to feel fair."
+      },
+      {
+        "kind": "example",
+        "body": "Credit card companies fought over the wording. They wanted stores to post a 'cash discount', never a 'card surcharge'. Skipping a discount feels like a smaller gain. A surcharge feels like money taken from you."
+      },
+      {
+        "kind": "key",
+        "body": "Losing $20 hurts about twice as much as finding $20 feels good. So an even bet never feels even."
+      },
+      {
+        "kind": "check",
+        "question": "A friend offers a coin flip: heads you win $20, tails you lose $20. Why do most people say no?",
+        "choices": [
+          "The odds are against them",
+          "The $20 going out feels about twice as big",
+          "They don't have $20 on them"
+        ],
+        "answer": 1,
+        "why": "The odds are even and the money is even. The feeling isn't. Twenty dollars leaving lands about twice as hard as twenty arriving. That makes a fair bet feel like a bad one."
+      }
+    ]
+  },
+  {
+    "id": "psy-11",
+    "title": "Why rare things feel common",
+    "track": "psychology",
+    "figure": "search",
+    "minutes": 3,
+    "triggers": [],
+    "blurb": "Your brain guesses how likely something is by how fast an example shows up. You'll see why the loud, rare stuff feels common, and the one question that fixes it.",
+    "takeaway": "You learned that easy to remember is not the same as common.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You're standing at the ocean. You ask how likely a shark attack is. Your brain doesn't count anything. It runs a search."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The first result is whatever was loudest. A video, a headline, a story someone told you. Shark attack comes back instantly."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The ordinary risks are in the list too. Drowning. A rip current. They almost never make the news, so they load slowly and sit near the bottom."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Here's what actually happens in the US. Sharks kill about one person a year. About 4,000 people drown."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "So don't ask what comes to mind. Ask out of how many. A count beats a memory every time."
+      },
+      {
+        "kind": "example",
+        "body": "Think of English words with the letter R. Is R more often the first letter, or the third? Most people say first. It's third. First-letter words just arrive faster."
+      },
+      {
+        "kind": "key",
+        "body": "Easy to picture is not the same as likely. A quick example tells you what made the news, not what happens."
+      },
+      {
+        "kind": "check",
+        "question": "You see two news stories about food poisoning at a chain. Why does the chain suddenly feel risky?",
+        "choices": [
+          "Two cases are strong evidence",
+          "You now have an example ready, so it feels common",
+          "You never liked the chain anyway"
+        ],
+        "answer": 1,
+        "why": "Two stories hand you an instant example. Your brain reads 'came to mind fast' as 'happens a lot'. Two cases out of millions of meals barely move the real number."
+      }
+    ]
+  },
+  {
+    "id": "ppl-6",
+    "title": "How to disagree without a fight",
+    "track": "people",
+    "figure": "sliver",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "Start with the part you think is wrong, and a disagreement turns into a fight. You'll learn two moves that keep it a conversation: say their point back, then name one thing.",
+    "takeaway": "You learned to say it back before you push back.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Your friend says practice should move to mornings because afternoons are too hot. You think mornings are worse. Most people lead with that, and now it's a fight."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Look at what they said again. Most of it you agree with. The heat is real. Find that part first."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Now find the one piece you actually disagree with. Not all of it. Just the piece: mornings."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Say the agreeing part back, in your own words. 'You're right, afternoons are brutal.' Now they know you listened instead of waiting to talk."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Then name the one piece. 'The part I'd change is mornings. Half of us can't get there by seven.' That's an edit, not a takedown."
+      },
+      {
+        "kind": "example",
+        "body": "Your friend says the group chat is dead because nobody plans anything. You think it's dead because the group got too big. Try: 'You're right, nobody's planning. I think the real problem is that there are forty of us in there now.' Same disagreement. No fight."
+      },
+      {
+        "kind": "key",
+        "body": "Say it back, then push back. And push on one thing, not five."
+      },
+      {
+        "kind": "check",
+        "question": "Why say their point back before you disagree?",
+        "choices": [
+          "It proves you listened",
+          "It makes them forget their point",
+          "It buys you time to argue"
+        ],
+        "answer": 0,
+        "why": "When people hear their own idea said back, they have less to defend. Your one disagreement then lands as an edit, not an attack."
+      }
+    ]
+  },
+  {
+    "id": "ppl-7",
+    "title": "Group projects that actually get done",
+    "track": "people",
+    "figure": "roster",
+    "minutes": 3,
+    "triggers": [],
+    "blurb": "Group work stalls when nobody knows exactly what to hand in. You'll see the three-column page that turns a vague pile into parts with a name and a day on each one.",
+    "takeaway": "You learned that every part needs a what, a who, and a when.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Make one page before anyone starts working. One row for each piece of work. Three empty columns: what, who, when."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Fill the 'what' column with things someone can hand over. Not 'research'. '10 slides on the causes.' An area can't be finished. A file can."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "One name per row. Not two. When two names share a part, each one waits for the other. The part sits still."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Every row gets a day. Spread them out so the parts arrive one at a time. A part with no day gets started the night before it's needed."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "All three columns live in one file. Everyone opens the same link. With three copies in three inboxes, the same work gets done twice."
+      },
+      {
+        "kind": "example",
+        "body": "In the 1880s a French engineer measured people pulling a rope. Alone, each pulled about 63 kg. In a group of eight, each pulled about 31 kg. Some of that is bad timing. Some is easing off when nobody can see your pull."
+      },
+      {
+        "kind": "key",
+        "body": "What, who, when, on one page everyone can see. Work nobody can point at is work nobody does."
+      },
+      {
+        "kind": "check",
+        "question": "Which one belongs in the 'what' column?",
+        "choices": [
+          "Sources",
+          "The timeline, drawn and labelled",
+          "Look into the background"
+        ],
+        "answer": 1,
+        "why": "'Sources' and 'look into' are areas. Nobody can tell when they are done. 'The timeline, drawn and labelled' is a thing someone can hand over."
+      }
+    ]
+  },
+  {
+    "id": "ppl-8",
+    "title": "How to ask for help",
+    "track": "people",
+    "figure": "trail",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "\"I don't get it\" gives the other person nothing to work with. You'll build the three-part ask instead: what you tried, where exactly you stopped, and what you want back.",
+    "takeaway": "You learned the three parts of an ask people can answer.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A good ask shows your path. Where you started, where you got stuck, and what you need to get moving. \"I don't get it\" shows none of that, so the other person has no idea where to start."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Part one: what you tried. \"I watched the video and redid problem 3 twice.\" Now they know where to pick up, and they can see you put in the work."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Part two: the exact spot you stopped. Not \"I don't get quadratics.\" Say \"I get lost right where you take the square root.\" One spot can be answered in a minute. A whole topic can't."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Part three: what you're asking for. A hint, a check of your work, ten minutes at lunch. One small thing, not the whole unit. If you don't name it, they have to guess, and guessing is work."
+      },
+      {
+        "kind": "example",
+        "body": "Vague: \"hey can you help me with the essay?\" Nothing back for two hours. Specific: \"I have the intro and two body paragraphs. My conclusion just repeats the intro. Can you read that last paragraph and tell me what's missing?\" Answered in five minutes."
+      },
+      {
+        "kind": "key",
+        "body": "What I tried. Where I'm stuck. What I'm asking for. Leave one out and they have to guess."
+      },
+      {
+        "kind": "check",
+        "question": "Which message is easiest for someone to answer?",
+        "choices": [
+          "\"I don't get the homework\"",
+          "\"Sorry to bother you, this is probably a dumb question\"",
+          "\"I'm stuck on question 4, step two. Can you check my setup?\""
+        ],
+        "answer": 2,
+        "why": "It names one spot and one thing to do. They can help in a minute without asking you three questions first."
+      }
+    ]
+  },
+  {
+    "id": "ppl-9",
+    "title": "Why your texts sound cold",
+    "track": "people",
+    "figure": "tone",
+    "minutes": 3,
+    "triggers": [],
+    "blurb": "A text carries your words and nothing else, so the reader fills the tone in with their own mood. You'll see why 'fine.' lands colder than you meant, and how to type the tone in so it doesn't.",
+    "takeaway": "You learned that tone has to be typed, not assumed.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A text is words with nothing on them. The same 'fine.' can land warm or cold. The words alone don't say which."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "As you type, you hear your own voice in your head. You already know you meant it kindly. So it feels obvious."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "The reader hears nothing. They fill the tone in with the mood they're already in. Tired or stressed, and your text turns cold."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "So there's a gap. You think your tone comes through about eight times in ten. Readers get it right about half the time."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "So type the tone in. Say the good feeling out loud. Swap the cold period for something warmer. 'all good!' does the job your voice would have."
+      },
+      {
+        "kind": "example",
+        "body": "Students rated the exact same reply as less sincere when it ended in a period. 'Yeah' read like they meant it. 'Yeah.' read like they didn't. One dot did that."
+      },
+      {
+        "kind": "key",
+        "body": "Your voice doesn't travel with the message. If you want the tone read right, type it in."
+      },
+      {
+        "kind": "check",
+        "question": "You text a friend 'ok.' and they think you're mad. Why?",
+        "choices": [
+          "Your words were unclear",
+          "They filled the tone in themselves",
+          "They read it too fast"
+        ],
+        "answer": 1,
+        "why": "The words were clear. The tone wasn't in them, so the reader supplied one from their own mood."
+      }
+    ]
+  },
+  {
+    "id": "fin-11",
+    "title": "Why the minimum payment is a trap",
+    "track": "finance",
+    "figure": "minimum",
+    "minutes": 3,
+    "triggers": [],
+    "blurb": "The minimum on a $1,000 card takes almost 6 years to clear and costs $766 in interest. You'll see where each payment goes, and the small change that cuts both numbers by about two thirds.",
+    "takeaway": "You learned that most of your first payment is interest.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You buy a $1,000 laptop on a credit card. The card charges 22% a year. You pay the minimum every month and nothing more."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "This card's minimum is 1% of what you owe plus that month's interest, never under $25. Month one that is $28. Interest takes $18. That is rent for still owing the money. Only $10 comes off the $1,000."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Next month the minimum drops, because you owe less. After a year it hits the $25 floor and stays there. It takes 70 payments to clear the card. That is 5 years and 10 months of paying for a laptop you already own."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Add up every payment and you handed over $1,766. The extra $766 is interest. You paid 77% more than the price tag."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Now pay $50 a month instead of $28. Same card, same rate. You are done in 2 years 2 months and you keep about $500."
+      },
+      {
+        "kind": "example",
+        "body": "Your card statement has to print a box like this. It shows how many years the minimum will take. It also shows the bigger payment that would clear the card in 3 years. A 2009 law made card companies add it, after surveys found almost nobody guesses the real number."
+      },
+      {
+        "kind": "key",
+        "body": "The minimum is the slowest way the card lets you pay. Slow is exactly what makes it expensive."
+      },
+      {
+        "kind": "check",
+        "question": "You owe $1,000 at 22%. Where does your $28 minimum payment go?",
+        "choices": [
+          "All $28 comes off the balance",
+          "$18 to interest, $10 off the balance",
+          "$10 to interest, $18 off the balance"
+        ],
+        "answer": 1,
+        "why": "Interest gets paid first. One month at 22% a year on $1,000 costs about $18. Only the $10 left over shrinks what you owe."
+      }
+    ]
+  },
+  {
+    "id": "fin-12",
+    "title": "What an apartment really costs",
+    "track": "finance",
+    "figure": "movein",
+    "minutes": 3,
+    "triggers": [],
+    "blurb": "Rent is only part of what an apartment costs you. You'll see the money due on move-in day, the bills that come every month, and what to have saved first.",
+    "takeaway": "You learned that the listing price isn't the price.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A listing shows one number. Say $1,200 a month. Two piles of money hide behind it: what you pay once, and what you pay every month."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Before you get a key, most landlords want first month's rent plus a deposit. That's $2,400 on day one. You get the deposit back when you move out clean."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Then the monthly extras. Power, water, and wifi run about $240. Renters insurance is $15 more, and it covers your stuff after a fire or a theft. That's $255."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "An empty apartment is really empty. A bed, a table, a lamp, pots, a shower curtain. Even buying used, that's about $800."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Add it up. About $3,200 to walk in the door, and $1,455 every month after. The listing said $1,200."
+      },
+      {
+        "kind": "example",
+        "body": "Two roommates take a $1,600 place. Rent looks like $800 each. On day one they each hand over $2,000: first month, half the deposit, half the furniture. Then it's $935 a month each, not $800."
+      },
+      {
+        "kind": "key",
+        "body": "About three months' rent to get in the door. Then rent plus about 20% every month."
+      },
+      {
+        "kind": "check",
+        "question": "The rent is $1,000. About how much should you have saved before move-in day?",
+        "choices": [
+          "About $2,000",
+          "About $3,000",
+          "About $1,000"
+        ],
+        "answer": 1,
+        "why": "First month is $1,000. The deposit is usually another $1,000. Filling an empty apartment costs about a month's rent on top of that."
+      }
+    ]
+  },
+  {
+    "id": "phil-9",
+    "title": "Chesterton's fence",
+    "track": "philosophy",
+    "figure": "fence",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "A fence sits in a field for no reason you can see, so pulling it out looks obvious. You'll see why the missing reason is the problem, and the one question that earns you a say.",
+    "takeaway": "You learned to find the reason before you remove the rule.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "A fence stands across an empty field. No sign on it. Nobody remembers who put it there. It looks like it does nothing."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "So tear it out. It's in the way and nothing is using it. Chesterton said no. Not yet."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Fences don't grow on their own. Someone put this one here for a reason, and you can't see it from your side. Walk around it. There's an open well back there."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "That's the whole test. Ask one question: why is this here? When you can answer it out loud, you've earned a say in whether it stays."
+      },
+      {
+        "kind": "example",
+        "body": "Your school makes everyone drop phones in a box before a test. It feels like they don't trust you. Then you hear a test got leaked last year and the grade had to retake it. That's the well."
+      },
+      {
+        "kind": "key",
+        "body": "You don't get to take the fence down until you can say why it went up."
+      },
+      {
+        "kind": "check",
+        "question": "You find a rule that looks pointless. What does Chesterton's fence tell you to do first?",
+        "choices": [
+          "Remove it and see what breaks",
+          "Find out why it was put there",
+          "Leave every old rule alone"
+        ],
+        "answer": 1,
+        "why": "The idea isn't 'never change anything'. It's 'know the reason first'. Once you know it, you can keep the rule, fix it, or drop it on purpose."
+      }
+    ]
+  },
+  {
+    "id": "phil-10",
+    "title": "Steelmanning",
+    "track": "philosophy",
+    "figure": "steel",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "Beating the weakest version of someone's point proves nothing. You'll see how to build their side at its strongest first, and why that's the only version worth arguing with.",
+    "takeaway": "You learned to argue with their best version.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "Any side of an argument has two versions. A flimsy one you could knock over in a second. And the one they actually hold."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "A strawman is aiming at the flimsy one. You win, and nothing happens. You beat a version you made up, not the one they hold."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Steelmanning is the other move. Before you argue, build their side up. Say it back so well they'd tell you 'yes, that's exactly it.'"
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Now aim at that one. If it falls, you beat the real thing. If it holds, you learned something instead of winning."
+      },
+      {
+        "kind": "example",
+        "body": "Your friend says phones should be banned in class. The weak version: 'you just hate fun.' Easy to beat, worth nothing. The strong version: 'a phone in your bag still splits your attention, and it costs the struggling kids the most.' Now you have to actually think."
+      },
+      {
+        "kind": "key",
+        "body": "Aim at their best version, not their worst. Beating the worst one proves nothing."
+      },
+      {
+        "kind": "check",
+        "question": "What makes a strawman useless even when you win?",
+        "choices": [
+          "It's rude to the other person",
+          "You beat a version they never argued for",
+          "They can do the same thing back to you"
+        ],
+        "answer": 1,
+        "why": "You knocked down something you built yourself. Their real point never got touched, so it's still standing."
+      }
+    ]
+  },
+  {
+    "id": "study-11",
+    "title": "You forget most of it by tomorrow",
+    "track": "study",
+    "figure": "decay",
+    "minutes": 2,
+    "triggers": [],
+    "blurb": "Most of what you learn today leaks out within a day. The drop is steepest right at the start, and you'll see how one short review turns the cliff into a slope.",
+    "takeaway": "You learned that each review flattens the drop.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You learn something today. The tall bar is all of it. The short ones are how much is still in your head on later days."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The empty boxes on top are what fell out. Almost all of the loss happens in the first day. After that it drains slowly."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Review it on day one and you are back at the top. One quick recall from memory, not a full reread."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Now the later days stay much higher. The cliff has turned into a slope."
+      },
+      {
+        "kind": "example",
+        "body": "In the 1880s Hermann Ebbinghaus memorized lists of nonsense syllables and tested himself for a month. About a third was left after a day, about a quarter after a week. Class material you understand fades slower, but the shape is the same."
+      },
+      {
+        "kind": "key",
+        "body": "Forgetting is fastest right after you learn. The cheapest review is the soonest one."
+      },
+      {
+        "kind": "check",
+        "question": "You read a chapter today. When is a ten-minute review worth the most?",
+        "choices": [
+          "The night before the test",
+          "Tonight or tomorrow",
+          "Halfway through the unit"
+        ],
+        "answer": 1,
+        "why": "The steepest part of the drop is the first day. A review there costs the least time and saves the most."
+      }
+    ]
+  },
+  {
+    "id": "study-12",
+    "title": "Flashcards that actually work",
+    "track": "study",
+    "figure": "leitner",
+    "minutes": 3,
+    "triggers": [],
+    "blurb": "Most flashcards fail because one card is carrying a whole paragraph. You'll see the three rules that fix that: one fact per card, the answer hidden, and the cards you miss coming back sooner.",
+    "takeaway": "You learned that the cards you miss come back sooner.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "One card, one fact. Not a paragraph, not a list of six things. If you can't answer it in about five seconds, split it into two cards."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "The answer stays hidden. Say it out loud, then flip. Reading the answer first feels like studying. Pulling it out of your head is what makes it stick."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Each box gets checked less often than the one before. Box one every day, box two every three days, box three once a week. That's a Leitner box."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "Get a card right and it moves up one box. Get it right again and it moves up again. Each box up, you see it less often."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Miss it and it drops all the way back to box one. You see it again tomorrow. The cards you're worst at are the ones you see most."
+      },
+      {
+        "kind": "example",
+        "body": "Twenty Spanish words. After a week, fourteen have climbed to box three and you barely touch them. The six you keep missing sit in box one, and those are the ones you drill every day."
+      },
+      {
+        "kind": "key",
+        "body": "The cards you miss come back sooner. That's the whole trick."
+      },
+      {
+        "kind": "check",
+        "question": "You miss a card sitting in box three. Where does it go?",
+        "choices": [
+          "It stays in box three",
+          "It drops back to box one",
+          "It moves down to box two"
+        ],
+        "answer": 1,
+        "why": "A miss sends it all the way back to box one. It sits there until you get it right."
+      }
+    ]
+  },
+  {
+    "id": "work-1",
+    "title": "Your employer's match is free money",
+    "track": "work",
+    "figure": "workmatch",
+    "minutes": 2,
+    "blurb": "Your offer letter has a second number hiding in the benefits part. Here's what it's worth, why it beats anything you could buy, and the one catch to ask about.",
+    "takeaway": "You learned that skipping the match means turning down part of your pay.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You got the job. It says $52,000 a year. That's the number you'll tell people."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "Now scroll down to the benefits part. There's a second number hiding in there. Almost nobody reads it."
+      },
+      {
+        "kind": "example",
+        "body": "First, what a 401(k) even is. It's a savings account for retirement that comes with the job. Money moves from your paycheck into it before you ever see it. It's your money. It gets invested, and you can't touch it until you're much older without paying a penalty."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "A match means your job puts money in too, but only when you do. Jobs that offer one usually match your first 3% to 6% of pay. Say yours does 4%."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "So your $2,080 becomes $4,160 on day one. Growing it yourself at 8% a year would take about nine years to do that."
+      },
+      {
+        "kind": "figure",
+        "step": 5,
+        "body": "Put in nothing and they put in nothing. That's not a bonus you missed. That's part of your pay you turned down."
+      },
+      {
+        "kind": "example",
+        "body": "One catch, called vesting. At some jobs their half isn't really yours until you've been there a year or two. Leave before that and you hand it back. Ask which one you're on during the offer call, before you sign."
+      },
+      {
+        "kind": "example",
+        "body": "Here's how you actually turn it on. In your first month there's a benefits sign-up, usually a website. You pick a percentage of your pay. Type in at least the number they match. It takes about five minutes and then it happens automatically forever."
+      },
+      {
+        "kind": "key",
+        "body": "Put in enough to get the whole match, even if you start at 1% and work up. Nothing else you can buy doubles your money on day one."
+      },
+      {
+        "kind": "check",
+        "question": "Your investments had a great year and went up 12%. Why is the match still a better deal?",
+        "choices": [
+          "The match doubles that money right away",
+          "You get the match whether you put in or not",
+          "Matches don't get taxed"
+        ],
+        "answer": 0,
+        "why": "Up 12% in a year is great. The match is 100%, straight away. And the match only lands if you put money in first, so 0% in means 0% matched."
+      }
+    ]
+  },
+  {
+    "id": "work-2",
+    "title": "What to say when they ask your number",
+    "track": "work",
+    "figure": "salaryask",
+    "minutes": 2,
+    "blurb": "On the first call a recruiter asks what you're looking for. They already know what the job pays and you don't. Here's what that costs, and the one line that hands the question back.",
+    "takeaway": "You learned to hand the number back instead of guessing one.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "It's your first call about the job. Usually a recruiter, before you've met anyone on the team. Near the end, they ask what you're looking for."
+      },
+      {
+        "kind": "example",
+        "body": "A recruiter is not your future boss. Their job is to fill the role, on budget. They're friendly because that's the work. It doesn't mean the conversation isn't a negotiation."
+      },
+      {
+        "kind": "example",
+        "body": "Here's what you can't see. Before that job was posted, someone approved a budget for it. A floor and a ceiling. The recruiter knows both. You know neither."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "So you say $60,000. If their floor was $65,000, you didn't just aim low. You landed under the bottom of a range you never saw."
+      },
+      {
+        "kind": "example",
+        "body": "And the first number said is sticky. Everything after it gets measured against it. Say $60,000 and the rest of the call is about whether you get a little more than $60,000. Their $80,000 ceiling never comes up."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "It also follows you. Raises are a percentage of where you started, so the gap widens every year. Ten years on, that one sentence cost about $57,000."
+      },
+      {
+        "kind": "example",
+        "body": "Ten minutes before the call fixes this. Check the job post first. A lot of states now make companies print the range. Then look up the title and city on levels.fyi. Then ask one person a year ahead of you what they got."
+      },
+      {
+        "kind": "figure",
+        "step": 4,
+        "body": "When they ask, ask back first. “What range is budgeted for this role?” It costs nothing, and plenty of recruiters will just tell you."
+      },
+      {
+        "kind": "example",
+        "body": "If they insist you go first, the research earns its keep. Say a range, and put the number you want at the bottom. Want $70,000? Say $70,000 to $80,000."
+      },
+      {
+        "kind": "key",
+        "body": "Ask before you answer. If you have to answer first, never say a number you wouldn't be glad to take."
+      },
+      {
+        "kind": "check",
+        "question": "They won't give a range and want your number. You'd be happy with $70,000. What do you say?",
+        "choices": [
+          "$70,000 to $80,000",
+          "$60,000 to $70,000",
+          "I'm flexible, make me an offer"
+        ],
+        "answer": 0,
+        "why": "The lowest number you say is the one they'll work from. Put what you actually want at the bottom, so even the worst case is a yes. Saying $60,000 to $70,000 hands them $60,000."
+      }
+    ]
+  },
+  {
+    "id": "work-3",
+    "title": "Why asking at your review is too late",
+    "track": "work",
+    "figure": "raiseask",
+    "minutes": 2,
+    "blurb": "Raise money gets decided months before anyone tells you. Here's when that actually happens, what to bring, and the sentence that does the work.",
+    "takeaway": "You learned to ask before the money is spoken for, with evidence instead of need.",
+    "cards": [
+      {
+        "kind": "figure",
+        "step": 1,
+        "body": "You've had a good year. So you wait for your review and ask there. That's the mistake almost everyone makes."
+      },
+      {
+        "kind": "example",
+        "body": "A review is the once-a-year meeting where your manager tells you how you did. It feels like the money meeting. It isn't. It's the meeting where you're told what was already decided."
+      },
+      {
+        "kind": "example",
+        "body": "Here's what you can't see. Months earlier your manager was handed a pot of money for the whole team and asked to split it. By your review, that split is done and signed off."
+      },
+      {
+        "kind": "figure",
+        "step": 2,
+        "body": "So the room where it's decided comes months before the room where you hear about it. Ask while there's still money to point at."
+      },
+      {
+        "kind": "example",
+        "body": "In practice that means the middle of the year. Not by email. Bring it up in a one to one, out loud, and say the word raise. Your manager needs to know before they walk into that planning meeting."
+      },
+      {
+        "kind": "figure",
+        "step": 3,
+        "body": "Bring evidence, not need. Rent going up isn't an argument. What you shipped is. What it saved is. What you now do that isn't in your job description is."
+      },
+      {
+        "kind": "example",
+        "body": "Keep a running list all year. One line every time something lands. You won't remember in October what you fixed in March. And a list written as it happened reads as fact, not as a pitch."
+      },
+      {
+        "kind": "example",
+        "body": "Then ask for a number, not a feeling. “I'd like to be at $78,000” beats “I was hoping for a bit more.” Say it, then stop talking. Let them answer."
+      },
+      {
+        "kind": "example",
+        "body": "If they say no, don't argue. Ask one question instead. “What would I need to be doing to get there?” Now you have a list. And a reason to come back with it."
+      },
+      {
+        "kind": "key",
+        "body": "Ask in the middle of the year, with a list and a number. Both halves matter."
+      },
+      {
+        "kind": "check",
+        "question": "Your review is in December. When should you raise the money conversation?",
+        "choices": [
+          "Around the middle of the year, before budgets are set",
+          "At the review, so it's on the record",
+          "Right after the review, for next year"
+        ],
+        "answer": 0,
+        "why": "By December the pot was divided months ago. Mid-year is while your manager still has something to argue for, and still has time to argue for it."
       }
     ]
   }

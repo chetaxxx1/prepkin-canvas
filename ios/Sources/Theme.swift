@@ -4,7 +4,12 @@ import SwiftUI
 /// Rule: UI colors stay fixed and low-chroma. Mascots are the only saturated thing
 /// on screen, so any species color pops.
 enum Theme {
-    static let paper = hex(0xFAF5EC)        // cream background, off-Home screens
+    /// The page. Measured off the Imprint frames George keeps pointing at: they run a
+    /// near-white page (#F8F8F8) with pure-white cards and a hairline border, not a
+    /// cream. Cream muddied every warm accent we put on it.
+    static let paper = hex(0xF8F8F8)
+    /// The hairline that keeps a white card visible on a near-white page.
+    static let cardEdge = hex(0xECEAE6)
     static let card = Color.white
     static let ink = hex(0x2E2622)
     static let muted = hex(0x96877F)        // warm gray text

@@ -145,7 +145,8 @@ function pageFor(url) {
 <div class="ic-app-header__main-navigation"><div class="ic-app-header__logomark-container"><a class="ic-app-header__logomark" href="/"><span class="screenreader-only">School</span></a></div>
 <ul class="ic-app-header__menu-list"><li class="ic-app-header__menu-list-item"><a id="global_nav_dashboard_link" class="ic-app-header__menu-list-link" href="/"><span class="menu-item__text">Dashboard</span></a></li>
 <li class="ic-app-header__menu-list-item"><a id="global_nav_help_link" class="ic-app-header__menu-list-link" href="#"><span class="menu-item__text">Help</span></a></li></ul></div></header>`;
-  const courseNav = `<div id="left-side" class="ic-app-course-menu ic-sticky-on list-view"><ul id="section-tabs">
+  const courseNav = `<div class="ic-app-nav-toggle-and-crumbs"><div id="breadcrumbs"><ul><li><a href="/courses/1">AP Physics C</a></li></ul></div></div>
+<div id="left-side" class="ic-app-course-menu ic-sticky-on list-view"><ul id="section-tabs">
 <li class="section"><a class="home" href="/courses/1">Home</a></li><li class="section"><a class="modules" href="/courses/1/modules">Modules</a></li>
 <li class="section"><a class="assignments" href="/courses/1/assignments">Assignments</a></li><li class="section"><a class="grades" href="/courses/1/grades">Grades</a></li>
 <li class="section"><a class="files" href="/courses/1/files">Files</a></li><li class="section"><a class="outcomes" href="/courses/1/outcomes">Outcomes</a></li>
@@ -153,7 +154,7 @@ function pageFor(url) {
   let main = '';
   let side = '';
   if (p === '/' || p === '/dashboard') {
-    main = `<div id="dashboard_header_container" class="ic-Dashboard-header"><h1>Dashboard</h1></div><div id="DashboardCard_Container">
+    main = `<div id="dashboard_header_container" class="ic-Dashboard-header"><div class="ic-Dashboard-header__layout"><h1 class="ic-Dashboard-header__title">Dashboard</h1></div></div><div id="DashboardCard_Container">
 <div class="ic-DashboardCard__box"><div class="ic-DashboardCard__box__container">
 <div class="ic-DashboardCard" data-testid="dashboard-card"><div class="ic-DashboardCard__header"><a class="ic-DashboardCard__link" href="/courses/1"><div class="ic-DashboardCard__header_hero" style="background-color: rgb(255, 111, 97); opacity: 0.6;"></div><div class="ic-DashboardCard__header_content"><h3 class="ic-DashboardCard__header-title ellipsis"><span style="color: rgb(255, 111, 97);">AP Physics C</span></h3><div class="ic-DashboardCard__header-subtitle">PHYS-C</div></div></a></div><nav class="ic-DashboardCard__action-container"><a class="ic-DashboardCard__action assignments" href="/courses/1/assignments"><span class="ic-DashboardCard__action-badge">0</span></a></nav></div>
 <div class="ic-DashboardCard" data-testid="dashboard-card"><div class="ic-DashboardCard__header"><a class="ic-DashboardCard__link" href="/courses/2"><div class="ic-DashboardCard__header_hero" style="background-color: rgb(87, 199, 155); opacity: 0.6;"></div><div class="ic-DashboardCard__header_content"><h3 class="ic-DashboardCard__header-title ellipsis"><span style="color: rgb(87, 199, 155);">English 11</span></h3><div class="ic-DashboardCard__header-subtitle">ENG-11</div></div></a></div><nav class="ic-DashboardCard__action-container"></nav></div>

@@ -212,6 +212,13 @@ html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header_
 html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout {
   background-color: var(--pk-paper) !important; border-bottom: 1px solid var(--pk-rule) !important; box-shadow: none !important;
 }
+/* On an image theme the page is the wall, so a solid bar reads as a slab. The
+ * bar and the breadcrumb strip take the page's own wash instead: they melt
+ * into the wallpaper and still cover what scrolls under them. */
+html.pk-on.pk-art:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout,
+html.pk-on.pk-art:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs {
+  background-color: var(--pk-paper-wash) !important; border-bottom: 0 !important;
+}
 html.pk-on:not(.pk-back-paper) .ig-row:hover { background-color: var(--pk-hover) !important; }
 /* The list containers behind module and assignment groups are painted white by
  * Canvas; they take the page paper so the rows read as cards on it. */
@@ -602,3 +609,31 @@ html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--
 #pk-week .pk-w-foot .more { color: var(--pk-link); cursor: pointer; }
 #pk-week .pk-w-foot .more:hover { text-decoration: underline; }
 html.pk-back-week #pk-week { display: none; }
+
+#pk-week .pk-w-league { display: flex; flex-direction: column; gap: 8px; margin: 0 0 12px; padding: 10px 12px; border-radius: 12px; background: var(--pk-paper-sunk); cursor: pointer; }
+#pk-week .pk-w-league .head { display: flex; align-items: center; gap: 10px; }
+#pk-week .pk-w-league .head b { display: block; font-size: 15px; font-weight: 900; letter-spacing: -.01em; }
+#pk-week .pk-w-league .head small { display: block; font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-week .pk-w-league .climb b { display: block; font-size: 13px; font-weight: 800; }
+#pk-week .pk-w-league .climb small { display: block; font-size: 11px; font-weight: 700; color: var(--pk-ink-2); margin-top: 3px; }
+#pk-week .pk-w-league .track { height: 8px; border-radius: 999px; background: var(--pk-rule); margin-top: 6px; overflow: hidden; }
+#pk-week .pk-w-league .track i { display: block; height: 100%; border-radius: 999px; background: var(--tier); }
+#pk-week .pk-w-league .pod { font-size: 12px; font-weight: 700; color: var(--pk-ink-2); }
+
+/* MARK: - Titles: bare, one hairline, a search pill in the corner. */
+html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout { display: flex !important; align-items: center !important; gap: 12px; }
+html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__title { flex: 1 1 auto; font-size: 34px !important; font-weight: 800 !important; letter-spacing: -.02em !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout,
+html.pk-on.pk-art:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs { border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #content > h1, html.pk-on:not(.pk-back-paper) .ic-Action-header__Heading { font-weight: 800 !important; letter-spacing: -.02em !important; }
+#pk-search {
+  display: inline-flex; align-items: center; gap: 8px; margin-left: auto; flex: none;
+  height: 36px; padding: 0 12px 0 12px; border-radius: 999px; cursor: pointer;
+  background: var(--pk-paper-2); border: 1px solid var(--pk-rule); color: var(--pk-ink);
+  font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-size: 14px; font-weight: 700;
+}
+#pk-search:hover { border-color: var(--pk-ink-2); }
+#pk-search:focus-visible { outline: 2px solid var(--pk-mark); outline-offset: 2px; }
+#pk-search kbd { font: inherit; font-size: 11px; font-weight: 800; color: var(--pk-ink-2); border: 1px solid var(--pk-rule); border-radius: 6px; padding: 1px 6px; margin-left: 4px; }
+.ic-app-nav-toggle-and-crumbs #pk-search { margin-right: 16px; height: 32px; font-size: 13px; }
+html.pk-art #pk-search { background: var(--pk-paper-wash); }

@@ -97,6 +97,34 @@ struct BridgeState: Codable, Equatable {
     /// finished focus session can no longer fall down the gap between a push the
     /// bridge accepted and a phone that never read it.
     var requestsAppliedAt: Date?
+    /// Where the student stands this week, so the laptop can draw the same league
+    /// the phone does. Numbers and word-list indexes only, never a typed name.
+    var league: BridgeLeague?
+}
+
+/// The league as the laptop sees it. Mirrors `LeagueState` + the last pod board,
+/// flattened to plain numbers: the extension has no `LeagueTier`, only an int.
+struct BridgeLeague: Codable, Equatable {
+    var tier: Int
+    var points: Int
+    /// Coins needed to leave this tier, `nil` at Deep.
+    var bar: Int?
+    var week: String
+    var pennants: [Int]
+    /// The pod board, best first, or `nil` when the student has no pod this week.
+    var board: [BridgeLeagueMember]?
+}
+
+struct BridgeLeagueMember: Codable, Equatable {
+    var you: Bool
+    var adjective: Int
+    var noun: Int
+    var points: Int
+    var level: Int
+    /// The kin to draw beside the name: a `ChibiSpecies.id` and a look id, the
+    /// same two the pod board already carries. Nothing else about anyone.
+    var species: String
+    var look: String
 }
 
 /// The bridge to Canvas data.
@@ -158,6 +186,11 @@ struct SupabaseCanvasClient: CanvasSyncClient {
         var payload: [String: Any] = ["coins": state.coins, "owned": state.owned]
         if let at = state.requestsAppliedAt {
             payload["requestsAppliedAt"] = Self.stamp(at)
+        }
+        if let league = state.league,
+           let data = try? JSONEncoder().encode(league),
+           let json = try? JSONSerialization.jsonObject(with: data) {
+            payload["league"] = json
         }
         _ = try await call("push_state", ["p_code": code, "p_token": token, "p_state": payload])
     }

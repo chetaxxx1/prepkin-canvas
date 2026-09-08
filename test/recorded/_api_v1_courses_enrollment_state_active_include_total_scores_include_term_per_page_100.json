@@ -51,10 +51,10 @@
           "enrollment_state": "active",
           "limit_privileges_to_course_section": false,
           "computed_current_grade": null,
-          "computed_current_score": 78.67,
+          "computed_current_score": 79.91,
           "computed_current_letter_grade": null,
           "computed_final_grade": null,
-          "computed_final_score": 68.66
+          "computed_final_score": 75.19
         },
         {
           "type": "student",
@@ -64,10 +64,10 @@
           "enrollment_state": "active",
           "limit_privileges_to_course_section": false,
           "computed_current_grade": null,
-          "computed_current_score": 78.67,
+          "computed_current_score": 79.91,
           "computed_current_letter_grade": null,
           "computed_final_grade": null,
-          "computed_final_score": 68.66
+          "computed_final_score": 75.19
         }
       ],
       "hide_final_grades": false,

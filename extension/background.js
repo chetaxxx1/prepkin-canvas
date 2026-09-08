@@ -63,7 +63,7 @@ async function registerFor(origin) {
         // receipt.js, themes.js, art/manifest.js and looks.js already ran at
         // document_start (the boot set) in this same world; naming them twice
         // redeclared their constants on every page.
-        js: ['slime.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'],
+        js: ['slime.js', 'podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'],
         runAt: 'document_end',
       },
     ]);
@@ -338,7 +338,16 @@ async function send(fresh) {
   // narrower copy: per-item scores and group weights never leave the laptop,
   // because nothing on the phone reads them and they are the most identifying
   // thing here.
-  const { graded, weights, ...forBridge } = payload;
+  const { graded, weights, ...rest } = payload;
+  // Old missing work stays on this machine too. The phone's list is today; a
+  // term of three-week-old zeros would fill it with work nobody is doing
+  // tonight, and it is the panel's Missing list that they belong to.
+  const staleMissing = Date.now() - DAYS_OVERDUE * 86_400_000;
+  const forBridge = { ...rest, tasks: rest.tasks.filter((t) => {
+    if (!t.missing || !t.dueAt) return true;
+    const due = Date.parse(t.dueAt);
+    return !Number.isFinite(due) || due >= staleMissing;
+  }) };
   const pushed = await pushToBridge(forBridge);
   // Requests deliberately stay queued. A push the bridge accepted only means the
   // row was written — the phone may not read it before the next push overwrites
@@ -409,6 +418,8 @@ async function pullWallet() {
         ...wallet,
         coins: state.coins,
         owned: Array.isArray(state.owned) ? state.owned : (wallet.owned ?? ['classic']),
+        // The phone's league, or null: the panel says "link your phone" then.
+        league: state.league && typeof state.league.tier === 'number' ? state.league : null,
       },
     });
     // Everything the phone has paid for can stop being re-sent. Anything newer
@@ -474,7 +485,7 @@ async function readSchool(origin) {
   const perCourse = await Promise.all(courses.map(async (course) => {
     const raw = await getPaged(
       origin,
-      `/api/v1/courses/${course.id}/assignments?include[]=submission&order_by=due_at&per_page=100`
+      `/api/v1/courses/${course.id}/assignments?include[]=submission&include[]=score_statistics&order_by=due_at&per_page=100`
     );
     if (!raw) {
       if (!previous) return [];
@@ -487,7 +498,7 @@ async function readSchool(origin) {
     examinedIds(raw, host, examined);
     // The same rows feed the task list and the grade sparkline — one fetch read
     // two ways, rather than asking Canvas twice for the same assignments.
-    graded[course.id] = mapGraded(raw);
+    graded[course.id] = mapGraded(raw, { host });
     const rawGroups = await getPaged(origin, `/api/v1/courses/${course.id}/assignment_groups?per_page=50`);
     weights[course.id] = mapWeights(rawGroups, { weighted: course.weighted !== false });
     return mapAssignments(raw, { host, course });

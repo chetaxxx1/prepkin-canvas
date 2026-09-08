@@ -269,3 +269,64 @@ extension Catalog {
         return picked
     }
 }
+
+// MARK: - Play puzzles
+
+/// A word ladder: two words, change one letter a rung. `par` is the shortest path
+/// through the full guess list, so nobody can beat it with an obscure word.
+struct LadderPuzzle: Codable, Equatable {
+    let start: String
+    let end: String
+    let par: Int
+}
+
+/// Five clues, hardest first, that share one link. `accept` is the list of words a
+/// guess has to contain to count; `name` is what the end card shows.
+struct ThreadPuzzle: Codable, Equatable, Identifiable {
+    let id: String
+    let name: String
+    let accept: [String]
+    let clues: [String]
+}
+
+/// Takuzu. `givens` is n×n; -1 blank, 0 filled, 1 ring.
+struct BalancePuzzle: Codable, Equatable {
+    let n: Int
+    let givens: [[Int]]
+}
+
+/// Star Battle, one star. `regions` is n×n of region ids 0..<n.
+struct PearlsPuzzle: Codable, Equatable {
+    let n: Int
+    let regions: [[Int]]
+}
+
+extension Catalog {
+    /// Dealt by design/games/gen.py, which checks every puzzle has one answer that
+    /// a rule-only solver can reach. The app never runs a solver; it only counts.
+    static let ladders: [LadderPuzzle] = load("ladders", fallback: fallbackLadders)
+    static let threads: [ThreadPuzzle] = load("threads", fallback: fallbackThreads)
+    static let balance: [BalancePuzzle] = load("balance", fallback: fallbackBalance)
+    static let pearls: [PearlsPuzzle] = load("pearls", fallback: fallbackPearls)
+
+    /// One of each, so a missing file still deals a playable puzzle.
+    private static let fallbackLadders = [LadderPuzzle(start: "BLACK", end: "BLIND", par: 4)]
+    private static let fallbackThreads = [ThreadPuzzle(
+        id: "card", name: "___ card", accept: ["card"],
+        clues: ["Wild", "Green", "Report", "Business", "Credit"])]
+    private static let fallbackBalance = [BalancePuzzle(n: 6, givens: [
+        [ 1,  0, -1, -1, -1, -1],
+        [-1,  0,  0, -1, -1, -1],
+        [-1, -1,  1, -1, -1,  1],
+        [-1, -1, -1, -1, -1, -1],
+        [-1, -1,  0,  0, -1,  0],
+        [-1, -1,  1, -1, -1,  1]])]
+    private static let fallbackPearls = [PearlsPuzzle(n: 7, regions: [
+        [0, 0, 0, 1, 1, 1, 1],
+        [0, 2, 2, 2, 1, 3, 1],
+        [0, 2, 4, 2, 3, 3, 3],
+        [5, 2, 4, 4, 4, 3, 6],
+        [5, 5, 5, 4, 6, 6, 6],
+        [5, 5, 5, 4, 6, 6, 6],
+        [5, 5, 5, 5, 6, 6, 6]])]
+}

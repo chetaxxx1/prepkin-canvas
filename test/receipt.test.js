@@ -194,6 +194,7 @@ test('R11 an image theme: the wallpaper under a paper wash, four banners across 
   assert.match(bodyBg, /linear-gradient\(rgba\(247, 246, 243, 0\.82\)/, 'the paper wash');
   assert.match(bodyBg, /chrome-extension:\/\/[a-z]+\/art\/(graffiti\/wallpaper\.webp|_placeholder\/wallpaper\.svg)/, 'the wallpaper, from inside the extension');
   assert.equal(await style(page, '#content', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'the columns let the wallpaper through');
+  assert.equal(await style(page, '#dashboard_header_container .ic-Dashboard-header__layout', 'backgroundColor'), 'rgba(247, 246, 243, 0.82)', 'the sticky bar wears the wash, never a solid slab');
   const heroes = await page.$$eval('.ic-DashboardCard__header_hero', (els) => els.map((e) => { const s = getComputedStyle(e); return [s.backgroundImage.match(/card-(\d)/)?.[1], s.backgroundColor, s.height, s.backgroundSize]; }));
   assert.deepEqual(heroes.map((x) => x[0]), ['1', '2'], 'banners rotate across cards');
   assert.equal(heroes[0][1], 'rgb(255, 111, 97)', 'the course colour is still there, as the strip');
@@ -352,6 +353,39 @@ test('R21 a task of your own shows on the course card and counts in the week', a
   const pushed = await phone.fetchTodo();
   assert.ok(!pushed.tasks.some((t) => t.title === 'Read chapter 4'), 'the phone never sees it');
   await h.setStorage({ ownTasks: [] });
+  await page.close();
+});
+
+test('R22 the league the phone publishes shows on the rail and in the buddy, names from the same word lists', async () => {
+  const { FakePhone } = require('./fake-phone');
+  const phone = new FakePhone(BRIDGE);
+  await h.sw((c) => bindWriter(c), await phone.claim());
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  await phone.pushState({ coins: 120, owned: ['classic'], league: { tier: 1, points: 120, bar: 300, week: '2026-W37', pennants: [0],
+    board: [{ you: false, adjective: 3, noun: 4, points: 200, level: 2, species: 'coral', look: 'base' }, { you: true, adjective: 1, noun: 2, points: 120, level: 1, species: 'sky', look: 'base' }] } });
+  await h.sw(() => pullWallet());
+  const page = await open('/');
+  await page.waitForSelector('#pk-week .pk-w-league', { timeout: 5000 });
+  const text = await page.$eval('#pk-week .pk-w-league', (e) => e.textContent);
+  assert.match(text, /^Shallows/, 'the tier, on the page');
+  assert.match(text, /180 to go for Reef/, 'points to the next tier');
+  assert.match(text, /120 of 300 this week/);
+  assert.match(text, /2nd of 2 in your pod/, 'the place, never the names');
+  assert.equal(await page.$eval('#prepkin-buddy', (e) => e.dataset.league), 'shallows');
+  assert.ok(!(await page.evaluate(() => document.body.textContent)).includes('Otter'), 'no stranger\'s name lands in the page itself');
+  await page.close();
+});
+
+test('R23 a search pill sits at the end of every title bar, opens the buddy on search, and its receipt row turns it off', async () => {
+  let page = await open('/');
+  assert.ok(await page.$('#dashboard_header_container .ic-Dashboard-header__layout > #pk-search'), 'dashboard: in the header bar');
+  await page.click('#pk-search');
+  await page.waitForSelector('#prepkin-buddy[data-open][data-view="search"]', { timeout: 3000 });
+  await page.close();
+  page = await open('/courses/1/modules');
+  assert.ok(await page.$('.ic-app-nav-toggle-and-crumbs > #pk-search'), 'a course page: on the breadcrumb strip');
+  await h.setStorage({ skin: SKIN({ search: false }) }); await page.waitForTimeout(400);
+  assert.equal(await page.$('#pk-search'), null, 'turned off from the receipt');
   await page.close();
 });
 

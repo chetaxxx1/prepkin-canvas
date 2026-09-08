@@ -20,6 +20,7 @@ struct TrackIcon: View {
             case "philosophy": philosophy
             case "psychology": psychology
             case "people": people
+            case "work": work
             default: study
             }
         }
@@ -78,6 +79,21 @@ struct TrackIcon: View {
             }
             rounded(16, 22, 19, 13, 5, Theme.coral)
             line(2.2) { p in p.go(31, 35); p.to(31, 38); p.to(27, 35) }
+        }
+    }
+
+    /// The badge you get handed on day one — an object, not a briefcase, which nobody
+    /// this age has ever owned. Leaf family, so it stays clear of study's mint.
+    private var work: some View {
+        ZStack(alignment: .topLeading) {
+            line(2.2) { p in p.go(14, 4); p.to(20, 13); p.to(26, 4) }
+            rounded(11, 12, 18, 25, 3.5, Theme.card)
+            rounded(16, 9, 8, 6, 2, Theme.leaf)
+            circle(20, 21, 4, Theme.leaf)
+            line(2.2) { p in
+                p.go(15, 30); p.to(25, 30)
+                p.go(17, 34); p.to(23, 34)
+            }
         }
     }
 
@@ -196,6 +212,7 @@ enum TrackTint {
         case "study": return Theme.mintSoft
         case "psychology": return Theme.hex(0xE6F0FB)
         case "people": return Theme.coralSoft
+        case "work": return Theme.hex(0xEEF6E0)
         default: return Theme.hex(0xEDE7FB)
         }
     }
@@ -207,6 +224,7 @@ enum TrackTint {
         case "study": return Theme.mint
         case "psychology": return Theme.hex(0x9BC8F2)
         case "people": return Theme.coral
+        case "work": return Theme.leaf
         default: return Theme.hex(0xC3B2F0)
         }
     }
@@ -218,6 +236,7 @@ enum TrackTint {
         case "study": return Theme.mintDark
         case "psychology": return Theme.hex(0x3D6FA8)
         case "people": return Theme.coralDeep
+        case "work": return Theme.hex(0x5A7A2E)
         default: return Theme.hex(0x6B5CA5)
         }
     }

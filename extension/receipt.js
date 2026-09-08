@@ -39,6 +39,17 @@ const PAPERS = {
     paper: '#131824', paper2: '#1A2030', sunk: '#0E121B', ink: '#E4E8F0', ink2: '#AEB6C6', rule: '#28303F', mark: '#8FB8EA' },
   moss:      { name: 'Moss', cast: 'forest dark', dark: true,
     paper: '#161C18', paper2: '#1D2520', sunk: '#10150F', ink: '#E4EAE4', ink2: '#AEBBB0', rule: '#2B352E', mark: '#8CCDA6' },
+  // The third four, 2026-09-06: the tints the theme galleries are actually full
+  // of — sea foam, a warm study beige, peach — and one more dark to hang them
+  // on. Same floor as every other stock: body text clears AAA on all four.
+  seafoam:   { name: 'Sea Foam', cast: 'pale mint', dark: false,
+    paper: '#EAF4F1', paper2: '#F5FAF8', sunk: '#DDEBE7', ink: '#17251F', ink2: '#42574F', rule: '#D2E3DD', mark: '#0F6B57' },
+  oat:       { name: 'Oat', cast: 'warm beige', dark: false,
+    paper: '#F4EEE4', paper2: '#FBF7F0', sunk: '#EAE1D2', ink: '#2A241C', ink2: '#574E42', rule: '#E2D7C6', mark: '#7A5230' },
+  peach:     { name: 'Peach', cast: 'soft apricot', dark: false,
+    paper: '#FBEEE7', paper2: '#FEF7F3', sunk: '#F5E2D7', ink: '#2E211A', ink2: '#5E4A3E', rule: '#EFDACC', mark: '#A9482A' },
+  plum:      { name: 'Plum', cast: 'aubergine dark', dark: true,
+    paper: '#191320', paper2: '#211A2A', sunk: '#120D18', ink: '#E9E4EE', ink2: '#B3AAC0', rule: '#2F2739', mark: '#C3A6EE' },
 };
 
 /// WCAG contrast ratio of two hex colours, so the shop card prints a measured
@@ -98,6 +109,7 @@ const RULES = [
   { key: 'card-grade', kind: 'added', label: 'Your grade on each course card', hook: 'card', opt: 'cardGrades', undo: 'Turn on' },
   { key: 'today', kind: 'added', label: 'Today, at the top of the dashboard', hook: 'card' },
   { key: 'week', kind: 'added', label: 'This week, at the top of the sidebar', hook: 'card' },
+  { key: 'search', kind: 'added', label: 'Search, in the corner of every page', when: () => true, opt: 'search', undo: 'Turn on' },
   { key: 'nickname', kind: 'fixed', when: (ctx) => ctx.nicknames > 0,
     label: (ctx) => `${ctx.nicknames} course name${ctx.nicknames === 1 ? '' : 's'} you chose` },
   { key: 'dense', kind: 'added', label: 'Compact pages, tighter rows', when: () => true, opt: 'dense', undo: 'Turn on' },
@@ -133,8 +145,8 @@ function skinClasses({ on, dark, look, dense = false, putBack = {}, detect = {} 
 /// put back. `present(hookName)` says how many times the hook matches (a
 /// boolean reads as one); the content script supplies it from the DOM, tests
 /// supply it directly.
-function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = false, dense = false, nicknames = 0 }) {
-  const ctx = { dark, mascot, stock, detect, cardGrades, dense, nicknames };
+function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = false, dense = false, nicknames = 0, search = true }) {
+  const ctx = { dark, mascot, stock, detect, cardGrades, dense, nicknames, search };
   return RULES.flatMap((rule) => {
     if (rule.darkOnly && !dark) return [];
     const hits = rule.hook ? Number(present(rule.hook)) || 0 : 0;

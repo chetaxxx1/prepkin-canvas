@@ -16,6 +16,10 @@ const TODO_TYPE_TO_DO = 'submitting';
 /// syllabus full of May deadlines does not bury this week.
 const DAYS_AHEAD = 14;
 const DAYS_OVERDUE = 7;
+/// Work the school itself marked missing keeps showing long after the overdue
+/// window closes. A zero from three weeks ago is the thing a student most needs
+/// to find, and dropping it at seven days is how it stays lost.
+const DAYS_MISSING = 90;
 /// Work you just handed in still shows briefly, so the app can tick it off and
 /// pay for it rather than having it silently vanish.
 const DAYS_AFTER_SUBMIT = 3;
@@ -98,7 +102,11 @@ function mapAssignments(raw, { host, course, now = Date.now() } = {}) {
     if (a.submission?.excused === true) return [];
     const submittedAt = submissionTime(a.submission, a.submission_types);
     const dueAt = a.due_at ?? null;
-    if (!isWorthShowing({ dueAt, submittedAt, now })) return [];
+    // Canvas sets `missing` itself once the due date passes with nothing handed
+    // in. Taking the school's own word for it rather than guessing is the same
+    // rule as the weights: we do not invent a judgement Canvas did not make.
+    const missing = !submittedAt && a.submission?.missing === true;
+    if (!isWorthShowing({ dueAt, submittedAt, missing, now })) return [];
     // Undated work carrying no marks is far more often a leftover — an old
     // practice quiz, a placeholder — than something you owe. Recent work gets
     // the benefit of the doubt. The course is current by construction: the
@@ -118,6 +126,7 @@ function mapAssignments(raw, { host, course, now = Date.now() } = {}) {
       score: numberOrNull(a.submission?.score),
       pointsPossible: numberOrNull(a.points_possible),
       gradedAt: a.submission?.graded_at ?? null,
+      missing,
       url: typeof a.html_url === 'string' ? a.html_url : null,
     }];
   });
@@ -150,7 +159,7 @@ function createdRecently(createdAt, now) {
   return Number.isFinite(at) && now - at <= DAYS_NEW * DAY;
 }
 
-function isWorthShowing({ dueAt, submittedAt, now }) {
+function isWorthShowing({ dueAt, submittedAt, missing = false, now }) {
   if (submittedAt) {
     const age = now - Date.parse(submittedAt);
     return Number.isFinite(age) ? age <= DAYS_AFTER_SUBMIT * DAY : false;
@@ -159,6 +168,7 @@ function isWorthShowing({ dueAt, submittedAt, now }) {
   if (!dueAt) return true;
   const due = Date.parse(dueAt);
   if (!Number.isFinite(due)) return true;
+  if (missing) return now - due <= DAYS_MISSING * DAY;
   return due - now <= DAYS_AHEAD * DAY && now - due <= DAYS_OVERDUE * DAY;
 }
 
@@ -203,7 +213,7 @@ function mapTodo(raw, host, now = Date.now(), courseIds = null) {
 /// The graded items in one course, oldest first, for the sparkline and the
 /// "recent" list under an expanded grade row. Only work that actually carries a
 /// score counts — an ungraded submission is not a data point.
-function mapGraded(raw, { limit = 24 } = {}) {
+function mapGraded(raw, { limit = 24, host = '' } = {}) {
   if (!Array.isArray(raw)) return [];
   return raw
     .flatMap((a) => {
@@ -212,11 +222,18 @@ function mapGraded(raw, { limit = 24 } = {}) {
       const outOf = numberOrNull(a.points_possible);
       if (score === null || !outOf) return [];
       const at = a.submission?.graded_at ?? a.submission?.submitted_at ?? a.due_at ?? null;
+      // Canvas only publishes score_statistics once enough of the class has been
+      // marked, so `mean` is absent far more often than not. Absent stays absent.
+      const mean = numberOrNull(a.score_statistics?.mean);
       return [{
+        // Same id as the task row, so a zero for missing work is not listed
+        // twice: once as missing, once as a grade.
+        id: `c-${host}-a${a.id}`,
         title: a.name,
         score,
         outOf,
         percent: Math.round((score / outOf) * 1000) / 10,
+        classMean: mean === null ? null : Math.round(mean * 10) / 10,
         at,
       }];
     })
@@ -312,6 +329,6 @@ function numberOrNull(value) {
 if (typeof module !== 'undefined') {
   module.exports = {
     mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore, safeColor, nextLink,
-    TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_AFTER_SUBMIT, DAYS_NEW,
+    TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_AFTER_SUBMIT, DAYS_NEW,
   };
 }

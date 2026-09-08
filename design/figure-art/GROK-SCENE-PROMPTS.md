@@ -138,9 +138,12 @@ A burrito wrapped in foil on a plate, one end cut open showing green lettuce, re
 
 ## **trolley** · The trolley problem
 
-```
-A red tram on a railway track that forks into two branches ahead of it, five people standing on the upper branch and one person on the lower branch, a lever beside the fork, flat side view. Drawn as a flat, wordless vector illustration for a learning app: big simple shapes, each filled with one flat colour from coral red #FF6F61, lavender #C3B2F0, sky blue #9BC8F2, and every shape traced with the same thick, even dark brown (#2E2622) outline. No shading, no gradients, no texture, no writing of any kind. The whole background is one plain solid pale sky blue (#E6F0FB). Empty space at the top left. Landscape 4:3.
-```
+**Do not use a whole-scene prompt for this one. See [TROLLEY-ART.md](TROLLEY-ART.md).**
+
+Fifteen rolls of the prompt that used to sit here never put the tram on the rails and
+never drew the fork correctly. The track, the fork and the counts are drawn in code by
+`TrolleyFigure`; only the tram and the footbridge are generated. That file has the
+tested Gemini prompt and the two numbers that sit the tram on the rail.
 
 
 ## **ship** · The ship of Theseus

@@ -6,14 +6,14 @@
     {
       "type": "Message",
       "notification_category": "Due Date",
-      "count": 35,
+      "count": 43,
       "unread_count": 0
     },
     {
       "type": "Submission",
       "notification_category": null,
-      "count": 30,
-      "unread_count": 30
+      "count": 39,
+      "unread_count": 39
     }
   ]
 }

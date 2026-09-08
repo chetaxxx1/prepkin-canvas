@@ -20,7 +20,13 @@ struct LessonCover: View {
 
     var body: some View {
         ZStack {
-            if usesFigure {
+            if usesFigure, let art = LessonFigure.coverArt(lesson.figure) {
+                // A lesson with scene art shows the whole scene. Its figure's first
+                // reveal is a bare stage — for the trolley, an empty fork with nobody
+                // on it — which reads as a card that failed to load.
+                LessonFigure.field(lesson.figure)
+                Image(art).resizable().scaledToFit().padding(height * 0.06)
+            } else if usesFigure {
                 // The figure paints its own field to the edges, so the cover is tinted
                 // whatever its shape. Small covers show only the first reveal: the hero
                 // object reads as art, while a fully labelled figure at 132pt is noise.

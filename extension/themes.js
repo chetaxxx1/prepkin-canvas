@@ -16,6 +16,11 @@ const TEXTURES = {
   // round, so it is capped at 4% there and 7% on dark papers.
   grain: (ink) => { const a = parseInt(ink.slice(1, 3), 16) < 128 ? '.04' : '.07'; return `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 ${a} 0'/></filter><rect width='120' height='120' filter='url(#n)' fill='${ink}'/></svg>`; },
   waves: (ink) => `<svg xmlns='http://www.w3.org/2000/svg' width='48' height='16'><path d='M0 8c6-6 12-6 18 0s12 6 18 0 12-6 18 0' fill='none' stroke='${ink}' stroke-opacity='.08'/></svg>`,
+  // Gingham, drawn as lines rather than blocks. Blocks at any opacity read as a
+  // grey plaid over the whole page and swallow the paper underneath; two thin
+  // crossing lines say "check" and leave the stock the thing you see.
+  checks: (ink) => `<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M0 .75h16M.75 0v16' stroke='${ink}' stroke-opacity='.07' stroke-width='1.5'/></svg>`,
+  stars: (ink) => `<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><path d='M9 4 L10 8 L14 9 L10 10 L9 14 L8 10 L4 9 L8 8 Z M27 20 L27.7 22.7 L30.5 23.5 L27.7 24.3 L27 27 L26.3 24.3 L23.5 23.5 L26.3 22.7 Z' fill='${ink}' fill-opacity='.09'/></svg>`,
 };
 
 /// `header`: 'band' keeps Canvas's course-colour strip; 'wash' lays a soft
@@ -69,6 +74,33 @@ const THEMES = [
     paper: { light: 'bond', dark: 'blueprint' }, accent: { light: '#1F5FA8', dark: '#7FB2E0' },
     rail: { light: '#26364A', dark: '#182230' },
     header: 'band', texture: 'none', accessory: 'beanie', colors: { cap: '#3E5A8C', brim: '#2E4368' }, price: 500 },
+  // The third six, 2026-09-06. Chosen against what students actually pick in the
+  // public theme galleries — sea foam, study beige, strawberry, Y2K cyan, park
+  // green, plum — on stocks that already clear the reading floor.
+  { id: 'seafoam', name: 'Sea Foam', vibe: 'pale mint, salt air, clean desk',
+    paper: { light: 'seafoam', dark: 'moss' }, accent: { light: '#0F6B57', dark: '#7FD8BE' },
+    rail: { light: '#1B4A40', dark: '#16302A' },
+    header: 'band', texture: 'waves', accessory: 'sprout', colors: { stem: '#0F6B57', leafA: '#4FB598', leafB: '#7FD8BE' }, price: 300 },
+  { id: 'beigestudy', name: 'Study Beige', vibe: 'oat paper, brown pen, nothing loud',
+    paper: { light: 'oat', dark: 'carbon' }, accent: { light: '#7A5230', dark: '#D9A97A' },
+    rail: { light: '#4A3826', dark: '#241C14' },
+    header: 'band', texture: 'grain', accessory: 'glasses', colors: { frame: '#7A5230' }, price: 300 },
+  { id: 'strawberry', name: 'Strawberry Matcha', vibe: 'pink and green, iced, summer',
+    paper: { light: 'peach', dark: 'moss' }, accent: { light: '#B03A46', dark: '#F0959E' },
+    rail: { light: '#7A2A34', dark: '#33181C' },
+    header: 'wash', texture: 'checks', accessory: 'scarf', colors: { wrap: '#E4808C', tail: '#B03A46' }, price: 350 },
+  { id: 'frutiger', name: 'Frutiger', vibe: 'glossy 2000s cyan, bubbles, a fresh install',
+    paper: { light: 'sky', dark: 'blueprint' }, accent: { light: '#0E6E8C', dark: '#66D3E8' },
+    rail: { light: '#0C4C60', dark: '#0A2C38' },
+    header: 'wash', texture: 'dots', accessory: 'glasses', colors: { frame: '#0E6E8C' }, price: 350 },
+  { id: 'parks', name: 'National Parks', vibe: 'pine, canvas tent, a printed map',
+    paper: { light: 'sage', dark: 'moss' }, accent: { light: '#3B6B3A', dark: '#9AD08E' },
+    rail: { light: '#2C4E2B', dark: '#1A2E1A' },
+    header: 'band', texture: 'grid', accessory: 'beanie', colors: { cap: '#3B6B3A', brim: '#2C4E2B' }, price: 350 },
+  { id: 'plumnight', name: 'Plum Night', vibe: 'aubergine dark, one soft star',
+    paper: { light: 'lavender', dark: 'plum' }, accent: { light: '#6A4FB0', dark: '#C3A6EE' },
+    rail: { light: '#3A2A55', dark: '#221A2E' },
+    header: 'wash', texture: 'stars', accessory: 'beanie', colors: { cap: '#6A4FB0', brim: '#4E3A8C' }, price: 400 },
 ];
 
 /// Image themes: everything above plus a wallpaper under a paper wash and four
@@ -96,6 +128,26 @@ const IMAGE_THEMES = [
     rail: { light: '#0F3550', dark: '#081E30' },
     header: 'band', texture: 'none', accessory: null, price: 450,
     art: 'deepsea', wash: { light: 0.82, dark: 0.7 } },
+  { id: 'forest', name: 'Spirit Forest', vibe: 'mossy roots, gold light, tiny glowing spirits',
+    paper: { light: 'sage', dark: 'moss' }, accent: { light: '#3F7A52', dark: '#9BD6AE' },
+    rail: { light: '#2F5A3C', dark: '#1B3324' },
+    header: 'band', texture: 'none', accessory: 'sprout', colors: { cap: '#3F7A52', brim: '#2F5A3C' }, price: 450,
+    art: 'forest', wash: { light: 0.72, dark: 0.74 } },
+  { id: 'spring', name: 'Spring Day', vibe: 'daisies, petals, a picnic, pastel everything',
+    paper: { light: 'rose', dark: 'ink' }, accent: { light: '#B04A6E', dark: '#F0A3BE' },
+    rail: { light: '#8A3355', dark: '#3A1A28' },
+    header: 'band', texture: 'none', accessory: 'glasses', colors: { cap: '#B04A6E', brim: '#8A3355' }, price: 450,
+    art: 'spring', wash: { light: 0.7, dark: 0.76 } },
+  { id: 'cafe', name: 'Rainy Cafe', vibe: 'window seat, latte, string lights, rain',
+    paper: { light: 'manila', dark: 'carbon' }, accent: { light: '#9E4B2E', dark: '#E8A184' },
+    rail: { light: '#5A3A2A', dark: '#243026' },
+    header: 'band', texture: 'none', accessory: 'scarf', colors: { cap: '#9E4B2E', brim: '#5A3A2A' }, price: 450,
+    art: 'cafe', wash: { light: 0.74, dark: 0.74 } },
+  { id: 'nebula', name: 'Nebula', vibe: 'indigo and plum, one gold star, quiet',
+    paper: { light: 'lavender', dark: 'ink' }, accent: { light: '#6A4FB0', dark: '#B9A6F0' },
+    rail: { light: '#4E3A8C', dark: '#241C40' },
+    header: 'band', texture: 'none', accessory: 'beanie', colors: { cap: '#6A4FB0', brim: '#4E3A8C' }, price: 450,
+    art: 'nebula', wash: { light: 0.82, dark: 0.7 } },
 ];
 for (const t of IMAGE_THEMES) THEMES.push(t);
 

@@ -163,7 +163,7 @@ document.getElementById('resync').addEventListener('click', async () => {
 
 // The page overlay reads these live, so a tick takes effect on any open Canvas
 // tab without a reload.
-const SKIN_DEFAULTS = { dark: false, cards: true, tidy: true, mascot: true, focusMinutes: 25 };
+const SKIN_DEFAULTS = { dark: false, cards: true, tidy: true, mascot: true, focusMinutes: 25, search: true };
 
 document.querySelectorAll('[data-skin]').forEach((box) => {
   box.addEventListener('change', async () => {
@@ -393,11 +393,23 @@ async function applyPopupSkin() {
 }
 applyPopupSkin();
 
+/// `YYYY-MM-DD` from storage to a local Date, and nothing else. Same rule as
+/// the panel's dayFromKey: a date that does not read back the same is not one.
+function planDayOf(key) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(key ?? ''));
+  if (!m) return null;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const day = new Date(y, mo - 1, d);
+  return day.getFullYear() === y && day.getMonth() === mo - 1 && day.getDate() === d ? day : null;
+}
+
 /// The same words the panel uses, from the same day.
 async function speak() {
-  const { lastPayload, onboarded } = await chrome.storage.local.get(['lastPayload', 'onboarded']);
+  const { lastPayload, onboarded, plans = {} } = await chrome.storage.local.get(['lastPayload', 'onboarded', 'plans']);
   if (!lastPayload?.tasks || !onboarded) return;
-  const said = voice(buckets(lastPayload.tasks, new Date()));
+  // The panel's day, not a second opinion: a student who moved two things to
+  // today should not read a different sentence in the toolbar.
+  const said = voice(buckets(lastPayload.tasks, new Date(), (t) => planDayOf(plans[t.id])));
   document.getElementById('say-head').textContent = said.headline;
   document.getElementById('say-sub').textContent = said.subline;
   document.getElementById('slime').innerHTML = slimeAt(36, said.face);

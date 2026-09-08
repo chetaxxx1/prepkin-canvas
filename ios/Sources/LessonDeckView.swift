@@ -28,6 +28,9 @@ struct LessonDeckView: View {
     @State private var reportReason: CardReportReason?
     @State private var finished = false
     @State private var paid = 0
+    @State private var finishing = false
+    @State private var keyCheers = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// One 0→1 value per flying coin, so they can be staggered.
     @State private var arc: [Double] = Array(repeating: 0, count: 5)
     @State private var flying = false
@@ -196,26 +199,13 @@ struct LessonDeckView: View {
     /// slime cropped by the screen edge so a shared screenshot carries the character.
     private func keyCard(_ card: LessonCard) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            CardTypeLabel("KEY IDEA")
-                .padding(.leading, 24).padding(.top, 30)
-
-            Text(card.body.uppercased())
-                .font(Theme.font(23, .heavy))
-                .lineSpacing(23 * 0.4)
-                .foregroundStyle(Theme.ink)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 26)
-                .padding(.top, 32).padding(.bottom, 36)
-                .background(RoundedRectangle(cornerRadius: 26, style: .continuous)
-                    .fill(Theme.mintSoft))
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
-
             Spacer(minLength: 0)
 
-            HStack(alignment: .bottom, spacing: 0) {
-                slime(size: 132, expression: .delight)
-                    .offset(x: -30)
+            keyArtifact(card)
+                .padding(.horizontal, 20)
+
+            HStack(alignment: .bottom, spacing: 10) {
+                slime(size: 96, animation: .celebrate, expression: .delight, replay: keyCheers)
                 Text("Screenshot this one.")
                     .font(Theme.font(13.5, .heavy))
                     .foregroundStyle(Theme.ink)
@@ -225,11 +215,65 @@ struct LessonDeckView: View {
                                                        bottomTrailingRadius: 18,
                                                        topTrailingRadius: 18,
                                                        style: .continuous)
-                        .fill(Theme.card))
-                    .offset(x: -16, y: -30)
-                Spacer(minLength: 0)
+                        .fill(Theme.card)
+                        .shadow(color: Theme.ink.opacity(0.06), radius: 6, y: 2))
+                    .offset(y: -26)
             }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 10)
+
+            Spacer(minLength: 0)
         }
+        // He is pleased with you for as long as you sit here, not for one second of it.
+        .onReceive(Timer.publish(every: 2.6, on: .main, in: .common).autoconnect()) { _ in
+            guard !reduceMotion else { return }
+            keyCheers += 1
+        }
+    }
+
+    /// The one card the app asks you to screenshot, so it is built to survive leaving
+    /// the app: the picture you just assembled, the sentence, and what it came from.
+    /// Before this it was a label, a pale panel and 600pt of empty screen.
+    private func keyArtifact(_ card: LessonCard) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if LessonFigure.exists(lesson.figure) {
+                LessonFigure(id: lesson.figure, step: LessonFigure.coverStep(lesson.figure))
+                    .frame(height: 132)
+                    .clipped()
+            }
+
+            VStack(alignment: .leading, spacing: 0) {
+                Text("KEY IDEA")
+                    .font(Theme.fixedFont(11, .heavy))
+                    .tracking(1.3)
+                    .foregroundStyle(TrackTint.ink(lesson.trackID))
+
+                Text(card.body)
+                    .font(Theme.font(22, .heavy))
+                    .lineSpacing(22 * 0.36)
+                    .foregroundStyle(Theme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 12)
+
+                HStack(spacing: 7) {
+                    Rectangle().fill(TrackTint.accent(lesson.trackID))
+                        .frame(width: 18, height: 2.5)
+                    Text(lesson.title)
+                        .font(Theme.font(12.5, .heavy))
+                        .foregroundStyle(Theme.muted)
+                        .lineLimit(1)
+                }
+                .padding(.top, 18)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 22)
+            .padding(.top, 20).padding(.bottom, 22)
+        }
+        .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Theme.card))
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous)
+            .strokeBorder(Theme.cardEdge, lineWidth: 1))
+        .shadow(color: Theme.ink.opacity(0.07), radius: 16, y: 6)
     }
 
     private func exampleCard(_ card: LessonCard, in size: CGSize) -> some View {
@@ -695,6 +739,11 @@ struct LessonDeckView: View {
     }
 
     private func finish() {
+        // The ledger is idempotent, so a second call pays 0 — which used to wipe the
+        // "+20" off the complete screen even though the coins had landed. Finishing
+        // happens once.
+        guard !finishing else { return }
+        finishing = true
         paid = state.completeLesson(id: lesson.id, reward: lesson.reward)
         if paid > 0 {
             flying = true
@@ -710,11 +759,12 @@ struct LessonDeckView: View {
 
     private func slime(size: CGFloat,
                        animation: ChibiAnimation = .idle,
-                       expression: SlimeExpression? = .idle) -> some View {
+                       expression: SlimeExpression? = .idle,
+                       replay: Int = 0) -> some View {
         SproutImage(speciesID: state.activeChibiID,
                     level: state.activeChibi.level,
                     skin: state.activeChibi.skinID,
-                    animation: animation, size: size)
+                    animation: animation, replay: replay, size: size)
     }
 
     private func bodyCopy(_ text: String) -> some View {
@@ -739,6 +789,9 @@ struct LessonCompleteView: View {
     let onClose: () -> Void
 
     @EnvironmentObject var state: AppState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var burst = false
+    @State private var cheers = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -756,30 +809,47 @@ struct LessonCompleteView: View {
             }
             .padding(.horizontal, 22).padding(.top, 10)
 
-            SproutImage(speciesID: state.activeChibiID,
-                        level: state.activeChibi.level,
-                        skin: state.activeChibi.skinID,
-                        animation: .celebrate, size: 170)
-                .padding(.top, 18)
+            ZStack {
+                // The still draws its character low in its own box, so the rays are
+                // dropped to sit around him rather than around the frame.
+                Burst().stroke(Theme.coin.opacity(0.5),
+                               style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                    .frame(width: 250, height: 250)
+                    .offset(y: 32)
+                    .scaleEffect(burst ? 1 : 0.6)
+                    .opacity(burst ? 1 : 0)
+                    .rotationEffect(.degrees(burst ? 0 : -18))
+                SproutImage(speciesID: state.activeChibiID,
+                            level: state.activeChibi.level,
+                            skin: state.activeChibi.skinID,
+                            animation: .celebrate, replay: cheers, size: 170)
+                    .scaleEffect(burst ? 1 : 0.82)
+            }
+            .padding(.top, 18)
 
             Text(lesson.takeaway)
                 .font(Theme.font(24, .heavy))
                 .lineSpacing(24 * 0.34)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Theme.ink)
-                .padding(.horizontal, 30).padding(.top, 16)
+                .padding(.horizontal, 30).padding(.top, 8)
 
             if paid > 0 {
-                HStack(spacing: 7) {
-                    CoinDisc(size: 16)
-                    Text("+\(paid) coins for finishing")
-                        .font(Theme.font(14.5, .heavy))
+                HStack(spacing: 9) {
+                    CoinDisc(size: 26)
+                    Text("+\(paid)")
+                        .font(Theme.font(30, .black))
                         .foregroundStyle(Theme.coinDark)
                 }
-                .padding(.horizontal, 14).padding(.vertical, 8)
+                .padding(.horizontal, 22).padding(.vertical, 10)
                 .background(Capsule().fill(Theme.coinSoft))
-                .padding(.top, 18)
+                .scaleEffect(burst ? 1 : 0.7)
+                .opacity(burst ? 1 : 0)
+                .padding(.top, 16)
             }
+
+            trackProgress
+                .padding(.top, 18)
 
             Spacer(minLength: 12)
 
@@ -803,6 +873,31 @@ struct LessonCompleteView: View {
                 .buttonStyle(PressStyle())
                 .padding(.horizontal, 22).padding(.bottom, 28)
             }
+        }
+        .onAppear {
+            guard !reduceMotion else { burst = true; return }
+            withAnimation(.spring(response: 0.55, dampingFraction: 0.62)) { burst = true }
+        }
+        // He keeps cheering while you are on this screen. The emote is a one-shot of
+        // about a second, so on its own it is over before anyone looks up.
+        .onReceive(Timer.publish(every: 2.4, on: .main, in: .common).autoconnect()) { _ in
+            guard !reduceMotion else { return }
+            cheers += 1
+        }
+    }
+
+    /// How far the track has come. It can only ever go up, so it is safe to show:
+    /// finishing a lesson should visibly move something.
+    private var trackProgress: some View {
+        let run = Catalog.lessons(in: lesson.trackID)
+        let done = run.filter { state.completedLessons.contains($0.id) }.count
+        return VStack(spacing: 8) {
+            Text("\(done) of \(run.count) in \(Catalog.track(lesson.trackID).name)")
+                .font(Theme.font(13, .heavy))
+                .foregroundStyle(Theme.muted)
+            ProgressTrack(fraction: Double(done) / Double(max(run.count, 1)),
+                          tint: TrackTint.accent(lesson.trackID))
+                .frame(width: 170)
         }
     }
 
@@ -838,6 +933,8 @@ struct LessonCompleteView: View {
         }
         .padding(20)
         .background(RoundedRectangle(cornerRadius: 24, style: .continuous).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous)
+            .strokeBorder(Theme.cardEdge, lineWidth: 1))
         .padding(.horizontal, 22)
     }
 
@@ -875,5 +972,24 @@ struct CardTypeLabel: View {
             .font(Theme.font(12, .heavy))
             .tracking(1.7)
             .foregroundStyle(Theme.muted)
+    }
+}
+
+
+/// The rays behind the mascot on the complete screen. Twelve short spokes, alternating
+/// length, drawn rather than animated as a sprite so Reduce Motion can simply show them
+/// at rest.
+private struct Burst: Shape {
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        let c = CGPoint(x: r.midX, y: r.midY)
+        for i in 0..<12 {
+            let a = Double(i) / 12 * 2 * .pi - .pi / 2
+            let inner = r.width * 0.36
+            let outer = r.width * (i.isMultiple(of: 2) ? 0.48 : 0.43)
+            p.move(to: CGPoint(x: c.x + inner * cos(a), y: c.y + inner * sin(a)))
+            p.addLine(to: CGPoint(x: c.x + outer * cos(a), y: c.y + outer * sin(a)))
+        }
+        return p
     }
 }

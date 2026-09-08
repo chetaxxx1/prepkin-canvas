@@ -15,6 +15,7 @@ const { FakePhone } = require('./fake-phone');
 const { launch, SCHOOL_A, SCHOOL_B, BRIDGE } = require('./harness');
 const { openPopup } = require('./popup');
 const S = require('./scenarios');
+const { THEMES } = require('../extension/themes.js');
 
 let server, h;
 const control = (p, body) => fetch(`${BRIDGE}/__${p}`, { method: 'POST', body: JSON.stringify(body ?? {}) }).then((r) => r.json());
@@ -75,7 +76,7 @@ test('A0 five taps on the version number own every theme, for testing', async ()
   await popup.click('#version');
   assert.equal(await popup.waitFor('#status', /unlocked/), 'Testing: every theme unlocked.');
   const wallet = await h.sw(() => chrome.storage.local.get('wallet').then((s) => s.wallet));
-  assert.equal(wallet.owned.length, 16);
+  assert.equal(wallet.owned.length, THEMES.length, 'every look in the catalog, however many that is now');
   assert.equal(wallet.coins, 9999);
   assert.equal(wallet.wearing, 'classic', 'what you wear does not change');
   await popup.close();

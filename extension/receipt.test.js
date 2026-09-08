@@ -14,16 +14,16 @@ test('every paper clears AAA for body text, and the card prints the measured num
     assert.ok(contrast(p.ink, p.paper) >= 7, `${id} ${contrast(p.ink, p.paper)}`);
     assert.ok(contrast(p.ink2, p.paper) >= 4.5, `${id} secondary ink`);
     assert.ok(contrast(p.mark, p.paper) >= 4.5, `${id} link ink`);
-    assert.match(paperLine(id), /^[A-Z][a-z]+ · \d+\.\d:1 · /);
+    assert.match(paperLine(id), /^[A-Z][A-Za-z ]+ · \d+\.\d:1 · /);   // a stock may be two words: "Sea Foam"
   }
   assert.equal(paperLine('manila'), 'Manila · 11.9:1 · warm');
   assert.equal(paperLine('nope'), '');
 });
 
-test('the catalog is twelve papers, eight light and four dark, and every theme names two of them', () => {
-  assert.equal(Object.keys(PAPERS).length, 12);
-  assert.equal(Object.values(PAPERS).filter((p) => p.dark).length, 4);
-  assert.equal(LOOKS.length, 16, 'twelve flat themes and four image themes');
+test('the catalog is sixteen papers, eleven light and five dark, and every theme names two of them', () => {
+  assert.equal(Object.keys(PAPERS).length, 16);
+  assert.equal(Object.values(PAPERS).filter((p) => p.dark).length, 5);
+  assert.equal(LOOKS.length, 26, 'eighteen flat themes and eight image themes');
   for (const look of LOOKS) {
     assert.ok(PAPERS[look.paper.light] && !PAPERS[look.paper.light].dark, `${look.id} light`);
     assert.ok(PAPERS[look.paper.dark] && PAPERS[look.paper.dark].dark, `${look.id} dark`);
@@ -115,7 +115,7 @@ test('the skin is classes only, and off means no classes at all', () => {
 
 test('a row is on the receipt only when its hook is on the page', () => {
   const none = receiptRows({ present: () => false });
-  assert.deepEqual(none.map((r) => r.key), ['paper', 'rail', 'dense', 'buddy'], 'paper, the rail, compact and the buddy are always there');
+  assert.deepEqual(none.map((r) => r.key), ['paper', 'rail', 'search', 'dense', 'buddy'], 'paper, the rail, search, compact and the buddy are always there');
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'today'), 'the Today block is on the dashboard receipt');
   const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, wordPaste: true }, dark: true, cardGrades: true, nicknames: 1 });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
@@ -204,7 +204,7 @@ const css = fs.readFileSync(path.join(__dirname, 'skin.css'), 'utf8').replace(/\
 // The lint guards Canvas's own page. Prepkin's own surfaces on it (#pk-today,
 // the card line) are ours to style, so they are read separately below.
 const allRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selectors: m[1].trim(), body: m[2] }));
-const ours = (sel) => /#pk-today|#pk-week|\.pk-card-due|pk-back-card-due|pk-back-today|pk-back-week/.test(sel);
+const ours = (sel) => /#pk-today|#pk-week|#pk-search|\.pk-card-due|pk-back-card-due|pk-back-today|pk-back-week/.test(sel);
 // A rule counts as Canvas's if any selector in it reaches Canvas markup.
 const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours(sel)));
 

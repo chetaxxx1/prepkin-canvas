@@ -17,6 +17,10 @@ struct SproutImage: View {
     /// Which Sprout look the kin is wearing: `classic` or `ninja`.
     var skin: String = "classic"
     var animation: ChibiAnimation = .idle
+    /// Bump this to play the current animation again. `animation` alone only fires on
+    /// a change, so a screen that wants the same emote twice — a celebration that keeps
+    /// going while you sit on it — has no other way to ask.
+    var replay: Int = 0
     var size: CGFloat
 
     /// Drawn height of the three-star art as a fraction of the box width, over
@@ -59,6 +63,9 @@ struct SproutImage: View {
             }
             .onChange(of: animation) { _, new in
                 if new != .idle { trigger += 1 }
+            }
+            .onChange(of: replay) { _, _ in
+                if animation != .idle { trigger += 1 }
             }
             .accessibilityHidden(true)
     }

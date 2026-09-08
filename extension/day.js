@@ -13,23 +13,47 @@ function sameLocalDay(a, b) {
       && a.getDate() === b.getDate();
 }
 
+/// How long work stays in "Overdue" before it moves to "Missing". Same seven
+/// days as DAYS_OVERDUE in canvas.js, which is what stops the two lists from
+/// showing the same row twice.
+const MISSED_AFTER_DAYS = 7;
+
 /// Splits the synced tasks the way the panel talks about them. "Overdue" is by
 /// the clock, not the calendar: work due at 9 AM is overdue at 2 PM.
-function buckets(tasks, now = new Date()) {
+///
+/// `missed` is work the school marked missing more than a week ago. It is kept
+/// out of `overdue` on purpose: the buddy's line counts what slipped this week,
+/// and a term's worth of old zeros in that number reads as a scolding.
+/// `plannedOn(task)` gives the day the student said they would do it, or null.
+/// It only ever moves work between "today" and "this week": planning something
+/// for tomorrow does not stop it being overdue, and nothing a student plans
+/// changes what the school is owed.
+function buckets(tasks, now = new Date(), plannedOn = () => null) {
   const pending = tasks.filter((t) => !t.submittedAt);
   const doneToday = tasks.filter((t) => {
     const at = t.submittedAt && new Date(t.submittedAt);
     return at && !isNaN(at) && sameLocalDay(at, now);
   });
-  const overdue = [], today = [], week = [];
+  const overdue = [], today = [], week = [], missed = [];
   for (const t of pending) {
     const due = t.dueAt ? new Date(t.dueAt) : null;
     if (!due || isNaN(due)) week.push(t);
-    else if (due < now) overdue.push(t);
+    else if (due < now) {
+      const days = (startOfDay(now) - startOfDay(due)) / DAY_MS;
+      (t.missing && days > MISSED_AFTER_DAYS ? missed : overdue).push(t);
+    }
     else if (sameLocalDay(due, now)) today.push(t);
     else week.push(t);
   }
-  return { overdue, today, week, doneToday };
+  // A plan re-sorts only what is still ahead. Work due today that you moved to
+  // Thursday leaves Today; work due Friday that you moved to today joins it.
+  const planned = [], rest = [];
+  for (const t of [...today, ...week]) {
+    const day = plannedOn(t);
+    if (!day) { (today.includes(t) ? planned : rest).push(t); continue; }
+    (sameLocalDay(day, now) ? planned : rest).push(t);
+  }
+  return { overdue, today: planned, week: rest, doneToday, missed };
 }
 
 function dueLabel(t, now = new Date()) {
@@ -42,7 +66,10 @@ function dueLabel(t, now = new Date()) {
     const days = Math.round((startOfDay(now) - startOfDay(due)) / DAY_MS);
     const when = days === 0 ? `${time} today`
       : days === 1 ? 'yesterday'
-      : due.toLocaleDateString([], { weekday: 'short' });
+      // Past a week a weekday name is a guess — "Tue" could be any Tuesday —
+      // so work this old says its date instead.
+      : days <= 6 ? due.toLocaleDateString([], { weekday: 'short' })
+      : due.toLocaleDateString([], { month: 'short', day: 'numeric' });
     return `Was due ${when} · still counts`;
   }
   if (sameLocalDay(due, now)) return `Due ${time}`;
@@ -105,5 +132,5 @@ function weekStats(tasks, now = new Date()) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { DAY_MS, startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, weekStats };
+  module.exports = { DAY_MS, MISSED_AFTER_DAYS, startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, weekStats };
 }

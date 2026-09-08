@@ -16,7 +16,7 @@ Then run `bash bridge/art-pack.sh`. It shrinks them to WebP under
 `extension/art/<theme>/` (about 650 KB a theme instead of 9 MB) and lists the
 theme in `extension/art/manifest.js`, which is what turns the real art on. A
 theme with no folder yet shows placeholder art, so nothing breaks while you
-are still generating. Done so far: **graffiti** (2026-09-05).
+are still generating. Done so far: graffiti (Grok, 2026-09-05); neoncity, vaporwave, deepsea, forest, spring, cafe, nebula (generated in-session with the Gemini image model, 2026-09-06). Originals in design/art-src/<theme>/.
 
 ## The master prompt (paste this, then one theme line)
 

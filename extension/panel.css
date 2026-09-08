@@ -393,3 +393,69 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-results li a small { font-size: 12px; color: var(--pk-text-2); }
 .pk-results li.on a, .pk-results li a:hover { background: var(--pk-inset); }
 .pk-results li.empty { padding: 12px 10px; color: var(--pk-text-2); font-size: 13px; }
+
+/* The league: the phone's ladder, the same cloth and the same words. */
+.pk-league { border: 1px solid var(--pk-line); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+.pk-league.empty { flex-direction: row; align-items: center; gap: 12px; }
+.pk-league.empty b, .pk-league-head b { display: block; font-size: 15px; font-weight: 900; letter-spacing: -.01em; }
+.pk-league.empty small, .pk-league-head small { display: block; font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
+.pk-league-head { display: flex; align-items: center; gap: 12px; }
+.pk-league-week b { display: block; font-size: 13px; font-weight: 800; }
+.pk-league-week small { display: block; font-size: 12px; font-weight: 700; color: var(--pk-text-2); margin-top: 4px; }
+.pk-league-bar { height: 8px; border-radius: 999px; background: var(--pk-track); margin-top: 6px; overflow: hidden; }
+.pk-league-bar i { display: block; height: 100%; border-radius: 999px; background: var(--tier); }
+.pk-league-note { font-size: 12px; font-weight: 700; color: var(--pk-text-2); padding: 8px 10px; border-radius: 10px; background: var(--pk-inset); }
+.pk-league-board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.pk-league-board li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 10px; font-size: 13px; }
+.pk-league-board li .pk-rank { width: 18px; text-align: right; font-weight: 800; color: var(--pk-text-2); font-variant-numeric: tabular-nums; }
+.pk-league-board li b { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.pk-league-board li .pk-pts { font-weight: 800; font-variant-numeric: tabular-nums; }
+.pk-league-board li.you { background: var(--tier); color: var(--tier-ink); }
+.pk-league-board li.you .pk-rank, .pk-league-board li.you .pk-pts { color: inherit; }
+.pk-league .pk-foot { padding: 0; }
+/* A pod member's kin: the phone's face plate. Eyes and tuft in the circle, feet out. */
+.pk-kin { flex: none; border-radius: 999px; background-color: var(--pk-inset); background-repeat: no-repeat; background-size: 190% auto; background-position: 50% 24%; box-shadow: inset 0 0 0 1px var(--pk-line); }
+.pk-league-board li.you .pk-kin { box-shadow: inset 0 0 0 1px var(--tier-edge); background-color: rgba(255, 255, 255, .55); }
+
+/* ---- Work dates: when you will do it, not when it is owed ----------------- */
+.pk-week div[data-drop] { border-radius: 10px; padding: 2px 6px; transition: background .14s var(--pk-ease); }
+.pk-week div.over { background: var(--pk-card); box-shadow: inset 0 0 0 2px var(--pk-mint); }
+.pk-list.over { border-radius: 12px; box-shadow: inset 0 0 0 2px var(--pk-mint); }
+.pk-list li.dragging { opacity: .5; }
+.pk-list li.moved .pk-bar { opacity: .55; }
+.pk-planbtn {
+  flex-shrink: 0; border: 0; background: var(--pk-inset); color: var(--pk-text-2);
+  font: inherit; font-size: 11px; font-weight: 800; padding: 4px 8px;
+  border-radius: 999px; cursor: pointer;
+}
+.pk-planbtn.on { background: var(--pk-mint); color: var(--pk-ink); }
+.pk-planpick {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  padding: 8px 10px; background: var(--pk-inset); border-radius: 12px;
+}
+.pk-planpick .pk-planlead { font-size: 11px; font-weight: 800; color: var(--pk-text-2); }
+.pk-planpick button {
+  border: 0; background: var(--pk-card); color: var(--pk-text); font: inherit;
+  font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 999px; cursor: pointer;
+}
+.pk-planpick button.on { background: var(--pk-mint); color: var(--pk-ink); }
+.pk-planpick button.clear { background: none; color: var(--pk-text-2); text-decoration: underline; }
+
+/* ---- Aiming for a grade: a mark on the bar, never a countdown ------------- */
+.pk-aim { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pk-aim .pk-aimlead { font-size: 11px; font-weight: 800; color: var(--pk-text-2); }
+.pk-aim button {
+  border: 0; background: var(--pk-card); color: var(--pk-text); font: inherit;
+  font-size: 12px; font-weight: 700; padding: 4px 9px; border-radius: 999px; cursor: pointer;
+}
+.pk-aim button.on { background: var(--pk-mint); color: var(--pk-ink); }
+.pk-aim button.clear { background: none; color: var(--pk-text-2); text-decoration: underline; font-size: 11px; }
+.pk-grade .pk-mini > u {
+  position: absolute; top: -2px; bottom: -2px; width: 2px; border-radius: 1px;
+  background: var(--pk-text-2); text-decoration: none;
+}
+.pk-recent div i { font-style: normal; font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
+
+/* The panel takes focus when it opens; that is a announcement, not a highlight. */
+.pk-panel:focus { outline: none; }
+.pk-panel:focus-visible { outline: 2px solid var(--pk-mint); outline-offset: -2px; }

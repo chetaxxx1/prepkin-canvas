@@ -40,9 +40,10 @@ class FakePhone {
     return (await this.rpc('fetch_todo', { p_code: this.code, p_token: this.token })).body;
   }
 
-  async pushState({ coins, owned = ['classic'], requestsAppliedAt = null }) {
+  async pushState({ coins, owned = ['classic'], requestsAppliedAt = null, league = null }) {
     const p_state = { coins, owned };
     if (requestsAppliedAt) p_state.requestsAppliedAt = requestsAppliedAt;
+    if (league) p_state.league = league;
     return this.rpc('push_state', { p_code: this.code, p_token: this.token, p_state });
   }
 

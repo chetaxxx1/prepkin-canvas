@@ -545,6 +545,47 @@ modules rewrite on).
 
 **Counts:** unit 79 · Receipt browser 15 · e2e 37 · stress 8.
 
+## Round 9, 2026-09-06 evening: work dates, missing work, six more looks
+
+Built from a walkthrough of BetterCampus on George's own Dartmouth Canvas — the
+gaps worth taking, not the whole product. Five additions: a **work date** (drag a
+task onto a day in This week, or press Plan; the day header counts "1 due · 1
+planned", the due date never moves, and Today counts what you planned, on the
+panel, the dashboard strip and in the buddy's line); a **Missing** bucket for
+work the school flagged more than a week ago, which Canvas's own lists drop, with
+what those zeros are worth in points; the **class average** beside each recent
+score; **See every assignment** per class (All / Graded / Missing / Upcoming);
+and a **grade to aim for** per class. Plans and targets never leave the browser,
+and old missing work is stripped from the bridge push — the phone's list is
+tonight.
+
+Real-Canvas facts learned on the restarted VM (35.193.221.111):
+- `score_statistics` only appears once an assignment has **five or more scored
+  submissions**, and only in a student's own view. The sandbox had four students,
+  so the field was absent everywhere; two more students plus a graded assignment
+  produced `{min: 31, max: 46, mean: 38.5}` and the panel drew "class 38.5".
+- Posting grades kicks off a background recompute in the `jobs` container. L5
+  failed once, immediately after a batch of grades, because every enrolment's
+  `computed_current_score` was briefly absent. It passed on the next run. If L5
+  fails right after seeding, wait for the jobs worker before believing it.
+- `submission.missing` is set by Canvas on 80 of 81 assignments in the student
+  view, so the Missing bucket rests on the school's own flag, not a guess.
+
+Also: the panel keeps its scroll position across redraws (a chip low in the list
+used to throw you back to the top), Escape closes the buddy from any view and
+hands focus back to the tab, opening the panel moves focus into it, and every new
+control carries `aria-pressed` or a labelled `radiogroup`.
+
+Six more Looks and four more papers — Sea Foam, Oat, Peach and Plum — chosen
+against what students actually pick in the public galleries (Sea Foam 25.7k likes,
+beigestudy 19.1k, Matcha Strawberry 8.8k, Frutiger Metro 19.2k, National Parks
+7.2k). Two new textures; the first gingham was drawn as blocks and read as a grey
+plaid over the whole page, so it is lines now. Captures in
+`design/signoff/themes/`. `design/signoff/papers/gallery.html` still shows twelve
+papers and is four short.
+
+**Counts:** unit 108 · Receipt browser 28 · e2e 38 · stress 8 · live 7/7.
+
 ## How to run
 
 ```bash

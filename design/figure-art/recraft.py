@@ -14,6 +14,9 @@ import json, os, subprocess, sys, time, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SVG = os.path.join(HERE, "svg"); PREVIEW = os.path.join(HERE, "preview")
+# The locked custom style, made from style-refs/. Without it every object is generated
+# freehand and the set stops looking like a set — which is what happened the first time.
+STYLE_ID = json.load(open(os.path.join(HERE, "style.json")))["style_id"]
 TOKEN = open(os.path.expanduser("~/.config/recraft/token")).read().strip()
 API = "https://external.api.recraft.ai/v1/images/generations"
 
@@ -48,12 +51,12 @@ OBJECTS = {
 
 def rgb(name): return {"rgb": list(PALETTE[name])}
 
-def generate(oid, model="recraftv4_1_vector", substyle=None):
+def generate(oid, model="recraftv4_styles_vector", substyle=None):
     prompt, colours = OBJECTS[oid]
     body = {
         "prompt": f"{prompt}. {STYLE}",
         "model": model,
-        "style": "vector_illustration",
+        "style_id": STYLE_ID,
         "size": "1024x1024",
         "n": 1,
         "response_format": "url",
@@ -97,7 +100,7 @@ def preview(oid):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    model = "recraftv4_1_vector"
+    model = "recraftv4_styles_vector"
     if "--model" in args:
         i = args.index("--model"); model = args[i + 1]; del args[i:i + 2]
     substyle = None
