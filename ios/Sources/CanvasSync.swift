@@ -323,14 +323,14 @@ struct MockCanvasClient: CanvasSyncClient {
         }
         return CanvasSnapshot(
             tasks: [
-                CanvasItem(id: "c-101", title: "Ch. 5 Problem Set", courseName: "AP Physics", dueAt: due(0, hour: 23)),
-                CanvasItem(id: "c-102", title: "Essay outline", courseName: "English 11", dueAt: due(1, hour: 8)),
-                CanvasItem(id: "c-103", title: "Unit 3 quiz", courseName: "APUSH", dueAt: due(2, hour: 15)),
+                CanvasItem(id: "c-101", title: "Ch. 5 Problem Set", courseName: "Physics 13", dueAt: due(0, hour: 23)),
+                CanvasItem(id: "c-102", title: "Essay outline", courseName: "Writing 5", dueAt: due(1, hour: 8)),
+                CanvasItem(id: "c-103", title: "Week 3 quiz", courseName: "Intro Psych", dueAt: due(2, hour: 15)),
             ],
             courses: [
-                CanvasCourse(id: "1", name: "AP Physics", code: "PHYS-11", score: 88.5, grade: "B+", colorHex: "#FF6F61"),
-                CanvasCourse(id: "2", name: "English 11", code: "ENG-11", score: 92.0, grade: "A-", colorHex: "#57C79B"),
-                CanvasCourse(id: "3", name: "APUSH", code: "HIST-21", score: nil, grade: nil, colorHex: "#9BC8F2"),
+                CanvasCourse(id: "1", name: "Physics 13", code: "PHYS 13", score: 88.5, grade: "B+", colorHex: "#FF6F61"),
+                CanvasCourse(id: "2", name: "Writing 5", code: "WRIT 5", score: 92.0, grade: "A-", colorHex: "#57C79B"),
+                CanvasCourse(id: "3", name: "Intro Psych", code: "PSYC 1", score: nil, grade: nil, colorHex: "#9BC8F2"),
             ])
     }
 }
