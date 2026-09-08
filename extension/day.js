@@ -108,8 +108,7 @@ function voice({ overdue, today, doneToday }) {
 }
 
 /// The week's numbers for the rail: Monday to Sunday around `now`, how many
-/// tasks fall in it and how many are handed in, split by course, and how many
-/// days in a row something was handed in (today, or ending yesterday).
+/// tasks fall in it and how many are handed in, split by course.
 function weekStats(tasks, now = new Date()) {
   const today = startOfDay(now);
   const start = new Date(today.getTime() - ((today.getDay() + 6) % 7) * DAY_MS);
@@ -121,13 +120,9 @@ function weekStats(tasks, now = new Date()) {
     if (!byCourse.has(k)) byCourse.set(k, { courseId: k, name: t.courseName ?? '', colorHex: t.colorHex ?? null, total: 0, done: 0 });
     const c = byCourse.get(k); c.total++; if (t.submittedAt) c.done++;
   }
-  const days = new Set(tasks.filter((t) => t.submittedAt).map((t) => startOfDay(new Date(t.submittedAt)).getTime()));
-  let streak = 0;
-  let cursor = days.has(today.getTime()) ? today.getTime() : today.getTime() - DAY_MS;
-  while (days.has(cursor)) { streak++; cursor -= DAY_MS; }
   return {
     start, end, total: inWeek.length, done: inWeek.filter((t) => t.submittedAt).length,
-    byCourse: [...byCourse.values()].sort((a, b) => b.total - a.total), streak,
+    byCourse: [...byCourse.values()].sort((a, b) => b.total - a.total),
   };
 }
 

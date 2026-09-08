@@ -605,7 +605,6 @@ html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--
 #pk-week .pk-w-legend b { font-weight: 800; color: var(--pk-ink-2); }
 #pk-week .pk-w-empty { margin: 0 0 10px; font-size: 13px; line-height: 18px; color: var(--pk-ink-2); }
 #pk-week .pk-w-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid var(--pk-rule); font-size: 12px; line-height: 16px; font-weight: 700; color: var(--pk-ink-2); }
-#pk-week .pk-w-foot .streak { color: var(--pk-ink); }
 #pk-week .pk-w-foot .more { color: var(--pk-link); cursor: pointer; }
 #pk-week .pk-w-foot .more:hover { text-decoration: underline; }
 html.pk-back-week #pk-week { display: none; }

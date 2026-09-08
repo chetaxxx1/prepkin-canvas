@@ -115,7 +115,7 @@ test('the GPA is unweighted until the student marks a class Honors or AP', () =>
   assert.equal(gpa([{ id: 'x' }]), null);
 });
 
-test('weekStats counts the Monday-to-Sunday week by course and the streak of handed-in days', () => {
+test('weekStats counts the Monday-to-Sunday week by course and handed-in tasks', () => {
   const { weekStats, DAY_MS } = require('./day.js');
   const now = new Date(2026, 8, 9, 12); // a Wednesday
   const day = (n, h = 10) => new Date(2026, 8, 9 + n, h).toISOString();
@@ -132,9 +132,6 @@ test('weekStats counts the Monday-to-Sunday week by course and the streak of han
   assert.equal(Math.round((w.end - w.start) / DAY_MS), 7);
   assert.deepEqual([w.total, w.done], [3, 2]);
   assert.deepEqual(w.byCourse.map((c) => [c.name, c.total, c.done]), [['Physics', 2, 1], ['English', 1, 1]]);
-  assert.equal(w.streak, 2, 'today and yesterday');
-  assert.equal(weekStats(tasks.map((t) => ({ ...t, submittedAt: undefined })), now).streak, 0);
-  assert.equal(weekStats([{ id: 9, courseId: 1, submittedAt: day(-1) }], now).streak, 1, 'a streak ending yesterday still counts');
 });
 
 test('composeData: nicknames rename courses everywhere, own tasks join the list, the payload itself is untouched', () => {

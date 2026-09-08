@@ -1290,7 +1290,7 @@ function renderSearchChip() {
 
 // MARK: - This week, at the top of the sidebar
 //
-// Our own rail: a ring of the week's work by course, the streak, and a way
+// Our own rail: a ring of the week's work by course and a way
 // into the buddy's week. Canvas's To Do and Coming Up stay right under it.
 // Counts and titles only; grades stay behind the panel's closed root.
 
@@ -1301,15 +1301,15 @@ function renderWeek() {
   const existing = document.getElementById(WEEK_ID);
   const onDashboard = /^\/(dashboard)?\/?$/.test(location.pathname);
   const side = document.getElementById('right-side');
-  // Shown from the first sync on, even with nothing due: the empty week and
-  // the streak are still the student's.
+  // Shown from the first sync on, even with nothing due: the empty week is
+  // still the student's.
   if (!onDashboard || !side || !skin.cards || killed || putBack.week || !(data.tasks?.length || data.at)) {
     existing?.remove();
     return;
   }
   const now = new Date();
   const w = weekStats(data.tasks, now);
-  const key = JSON.stringify([w.start.getTime(), w.total, w.done, w.streak, w.byCourse.map((c) => [c.courseId, c.total, c.done]), wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.league?.bar ?? null, wallet.league?.board?.length ?? null, wallet.league?.board?.findIndex?.((m) => m.you) ?? null]);
+  const key = JSON.stringify([w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]), wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.league?.bar ?? null, wallet.league?.board?.length ?? null, wallet.league?.board?.findIndex?.((m) => m.you) ?? null]);
   if (existing && existing.dataset.key === key) return;
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1406,7 +1406,7 @@ function renderWeek() {
     box.insertBefore(box2, head.nextSibling);
   }
   const foot = el('div', 'pk-w-foot');
-  foot.append(el('span', w.streak ? 'streak' : '', w.streak ? `${w.streak} day${w.streak === 1 ? '' : 's'} in a row` : 'Start a streak today'));
+  foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : 'Nothing finished yet this week'));
   const more = el('span', 'more', 'See the week');
   more.setAttribute('role', 'button'); more.tabIndex = 0;
   const openWeek = () => { ui.open = true; ui.view = 'week'; ui.sheet = null; render(); };
