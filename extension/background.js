@@ -334,6 +334,8 @@ async function isCanvas(origin) {
 
 // MARK: - Syncing
 
+const payloadVersion = () => chrome.runtime.getManifest().version;
+
 async function syncAll() {
   const origins = await connectedOrigins();
   if (!origins.length) return finish({ ok: false, error: 'No Canvas connected yet.' });
@@ -362,6 +364,7 @@ async function send(fresh) {
   const all = Object.values(results);
   const { requests = [] } = await chrome.storage.local.get('requests');
   const payload = {
+    version: payloadVersion(),
     tasks: all.flatMap((r) => r.tasks),
     courses: all.flatMap((r) => r.courses),
     graded: Object.assign({}, ...all.map((r) => r.graded ?? {})),

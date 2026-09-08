@@ -1,6 +1,8 @@
 // Run with: node --test extension/canvas.test.js
 const test = require('node:test');
 const assert = require('node:assert');
+const fs = require('node:fs');
+const path = require('node:path');
 const { mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore,
         DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_NEW, safeColor, nextLink } = require('./canvas.js');
 
@@ -12,6 +14,19 @@ const COURSE = { id: '1', name: 'AP Physics', colorHex: '#FF6F61' };
 
 const map = (raw, now = NOW) => mapAssignments(raw, { host: HOST, course: COURSE, now });
 const assignment = (over = {}) => ({ id: 77, name: 'Lab writeup', due_at: at(2), points_possible: 50, ...over });
+
+// MARK: - Extension version
+
+test('the pushed list carries the extension version', () => {
+  const source = fs.readFileSync(path.join(__dirname, 'background.js'), 'utf8');
+  const [definition] = source.match(/^const payloadVersion = .*;$/m) ?? [];
+  assert.ok(definition, 'the manifest reader stays available as a one-line helper');
+  const version = Function('chrome', `${definition}\nreturn payloadVersion();`)({
+    runtime: { getManifest: () => ({ version: '0.6.0' }) },
+  });
+  assert.equal(version, '0.6.0');
+  assert.match(source, /const payload = \{\s*version: payloadVersion\(\),/);
+});
 
 // MARK: - Courses and grades
 

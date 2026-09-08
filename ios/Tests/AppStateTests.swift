@@ -93,8 +93,12 @@ final class AppStateTests: XCTestCase {
         func fetchTodo() async throws -> CanvasSnapshot { throw BridgeError.server(status: 503) }
     }
     private struct ListClient: CanvasSyncClient {
+        var extensionVersion: String? = nil
+
         func fetchTodo() async throws -> CanvasSnapshot {
-            CanvasSnapshot(tasks: [CanvasItem(id: "c-1", title: "Lab 3", courseName: "Physics", dueAt: nil)])
+            CanvasSnapshot(
+                tasks: [CanvasItem(id: "c-1", title: "Lab 3", courseName: "Physics", dueAt: nil)],
+                extensionVersion: extensionVersion)
         }
     }
 
@@ -128,11 +132,24 @@ final class AppStateTests: XCTestCase {
     }
 
     func testAListMakesItConnected() async {
-        let state = AppState(store: makeStore(), makeClient: { $0.pairingCode != nil ? ListClient() : nil })
+        let state = AppState(store: makeStore(), makeClient: {
+            $0.pairingCode != nil ? ListClient(extensionVersion: "0.6.0") : nil
+        })
         _ = state.ensurePairingCode()
         await state.syncCanvas()
         XCTAssertEqual(state.canvasLink, .connected)
         XCTAssertNil(state.canvasStatus)
+    }
+
+    func testAnOldExtensionStillConnectsAndAsksForAnUpdate() async {
+        let state = AppState(store: makeStore(), makeClient: {
+            $0.pairingCode != nil ? ListClient(extensionVersion: "0.5.9") : nil
+        })
+        _ = state.ensurePairingCode()
+        await state.syncCanvas()
+        XCTAssertEqual(state.canvasLink, .connected)
+        XCTAssertEqual(state.canvasStatus,
+                       "Update Prepkin for Canvas in Chrome to keep getting your work.")
     }
 
     func testAFailedCheckIsOfflineAndKeepsTheLastList() async {

@@ -107,11 +107,13 @@ final class CanvasSnapshotTests: XCTestCase {
 
     func testItReadsCoursesAndGradesAlongsideTheTasks() throws {
         let snap = try decode("""
-        {"tasks":[{"id":"c-a1","title":"Lab writeup","courseName":"AP Physics","dueAt":null,
+        {"version":"0.6.1",
+         "tasks":[{"id":"c-a1","title":"Lab writeup","courseName":"AP Physics","dueAt":null,
                    "courseId":"1","colorHex":"#FF6F61","submittedAt":"2026-08-30T10:00:00Z",
                    "score":47,"pointsPossible":50}],
          "courses":[{"id":"1","name":"AP Physics","code":"PHYS-11","score":88.5,"grade":"B+","colorHex":"#FF6F61"}]}
         """)
+        XCTAssertEqual(snap.extensionVersion, "0.6.1")
         XCTAssertEqual(snap.courses.first?.score, 88.5)
         XCTAssertEqual(snap.courses.first?.grade, "B+")
         XCTAssertEqual(snap.tasks.first?.score, 47)
@@ -134,6 +136,19 @@ final class CanvasSnapshotTests: XCTestCase {
         let snap = try decode(#"{"tasks":[]}"#)
         XCTAssertTrue(snap.tasks.isEmpty)
         XCTAssertTrue(snap.courses.isEmpty)
+        XCTAssertNil(snap.extensionVersion)
+    }
+
+    func testExtensionVersionComparisonUsesDottedNumbers() {
+        let cases = [
+            ("0.6.0", "0.10.0", true),
+            ("0.6", "0.6.1", true),
+            ("0.6", "0.6.0", false),
+            ("1.0.0", "0.10.0", false),
+        ]
+        for (a, b, expected) in cases {
+            XCTAssertEqual(CanvasSnapshot.isOlder(a, than: b), expected, "\(a) compared with \(b)")
+        }
     }
 
     func testAJunkDueDateLosesTheDateNotTheWholeList() throws {
