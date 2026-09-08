@@ -215,11 +215,12 @@ function pageFor(url) {
     main = `<h1>Canvas</h1><p>Fake Canvas for Prepkin tests.</p>`;
   }
   const inCourse = /^\/courses\/\d+/.test(p);
+  const editor = q.get('rce') === '1' ? '<div class="rce-wrapper"><textarea aria-label="Rich Content Editor"></textarea></div>' : '';
   return `<!doctype html><html><head><title>Dashboard</title><script>ENV = ${env};</script>
 <style>body{margin:0;font-family:Lato,sans-serif} .ic-DashboardCard{display:inline-block;width:262px;margin:36px 0 0 36px;background:#fff;border-radius:4px;vertical-align:top} .ic-DashboardCard__header_hero{height:146px} .ic-DashboardCard__header_content{padding:12px 18px 0;height:80px;overflow:hidden;background:#fff} .ig-title{color:#273540} .ic-DashboardCard__action-container{display:flex;height:2.5rem} #left-side{width:192px;float:left} #right-side{width:288px;float:right} .ig-header{background:#f5f5f5;padding:8px} .context_module{margin-bottom:24px} .btn{display:inline-block;padding:8px 14px;border:1px solid transparent;border-radius:3px;background:#f5f5f5;color:#2d3b45} .btn-primary{background:#0374B5;border-color:#0374B5;color:#fff}</style></head>
 <body class="${bodyClass}"><div id="application" class="ic-app">${chrome}
 <div id="wrapper" class="ic-Layout-wrapper"><div id="main" class="ic-Layout-columns">${inCourse ? courseNav : ''}
-<div id="content-wrapper" class="ic-Layout-contentWrapper"><div id="content" class="ic-Layout-contentMain">${main}</div></div>
+<div id="content-wrapper" class="ic-Layout-contentWrapper"><div id="content" class="ic-Layout-contentMain">${editor}${main}</div></div>
 ${side ? `<div id="right-side-wrapper" class="ic-app-main-content__secondary"><aside id="right-side">${side}</aside></div>` : ''}
 </div></div></div></body></html>`;
 }
