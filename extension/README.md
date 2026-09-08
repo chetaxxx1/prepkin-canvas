@@ -1,4 +1,4 @@
-# Prepkin Canvas Sync — Chrome extension
+# Prepkin for Canvas — Chrome extension
 
 Reads your Canvas to-do list with the session already in your browser, and pushes
 it to the bridge so the iPhone app can pick it up. No password is asked for,

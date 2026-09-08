@@ -467,7 +467,7 @@ Targets: 2,370 phone, 1,100 extension, 23 payers.
 
 1. "My Canvas at 11:58pm and at 11:59pm." Twenty-second before and after screen recording, graffiti look, ends on the put-back tap. George films. TikTok, Reels, Shorts.
 2. "The extension that shows you its receipt." Scroll the Receipt list, tap put all back, the page returns. George films. All three platforms and the Reddit comments.
-3. "After the May Canvas breach I read what my extensions send." DevTools network tab open on a Canvas page, one call and nothing else. George films. TikTok and r/CanvasLMS.
+3. "After the May Canvas breach I read what my extensions send." DevTools network tab open on a Canvas page, one call and nothing else. Spoken line: "Reads only the Canvas you connect. Sends your coursework list and course grades to your own phone, and makes no other request." George films. TikTok and r/CanvasLMS.
 4. "I turned in my lab report and my fish got paid." Laptop and phone in one shot, submit, coins land in the tank. George films. This is the clip that only Prepkin can make.
 5. "On a quiz it does nothing at all. That is the point." Quiz page with the extension on, nothing changes. George films. Also the clip to send a district IT person.
 6. "Every Canvas look, in order of how late it is." All 20 looks cycling at 1.2 seconds each with name labels. HyperFrames renders. Saves and shares well.
