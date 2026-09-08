@@ -377,7 +377,7 @@ async function bindWriter(code) {
     }));
     // 404 here is the bridge itself, not the code: the pairing functions are
     // missing, which means bridge/schema.sql was never run on this project.
-    if (res.status === 404) return { ok: false, error: 'The bridge is out of date. Prepkin has to update it — try again later.' };
+    if (res.status === 404) return { ok: false, error: 'Prepkin needs an update before this can pair.' };
     if (!res.ok) return { ok: false, error: 'That code is not one the app is offering.' };
     const token = await res.json().catch(() => null);
     if (typeof token !== 'string' || !token) {
@@ -389,7 +389,7 @@ async function bindWriter(code) {
     await chrome.storage.local.set({ pairingCode: code, writerToken: token });
     return { ok: true };
   } catch {
-    return { ok: false, error: 'Could not reach the bridge.' };
+    return { ok: false, error: 'Could not reach Prepkin.' };
   }
 }
 
@@ -581,7 +581,7 @@ async function pushToBridge(payload) {
     // make the student pair again.
     const message = String((await res.json().catch(() => null))?.message ?? '');
     if (message.includes('too large')) {
-      return { ok: false, error: 'Too much to send. Disconnect a school you are done with, then Sync now.' };
+      return { ok: false, error: 'Too much to send. Disconnect a school you are done with, then Check again.' };
     }
     // The phone unpaired, or the row expired. Say so plainly and drop the dead
     // token, so the popup asks for a fresh code instead of retrying forever.
@@ -589,9 +589,9 @@ async function pushToBridge(payload) {
       await chrome.storage.local.remove('writerToken');
       return { ok: false, error: 'Your phone unpaired this laptop. Tap New code in the app and paste it here.' };
     }
-    return { ok: false, error: `Bridge returned ${res.status}.` };
+    return { ok: false, error: `Prepkin returned ${res.status}.` };
   } catch {
-    return { ok: false, error: 'Could not reach the bridge.' };
+    return { ok: false, error: 'Could not reach Prepkin.' };
   }
 }
 
