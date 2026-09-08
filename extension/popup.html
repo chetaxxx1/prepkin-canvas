@@ -152,6 +152,8 @@
   .ok  { color: var(--green); }
   .bad { color: var(--bad); }
   .foot-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 0; }
+  a { color: var(--green); font-weight: 800; text-decoration: none; }
+  a:hover { text-decoration: underline; }
 
   /* First run: three steps, every one skippable. */
   .onb { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 24px 16px 16px; }
@@ -208,6 +210,7 @@
   <div class="card outline">
     <div class="linked" id="linked" hidden><b>Linked</b><small>Coins and focus time go to the app.</small></div>
     <div id="pair-box">
+      <p class="hint" style="padding:12px 14px 0;margin:0">No app yet? <a href="https://prepkin.com/app" target="_blank">Get Prepkin for iPhone</a></p>
       <p class="hint" style="padding:12px 14px 0;margin:0">Open the app, tap the sliders on Today, and type the code it shows.</p>
       <div class="pair">
         <input id="code" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off" spellcheck="false" />
@@ -244,6 +247,7 @@
 
 <div id="status"></div>
 <div class="foot-row"><span class="ver" id="version"></span></div>
+<p class="hint" style="padding:4px 16px 0;margin:0;color:var(--ink-3)">Something wrong? <a href="mailto:support@prepkin.com" target="_blank">support@prepkin.com</a></p>
 
 </div>
 

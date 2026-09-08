@@ -325,12 +325,22 @@ struct DayEditorView: View {
                 .buttonStyle(.plain)
             }
             hairline.padding(.vertical, 18)
-            Text(state.isBridgeConfigured
-                 ? "Type this into the Prepkin extension in Chrome."
-                 : "This build is not connected to Canvas, so the tasks here are sample data.")
-                .font(Theme.font(15, .semibold))
-                .foregroundStyle(Theme.muted)
-                .lineSpacing(2)
+            if state.isBridgeConfigured {
+                Text("Type this into the Prepkin extension in Chrome.")
+                    .font(Theme.font(15, .semibold))
+                    .foregroundStyle(Theme.muted)
+                    .lineSpacing(2)
+                Link("Get the Chrome extension",
+                     destination: URL(string: "https://prepkin.com/chrome")!)
+                    .font(Theme.font(15, .semibold))
+                    .foregroundStyle(Theme.muted)
+                    .padding(.top, 6)
+            } else {
+                Text("This build is not connected to Canvas, so the tasks here are sample data.")
+                    .font(Theme.font(15, .semibold))
+                    .foregroundStyle(Theme.muted)
+                    .lineSpacing(2)
+            }
         }
         .padding(18)
         .background(cardBackground(26))
@@ -733,6 +743,18 @@ struct DayEditorView: View {
                 settingRow("A note if you're away a few days", isOn: Binding(
                     get: { state.settings.comeBackRemindersEnabled },
                     set: state.setComeBackReminders))
+            }
+
+            hairline
+            Link(destination: URL(string: "mailto:support@prepkin.com")!) {
+                HStack(spacing: 12) {
+                    Text("Get help")
+                        .font(Theme.font(17, .bold))
+                        .foregroundStyle(Theme.ink)
+                    Spacer(minLength: 0)
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
             }
 
             Text("Nothing here is a countdown, and nothing warns you about losing something.")

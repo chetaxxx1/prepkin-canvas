@@ -146,7 +146,7 @@ final class AppState: ObservableObject {
 
     func syncCanvas() async {
         guard let client = makeClient(game) else {
-            canvasStatus = "Pair with the Chrome extension to see Canvas here."
+            canvasStatus = "Pair with Prepkin for Canvas in Chrome to see Canvas here."
             canvasLink = .notSetUp
             return
         }

@@ -185,6 +185,4 @@ extension's update notes.
 
 ## Contact
 
-<!-- TODO: a real address you actually read. The store listing requires one, and
-     the deletion request above is not a real promise without it. -->
-**PUT A SUPPORT EMAIL HERE BEFORE PUBLISHING.**
+Email support@prepkin.com and we will help with deletion requests or anything else on this page.
