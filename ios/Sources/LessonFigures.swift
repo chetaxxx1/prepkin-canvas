@@ -3335,7 +3335,7 @@ private func fxLayer<Content: View>(_ at: Int, _ step: Int,
 }
 
 private struct FxShape: Shape {
-    let build: (inout Path) -> Void
+    let build: @Sendable (inout Path) -> Void
     func path(in rect: CGRect) -> Path { var p = Path(); build(&p); return p }
 }
 
@@ -3371,7 +3371,7 @@ private func fxOval(_ cx: CGFloat, _ cy: CGFloat, _ rx: CGFloat, _ ry: CGFloat,
 }
 
 private func fxPoly(_ fill: Color, stroke: CGFloat = 2.5,
-                    _ build: @escaping (inout Path) -> Void) -> some View {
+                    _ build: @escaping @Sendable (inout Path) -> Void) -> some View {
     ZStack(alignment: .topLeading) {
         FxShape(build: build).fill(fill)
         FxShape(build: build)
@@ -3381,13 +3381,13 @@ private func fxPoly(_ fill: Color, stroke: CGFloat = 2.5,
 }
 
 private func fxStroke(_ color: Color, _ w: CGFloat,
-                      _ build: @escaping (inout Path) -> Void) -> some View {
+                      _ build: @escaping @Sendable (inout Path) -> Void) -> some View {
     FxShape(build: build)
         .stroke(color, style: StrokeStyle(lineWidth: w, lineCap: .round, lineJoin: .round))
         .frame(width: FigureCanvasMetrics.w, height: FigureCanvasMetrics.h, alignment: .topLeading)
 }
 
-private func fxDash(_ w: CGFloat, _ build: @escaping (inout Path) -> Void) -> some View {
+private func fxDash(_ w: CGFloat, _ build: @escaping @Sendable (inout Path) -> Void) -> some View {
     FxShape(build: build)
         .stroke(Fig.ink.opacity(0.45), style: StrokeStyle(lineWidth: w, dash: [8, 6]))
         .frame(width: FigureCanvasMetrics.w, height: FigureCanvasMetrics.h, alignment: .topLeading)

@@ -144,7 +144,7 @@ private struct Glyph40<Content: View>: View {
 }
 
 private struct Ink: Shape {
-    let build: (inout Path) -> Void
+    let build: @Sendable (inout Path) -> Void
     func path(in rect: CGRect) -> Path { var p = Path(); build(&p); return p }
 }
 
@@ -175,11 +175,11 @@ private func oval(_ cx: CGFloat, _ cy: CGFloat, _ rx: CGFloat, _ ry: CGFloat,
         .offset(x: cx - rx, y: cy - ry)
 }
 
-private func fill(_ f: Color, _ build: @escaping (inout Path) -> Void) -> some View {
+private func fill(_ f: Color, _ build: @escaping @Sendable (inout Path) -> Void) -> some View {
     Ink(build: build).fill(f).frame(width: 40, height: 40)
 }
 
-private func line(_ w: CGFloat, _ build: @escaping (inout Path) -> Void) -> some View {
+private func line(_ w: CGFloat, _ build: @escaping @Sendable (inout Path) -> Void) -> some View {
     Ink(build: build)
         .stroke(Theme.ink, style: StrokeStyle(lineWidth: w, lineCap: .round, lineJoin: .round))
         .frame(width: 40, height: 40)

@@ -72,6 +72,9 @@ struct TrackMapView: View {
                         .foregroundStyle(Theme.ink)
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(Theme.card))
+                        .padding(3)
+                        .contentShape(Rectangle())
+                        .padding(-3)
                 }
                 .accessibilityLabel("Back")
                 Spacer()
