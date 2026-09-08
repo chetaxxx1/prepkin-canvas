@@ -207,6 +207,47 @@ function pageName(pathname) {
   return 'This page';
 }
 
+/// A current rule from Prepkin may ask this build to leave one page alone.
+/// The saved answer is deliberately short-lived, and every rule must expire.
+function remoteKill(flags, { host, page, version, now }) {
+  if (!flags || !Number.isFinite(flags.fetchedAt) || !Array.isArray(flags.rules)) return null;
+  if (now - flags.fetchedAt > 7 * 86_400_000) return null;
+
+  const parts = (value) => {
+    if (typeof value !== 'string' || !/^\d+(?:\.\d+)*$/.test(value)) return null;
+    return value.split('.').map(Number);
+  };
+  const compare = (a, b) => {
+    const left = parts(a); const right = parts(b);
+    if (!left || !right) return null;
+    for (let i = 0; i < Math.max(left.length, right.length); i += 1) {
+      const d = (left[i] ?? 0) - (right[i] ?? 0);
+      if (d) return d < 0 ? -1 : 1;
+    }
+    return 0;
+  };
+
+  for (const rule of flags.rules) {
+    if (!rule || typeof rule !== 'object') continue;
+    const end = Date.parse(rule.endsAt ?? '');
+    if (!Number.isFinite(end) || end <= now) continue;
+    if (rule.host !== '*' && rule.host !== host) continue;
+    if (rule.page !== '*' && rule.page !== page) continue;
+    if (rule.minVer != null) {
+      const order = compare(version, rule.minVer);
+      if (order === null || order < 0) continue;
+    }
+    if (rule.maxVer != null) {
+      const order = compare(version, rule.maxVer);
+      if (order === null || order > 0) continue;
+    }
+    return typeof rule.note === 'string' && rule.note.trim()
+      ? rule.note
+      : 'Prepkin is staying out of the way on this page for now.';
+  }
+  return null;
+}
+
 /// Canvas's sign-in pages, which the skin never touches in any mode.
 function isLoginPath(pathname) {
   return /^\/(login|logout|register|confirmations)(\/|$)|^\/users\/[^/]+\/(password|confirm)/.test(pathname);
@@ -226,11 +267,12 @@ function isSubmissionPath(pathname, hash = '') {
     || (/^\/courses\/\d+\/assignments\/\d+\/?$/.test(pathname) && hash === '#submit');
 }
 
-function killReason({ forcedColors = false, prefersContrast = false, envHighContrast = false,
+function killReason({ remote = '', forcedColors = false, prefersContrast = false, envHighContrast = false,
                       newQuizzes = false, widgetDashboard = false, loginPage = false, quizTake = false,
                       submitting = false, editorOpen = false } = {}) {
   if (loginPage) return 'This is the sign-in page. It stays the school\'s.';
   if (quizTake) return 'You are taking a quiz. Receipt stays out of the way.';
+  if (remote) return remote;
   if (submitting) return 'You are handing something in. Receipt stays out of the way.';
   if (editorOpen) return 'The editor is open. Receipt stays out of the way.';
   if (envHighContrast) return 'Your school has High Contrast on. Receipt stays out of the way.';
@@ -247,5 +289,5 @@ function shouldStepAside({ mine, current, alive }) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, shouldStepAside };
+  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, shouldStepAside };
 }

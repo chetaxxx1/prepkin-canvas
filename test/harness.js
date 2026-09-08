@@ -53,6 +53,11 @@ async function launch({ headless = !process.env.HEADED } = {}) {
       '--remote-debugging-port=0',
     ],
   });
+  await context.route('**/rest/v1/rpc/fetch_flags', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ at: new Date().toISOString(), rules: [] }),
+  }));
   let worker = context.serviceWorkers()[0];
   if (!worker) worker = await context.waitForEvent('serviceworker');
   const id = new URL(worker.url()).host;
