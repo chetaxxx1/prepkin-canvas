@@ -25,7 +25,7 @@ private struct Ico<Content: View>: View {
 }
 
 private struct Poly: Shape {
-    let build: (inout Path) -> Void
+    let build: @Sendable (inout Path) -> Void
     func path(in rect: CGRect) -> Path { var p = Path(); build(&p); return p }
 }
 
@@ -46,12 +46,12 @@ private func dot(_ cx: CGFloat, _ cy: CGFloat, _ r: CGFloat, _ fill: Color) -> s
     Circle().fill(fill).frame(width: r * 2, height: r * 2).offset(x: cx - r, y: cy - r)
 }
 
-private func blob(_ fill: Color, _ build: @escaping (inout Path) -> Void) -> some View {
+private func blob(_ fill: Color, _ build: @escaping @Sendable (inout Path) -> Void) -> some View {
     Poly(build: build).fill(fill).frame(width: 24, height: 24)
 }
 
 private func stroke(_ color: Color, _ width: CGFloat,
-                    _ build: @escaping (inout Path) -> Void) -> some View {
+                    _ build: @escaping @Sendable (inout Path) -> Void) -> some View {
     Poly(build: build)
         .stroke(color, style: StrokeStyle(lineWidth: width, lineCap: .round, lineJoin: .round))
         .frame(width: 24, height: 24)

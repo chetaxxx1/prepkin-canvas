@@ -76,6 +76,9 @@ struct CollectionView: View {
                     .frame(width: 38, height: 38)
                     .background(Circle().fill(Theme.card)
                         .shadow(color: .black.opacity(0.06), radius: 6, y: 2))
+                    .padding(3)
+                    .contentShape(Rectangle())
+                    .padding(-3)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Back")
