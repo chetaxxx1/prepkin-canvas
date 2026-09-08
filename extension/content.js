@@ -49,6 +49,42 @@ function alive() {
   return current;
 }
 
+/// Send only this isolated script's own errors back to the worker.
+function logError(where, err) {
+  if (!alive()) return;
+  try {
+    if (!alive()) return;
+    const version = chrome.runtime.getManifest().version;
+    if (!alive()) return;
+    chrome.runtime.sendMessage({
+      type: 'log-error',
+      at: new Date().toISOString(),
+      where,
+      message: err?.message ?? String(err ?? 'Unknown error'),
+      stack: err?.stack ?? '',
+      version,
+    }).catch(() => {});
+  } catch {}
+}
+
+/// Canvas runs in another JavaScript world. A filename or stack from the
+/// extension's own origin keeps the school's errors out of this record.
+function isOwnError(source, err) {
+  if (!alive()) return false;
+  const ownOrigin = chrome.runtime.getURL('');
+  return String(source ?? '').startsWith(ownOrigin)
+    || String(err?.stack ?? '').includes(ownOrigin);
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (event) => {
+    if (isOwnError(event.filename, event.error)) logError('Canvas page', event.error ?? event.message);
+  });
+  window.addEventListener('unhandledrejection', (event) => {
+    if (isOwnError('', event.reason)) logError('Canvas page', event.reason);
+  });
+}
+
 /// Matches TaskKind.canvas.reward in the app, so the "+30" here is the same 30
 /// coins the phone actually pays for a verified submission.
 const COIN_REWARD = 30;
