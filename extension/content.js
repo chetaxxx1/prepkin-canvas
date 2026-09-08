@@ -3,6 +3,8 @@
 // Injected on demand by background.js once you connect a site, so it never runs
 // anywhere you have not approved.
 
+{
+
 if (typeof module !== 'undefined') {
   // Under node the sibling scripts are modules, not page globals.
   Object.assign(globalThis, require('./receipt.js'), require('./themes.js'), require('./art/manifest.js'), require('./selectors.js'), require('./looks.js'), require('./canvas.js'), require('./day.js'), require('./podnames.js'));
@@ -10,6 +12,42 @@ if (typeof module !== 'undefined') {
 
 const ROOT_ID = 'prepkin-buddy';
 const DEFAULTS = { dark: false, cards: true, tidy: true, mascot: true, focusMinutes: 25, search: true };
+const instanceId = typeof document === 'undefined' ? null : crypto.randomUUID();
+let tornDown = false;
+if (instanceId) document.documentElement.dataset.pkInstance = instanceId;
+
+/// Take everything this instance put on Canvas back off in one pass. The page
+/// observer and timers stop first, so none of them can rebuild after this.
+function teardown() {
+  if (tornDown || typeof document === 'undefined') return;
+  tornDown = true;
+  clearInterval(ticker);
+  clearTimeout(showTimer);
+  clearTimeout(pageTimer);
+  pageObserver?.disconnect();
+  pageObserver = null;
+  const root = document.documentElement;
+  for (const name of [...root.classList]) if (name.startsWith('pk-')) root.classList.remove(name);
+  document.querySelectorAll('[data-pk-name]').forEach((el) => {
+    el.textContent = el.dataset.pkName;
+    delete el.dataset.pkName;
+  });
+  document.querySelectorAll('[id^="pk-"], .pk-card-due, .pk-card-grade').forEach((el) => el.remove());
+  document.querySelectorAll('[class*="pk-"]').forEach((el) => {
+    for (const name of [...el.classList]) if (name.startsWith('pk-')) el.classList.remove(name);
+  });
+  document.getElementById(ROOT_ID)?.remove();
+  shadow = null;
+  styleEl = null;
+}
+
+/// Whether this instance can still ask the extension for anything.
+function alive() {
+  let current = false;
+  try { current = typeof chrome !== 'undefined' && !!chrome.runtime?.id; } catch {}
+  if (!current) teardown();
+  return current;
+}
 
 /// Matches TaskKind.canvas.reward in the app, so the "+30" here is the same 30
 /// coins the phone actually pays for a verified submission.
@@ -164,6 +202,7 @@ function applySkin(s) {
   // The theme's variables, as a stylesheet element boot.js may already have made.
   let style = document.getElementById('pk-theme-vars');
   if (!style) { style = document.createElement('style'); style.id = 'pk-theme-vars'; root.append(style); }
+  if (!alive()) return;
   const css = next.size ? themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f))) : '';
   if (style.textContent !== css) style.textContent = css;
 }
@@ -559,7 +598,7 @@ const TIERS = [
 const KIN_SPECIES = ['butter', 'coral', 'lilac', 'mint', 'peach', 'sky'];
 function kinFace(species, size = 28) {
   const id = KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
-  const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL ? chrome.runtime.getURL(`art/kin/${id}.webp`) : `art/kin/${id}.webp`;
+  const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL && alive() ? chrome.runtime.getURL(`art/kin/${id}.webp`) : `art/kin/${id}.webp`;
   return `<span class="pk-kin" style="width:${size}px;height:${size}px;background-image:url('${url}')" aria-hidden="true"></span>`;
 }
 function tierOf(league) { return TIERS[Math.max(0, Math.min(TIERS.length - 1, Number(league?.tier) || 0))]; }
@@ -927,6 +966,7 @@ function panelViewFallback() {
 /// For an image theme the student is wearing: which banner each course
 /// wears. A tap saves it; the dashboard follows without a reload.
 function bannerPicker(look) {
+  if (!alive()) return '';
   const art = artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f));
   if (!art || wallet.wearing !== look.id) return '';
   const courses = data.courses.filter((c) => c.name).slice(0, 8);
@@ -981,6 +1021,7 @@ function looksView() {
     const paper = paperLine(stock);
     const p = PAPERS[stock];
     const accent = look.accent?.[skin.dark ? 'dark' : 'light'] ?? p.mark;
+    if (!alive()) return '';
     const art = artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f));
     // Inside a double-quoted style attribute, so the url gets single quotes.
     // The wall sits under a wash of the paper so the name still reads.
@@ -1247,7 +1288,10 @@ function renderToday() {
     if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
     const focusBtn = el('span', '', `Focus ${skin.focusMinutes} min`);
     focusBtn.setAttribute('role', 'button'); focusBtn.tabIndex = 0;
-    const go = (e) => { if (!e.isTrusted) return; chrome.runtime.sendMessage({ type: 'focus-start', taskId: next.id, title: next.title, url: next.url, minutes: skin.focusMinutes }); };
+    const go = (e) => {
+      if (!e.isTrusted || !alive()) return;
+      chrome.runtime.sendMessage({ type: 'focus-start', taskId: next.id, title: next.title, url: next.url, minutes: skin.focusMinutes });
+    };
     focusBtn.addEventListener('click', go);
     focusBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
     const grades = el('span', '', 'Grades');
@@ -1426,6 +1470,7 @@ function renderWeek() {
 let pageObserver = null;
 let pageTimer = null;
 function refreshPage() {
+  if (tornDown) return;
   applySkin(skin);
   decorateCards();
   renderToday();
@@ -1434,15 +1479,18 @@ function refreshPage() {
 }
 function watchPage() {
   if (pageObserver) return;
-  const schedule = () => { clearTimeout(pageTimer); pageTimer = setTimeout(refreshPage, 200); };
+  const schedule = () => { if (tornDown) return; clearTimeout(pageTimer); pageTimer = setTimeout(refreshPage, 200); };
   // Our own nodes — the buddy's host and the card lines — must not count as
   // the page changing, or every pass would schedule the next one forever.
   const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === TODAY_ID || n.id === WEEK_ID || n.id === SEARCH_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${TODAY_ID}, #${WEEK_ID}, #${SEARCH_ID}, .${CARD_DUE_CLASS}`));
   pageObserver = new MutationObserver((records) => {
-    const theirs = records.some((r) => !ours(r.target) || [...r.addedNodes, ...r.removedNodes].some((n) => !ours(n)));
+    const current = document.documentElement.dataset.pkInstance;
+    if (shouldStepAside({ mine: instanceId, current, alive: alive() })) { teardown(); return; }
+    const theirs = records.filter((r) => r.type === 'childList')
+      .some((r) => !ours(r.target) || [...r.addedNodes, ...r.removedNodes].some((n) => !ours(n)));
     if (theirs) schedule();
   });
-  pageObserver.observe(document.documentElement, { childList: true, subtree: true });
+  pageObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-pk-instance'], childList: true, subtree: true });
   document.addEventListener('canvasReadyStateChange', schedule);
   window.addEventListener('popstate', schedule);
   window.addEventListener('hashchange', schedule);
@@ -1736,19 +1784,20 @@ function wire(root) {
     if (!e.isTrusted) return;
     const id = e.currentTarget.dataset.focus;
     const task = (data.tasks ?? []).find((t) => t.id === id);
+    if (!alive()) return;
     chrome.runtime.sendMessage({
       type: 'focus-start', taskId: id, title: task?.title, url: task?.url,
       minutes: skin.focusMinutes,
     });
   });
   root.querySelector('[data-focus-extend]')?.addEventListener('click', (e) => {
-    if (e.isTrusted) chrome.runtime.sendMessage({ type: 'focus-extend' });
+    if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-extend' });
   });
   root.querySelector('[data-focus-stop]')?.addEventListener('click', (e) => {
-    if (e.isTrusted) chrome.runtime.sendMessage({ type: 'focus-stop' });
+    if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-stop' });
   });
   root.querySelector('[data-focus-clear]')?.addEventListener('click', (e) => {
-    if (e.isTrusted) chrome.runtime.sendMessage({ type: 'focus-clear' });
+    if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-clear' });
   });
 }
 
@@ -1769,6 +1818,7 @@ async function buy(id) {
     coins: owned || wallet.coins === null ? wallet.coins : wallet.coins - look.price,
   };
   await chrome.storage.local.set({ wallet });
+  if (!alive()) return;
   if (!owned) await chrome.runtime.sendMessage({ type: 'spend', lookId: id, price: look.price });
   ui.sheet = null;
   applySkin(skin);
@@ -1799,6 +1849,7 @@ function panelStyle(host) {
   // full-width stack of raw text across somebody's coursework, which is worse
   // than not showing up at all.
   host.style.display = 'none';
+  if (!alive()) return null;
   fetch(chrome.runtime.getURL('panel.css'))
     .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
     .then((css) => { panelCSS = css; el.textContent = css; host.style.display = ''; })
@@ -1810,8 +1861,10 @@ function panelStyle(host) {
 }
 
 async function mount() {
+  if (tornDown || !alive()) return;
   skin = await settings();
   const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'nicknames', 'ownTasks', 'plans', 'targets']);
+  if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
   data = composeData(stored.lastPayload ?? null, ownTasks, nicknames);
@@ -1831,6 +1884,9 @@ async function mount() {
   renderSearchChip();
   watchPage();
 
+  clearInterval(ticker);
+  ticker = setInterval(() => { if (!alive()) return; if (focus.state === 'running' && ui.open) render(); }, 1000);
+
   document.getElementById(ROOT_ID)?.remove();
   shadow = null;
   // The sign-in page is the school's alone: no paper, no buddy.
@@ -1844,13 +1900,11 @@ async function mount() {
   // querySelector. A closed root also stops a school's CSS reaching in.
   shadow = host.attachShadow({ mode: 'closed' });
   styleEl = panelStyle(host);
+  if (!styleEl) return;
   shadow.append(styleEl);
   document.body.append(host);
   render();
 
-  clearInterval(ticker);
-  // Only tick while a timer is actually on screen.
-  ticker = setInterval(() => { if (focus.state === 'running' && ui.open) render(); }, 1000);
 }
 
 if (typeof module !== 'undefined') {
@@ -1875,4 +1929,5 @@ if (typeof module !== 'undefined') {
     if (msg.type === 'open-buddy') { ui.open = !!shadow; ui.view = 'panel'; ui.sheet = null; render(); respond({ ok: !!shadow }); }
   });
   mount();
+}
 }
