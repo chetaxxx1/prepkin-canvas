@@ -16,6 +16,8 @@ const CONTENT_SCRIPTS = ['podnames.js', 'canvas.js', 'selectors.js', 'day.js', '
 const FETCH_TIMEOUT_MS = 20_000;
 const withTimeout = (init = {}) => ({ ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
 
+importScripts('errlog.js');
+
 // bridge/apply-config.sh writes config.js. Without it the extension still reads
 // Canvas; it just has nowhere to send the list.
 importScripts('canvas.js');
@@ -28,18 +30,58 @@ try {
   console.warn('Prepkin: no config.js — run bridge/apply-config.sh');
 }
 
-chrome.runtime.onInstalled.addListener(async ({ reason }) => {
-  chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
-  await chrome.storage.local.remove(UPDATE_WAITING);
-  await registerAll();
-  if (reason === 'update') await reinjectOpenTabs();
+const loggedErrors = new WeakSet();
+let errorLogLock = Promise.resolve();
+
+/// Remember one extension error at a time so concurrent failures cannot erase
+/// each other. Logging failure is swallowed because the original result wins.
+function logError(where, err) {
+  if (err && typeof err === 'object') {
+    if (loggedErrors.has(err)) return Promise.resolve();
+    loggedErrors.add(err);
+  }
+  const entry = {
+    at: err?.at ?? new Date().toISOString(),
+    where,
+    message: err?.message ?? String(err ?? 'Unknown error'),
+    stack: err?.stack ?? '',
+    version: err?.version ?? chrome.runtime.getManifest().version,
+  };
+  const write = errorLogLock.then(async () => {
+    const { errorLog = [] } = await chrome.storage.local.get('errorLog');
+    await chrome.storage.local.set({ errorLog: recordError(errorLog, entry) });
+  });
+  errorLogLock = write.catch(() => {});
+  return errorLogLock;
+}
+
+self.addEventListener('error', (event) => {
+  logError('worker', event.error ?? event.message);
 });
+self.addEventListener('unhandledrejection', (event) => {
+  logError('worker', event.reason);
+});
+
+chrome.runtime.onInstalled.addListener(({ reason }) =>
+  Promise.resolve().then(async () => {
+    chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
+    await chrome.storage.local.remove(UPDATE_WAITING);
+    await registerAll();
+    if (reason === 'update') await reinjectOpenTabs();
+  }).catch(async (err) => {
+    await logError('worker install', err);
+    throw err;
+  }));
 // Re-created on every browser start too — creating an alarm that already
 // exists is a cheap no-op, and a lost alarm would otherwise stay lost.
-chrome.runtime.onStartup.addListener(() => {
-  chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
-  registerAll();
-});
+chrome.runtime.onStartup.addListener(() =>
+  Promise.resolve().then(async () => {
+    chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
+    await registerAll();
+  }).catch(async (err) => {
+    await logError('worker startup', err);
+    throw err;
+  }));
 
 chrome.runtime.onUpdateAvailable.addListener(async () => {
   const { focus } = await chrome.storage.local.get('focus');
@@ -114,8 +156,13 @@ async function reinjectOpenTabs() {
 }
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === SYNC_ALARM) syncAll();
-  if (alarm.name === FOCUS_ALARM) focusDone();
+  let work;
+  if (alarm.name === SYNC_ALARM) work = syncAll();
+  if (alarm.name === FOCUS_ALARM) work = focusDone();
+  work?.catch(async (err) => {
+    await logError('worker alarm', err);
+    throw err;
+  });
 });
 
 // Syncing when you land on a connected Canvas keeps the phone close to current
@@ -223,51 +270,55 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (!ok) return sendResponse({ ok: false, error: 'Not allowed.' });
       handleMessage(msg, sendResponse);
     })
-    .catch(() => sendResponse({ ok: false, error: 'Not allowed.' }));
+    .catch(async (err) => {
+      await logError('worker message', err);
+      sendResponse({ ok: false, error: 'Not allowed.' });
+    });
   return true; // keep the channel open for the async reply
 });
 
 function handleMessage(msg, sendResponse) {
+  let response;
+  if (msg.type === 'log-error') {
+    response = logError('Canvas page', msg).then(() => ({ ok: true }));
+  }
   if (msg.type === 'focus-start') {
-    focusStart(msg).then(sendResponse);
-    return true;
+    response = focusStart(msg);
   }
   if (msg.type === 'focus-extend') {
-    focusExtend().then(sendResponse);
-    return true;
+    response = focusExtend();
   }
   if (msg.type === 'focus-stop' || msg.type === 'focus-clear') {
-    focusStop().then(() => sendResponse({ ok: true }));
-    return true;
+    response = focusStop().then(() => ({ ok: true }));
   }
   if (msg.type === 'spend') {
-    queueRequest({ kind: 'look', lookId: msg.lookId, price: msg.price })
-      .then(() => sendResponse({ ok: true }));
-    return true;
+    response = queueRequest({ kind: 'look', lookId: msg.lookId, price: msg.price })
+      .then(() => ({ ok: true }));
   }
   if (msg.type === 'sync-now') {
     // Deliberately not rate-limited: this is the button a student presses when
     // the phone looks stale, and making it do nothing would be worse than the
     // requests it costs.
-    (msg.origin ? syncNow(msg.origin) : syncAll()).then(sendResponse);
-    return true; // keep the message channel open for the async reply
+    response = msg.origin ? syncNow(msg.origin) : syncAll();
   }
   if (msg.type === 'verify-canvas') {
-    isCanvas(msg.origin).then(sendResponse);
-    return true;
+    response = isCanvas(msg.origin);
   }
   if (msg.type === 'register') {
-    registerFor(msg.origin).then(() => sendResponse({ ok: true }));
-    return true;
+    response = registerFor(msg.origin).then(() => ({ ok: true }));
   }
   if (msg.type === 'forget') {
-    forgetOrigin(msg.origin).then(sendResponse);
-    return true;
+    response = forgetOrigin(msg.origin);
   }
   if (msg.type === 'pair') {
-    bindWriter(msg.code).then(sendResponse);
-    return true;
+    response = bindWriter(msg.code);
   }
+  if (!response) return;
+  response.then(sendResponse).catch(async (err) => {
+    await logError('worker message', err);
+    throw err;
+  });
+  return true;
 }
 
 /// Disconnecting a school also takes its already-synced work back off the phone
@@ -336,13 +387,18 @@ async function isCanvas(origin) {
 
 const payloadVersion = () => chrome.runtime.getManifest().version;
 
-async function syncAll() {
-  const origins = await connectedOrigins();
-  if (!origins.length) return finish({ ok: false, error: 'No Canvas connected yet.' });
-  const reads = await Promise.all(origins.map(async (o) => [o, await readSchool(o)]));
-  const fresh = Object.fromEntries(reads.filter(([, r]) => r));
-  if (!Object.keys(fresh).length) return finish({ ok: false, error: 'Canvas said no — log in again?' });
-  return send(fresh);
+function syncAll() {
+  return Promise.resolve().then(async () => {
+    const origins = await connectedOrigins();
+    if (!origins.length) return finish({ ok: false, error: 'No Canvas connected yet.' });
+    const reads = await Promise.all(origins.map(async (o) => [o, await readSchool(o)]));
+    const fresh = Object.fromEntries(reads.filter(([, r]) => r));
+    if (!Object.keys(fresh).length) return finish({ ok: false, error: 'Canvas said no — log in again?' });
+    return send(fresh);
+  }).catch(async (err) => {
+    await logError('all schools', err);
+    throw err;
+  });
 }
 
 async function syncNow(origin) {
@@ -602,7 +658,11 @@ async function getPaged(origin, path) {
 /// Hands the list to the bridge, keyed by the pairing code and nothing else —
 /// no name, no account, no Canvas credentials.
 async function pushToBridge(payload) {
-  const { pairingCode, writerToken } = await chrome.storage.local.get(['pairingCode', 'writerToken']);
+  const privateKeys = await chrome.storage.local.get(['pairingCode', 'writerToken']).catch(async (err) => {
+    await logError('phone send', err);
+    throw err;
+  });
+  const { pairingCode, writerToken } = privateKeys;
   if (!pairingCode) return { ok: false, error: 'No pairing code yet.' };
   if (!writerToken) return { ok: false, error: 'Not paired yet — paste the code from the app.' };
   if (!bridge) return { ok: false, error: 'Extension is missing config.js.' };
@@ -633,7 +693,8 @@ async function pushToBridge(payload) {
       return { ok: false, error: 'Your phone unpaired this laptop. Tap New code in the app and paste it here.' };
     }
     return { ok: false, error: `Prepkin returned ${res.status}.` };
-  } catch {
+  } catch (err) {
+    await logError('phone send', err);
     return { ok: false, error: 'Could not reach Prepkin.' };
   }
 }

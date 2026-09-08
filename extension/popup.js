@@ -54,6 +54,21 @@ function report(result) {
   else show(result.error ?? 'Something went wrong.', 'bad');
 }
 
+document.getElementById('copy-report').addEventListener('click', async (event) => {
+  event.preventDefault();
+  try {
+    const { errorLog = [] } = await chrome.storage.local.get('errorLog');
+    const version = chrome.runtime.getManifest().version;
+    const chromeVersion = navigator.userAgent.match(/Chrome\/([\d.]+)/)?.[1] ?? 'unknown';
+    const text = formatReport(errorLog, { version, chrome: chromeVersion });
+    await navigator.clipboard.writeText(text);
+    if (errorLog.length) show('Copied. Paste it into your email.', 'ok');
+    else show('Nothing has gone wrong on this laptop.', 'ok');
+  } catch {
+    show('Could not copy the report.', 'bad');
+  }
+});
+
 async function connectedOrigins() {
   const { origins = [] } = await chrome.storage.local.get('origins');
   const live = [];
