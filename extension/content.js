@@ -1872,7 +1872,7 @@ async function mount() {
   document.getElementById(ROOT_ID)?.remove();
   shadow = null;
   // The sign-in page is the school's alone: no paper, no buddy.
-  if (!skin.mascot || isLoginPath(location.pathname) || isQuizTake(location.pathname)) return;
+  if (!skin.mascot || isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
 
   const host = document.createElement('div');
   host.id = ROOT_ID;
