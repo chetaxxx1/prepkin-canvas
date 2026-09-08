@@ -54,14 +54,18 @@ const settle = (ms = 150) => new Promise((r) => setTimeout(r, ms));
 // MARK: - A. Pairing
 
 test('A1 a fresh code pairs, and the popup reports the first sync', async () => {
-  await world(HOST_A, S.plainSemester());
+  await world(HOST_A, { ...S.plainSemester(), delayMs: 300 });
   await h.connect(SCHOOL_A);
   await h.setStorage({ onboarded: true });
   const phone = new FakePhone(BRIDGE);
   const code = await phone.claim();
   const popup = await openPopup(h);
+  assert.equal(await popup.text('#resync'), 'Check again');
+  assert.equal(await popup.evaluate(`document.getElementById('slime')`), null, 'the old inline mascot host is gone');
+  assert.match(await popup.evaluate(`document.querySelector('#kin > img')?.src ?? ''`), /\/art\/kin\/mint\.webp$/, 'the popup uses the student\'s kin image');
   await popup.fill('#code', code.toLowerCase().replace('-', ' '));
   await popup.click('#save');
+  assert.match(await popup.waitFor('#status', /Getting your work/), /Getting your work/);
   assert.equal(await popup.waitFor('#status', /Sent|should|not|expired|bridge/i), 'Sent 6 assignments.');
   assert.equal(await popup.value('#code'), code, 'the code is normalised in place');
   await popup.close();
@@ -179,6 +183,26 @@ test('B1 a logged-in Canvas is recognised, gets the skin, and the panel mounts',
   await page.waitForSelector('#prepkin-buddy', { state: 'attached' });
   const closed = await page.evaluate(() => document.getElementById('prepkin-buddy').shadowRoot === null);
   assert.equal(closed, true, 'the panel is in a closed shadow root');
+  await page.close();
+});
+
+test('B10 a newer content-script instance takes over an open Canvas page', async () => {
+  await world(HOST_A, S.plainSemester());
+  await h.connect(SCHOOL_A);
+  const page = await h.context.newPage();
+  await page.goto(`${SCHOOL_A}/`);
+  await page.waitForSelector('#prepkin-buddy', { state: 'attached' });
+  const first = await page.getAttribute('html', 'data-pk-instance');
+  assert.ok(first, 'the first content-script instance stamps the page');
+  await h.sw(async (origin) => {
+    const tabs = await chrome.tabs.query({ url: `${origin}/*` });
+    const tab = tabs.find((candidate) => candidate.url?.startsWith(origin));
+    if (!tab?.id) throw new Error('no open Canvas tab');
+    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
+  }, SCHOOL_A);
+  await page.waitForFunction((old) => document.documentElement.dataset.pkInstance !== old, first, { timeout: 5000 });
+  await page.waitForSelector('#prepkin-buddy', { state: 'attached' });
+  assert.equal(await page.locator('#prepkin-buddy').count(), 1, 'the old instance tears down and the new one mounts once');
   await page.close();
 });
 
@@ -454,7 +478,7 @@ test('D3 the half-hour alarm exists', async () => {
   assert.equal(alarm?.periodInMinutes, 30);
 });
 
-test('D4 Sync now is never rate-limited', async () => {
+test('D4 Check again is never rate-limited', async () => {
   await paired();
   await control('log/clear');
   await sync(); await sync();
