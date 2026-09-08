@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy policy — Prepkin for Canvas</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header>
+    <a href="https://prepkin.com">Prepkin</a>
+  </header>
+  <main>
+    <h1>Privacy policy — Prepkin for Canvas</h1>
+    <p class="meta">Last updated: 5 September 2026</p>
+
+    <h2>The short version</h2>
+    <p>Prepkin for Canvas reads only the Canvas you connect. Sends your coursework list and course grades to your own phone, and makes no other request. It never asks for your password, and nothing it collects is sold, shared, or used for advertising.</p>
+    <p>This page also covers the weekly league in the phone app, because it uses the same path between your laptop and your phone. The league is the one part of Prepkin where another person can see anything of yours: a nickname the app picked for you, your fish, and how many coins you earned that week. Never your coursework, never your grades, never your real name. Joining is your choice and nothing is created until you say yes.</p>
+
+    <h2>What it reads</h2>
+    <p>Only from a Canvas site you connected yourself, using the login session already in your browser:</p>
+    <ul>
+      <li>Your courses, their names and course codes</li>
+      <li>Your assignments and quizzes: title, due date, points, and the link back to Canvas</li>
+      <li>Whether you have handed something in, and when</li>
+      <li>Your scores and current grade in each course</li>
+      <li>The colours you picked for your Canvas dashboard</li>
+    </ul>
+    <p>The page skin and its receipt are worked out entirely on your laptop, from the page in front of you. Nothing about what was changed, put back, or shown is sent anywhere.</p>
+
+    <h2>What leaves your laptop</h2>
+    <p>Less than what it reads. Sent so your phone can show it:</p>
+    <ul>
+      <li>Course names and codes, and your current grade in each</li>
+      <li>Assignment and quiz titles, due dates, points, and submission times</li>
+      <li>The Canvas site the work came from</li>
+    </ul>
+    <p><strong>Deliberately not sent:</strong> your per-assignment score history and your assignment-group weights. Those stay on the laptop, for the panel on Canvas only, because the phone has no use for them and they are the most identifying thing here.</p>
+    <p><strong>Never collected at any point:</strong> your Canvas password, your email address, your name, your student ID, your browsing on any other site, or anything at all from a site you did not connect. The league adds nothing to this list: there is no text box anywhere in it, so there is nothing you could type for us to keep.</p>
+
+    <h2>Where your coursework goes, and who can read it</h2>
+    <p>To a database run for this app on <a href="https://supabase.com">Supabase</a>, in one row. That row is found by a pairing code, and reading or writing it also requires a long random secret that only your phone and your laptop hold. The secret is stored as a one-way hash, so the database cannot hand it back to anyone — including us.</p>
+    <p>Someone who learned your pairing code after your laptop paired cannot read the row. The code is only usable for the fifteen minutes it takes to pair.</p>
+    <p>There is no account, no email, and no name attached to the row. But course names and grades can identify a person, so we treat the row as your education record, not as anonymous data.</p>
+    <p><strong>Nobody else can read this row.</strong> Not other students, not people in your league pod, not anyone with the app. It takes that secret, and only your phone and your laptop have it.</p>
+
+    <h2>The weekly pod, and what strangers can see</h2>
+    <p>The phone app has a weekly league. If you join a pod, up to nineteen students you do not know can see four things about you — and you can see the same four things about each of them:</p>
+    <ul>
+      <li><strong>A nickname the app picked</strong>, like "Quiet Otter". You cannot type a name, pick one, or change it. Prepkin chooses two numbers and your phone looks them up in a list of 64 adjectives and 64 nouns that ships inside the app. Your real name is never part of this.</li>
+      <li><strong>Your fish</strong>: which one you have and what it is wearing. A picture, nothing else.</li>
+      <li><strong>Its stars</strong>: how grown your fish is, one to three. A number that only goes up.</li>
+      <li><strong>The coins you earned that week.</strong> Not your balance, not what you spent, not what you did to earn them.</li>
+    </ul>
+    <p>That is the whole list. A pod row holds which week it is, which depth of water the pod is, two numbers for the nickname, the fish, the points, the highest points you reached that week, and the time that high point last moved — which is there only to cap how fast any score can grow. No time is ever shown to anybody else. The board cannot tell another student when you last opened the app, or whether you are using it right now.</p>
+    <p>A pod row does <strong>not</strong> contain your coursework, course names, grades, assignments, due dates, school, Canvas site, email, real name, student ID, location, or anything about your device. There is no message box, no profile, no way to add a person and no way to send a person anything. That is deliberate: nothing in a pod is text a person chose, so there is nothing in a pod that can be used to hurt somebody.</p>
+    <p><strong>The league and the Canvas coursework are kept apart.</strong> They are separate rows in separate tables with no shared key and no way to get from one to the other. Nobody in your pod can reach your coursework, and disconnecting Canvas does not touch your league.</p>
+    <p><strong>Joining is your choice.</strong> Until you say yes to a pod, you have no league row on the server at all.</p>
+    <p><strong>What we cannot promise.</strong> Your points come from your own phone, and there is no way for the server to check them, so a determined person could put a number on a board that they did not earn. Prepkin caps how fast any score can grow, and the league is climb-only — nobody's tier ever goes down, and nobody else's score can move yours. Somebody else's inflated number costs you nothing but the comparison.</p>
+
+    <h2>How long it is kept</h2>
+    <p>The coursework row is deleted 30 days after your laptop last sent an update. A scheduled job runs hourly and removes anything past that.</p>
+    <p>If you tap <strong>Disconnect</strong> in the app, the row is deleted immediately. If you remove a school in the extension's popup, that school's work stops being sent and is removed from the next push.</p>
+    <p>The league is kept on a different clock, because it holds a ladder you climbed over months and a standing that quietly disappeared would be worse than none at all:</p>
+    <ul>
+      <li><strong>Your league identity</strong> — the nickname numbers, the fish, and your depth — has no expiry date and is not touched by disconnecting Canvas. It holds no coursework of any kind.</li>
+      <li><strong>A league identity that never joined a pod</strong> is deleted after 7 days.</li>
+      <li><strong>Pod scoreboards</strong> are deleted four weeks after their week is settled. The app only ever draws the current week. A pod that nobody in it ever came back to cannot be settled, and is deleted after six months instead.</li>
+      <li><strong>Tap Forget me</strong> in the league and your identity and every pod row you appear in are deleted immediately. That cannot be undone: there is no account to sign back into and no way to prove a new identity was you.</li>
+    </ul>
+
+    <h2>Who it is for</h2>
+    <p>Prepkin for Canvas is intended for students aged 13 and over. It is not directed to children under 13, and we do not knowingly collect anything from them. If you believe a child under 13 has used it, delete the pairing in the app and email the address below and the row will be removed. A league identity has to be deleted from the app itself, with <strong>Forget me</strong> — we cannot find one from an email, because there is no name, address or anything else on it to look it up by.</p>
+    <p>The pod is built for teenagers on purpose. Because a nickname comes from a word list we ship and nothing in a pod is text a person chose, there is no way for one student to say anything at all to another one through this app.</p>
+
+    <h2>Third parties</h2>
+    <p>Supabase hosts the database. No analytics, advertising, tracking, or other third-party code is included in the extension or the app. Nothing is sold or shared for advertising, and nothing is used to build a profile.</p>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li><strong>See what is sent:</strong> the extension's popup shows the last update and its count.</li>
+      <li><strong>Stop sending a school:</strong> remove it in the popup. The permission is revoked.</li>
+      <li><strong>Delete your coursework:</strong> tap Disconnect in the app. The row goes immediately.</li>
+      <li><strong>Leave the pod:</strong> tap Leave in the league. Your seat and that week's score go straight away. Your nickname, your fish and your depth stay.</li>
+      <li><strong>Delete your league identity:</strong> tap Forget me in the league. Your identity and every pod row with you in it are deleted immediately, and cannot be restored.</li>
+      <li><strong>Uninstall:</strong> removing the extension stops all collection. The row expires within 30 days.</li>
+    </ul>
+
+    <h2>Changes</h2>
+    <p>If what is collected changes, this page changes with it and the date at the top moves. A change that widens what is collected will be called out in the extension's update notes.</p>
+
+    <h2>Contact</h2>
+    <p>Email <a href="mailto:support@prepkin.com">support@prepkin.com</a> and we will help with deletion requests or anything else on this page.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="support.html">Support</a>
+    </nav>
+    <span class="date">5 September 2026</span>
+  </footer>
+</body>
+</html>
