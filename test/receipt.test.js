@@ -192,7 +192,7 @@ test('R11 an image theme: the wallpaper under a paper wash, four banners across 
   const page = await open('/');
   const bodyBg = await style(page, 'body', 'backgroundImage');
   assert.match(bodyBg, /linear-gradient\(rgba\(247, 246, 243, 0\.82\)/, 'the paper wash');
-  assert.match(bodyBg, /chrome-extension:\/\/[a-z]+\/art\/(graffiti\/wallpaper\.webp|_placeholder\/wallpaper\.svg)/, 'the wallpaper, from inside the extension');
+  assert.match(bodyBg, /chrome-extension:\/\/[a-z0-9-]+\/art\/(graffiti\/wallpaper\.webp|_placeholder\/wallpaper\.svg)/, 'the wallpaper, from inside the extension');
   assert.equal(await style(page, '#content', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'the columns let the wallpaper through');
   assert.equal(await style(page, '#dashboard_header_container .ic-Dashboard-header__layout', 'backgroundColor'), 'rgba(247, 246, 243, 0.82)', 'the sticky bar wears the wash, never a solid slab');
   const heroes = await page.$$eval('.ic-DashboardCard__header_hero', (els) => els.map((e) => { const s = getComputedStyle(e); return [s.backgroundImage.match(/card-(\d)/)?.[1], s.backgroundColor, s.height, s.backgroundSize]; }));

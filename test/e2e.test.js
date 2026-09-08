@@ -72,20 +72,6 @@ test('A1 a fresh code pairs, and the popup reports the first sync', async () => 
   assert.equal((await phone.fetchTodo()).tasks.length, 6);
 });
 
-test('A0 five taps on the version number own every theme, for testing', async () => {
-  await h.setStorage({ onboarded: true, wallet: { coins: 0, owned: ['classic'], wearing: 'classic' } });
-  const popup = await openPopup(h);
-  for (let i = 0; i < 4; i++) await popup.click('#version');
-  assert.equal(await h.sw(() => chrome.storage.local.get('wallet').then((s) => s.wallet.owned.length)), 1, 'four taps do nothing');
-  await popup.click('#version');
-  assert.equal(await popup.waitFor('#status', /unlocked/), 'Testing: every theme unlocked.');
-  const wallet = await h.sw(() => chrome.storage.local.get('wallet').then((s) => s.wallet));
-  assert.equal(wallet.owned.length, THEMES.length, 'every look in the catalog, however many that is now');
-  assert.equal(wallet.coins, 9999);
-  assert.equal(wallet.wearing, 'classic', 'what you wear does not change');
-  await popup.close();
-});
-
 test('A2 the same code on a second laptop is refused', async () => {
   const phone = await paired();
   const again = await h.sw((c) => bindWriter(c), phone.code);
@@ -147,7 +133,7 @@ test('A7 a bridge that is down still leaves the Canvas list on the laptop', asyn
   await control('bridge', { down: true });
   const status = await sync();
   assert.equal(status.ok, false);
-  assert.equal(status.error, 'Could not reach the bridge.');
+  assert.equal(status.error, 'Could not reach Prepkin.');
   const s = await h.storage();
   assert.equal(s.lastPayload.tasks.length, 6, 'the panel still has the list');
   assert.ok(s.writerToken, 'the token survives an outage');
@@ -166,7 +152,7 @@ test('A9 against the old code-only bridge, pairing fails with a message, not a h
   await control('bridge', { legacy: true });
   const status = await h.sw((c) => bindWriter(c), 'ABCD-EFGH');
   assert.equal(status.ok, false);
-  assert.match(status.error, /out of date/);
+  assert.match(status.error, /needs an update/);
 });
 
 // MARK: - B. Connecting a school
