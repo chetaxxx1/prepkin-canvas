@@ -32,8 +32,8 @@ words (never "sync", "bridge", "selector"), no scolding. Urgency is amber and re
 - The page belongs to the school. The skin is imposed, so it stays quiet; personality
   lives on the surfaces the student chose to open (popup, panel, app).
 - Worst case is Canvas, unchanged. A missed hook leaves a plain page, never a broken one.
-- Reads nothing it does not need, sends nothing but the task list to the student's own
-  phone, makes zero external requests. No web fonts, no CDN, no analytics.
+- Reads only the Canvas you connect. Sends your coursework list and course grades to
+  your own phone, and makes no other request. No web fonts, no CDN, no analytics.
 - Coins pay for finishing, never for grades. No meters, streaks, countdowns, padlocks,
   or `?` tiles. Accessibility (dark, contrast, motion) is never behind coins.
 - The popup is the funnel: the one screen worth opening, and the one worth a screenshot.

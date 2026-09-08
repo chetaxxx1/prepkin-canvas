@@ -1,4 +1,4 @@
-# Privacy policy — Prepkin Canvas Sync
+# Privacy policy — Prepkin for Canvas
 
 **This file is the text. It is not the policy until it lives at a real, public
 URL.** The Chrome Web Store listing will not accept a link into a git repo, and
@@ -12,9 +12,10 @@ Last updated: 5 September 2026
 
 ## The short version
 
-Prepkin Canvas Sync reads the Canvas coursework you are already logged in to,
-and sends it to your own phone. It never asks for your password, and nothing it
-collects is sold, shared, or used for advertising.
+Prepkin for Canvas reads only the Canvas you connect. Sends your coursework
+list and course grades to your own phone, and makes no other request. It never
+asks for your password, and nothing it collects is sold, shared, or used for
+advertising.
 
 This page also covers the weekly league in the phone app, because it uses the
 same bridge. The league is the one part of Prepkin where another person can see
@@ -146,7 +147,7 @@ all:
 
 ## Who it is for
 
-Prepkin Canvas Sync is intended for students aged 13 and over. It is not
+Prepkin for Canvas is intended for students aged 13 and over. It is not
 directed to children under 13, and we do not knowingly collect anything from
 them. If you believe a child under 13 has used it, delete the pairing in the app
 and email the address below and the row will be removed. A league identity has

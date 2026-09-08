@@ -1,4 +1,4 @@
-// Prepkin Canvas Sync — background service worker (MV3).
+// Prepkin for Canvas — background service worker (MV3).
 //
 // Works with any school's Canvas. Nothing is hardcoded: you connect the site
 // you are standing on, Chrome asks you to approve that one origin, and the
