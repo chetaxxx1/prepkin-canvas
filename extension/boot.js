@@ -4,7 +4,7 @@
 // content.js at document_end.
 (async () => {
   try {
-    if (isLoginPath(location.pathname) || isQuizTake(location.pathname)) return;
+    if (isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
     const s = await chrome.storage.local.get(['skin', 'wallet', 'putBack']);
     const skin = { dark: false, cards: true, mascot: true, ...(s.skin ?? {}) };
     if (skin.mode === 'auto') skin.dark = matchMedia('(prefers-color-scheme: dark)').matches;

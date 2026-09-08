@@ -30,6 +30,7 @@ const SELECTORS = {
   gradesTable:     { sel: '#grades_summary', page: 'grades', conf: 'verified' },
   ltiFrame:        { sel: '.tool_content_wrapper', page: 'lti', conf: 'verified' },
   newQuizzes:      { sel: 'body.native-new-quizzes', page: 'quiz', conf: 'verified' },
+  rce:             { sel: '.tox-tinymce, .rce-wrapper, [data-rce-wrapper]', page: 'any', conf: 'likely' },
   flashError:      { sel: '.ic-flash-error', page: 'any', conf: 'verified', never: true },
   skipLink:        { sel: '#skip_navigation_link', page: 'any', conf: 'verified', never: true },
 };

@@ -219,10 +219,20 @@ function isQuizTake(pathname) {
   return /\/quizzes\/\d+\/take(\b|\/|$)/.test(pathname);
 }
 
+/// A student handing work in. The submission flow stays entirely Canvas's.
+function isSubmissionPath(pathname, hash = '') {
+  return /\/courses\/\d+\/assignments\/\d+\/submissions(?:\/|$)/.test(pathname)
+    || pathname.includes('/gradebook/speed_grader')
+    || (/^\/courses\/\d+\/assignments\/\d+\/?$/.test(pathname) && hash === '#submit');
+}
+
 function killReason({ forcedColors = false, prefersContrast = false, envHighContrast = false,
-                      newQuizzes = false, widgetDashboard = false, loginPage = false, quizTake = false } = {}) {
+                      newQuizzes = false, widgetDashboard = false, loginPage = false, quizTake = false,
+                      submitting = false, editorOpen = false } = {}) {
   if (loginPage) return 'This is the sign-in page. It stays the school\'s.';
   if (quizTake) return 'You are taking a quiz. Receipt stays out of the way.';
+  if (submitting) return 'You are handing something in. Receipt stays out of the way.';
+  if (editorOpen) return 'The editor is open. Receipt stays out of the way.';
   if (envHighContrast) return 'Your school has High Contrast on. Receipt stays out of the way.';
   if (forcedColors || prefersContrast) return 'High Contrast is on. Receipt stays out of the way.';
   if (newQuizzes) return 'This is a New Quizzes page. Receipt stays out of the way.';
@@ -231,5 +241,5 @@ function killReason({ forcedColors = false, prefersContrast = false, envHighCont
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason, isLoginPath, isQuizTake, themeStyle };
+  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle };
 }

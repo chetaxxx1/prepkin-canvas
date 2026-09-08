@@ -123,6 +123,8 @@ function detectKill() {
   return killReason({
     loginPage: isLoginPath(location.pathname),
     quizTake: isQuizTake(location.pathname),
+    submitting: isSubmissionPath(location.pathname, location.hash),
+    editorOpen: !!document.querySelector(SELECTORS.rce.sel),
     forcedColors: matchMedia('(forced-colors: active)').matches,
     prefersContrast: matchMedia('(prefers-contrast: more)').matches,
     envHighContrast: /"use_high_contrast"\s*:\s*true/.test(env),

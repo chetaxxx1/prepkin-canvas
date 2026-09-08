@@ -172,6 +172,9 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
 
 test('the kill reasons, in order', () => {
   assert.equal(killReason(), null);
+  assert.match(killReason({ quizTake: true, submitting: true }), /taking a quiz/);
+  assert.match(killReason({ submitting: true, editorOpen: true, envHighContrast: true }), /handing something in/);
+  assert.match(killReason({ editorOpen: true, envHighContrast: true }), /editor is open/);
   assert.match(killReason({ envHighContrast: true, newQuizzes: true }), /Your school has High Contrast on/);
   assert.match(killReason({ forcedColors: true }), /High Contrast is on/);
   assert.match(killReason({ newQuizzes: true }), /New Quizzes/);
@@ -270,4 +273,15 @@ test('a quiz being taken switches the skin off, from the path alone', () => {
   const present = () => 1;
   assert.ok(!receiptRows({ present }).some((r) => r.key === 'nickname'));
   assert.equal(receiptRows({ present, nicknames: 2 }).find((r) => r.key === 'nickname').label, '2 course names you chose');
+});
+
+test('handing work in is never skinned', () => {
+  const { isSubmissionPath } = require('./receipt.js');
+  assert.ok(isSubmissionPath('/courses/4/assignments/12/submissions'));
+  assert.ok(isSubmissionPath('/courses/4/assignments/12/submissions/7'));
+  assert.ok(isSubmissionPath('/courses/4/gradebook/speed_grader'));
+  assert.ok(isSubmissionPath('/courses/4/assignments/12', '#submit'));
+  assert.ok(!isSubmissionPath('/courses/4/assignments/12'));
+  assert.ok(!isSubmissionPath('/courses/4/assignments'));
+  assert.ok(!isSubmissionPath('/'));
 });
