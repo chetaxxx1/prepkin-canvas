@@ -464,10 +464,7 @@ struct WordleView: View {
     }
 
     private var endLine: String {
-        if game.won {
-            let streak = state.wordleStreak
-            return streak > 1 ? "\(streak) days in a row. New word tomorrow." : "New word tomorrow."
-        }
+        if game.won { return "New word tomorrow." }
         return "No coins today, and nothing lost. New word tomorrow."
     }
 }

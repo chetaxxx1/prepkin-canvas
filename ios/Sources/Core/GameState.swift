@@ -96,8 +96,7 @@ struct GameState: Codable, Equatable {
     var wordleSolved = 0
     /// Fewest guesses ever. `nil` until the first solve.
     var wordleBest: Int?
-    var wordleStreak = 0
-    /// The last day a word was solved, so the streak knows whether today continues it.
+    /// The last day a word was solved.
     var wordleLastDay: DayKey?
     /// Today's board, so leaving mid-puzzle and coming back finds the same guesses —
     /// and a solved board stays solved instead of dealing the same word again.
@@ -149,7 +148,7 @@ struct GameState: Codable, Equatable {
         case friends, pendingFriendCodes
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
         case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick
-        case wordleSolved, wordleBest, wordleStreak, wordleLastDay, wordleGuesses, wordleGuessDay
+        case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
         case league
     }
@@ -204,7 +203,6 @@ struct GameState: Codable, Equatable {
         lockedPick = try c.decodeIfPresent(String.self, forKey: .lockedPick)
         wordleSolved = try c.decodeIfPresent(Int.self, forKey: .wordleSolved) ?? blank.wordleSolved
         wordleBest = try c.decodeIfPresent(Int.self, forKey: .wordleBest)
-        wordleStreak = try c.decodeIfPresent(Int.self, forKey: .wordleStreak) ?? blank.wordleStreak
         wordleLastDay = try c.decodeIfPresent(DayKey.self, forKey: .wordleLastDay)
         wordleGuesses = try c.decodeIfPresent([String].self, forKey: .wordleGuesses) ?? blank.wordleGuesses
         wordleGuessDay = try c.decodeIfPresent(DayKey.self, forKey: .wordleGuessDay)
@@ -458,22 +456,8 @@ struct GameState: Codable, Equatable {
         guard ok else { return 0 }
         wordleSolved += 1
         wordleBest = min(wordleBest ?? guesses, guesses)
-        // Yesterday continues the streak; anything older starts it over at 1.
-        if let last = wordleLastDay, last == Self.dayBefore(day, calendar: calendar) {
-            wordleStreak += 1
-        } else if wordleLastDay != day {
-            wordleStreak = 1
-        }
         wordleLastDay = day
         return reward
-    }
-
-    /// The streak as it stands right now: a solve yesterday or today keeps it; a
-    /// gap of a day or more means it has already lapsed, whatever the counter says.
-    func wordleStreak(asOf day: DayKey? = nil, calendar: Calendar = .current) -> Int {
-        let day = day ?? effectiveDay
-        guard let last = wordleLastDay else { return 0 }
-        return (last == day || last == Self.dayBefore(day, calendar: calendar)) ? wordleStreak : 0
     }
 
     static func dayBefore(_ day: DayKey, calendar: Calendar = .current) -> DayKey? {

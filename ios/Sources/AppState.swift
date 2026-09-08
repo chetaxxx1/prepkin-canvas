@@ -436,8 +436,6 @@ final class AppState: ObservableObject {
         game.wordleGuessDay = day
     }
 
-    var wordleStreak: Int { game.wordleStreak() }
-
     var numberLineClaimedToday: Bool { game.numberLineClaimedToday }
 
     /// Returns what was paid: 25 the first round of the day, 0 after.

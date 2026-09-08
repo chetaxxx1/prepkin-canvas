@@ -26,9 +26,15 @@ targets:
         # also reaches UIKit-hosted views and the web view, which
         # .preferredColorScheme never did.
         INFOPLIST_KEY_UIUserInterfaceStyle: Light
+        INFOPLIST_KEY_CFBundleDisplayName: "Prepkin for Canvas"
+        # Every upload asks the export question unless this says no. We only use
+        # the system's TLS, which is exempt.
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: 1
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_VERSION: "5.9"
-        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_STYLE: Automatic
   PrepkinCanvasTests:
     type: bundle.unit-test
     platform: iOS
