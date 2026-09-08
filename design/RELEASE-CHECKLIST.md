@@ -44,7 +44,15 @@ session has not committed yet. All commits below are on `main`, none pushed.
 - [x] Extension keeps its last 20 errors; "Copy a report" in the popup (bb0ccb7).
 - [x] Audit's small bugs: 44pt back buttons, dead `ChibiStageView` removed, three Sendable
       warnings, `package.json` version matches the manifest (cd7e3a8).
-- [x] Browser suites updated to today's copy and switches (7e1535c). Not run: see below.
+- [x] Browser suites green on a reinstalled Playwright Chromium: e2e 39, stress 8, receipt 29 (416ad8d, 3c2b524).
+- [x] Remote off switch (audit M2), decided by council: `fetch_flags()` on the bridge, rules matched
+      locally, fail-open, six-hourly poll, privacy text updated (3c2b524). Lives in `bridge/schema.sql`,
+      so it arrives with the schema re-run.
+- [x] Privacy manifest declares coursework as Other User Content, not linked, app functionality (1ed6d59).
+- [x] App Store screenshots at 1320x2868, seven screens on college sample data (3c052d5 and after).
+- [x] Chrome tile 440x280 and marquee 1400x560, placeholders in `design/store/` (279d4df).
+- [x] Sample Canvas courses read like college, not high school (08b388a).
+- [x] `npm run package` builds `dist/prepkin-canvas-0.6.0.zip` with errlog.js in and slime.js out.
 
 ## George, before the store
 
@@ -58,24 +66,22 @@ session has not committed yet. All commits below are on `main`, none pushed.
 4. **Sign off the 1024 icon** or replace it. The current file is a mint Sprout still on
    #DDF4EA, made as a placeholder so archives can run.
 5. **Set the Apple team** for signing (`project.yml` is on automatic signing with no team).
-6. **Answer the App Store privacy label** to match reality. `PrivacyInfo.xcprivacy` currently
-   declares no collected data types, and coursework does go through Prepkin's server to the
-   student's phone. One of the two must change before submit; the Chrome data disclosure in
-   `design/store/chrome-listing.md` already tells the truth.
-7. **Reinstall Playwright's Chromium** so the browser suites can run again: it lived in
-   `~/Library/Caches/ms-playwright` and was deleted when the caches were cleared. From
-   `~/Library/Developer/prepkin-canvas-test-deps`: `npx playwright install chromium`, then
-   `npm run test:e2e`, `test:stress`, `test:receipt` from the repo root. The suites were updated
-   blind today; expect a few stale assertions.
-8. **Retake iOS screenshots** at 1320x2868 (6.9"); the current 1206x2622 set is refused.
-9. **Make the 440x280 tile and 1400x560 marquee** for the Chrome listing.
-10. **Install on a real phone** with free provisioning (expires every seven days).
-11. **Commit the games work** in the working tree so the four failing content tests can be
+6. **Answer the App Store privacy label** the same way `PrivacyInfo.xcprivacy` now does:
+   Other User Content, collected, not linked to identity, not used for tracking, app
+   functionality only.
+7. **Look at the store art before upload.** `design/screenshots/appstore-6.9/` (seven shots on
+   sample data) and the placeholder tile and marquee in `design/store/`. The tile and marquee
+   are PIL renders of a still, good enough to pass validation, not good enough to sell.
+8. **When you re-run `bridge/schema.sql`, the off switch comes with it.** To use it later:
+   `update flags set rules = '[…]'::jsonb where id = 1;` in the SQL editor; the comment above the
+   table in schema.sql shows the rule shape. Every rule needs an `endsAt`.
+9. **Install on a real phone** with free provisioning (expires every seven days).
+10. **Commit the games work** in the working tree so the four failing content tests can be
     judged, and delete `PlayRecord.streak` / `playStreak()` in `GameState.swift`, now unread.
-12. **Plus UI** is not built; the plumbing is. The Lamp card and the trial trigger (third
+11. **Plus UI** is not built; the plumbing is. The Lamp card and the trial trigger (third
     finished assignment) are 1.0.1 work per the plan.
-13. **Stop the sandbox VM** when not in use (`canvas-sandbox`, Google Cloud console).
-14. **Push `main`.** Nothing from today has left this machine.
+12. **Stop the sandbox VM** when not in use (`canvas-sandbox`, Google Cloud console).
+13. **Push `main`.** Nothing from today has left this machine.
 
 ## iPhone app, 2026-09-05
 
@@ -102,5 +108,5 @@ session has not committed yet. All commits below are on `main`, none pushed.
   popup on their own dashboard.
 - The error log: a student who writes in can paste "Copy a report" from the popup. Ask for it
   in the support auto-reply.
-- Remote kill and rollback (audit M2) still do not exist. A bad Canvas deploy means a Chrome
-  review cycle to fix; freeze dates in the plan are the only lever.
+- The remote off switch only works once `bridge/schema.sql` has been applied and only for
+  builds that carry 3c2b524 or later. Older installs cannot be switched off remotely.
