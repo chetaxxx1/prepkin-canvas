@@ -169,6 +169,7 @@ function searchRank(items, query, limit = 8) {
 let wallet = { coins: null, owned: ['classic'], wearing: 'classic' };
 let skin = { ...DEFAULTS };
 let focus = { state: 'idle' };
+let flags = null;
 
 /// Settings live in one place so the popup and the page cannot disagree.
 async function settings() {
@@ -186,6 +187,7 @@ if (typeof matchMedia === 'function') {
 /// Why the skin has to stay out of the way on this page, or null. Worked out
 /// from the three places Canvas signals it and from the OS.
 let killed = null;
+let remoteKilled = null;
 /// Canvas's ENV is written once per document and can be a hundred kilobytes;
 /// read it once, not on every observer pass.
 let envText = null;
@@ -194,7 +196,14 @@ function detectKill() {
     envText = [...document.querySelectorAll('script:not([src])')].map((el) => el.textContent).join('\n');
   }
   const env = envText;
+  remoteKilled = remoteKill(flags, {
+    host: location.host,
+    page: pageName(location.pathname),
+    version: chrome.runtime.getManifest().version,
+    now: Date.now(),
+  });
   return killReason({
+    remote: remoteKilled,
     loginPage: isLoginPath(location.pathname),
     quizTake: isQuizTake(location.pathname),
     submitting: isSubmissionPath(location.pathname, location.hash),
@@ -1881,7 +1890,7 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'nicknames', 'ownTasks', 'plans', 'targets']);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags']);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
@@ -1891,6 +1900,7 @@ async function mount() {
   targets = stored.targets ?? {};
   banners = stored.banners ?? {};
   putBack = stored.putBack ?? {};
+  flags = stored.flags ?? null;
   wallet = { ...wallet, ...(stored.wallet ?? {}) };
   if (!LOOKS_BY_ID[wallet.wearing]) wallet.wearing = 'classic'; // a look that no longer exists
   focus = stored.focus ?? { state: 'idle' };
@@ -1908,7 +1918,7 @@ async function mount() {
   document.getElementById(ROOT_ID)?.remove();
   shadow = null;
   // The sign-in page is the school's alone: no paper, no buddy.
-  if (!skin.mascot || isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
+  if (!skin.mascot || remoteKilled || isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
 
   const host = document.createElement('div');
   host.id = ROOT_ID;
@@ -1933,7 +1943,7 @@ if (typeof module !== 'undefined') {
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {
-    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.nicknames || changes.ownTasks) mount();
+    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.nicknames || changes.ownTasks || changes.flags) mount();
     // Not plans, levels or targets: the tab that set one has already redrawn,
     // and a remount here would throw the student back to the top of the panel
     // they just tapped in.

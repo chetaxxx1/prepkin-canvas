@@ -33,7 +33,7 @@ words (never "sync", "bridge", "selector"), no scolding. Urgency is amber and re
   lives on the surfaces the student chose to open (popup, panel, app).
 - Worst case is Canvas, unchanged. A missed hook leaves a plain page, never a broken one.
 - Reads only the Canvas you connect. Sends your coursework list and course grades to
-  your own phone, and makes no other request. No web fonts, no CDN, no analytics.
+  your own phone, and makes no other request except a six-hourly check whether to turn itself off. No web fonts, no CDN, no analytics.
 - Coins pay for finishing, never for grades. No meters, streaks, countdowns, padlocks,
   or `?` tiles. Accessibility (dark, contrast, motion) is never behind coins.
 - The popup is the funnel: the one screen worth opening, and the one worth a screenshot.

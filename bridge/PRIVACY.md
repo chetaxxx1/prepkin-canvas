@@ -42,6 +42,10 @@ sent anywhere.
 
 ## What leaves your laptop
 
+Every six hours, the extension asks Prepkin's server whether it should turn
+itself off on some Canvas page. The request carries nothing about you. This is
+the only thing it asks for without a paired phone.
+
 Less than what it reads. Sent to the bridge, so your phone can show it:
 
 - Course names and codes, and your current grade in each

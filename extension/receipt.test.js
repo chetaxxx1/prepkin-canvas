@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
-const { PAPERS, RULES, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, killReason, shouldStepAside } = require('./receipt.js');
+const { PAPERS, RULES, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, shouldStepAside } = require('./receipt.js');
 const { SELECTORS } = require('./selectors.js');
 const { LOOKS } = require('./looks.js');
 
@@ -186,8 +186,47 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
 
 // MARK: - Off switches and names
 
+test('a current global rule turns the skin off', () => {
+  const now = Date.parse('2026-09-08T12:00:00Z');
+  const flags = {
+    fetchedAt: now,
+    at: '2026-09-08T11:00:00Z',
+    rules: [{ host: '*', page: '*', endsAt: '2026-09-09T00:00:00Z', note: 'Canvas changed.' }],
+  };
+  assert.equal(remoteKill(flags, { host: 'school.instructure.com', page: 'Dashboard', version: '0.6.4', now }), 'Canvas changed.');
+});
+
+test('remote rules match narrowly, expire, and fail open', () => {
+  const now = Date.parse('2026-09-08T12:00:00Z');
+  const context = { host: 'school.instructure.com', page: 'Dashboard', version: '0.10.0', now };
+  const flags = (rule, fetchedAt = now) => ({ fetchedAt, at: '2026-09-08T11:00:00Z', rules: [rule] });
+  const live = { host: '*', page: '*', endsAt: '2026-09-09T00:00:00Z', note: 'Stay clear.' };
+  const cases = [
+    ['host match', { ...live, host: context.host }, context, 'Stay clear.'],
+    ['host mismatch', { ...live, host: 'other.instructure.com' }, context, null],
+    ['page match', { ...live, page: 'Dashboard' }, context, 'Stay clear.'],
+    ['page mismatch', { ...live, page: 'Modules' }, context, null],
+    ['version inside range', { ...live, minVer: '0.9', maxVer: '0.10.0' }, context, 'Stay clear.'],
+    ['version below range', { ...live, minVer: '0.10.1' }, context, null],
+    ['version above range', { ...live, maxVer: '0.9.0' }, context, null],
+    ['expired rule', { ...live, endsAt: '2026-09-08T12:00:00Z' }, context, null],
+    ['missing end', { ...live, endsAt: undefined }, context, null],
+    ['unparseable end', { ...live, endsAt: 'later' }, context, null],
+    ['blank note', { ...live, note: '  ' }, context, 'Prepkin is staying out of the way on this page for now.'],
+  ];
+  for (const [name, rule, where, expected] of cases) {
+    assert.equal(remoteKill(flags(rule), where), expected, name);
+  }
+  assert.equal(remoteKill(flags(live, now - 7 * 86_400_000 - 1), context), null, 'saved answer older than seven days');
+  assert.doesNotThrow(() => remoteKill({ fetchedAt: now, at: null, rules: {} }, context));
+  assert.equal(remoteKill({ fetchedAt: now, at: null, rules: {} }, context), null, 'malformed rules fail open');
+});
+
 test('the kill reasons, in order', () => {
   assert.equal(killReason(), null);
+  assert.match(killReason({ loginPage: true, remote: 'Remote note.' }), /sign-in page/);
+  assert.match(killReason({ quizTake: true, remote: 'Remote note.' }), /taking a quiz/);
+  assert.equal(killReason({ remote: 'Remote note.', submitting: true }), 'Remote note.');
   assert.match(killReason({ quizTake: true, submitting: true }), /taking a quiz/);
   assert.match(killReason({ submitting: true, editorOpen: true, envHighContrast: true }), /handing something in/);
   assert.match(killReason({ editorOpen: true, envHighContrast: true }), /editor is open/);

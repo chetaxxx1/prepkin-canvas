@@ -5,7 +5,13 @@
 (async () => {
   try {
     if (isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
-    const s = await chrome.storage.local.get(['skin', 'wallet', 'putBack']);
+    const s = await chrome.storage.local.get(['skin', 'wallet', 'putBack', 'flags']);
+    if (remoteKill(s.flags, {
+      host: location.host,
+      page: pageName(location.pathname),
+      version: chrome.runtime.getManifest().version,
+      now: Date.now(),
+    })) return;
     const skin = { dark: false, cards: true, mascot: true, ...(s.skin ?? {}) };
     if (skin.mode === 'auto') skin.dark = matchMedia('(prefers-color-scheme: dark)').matches;
     const classes = skinClasses({

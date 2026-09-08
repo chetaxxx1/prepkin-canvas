@@ -6,6 +6,7 @@
 // school.instructure.com go through exactly the same path.
 
 const SYNC_ALARM = 'prepkin-sync';
+const FLAGS_ALARM = 'prepkin-flags';
 const UPDATE_WAITING = 'updateWaiting';
 const BOOT_SCRIPTS = ['receipt.js', 'themes.js', 'art/manifest.js', 'looks.js', 'boot.js'];
 const CONTENT_SCRIPTS = ['podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'];
@@ -65,7 +66,9 @@ self.addEventListener('unhandledrejection', (event) => {
 chrome.runtime.onInstalled.addListener(({ reason }) =>
   Promise.resolve().then(async () => {
     chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
+    chrome.alarms.create(FLAGS_ALARM, { periodInMinutes: 360 });
     await chrome.storage.local.remove(UPDATE_WAITING);
+    await refreshFlags();
     await registerAll();
     if (reason === 'update') await reinjectOpenTabs();
   }).catch(async (err) => {
@@ -77,6 +80,8 @@ chrome.runtime.onInstalled.addListener(({ reason }) =>
 chrome.runtime.onStartup.addListener(() =>
   Promise.resolve().then(async () => {
     chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
+    chrome.alarms.create(FLAGS_ALARM, { periodInMinutes: 360 });
+    await refreshFlags();
     await registerAll();
   }).catch(async (err) => {
     await logError('worker startup', err);
@@ -158,12 +163,37 @@ async function reinjectOpenTabs() {
 chrome.alarms.onAlarm.addListener((alarm) => {
   let work;
   if (alarm.name === SYNC_ALARM) work = syncAll();
+  if (alarm.name === FLAGS_ALARM) work = refreshFlags();
   if (alarm.name === FOCUS_ALARM) work = focusDone();
   work?.catch(async (err) => {
     await logError('worker alarm', err);
     throw err;
   });
 });
+
+/// The off switch is public and contains no student data, so it is checked
+/// even when this laptop has never paired. A bad answer never replaces the
+/// last good one: old data expires in receipt.js and the skin stays on.
+async function refreshFlags() {
+  try {
+    if (!bridge) throw new Error('Prepkin server configuration is missing.');
+    const res = await fetch(`${bridge.url}/rest/v1/rpc/fetch_flags`, withTimeout({
+      method: 'POST',
+      headers: {
+        apikey: bridge.key,
+        Authorization: `Bearer ${bridge.key}`,
+        'Content-Type': 'application/json',
+      },
+      body: '{}',
+    }));
+    if (!res.ok) throw new Error(`Flag check returned ${res.status}.`);
+    const answer = await res.json();
+    if (!answer || !Array.isArray(answer.rules)) throw new Error('Flag check returned an invalid answer.');
+    await chrome.storage.local.set({ flags: { fetchedAt: Date.now(), at: answer.at, rules: answer.rules } });
+  } catch (err) {
+    await logError('worker flags', err);
+  }
+}
 
 // Syncing when you land on a connected Canvas keeps the phone close to current
 // without polling anyone's server every minute.

@@ -286,6 +286,32 @@ grant execute on function fetch_state(text, text)           to anon;
 grant execute on function delete_pairing(text, text)        to anon;
 revoke all on function purge_expired_pairings()             from anon;
 
+-- ---------------------------------------------------------------------------
+-- A public, read-only off switch. Each rule has this shape:
+-- { "host": "*" | "school.instructure.com", "page": "*" | <pageName()>,
+--   "minVer": "0.6.0" | null, "maxVer": "0.6.9" | null,
+--   "endsAt": "2026-10-01T00:00:00Z",
+--   "note": "Canvas changed its dashboard. Receipt stays out of the way for now." }
+-- The extension refuses any rule with no endsAt.
+--
+-- Example:
+-- update flags set rules = '[{"host":"*","page":"Dashboard","minVer":"0.6.0","maxVer":"0.6.9","endsAt":"2026-10-01T00:00:00Z","note":"Canvas changed its dashboard. Receipt stays out of the way for now."}]'::jsonb where id = 1;
+-- Reset:
+-- update flags set rules = '[]'::jsonb where id = 1;
+
+create table if not exists flags (
+  id int primary key default 1 check (id = 1),
+  rules jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+insert into flags (id) values (1) on conflict do nothing;
+alter table flags enable row level security;
+create or replace function fetch_flags() returns jsonb
+language sql stable security definer set search_path = public as $$
+  select jsonb_build_object('at', now(), 'rules', rules) from flags where id = 1;
+$$;
+grant execute on function fetch_flags() to anon;
+
 -- ===========================================================================
 -- Pods — the weekly league, once there are strangers in it
 -- ===========================================================================

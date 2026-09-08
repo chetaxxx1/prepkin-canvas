@@ -172,6 +172,32 @@ test('B1 a logged-in Canvas is recognised, gets the skin, and the panel mounts',
   await page.close();
 });
 
+test('B11 a current global rule leaves the page alone until it is cleared', async () => {
+  await world(HOST_A, S.plainSemester());
+  await h.connect(SCHOOL_A);
+  const note = 'Canvas changed. Receipt is waiting for now.';
+  const now = Date.now();
+  await h.setStorage({
+    flags: {
+      fetchedAt: now,
+      at: new Date(now).toISOString(),
+      rules: [{ host: '*', page: '*', endsAt: new Date(now + 86_400_000).toISOString(), note }],
+    },
+  });
+  const page = await h.context.newPage();
+  await page.goto(`${SCHOOL_A}/`);
+  await page.waitForFunction(() => document.documentElement.dataset.pkInstance, null, { timeout: 5000 });
+  assert.deepEqual(await page.$eval('html', (el) => [...el.classList].filter((c) => c.startsWith('pk-'))), []);
+  const popup = await openPopup(h);
+  assert.equal(await popup.waitFor('#receipt-off', /Canvas changed/), note);
+  await popup.close();
+
+  await h.sw(() => chrome.storage.local.remove('flags'));
+  await page.waitForFunction(() => document.documentElement.classList.contains('pk-on'), null, { timeout: 5000 });
+  assert.ok((await page.$eval('html', (el) => [...el.classList].filter((c) => c.startsWith('pk-')))).length > 0);
+  await page.close();
+});
+
 test('B10 a newer content-script instance takes over an open Canvas page', async () => {
   await world(HOST_A, S.plainSemester());
   await h.connect(SCHOOL_A);
