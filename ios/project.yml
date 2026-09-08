@@ -55,6 +55,7 @@ schemes:
         PrepkinCanvasTests: [test]
     run:
       config: Debug
+      storeKitConfiguration: PrepkinCanvas.storekit
     test:
       config: Debug
       targets: [PrepkinCanvasTests]
