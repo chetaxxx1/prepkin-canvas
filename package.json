@@ -4,7 +4,7 @@
   "version": "0.5.0",
   "description": "Prepkin Canvas — Chrome extension, Supabase bridge, iOS app.",
   "scripts": {
-    "test": "node --test extension/canvas.test.js extension/content.test.js extension/copy.test.js extension/receipt.test.js",
+    "test": "node --test extension/canvas.test.js extension/content.test.js extension/copy.test.js extension/copy-sweep.test.js extension/receipt.test.js",
     "package": "bridge/package.sh",
     "test:e2e": "node --test test/e2e.test.js",
     "test:stress": "node --test test/stress.test.js",
