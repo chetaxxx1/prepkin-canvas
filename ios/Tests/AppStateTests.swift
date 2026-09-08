@@ -111,6 +111,22 @@ final class AppStateTests: XCTestCase {
         XCTAssertEqual(state.canvasLink, .waitingForLaptop)
     }
 
+    func testExpiredPairingSaysSo() async {
+        let store = makeStore()
+        var game = GameState()
+        _ = game.ensurePairingCode()
+        game.lastCanvasSyncAt = Date()
+        store.save(game, immediately: true)
+        let state = AppState(store: store,
+                             makeClient: { $0.pairingCode != nil ? WaitingClient() : nil })
+
+        await state.syncCanvas()
+
+        XCTAssertEqual(state.canvasLink, .expired)
+        XCTAssertEqual(state.canvasStatus,
+                       "Your laptop's link ran out. Make a new code and paste it into Chrome.")
+    }
+
     func testAListMakesItConnected() async {
         let state = AppState(store: makeStore(), makeClient: { $0.pairingCode != nil ? ListClient() : nil })
         _ = state.ensurePairingCode()

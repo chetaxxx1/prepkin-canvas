@@ -389,7 +389,7 @@ struct DayEditorView: View {
     private var linkDot: Color {
         switch state.canvasLink {
         case .connected, .notSetUp: return Theme.mint   // notSetUp = not checked yet this launch
-        case .waitingForLaptop, .offline: return Theme.dim
+        case .waitingForLaptop, .offline, .expired: return Theme.dim
         }
     }
     private var linkTitle: String {
@@ -397,12 +397,14 @@ struct DayEditorView: View {
         case .connected, .notSetUp: return "Connected"
         case .waitingForLaptop: return "Waiting for your laptop"
         case .offline: return "Showing your last list"
+        case .expired: return "Link ran out"
         }
     }
     private var syncLine: String {
         switch state.canvasLink {
         case .waitingForLaptop: return "· nothing received yet"
         case .offline: return "· could not check just now"
+        case .expired: return "· make a new code"
         case .connected, .notSetUp:
             guard let at = state.lastCanvasSyncAt else { return "" }
             return "· list received \(at.formatted(.relative(presentation: .named)))"

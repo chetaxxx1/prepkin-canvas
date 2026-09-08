@@ -28,6 +28,7 @@ final class AppState: ObservableObject {
         case waitingForLaptop  // paired, nothing received yet
         case connected         // the last check reached the laptop's list
         case offline           // the last check failed; the last list stays
+        case expired           // a previous list arrived, but this pairing ran out
     }
     @Published private(set) var canvasLink: CanvasLink = .notSetUp
     /// Why the pairing code on screen is not usable yet — the bridge was
@@ -174,8 +175,13 @@ final class AppState: ObservableObject {
             }
         } catch BridgeError.notPairedYet {
             guard game.pairingCode == codeAtStart else { return }
-            canvasStatus = "Waiting for your laptop to send its first list."
-            canvasLink = .waitingForLaptop
+            if game.lastCanvasSyncAt != nil {
+                canvasStatus = "Your laptop's link ran out. Make a new code and paste it into Chrome."
+                canvasLink = .expired
+            } else {
+                canvasStatus = "Waiting for your laptop to send its first list."
+                canvasLink = .waitingForLaptop
+            }
         } catch {
             guard game.pairingCode == codeAtStart else { return }
             // Keep whatever is already on the list. A dropped connection is not a
