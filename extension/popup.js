@@ -120,7 +120,7 @@ function requestSite(after) {
     await chrome.storage.local.set({ origins: [...new Set([...origins, tabOrigin])] });
     // Now that Chrome has granted the origin, the skin can be injected there.
     await chrome.runtime.sendMessage({ type: 'register', origin: tabOrigin });
-    show(`Connected as ${check.name}. Syncing…`);
+    show(`Connected as ${check.name}. Getting your work…`);
     await render();
     after?.();
     report(await chrome.runtime.sendMessage({ type: 'sync-now', origin: tabOrigin }));
@@ -138,7 +138,7 @@ document.getElementById('save').addEventListener('click', async () => {
   // is spent, and nobody who guesses it later can read or change anything.
   const paired = await chrome.runtime.sendMessage({ type: 'pair', code });
   if (!paired?.ok) return show(paired?.error ?? 'Could not pair.', 'bad');
-  show('Paired. Syncing…');
+  show('Paired. Getting your work…');
   report(await chrome.runtime.sendMessage({ type: 'sync-now' }));
   showPairing();
   loadBuddy();
@@ -146,7 +146,7 @@ document.getElementById('save').addEventListener('click', async () => {
 });
 
 document.getElementById('resync').addEventListener('click', async () => {
-  show('Syncing…');
+  show('Getting your work…');
   report(await chrome.runtime.sendMessage({ type: 'sync-now' }));
 });
 
@@ -519,7 +519,7 @@ function onboardingStep(step) {
       <h2>Linked</h2><p>Coins and focus time now go to your phone.</p></div>`;
     await new Promise((r) => setTimeout(r, 1100));
     onbEl.hidden = true; mainEl.hidden = false;
-    show('Paired. Syncing…');
+    show('Paired. Getting your work…');
     report(await chrome.runtime.sendMessage({ type: 'sync-now' }));
     showPairing();
     loadBuddy();

@@ -3026,7 +3026,7 @@ struct ToneFigure: View {
                 fxText("GAP", Fig.caption, 184, 228, weight: .black)
             }
             fxLayer(5, step) {
-                fxChip("ALL GOOD!", Fig.caption, 132, 256, 96, Fig.chipH, Fig.coin)
+                fxChip("ALL GOOD", Fig.caption, 132, 256, 96, Fig.chipH, Fig.coin)
             }
         }
         .animation(Fig.reveal, value: step)
