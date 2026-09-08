@@ -159,6 +159,7 @@ final class AppState: ObservableObject {
             guard game.pairingCode == codeAtStart else { return }
             let before = Set(game.tasks.map(\.id))
             game.applyCanvas(snapshot)
+            ReviewPrompt.askIfEarned(finishedCanvasItems: game.canvasItems.filter(\.isSubmitted).count)
             // Pay what the laptop asked for — finished focus sessions, looks
             // bought in its shop — then tell it the balance and what it can stop
             // re-sending. Without this half the extension's coins never arrive.
