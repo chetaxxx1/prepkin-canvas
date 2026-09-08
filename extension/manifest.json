@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Prepkin Canvas Sync",
+  "name": "Prepkin for Canvas",
   "version": "0.6.0",
   "description": "Brings your Canvas work to the Prepkin app on your phone, with a study buddy and focus timer on Canvas itself.",
+  "homepage_url": "https://prepkin.com",
   "permissions": [
     "storage",
     "alarms",
@@ -19,7 +20,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Prepkin Canvas Sync",
+    "default_title": "Prepkin for Canvas",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -36,7 +37,8 @@
       ],
       "matches": [
         "https://*/*"
-      ]
+      ],
+      "use_dynamic_url": true
     }
   ],
   "minimum_chrome_version": "116",

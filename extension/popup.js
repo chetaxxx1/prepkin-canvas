@@ -7,17 +7,6 @@ const sitesEl = document.getElementById('sites');
 document.getElementById('slime').innerHTML = slimeAt(36);
 document.getElementById('version').textContent = `v${chrome.runtime.getManifest().version}`;
 
-// For testing: five taps on the version number own every theme. A paired
-// phone's wallet replaces this the next time it syncs.
-let versionTaps = 0;
-document.getElementById('version').addEventListener('click', async () => {
-  if (++versionTaps < 5) return;
-  versionTaps = 0;
-  const { wallet } = await chrome.storage.local.get('wallet');
-  await chrome.storage.local.set({ wallet: { ...(wallet ?? {}), coins: 9999, owned: LOOKS.map((l) => l.id), wearing: wallet?.wearing ?? 'classic' } });
-  show('Testing: every theme unlocked.', 'ok');
-});
-
 const CHECK_SVG = `
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
     <circle cx="8" cy="8" r="8" fill="#51CFA0"/>
