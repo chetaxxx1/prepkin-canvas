@@ -8,7 +8,7 @@
 const SYNC_ALARM = 'prepkin-sync';
 const UPDATE_WAITING = 'updateWaiting';
 const BOOT_SCRIPTS = ['receipt.js', 'themes.js', 'art/manifest.js', 'looks.js', 'boot.js'];
-const CONTENT_SCRIPTS = ['slime.js', 'podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'];
+const CONTENT_SCRIPTS = ['podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'];
 
 /// No request may hang a sync. A school behind a dead SSO hop, or a bridge that
 /// accepts the connection and never answers, used to stall syncAll forever —
@@ -371,7 +371,7 @@ async function send(fresh) {
     requests,
     at: new Date().toISOString(),
   };
-  // The page overlay reads lastPayload, so the slime knows what you owe even
+  // The page overlay reads lastPayload, so the buddy knows what you owe even
   // when the phone is in another room.
   await chrome.storage.local.set({ lastResults: results, lastPayload: payload });
   // The panel reads grades from lastPayload, on this machine. The bridge gets a

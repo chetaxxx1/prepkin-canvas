@@ -32,7 +32,8 @@
 
   /* The head: the buddy speaks. */
   .head { display: flex; align-items: center; gap: 12px; padding: 16px 16px 12px; }
-  .head #slime { flex-shrink: 0; display: flex; }
+  .head #kin { flex-shrink: 0; display: flex; }
+  .head #kin img { display: block; }
   .head .say { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .head .say strong { font-size: 16px; line-height: 20px; font-weight: 800; letter-spacing: -.01em;
                       overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -175,7 +176,7 @@
 </style>
 
 <div class="head">
-  <span id="slime" aria-hidden="true"></span>
+  <span id="kin" aria-hidden="true"></span>
   <div class="say" id="say"><strong id="say-head">Prepkin</strong><span id="say-sub">Your Canvas, quieter.</span></div>
   <span class="coinchip" id="coins" hidden></span>
 </div>
@@ -251,7 +252,6 @@
 
 </div>
 
-<script src="slime.js"></script>
 <script src="themes.js"></script>
 <script src="art/manifest.js"></script>
 <script src="looks.js"></script>

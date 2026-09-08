@@ -1,16 +1,16 @@
-// Looks: a palette plus something the slime wears.
+// Looks: a palette plus something the buddy wears.
 //
 // Earned with coins from verified work, never bought with money. The catalog is
 // static and ships with the extension; what you own and what you are wearing
 // come from the phone, because the coin ledger lives there.
 //
-// PROVISIONAL ART: the four accessories below are drawn in the slime's own
-// normalised coordinate space (0..1, the same one bridge/port-slime.py emits).
+// PROVISIONAL ART: the four accessories below are drawn in the old mascot's
+// normalised coordinate space (0..1).
 // They are new mascot art and need George's sign-off. Everything about them is
 // contained in this file, so swapping in approved renders is a one-file change.
-// The slime's body, belly and face are never touched by a look.
+// The buddy's body and face are never touched by a look.
 
-/// Accessories are drawn after the face, in the slime's 0..1 space.
+/// Accessories are drawn after the face, in the old mascot's 0..1 space.
 const LOOK_ACCESSORIES = {
   sprout: (c) => `
     <path d="M0.598 0.075 C0.596 0.045 0.596 0.020 0.600 0.000"
@@ -42,7 +42,7 @@ if (typeof module !== 'undefined') Object.assign(globalThis, require('./themes.j
 const LOOKS = THEMES;
 const LOOKS_BY_ID = Object.fromEntries(LOOKS.map((l) => [l.id, l]));
 
-/// The accessory markup for a look, or '' for a bare slime.
+/// The accessory markup for a look, or '' for a bare buddy.
 function lookAccessorySVG(lookId) {
   const look = LOOKS_BY_ID[lookId];
   if (!look?.accessory) return '';

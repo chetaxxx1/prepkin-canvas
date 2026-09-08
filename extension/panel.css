@@ -60,7 +60,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 }
 .pk-head.worried { background: var(--pk-amber-tint); }
 .pk-hero { display: flex; align-items: center; gap: 14px; }
-.pk-hero > svg { flex-shrink: 0; }
+.pk-hero > .pk-buddy { flex-shrink: 0; }
 .pk-bubble { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .pk-bubble strong { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; }
 .pk-bubble span { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-text-mid); }
@@ -273,7 +273,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   box-shadow: inset 0 0 0 1px var(--pk-mint-border);
   padding: 16px 14px; display: flex; align-items: center; gap: 12px;
 }
-.pk-result > svg { flex-shrink: 0; }
+.pk-result > .pk-buddy { flex-shrink: 0; }
 .pk-result div { display: flex; flex-direction: column; gap: 4px; }
 .pk-result b { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; }
 .pk-result small { font-size: 13px; font-weight: 600; color: var(--pk-text-mid); }
@@ -341,11 +341,11 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 
 /* A look tile shows the page it makes: a scrap of paper with one card. */
 .pk-preview { position: relative; width: 100%; height: 64px; display: block; }
-.pk-preview > span { position: absolute; left: 8px; right: 8px; top: 8px; height: 48px; border-radius: 6px; border: 1px solid; display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; }
+.pk-preview > span:not(.pk-buddy) { position: absolute; left: 8px; right: 8px; top: 8px; height: 48px; border-radius: 6px; border: 1px solid; display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; }
 .pk-preview > span i { display: block; width: 28%; height: 4px; border-radius: 2px; }
 .pk-preview > span em { display: block; width: 70%; height: 3px; border-radius: 2px; opacity: .55; }
 .pk-preview > span em + em { width: 45%; }
-.pk-preview > svg { position: absolute; right: 10px; bottom: 0; }
+.pk-preview > .pk-buddy { position: absolute; right: 10px; bottom: 0; }
 
 /* The focus ring around the buddy. */
 .pk-ring { position: relative; width: 72px; height: 72px; flex-shrink: 0; display: grid; place-items: center; }
@@ -353,7 +353,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-ring circle:last-child { transition: stroke-dashoffset 1s linear; }
 .pk-timer .pk-row > .pk-mins { margin-left: auto; align-self: flex-start; }
 /* An image theme's tile shows its wallpaper; the preview card floats on it. */
-.pk-look.has-art .pk-preview > span { box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
+.pk-look.has-art .pk-preview > span:not(.pk-buddy) { box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
 .pk-look.has-art b, .pk-look.has-art small { text-shadow: 0 1px 0 rgba(255, 255, 255, .35); }
 .pk-look.has-art.on-dark b, .pk-look.has-art.on-dark small { text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
 /* The banner picker in a worn image theme's sheet. */
@@ -415,6 +415,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-league .pk-foot { padding: 0; }
 /* A pod member's kin: the phone's face plate. Eyes and tuft in the circle, feet out. */
 .pk-kin { flex: none; border-radius: 999px; background-color: var(--pk-inset); background-repeat: no-repeat; background-size: 190% auto; background-position: 50% 24%; box-shadow: inset 0 0 0 1px var(--pk-line); }
+.pk-kin.pk-buddy { display: block; border-radius: 0; background-color: transparent; background-size: contain; background-position: center; box-shadow: none; }
 .pk-league-board li.you .pk-kin { box-shadow: inset 0 0 0 1px var(--tier-edge); background-color: rgba(255, 255, 255, .55); }
 
 /* ---- Work dates: when you will do it, not when it is owed ----------------- */

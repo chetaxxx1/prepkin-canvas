@@ -58,7 +58,7 @@ test('done today means submitted on this local day', () => {
 
 // MARK: - Voice
 
-test('the slime never scolds', () => {
+test('the buddy never scolds', () => {
   for (const shape of [{ overdue: [1, 2, 3], today: [], doneToday: [] }, { overdue: [], today: [1], doneToday: [] }, { overdue: [], today: [], doneToday: [] }]) {
     const v = voice(shape);
     assert.ok(v.headline && v.subline);
@@ -175,6 +175,16 @@ test('a pod member gets the phone\'s kin face, Mint when the species is unknown'
   assert.equal(KIN_SPECIES.length, 6);
   assert.match(kinFace('coral'), /art\/kin\/coral\.webp/);
   assert.match(kinFace('<img onerror=x>'), /art\/kin\/mint\.webp/, 'never page data in a url');
+});
+
+test('the buddy is the student\'s own kin, mint until the phone says otherwise', () => {
+  const { ownSpecies, _setWallet } = require('./content.js');
+  _setWallet({});
+  assert.equal(ownSpecies(), 'mint');
+  _setWallet({ league: { board: [{ species: 'sky' }, { you: true, species: 'coral' }] } });
+  assert.equal(ownSpecies(), 'coral');
+  _setWallet({ league: { board: [{ you: true, species: 'dragon' }] } });
+  assert.equal(ownSpecies(), 'mint');
 });
 
 // MARK: - Missing, and the day you will actually do it

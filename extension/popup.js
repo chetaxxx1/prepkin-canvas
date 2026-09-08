@@ -3,8 +3,17 @@ const statusEl = document.getElementById('status');
 const connectBtn = document.getElementById('connect');
 const sitesEl = document.getElementById('sites');
 
-// The same slime the app and the page overlay draw, at popup size.
-document.getElementById('slime').innerHTML = slimeAt(36);
+const KIN_SPECIES = ['butter', 'coral', 'lilac', 'mint', 'peach', 'sky'];
+let wallet = {};
+
+/// The student's own kin still, Mint until the phone names another species.
+function kinAt(size) {
+  const species = wallet.league?.board?.find((member) => member?.you === true)?.species;
+  const id = KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
+  return `<img src="${chrome.runtime.getURL(`art/kin/${id}.webp`)}" width="${size}" height="${size}" alt="">`;
+}
+
+document.getElementById('kin').innerHTML = kinAt(36);
 document.getElementById('version').textContent = `v${chrome.runtime.getManifest().version}`;
 
 const CHECK_SVG = `
@@ -394,14 +403,15 @@ function planDayOf(key) {
 
 /// The same words the panel uses, from the same day.
 async function speak() {
-  const { lastPayload, onboarded, plans = {} } = await chrome.storage.local.get(['lastPayload', 'onboarded', 'plans']);
+  const { lastPayload, onboarded, plans = {}, wallet: storedWallet } = await chrome.storage.local.get(['lastPayload', 'onboarded', 'plans', 'wallet']);
+  wallet = storedWallet ?? wallet;
   if (!lastPayload?.tasks || !onboarded) return;
   // The panel's day, not a second opinion: a student who moved two things to
   // today should not read a different sentence in the toolbar.
   const said = voice(buckets(lastPayload.tasks, new Date(), (t) => planDayOf(plans[t.id])));
   document.getElementById('say-head').textContent = said.headline;
   document.getElementById('say-sub').textContent = said.subline;
-  document.getElementById('slime').innerHTML = slimeAt(36, said.face);
+  document.getElementById('kin').innerHTML = kinAt(36);
 }
 speak();
 
@@ -409,8 +419,10 @@ speak();
 
 /// Only ever shown when the phone has actually told us a number. A wallet the
 /// extension made up would be worse than no wallet at all.
-chrome.storage.local.get('wallet').then(({ wallet }) => {
-  if (typeof wallet?.coins !== 'number') return;
+chrome.storage.local.get('wallet').then(({ wallet: storedWallet }) => {
+  wallet = storedWallet ?? wallet;
+  document.getElementById('kin').innerHTML = kinAt(36);
+  if (typeof wallet.coins !== 'number') return;
   const chip = document.getElementById('coins');
   chip.innerHTML = COIN_SVG;
   chip.append(String(wallet.coins));
@@ -424,17 +436,6 @@ chrome.storage.local.get('wallet').then(({ wallet }) => {
 
 const onbEl = document.getElementById('onboarding');
 const mainEl = document.getElementById('main');
-
-/// `size` is the width; height follows from the app's aspect (width / height),
-/// so the popup slime has the same proportions as the one on the phone.
-function slimeAt(size, face = 'faceIdle') {
-  return `<svg width="${size}" height="${size / SLIME_ASPECT}" viewBox="0 0 1 1"
-               preserveAspectRatio="none" aria-hidden="true">
-    <path d="${SLIME_PATHS.body}" fill="${SLIME_PALETTE.body}"/>
-    <path d="${SLIME_PATHS.belly}" fill="${SLIME_PALETTE.belly}"/>
-    <path d="${SLIME_PATHS[face]}" fill="${SLIME_PALETTE.ink}"/>
-  </svg>`;
-}
 
 function dots(step) {
   return `<div class="dots">${[0, 1, 2].map((i) =>
@@ -451,7 +452,7 @@ async function finishOnboarding() {
 function onboardingStep(step) {
   if (step === 0) {
     onbEl.innerHTML = `<div class="onb">
-      ${slimeAt(72, 'faceDelight')}
+      ${kinAt(72)}
       <h2>Hi, I'm your buddy</h2>
       <p>I keep your Canvas due dates, grades and progress in one calm place.</p>
       <button class="mint wide" id="onb-next" style="margin:0">Let's set up</button>
@@ -487,7 +488,7 @@ function onboardingStep(step) {
     <h2>Link your phone</h2>
     <p>Coins and focus time go to the Prepkin app. Optional.</p>
     <div class="detected" style="justify-content:center;gap:12px">
-      ${slimeAt(40)}
+      ${kinAt(40)}
       <small style="max-width:150px">In the app: Today, then the sliders button.</small>
     </div>
     <div class="pair">
@@ -513,7 +514,7 @@ function onboardingStep(step) {
     // The moment it worked: the buddy, a line, a tick, the phone.
     onbEl.hidden = false; mainEl.hidden = true;
     onbEl.innerHTML = `<div class="onb">
-      <div class="linked-moment">${slimeAt(48, 'faceDelight')}<span class="line"></span>
+      <div class="linked-moment">${kinAt(48)}<span class="line"></span>
         <span class="tick"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5 L6.5 11.5 L12.5 5" stroke="#101820" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="line"></span><svg width="26" height="40" viewBox="0 0 26 40" aria-hidden="true"><rect x="1" y="1" width="24" height="38" rx="5" fill="none" stroke="#51cfa0" stroke-width="2"/><rect x="9" y="33" width="8" height="2" rx="1" fill="#51cfa0"/></svg></div>
       <h2>Linked</h2><p>Coins and focus time now go to your phone.</p></div>`;

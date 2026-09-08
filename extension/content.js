@@ -1,4 +1,4 @@
-// Runs on a connected Canvas page: applies the skin and puts the slime on screen.
+// Runs on a connected Canvas page: applies the skin and puts Sprout on screen.
 //
 // Injected on demand by background.js once you connect a site, so it never runs
 // anywhere you have not approved.
@@ -227,29 +227,6 @@ function showMe() {
   document.documentElement.classList.add('pk-show');
   clearTimeout(showTimer);
   showTimer = setTimeout(() => document.documentElement.classList.remove('pk-show'), 4000);
-}
-
-// MARK: - The slime
-
-/// The same traced paths the iPhone app draws, ported by bridge/port-slime.py.
-/// Drawn as SVG rather than a picture so it stays sharp and recolours for free.
-/// A look may add an accessory layer on top; the body, belly and face never change.
-/// `size` is the width, exactly as in the app. SLIME_ASPECT is width over
-/// height (see SlimeView.swift: `h = w / Slime.aspect`), so the slime is a
-/// little wider than it is tall — dividing here is what keeps him from
-/// stretching. The paths are normalised to 0..1 on each axis independently and
-/// fill the box, which is why preserveAspectRatio is off: that is the same
-/// mapping TracedShape does onto its frame.
-function slimeSVG(face = 'faceIdle', size = 64, lookId = null) {
-  const h = size / SLIME_ASPECT;
-  const accessory = lookAccessorySVG(lookId ?? wallet.wearing);
-  return `
-  <svg width="${size}" height="${h}" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
-    <path d="${SLIME_PATHS.body}" fill="${SLIME_PALETTE.body}"/>
-    <path d="${SLIME_PATHS.belly}" fill="${SLIME_PALETTE.belly}"/>
-    <path d="${SLIME_PATHS[face]}" fill="${SLIME_PALETTE.ink}"/>
-    ${accessory}
-  </svg>`;
 }
 
 const COIN_SVG = `
@@ -596,10 +573,15 @@ const TIERS = [
 /// The kin stills the phone draws on its board, level three, shipped in the
 /// zip. An unknown species gets Mint rather than a broken image.
 const KIN_SPECIES = ['butter', 'coral', 'lilac', 'mint', 'peach', 'sky'];
-function kinFace(species, size = 28) {
+function ownSpecies() {
+  const board = Array.isArray(wallet.league?.board) ? wallet.league.board : [];
+  const species = board.find((member) => member?.you === true)?.species;
+  return KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
+}
+function kinFace(species, size = 28, className = '') {
   const id = KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
   const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL && alive() ? chrome.runtime.getURL(`art/kin/${id}.webp`) : `art/kin/${id}.webp`;
-  return `<span class="pk-kin" style="width:${size}px;height:${size}px;background-image:url('${url}')" aria-hidden="true"></span>`;
+  return `<span class="pk-kin${className ? ` ${className}` : ''}" style="width:${size}px;height:${size}px;background-image:url('${url}')" aria-hidden="true"></span>`;
 }
 function tierOf(league) { return TIERS[Math.max(0, Math.min(TIERS.length - 1, Number(league?.tier) || 0))]; }
 
@@ -923,19 +905,19 @@ function whatIfView() {
         </div>
       </div>`;
   } else if (needed === null) {
-    result = `<div class="pk-result">${slimeSVG('faceIdle', 44)}
+    result = `<div class="pk-result">${kinFace(ownSpecies(), 44, 'pk-buddy')}
       <div><b>Not enough to go on</b><small>Once something is graded I can work this out.</small></div></div>`;
   } else if (needed > 100) {
     const reachable = options.filter(([, cut]) =>
       (requiredScore({ current: course.score, target: cut, weight }) ?? 999) <= 100)[0];
-    result = `<div class="pk-result">${slimeSVG('faceDeadpan', 44)}
+    result = `<div class="pk-result">${kinFace(ownSpecies(), 44, 'pk-buddy')}
       <div><b>That one is out of reach</b>
       <small>${reachable
         ? `A ${reachable[0]} needs ${requiredScore({ current: course.score, target: reachable[1], weight })}%. That one is still open.`
         : 'The grade is settled either way. Finish it and move on.'}</small></div></div>`;
   } else {
     const kind = needed <= course.score ? 'Comfortably in reach' : 'Within reach';
-    result = `<div class="pk-result">${slimeSVG(needed <= course.score ? 'faceDelight' : 'faceIdle', 44)}
+    result = `<div class="pk-result">${kinFace(ownSpecies(), 44, 'pk-buddy')}
       <div><b>You'd need ${needed}%</b>
       <small>${kind}. You're averaging ${course.score}% so far.</small></div></div>`;
   }
@@ -996,7 +978,7 @@ function looksView() {
         <h2>${escapeHTML(look.name)}</h2>
       </div>
       <div class="pk-sheet">
-        <div class="pk-well" style="background:${escapeHTML(PAPERS[stockFor(look, !!skin.dark)].paper)}">${slimeSVG('faceIdle', 64, look.id)}</div>
+        <div class="pk-well" style="background:${escapeHTML(PAPERS[stockFor(look, !!skin.dark)].paper)}">${kinFace(ownSpecies(), 64, 'pk-buddy')}</div>
         <b>Wear ${escapeHTML(look.name)}?</b>
         <small class="pk-paper">${escapeHTML(look.vibe ?? '')}<br>Light: ${escapeHTML(paperLine(stockFor(look, false)))}<br>Dark: ${escapeHTML(paperLine(stockFor(look, true)))}</small>
         <span class="pk-cost">${COIN_SVG}${look.price} coins${
@@ -1033,7 +1015,7 @@ function looksView() {
               data-look="${escapeHTML(look.id)}" style="background:${escapeHTML(p.paper)};background-image:${tex};background-size:cover;color:${escapeHTML(p.ink)}">
         <span class="pk-preview" aria-hidden="true">
           <span style="background:${escapeHTML(p.paper2)};border-color:${escapeHTML(p.rule)}"><i style="background:${escapeHTML(accent)}"></i><em style="background:${escapeHTML(p.ink2)}"></em><em style="background:${escapeHTML(p.rule)}"></em></span>
-          ${slimeSVG('faceIdle', 34, look.id)}
+          ${kinFace(ownSpecies(), 34, 'pk-buddy')}
         </span>
         <b>${escapeHTML(look.name)}</b>
         <small class="pk-paper">${escapeHTML(look.vibe ?? paper)}</small>
@@ -1073,7 +1055,7 @@ function focusCard() {
               <circle cx="36" cy="36" r="${R}" fill="none" stroke="var(--pk-mint)" stroke-width="4" stroke-linecap="round"
                       stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - pct / 100)).toFixed(1)}" transform="rotate(-90 36 36)"/>
             </svg>
-            ${slimeSVG('faceIdle', 40)}
+            ${kinFace(ownSpecies(), 40, 'pk-buddy')}
           </span>
           <div>
             <div class="pk-clock">${mins}:${String(secs).padStart(2, '0')}</div>
@@ -1086,7 +1068,7 @@ function focusCard() {
   }
   return `
     <div class="pk-timer done">
-      ${slimeSVG('faceDelight', 56)}
+      ${kinFace(ownSpecies(), 56, 'pk-buddy')}
       <b>${focus.durationMin} minutes. Nice.</b>
       <span class="pk-plus">${COIN_SVG}+${focus.durationMin} coins on your phone</span>
       ${safeURL(focus.url)
@@ -1266,7 +1248,7 @@ function renderToday() {
   box.dataset.key = key;
   box.setAttribute('aria-label', 'Prepkin: today');
   const buddy = el('span', 'pk-t-buddy');
-  buddy.innerHTML = slimeSVG(said.face, 44); // our own SVG constant, never page data
+  buddy.innerHTML = kinFace(ownSpecies(), 44, 'pk-buddy');
   const say = el('div', 'pk-t-say');
   say.append(el('b', '', said.headline), el('small', '', said.subline));
   const counts = el('div', 'pk-t-counts');
@@ -1530,14 +1512,14 @@ function render() {
   root.innerHTML = `
     ${focus.state !== 'idle' ? focusCard() : ''}
     <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
-      ${slimeSVG(said.face, 44)}
+      ${kinFace(ownSpecies(), 44, 'pk-buddy')}
       ${urgent ? `<span class="pk-count" aria-hidden="true">${urgent}</span>` : ''}
     </button>
     <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Prepkin" tabindex="-1" ${ui.open ? '' : 'hidden'}>
       ${showHeader ? `
       <div class="pk-head${said.worried ? ' worried' : ''}">
         <div class="pk-hero">
-          ${slimeSVG(said.face, 64)}
+          ${kinFace(ownSpecies(), 64, 'pk-buddy')}
           <div class="pk-bubble">
             <strong>${said.headline}</strong>
             <span>${said.subline}</span>
@@ -1551,7 +1533,7 @@ function render() {
         </div>
         <div class="pk-track">
           <i style="width:${pct}%"></i>
-          <span class="pk-rider" style="left:${pct}%">${slimeSVG(said.face, 22)}</span>
+          <span class="pk-rider" style="left:${pct}%">${kinFace(ownSpecies(), 22, 'pk-buddy')}</span>
         </div>
       </div>` : ''}
       <div class="pk-body">${body}</div>
@@ -1910,8 +1892,8 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, TIERS, tierOf, kinFace, KIN_SPECIES,
-                     _setData: (d) => { data = d; } };
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES,
+                     _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; } };
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {

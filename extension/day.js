@@ -83,7 +83,7 @@ function submittedLabel(t) {
 }
 
 
-/// What the slime says. Calm on purpose: no alarms, no shame. Overdue work is
+/// What the buddy says. Calm on purpose: no alarms, no shame. Overdue work is
 /// "still counts", never a red wall.
 function voice({ overdue, today, doneToday }) {
   const o = overdue.length, t = today.length, d = doneToday.length;
