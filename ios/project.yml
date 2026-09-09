@@ -35,6 +35,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_VERSION: "5.9"
         CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: FLN528LLJ6
   PrepkinCanvasTests:
     type: bundle.unit-test
     platform: iOS

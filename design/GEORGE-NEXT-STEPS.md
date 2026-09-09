@@ -41,18 +41,14 @@ This proves step 1 worked.
 ## 4. Put the app on your phone (30 minutes the first time)
 
 1. Open Xcode. Menu **Xcode**, **Settings**, **Accounts**. Click **+**, add your Apple ID.
-2. Go to https://developer.apple.com/account. Under **Membership details** copy the
-   **Team ID** (ten letters and numbers).
-3. Open `ios/project.yml`. Under the first `settings: base:` block add one line:
-   `DEVELOPMENT_TEAM: ABCDE12345` with your real Team ID.
-4. In Terminal: `cd ~/Desktop/app/prepkin-canvas/ios && xcodegen generate`.
-5. Open `ios/PrepkinCanvas.xcodeproj` in Xcode.
-6. Plug in your iPhone with a cable. At the top of Xcode pick your iPhone as the device.
-7. Press the **Play** button. Wait for the build.
-8. On the phone: **Settings**, **General**, **VPN & Device Management**, tap your Apple ID,
+   (Your Team ID FLN528LLJ6 is already in `ios/project.yml`. Done 2026-09-09.)
+2. Open `ios/PrepkinCanvas.xcodeproj` in Xcode.
+3. Plug in your iPhone with a cable. At the top of Xcode pick your iPhone as the device.
+4. Press the **Play** button. Wait for the build.
+5. On the phone: **Settings**, **General**, **VPN & Device Management**, tap your Apple ID,
    tap **Trust**. Open Prepkin.
-9. Use it for one school day. Write down anything that looks wrong.
-10. This expires in seven days. Repeat step 7 each week until you pay for the developer
+6. Use it for one school day. Write down anything that looks wrong.
+7. This expires in seven days. Repeat step 4 each week until you pay for the developer
     program.
 
 ## 5. Make the web addresses real (30 minutes)
