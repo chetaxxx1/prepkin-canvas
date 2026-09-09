@@ -163,7 +163,15 @@ struct HomeView: View {
                 .frame(width: screenWidth, height: sceneHeight)
 
             if !stageReady {
-                tankFloor
+                // The same plate the page will paint, shown natively at once. The
+                // page takes a second or three to boot on a phone; a flat floor
+                // colour for that long read as the background loading late.
+                Image(tank.asset)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: screenWidth, height: sceneHeight, alignment: .bottom)
+                    .clipped()
+                    .background(tankFloor)
                     .overlay(alignment: .bottom) {
                         SproutImage(speciesID: state.activeChibiID,
                                     level: state.activeChibi.level,
