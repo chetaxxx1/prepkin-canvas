@@ -282,10 +282,29 @@ struct SproutView: UIViewRepresentable {
             guard event == "ready" else { return }
             ready = true
             message.webView?.evaluateJavaScript("window.RiverSprite.setReduceMotion(\(reduceMotion))")
-            onReady?(true)
             if let script = pending, let webView = message.webView {
                 pending = nil
                 webView.evaluateJavaScript(script)
+            }
+            revealOncePainted(message.webView, tries: 0)
+        }
+
+        /// `ready` means the script is up, not that the tank plate has decoded: for
+        /// a beat the canvas is a flat wash, which showed through the cover as a
+        /// green flash. Hold the cover until the plate has arrived, or 1.2 seconds,
+        /// whichever comes first.
+        private func revealOncePainted(_ webView: WKWebView?, tries: Int) {
+            guard let webView, tries < 12 else { onReady?(true); return }
+            let probe = "performance.getEntriesByType('resource').some(function(r){return r.name.indexOf('/tanks/')>-1})"
+            webView.evaluateJavaScript(probe) { [weak self] result, _ in
+                guard let self, self.ready else { return }
+                if result as? Bool == true {
+                    self.onReady?(true)
+                } else {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.revealOncePainted(webView, tries: tries + 1)
+                    }
+                }
             }
         }
 
