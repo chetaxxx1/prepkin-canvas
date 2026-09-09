@@ -9,3 +9,4 @@ dist/
 
 # Claude Code worktrees are copies of this repo, never content
 .claude/worktrees/
+__pycache__/

@@ -34,6 +34,11 @@ final class AppState: ObservableObject {
     /// Why the pairing code on screen is not usable yet — the bridge was
     /// unreachable when the app tried to claim it. Nil when the code is good.
     @Published private(set) var pairingStatus: String?
+    /// Friends who are working right now. Not persisted: a presence is only ever
+    /// true for the next few minutes, and a cached one would seat somebody at a desk
+    /// they left yesterday.
+    @Published private(set) var friendsFocusing: [FocusPresence] = []
+
     /// What the last pod sync did, for the league board. Not persisted — the board
     /// itself is, so a failure leaves the standings up and only this line changes.
     @Published private(set) var leagueStatus: String?
@@ -57,6 +62,7 @@ final class AppState: ObservableObject {
     private let store: Store
     private let makeClient: (GameState) -> CanvasSyncClient?
     private let makeLeagueClient: (GameState) -> LeagueClient?
+    private let makeStudyClient: (GameState) -> StudyClient?
 
     /// Real bridge once there is a pairing code. Sample data only in a checkout
     /// with no bridge configured at all, so a demo is never an empty page — but a
@@ -79,16 +85,37 @@ final class AppState: ObservableObject {
         return SupabaseLeagueClient()
     }
 
+    /// Same rule as the league client, and the mock deliberately reports that nobody
+    /// is focusing. See `MockStudyClient`.
+    nonisolated static func defaultStudyClient(for state: GameState,
+                                               config: BridgeConfig = .shared) -> StudyClient? {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains(MockStudyClient.fakeTableArgument) {
+            return MockStudyClient.seatedForTesting()
+        }
+        #endif
+        guard config.isConfigured else { return MockStudyClient() }
+        return SupabaseStudyClient()
+    }
+
     init(store: Store = .shared,
          makeClient: @escaping (GameState) -> CanvasSyncClient? = { AppState.defaultClient(for: $0) },
-         makeLeagueClient: @escaping (GameState) -> LeagueClient? = { AppState.defaultLeagueClient(for: $0) }) {
+         makeLeagueClient: @escaping (GameState) -> LeagueClient? = { AppState.defaultLeagueClient(for: $0) },
+         makeStudyClient: @escaping (GameState) -> StudyClient? = { AppState.defaultStudyClient(for: $0) }) {
         self.store = store
         self.makeClient = makeClient
         self.makeLeagueClient = makeLeagueClient
+        self.makeStudyClient = makeStudyClient
         var loaded = store.load()
         loaded.advance()
         loaded.lastOpenedAt = Date()
         game = loaded
+        #if DEBUG
+        // Launch with `-unlockAll` to open the whole catalogue. See DebugUnlock.swift.
+        if ProcessInfo.processInfo.arguments.contains("-unlockAll") {
+            game.unlockEverythingForTesting()
+        }
+        #endif
         game.refreshPicksIfNeeded()
         store.save(game)
     }
@@ -195,6 +222,63 @@ final class AppState: ObservableObject {
             canvasStatus = "Could not reach your laptop just now. Showing your last list."
             canvasLink = .offline
         }
+    }
+
+    // MARK: - Study Together
+
+    /// Whether anybody is at the table. Drives one line on the Focus screen and
+    /// nothing else; when it is false the feature is invisible rather than empty.
+    var anyoneFocusing: Bool { !liveFocusPresences.isEmpty }
+
+    /// Presences that are still running as of now. The list is refreshed on a screen
+    /// appearing rather than on a timer, so it is filtered again on read.
+    var liveFocusPresences: [FocusPresence] { friendsFocusing.filter { $0.isLive() } }
+
+    /// Asks the bridge who is working. Silent on every failure: a friend who cannot
+    /// be seen right now is the same as a friend who is not working, and neither is
+    /// worth an error on a screen whose whole job is to be calm.
+    ///
+    /// Does nothing without an identity. Today the only thing that mints one is
+    /// joining a league pod; when the friends flow lands it will mint one too, and
+    /// this reads whatever is there.
+    func refreshFriendsFocusing() async {
+        var identity = game.league.identity
+        #if DEBUG
+        // `-fakeTable` seats friends before anything has minted a real identity.
+        if identity == nil, ProcessInfo.processInfo.arguments.contains(MockStudyClient.fakeTableArgument) {
+            identity = LeagueIdentity(id: "debug", token: "debug", adjective: 0, noun: 0)
+        }
+        #endif
+        guard let identity, let client = makeStudyClient(game) else {
+            friendsFocusing = []
+            return
+        }
+        // Whose answer this is. Compared again after the call so a student who erased
+        // their player mid-flight does not get a table back. Nil under `-fakeTable`,
+        // where nothing was ever minted and there is nothing to invalidate.
+        let asked = game.league.identity
+        do {
+            let rows = try await client.friendsFocusing(identity: identity)
+            guard game.league.identity == asked else { return }
+            friendsFocusing = rows
+        } catch {
+            friendsFocusing = []
+        }
+    }
+
+    /// Says a session has started, so friends can see the row and join. Fire and
+    /// forget: the timer on this phone never waits on the bridge, and a session that
+    /// nobody else could see still counts for everything it counts for.
+    func announceFocus(minutes: Int) {
+        guard let identity = game.league.identity, let client = makeStudyClient(game) else { return }
+        Task { _ = try? await client.startFocus(identity: identity, minutes: minutes) }
+    }
+
+    /// Says it is over, early or otherwise. Also fire and forget — the row expires on
+    /// its own, so the worst a dropped call costs is a friend seeing a clock run out.
+    func endFocusAnnouncement() {
+        guard let identity = game.league.identity, let client = makeStudyClient(game) else { return }
+        Task { try? await client.endFocus(identity: identity) }
     }
 
     // MARK: - The league pod
@@ -450,7 +534,40 @@ final class AppState: ObservableObject {
 
     var numberLineClaimedToday: Bool { game.numberLineClaimedToday }
 
-    /// Returns what was paid: 25 the first round of the day, 0 after.
+    /// True once any game has banked today's Play coins.
+    var playClaimedToday: Bool { game.playClaimedToday }
+    /// The game that banked them, for the "Today's 30 banked by Ladder" line.
+    var playBankedBy: CoinReason? { game.playBanked(on: game.effectiveDay) }
+
+    /// Returns what was paid: 30 for the first game finished today, 0 after.
+    @discardableResult
+    func recordPlaySolve<P>(_ path: WritableKeyPath<GameState, PlayRecord<P>>, reason: CoinReason,
+                            dealtDay: DayKey) -> Int {
+        let paid = game.recordPlaySolve(path, reason: reason, day: dealtDay)
+        if paid > 0 { play(.celebrate) }
+        return paid
+    }
+
+    func playProgress<P>(_ path: KeyPath<GameState, PlayRecord<P>>, for day: DayKey) -> P? {
+        game.playProgress(path, for: day)
+    }
+
+    func savePlayProgress<P>(_ path: WritableKeyPath<GameState, PlayRecord<P>>, _ progress: P,
+                             startedAt: Date? = nil, day: DayKey,
+                             puzzleRating: Int = Rating.unrated) {
+        game.savePlayProgress(path, progress, startedAt: startedAt, day: day,
+                              puzzleRating: puzzleRating)
+    }
+
+    /// The puzzle rating, for the end card and the Play rail.
+    var rating: PlayerRating { game.rating }
+
+    /// The stopwatch start for today's board, if it was touched today.
+    func playStartedAt<P>(_ path: KeyPath<GameState, PlayRecord<P>>, for day: DayKey) -> Date? {
+        game[keyPath: path].progressDay == day ? game[keyPath: path].startedAt : nil
+    }
+
+    /// Returns what was paid: 30 if this is the first game finished today, 0 after.
     @discardableResult
     func finishNumberLineRound(accuracy: Int) -> Int {
         let paid = game.recordNumberLineRound(accuracy: accuracy)

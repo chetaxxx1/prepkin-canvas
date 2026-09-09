@@ -41,7 +41,7 @@ extension TaskTemplate {
     /// marked active below are what a brand-new user starts with.
     static let presets: [TaskTemplate] = [
         // Study
-        TaskTemplate(id: "s-1", title: "20 min SAT practice", kind: .study, isActive: true, isPreset: true),
+        TaskTemplate(id: "s-1", title: "20 min study session", kind: .study, isActive: true, isPreset: true),
         TaskTemplate(id: "s-2", title: "Review today's notes", kind: .study, isActive: false, isPreset: true),
         TaskTemplate(id: "s-3", title: "Read 10 pages", kind: .study, isActive: false, isPreset: true),
         TaskTemplate(id: "s-4", title: "Redo one question you got wrong", kind: .study, isActive: false, isPreset: true),

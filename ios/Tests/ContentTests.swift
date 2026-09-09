@@ -64,7 +64,7 @@ final class ContentTests: XCTestCase {
     }
 
     func testTracksComeOutInCatalogueOrder() {
-        XCTAssertEqual(Catalog.tracks.map(\.id), ["finance", "philosophy", "study", "psychology", "people"])
+        XCTAssertEqual(Catalog.tracks.map(\.id), ["finance", "philosophy", "study", "psychology", "people", "work"])
         for track in Catalog.tracks {
             XCTAssertFalse(Catalog.lessons(in: track.id).isEmpty)
         }

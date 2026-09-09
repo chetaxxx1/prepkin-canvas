@@ -1,4 +1,4 @@
-# Play — four new games, plan (2026-09-08)
+# Play — the six games, plan (2026-09-08)
 
 Prepkin already has two games: Daily Word (a Wordle-type word game, 30 coins) and
 Number Line (25 coins). Both live in the Play section of the Learn tab since the
@@ -39,9 +39,12 @@ Copy the mechanic. Never copy the name, the art, the code, or the puzzle content
 - **Puzzle content is a compilation.** A curated word list or a set of daily puzzles
   can be protected as a compilation. Generate our own. Never scrape theirs.
 
-House rules for the four games below, so the design stays ours:
-no crown icon, no sun/moon, no "=" and "×" edge signs, no LinkedIn purple/blue,
+House rules, so the design stays ours: no crown icon, no LinkedIn purple/blue,
 no LinkedIn or NYT names anywhere in the code or copy.
+*Changed 2026-09-08 pm:* George played the first build and asked for near-replicas of
+the games his demographic already plays, mechanics identical. So the earlier "no
+sun/moon, no = and × signs, no clues on the ladder" rule is dropped. Generic symbols
+and rules are not protectable; names, art, code and puzzle sets still are.
 
 ## 2. Who this is for, and what they want (research)
 
@@ -81,15 +84,18 @@ What that means for Prepkin:
 
 ## 3. The four games
 
-### Ladder (word ladder)
-Two words shown, top and bottom. Type rungs; each changes exactly one letter and must
-be a real word (the 14.7k `guesses.json` list). Par is the shortest path in the
-901-word common list. Reach the bottom in par or over par; both count as solved.
-Different from Crossclimb on purpose: no clues, no sorting. Doublets as Carroll wrote it.
-*Feasibility, measured:* 563 of the 901 common words have a common-word neighbour;
-there are 23,476 five-rung ladders using only common words, ~870k using the full
-dictionary. Enough for years without repeats.
-*Reward math:* solved = done. Rung count is the compare number, not a gate.
+### Ladder (Crossclimb-type, rebuilt 2026-09-08 pm)
+The first build was Carroll's Doublets (free rungs, no clues). George: "terrible, it
+doesn't tell me if I'm right or wrong." Now a Crossclimb replica: seven five-letter
+words, each one letter off the next. The middle five are dealt scrambled, each with a
+clue. Type a word; it is checked the moment the fifth letter lands: right locks it
+mint, wrong shakes and stays to be edited. When all five are right, tap a rung to pick
+it up and tap another to swap, until each is one letter off its neighbour (either way
+up counts). Then the top and bottom rungs unlock with their clues. Timed from the first
+letter; the time is the compare number.
+*Content:* hand-written in `design/games/ladders.py` (40 so far); `gen.py candidates`
+prints chains to author more. Checked: common words, one letter a rung, the middle has
+exactly one order up to reversal, the deal is never the answer.
 
 ### Thread (category guessing)
 Five clues, hardest first, one shown at a time. Type the link. A miss reveals the next
@@ -100,12 +106,14 @@ nothing lost. Different from Pinpoint by voice and content: adult categories
 ~180 days, repeats after 120 are fine). Accepted answers are a list of keywords with
 loose matching (plurals and filler words stripped).
 
-### Balance (Takuzu / Binairo)
-6×6. Two glyphs, filled dot and ring (shape, not just colour, for colour-blind
-players). Three of each in every row and column, never three in a row. Givens only,
-no edge signs. Tap cycles blank, filled, ring. Solved when full and clean.
-*Generation:* fill a valid grid by backtracking, remove cells in random order while
-a solver still finds exactly one answer, stop at 14 givens (fewer givens = harder).
+### Balance (Tango-type)
+6×6, suns and moons. Three of each in every row and column, never three in a row, and
+four to six signs between neighbours: = means the pair matches, × means it differs
+(added 2026-09-08 pm for the replica rule). Tap cycles blank, sun, moon. Solved when
+full and clean; a broken rule or sign shows coral at once.
+*Generation:* fill a valid grid, read four to six true signs off it, remove cells in
+random order while a solver still finds exactly one answer AND a rule-only solver
+(pairs, gaps, full halves, signs) still reaches it. Measured: ~7 givens, ~5 signs.
 
 ### Pearls (Star Battle, one star)
 7×7 weekdays, 8×8 on Sundays. Coloured regions ("reefs") with thick borders. One pearl
@@ -114,8 +122,22 @@ cross, pearl. Conflicts get a coral ring so the board teaches its own rules.
 *Generation:* pick a random no-touch permutation as the answer, seed one region per
 pearl, grow regions at random until the board is covered, keep only boards with
 exactly one solution. Prototype does this live in ~1–50 attempts.
-*Open:* uniqueness is guaranteed, "solvable without guessing" is not yet. Add a
-deduction-only solver as the gate before shipping, or hand-pick from the generated set.
+*Shipped:* a rule-only solver is the gate in `gen.py` (single candidates, confinement).
+
+### Trace (Zip-type, added 2026-09-08 pm, replaces Number Line)
+Number Line was not a replica of anything and George cut it. Trace: a 6×6 grid, numbers
+1..k on some cells, a few walls on edges. Drag one line from 1 through every square,
+hitting the numbers in order, ending on the last one, never crossing a wall. Dragging
+back over the previous cell undoes it; Undo and Clear buttons. Timed.
+*Generation:* a random Hamiltonian path; 6–9 numbers spread along it; walls only on
+edges the path does not cross, added two at a time until a counting solver finds
+exactly one line. ~15% of tries survive; 400 boards in about three minutes.
+
+### Feel, shared by all six (2026-09-08 pm)
+Every logic game has Undo and a Hint. Hints are free and counted (end card and share
+line say "2 hints"); each one does a real move and the kin says why. A wrong mark is
+fixed before anything new is placed. Pearls auto-crosses what a pearl rules out, like
+Queens. A miss is always shown where it happened and cleared for the next try.
 
 ## 4. Coins: one daily pool (decided 2026-09-08)
 

@@ -272,33 +272,121 @@ extension Catalog {
 
 // MARK: - Play puzzles
 
-/// A word ladder: two words, change one letter a rung. `par` is the shortest path
-/// through the full guess list, so nobody can beat it with an obscure word.
-struct LadderPuzzle: Codable, Equatable {
-    let start: String
-    let end: String
-    let par: Int
+/// A Crossclimb-type ladder: seven words in order, each one letter off the next,
+/// with a clue each. `deal` is the scrambled order the middle five (indices 1...5)
+/// are shown in. Words 0 and 6 are the locked top and bottom rungs.
+struct LadderPuzzle: Codable, Equatable, RatedPuzzle {
+    let words: [String]
+    let clues: [String]
+    let deal: [Int]
+    var rating: Int = Rating.unrated
+
+    init(words: [String], clues: [String], deal: [Int], rating: Int = Rating.unrated) {
+        self.words = words; self.clues = clues; self.deal = deal; self.rating = rating
+    }
+
+    private enum CodingKeys: String, CodingKey { case words, clues, deal, rating }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        words = try c.decode([String].self, forKey: .words)
+        clues = try c.decode([String].self, forKey: .clues)
+        deal = try c.decode([Int].self, forKey: .deal)
+        rating = try c.decodeIfPresent(Int.self, forKey: .rating) ?? Rating.unrated
+    }
 }
 
 /// Five clues, hardest first, that share one link. `accept` is the list of words a
 /// guess has to contain to count; `name` is what the end card shows.
-struct ThreadPuzzle: Codable, Equatable, Identifiable {
+struct ThreadPuzzle: Codable, Equatable, Identifiable, RatedPuzzle {
     let id: String
     let name: String
     let accept: [String]
     let clues: [String]
+    var rating: Int = Rating.unrated
+
+    init(id: String, name: String, accept: [String], clues: [String], rating: Int = Rating.unrated) {
+        self.id = id; self.name = name; self.accept = accept; self.clues = clues; self.rating = rating
+    }
+
+    private enum CodingKeys: String, CodingKey { case id, name, accept, clues, rating }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        accept = try c.decode([String].self, forKey: .accept)
+        clues = try c.decode([String].self, forKey: .clues)
+        rating = try c.decodeIfPresent(Int.self, forKey: .rating) ?? Rating.unrated
+    }
 }
 
-/// Takuzu. `givens` is n×n; -1 blank, 0 filled, 1 ring.
-struct BalancePuzzle: Codable, Equatable {
+/// A sign between two neighbouring cells: `same` means they match, otherwise
+/// they differ. `a` and `b` are [row, column].
+struct BalanceSign: Codable, Equatable {
+    let a: [Int]
+    let b: [Int]
+    let same: Bool
+}
+
+/// Tango-type Takuzu. `givens` is n×n; -1 blank, 0 sun, 1 moon.
+struct BalancePuzzle: Codable, Equatable, RatedPuzzle {
     let n: Int
     let givens: [[Int]]
+    var signs: [BalanceSign] = []
+    var rating: Int = Rating.unrated
+
+    init(n: Int, givens: [[Int]], signs: [BalanceSign] = [], rating: Int = Rating.unrated) {
+        self.n = n; self.givens = givens; self.signs = signs; self.rating = rating
+    }
+
+    private enum CodingKeys: String, CodingKey { case n, givens, signs, rating }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        n = try c.decode(Int.self, forKey: .n)
+        givens = try c.decode([[Int]].self, forKey: .givens)
+        signs = try c.decodeIfPresent([BalanceSign].self, forKey: .signs) ?? []
+        rating = try c.decodeIfPresent(Int.self, forKey: .rating) ?? Rating.unrated
+    }
+}
+
+/// Zip-type path puzzle. `numbers` is n×n, 0 for no number; `walls` are pairs of
+/// cell indices (r*n+c) the line may not cross between.
+struct TracePuzzle: Codable, Equatable, RatedPuzzle {
+    let n: Int
+    let numbers: [[Int]]
+    let walls: [[Int]]
+    var rating: Int = Rating.unrated
+
+    init(n: Int, numbers: [[Int]], walls: [[Int]], rating: Int = Rating.unrated) {
+        self.n = n; self.numbers = numbers; self.walls = walls; self.rating = rating
+    }
+
+    private enum CodingKeys: String, CodingKey { case n, numbers, walls, rating }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        n = try c.decode(Int.self, forKey: .n)
+        numbers = try c.decode([[Int]].self, forKey: .numbers)
+        walls = try c.decode([[Int]].self, forKey: .walls)
+        rating = try c.decodeIfPresent(Int.self, forKey: .rating) ?? Rating.unrated
+    }
 }
 
 /// Star Battle, one star. `regions` is n×n of region ids 0..<n.
-struct PearlsPuzzle: Codable, Equatable {
+struct PearlsPuzzle: Codable, Equatable, RatedPuzzle {
     let n: Int
     let regions: [[Int]]
+    var rating: Int = Rating.unrated
+
+    init(n: Int, regions: [[Int]], rating: Int = Rating.unrated) {
+        self.n = n; self.regions = regions; self.rating = rating
+    }
+
+    private enum CodingKeys: String, CodingKey { case n, regions, rating }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        n = try c.decode(Int.self, forKey: .n)
+        regions = try c.decode([[Int]].self, forKey: .regions)
+        rating = try c.decodeIfPresent(Int.self, forKey: .rating) ?? Rating.unrated
+    }
 }
 
 extension Catalog {
@@ -308,9 +396,19 @@ extension Catalog {
     static let threads: [ThreadPuzzle] = load("threads", fallback: fallbackThreads)
     static let balance: [BalancePuzzle] = load("balance", fallback: fallbackBalance)
     static let pearls: [PearlsPuzzle] = load("pearls", fallback: fallbackPearls)
+    static let trace: [TracePuzzle] = load("trace", fallback: fallbackTrace)
 
     /// One of each, so a missing file still deals a playable puzzle.
-    private static let fallbackLadders = [LadderPuzzle(start: "BLACK", end: "BLIND", par: 4)]
+    static let fallbackLadders = [LadderPuzzle(
+        words: ["BLAND", "BLEND", "BLIND", "BLINK", "BRINK", "BRISK", "BRICK"],
+        clues: ["Lacking flavor", "Mix in a smoothie", "Window shade", "Quick eye shut",
+                "Edge of a cliff", "Quick and energetic", "Wall building block"],
+        deal: [3, 1, 5, 2, 4])]
+    static let fallbackTrace = [TracePuzzle(n: 4, numbers: [
+        [1, 0, 0, 2],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [4, 0, 0, 3]], walls: [])]
     private static let fallbackThreads = [ThreadPuzzle(
         id: "card", name: "___ card", accept: ["card"],
         clues: ["Wild", "Green", "Report", "Business", "Credit"])]
@@ -322,11 +420,11 @@ extension Catalog {
         [-1, -1,  0,  0, -1,  0],
         [-1, -1,  1, -1, -1,  1]])]
     private static let fallbackPearls = [PearlsPuzzle(n: 7, regions: [
-        [0, 0, 0, 1, 1, 1, 1],
-        [0, 2, 2, 2, 1, 3, 1],
-        [0, 2, 4, 2, 3, 3, 3],
-        [5, 2, 4, 4, 4, 3, 6],
-        [5, 5, 5, 4, 6, 6, 6],
-        [5, 5, 5, 4, 6, 6, 6],
-        [5, 5, 5, 5, 6, 6, 6]])]
+        [1, 1, 0, 0, 0, 0, 6],
+        [1, 3, 4, 2, 0, 6, 6],
+        [3, 3, 4, 2, 2, 6, 6],
+        [4, 3, 4, 6, 6, 6, 6],
+        [4, 4, 4, 4, 4, 6, 6],
+        [4, 5, 5, 5, 4, 6, 6],
+        [4, 4, 4, 5, 6, 6, 6]])]
 }

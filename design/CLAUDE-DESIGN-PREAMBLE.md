@@ -11,11 +11,15 @@ Read it before you draw. You do not write Swift; Claude Code ports your handoff.
 
 ## What the app is
 
-A companion app for high school students. A small mascot, the **kin**, lives on the home
-screen like Finch's bird. Real Canvas LMS assignments sync in through a Chrome extension
-and appear as tasks. Finishing daily tasks — school work and life care — earns coins.
-Coins grow the kin (three stars) and adopt new kin and room scenes. Six tabs: Home,
-Focus, Games, Learn, Friends, Kin. No accounts. Nothing is ever taken away.
+A companion app for **college undergraduates** (changed 2026-09-08; it used to say high
+school). The Learn tab's 57 micro-lessons teach personal finance, study skills,
+psychology, philosophy, people skills and work — not the SAT. A small mascot, the
+**kin**, lives on the home screen like Finch's bird. Real Canvas LMS assignments sync in
+through a Chrome extension and appear as tasks. Finishing daily tasks — coursework and
+life care — earns coins. Coins grow the kin (three stars) and adopt new kin and room
+scenes. Six daily puzzle games live on the Play rail. Five tabs: Home, Focus, Learn,
+Friends, Kin. No accounts. Nothing is ever taken away **except the puzzle
+rating**, which is the one number allowed to fall (design/SOCIAL-PLAN.md §3).
 
 ## Read these files first
 
@@ -29,6 +33,8 @@ Focus, Games, Learn, Friends, Kin. No accounts. Nothing is ever taken away.
   `CanvasSync.swift` — the only data the app has. Design against real fields. Never
   invent a stat, a preset list, or a number the app could not already know. Never ask
   the student to type a number the app could work out.
+- `design/SOCIAL-PLAN.md` — the friend board, tank visits and the rating, and the
+  working app each one copies. Read this before any social screen.
 - `design/screenshots/` — the app as it runs today (`18`–`23` are the newest).
 - The most recent finished handoffs, for the level to match:
   `design/handoff-kin/README.md`, `design/handoff-friends/README.md`,
@@ -61,8 +67,12 @@ idle, bounce, celebrate, wave, sleep, dance, peek, startle, slump.
 
 - Coins pay for **finishing**, never for grades, correct answers, or beating a friend.
 - **No meters.** Nothing decays. The kin is never hungry, sad, neglected or punished.
-- **No streaks, no countdowns, no padlocks, no `?` tiles.** Every number shown can only
-  go up. "New picks tomorrow" is the most urgency allowed.
+- **No streaks, no countdowns, no padlocks, no `?` tiles.** "New picks tomorrow" is the
+  most urgency allowed.
+- Every number shown can only go up, with **one** exception added 2026-09-08: the puzzle
+  **rating**, copied from chess.com's puzzle rating. It is measured, not self-reported,
+  which is why it is allowed to fall. It appears on the game end card and on the Play
+  header. It never appears on Home, never in red, and never in a notification.
 - **No free text between students.** Anything a student can send is chosen from a fixed
   set of drawn cards. No DMs, no captions, no photos, no camera.
 - **Ranking is opt-in, never the default.** The default social number is a group total.

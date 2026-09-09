@@ -68,7 +68,7 @@ struct LearnView: View {
 
                     VStack(alignment: .leading, spacing: 12) {
                         playTitle
-                        playTiles
+                        playRail
                     }
 
                     savedRow
@@ -97,7 +97,11 @@ struct LearnView: View {
                 case .track(let id): TrackMapView(trackID: id, onRead: open)
                 case .saved: SavedCardsView(onRead: open)
                 case .dailyWord: WordleView()
-                case .numberLine: NumberLineView()
+                case .trace: TraceView()
+                case .pearls: PearlsView()
+                case .balance: BalanceView()
+                case .ladder: LadderView()
+                case .thread: ThreadView()
                 }
             }
         }
@@ -324,9 +328,12 @@ struct LearnView: View {
 
     // MARK: - Play
 
-    /// Daily Word and Number Line, moved here from the Games tab on 2026-09-06 so
-    /// the tab bar could drop to five (design/hicks-law-plan.md). Two tiles, no
-    /// hero: the one big thing on this screen stays the lesson.
+    /// The Play rail: Daily Word and Number Line moved here from the Games tab on
+    /// 2026-09-06 so the tab bar could drop to five (design/hicks-law-plan.md), and
+    /// the four games of 2026-09-08 joined them (design/GAMES-PLAN.md). Six tiles
+    /// is past the five-equal-choices rule, so it is a catalog: a rail that sorts
+    /// today's unplayed games first and never cuts one. No hero: the one big thing
+    /// on this screen stays the lesson.
     private var playTitle: some View {
         HStack(alignment: .top, spacing: 10) {
             PlayIcon(size: 28).padding(.top, 1)
@@ -334,63 +341,134 @@ struct LearnView: View {
                 Text("Play")
                     .font(Theme.font(19, .black))
                     .foregroundStyle(Theme.ink)
-                Text("A word a day, and ten quick numbers")
+                Text(playLine)
                     .font(Theme.font(13, .bold))
                     .foregroundStyle(Theme.muted)
+            }
+            Spacer(minLength: 8)
+            // The one competitive number that works with nobody else on the app.
+            // Hidden until the first result, so a new student is not handed a score
+            // they have not played for.
+            if state.rating.settled > 0 {
+                VStack(spacing: 0) {
+                    Text(state.rating.display)
+                        .font(Theme.font(15, .black))
+                        .foregroundStyle(Theme.ink)
+                    Text("RATING")
+                        .font(Theme.font(8.5, .black)).tracking(1)
+                        .foregroundStyle(Theme.muted)
+                }
+                .padding(.top, 2)
             }
         }
         .padding(.horizontal, 24)
     }
 
-    private var playTiles: some View {
-        HStack(spacing: 12) {
-            NavigationLink(value: LearnRoute.dailyWord) {
-                playTile(name: "Daily Word", line: dailyWordLine,
-                         fill: Theme.hex(0xFFC94D), ink: Theme.hex(0x3A2A05)) {
-                    Text("A").font(Theme.font(16, .black)).foregroundStyle(Theme.hex(0x7A5C1E))
-                }
-            }
-            .buttonStyle(PressStyle(scale: 0.97))
-            .accessibilityLabel("Daily Word, \(dailyWordLine)")
+    private var playLine: String {
+        let tiles = playTiles
+        let left = tiles.filter { !$0.played }.count
+        if !state.playClaimedToday { return "\(Self.countWord(tiles.count)) today. First finish banks 30." }
+        if left == 0 { return "All done today. New ones tomorrow." }
+        return "Banked. \(Self.countWord(left)) more for the result line."
+    }
 
-            NavigationLink(value: LearnRoute.numberLine) {
-                playTile(name: "Number Line", line: numberLineLine,
-                         fill: Theme.hex(0x9B7BEA), ink: Theme.hex(0x2A1A57)) {
-                    Text("7").font(Theme.font(16, .black)).foregroundStyle(Theme.hex(0x6B4FBF))
+    private static func countWord(_ n: Int) -> String {
+        ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"].indices.contains(n - 1)
+            ? ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"][n - 1] : "\(n)"
+    }
+
+    private var playRail: some View {
+        let tiles = playTiles
+        let ordered = tiles.filter { !$0.played } + tiles.filter { $0.played }
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(ordered) { tile in
+                    NavigationLink(value: tile.route) {
+                        playTile(tile)
+                    }
+                    .buttonStyle(PressStyle(scale: 0.97))
+                    .accessibilityLabel("\(tile.name), \(tile.line)")
                 }
             }
-            .buttonStyle(PressStyle(scale: 0.97))
-            .accessibilityLabel("Number Line, \(numberLineLine)")
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
+    }
+
+    /// One tile per game. `played` is whether today's is done; it sorts to the end.
+    private struct PlayTile: Identifiable {
+        let route: LearnRoute
+        let name: String
+        let line: String
+        let played: Bool
+        let fill: Color
+        let ink: Color
+        let glyph: PlayGlyph
+        var id: String { name }
+    }
+
+    private var playTiles: [PlayTile] {
+        let today = state.game.effectiveDay
+        let plus = state.playClaimedToday ? "" : " · +30"
+        let number = PlayDeal.number()
+        let pearlsDone = state.game.pearlsPlay.lastDay == today
+        let balanceDone = state.game.balancePlay.lastDay == today
+        let ladderDone = state.game.ladderPlay.lastDay == today
+        let traceDone = state.game.tracePlay.lastDay == today
+        // A missed thread is over for the day too: five misses, answer shown.
+        let threadDone = state.game.threadPlay.lastDay == today
+            || (state.playProgress(\.threadPlay, for: today)?.count ?? 0) >= 5
+        return [
+            PlayTile(route: .dailyWord, name: "Daily Word", line: dailyWordLine,
+                     played: state.wordleClaimedToday,
+                     fill: Theme.hex(0xFFC94D), ink: Theme.hex(0x3A2A05), glyph: .letter("A", Theme.hex(0x7A5C1E))),
+            PlayTile(route: .trace, name: "Trace",
+                     line: traceDone ? "Solved" : "Board \(number)\(plus)",
+                     played: traceDone,
+                     fill: Theme.hex(0x9B7BEA), ink: Theme.hex(0x2A1A57), glyph: .trace),
+            PlayTile(route: .pearls, name: "Pearls",
+                     line: pearlsDone ? "Solved" : "\(PlayDeal.isSunday() ? "8×8" : "7×7") · reef \(number)\(plus)",
+                     played: pearlsDone,
+                     fill: Theme.hex(0x4CA8E8), ink: Theme.hex(0x0B3652), glyph: .pearl),
+            PlayTile(route: .balance, name: "Balance",
+                     line: balanceDone ? "Solved" : "Grid \(number)\(plus)",
+                     played: balanceDone,
+                     fill: Theme.hex(0xA5CE6B), ink: Theme.hex(0x2F4712), glyph: .dots),
+            PlayTile(route: .ladder, name: "Ladder",
+                     line: ladderDone ? "Solved" : "Ladder \(number)\(plus)",
+                     played: ladderDone,
+                     fill: Theme.mint, ink: Theme.hex(0x0F3D2B), glyph: .ladder),
+            PlayTile(route: .thread, name: "Thread",
+                     line: threadDone ? (state.game.threadPlay.lastDay == today ? "Solved" : "See the answer") : "Thread \(number)\(plus)",
+                     played: threadDone,
+                     fill: Theme.hex(0xF7A8B8), ink: Theme.hex(0x5A1F2E), glyph: .thread),
+        ]
     }
 
     /// The Games rail card, at half the screen width.
-    private func playTile<G: View>(name: String, line: String, fill: Color, ink: Color,
-                                   @ViewBuilder glyph: () -> G) -> some View {
+    private func playTile(_ tile: PlayTile) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             RoundedRectangle(cornerRadius: 11, style: .continuous)
                 .fill(Theme.card)
                 .frame(width: 34, height: 34)
-                .overlay { glyph() }
+                .overlay { PlayGlyphView(glyph: tile.glyph) }
             Spacer(minLength: 10)
-            Text(name)
+            Text(tile.name)
                 .font(Theme.font(17, .black))
                 .tracking(-0.3)
-                .foregroundStyle(ink)
+                .foregroundStyle(tile.ink)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
-            Text(line)
+            Text(tile.line)
                 .font(Theme.font(10.5, .black))
-                .foregroundStyle(ink)
+                .foregroundStyle(tile.ink)
                 .lineLimit(1)
                 .minimumScaleFactor(0.85)
                 .padding(.top, 5)
         }
         .padding(13)
-        .frame(maxWidth: .infinity, minHeight: 118, alignment: .leading)
+        .frame(minWidth: 168, maxWidth: 168, minHeight: 118, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous).fill(fill)
+            RoundedRectangle(cornerRadius: 24, style: .continuous).fill(tile.fill)
                 .overlay(alignment: .topTrailing) {
                     Circle().fill(.white.opacity(0.18)).frame(width: 70, height: 70)
                         .offset(x: 16, y: -16)
@@ -405,14 +483,7 @@ struct LearnView: View {
             return guesses.count == 1 ? "Solved, first try" : "Solved in \(guesses.count)"
         }
         if guesses.count >= 6 { return "See the answer" }
-        return "Word \(WordleGame.puzzleNumber()) · +30"
-    }
-
-    private var numberLineLine: String {
-        if state.numberLineClaimedToday {
-            return state.game.numberLineBest.map { "Best \($0)% · play again" } ?? "Play again"
-        }
-        return "Ten quick ones · +25"
+        return state.playClaimedToday ? "Word \(WordleGame.puzzleNumber())" : "Word \(WordleGame.puzzleNumber()) · +30"
     }
 
     private var savedRow: some View {
@@ -486,7 +557,11 @@ enum LearnRoute: Hashable {
     case track(String)
     case saved
     case dailyWord
-    case numberLine
+    case trace
+    case pearls
+    case balance
+    case ladder
+    case thread
 }
 
 // MARK: - Small pieces

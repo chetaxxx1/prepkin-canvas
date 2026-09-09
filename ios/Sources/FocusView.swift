@@ -20,7 +20,6 @@ struct FocusView: View {
     @State private var banked: TimeInterval = 0
     @State private var legStart: Date?
     @State private var total: TimeInterval = 0
-    @State private var pairedTask: DailyTask?
     @State private var confirmingClockOut = false
     @State private var now = Date()
 
@@ -48,6 +47,9 @@ struct FocusView: View {
                 if phase == .running && new > old { state.play(.bounce) }
             }
             .onChange(of: phase) { _, new in state.hideTabBar = new != .ready }
+            // On appearing, not on a timer: a table of three friends is not worth a
+            // poll, and a row is filtered again on read so a stale one cannot show.
+            .task { await state.refreshFriendsFocusing() }
             .onDisappear { state.hideTabBar = false }
         }
     }
@@ -125,6 +127,8 @@ struct FocusView: View {
 
             Spacer()
 
+            atTheTable
+
             Button { start() } label: {
                 Text("Start focus")
                     .font(Theme.font(17, .heavy))
@@ -137,6 +141,67 @@ struct FocusView: View {
         }
         .padding(24)
         .padding(.bottom, 104)
+    }
+
+    // MARK: - Study Together
+
+    /// Friends who are working right now, and one tap to sit down with them.
+    ///
+    /// The cheap version of `FRIENDS-PLAN.md` §3: **two independent timers.** Join
+    /// starts YOUR clock at the nearest offered length, and after that the two
+    /// sessions have nothing to do with each other. Nobody is told if you stop, and
+    /// nobody is paid differently for having company.
+    ///
+    /// Absent, not empty, when nobody is working. A row that says "no friends are
+    /// focusing" would turn a calm screen into a report on how alone you are.
+    @ViewBuilder private var atTheTable: some View {
+        let table = state.liveFocusPresences
+        if let first = table.first {
+            HStack(spacing: 10) {
+                HStack(spacing: -12) {
+                    ForEach(table.prefix(3)) { who in
+                        SproutImage(speciesID: who.speciesID, level: who.level,
+                                    skin: who.lookID, size: 34)
+                            .frame(width: 34, height: 34)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(tableTitle(table))
+                        .font(Theme.font(13.5, .heavy))
+                        .foregroundStyle(Theme.ink)
+                        .lineLimit(1).minimumScaleFactor(0.8)
+                    Text(StudyTogether.line(for: first, at: now))
+                        .font(Theme.font(11.5, .bold))
+                        .foregroundStyle(Theme.muted)
+                }
+                Spacer(minLength: 4)
+                if let length = StudyTogether.joinLength(minutesLeft: first.minutesLeft(at: now)) {
+                    Button {
+                        minutes = length
+                        start()
+                    } label: {
+                        Text("Join")
+                            .font(Theme.font(13.5, .black))
+                            .foregroundStyle(Theme.onDarkWarm)
+                            .padding(.horizontal, 16).frame(height: 34)
+                            .background(Capsule().fill(Theme.ink))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Join \(first.displayName) for \(length) minutes")
+                }
+            }
+            .padding(.horizontal, 12).padding(.vertical, 10)
+            .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Theme.card)
+                .shadow(color: .black.opacity(0.05), radius: 6, y: 2))
+            .padding(.bottom, 14)
+        }
+    }
+
+    /// One name, or a count. Never a list of names running off the edge.
+    private func tableTitle(_ table: [FocusPresence]) -> String {
+        guard let first = table.first else { return "" }
+        if table.count == 1 { return first.displayName }
+        return "\(first.displayName) and \(table.count - 1) more"
     }
 
     // MARK: - On shift
@@ -277,9 +342,6 @@ struct FocusView: View {
                               paused: phase == .paused,
                               size: 250 * k)
             }
-            if let task = pairedTask {
-                taskPill(task).offset(y: 6)
-            }
         }
     }
 
@@ -320,46 +382,9 @@ struct FocusView: View {
         .frame(width: 13, height: 11, alignment: .leading)
     }
 
-    /// The handoff pairs the shift with a Canvas task and never wraps the pill, so
-    /// the strings are cut to length here rather than left to the layout — that
-    /// keeps the pill hugging its content the way the frame draws it.
-    private func taskPill(_ task: DailyTask) -> some View {
-        HStack(spacing: 8) {
-            Circle().fill(Reef.float).frame(width: 7, height: 7)
-            Text(clipped(task.title, to: 22))
-                .font(Theme.font(12.5, .black))
-                .foregroundStyle(Theme.ink)
-            if let code = courseCode(for: task) {
-                Text(code)
-                    .font(Theme.font(11.5, .heavy))
-                    .foregroundStyle(Theme.bagInk)
-            }
-        }
-        .lineLimit(1)
-        .padding(.horizontal, 15)
-        .padding(.vertical, 8)
-        .background(
-            Capsule().fill(Theme.card)
-                .shadow(color: Color.black.opacity(0.13), radius: 5, y: 3)
-        )
-    }
-
     /// Only a genuine course code goes in the pill. Canvas course *names* run to
     /// whole sentences ("Thayer Welcome and Orientation"), and a sentence sliced
     /// to nine characters tells the student nothing — the title alone is better.
-    private func courseCode(for task: DailyTask) -> String? {
-        guard let name = task.detail,
-              let code = state.courses.first(where: { $0.name == name })?.code,
-              !code.isEmpty, code.count <= 12
-        else { return nil }
-        return code
-    }
-
-    private func clipped(_ text: String, to limit: Int) -> String {
-        text.count <= limit ? text
-            : text.prefix(limit).trimmingCharacters(in: .whitespaces) + "…"
-    }
-
     /// 250pt track to match the scene circle above it. The handoff's optional
     /// milestone tick is left off — there are no breaks inside a shift yet.
     private func progressBar(_ k: CGFloat) -> some View {
@@ -427,11 +452,11 @@ struct FocusView: View {
         banked = 0
         legStart = Date()
         now = Date()
-        // Whatever is next on today's list rides along, so the shift is tied to a
-        // real piece of work rather than an anonymous timer.
-        pairedTask = state.tasks.first { !$0.done }
         phase = .running
         state.play(.wave)
+        // Friends can see the row from here. Fire and forget: this clock never waits
+        // on the bridge, and a session nobody could see still pays the same.
+        state.announceFocus(minutes: minutes)
     }
 
     private func pause() {
@@ -462,9 +487,9 @@ struct FocusView: View {
         banked = 0
         total = 0
         phase = .ready
-        pairedTask = nil
         // The timer can run out while "Clock out early?" is still up.
         confirmingClockOut = false
+        state.endFocusAnnouncement()
         state.recordShift(miles: driven)
         if paid > 0 {
             state.recordFocus(minutes: paid)

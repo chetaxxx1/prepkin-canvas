@@ -108,6 +108,15 @@ struct GameState: Codable, Equatable {
     /// Best round accuracy, 0–100. `nil` until the first round.
     var numberLineBest: Int?
 
+    /// The four Play puzzles added 2026-09-08 (design/GAMES-PLAN.md). Same shape as
+    /// the Daily Word record above, one struct each instead of five fields each.
+    var ladderPlay = PlayRecord<[String]>()
+    var threadPlay = PlayRecord<[String]>()
+    var balancePlay = PlayRecord<[Int]>()
+    var pearlsPlay = PlayRecord<[Int]>()
+    /// Trace (2026-09-08) replaced Number Line on the rail; the old fields stay for old saves.
+    var tracePlay = PlayRecord<[Int]>()
+
     /// The code the student types into the Chrome extension. Optional on purpose:
     /// nothing is created until they actually open the connect screen, and the app
     /// works fully without one.
@@ -130,6 +139,10 @@ struct GameState: Codable, Equatable {
     /// change it.
     var friendCode: String?
 
+    /// The puzzle rating. See `Rating.swift` for why this is the one number in the
+    /// app that is allowed to go down.
+    var rating = PlayerRating()
+
     /// The friends whose kins show on the tab. Empty until there is a bridge to
     /// fill it: a student must never see a person who does not exist.
     var friends: [Friend] = []
@@ -143,13 +156,14 @@ struct GameState: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case ledger, owned, activeChibiID, sceneID, ownedScenes, completedLessons
         case templates, canvasItems, canvasCourses, currentDay, maxDayReached
-        case settings, lastOpenedAt, pairingCode, lastCanvasSyncAt, bestShift, friendCode
+        case settings, lastOpenedAt, pairingCode, lastCanvasSyncAt, bestShift, friendCode, rating
         case pairingToken, ownedLooks, requestsAppliedAt
         case friends, pendingFriendCodes
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
         case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick
         case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
+        case ladderPlay, threadPlay, balancePlay, pearlsPlay, tracePlay
         case league
     }
 
@@ -187,6 +201,7 @@ struct GameState: Codable, Equatable {
         requestsAppliedAt = try c.decodeIfPresent(Date.self, forKey: .requestsAppliedAt)
         lastCanvasSyncAt = try c.decodeIfPresent(Date.self, forKey: .lastCanvasSyncAt)
         friendCode = try c.decodeIfPresent(String.self, forKey: .friendCode)
+        rating = try c.decodeIfPresent(PlayerRating.self, forKey: .rating) ?? blank.rating
         friends = try c.decodeIfPresent([Friend].self, forKey: .friends) ?? blank.friends
         pendingFriendCodes = try c.decodeIfPresent([String].self, forKey: .pendingFriendCodes) ?? blank.pendingFriendCodes
         bestShift = try c.decodeIfPresent(Int.self, forKey: .bestShift) ?? blank.bestShift
@@ -208,6 +223,11 @@ struct GameState: Codable, Equatable {
         wordleGuessDay = try c.decodeIfPresent(DayKey.self, forKey: .wordleGuessDay)
         numberLinePlayed = try c.decodeIfPresent(Int.self, forKey: .numberLinePlayed) ?? blank.numberLinePlayed
         numberLineBest = try c.decodeIfPresent(Int.self, forKey: .numberLineBest)
+        ladderPlay = try c.decodeIfPresent(PlayRecord<[String]>.self, forKey: .ladderPlay) ?? blank.ladderPlay
+        threadPlay = try c.decodeIfPresent(PlayRecord<[String]>.self, forKey: .threadPlay) ?? blank.threadPlay
+        balancePlay = try c.decodeIfPresent(PlayRecord<[Int]>.self, forKey: .balancePlay) ?? blank.balancePlay
+        pearlsPlay = try c.decodeIfPresent(PlayRecord<[Int]>.self, forKey: .pearlsPlay) ?? blank.pearlsPlay
+        tracePlay = try c.decodeIfPresent(PlayRecord<[Int]>.self, forKey: .tracePlay) ?? blank.tracePlay
         // A save written before the league existed opens in Tidepool with no
         // pennants. There is no history to reconstruct and inventing one would be a
         // keepsake nobody earned.
@@ -241,6 +261,7 @@ struct GameState: Codable, Equatable {
         }
         currentDay = day
         settleLeagueWeekIfNeeded()
+        settleRatingIfNeeded(to: day)
     }
 
     // MARK: - The league week
@@ -444,20 +465,111 @@ struct GameState: Codable, Equatable {
         bestShift = max(bestShift, miles)
     }
 
-    /// Pays for the daily word once per day. Replaces the old `@AppStorage` day
-    /// stamp, which a clock change could reset. `day` is the day the puzzle was
-    /// dealt — a solve finished just past midnight still settles the word it was.
+    // MARK: - The Play pool
+
+    /// Play pays once a day: the first game finished banks `playReward`, and every
+    /// game after that posts a zero line, so it still counts as played and its
+    /// solved count still moves. One pool keeps six games from out-earning real work,
+    /// and one number is easier to read than six (design/GAMES-PLAN.md §4).
+    static let playReward = 30
+    static let playReasons: Set<CoinReason> = [.wordle, .numberLine, .ladder, .thread, .balance, .pearls, .trace]
+
+    /// The game that banked `day`'s coins, or nil while the pool is still open.
+    func playBanked(on day: DayKey) -> CoinReason? {
+        ledger.entries.first { $0.day == day && $0.amount > 0 && Self.playReasons.contains($0.reason) }?.reason
+    }
+
+    var playClaimedToday: Bool { playBanked(on: effectiveDay) != nil }
+
+    /// Posts one game's line for `day`, paid only while the pool is open. Returns
+    /// what it paid. A key already posted pays nothing and changes nothing.
+    private mutating func postPlay(_ reason: CoinReason, key: String, day: DayKey, now: Date) -> Int {
+        let amount = playBanked(on: day) == nil ? Self.playReward : 0
+        let ok = ledger.post(CoinEntry(key: key, amount: amount, reason: reason, day: day, at: now))
+        return ok ? amount : 0
+    }
+
+    /// Marks one of the four new games solved for `day`, once per day, and pays the
+    /// pool if it is still open. `day` is the day the puzzle was dealt. No streak:
+    /// the only counter is `solved`, and it only goes up (PRODUCT.md).
     @discardableResult
-    mutating func recordWordleWin(reward: Int = 30, guesses: Int = 6, day: DayKey? = nil,
+    mutating func recordPlaySolve<P>(_ path: WritableKeyPath<GameState, PlayRecord<P>>, reason: CoinReason,
+                                     day: DayKey? = nil, now: Date = Date()) -> Int {
+        let day = day ?? effectiveDay
+        guard self[keyPath: path].lastDay != day else { return 0 }
+        self[keyPath: path].solved += 1
+        self[keyPath: path].lastDay = day
+        // A win on the board that was dealt, before the record is cleared by the
+        // next day's settle. An unrated board scores nothing (`Rating.after`).
+        rating = Rating.after(rating, puzzle: self[keyPath: path].puzzleRating ?? Rating.unrated,
+                              solved: true, day: day)
+        return postPlay(reason, key: "\(reason.rawValue):\(day.raw)", day: day, now: now)
+    }
+
+    /// Today's board, so leaving mid-puzzle and coming back finds it. Good only for
+    /// the day it was dealt; any other day reads as a fresh board.
+    func playProgress<P>(_ path: KeyPath<GameState, PlayRecord<P>>, for day: DayKey) -> P? {
+        self[keyPath: path].progressDay == day ? self[keyPath: path].progress : nil
+    }
+
+    mutating func savePlayProgress<P>(_ path: WritableKeyPath<GameState, PlayRecord<P>>, _ progress: P,
+                                      startedAt: Date? = nil, day: DayKey,
+                                      puzzleRating: Int = Rating.unrated) {
+        self[keyPath: path].progress = progress
+        self[keyPath: path].progressDay = day
+        self[keyPath: path].startedAt = startedAt
+        // Saved on the first move, not on opening the screen: this is what makes
+        // an unfinished board count as an attempt tomorrow, and looking at one and
+        // walking away count as nothing.
+        self[keyPath: path].puzzleRating = puzzleRating > Rating.unrated ? puzzleRating : nil
+    }
+
+    // MARK: - The rating
+
+    /// Settles yesterday's boards: any game whose last saved board was a day the
+    /// student never solved is a loss, once, at the rating that board was worth.
+    ///
+    /// Hung off `advance(to:)` beside the league week, for the same reason — it
+    /// fires on the four moments the day already rolls and needs no timer. Opening
+    /// a game and leaving without a move is not a loss, because nothing was saved.
+    ///
+    /// The five games a rating is kept for are named here one by one. Daily Word is
+    /// not among them: a word guessed from five letters has a luck in it that a
+    /// Takuzu grid does not, and `words.json` carries no per-word difficulty to
+    /// rate against. A heterogeneous list of key paths is not a thing Swift will
+    /// hold, so five lines it is.
+    @discardableResult
+    mutating func settleRatingIfNeeded(to day: DayKey = .today()) -> Int {
+        settleRating(\.balancePlay, to: day)
+            + settleRating(\.pearlsPlay, to: day)
+            + settleRating(\.tracePlay, to: day)
+            + settleRating(\.ladderPlay, to: day)
+            + settleRating(\.threadPlay, to: day)
+    }
+
+    private mutating func settleRating<P>(_ path: WritableKeyPath<GameState, PlayRecord<P>>,
+                                          to day: DayKey) -> Int {
+        let record = self[keyPath: path]
+        guard let dealt = record.progressDay, dealt < day,
+              let worth = record.puzzleRating, record.lastDay != dealt else { return 0 }
+        rating = Rating.after(rating, puzzle: worth, solved: false, day: dealt)
+        // Cleared so the same unfinished board cannot be settled twice.
+        self[keyPath: path].puzzleRating = nil
+        return 1
+    }
+
+    /// Pays for the daily word through the pool, once per day. `day` is the day the
+    /// puzzle was dealt — a solve finished just past midnight still settles the
+    /// word it was.
+    @discardableResult
+    mutating func recordWordleWin(guesses: Int = 6, day: DayKey? = nil,
                                   now: Date = Date(), calendar: Calendar = .current) -> Int {
         let day = day ?? effectiveDay
-        let ok = ledger.post(CoinEntry(key: "wordle:\(day.raw)", amount: reward,
-                                       reason: .wordle, day: day, at: now))
-        guard ok else { return 0 }
+        guard !ledger.isClaimed("wordle:\(day.raw)") else { return 0 }
         wordleSolved += 1
         wordleBest = min(wordleBest ?? guesses, guesses)
         wordleLastDay = day
-        return reward
+        return postPlay(.wordle, key: "wordle:\(day.raw)", day: day, now: now)
     }
 
     static func dayBefore(_ day: DayKey, calendar: Calendar = .current) -> DayKey? {
@@ -470,17 +582,14 @@ struct GameState: Codable, Equatable {
 
     var wordleClaimedToday: Bool { ledger.isClaimed("wordle:\(effectiveDay.raw)") }
 
-    /// A finished Number Line round. Paid once a day, whatever the accuracy — the
-    /// score is a number to beat, never the thing that decides the coins.
+    /// A finished Number Line round. Paid through the pool once a day, whatever the
+    /// accuracy — the score is a number to beat, never the thing that decides the coins.
     @discardableResult
-    mutating func recordNumberLineRound(accuracy: Int, reward: Int = 25, day: DayKey? = nil,
-                                        now: Date = Date()) -> Int {
+    mutating func recordNumberLineRound(accuracy: Int, day: DayKey? = nil, now: Date = Date()) -> Int {
         let day = day ?? effectiveDay
         numberLinePlayed += 1
         numberLineBest = max(numberLineBest ?? 0, accuracy)
-        let ok = ledger.post(CoinEntry(key: "numberline:\(day.raw)", amount: reward,
-                                       reason: .numberLine, day: day, at: now))
-        return ok ? reward : 0
+        return postPlay(.numberLine, key: "numberline:\(day.raw)", day: day, now: now)
     }
 
     var numberLineClaimedToday: Bool { ledger.isClaimed("numberline:\(effectiveDay.raw)") }
@@ -664,4 +773,25 @@ struct GameState: Codable, Equatable {
         canvasCourses = []
         lastCanvasSyncAt = nil
     }
+}
+
+// MARK: - Play records
+
+/// One Play game's record. `solved` is kept here rather than derived from the
+/// ledger because the ledger compacts lines older than 90 days and it should
+/// never go down. `progress` is today's board in whatever shape the game
+/// keeps — rungs, misses, a grid — and is only good for `progressDay`.
+struct PlayRecord<Progress: Codable & Equatable>: Codable, Equatable {
+    var solved = 0
+    var lastDay: DayKey?
+    var progress: Progress?
+    var progressDay: DayKey?
+    /// When today's board was first touched, so the stopwatch survives leaving
+    /// and coming back. Nil for the games that don't keep time.
+    var startedAt: Date?
+    /// What `progressDay`'s board was worth. Kept here rather than looked up again
+    /// at settle time so a board that has since scrolled out of the deal — a
+    /// re-generated content file, a clock rolled forward a week — still settles at
+    /// the rating it was actually played at. Nil for a board with no rating.
+    var puzzleRating: Int?
 }

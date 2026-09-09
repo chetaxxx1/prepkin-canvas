@@ -93,7 +93,7 @@ final class StoreTests: XCTestCase {
         let now = Date()
         var done = DailyTask(id: "l-1", title: "Drink a glass of water", kind: .life)
         done.done = true
-        let open = DailyTask(id: "s-1", title: "20 min SAT practice", kind: .study)
+        let open = DailyTask(id: "s-1", title: "20 min study session", kind: .study)
 
         let state = Store.fromLegacy(legacy(coins: 340, savedOn: now, tasks: [done, open]), now: now)
 
@@ -116,7 +116,7 @@ final class StoreTests: XCTestCase {
         let now = Date()
         var life = DailyTask(id: "l-1", title: "Drink a glass of water", kind: .life)
         life.done = true
-        var study = DailyTask(id: "s-1", title: "20 min SAT practice", kind: .study)
+        var study = DailyTask(id: "s-1", title: "20 min study session", kind: .study)
         study.done = true
 
         let state = Store.fromLegacy(legacy(coins: 5, savedOn: now, tasks: [life, study]), now: now)

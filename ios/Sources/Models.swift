@@ -159,7 +159,7 @@ enum TaskCategory: String, Codable, CaseIterable {
     case stretch, outdoors, connect, tidy
 
     /// Checked in this order — "Ch. 5 Problem Set" has to land on the ruler, not the
-    /// book, and "20 min SAT practice" on flashcards, not the ruler.
+    /// book, and "20 min study session" on flashcards, not the ruler.
     private static let keywords: [(TaskCategory, [String])] = [
         (.labs,       ["lab", "project", "writeup", "write-up", "report", "presentation",
                        "experiment", "poster"]),

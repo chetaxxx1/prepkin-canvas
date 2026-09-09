@@ -113,9 +113,12 @@ final class WordleGame: ObservableObject {
         return result
     }
 
-    func keyboardState(_ letter: String) -> TileState {
+    /// `settled` is how many guesses the keys may read from. The view passes one
+    /// fewer while the newest row is still flipping, so the keys colour with the
+    /// tiles, not before them.
+    func keyboardState(_ letter: String, settled: Int? = nil) -> TileState {
         var best = TileState.empty
-        for guess in guesses {
+        for guess in guesses.prefix(settled ?? guesses.count) {
             let st = states(for: guess)
             for (i, ch) in guess.enumerated() where String(ch) == letter {
                 switch st[i] {
@@ -152,6 +155,13 @@ struct WordleView: View {
     /// Bumped on every rejected guess. The bubble reads off it so two bad words in a
     /// row restart the 1.5 s rather than the second one inheriting the first's timer.
     @State private var notAWord = 0
+    /// The Wordle reveal: the row just entered flips tile by tile, left to right,
+    /// and shows its colours only as each tile comes back round. The end card
+    /// waits for the last tile.
+    @State private var revealRow = -1
+    @State private var revealedCols = 5
+    @State private var flipping: Set<Int> = []
+    @State private var revealDone = true
 
     private static let butter = Theme.hex(0xFFC94D)
     private static let inkOnButter = Theme.hex(0x3A2A05)
@@ -173,13 +183,14 @@ struct WordleView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-            if game.finished { endCard.transition(.move(edge: .bottom).combined(with: .opacity)) }
+            if game.finished, revealDone { endCard.transition(.move(edge: .bottom).combined(with: .opacity)) }
         }
         .background(Theme.paper)
         .ignoresSafeArea(edges: .top)
         .toolbar(.hidden, for: .navigationBar)
         .hidesTabBar()
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: game.finished)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: revealDone)
         .onAppear {
             alreadyClaimed = state.wordleClaimedToday
             let saved = state.wordleGuesses(for: game.dealtDay)
@@ -302,16 +313,20 @@ struct WordleView: View {
             }
             return ("", .empty)
         }()
-        let filled = tileState != .empty
+        // Mid-reveal, a tile that has not flipped yet still looks unjudged.
+        let pending = row == revealRow && col >= revealedCols
+        let shown: WordleGame.TileState = pending ? .empty : tileState
+        let filled = shown != .empty
         return Text(letter)
             .font(Theme.font(24, .black))
             .foregroundStyle(filled ? .white : Theme.ink)
             .frame(width: 56, height: 56)
-            .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(color(tileState)))
+            .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(color(shown)))
             .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous)
                 .strokeBorder(filled ? .clear : (letter.isEmpty ? Theme.hairline : Theme.ink.opacity(0.35)),
                               lineWidth: 2))
-            .scaleEffect(letter.isEmpty || filled ? 1 : 1.05)
+            .scaleEffect(letter.isEmpty || filled || pending ? 1 : 1.05)
+            .rotation3DEffect(.degrees(row == revealRow && flipping.contains(col) ? 90 : 0), axis: (x: 1, y: 0, z: 0))
             .animation(.spring(response: 0.18, dampingFraction: 0.6), value: letter)
     }
 
@@ -366,11 +381,11 @@ struct WordleView: View {
     }
 
     private func keyInk(_ letter: String) -> Color {
-        game.keyboardState(letter) == .empty ? Theme.ink : .white
+        game.keyboardState(letter, settled: settledGuesses) == .empty ? Theme.ink : .white
     }
 
     private func keyColor(_ letter: String) -> Color {
-        let s = game.keyboardState(letter)
+        let s = game.keyboardState(letter, settled: settledGuesses)
         return s == .empty ? Theme.card : color(s)
     }
 
@@ -408,6 +423,30 @@ struct WordleView: View {
             notAWord = 0
             state.saveWordleGuesses(game.guesses, for: game.dealtDay)
             UIImpactFeedbackGenerator(style: game.finished ? .medium : .light).impactOccurred()
+            reveal(row: game.guesses.count - 1)
+        }
+    }
+
+    /// Guesses the keyboard may colour from: all of them, minus the row mid-flip.
+    private var settledGuesses: Int { revealDone ? game.guesses.count : max(0, game.guesses.count - 1) }
+
+    /// Flip the row's tiles one at a time. Each goes edge-on, takes its colour,
+    /// and comes back. Skipped when the system asks for less motion.
+    private func reveal(row: Int) {
+        guard !reduceMotion else { revealDone = true; return }
+        revealRow = row
+        revealedCols = 0
+        revealDone = false
+        for col in 0..<5 {
+            let t = Double(col) * 0.26
+            DispatchQueue.main.asyncAfter(deadline: .now() + t) {
+                withAnimation(.easeIn(duration: 0.13)) { _ = flipping.insert(col) }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + t + 0.13) {
+                revealedCols = col + 1
+                withAnimation(.easeOut(duration: 0.13)) { _ = flipping.remove(col) }
+                if col == 4 { revealDone = true; revealRow = -1 }
+            }
         }
     }
 
