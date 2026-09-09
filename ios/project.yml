@@ -56,6 +56,11 @@ schemes:
     run:
       config: Debug
       storeKitConfiguration: PrepkinCanvas.storekit
+      # On by default so a Run on the phone comes up with the whole catalogue open. It is
+      # DEBUG-only and read from ProcessInfo, so a Release or TestFlight build ignores it
+      # entirely. Untick it in Product > Scheme > Edit Scheme to see the real save instead.
+      commandLineArguments:
+        "-unlockAll": true
     test:
       config: Debug
       targets: [PrepkinCanvasTests]

@@ -1,3 +1,14 @@
+import Foundation
+
+/// True only in a DEBUG build launched with `-unlockAll`. Gates the in-app costume rail.
+let sproutShowsCostumeTray: Bool = {
+    #if DEBUG
+    return ProcessInfo.processInfo.arguments.contains("-unlockAll")
+    #else
+    return false
+    #endif
+}()
+
 import SwiftUI
 import WebKit
 
@@ -100,6 +111,11 @@ struct SproutView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         if let view = Shared.webView {
             view.removeFromSuperview()
+            // The page is normally deaf to touches — the app drives it entirely through JS, so
+            // the web view is created with interaction off. The costume rail is the exception:
+            // it is a real control on the page and has to be tappable. Set on the reused view
+            // too, because Shared.webView outlives any one host.
+            view.isUserInteractionEnabled = sproutShowsCostumeTray
             context.coordinator.onReady = onReady
             context.coordinator.onLayout = onLayout
             // The page is already up, but this host starts covered and has to be
@@ -133,7 +149,7 @@ struct SproutView: UIViewRepresentable {
         // hands the page a safe-area inset and the tank stops short of the
         // bottom edge, leaving a band of bare page colour.
         view.scrollView.contentInsetAdjustmentBehavior = .never
-        view.isUserInteractionEnabled = false
+        view.isUserInteractionEnabled = sproutShowsCostumeTray
         view.backgroundColor = placeholder
         view.scrollView.backgroundColor = placeholder
         // Both of the above are invisible while the view is opaque, and it has to
@@ -216,6 +232,11 @@ struct SproutView: UIViewRepresentable {
                 URLQueryItem(name: "radius", value: String(format: "%.2f", radius)),
                 URLQueryItem(name: "tank", value: tank),
             ]
+            // Testing switch: show the page's own costume rail inside the app so the whole rack
+            // can be tried on a phone. DEBUG-only and behind -unlockAll, so it never ships.
+            if sproutShowsCostumeTray {
+                components.queryItems?.append(URLQueryItem(name: "tray", value: "1"))
+            }
             return components.url!
         }
     }

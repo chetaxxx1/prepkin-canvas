@@ -24,10 +24,13 @@ struct SproutImage: View {
     var size: CGFloat
 
     /// Drawn height of the three-star art as a fraction of the box width, over
-    /// every kin in the catalogue. Droplet's headphones at stage III reach far
-    /// above the crown, so the shared crop is nearly square and every still
-    /// draws a little smaller than before. `capture_sprout.py` prints this value.
-    static let heightRatio: CGFloat = 0.999
+    /// every kin in the catalogue. `capture_sprout.py` prints this value; it must be
+    /// updated whenever the stills are recaptured or every card reserves the wrong height.
+    ///
+    /// 2026-09-09: 0.999 -> 0.660. The stills were recaptured from the current rig, where a
+    /// stage-III kin spreads its fins 1293px wide against 853px of height. The old set was
+    /// nearly square because its tallest art was headphones reaching above the crown.
+    static let heightRatio: CGFloat = 0.660
 
     @State private var trigger = 0
 

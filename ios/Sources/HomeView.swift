@@ -204,7 +204,10 @@ struct HomeView: View {
         // and a masked ancestor stops WKWebView's out-of-process layer from
         // rendering — the tank and Sprout both vanish.
         .contentShape(Rectangle())
-        .gesture(tankGesture)
+        // The tank gesture is a DragGesture(minimumDistance: 0) across the whole scene, so it
+        // swallows every touch before the web view sees one. With the costume rail on, hand
+        // touches to the subviews instead — otherwise tapping a costume just makes him swim there.
+        .gesture(tankGesture, including: sproutShowsCostumeTray ? .subviews : .all)
         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: bubble)
         // The swim is physics on the page, so the pill travelling with him is a
         // near match rather than a synced one. Still better than a jump cut.
