@@ -12,6 +12,8 @@ This is how those get to exist. Written 2026-09-10.
   this domain in it. You do not need to sign up or transfer anything.
 - **The site is built.** It is the `site/` folder in this repo: a home page, the
   privacy policy, the terms, a support page, a 404, and seven redirect pages.
+  It is the `design/handoff-site/` design, turn-2 artboards, with Newsreader and
+  Nunito self-hosted in `site/fonts/` and the mark and Sprout in `site/img/`.
 - Right now prepkin.com returns **403**, so whatever is answering is not a site.
 
 ## Step 1 — deploy the folder
@@ -64,9 +66,23 @@ three numbers that carry the whole forecast.
 
 ## Still a placeholder
 
-`site/build.py` has `STORE_URL` set to a fake Chrome Web Store address, because
-the listing does not exist yet. **On the day it goes live:** change that one line,
-run `python3 site/build.py`, and redeploy. Same for `APP_URL`.
+`site/build.py` has `STORE_URL` set to a fake Chrome Web Store address and
+`APP_URL` to a fake App Store one, because neither listing exists yet. **On the
+day they go live:** change those two lines, run `python3 site/build.py`, and
+redeploy. Thirty-six links on the site point at the first one.
+
+## The Canvas shot is missing
+
+The hero and the "On your laptop" card were designed around a before/after shot
+of a real Canvas page. There is no such shot yet, so **the build leaves both
+blocks out entirely** rather than shipping an empty frame. That is why the two
+cards under "Two halves" are different heights right now.
+
+To fill them: put a 1120 x 520 image at `site/img/canvas-before-after.png` and a
+520 x 260 one at `site/img/canvas-card.png`, then rerun the build. Both appear on
+their own. Shoot them on the self-hosted Canvas sandbox — the VM has to be
+started from the Google Cloud console first, and its external IP changes each
+time.
 
 ## Rebuilding
 
@@ -85,4 +101,14 @@ so a push redeploys it.
 **No outside requests.** No Google Fonts, no CDN scripts, no hosted images. The
 Canvas skin's whole claim is that it makes zero external network requests, and a
 marketing site that pulls a font from Google undercuts the one thing we lead with.
-The CSS is inline in `build.py` for exactly this reason. Keep it that way.
+The CSS is inline in `build.py` and the two typefaces are `.woff2` files in
+`site/fonts/` for exactly this reason. Keep it that way.
+
+To check it after a change, look for anything that is not a store link:
+
+```bash
+grep -oh 'https\?://[^"'"'"' )]*' site/*.html site/*/index.html site/*/*/index.html | sort -u
+```
+
+The only answers should be the two store URLs and the `supabase.com` link inside
+the privacy policy's own text.
