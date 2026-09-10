@@ -572,7 +572,6 @@ struct DayEditorView: View {
     }
 
     private func row(_ t: TaskTemplate, editable: Bool = false) -> some View {
-        let tint = Self.rowTint(t)
         let confirming = editable && confirmingRemoveID == t.id
         return HStack(spacing: 14) {
             if editable {
@@ -591,10 +590,7 @@ struct DayEditorView: View {
                         withAnimation(.easeInOut(duration: 0.18)) { confirmingRemoveID = t.id }
                     }
             }
-            RoundedRectangle(cornerRadius: 17, style: .continuous)
-                .fill(tint.bg)
-                .frame(width: 50, height: 50)
-                .overlay(CategoryIcon(category: Self.category(t), size: 30))
+            IconTile(icon: Self.category(t).rawValue, size: 50)
             VStack(alignment: .leading, spacing: 4) {
                 Text(t.title)
                     .font(Theme.font(17, .bold))
@@ -684,23 +680,6 @@ struct DayEditorView: View {
 
     static func category(_ t: TaskTemplate) -> TaskCategory {
         TaskCategory.of(DailyTask(id: t.id, title: t.title, kind: t.kind))
-    }
-
-    /// One tile tint per object, from the handoff's preset list. Shared with the
-    /// first run's pick screen, which draws the same rows.
-    static func rowTint(_ t: TaskTemplate) -> (bg: Color, fg: Color) {
-        switch category(t) {
-        case .reading:            return (Theme.hex(0xECEFFC), Theme.hex(0x6B79D8))
-        case .writing, .problemSet, .labs, .study:
-            return (Theme.hex(0xFDF0E4), Theme.hex(0xE08A3C))
-        case .lifeCare:           return (Theme.hex(0xE6F3FA), Theme.hex(0x4A9CC4))
-        case .walk, .stretch:     return (D.mintTint, D.mintIcon)
-        case .outdoors:           return (Theme.hex(0xE9F5E2), Theme.hex(0x6BA04A))
-        case .sleep:              return (Theme.hex(0xF2ECFB), Theme.hex(0x8A6FC4))
-        case .connect:            return (Theme.hex(0xFDF0E4), Theme.hex(0xE08A3C))
-        case .tidy:               return (Theme.hex(0xEFEFEA), Theme.hex(0x8A8577))
-        case .meal:               return (D.coralTint, Theme.hex(0xE8574A))
-        }
     }
 
     // MARK: - Reminders

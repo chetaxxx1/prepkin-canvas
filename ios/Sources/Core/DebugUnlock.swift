@@ -1,5 +1,17 @@
 import Foundation
 
+/// True only in a DEBUG build launched with `-unlockAll`. Views that gate on
+/// Plus read this too, so the scanner can be tried on a simulator.
+enum DebugUnlock {
+    static let isOn: Bool = {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("-unlockAll")
+        #else
+        return false
+        #endif
+    }()
+}
+
 #if DEBUG
 extension GameState {
     /// Testing switch: grant the whole catalogue.

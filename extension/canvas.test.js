@@ -4,7 +4,8 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
 const { mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore,
-        DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_NEW, safeColor, nextLink } = require('./canvas.js');
+        DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_NEW, safeColor, nextLink,
+        mapEvents, eventQueries, EVENT_DAYS_AHEAD, EVENT_DAYS_BACK } = require('./canvas.js');
 
 const HOST = 'canvas.dartmouth.edu';
 const NOW = Date.parse('2026-09-01T12:00:00Z');
@@ -437,4 +438,61 @@ test('a graded row carries the same id as its task, so a missing zero is not lis
   const [g] = mapGraded([raw], { host: HOST });
   assert.equal(t.missing, true);
   assert.equal(g.id, t.id);
+});
+
+// MARK: - Course calendar events
+
+const event = (over = {}) => ({
+  id: 501, title: 'Midterm 1', start_at: at(4), end_at: at(4), all_day: false,
+  context_code: 'course_1', html_url: 'https://canvas.dartmouth.edu/calendar?event_id=501', ...over,
+});
+const events = (raw, courses = [COURSE]) => mapEvents(raw, { host: HOST, courses, now: NOW });
+
+test('a course event lands on the calendar with the course name and colour', () => {
+  const [e] = events([event()]);
+  assert.equal(e.id, `e-${HOST}-501`);
+  assert.equal(e.title, 'Midterm 1');
+  assert.equal(e.courseName, 'AP Physics');
+  assert.equal(e.colorHex, '#FF6F61');
+  assert.equal(e.allDay, false);
+  assert.equal(e.startAt, at(4));
+});
+
+test('assignments through the events endpoint are dropped: they are tasks', () => {
+  assert.deepEqual(events([event({ assignment: { id: 9 } })]), []);
+  assert.deepEqual(events([event({ type: 'assignment' })]), []);
+});
+
+test('personal events and events from courses the term filter dropped stay off the phone', () => {
+  assert.deepEqual(events([event({ context_code: 'user_42' })]), []);
+  assert.deepEqual(events([event({ context_code: 'course_999' })]), []);
+});
+
+test('events keep the calendar window, not the task window', () => {
+  assert.equal(events([event({ start_at: at(EVENT_DAYS_AHEAD - 1) })]).length, 1);
+  assert.equal(events([event({ start_at: at(EVENT_DAYS_AHEAD + 1) })]).length, 0);
+  assert.equal(events([event({ start_at: at(-(EVENT_DAYS_BACK - 1)) })]).length, 1);
+  assert.equal(events([event({ start_at: at(-(EVENT_DAYS_BACK + 1)) })]).length, 0);
+});
+
+test('an event with no readable start has no day to sit on', () => {
+  assert.deepEqual(events([event({ start_at: null })]), []);
+  assert.deepEqual(events([event({ start_at: 'soon' })]), []);
+});
+
+test('the same event id is pushed once and the list is sorted by start', () => {
+  const out = events([event({ id: 2, start_at: at(5) }), event({ id: 1, start_at: at(3) }), event({ id: 1, start_at: at(3) })]);
+  assert.deepEqual(out.map((e) => e.id), [`e-${HOST}-1`, `e-${HOST}-2`]);
+});
+
+test('calendar queries are chunked ten courses at a time inside the window', () => {
+  const courses = Array.from({ length: 12 }, (_, i) => ({ id: String(i + 1), name: `C${i}` }));
+  const qs = eventQueries(courses, NOW);
+  assert.equal(qs.length, 2);
+  assert.equal((qs[0].match(/context_codes\[\]=/g) || []).length, 10);
+  assert.equal((qs[1].match(/context_codes\[\]=/g) || []).length, 2);
+  assert.ok(qs[0].includes('type=event'));
+  assert.ok(qs[0].includes(`start_date=${new Date(NOW - EVENT_DAYS_BACK * DAY).toISOString().slice(0, 10)}`));
+  assert.ok(qs[0].includes(`end_date=${new Date(NOW + EVENT_DAYS_AHEAD * DAY).toISOString().slice(0, 10)}`));
+  assert.deepEqual(eventQueries([], NOW), []);
 });

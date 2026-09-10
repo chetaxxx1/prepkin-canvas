@@ -48,6 +48,32 @@ final class CopySweepTests: XCTestCase {
         XCTAssertTrue(failures.isEmpty, failures.joined(separator: "\n"))
     }
 
+    // MARK: - Home and Your day
+
+    /// The two screens a student is on every day get a tighter list.
+    ///
+    /// "behind" is banned here and nowhere else on purpose: on Home it can only
+    /// mean "you are behind", which is scolding, while elsewhere it is a plain
+    /// word about where a thing sits (the room *behind* your kin, on the Kin tab).
+    private let scoldWords = try! NSRegularExpression(
+        pattern: #"\b(behind|streak|catch up|falling)\b"#, options: [.caseInsensitive])
+
+    func testHomeAndYourDayNeverScold() throws {
+        let screens = ["HomeView.swift", "DayEditorView.swift", "TaskEditorSheet.swift"]
+        var failures: [String] = []
+        for name in screens {
+            let url = sourcesDirectory().appendingPathComponent(name)
+            let text = try String(contentsOf: url, encoding: .utf8)
+            for literal in stringLiterals(in: stripComments(text)) {
+                let range = NSRange(literal.startIndex..., in: literal)
+                if scoldWords.firstMatch(in: literal, options: [], range: range) != nil {
+                    failures.append("\(name): \"\(short(literal))\" scolds")
+                }
+            }
+        }
+        XCTAssertTrue(failures.isEmpty, failures.joined(separator: "\n"))
+    }
+
     // MARK: - Paths
 
     private func sourcesDirectory() -> URL {

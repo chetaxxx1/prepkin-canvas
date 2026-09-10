@@ -74,7 +74,7 @@ struct LearnView: View {
                     savedRow
                 }
                 .padding(.top, 4)
-                .padding(.bottom, 124)
+                .padding(.bottom, Theme.tabClearance)
             }
             .background(Theme.paper)
             // Scrolled section titles used to run straight under the clock. A solid
@@ -100,8 +100,8 @@ struct LearnView: View {
                 case .trace: TraceView()
                 case .pearls: PearlsView()
                 case .balance: BalanceView()
-                case .ladder: LadderView()
-                case .thread: ThreadView()
+                case .sort: SortView()
+                case .weave: WeaveView()
                 }
             }
         }
@@ -412,11 +412,11 @@ struct LearnView: View {
         let number = PlayDeal.number()
         let pearlsDone = state.game.pearlsPlay.lastDay == today
         let balanceDone = state.game.balancePlay.lastDay == today
-        let ladderDone = state.game.ladderPlay.lastDay == today
         let traceDone = state.game.tracePlay.lastDay == today
-        // A missed thread is over for the day too: five misses, answer shown.
-        let threadDone = state.game.threadPlay.lastDay == today
-            || (state.playProgress(\.threadPlay, for: today)?.count ?? 0) >= 5
+        let weaveDone = state.game.weavePlay.lastDay == today
+        // A lost Sort is over for the day too: four misses, groups shown.
+        let sortDone = state.game.sortPlay.lastDay == today
+            || SortGame.isOver(state.playProgress(\.sortPlay, for: today) ?? [])
         return [
             PlayTile(route: .dailyWord, name: "Daily Word", line: dailyWordLine,
                      played: state.wordleClaimedToday,
@@ -433,14 +433,14 @@ struct LearnView: View {
                      line: balanceDone ? "Solved" : "Grid \(number)\(plus)",
                      played: balanceDone,
                      fill: Theme.hex(0xA5CE6B), ink: Theme.hex(0x2F4712), glyph: .dots),
-            PlayTile(route: .ladder, name: "Ladder",
-                     line: ladderDone ? "Solved" : "Ladder \(number)\(plus)",
-                     played: ladderDone,
-                     fill: Theme.mint, ink: Theme.hex(0x0F3D2B), glyph: .ladder),
-            PlayTile(route: .thread, name: "Thread",
-                     line: threadDone ? (state.game.threadPlay.lastDay == today ? "Solved" : "See the answer") : "Thread \(number)\(plus)",
-                     played: threadDone,
-                     fill: Theme.hex(0xF7A8B8), ink: Theme.hex(0x5A1F2E), glyph: .thread),
+            PlayTile(route: .sort, name: "Sort",
+                     line: sortDone ? (state.game.sortPlay.lastDay == today ? "Solved" : "See the groups") : "Board \(number)\(plus)",
+                     played: sortDone,
+                     fill: Theme.hex(0xF5A15C), ink: Theme.hex(0x5A2A0E), glyph: .sort),
+            PlayTile(route: .weave, name: "Weave",
+                     line: weaveDone ? "Solved" : "Board \(number)\(plus)",
+                     played: weaveDone,
+                     fill: Theme.hex(0x5CC8C0), ink: Theme.hex(0x0E4744), glyph: .weave),
         ]
     }
 
@@ -489,12 +489,7 @@ struct LearnView: View {
     private var savedRow: some View {
         NavigationLink(value: LearnRoute.saved) {
             HStack(spacing: 13) {
-                Image(systemName: "heart.fill")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(Theme.coral)
-                    .frame(width: 44, height: 44)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(Theme.coralSoft))
+                IconTile(icon: "heart", size: 44)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Saved cards")
                         .font(Theme.font(16, .heavy))
@@ -560,8 +555,8 @@ enum LearnRoute: Hashable {
     case trace
     case pearls
     case balance
-    case ladder
-    case thread
+    case sort
+    case weave
 }
 
 // MARK: - Small pieces

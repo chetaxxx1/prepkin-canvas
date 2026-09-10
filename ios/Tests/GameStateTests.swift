@@ -352,23 +352,30 @@ final class LearnStateTests: XCTestCase {
 
     // MARK: - Friends
 
-    /// The tab must never invent people. A fresh state has no friends, and a
-    /// pending code is kept once and can be taken back.
-    func testFriendsStartEmptyAndPendingCodesRoundTrip() throws {
+    /// The tab must never invent people. A fresh state has no friends and no code
+    /// of its own — both arrive from the bridge or not at all.
+    func testFriendsStartEmptyAndTheWholeRowRoundTrips() throws {
         var s = GameState()
         XCTAssertTrue(s.friends.isEmpty)
-        XCTAssertTrue(s.pendingFriendCodes.isEmpty)
+        XCTAssertNil(s.friendCode)
 
-        s.addPendingFriendCode("ABCD-EFGH")
-        s.addPendingFriendCode("ABCD-EFGH")
-        XCTAssertEqual(s.pendingFriendCodes, ["ABCD-EFGH"])
+        let now = Date(timeIntervalSince1970: 1_757_000_000)
+        s.addFriend(Friend(id: "abc", adjective: 2, noun: 5, speciesID: "ember",
+                           lookID: "classic", costumeID: "none", sceneID: "reef",
+                           level: 3, tier: .kelp, friendsSince: now,
+                           onShiftUntil: now.addingTimeInterval(600)), now: now)
+        s.setNickname("Maya", for: "abc")
 
         let back = try Store.decoder.decode(GameState.self, from: Store.encoder.encode(s))
-        XCTAssertEqual(back.pendingFriendCodes, ["ABCD-EFGH"])
-        XCTAssertTrue(back.friends.isEmpty)
+        let f = try XCTUnwrap(back.friends.first)
+        XCTAssertEqual(f.displayName, "Maya")
+        XCTAssertEqual(f.speciesID, "ember")
+        XCTAssertEqual(f.tier, .kelp)
+        XCTAssertEqual(f.seenAt.timeIntervalSince1970, now.timeIntervalSince1970, accuracy: 1)
+        XCTAssertNotNil(f.onShiftUntil)
 
-        s.removePendingFriendCode("ABCD-EFGH")
-        XCTAssertTrue(s.pendingFriendCodes.isEmpty)
+        s.dropFriend("abc")
+        XCTAssertTrue(s.friends.isEmpty)
     }
 
     // MARK: - First run

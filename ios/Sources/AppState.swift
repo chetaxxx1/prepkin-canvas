@@ -9,7 +9,13 @@ import SwiftUI
 @MainActor
 final class AppState: ObservableObject {
     @Published private(set) var game: GameState {
-        didSet { store.save(game) }
+        didSet {
+            store.save(game)
+            // Both are cheap: a handful of values compared, and each leaves
+            // immediately unless the thing it publishes actually changed.
+            pushTankIfNeeded()
+            pushTodayIfNeeded()
+        }
     }
 
     @Published var animation: ChibiAnimation = .wave
@@ -43,6 +49,16 @@ final class AppState: ObservableObject {
     /// itself is, so a failure leaves the standings up and only this line changes.
     @Published private(set) var leagueStatus: String?
 
+    /// Friends' day rows for the last week, newest per friend. Not persisted: it is
+    /// a fact about today that goes stale by tomorrow, and a cached one would draw
+    /// yesterday's work under somebody's name.
+    @Published private(set) var friendDays: [DayRow] = []
+
+    /// One quiet line for the Add a friend screen when a call could not be made.
+    /// Never an error about a code: a code that opens nothing is answered on the
+    /// screen itself, in the same words every time.
+    @Published var friendStatus: String?
+
     /// One line of dark glass saying what just happened. A new value replaces the
     /// current one in place; there is never a second toast on screen.
     @Published var toast: String?
@@ -56,19 +72,41 @@ final class AppState: ObservableObject {
     /// "Add a friend" was tapped on a locked game's sheet. Root switches to the
     /// Friends tab. Cleared by Root once the switch is made; never persisted.
     @Published var openFriendsRequest = false
+    /// Sitting down beside a friend: how many minutes to start. Root switches to
+    /// Focus and Focus starts the shift and clears it. Never persisted — it is only
+    /// ever about the next few seconds.
+    @Published var joinShiftRequest: Int?
+    /// The Tomorrow line on Home was tapped. Root switches to the Calendar tab and
+    /// Calendar opens on this day. Cleared by Calendar once it lands; never persisted.
+    @Published var openCalendarOn: DayKey?
 
     private var toastTask: Task<Void, Never>?
+    /// The last (costume, scene) the bridge was told about, and the call waiting to
+    /// tell it about the next one. See `pushTankIfNeeded`.
+    private var lastTankPushed: TankPush?
+    private var tankPush: Task<Void, Never>?
+    /// The last day counts the bridge was told about, and the call waiting to tell
+    /// it about the next ones. See `pushTodayIfNeeded`.
+    private var lastTodayPushed: TodayPush?
+    private var todayPush: Task<Void, Never>?
 
     private let store: Store
     private let makeClient: (GameState) -> CanvasSyncClient?
     private let makeLeagueClient: (GameState) -> LeagueClient?
     private let makeStudyClient: (GameState) -> StudyClient?
+    private let makeFriendClient: (GameState) -> FriendClient?
 
     /// Real bridge once there is a pairing code. Sample data only in a checkout
     /// with no bridge configured at all, so a demo is never an empty page — but a
     /// real install that unpairs gets nothing, not fake homework that pays coins.
     nonisolated static func defaultClient(for state: GameState, config: BridgeConfig = .shared) -> CanvasSyncClient? {
         guard config.isConfigured else { return MockCanvasClient() }
+        #if DEBUG
+        // `-sampleCanvas` shows the sample feed on a simulator that has no
+        // laptop to pair with. DEBUG only, and a separate switch from
+        // `-unlockAll` so the pairing tests keep seeing the real client.
+        if ProcessInfo.processInfo.arguments.contains("-sampleCanvas") { return MockCanvasClient() }
+        #endif
         guard let code = state.pairingCode, let token = state.pairingToken else { return nil }
         return SupabaseCanvasClient(code: code, token: token)
     }
@@ -98,14 +136,30 @@ final class AppState: ObservableObject {
         return SupabaseStudyClient()
     }
 
+    /// Same rule again, and the mock deliberately has nobody in it. Friends do not
+    /// ride on the Canvas pairing or on the pod: a student with neither still has
+    /// the tab, so there is nothing else to check.
+    nonisolated static func defaultFriendClient(for state: GameState,
+                                                config: BridgeConfig = .shared) -> FriendClient? {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains(MockFriendClient.fakeFriendArgument) {
+            return MockFriendClient.seededForTesting()
+        }
+        #endif
+        guard config.isConfigured else { return MockFriendClient() }
+        return SupabaseFriendClient()
+    }
+
     init(store: Store = .shared,
          makeClient: @escaping (GameState) -> CanvasSyncClient? = { AppState.defaultClient(for: $0) },
          makeLeagueClient: @escaping (GameState) -> LeagueClient? = { AppState.defaultLeagueClient(for: $0) },
-         makeStudyClient: @escaping (GameState) -> StudyClient? = { AppState.defaultStudyClient(for: $0) }) {
+         makeStudyClient: @escaping (GameState) -> StudyClient? = { AppState.defaultStudyClient(for: $0) },
+         makeFriendClient: @escaping (GameState) -> FriendClient? = { AppState.defaultFriendClient(for: $0) }) {
         self.store = store
         self.makeClient = makeClient
         self.makeLeagueClient = makeLeagueClient
         self.makeStudyClient = makeStudyClient
+        self.makeFriendClient = makeFriendClient
         var loaded = store.load()
         loaded.advance()
         loaded.lastOpenedAt = Date()
@@ -331,6 +385,10 @@ final class AppState: ObservableObject {
         game.league.podWeek = nil
         game.league.lastPod = nil
         game.league.identity = nil
+        // The row is about to be deleted, and every friendship goes with it. Leaving
+        // the list on screen would draw people this phone can no longer reach.
+        game.friends = []
+        game.friendCode = nil
         leagueStatus = nil
         guard let identity, let client = makeLeagueClient(game) else { return }
         try? await client.forgetPlayer(identity: identity)
@@ -411,6 +469,8 @@ final class AppState: ObservableObject {
 
     var pairingCode: String? { game.pairingCode }
     var lastCanvasSyncAt: Date? { game.lastCanvasSyncAt }
+    /// One line of what is on tomorrow, or `nil` when tomorrow is empty.
+    var tomorrowLine: String? { game.tomorrowLine() }
     var isBridgeConfigured: Bool { BridgeConfig.shared.isConfigured }
 
     /// The code shown on screen. Claiming it on the bridge is what actually
@@ -451,13 +511,281 @@ final class AppState: ObservableObject {
 
     var friendCode: String? { game.friendCode }
     var friends: [Friend] { game.friends }
-    var pendingFriendCodes: [String] { game.pendingFriendCodes }
+    /// The people to put a card at the top of the tab for. See `FriendList.added`.
+    var friendsWhoAddedYou: [Friend] { FriendList.added(in: game.friends) }
 
+    /// What `addFriend` did, in the three words the screen needs.
+    enum AddFriendOutcome: Equatable {
+        case added(Friend)
+        /// The code opens nothing. Never says whether it exists — a typo, a
+        /// replaced code and somebody who blocked you all land here.
+        case nothing
+        case couldNotReach
+    }
+
+    /// Who this phone is on the bridge, minting one the first time somebody asks.
+    ///
+    /// One identity serves the pod, Study Together and friends; it already served
+    /// two of those. Called when the Add a friend screen opens, which is the first
+    /// moment a student has asked for anything social — a student who never opens
+    /// it has no row out there at all.
     @discardableResult
-    func ensureFriendCode() -> String { game.ensureFriendCode() }
+    func ensureIdentity() async -> LeagueIdentity? {
+        if let existing = game.league.identity { return existing }
+        guard let client = makeLeagueClient(game) else { return nil }
+        guard let made = try? await client.createPlayer() else { return nil }
+        // Two screens can ask at once. Whoever landed first owns it, and the other
+        // row is the bridge's to purge.
+        guard game.league.identity == nil else { return game.league.identity }
+        game.league.identity = made
+        return made
+    }
 
-    func addPendingFriendCode(_ code: String) { game.addPendingFriendCode(code) }
-    func removePendingFriendCode(_ code: String) { game.removePendingFriendCode(code) }
+    /// Fills `friendCode` from the bridge. Idempotent, and safe on every open.
+    func loadMyCode() async {
+        guard let identity = await ensureIdentity(), let client = makeFriendClient(game) else { return }
+        guard let code = try? await client.myCode(identity: identity) else { return }
+        guard game.league.identity == identity else { return }
+        game.friendCode = code
+    }
+
+    /// Hands out a new code. The old one stops opening anything, which is how a
+    /// student takes back a code they have already sent to somebody.
+    func rotateMyCode() async {
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        guard let code = try? await client.rotateCode(identity: identity) else {
+            friendStatus = "Could not get a new code just now. Try again in a moment."
+            return
+        }
+        guard game.league.identity == identity else { return }
+        game.friendCode = code
+        friendStatus = nil
+    }
+
+    /// Adds by code, and puts them on the tab.
+    func addFriend(code: String) async -> AddFriendOutcome {
+        guard let identity = await ensureIdentity(), let client = makeFriendClient(game) else {
+            return .couldNotReach
+        }
+        do {
+            guard let friend = try await client.addFriend(identity: identity, code: code) else {
+                return .nothing
+            }
+            guard game.league.identity == identity else { return .couldNotReach }
+            game.addFriend(friend)
+            return .added(friend)
+        } catch {
+            return .couldNotReach
+        }
+    }
+
+    /// Draws the whole tab in one call. Silent on every failure: the list already on
+    /// screen stays, because a dropped connection is not a reason to empty somebody's
+    /// friends.
+    func refreshFriends() async {
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        guard let rows = try? await client.fetchFriends(identity: identity) else { return }
+        guard game.league.identity == identity else { return }
+        game.applyFriends(rows)
+    }
+
+    func setNickname(_ raw: String, for id: String) { game.setNickname(raw, for: id) }
+
+    func markFriendSeen(_ id: String) { game.markFriendSeen(id) }
+
+    /// Instant and silent, both of them. The row goes now; the bridge is told after,
+    /// and a failed call leaves a row that the next fetch puts back rather than a
+    /// student stuck looking at somebody they just removed.
+    func removeFriend(_ id: String) {
+        game.dropFriend(id)
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        Task { try? await client.removeFriend(identity: identity, friendID: id) }
+    }
+
+    func blockFriend(_ id: String) {
+        game.dropFriend(id)
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        Task { try? await client.blockPlayer(identity: identity, playerID: id) }
+    }
+
+    /// Sends two ids and a time. The friendship is left alone — reporting somebody
+    /// and wanting them gone are two different taps, and the menu offers both.
+    func reportFriend(_ id: String) {
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        Task { try? await client.reportPlayer(identity: identity, playerID: id) }
+    }
+
+    // MARK: - Today
+
+    /// This phone's own four counts for today, read off the ledger.
+    var todayCounts: TodayCounts { TodayCounts(ledger: game.ledger, day: game.effectiveDay) }
+
+    /// One friend's today, or nothing at all.
+    ///
+    /// Nothing is the common answer and it draws nothing: a friend with sharing off
+    /// and a friend who has not started yet look identical on screen, which is the
+    /// point of `share_today` being a flag rather than a status.
+    func today(for friend: Friend) -> TodayCounts? {
+        guard let counts = TodayLines.newest(friendDays, for: friend.id), !counts.isEmpty
+        else { return nil }
+        return counts
+    }
+
+    /// The sentence under the whole tab, or nothing.
+    var weeklyTogether: String? {
+        // Only friends who actually put a row in the week are counted, so the
+        // headcount is never a claim about people who are not in the number.
+        let contributors = game.friends.compactMap { f -> TodayCounts? in
+            let mine = friendDays.filter { $0.playerID == f.id }.map(\.counts)
+            guard !mine.isEmpty else { return nil }
+            let week = mine.reduce(TodayCounts(), +)
+            return week.isEmpty ? nil : week
+        }
+        return TodayLines.weekly(mine: weekOfMine, friends: contributors)
+    }
+
+    /// My own week, folded the same way a friend's is, in one pass.
+    private var weekOfMine: TodayCounts {
+        let now = Date()
+        let days = Set((0...6).map { DayKey(now.addingTimeInterval(TimeInterval(-$0 * 86_400))) })
+        return TodayCounts.week(ledger: game.ledger, days: days)
+    }
+
+    /// Asks for a week of rows, one day either side of it.
+    ///
+    /// **A day either side because `day` is each sender's own local day.** A friend
+    /// twelve hours ahead is already writing tomorrow's date; asking only for days
+    /// up to mine would leave their lines empty all day and then show them late.
+    /// `fetch_today` clamps the span to a fortnight, so the extra day is free.
+    func refreshToday() async {
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        let now = Date()
+        let from = DayKey(now.addingTimeInterval(-7 * 86_400))
+        let to = DayKey(now.addingTimeInterval(86_400))
+        guard let rows = try? await client.fetchToday(identity: identity, from: from, to: to) else { return }
+        guard game.league.identity == identity else { return }
+        friendDays = rows
+    }
+
+    /// Publishes today's counts when they change.
+    ///
+    /// **Nothing leaves the phone while the switch is off.** The bridge would hide
+    /// the rows from friends either way, but "we store it and promise not to show
+    /// anybody" is not what the privacy sheet says, and it is not what a student
+    /// reading "your fish, and nothing else" would picture. Not writing the row is
+    /// also what stops turning the switch on from revealing a fortnight the student
+    /// spent with it off.
+    ///
+    /// **Nothing is sent for an empty day.** A phone that saves at one minute past
+    /// midnight would otherwise write a row of four zeros, and the bridge's promise
+    /// that a friend with no row simply has no line would stop holding. And nothing
+    /// is sent at all with no friends: a student who has never added anybody has
+    /// nobody who could read it.
+    private func pushTodayIfNeeded() {
+        let want = TodayPush(day: game.effectiveDay, counts: todayCounts)
+        guard game.shareToday, !want.counts.isEmpty, !game.friends.isEmpty,
+              want != lastTodayPushed else { return }
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        todayPush?.cancel()
+        todayPush = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(Self.todaySettle * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            try? await client.pushToday(identity: identity, day: want.day, counts: want.counts)
+            guard !Task.isCancelled else { return }
+            self?.lastTodayPushed = want
+        }
+    }
+
+    private struct TodayPush: Equatable {
+        let day: DayKey
+        let counts: TodayCounts
+    }
+
+    /// A minute. Checking off six things in a lesson deck is one push, not six.
+    private static let todaySettle: TimeInterval = 60
+
+    // MARK: - Waves
+
+    /// Friends who waved at you and have not been shown yet.
+    var unseenWaves: [Friend] {
+        let ids = Set(game.unseenWaves(on: game.effectiveDay))
+        return game.friends.filter { ids.contains($0.id) }
+    }
+
+    func hasWaved(at friend: Friend) -> Bool {
+        game.hasWaved(at: friend.id, on: game.effectiveDay)
+    }
+
+    /// Waves. Settles on the phone straight away, because the button showing its
+    /// settled state is the whole feedback — there is no toast and nothing to undo.
+    func wave(at friend: Friend) {
+        let day = game.effectiveDay
+        guard !game.hasWaved(at: friend.id, on: day) else { return }
+        game.markWaved(at: friend.id, on: day)
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        Task {
+            _ = try? await client.sendVibe(identity: identity, friendID: friend.id,
+                                           kind: Vibes.wave.kind, day: day)
+        }
+    }
+
+    func markWaveSeen(_ id: String) { game.markWaveSeen(id, on: game.effectiveDay) }
+
+    /// Who waved at you, and who you have already waved at. Silent on failure: a
+    /// hello that cannot be fetched right now is the same as no hello.
+    func refreshWaves() async {
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        let day = game.effectiveDay
+        if let visits = try? await client.fetchVisits(identity: identity, day: day) {
+            guard game.league.identity == identity else { return }
+            game.applyWavesReceived(visits.map(\.sender.id), on: day)
+        }
+        if let sent = try? await client.fetchSent(identity: identity, day: day) {
+            guard game.league.identity == identity else { return }
+            game.applyWavesSent(sent, on: day)
+        }
+    }
+
+    // MARK: - What friends can see
+
+    func setSharing(today: Bool, board: Bool) {
+        let wasOff = !game.shareToday
+        game.shareToday = today
+        game.shareBoard = board
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        Task { try? await client.setSharing(identity: identity, today: today, board: board) }
+        // Turning it on starts from today, not from a fortnight ago: nothing was
+        // written while it was off, so this is the first row there is.
+        if today, wasOff { pushTodayIfNeeded() }
+    }
+
+    /// Publishes the two cosmetic ids a friend's screen needs, when they change.
+    ///
+    /// Debounced rather than sent on the tap: changing a tank is a browsing action —
+    /// a student flicks through five of them — and only the one they stop on is
+    /// worth a call. Nothing waits on it and nothing is told when it fails; the next
+    /// change sends the current state anyway.
+    private func pushTankIfNeeded() {
+        let want = TankPush(costume: game.activeCostumeID, scene: game.sceneID)
+        guard want != lastTankPushed else { return }
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        tankPush?.cancel()
+        tankPush = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(Self.tankSettle * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            try? await client.setTank(identity: identity, costume: want.costume, scene: want.scene)
+            guard !Task.isCancelled else { return }
+            self?.lastTankPushed = want
+        }
+    }
+
+    private struct TankPush: Equatable {
+        let costume: String
+        let scene: String
+    }
+
+    /// How long a burst of taps has to stop for before the last one is published.
+    private static let tankSettle: TimeInterval = 2
 
     func unpair() {
         // Delete the row first — the token that proves it is ours is about to be
@@ -503,6 +831,37 @@ final class AppState: ObservableObject {
         rescheduleReminders()
     }
 
+    // MARK: - Dated tasks (the calendar)
+
+    func tasks(on day: DayKey) -> [DailyTask] { game.tasks(on: day) }
+    func events(on day: DayKey) -> [CanvasEvent] { game.events(on: day) }
+    func datedTask(_ id: String) -> DatedTask? { game.datedTasks.first { $0.id == id } }
+
+    func addDated(_ task: DatedTask) {
+        game.addDated(task)
+        rescheduleReminders()
+    }
+
+    func addDated(_ tasks: [DatedTask]) {
+        for t in tasks { game.addDated(t) }
+        if !tasks.isEmpty { play(.bounce) }
+        rescheduleReminders()
+    }
+
+    func updateDated(_ task: DatedTask) {
+        game.updateDated(task)
+        rescheduleReminders()
+    }
+
+    func deleteDated(_ id: String) {
+        game.deleteDated(id)
+        rescheduleReminders()
+    }
+
+    func setScanConsent() {
+        game.settings.scanConsentGiven = true
+    }
+
     // MARK: - Other earnings
 
     func recordFocus(minutes: Int) {
@@ -536,7 +895,7 @@ final class AppState: ObservableObject {
 
     /// True once any game has banked today's Play coins.
     var playClaimedToday: Bool { game.playClaimedToday }
-    /// The game that banked them, for the "Today's 30 banked by Ladder" line.
+    /// The game that banked them, for the "Today's 30 banked by Pearls" line.
     var playBankedBy: CoinReason? { game.playBanked(on: game.effectiveDay) }
 
     /// Returns what was paid: 30 for the first game finished today, 0 after.

@@ -8,6 +8,33 @@ change to fit six games.
 
 Playable prototype of all four: `design/games/prototype.html` (open in a browser).
 
+## 0. Changed 2026-09-10: Ladder and Thread out, Sort and Weave in
+
+George: the games are "not very good"; every one must be a brain-teaser his
+demographic already plays. Research that day:
+
+- LinkedIn's own games lead named Pinpoint and Crossclimb its **least** popular
+  games and Zip its most (GamesBeat, Mar 2026). So Thread and Ladder go.
+- NYT's Connections is the #2 daily game on earth (3.3B plays in 2024) with the
+  strongest college-paper evidence of any game; Strands is #4 (1.3B+). So a
+  Connections-type (**Sort**) and a Strands-type (**Weave**) come in.
+- Daily Word, Trace, Pearls and Balance stay: Wordle, Zip, Queens and Tango are
+  the four the numbers back.
+- Legal picture unchanged. No enforcement against a LinkedIn clone was found.
+  NYT enforces the Wordle name and the green/yellow tile look; Wordle is a
+  registered US mark (Nov 2025) and LinkedIn filed Zip (Feb 2025). Sort and
+  Weave use our names, our palette (group colours mint, gold, pink, lavender in
+  that order, not NYT's yellow-green-blue-purple), our code and our own boards.
+
+Content: `design/games/sorts.py` (60 hand-written boards, a 1-5 `hard` tag each)
+and `design/games/weaves.py` (57 themes; `gen.py` tiles each into a 6×8 with the
+spanning word touching two opposite sides, no diagonal crossings). Weave's
+non-theme words check against `dictionary.txt` (the system word list, 4-10
+letters, plus every theme word). Three real non-theme words earn a hint that
+outlines a hidden word, as in the original. Sort allows four misses, shows the
+groups on a loss, and pays nothing for a loss. Old saves keep their Ladder and
+Thread records and ledger lines; the fields are read, never written.
+
 ## 1. The legal line
 
 Copy the mechanic. Never copy the name, the art, the code, or the puzzle content.

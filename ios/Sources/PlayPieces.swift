@@ -37,11 +37,11 @@ extension CoinReason {
         switch self {
         case .wordle: return "Daily Word"
         case .numberLine: return "Number Line"
-        case .ladder: return "Ladder"
-        case .thread: return "Thread"
         case .balance: return "Balance"
         case .pearls: return "Pearls"
         case .trace: return "Trace"
+        case .sort: return "Sort"
+        case .weave: return "Weave"
         default: return nil
         }
     }
@@ -158,8 +158,7 @@ struct PlayKinLine: View {
 
     var body: some View {
         HStack(spacing: 9) {
-            SproutFace(speciesID: state.activeChibiID, size: 34,
-                       plate: Theme.species(state.activeChibiID).opacity(0.35))
+            SproutFace(speciesID: state.activeChibiID, size: 34, plate: Theme.plate(for: state.activeChibiID))
             Text(copy)
                 .font(Theme.font(13.5, .heavy))
                 .foregroundStyle(Theme.ink)
@@ -285,9 +284,9 @@ enum PlayGlyph {
     case letter(String, Color)
     case pearl
     case dots
-    case ladder
-    case thread
     case trace
+    case sort
+    case weave
 }
 
 struct PlayGlyphView: View {
@@ -309,28 +308,6 @@ struct PlayGlyphView: View {
                 Circle().fill(Theme.hex(0x2F4712)).frame(width: 9, height: 9)
                 Circle().strokeBorder(Theme.hex(0x2F4712), lineWidth: 2.5).frame(width: 9, height: 9)
             }
-        case .ladder:
-            VStack(spacing: 3) {
-                ForEach(0..<3, id: \.self) { _ in
-                    Capsule().fill(Theme.hex(0x0F3D2B)).frame(width: 14, height: 2.5)
-                }
-            }
-            .overlay {
-                HStack(spacing: 10) {
-                    Capsule().fill(Theme.hex(0x0F3D2B)).frame(width: 2.5, height: 18)
-                    Capsule().fill(Theme.hex(0x0F3D2B)).frame(width: 2.5, height: 18)
-                }
-            }
-        case .thread:
-            Path { p in
-                p.move(to: CGPoint(x: 3, y: 15))
-                p.addCurve(to: CGPoint(x: 15, y: 3), control1: CGPoint(x: 3, y: 4), control2: CGPoint(x: 15, y: 14))
-            }
-            .stroke(Theme.hex(0x5A1F2E), style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
-            .frame(width: 18, height: 18)
-            .overlay(alignment: .topTrailing) {
-                Circle().strokeBorder(Theme.hex(0x5A1F2E), lineWidth: 2).frame(width: 6, height: 6)
-            }
         case .trace:
             // A line snaking through a small grid, a dot on the start.
             Path { p in
@@ -345,6 +322,32 @@ struct PlayGlyphView: View {
             .frame(width: 18, height: 18)
             .overlay(alignment: .topLeading) {
                 Circle().fill(Theme.hex(0x2A1A57)).frame(width: 6, height: 6)
+            }
+        case .sort:
+            // Four tiles, one row filled in: a group found.
+            VStack(spacing: 2.5) {
+                HStack(spacing: 2.5) {
+                    RoundedRectangle(cornerRadius: 2).fill(Theme.hex(0x5A2A0E)).frame(width: 8, height: 8)
+                    RoundedRectangle(cornerRadius: 2).fill(Theme.hex(0x5A2A0E)).frame(width: 8, height: 8)
+                }
+                HStack(spacing: 2.5) {
+                    RoundedRectangle(cornerRadius: 2).strokeBorder(Theme.hex(0x5A2A0E), lineWidth: 2).frame(width: 8, height: 8)
+                    RoundedRectangle(cornerRadius: 2).strokeBorder(Theme.hex(0x5A2A0E), lineWidth: 2).frame(width: 8, height: 8)
+                }
+            }
+        case .weave:
+            // A line threading three letters, corner to corner.
+            Path { p in
+                p.move(to: CGPoint(x: 3, y: 15))
+                p.addLine(to: CGPoint(x: 9, y: 9))
+                p.addLine(to: CGPoint(x: 15, y: 3))
+            }
+            .stroke(Theme.hex(0x0E4744), style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
+            .frame(width: 18, height: 18)
+            .overlay {
+                ForEach([CGPoint(x: 3, y: 15), CGPoint(x: 9, y: 9), CGPoint(x: 15, y: 3)], id: \.x) { c in
+                    Circle().fill(Theme.hex(0x0E4744)).frame(width: 6, height: 6).position(c)
+                }
             }
         }
     }

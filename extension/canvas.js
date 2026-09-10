@@ -26,6 +26,11 @@ const DAYS_AFTER_SUBMIT = 3;
 /// How new an undated, unmarked assignment has to be to count as real work
 /// rather than a leftover somebody never cleaned up.
 const DAYS_NEW = 60;
+/// The calendar looks further out than the task list does: a midterm in
+/// six weeks belongs on a calendar even though it does not belong on tonight's
+/// list. Events a week gone still show, as the tasks do.
+const EVENT_DAYS_AHEAD = 90;
+const EVENT_DAYS_BACK = 7;
 
 const SUBMITTED_STATES = ['submitted', 'graded', 'pending_review'];
 /// Ways of handing work in through Canvas itself. Anything else — on paper,
@@ -306,6 +311,65 @@ function examinedIds(raw, host, into = new Set()) {
   return into;
 }
 
+// MARK: - Course calendar
+
+/// Things that happen rather than get handed in: an exam sitting, a class a
+/// teacher put on the course calendar by hand, office hours. Canvas returns
+/// assignments through the same endpoint with `type=assignment`; those are the
+/// task list's job, and a row wearing an `assignment` is dropped here so the
+/// same quiz is never both a task and an event.
+function mapEvents(raw, { host, courses = [], now = Date.now() } = {}) {
+  if (!Array.isArray(raw)) return [];
+  const byCode = new Map(courses.map((c) => [`course_${c.id}`, c]));
+  const out = [];
+  const seen = new Set();
+  for (const e of raw) {
+    if (!e || e.id == null || !e.title) continue;
+    if (e.assignment || e.type === 'assignment') continue;
+    if (e.hidden === true || e.workflow_state === 'deleted') continue;
+    const startAt = e.start_at ?? null;
+    const start = Date.parse(startAt);
+    if (!Number.isFinite(start)) continue;
+    if (start - now > EVENT_DAYS_AHEAD * DAY || now - start > EVENT_DAYS_BACK * DAY) continue;
+    const course = byCode.get(e.context_code) ?? null;
+    // Personal events (context_code user_…) are the student's own; the phone
+    // only wants the school's.
+    if (!course) continue;
+    const id = `e-${host}-${e.id}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    out.push({
+      id,
+      title: e.title,
+      courseName: course.name,
+      courseId: course.id,
+      colorHex: course.colorHex ?? null,
+      startAt,
+      endAt: e.end_at ?? null,
+      allDay: e.all_day === true,
+      location: typeof e.location_name === 'string' && e.location_name ? e.location_name : null,
+      url: typeof e.html_url === 'string' ? e.html_url : null,
+    });
+  }
+  return out.sort((a, b) => a.startAt.localeCompare(b.startAt));
+}
+
+/// Canvas caps `context_codes[]` at ten per request, so a student with twelve
+/// courses needs two calls. Returns the query strings, one per chunk.
+function eventQueries(courses, now = Date.now()) {
+  const day = (d) => new Date(d).toISOString().slice(0, 10);
+  const from = day(now - EVENT_DAYS_BACK * DAY);
+  const to = day(now + EVENT_DAYS_AHEAD * DAY);
+  const codes = courses.map((c) => `context_codes[]=course_${encodeURIComponent(c.id)}`);
+  const queries = [];
+  for (let i = 0; i < codes.length; i += 10) {
+    queries.push(
+      `/api/v1/calendar_events?type=event&start_date=${from}&end_date=${to}&per_page=100&${codes.slice(i, i + 10).join('&')}`
+    );
+  }
+  return queries;
+}
+
 /// The per-course pass knows about submissions and grades, so it wins any tie.
 /// The to-do sweep only adds what that pass never saw — a course whose
 /// assignment list failed to load, say.
@@ -329,6 +393,7 @@ function numberOrNull(value) {
 if (typeof module !== 'undefined') {
   module.exports = {
     mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore, safeColor, nextLink,
-    TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_AFTER_SUBMIT, DAYS_NEW,
+    mapEvents, eventQueries,
+    TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_AFTER_SUBMIT, DAYS_NEW, EVENT_DAYS_AHEAD, EVENT_DAYS_BACK,
   };
 }

@@ -453,6 +453,7 @@ async function send(fresh) {
     version: payloadVersion(),
     tasks: all.flatMap((r) => r.tasks),
     courses: all.flatMap((r) => r.courses),
+    events: all.flatMap((r) => r.events ?? []),
     graded: Object.assign({}, ...all.map((r) => r.graded ?? {})),
     weights: Object.assign({}, ...all.map((r) => r.weights ?? {})),
     // Coins the phone still owes or is owed: finished focus sessions, and looks
@@ -638,10 +639,18 @@ async function readSchool(origin) {
   // filter kept — otherwise a concluded class returns through the back door.
   const courseIds = new Set(courses.map((c) => c.id));
 
+  // The course calendars, for the phone's Calendar tab. A chunk that fails
+  // keeps its last good events, the same as a course whose list failed.
+  const rawEvents = await Promise.all(eventQueries(courses).map((q) => getPaged(origin, q)));
+  const events = rawEvents.every((r) => r === null) && previous?.events
+    ? previous.events
+    : mapEvents(rawEvents.flatMap((r) => r ?? []), { host, courses });
+
   return {
     courses,
     graded,
     weights,
+    events,
     tasks: merge(perCourse.flat(), rawTodo ? mapTodo(rawTodo, host, Date.now(), courseIds) : [], examined),
   };
 }

@@ -216,116 +216,36 @@ struct TierLadder: View {
     }
 }
 
-private extension LeagueTier {
+extension LeagueTier {
     /// Tidepool is where everyone starts, so there is no pennant for it — a keepsake
     /// handed out for existing is worth nothing next to a track badge, which means
     /// eight finished lessons.
     var isStart: Bool { self == .tidepool }
 }
 
-// MARK: - The card
+// MARK: - The pod
 
-/// The league on the Friends tab: the ladder, and under it the pod.
+/// The pod, and only the pod. It sits inside `LeagueLadderView`.
+///
+/// This was `LeagueCard`, which drew the tier, the progress bar, the pod and a
+/// fold-out ladder in one 620pt block at the top of the Friends tab. The tier and the
+/// ladder moved to `LeagueLadderView`; what is left is the part that was always its
+/// own thing.
 ///
 /// When the pod holds nobody but you it says so plainly. The alternative — inventing
 /// nineteen rivals so the board looks busy — is the same dishonesty as the four
 /// hard-coded friends that were cut from this tab, moved one screen over.
-struct LeagueCard: View {
+struct PodSection: View {
     @EnvironmentObject var state: AppState
-    @State private var showLadder = false
 
-    private var league: LeagueState { state.league }
-    private var tier: LeagueTier { league.tier }
     private var points: Int { state.leaguePoints }
-    private var toGo: Int? { state.leaguePointsToNextTier }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            header
-            progress
-            Rectangle().fill(Theme.hairline).frame(height: 1)
-            podSection
-            if showLadder {
-                Rectangle().fill(Theme.hairline).frame(height: 1)
-                TierLadder(current: tier, deepest: league.deepestReached,
-                           nextNote: toGo.map { "\($0) to go" })
-                    .transition(.opacity)
-            }
-            Button {
-                withAnimation(.easeOut(duration: 0.22)) { showLadder.toggle() }
-            } label: {
-                Text(showLadder ? "Hide the ladder" : "See the whole ladder")
-                    .font(Theme.font(13, .heavy))
-                    .foregroundStyle(Theme.coralDeep)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(18)
-        .background(RoundedRectangle(cornerRadius: 26, style: .continuous)
-            .fill(Theme.card)
-            .shadow(color: Theme.hex(0x2E2622).opacity(0.05), radius: 8, y: 2))
-        // A no-op unless the student opted in, so a card on screen never mints a row
-        // on the bridge. Nothing else in the app asks for the board yet.
-        .task { await state.syncLeague() }
-    }
-
-    private var header: some View {
-        HStack(spacing: 14) {
-            TierPennant(tier: tier, earned: league.pennants.contains(tier), height: 52)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(tier.name)
-                    .font(Theme.font(19, .black))
-                    .foregroundStyle(Theme.ink)
-                Text(tier.water)
-                    .font(Theme.font(12.5, .semibold))
-                    .foregroundStyle(Theme.muted)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer(minLength: 0)
-        }
-    }
-
-    @ViewBuilder private var progress: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            HStack(spacing: 6) {
-                CoinDisc(size: 15)
-                // "Earned", not "coins" on its own: Home's band counts the balance and
-                // falls when you buy something. This one cannot fall, and two bars that
-                // move opposite ways under the same word read as a bug.
-                Text("\(points) earned this week")
-                    .font(Theme.font(14.5, .black))
-                    .foregroundStyle(Theme.ink)
-                Spacer(minLength: 0)
-            }
-
-            if let toGo, let next = tier.next, let bar = LeagueRules.bar(for: tier) {
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(Theme.hairline)
-                        Capsule().fill(tier.color)
-                            .frame(width: geo.size.width * min(1, Double(points) / Double(bar)))
-                    }
-                }
-                .frame(height: 8)
-                Text(toGo == 0
-                     ? "That clears it. \(next.name) on Monday."
-                     : "\(toGo) more and you're in \(next.name) on Monday.")
-                    .font(Theme.font(12.5, .bold))
-                    .foregroundStyle(Theme.muted)
-            } else {
-                Text("Deep is the last one. Nothing below it, and nothing to lose.")
-                    .font(Theme.font(12.5, .bold))
-                    .foregroundStyle(Theme.muted)
-            }
-
-            Text("A quiet week keeps you where you are. Nothing here ever moves you down.")
-                .font(Theme.font(11.5, .heavy))
-                .foregroundStyle(Theme.dim)
-                .fixedSize(horizontal: false, vertical: true)
-        }
+        podSection
+            .frame(maxWidth: .infinity, alignment: .leading)
+            // A no-op unless the student opted in, so a card on screen never mints a
+            // row on the bridge. Nothing else in the app asks for the board yet.
+            .task { await state.syncLeague() }
     }
 
     // MARK: - The pod

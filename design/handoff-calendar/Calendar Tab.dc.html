@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E7E0D3; font-family:Nunito,-apple-system,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#C4523F; text-decoration:none; }
+  a:hover { color:#FF6F61; }
+  ::-webkit-scrollbar { width:0; height:0; display:none; }
+  @keyframes nowPulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
+</style>
+</helmet>
+
+<section style="padding:44px 48px 40px">
+<div style="display:flex;align-items:baseline;gap:12px;margin:0 0 8px">
+  <a href="#1a" style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#2E2622;color:#fff;border-radius:4px">1</a>
+  <span style="font:900 14px Nunito;color:#2E2622">Calendar tab — redesign</span>
+  <span style="font:700 11.5px Nunito;color:#96877F">402 × 874 · content starts y=233 (was y≈330) · tokens from Theme.swift</span>
+</div>
+<p style="max-width:760px;margin:0 0 30px;font:700 12.5px/1.7 Nunito;color:#7B6C63">Two bands of chrome instead of three: the Week · Month switch and ‹ Today › moved inside the strip card, so the strip is the chrome. Load is stacked bars, not dots. Tasks are cards on paper; events are ruled entries whose rail height is their duration, so a two-hour midterm is visibly bigger than an hour of office hours. Past days fold to one line. One floating button, not two — the scanner lives inside the + sheet rather than sitting on every screen wearing a PLUS badge.</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+
+<!-- ARTBOARD 1 — WEEK, FULL -->
+<div id="1a" style="display:flex;flex-direction:column;gap:10px;flex:none;scroll-margin-top:16px">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <a href="#1a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px">1a</a>
+    <span style="font:900 12.5px Nunito;color:#2E2622">Week — a full week</span>
+    <span style="font:700 11px Nunito;color:#96877F">live: check off, expand the past, tap a day</span>
+  </div>
+
+  <div style="width:402px;height:874px;background:#FAF5EC;border-radius:44px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(46,38,34,.16)">
+
+    <!-- 0–59: status bar zone, deliberately empty -->
+
+    <!-- HEADER BAND 1 : 59 → 109 -->
+    <div style="position:absolute;left:0;right:0;top:59px;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-sizing:border-box;z-index:3">
+      <div>
+        <div style="font-family:Nunito;font-weight:900;font-size:25px;line-height:28px;color:#2E2622">Calendar</div>
+        <sc-if value="{{ capOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="font:800 12.5px/15px Nunito;color:#96877F;margin-top:1px">4 things due this week · 1 event</div>
+        </sc-if>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border-radius:100px;box-shadow:0 2px 8px rgba(46,40,34,.12)">
+        <svg width="18" height="18" viewBox="0 0 18 18" style="display:block"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+        <span style="font:900 15px Nunito;color:#2E2622">{{ wallet }}</span>
+      </div>
+    </div>
+
+    <!-- HEADER BAND 2 : the strip card, 113 → 209 -->
+    <div style="position:absolute;left:12px;right:12px;top:113px;height:120px;background:#fff;border-radius:24px;box-shadow:0 2px 8px rgba(46,38,34,.05);z-index:3;box-sizing:border-box;padding:6px 10px 8px">
+
+      <div style="height:32px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;background:#F5EFE3;border-radius:100px;padding:2.5px">
+          <div style="padding:5px 15px;border-radius:100px;background:#fff;box-shadow:0 1px 3px rgba(46,38,34,.12);font:900 12.5px Nunito;color:#2E2622">Week</div>
+          <a href="#1c" style="padding:5px 15px;border-radius:100px;font:900 12.5px Nunito;color:#B4A996">Month</a>
+        </div>
+        <div style="display:flex;align-items:center;gap:2px">
+          <div onClick="{{ prevWeek }}" style="width:28px;height:28px;border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+            <svg width="15" height="15" viewBox="0 0 24 24"><path d="M14.5 5.5 8.5 12l6 6.5" stroke="#96877F" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <div onClick="{{ goToday }}" style="padding:5px 12px;border-radius:100px;background:#F5EFE3;font:900 12px Nunito;color:#2E2622;cursor:pointer">Today</div>
+          <div onClick="{{ nextWeek }}" style="width:28px;height:28px;border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+            <svg width="15" height="15" viewBox="0 0 24 24"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#96877F" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:2px;margin-top:2px">
+        <div onClick="{{ pick6 }}" style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;background: {{ bg6 }}">
+          <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">S</span>
+          <span style="font:900 17px/26px Nunito;color:#B4A996">6</span>
+          <div style="height:20px;display:flex;flex-direction:column-reverse;gap:2.5px;justify-content:flex-start"></div>
+        </div>
+        <div onClick="{{ pick7 }}" style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;background: {{ bg7 }}">
+          <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">M</span>
+          <span style="font:900 17px/26px Nunito;color:#B4A996">7</span>
+          <div style="height:20px;display:flex;flex-direction:column-reverse;gap:2.5px;justify-content:flex-start"></div>
+        </div>
+        <div onClick="{{ pick8 }}" style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;background: {{ bg8 }}">
+          <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">T</span>
+          <span style="font:900 17px/26px Nunito;color:#B4A996">8</span>
+          <div style="height:20px;display:flex;flex-direction:column-reverse;gap:2.5px;justify-content:flex-start"></div>
+        </div>
+        <div onClick="{{ pick9 }}" style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;background: {{ bg9 }}">
+          <span style="font:900 10.5px Nunito;color:#C4523F;letter-spacing:.4px">W</span>
+          <span style="width:26px;height:26px;border-radius:13px;background:#FF6F61;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#fff">9</span>
+          <div style="height:20px;display:flex;flex-direction:column-reverse;gap:2.5px;justify-content:flex-start;margin-top:1px">
+            <div style="width:20px;height:3px;border-radius:1.5px;background:#FF6F61"></div>
+          </div>
+        </div>
+        <div onClick="{{ pick10 }}" style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;background: {{ bg10 }}">
+          <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">T</span>
+          <span style="font:900 17px/26px Nunito;color:#2E2622">10</span>
+          <div style="height:20px;display:flex;flex-direction:column-reverse;gap:2.5px;justify-content:flex-start;margin-top:1px">
+            <div style="width:20px;height:3px;border-radius:1.5px;background:#B4A996"></div>
+            <div style="width:20px;height:3px;border-radius:1.5px;background:#57C79B"></div>
+            <div style="width:20px;height:3px;border-radius:1.5px;background:#9BC8F2"></div>
+          </div>
+        </div>
+        <div onClick="{{ pick11 }}" style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;background: {{ bg11 }}">
+          <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">F</span>
+          <span style="font:900 17px/26px Nunito;color:#2E2622">11</span>
+          <div style="height:20px;display:flex;flex-direction:column-reverse;gap:2.5px;justify-content:flex-start;margin-top:1px">
+            <div style="width:20px;height:3px;border-radius:1.5px;background:#9BC8F2"></div>
+          </div>
+        </div>
+        <div onClick="{{ pick12 }}" style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;background: {{ bg12 }}">
+          <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">S</span>
+          <span style="font:900 17px/26px Nunito;color:#2E2622">12</span>
+          <div style="height:20px;display:flex;flex-direction:column-reverse;gap:2.5px;justify-content:flex-start"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENDA SCROLL : 233 → 874, scrolls under the tab bar -->
+    <div onScroll="{{ onScroll }}" style="position:absolute;left:0;right:0;top:233px;bottom:0;overflow-y:auto;padding:0 16px 206px;box-sizing:border-box;z-index:1">
+
+      <sc-if value="{{ pastShut }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ togglePast }}" style="display:flex;align-items:center;gap:9px;padding:9px 13px;margin-top:14px;background:#F3ECE0;border-radius:14px;cursor:pointer">
+          <svg width="13" height="13" viewBox="0 0 24 24" style="flex:none"><path d="M6 9.5 12 15.5l6-6" stroke="#B4A996" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span style="font:800 12.5px Nunito;color:#96877F">Sun – Tue · free</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pastOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ togglePast }}" style="margin-top:8px;cursor:pointer">
+          <div style="display:flex;align-items:center;gap:8px;padding:11px 4px">
+            <span style="font:900 13px Nunito;color:#B4A996">Sunday</span><span style="font:800 12.5px Nunito;color:#C9BEAC">Sep 6</span>
+            <div style="flex:1"></div><span style="font:800 12.5px Nunito;color:#C9BEAC">Free</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:11px 4px">
+            <span style="font:900 13px Nunito;color:#B4A996">Monday</span><span style="font:800 12.5px Nunito;color:#C9BEAC">Sep 7</span>
+            <div style="flex:1"></div><span style="font:800 12.5px Nunito;color:#C9BEAC">Free</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:11px 4px">
+            <span style="font:900 13px Nunito;color:#B4A996">Tuesday</span><span style="font:800 12.5px Nunito;color:#C9BEAC">Sep 8</span>
+            <div style="flex:1"></div><span style="font:800 12.5px Nunito;color:#C9BEAC">Free</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- TODAY -->
+      <div style="display:flex;align-items:center;gap:8px;padding:20px 4px 9px">
+        <span style="font:900 14px Nunito;color:#C4523F">Today</span>
+        <span style="font:800 13px Nunito;color:#B4A996">Sep 9</span>
+        <div style="flex:1;height:1px;background:#EFE8DB"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity: {{ op1 }}">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#FF6F61"></div>
+        <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+          <svg width="30" height="30" viewBox="0 0 24 24"><rect x="3.6" y="8.4" width="16.8" height="7.2" rx="1.8" fill="#7FB2D4"></rect><path d="M3.6 12.4h16.8v1.4a1.8 1.8 0 0 1-1.8 1.8H5.4a1.8 1.8 0 0 1-1.8-1.8Z" fill="#5E97BF"></path><rect x="6.8" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect><rect x="11.2" y="8.4" width="1.7" height="3.9" rx=".6" fill="#fff"></rect><rect x="15.6" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+          <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Physics 13 · all day</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;flex:none">
+          <div style="display:flex;align-items:center;gap:3px">
+            <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+            <span style="font:900 13px Nunito;color:#A8761D">30</span>
+          </div>
+          <div onClick="{{ tg1 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ d1 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ n1 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <!-- THURSDAY -->
+      <div style="display:flex;align-items:center;gap:8px;padding:20px 4px 9px">
+        <span style="font:900 14px Nunito;color:#2E2622">Thursday</span>
+        <span style="font:800 13px Nunito;color:#B4A996">Sep 10</span>
+        <div style="flex:1;height:1px;background:#EFE8DB"></div>
+        <div style="width:26px;height:26px;border-radius:13px;background:#F0E9DC;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="13" height="13" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;margin-bottom:8px;opacity: {{ op2 }}">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#B4A996"></div>
+        <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+          <svg width="30" height="30" viewBox="0 0 24 24"><rect x="4.4" y="5.8" width="15.2" height="10.4" rx="2.4" fill="#C98F2E" transform="rotate(-9 12 13)"></rect><rect x="4.4" y="8.2" width="15.2" height="10.6" rx="2.4" fill="#F5CE79"></rect><rect x="7.2" y="11.2" width="9.6" height="1.8" rx=".9" fill="#96631A"></rect><rect x="7.2" y="14.4" width="6.2" height="1.8" rx=".9" fill="#B57E28"></rect></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Bio quiz ch 3-4</div>
+          <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Study · all day</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;flex:none">
+          <div style="display:flex;align-items:center;gap:3px">
+            <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+            <span style="font:900 13px Nunito;color:#A8761D">20</span>
+          </div>
+          <div onClick="{{ tg2 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ d2 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ n2 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity: {{ op3 }}">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#57C79B"></div>
+        <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+          <svg width="30" height="30" viewBox="0 0 24 24"><rect x="9.4" y="3" width="5.2" height="3" rx="1.4" fill="#FF9E94"></rect><rect x="9.4" y="5.8" width="5.2" height="1.8" fill="#A99F8E"></rect><rect x="9.4" y="7.2" width="5.2" height="9.4" fill="#FFC24B"></rect><rect x="12" y="7.2" width="2.6" height="9.4" fill="#EDAE33"></rect><path d="M9.4 16.6h5.2L12 20.8Z" fill="#E8C58F"></path><path d="M11 19.1h2L12 20.8Z" fill="#4A4038"></path></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Essay outline</div>
+          <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Writing 5 · due 8:00 AM</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;flex:none">
+          <div style="display:flex;align-items:center;gap:3px">
+            <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+            <span style="font:900 13px Nunito;color:#A8761D">30</span>
+          </div>
+          <div onClick="{{ tg3 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ d3 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ n3 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:11px;padding:14px 8px 0 4px;min-height:44px;box-sizing:border-box">
+        <div style="width:44px;flex:none;text-align:right">
+          <div style="font:900 13px/14px Nunito;color:#2E2622">2:00</div>
+          <div style="font:900 9.5px/12px Nunito;color:#B4A996;letter-spacing:.5px">PM</div>
+        </div>
+        <div style="width:9px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px">
+          <div style="width:9px;height:9px;border-radius:5px;background:#9BC8F2;flex:none"></div>
+          <div style="width:2px;flex:1;background:#9BC8F2;opacity:.4;border-radius:1px;margin-top:3px"></div>
+        </div>
+        <div style="flex:1;min-width:0;padding-bottom:6px">
+          <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Office hours</div>
+          <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Intro Psych · 2:00–3:00 PM · Moore 202</div>
+        </div>
+      </div>
+
+      <!-- FRIDAY -->
+      <div style="display:flex;align-items:center;gap:8px;padding:20px 4px 9px">
+        <span style="font:900 14px Nunito;color:#2E2622">Friday</span>
+        <span style="font:800 13px Nunito;color:#B4A996">Sep 11</span>
+        <div style="flex:1;height:1px;background:#EFE8DB"></div>
+        <div style="width:26px;height:26px;border-radius:13px;background:#F0E9DC;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="13" height="13" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity: {{ op4 }}">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#9BC8F2"></div>
+        <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+          <svg width="30" height="30" viewBox="0 0 24 24"><rect x="4.4" y="5.8" width="15.2" height="10.4" rx="2.4" fill="#C98F2E" transform="rotate(-9 12 13)"></rect><rect x="4.4" y="8.2" width="15.2" height="10.6" rx="2.4" fill="#F5CE79"></rect><rect x="7.2" y="11.2" width="9.6" height="1.8" rx=".9" fill="#96631A"></rect><rect x="7.2" y="14.4" width="6.2" height="1.8" rx=".9" fill="#B57E28"></rect></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Week 3 quiz</div>
+          <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Intro Psych · due 3:00 PM</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;flex:none">
+          <div style="display:flex;align-items:center;gap:3px">
+            <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+            <span style="font:900 13px Nunito;color:#A8761D">30</span>
+          </div>
+          <div onClick="{{ tg4 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ d4 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ n4 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <!-- SATURDAY, empty: one quiet line -->
+      <div style="display:flex;align-items:center;gap:8px;padding:16px 4px 4px;cursor:pointer">
+        <span style="font:900 13px Nunito;color:#B4A996">Saturday</span>
+        <span style="font:800 12.5px Nunito;color:#C9BEAC">Sep 12</span>
+        <div style="flex:1"></div>
+        <span style="font:800 12.5px Nunito;color:#C9BEAC">Free</span>
+      </div>
+
+      <!-- NEXT WEEK -->
+      <div style="display:flex;align-items:center;gap:10px;padding:26px 4px 2px">
+        <div style="flex:1;height:1px;background:#E9E1D6"></div>
+        <span style="font:900 10px Nunito;color:#B4A996;letter-spacing:1.5px">NEXT WEEK</span>
+        <div style="flex:1;height:1px;background:#E9E1D6"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:16px 4px 9px">
+        <span style="font:900 14px Nunito;color:#2E2622">Sunday</span>
+        <span style="font:800 13px Nunito;color:#B4A996">Sep 13</span>
+        <div style="flex:1;height:1px;background:#EFE8DB"></div>
+        <div style="width:26px;height:26px;border-radius:13px;background:#F0E9DC;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="13" height="13" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:11px;padding:0 8px 0 4px;min-height:64px;box-sizing:border-box">
+        <div style="width:44px;flex:none;text-align:right">
+          <div style="font:900 13px/14px Nunito;color:#2E2622">9:00</div>
+          <div style="font:900 9.5px/12px Nunito;color:#B4A996;letter-spacing:.5px">AM</div>
+        </div>
+        <div style="width:9px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px">
+          <div style="width:9px;height:9px;border-radius:5px;background:#FF6F61;flex:none"></div>
+          <div style="width:2px;flex:1;background:#FF6F61;opacity:.4;border-radius:1px;margin-top:3px"></div>
+        </div>
+        <div style="flex:1;min-width:0;padding-bottom:6px">
+          <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Midterm 1</div>
+          <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Physics 13 · 9:00–11:00 AM</div>
+        </div>
+      </div>
+
+      <!-- kin peek at the end of the scroll -->
+      <div style="display:flex;justify-content:center;margin-top:26px">
+        <div style="width:78px;height:44px;border:2px dashed #CFC3B2;border-radius:22px 22px 0 0;border-bottom:none;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;box-sizing:border-box">
+          <span style="font:900 9.5px ui-monospace,Menlo,monospace;color:#B4A996;letter-spacing:1.4px">KIN</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom fade -->
+    <div style="position:absolute;left:0;right:0;bottom:100px;height:64px;background:linear-gradient(to top,#FAF5EC 12%,rgba(250,245,236,0));pointer-events:none;z-index:2"></div>
+
+    <!-- floating actions -->
+    <div style="position:absolute;right:20px;bottom:112px;display:flex;align-items:center;gap:14px;z-index:4">
+      <div style="width:60px;height:60px;border-radius:30px;background:#FF6F61;box-shadow:0 6px 18px rgba(255,111,97,.42);display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+      </div>
+    </div>
+
+    <!-- tab bar (RootView.tabBar — reproduced, not redesigned) -->
+    <div style="position:absolute;left:0;right:0;bottom:0;height:100px;background:#FFFDF8;box-shadow:0 -6px 11px rgba(40,20,18,.06);border-top:.5px solid rgba(46,38,34,.08);display:flex;align-items:flex-start;padding:6px 4px 0;box-sizing:border-box;z-index:5">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><path d="M12 2.6 22 10.6H2Z" fill="#E4735F"></path><path d="M12 2.6 22 10.6H12Z" fill="#C4523F"></path><rect x="4.6" y="10.6" width="14.8" height="9.8" fill="#FFF1E0"></rect><rect x="9.7" y="14" width="4.6" height="6.4" rx="1.7" fill="#4FA6D6"></rect><rect x="5.9" y="12.4" width="2.8" height="2.8" rx=".7" fill="#FFC24B"></rect><rect x="3.2" y="20" width="17.6" height="1.8" rx=".9" fill="#C2B5A4"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Home</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><path d="M7.2 4.4h9.6L12 12l4.8 7.6H7.2L12 12Z" fill="#BCD1DB"></path><path d="M8.5 5.9h7L12 11Z" fill="#F0A02A"></path><path d="M12 13.3 16 18.2H8Z" fill="#D97E12"></path><rect x="11.4" y="10.9" width="1.2" height="3.2" rx=".6" fill="#F0A02A"></rect><rect x="6.4" y="4.4" width="1.3" height="15.2" fill="#9A7550"></rect><rect x="16.3" y="4.4" width="1.3" height="15.2" fill="#9A7550"></rect><rect x="5.2" y="2" width="13.6" height="2.6" rx="1.3" fill="#7C5A3C"></rect><rect x="5.2" y="19.4" width="13.6" height="2.6" rx="1.3" fill="#7C5A3C"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Focus</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><rect x="3.4" y="16.4" width="17.2" height="4" rx="1.3" fill="#2E6E9E"></rect><rect x="5" y="16.4" width="1.6" height="4" fill="#FFF1E0"></rect><rect x="4.6" y="12.1" width="14.8" height="4" rx="1.3" fill="#4FA6D6"></rect><rect x="6.2" y="12.1" width="1.6" height="4" fill="#FFF1E0"></rect><rect x="3.4" y="7.8" width="17.2" height="4" rx="1.3" fill="#89C6E8"></rect><rect x="5" y="7.8" width="1.6" height="4" fill="#FFF1E0"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Learn</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;background:#FFE0DA;border-radius:16px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><rect x="3" y="5.4" width="18" height="15.6" rx="3" fill="#FFF1E0"></rect><path d="M3 8.4a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v1.2H3Z" fill="#E4735F"></path><rect x="6.6" y="2.4" width="2.4" height="4.6" rx="1.2" fill="#C4523F"></rect><rect x="15" y="2.4" width="2.4" height="4.6" rx="1.2" fill="#C4523F"></rect><rect x="6.6" y="12.6" width="3.4" height="3.4" rx="1" fill="#F2B9AF"></rect><rect x="11.6" y="12.6" width="3.4" height="3.4" rx="1" fill="#FF6F61"></rect><rect x="6.6" y="17.2" width="3.4" height="2.4" rx="1" fill="#F2B9AF"></rect></svg>
+        <span style="font:900 10.5px Nunito;color:#C24A3E">Calendar</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><circle cx="15.8" cy="12.6" r="4.6" fill="#F2A0BE"></circle><circle cx="14.4" cy="12.2" r=".85" fill="#2E2622"></circle><circle cx="17.4" cy="12.2" r=".85" fill="#2E2622"></circle><circle cx="8.6" cy="10.8" r="5.6" fill="#F5AE79"></circle><circle cx="6.9" cy="10.4" r="1" fill="#2E2622"></circle><circle cx="10.4" cy="10.4" r="1" fill="#2E2622"></circle><path d="M7.7 12.9q.9.9 1.8 0" stroke="#2E2622" stroke-width="1" fill="none" stroke-linecap="round"></path></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Friends</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <div style="width:27px;height:27px;border-radius:14px;border:2px dashed #CFC3B2;display:flex;align-items:center;justify-content:center;box-sizing:border-box">
+          <span style="font:900 7px ui-monospace,Menlo,monospace;color:#B4A996">KIN</span>
+        </div>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Kin</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:402px;font:700 11px/1.7 ui-monospace,Menlo,monospace;color:#7B6C63;margin-top:2px">
+    <div>y59–109 title + count · y113–233 strip card (switch + ‹Today› live inside it) · y233 first content</div>
+    <div>strip load = up to 4 stacked bars, 20×3, bottom-aligned, chronological, +n past four</div>
+    <div>KIN peek 78×44 · Sprout, coat mint, 1 star, emote <b>peek</b> · rises 10pt when the scroll hits the end</div>
+  </div>
+</div>
+
+<!-- ARTBOARD 2 — WEEK, EMPTY -->
+<div id="1b" style="display:flex;flex-direction:column;gap:10px;flex:none;scroll-margin-top:16px">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <a href="#1b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px">1b</a>
+    <span style="font:900 12.5px Nunito;color:#2E2622">Week — empty</span>
+    <span style="font:700 11px Nunito;color:#96877F">nothing paired · the screen that sells the scanner</span>
+  </div>
+
+  <div style="width:402px;height:874px;background:#FAF5EC;border-radius:44px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(46,38,34,.16)">
+    <div style="position:absolute;left:0;right:0;top:59px;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-sizing:border-box">
+      <div style="font-family:Nunito;font-weight:900;font-size:25px;line-height:28px;color:#2E2622">Calendar</div>
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border-radius:100px;box-shadow:0 2px 8px rgba(46,40,34,.12)">
+        <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+        <span style="font:900 15px Nunito;color:#2E2622">0</span>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:12px;right:12px;top:113px;height:120px;background:#fff;border-radius:24px;box-shadow:0 2px 8px rgba(46,38,34,.05);box-sizing:border-box;padding:6px 10px 8px">
+      <div style="height:32px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;background:#F5EFE3;border-radius:100px;padding:2.5px">
+          <div style="padding:5px 15px;border-radius:100px;background:#fff;box-shadow:0 1px 3px rgba(46,38,34,.12);font:900 12.5px Nunito;color:#2E2622">Week</div>
+          <a href="#1c" style="padding:5px 15px;border-radius:100px;font:900 12.5px Nunito;color:#B4A996">Month</a>
+        </div>
+        <div style="display:flex;align-items:center;gap:2px">
+          <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M14.5 5.5 8.5 12l6 6.5" stroke="#96877F" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div style="padding:5px 12px;border-radius:100px;background:#F5EFE3;font:900 12px Nunito;color:#2E2622">Today</div>
+          <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#96877F" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:2px;margin-top:2px">
+        <sc-for list="{{ emptyWeek }}" as="d" hint-placeholder-count="7">
+          <div style="flex:1;border-radius:15px;padding:5px 0 6px;display:flex;flex-direction:column;align-items:center">
+            <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">{{ d.l }}</span>
+            <span style="font:900 17px/26px Nunito;color:#B4A996">{{ d.n }}</span>
+            <div style="height:20px"></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:12px;right:12px;top:269px;background:#fff;border-radius:28px;box-shadow:0 3px 14px rgba(46,38,34,.07);box-sizing:border-box;padding:30px 26px 26px;display:flex;flex-direction:column;align-items:center">
+      <div style="width:116px;height:106px;border:2px dashed #CFC3B2;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+        <span style="font:900 10.5px ui-monospace,Menlo,monospace;color:#B4A996;letter-spacing:1.6px">KIN</span>
+      </div>
+      <div style="font:900 19px/1.25 Nunito;color:#2E2622;text-align:center">Nothing on this week.</div>
+      <div style="font:800 13.5px/1.5 Nunito;color:#96877F;text-align:center;margin-top:8px;text-wrap:pretty;max-width:270px">Point the camera at a syllabus and I'll fill this in.</div>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:9px;margin-top:22px;width:100%;height:50px;border-radius:100px;background:#DFF3E9;border:1.5px solid #57C79B;box-sizing:border-box;cursor:pointer">
+        <svg width="21" height="21" viewBox="0 0 24 24"><path d="M4 8.6h3.4l1.5-2.2h6.2l1.5 2.2H20a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.2a2 2 0 0 1 2-2Z" fill="#2E2622"></path><circle cx="12" cy="14.2" r="3.9" fill="#DFF3E9"></circle><circle cx="12" cy="14.2" r="2.2" fill="#2E2622"></circle></svg>
+        <span style="font:900 15px Nunito;color:#2E2622">Scan a syllabus</span>
+        <span style="padding:2px 6px;border-radius:100px;background:#FFF3D6;border:1px solid #E8A62E;font:900 8.5px Nunito;color:#A8761D;letter-spacing:.7px">PLUS</span>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;width:100%;height:46px;border-radius:100px;border:1.5px solid #EDE1D3;box-sizing:border-box;cursor:pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#7B6C63"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#7B6C63"></rect></svg>
+        <span style="font:900 14.5px Nunito;color:#7B6C63">Add something yourself</span>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;height:100px;background:#FFFDF8;box-shadow:0 -6px 11px rgba(40,20,18,.06);border-top:.5px solid rgba(46,38,34,.08);display:flex;align-items:flex-start;padding:6px 4px 0;box-sizing:border-box">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><path d="M12 2.6 22 10.6H2Z" fill="#E4735F"></path><path d="M12 2.6 22 10.6H12Z" fill="#C4523F"></path><rect x="4.6" y="10.6" width="14.8" height="9.8" fill="#FFF1E0"></rect><rect x="9.7" y="14" width="4.6" height="6.4" rx="1.7" fill="#4FA6D6"></rect><rect x="5.9" y="12.4" width="2.8" height="2.8" rx=".7" fill="#FFC24B"></rect><rect x="3.2" y="20" width="17.6" height="1.8" rx=".9" fill="#C2B5A4"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Home</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><path d="M7.2 4.4h9.6L12 12l4.8 7.6H7.2L12 12Z" fill="#BCD1DB"></path><path d="M8.5 5.9h7L12 11Z" fill="#F0A02A"></path><path d="M12 13.3 16 18.2H8Z" fill="#D97E12"></path><rect x="11.4" y="10.9" width="1.2" height="3.2" rx=".6" fill="#F0A02A"></rect><rect x="6.4" y="4.4" width="1.3" height="15.2" fill="#9A7550"></rect><rect x="16.3" y="4.4" width="1.3" height="15.2" fill="#9A7550"></rect><rect x="5.2" y="2" width="13.6" height="2.6" rx="1.3" fill="#7C5A3C"></rect><rect x="5.2" y="19.4" width="13.6" height="2.6" rx="1.3" fill="#7C5A3C"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Focus</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><rect x="3.4" y="16.4" width="17.2" height="4" rx="1.3" fill="#2E6E9E"></rect><rect x="5" y="16.4" width="1.6" height="4" fill="#FFF1E0"></rect><rect x="4.6" y="12.1" width="14.8" height="4" rx="1.3" fill="#4FA6D6"></rect><rect x="6.2" y="12.1" width="1.6" height="4" fill="#FFF1E0"></rect><rect x="3.4" y="7.8" width="17.2" height="4" rx="1.3" fill="#89C6E8"></rect><rect x="5" y="7.8" width="1.6" height="4" fill="#FFF1E0"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Learn</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;background:#FFE0DA;border-radius:16px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><rect x="3" y="5.4" width="18" height="15.6" rx="3" fill="#FFF1E0"></rect><path d="M3 8.4a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v1.2H3Z" fill="#E4735F"></path><rect x="6.6" y="2.4" width="2.4" height="4.6" rx="1.2" fill="#C4523F"></rect><rect x="15" y="2.4" width="2.4" height="4.6" rx="1.2" fill="#C4523F"></rect><rect x="6.6" y="12.6" width="3.4" height="3.4" rx="1" fill="#F2B9AF"></rect><rect x="11.6" y="12.6" width="3.4" height="3.4" rx="1" fill="#FF6F61"></rect><rect x="6.6" y="17.2" width="3.4" height="2.4" rx="1" fill="#F2B9AF"></rect></svg>
+        <span style="font:900 10.5px Nunito;color:#C24A3E">Calendar</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><circle cx="15.8" cy="12.6" r="4.6" fill="#F2A0BE"></circle><circle cx="14.4" cy="12.2" r=".85" fill="#2E2622"></circle><circle cx="17.4" cy="12.2" r=".85" fill="#2E2622"></circle><circle cx="8.6" cy="10.8" r="5.6" fill="#F5AE79"></circle><circle cx="6.9" cy="10.4" r="1" fill="#2E2622"></circle><circle cx="10.4" cy="10.4" r="1" fill="#2E2622"></circle><path d="M7.7 12.9q.9.9 1.8 0" stroke="#2E2622" stroke-width="1" fill="none" stroke-linecap="round"></path></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Friends</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <div style="width:27px;height:27px;border-radius:14px;border:2px dashed #CFC3B2;display:flex;align-items:center;justify-content:center;box-sizing:border-box">
+          <span style="font:900 7px ui-monospace,Menlo,monospace;color:#B4A996">KIN</span>
+        </div>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Kin</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:402px;font:700 11px/1.7 ui-monospace,Menlo,monospace;color:#7B6C63;margin-top:2px">
+    <div>KIN 116×106 · Sprout, coat <b>mint</b>, <b>1 star</b>, emote <b>idle</b>, one <b>bounce</b> when the card lands</div>
+    <div>no count line in the header — there is nothing to count · no FABs: the card already carries both actions</div>
+  </div>
+</div>
+
+<!-- ARTBOARD 3 — MONTH -->
+<div id="1c" style="display:flex;flex-direction:column;gap:10px;flex:none;scroll-margin-top:16px">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <a href="#1c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px">1c</a>
+    <span style="font:900 12.5px Nunito;color:#2E2622">Month</span>
+    <span style="font:700 11px Nunito;color:#96877F">live: tap any day</span>
+  </div>
+
+  <div style="width:402px;height:874px;background:#FAF5EC;border-radius:44px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(46,38,34,.16)">
+    <div style="position:absolute;left:0;right:0;top:59px;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-sizing:border-box;z-index:3">
+      <div>
+        <div style="font-family:Nunito;font-weight:900;font-size:25px;line-height:28px;color:#2E2622">Calendar</div>
+        <div style="font:800 12.5px/15px Nunito;color:#96877F;margin-top:1px">4 things due September · 2 events</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border-radius:100px;box-shadow:0 2px 8px rgba(46,40,34,.12)">
+        <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+        <span style="font:900 15px Nunito;color:#2E2622">{{ wallet }}</span>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:12px;right:12px;top:113px;background:#fff;border-radius:24px;box-shadow:0 2px 8px rgba(46,38,34,.05);box-sizing:border-box;padding:6px 10px 10px;z-index:3">
+      <div style="height:32px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;background:#F5EFE3;border-radius:100px;padding:2.5px">
+          <a href="#1a" style="padding:5px 15px;border-radius:100px;font:900 12.5px Nunito;color:#B4A996">Week</a>
+          <div style="padding:5px 15px;border-radius:100px;background:#fff;box-shadow:0 1px 3px rgba(46,38,34,.12);font:900 12.5px Nunito;color:#2E2622">Month</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:2px">
+          <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M14.5 5.5 8.5 12l6 6.5" stroke="#96877F" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+          <div onClick="{{ mToday }}" style="padding:5px 12px;border-radius:100px;background:#F5EFE3;font:900 12px Nunito;color:#2E2622;cursor:pointer">Today</div>
+          <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#96877F" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        </div>
+      </div>
+
+      <div style="display:flex;margin-top:4px">
+        <div style="flex:1;text-align:center;font:900 10.5px/18px Nunito;color:#C9BEAC;letter-spacing:.5px">S</div>
+        <div style="flex:1;text-align:center;font:900 10.5px/18px Nunito;color:#C9BEAC;letter-spacing:.5px">M</div>
+        <div style="flex:1;text-align:center;font:900 10.5px/18px Nunito;color:#C9BEAC;letter-spacing:.5px">T</div>
+        <div style="flex:1;text-align:center;font:900 10.5px/18px Nunito;color:#C9BEAC;letter-spacing:.5px">W</div>
+        <div style="flex:1;text-align:center;font:900 10.5px/18px Nunito;color:#C9BEAC;letter-spacing:.5px">T</div>
+        <div style="flex:1;text-align:center;font:900 10.5px/18px Nunito;color:#C9BEAC;letter-spacing:.5px">F</div>
+        <div style="flex:1;text-align:center;font:900 10.5px/18px Nunito;color:#C9BEAC;letter-spacing:.5px">S</div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap">
+        <sc-for list="{{ monthCells }}" as="c" hint-placeholder-count="42">
+          <div onClick="{{ c.pick }}" style="width:14.2857%;height:50px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box;cursor:pointer;border-radius:14px;background: {{ c.bg }}">
+            <span style="width:25px;height:25px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:Nunito;font-weight:900;font-size:15px;color: {{ c.fg }};background: {{ c.disc }}">{{ c.n }}</span>
+            <div style="display:flex;align-items:center;gap:2.5px;margin-top:4px;height:8px">
+              <sc-for list="{{ c.bars }}" as="b" hint-placeholder-count="0">
+                <div style="width:11px;height:3px;border-radius:1.5px;background: {{ b.c }}"></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;top:495px;bottom:0;overflow-y:auto;padding:0 16px 210px;box-sizing:border-box;z-index:1">
+      <div style="display:flex;align-items:center;gap:8px;padding:16px 4px 9px">
+        <span style="font-family:Nunito;font-weight:900;font-size:14px;color: {{ mHeadColor }}">{{ mDayName }}</span>
+        <span style="font:800 13px Nunito;color:#B4A996">{{ mDayDate }}</span>
+        <div style="flex:1;height:1px;background:#EFE8DB"></div>
+        <div style="width:26px;height:26px;border-radius:13px;background:#F0E9DC;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="13" height="13" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+
+      <sc-if value="{{ mIs9 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity: {{ op1 }}">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#FF6F61"></div>
+          <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+            <svg width="30" height="30" viewBox="0 0 24 24"><rect x="3.6" y="8.4" width="16.8" height="7.2" rx="1.8" fill="#7FB2D4"></rect><path d="M3.6 12.4h16.8v1.4a1.8 1.8 0 0 1-1.8 1.8H5.4a1.8 1.8 0 0 1-1.8-1.8Z" fill="#5E97BF"></path><rect x="6.8" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect><rect x="11.2" y="8.4" width="1.7" height="3.9" rx=".6" fill="#fff"></rect><rect x="15.6" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+            <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Physics 13 · all day</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;flex:none">
+            <div style="display:flex;align-items:center;gap:3px">
+              <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+              <span style="font:900 13px Nunito;color:#A8761D">30</span>
+            </div>
+            <div onClick="{{ tg1 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+              <sc-if value="{{ d1 }}" hint-placeholder-val="{{ false }}">
+                <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              </sc-if>
+              <sc-if value="{{ n1 }}" hint-placeholder-val="{{ true }}">
+                <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mIs10 }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;margin-bottom:8px;opacity: {{ op2 }}">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#B4A996"></div>
+            <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+              <svg width="30" height="30" viewBox="0 0 24 24"><rect x="4.4" y="5.8" width="15.2" height="10.4" rx="2.4" fill="#C98F2E" transform="rotate(-9 12 13)"></rect><rect x="4.4" y="8.2" width="15.2" height="10.6" rx="2.4" fill="#F5CE79"></rect><rect x="7.2" y="11.2" width="9.6" height="1.8" rx=".9" fill="#96631A"></rect><rect x="7.2" y="14.4" width="6.2" height="1.8" rx=".9" fill="#B57E28"></rect></svg>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Bio quiz ch 3-4</div>
+              <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Study · all day</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;flex:none">
+              <div style="display:flex;align-items:center;gap:3px">
+                <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+                <span style="font:900 13px Nunito;color:#A8761D">20</span>
+              </div>
+              <div onClick="{{ tg2 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+                <sc-if value="{{ d2 }}" hint-placeholder-val="{{ false }}">
+                  <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                </sc-if>
+                <sc-if value="{{ n2 }}" hint-placeholder-val="{{ true }}">
+                  <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity: {{ op3 }}">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#57C79B"></div>
+            <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+              <svg width="30" height="30" viewBox="0 0 24 24"><rect x="9.4" y="3" width="5.2" height="3" rx="1.4" fill="#FF9E94"></rect><rect x="9.4" y="5.8" width="5.2" height="1.8" fill="#A99F8E"></rect><rect x="9.4" y="7.2" width="5.2" height="9.4" fill="#FFC24B"></rect><rect x="12" y="7.2" width="2.6" height="9.4" fill="#EDAE33"></rect><path d="M9.4 16.6h5.2L12 20.8Z" fill="#E8C58F"></path><path d="M11 19.1h2L12 20.8Z" fill="#4A4038"></path></svg>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Essay outline</div>
+              <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Writing 5 · due 8:00 AM</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;flex:none">
+              <div style="display:flex;align-items:center;gap:3px">
+                <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+                <span style="font:900 13px Nunito;color:#A8761D">30</span>
+              </div>
+              <div onClick="{{ tg3 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+                <sc-if value="{{ d3 }}" hint-placeholder-val="{{ false }}">
+                  <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                </sc-if>
+                <sc-if value="{{ n3 }}" hint-placeholder-val="{{ true }}">
+                  <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:11px;padding:14px 8px 0 4px;min-height:44px;box-sizing:border-box">
+            <div style="width:44px;flex:none;text-align:right">
+              <div style="font:900 13px/14px Nunito;color:#2E2622">2:00</div>
+              <div style="font:900 9.5px/12px Nunito;color:#B4A996;letter-spacing:.5px">PM</div>
+            </div>
+            <div style="width:9px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px">
+              <div style="width:9px;height:9px;border-radius:5px;background:#9BC8F2;flex:none"></div>
+              <div style="width:2px;flex:1;background:#9BC8F2;opacity:.4;border-radius:1px;margin-top:3px"></div>
+            </div>
+            <div style="flex:1;min-width:0;padding-bottom:6px">
+              <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Office hours</div>
+              <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Intro Psych · 2:00–3:00 PM · Moore 202</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mIs11 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity: {{ op4 }}">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#9BC8F2"></div>
+          <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box">
+            <svg width="30" height="30" viewBox="0 0 24 24"><rect x="4.4" y="5.8" width="15.2" height="10.4" rx="2.4" fill="#C98F2E" transform="rotate(-9 12 13)"></rect><rect x="4.4" y="8.2" width="15.2" height="10.6" rx="2.4" fill="#F5CE79"></rect><rect x="7.2" y="11.2" width="9.6" height="1.8" rx=".9" fill="#96631A"></rect><rect x="7.2" y="14.4" width="6.2" height="1.8" rx=".9" fill="#B57E28"></rect></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Week 3 quiz</div>
+            <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Intro Psych · due 3:00 PM</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;flex:none">
+            <div style="display:flex;align-items:center;gap:3px">
+              <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg>
+              <span style="font:900 13px Nunito;color:#A8761D">30</span>
+            </div>
+            <div onClick="{{ tg4 }}" style="width:44px;height:44px;margin:-5.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+              <sc-if value="{{ d4 }}" hint-placeholder-val="{{ false }}">
+                <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              </sc-if>
+              <sc-if value="{{ n4 }}" hint-placeholder-val="{{ true }}">
+                <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mIs13 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:11px;padding:0 8px 0 4px;min-height:64px;box-sizing:border-box">
+          <div style="width:44px;flex:none;text-align:right">
+            <div style="font:900 13px/14px Nunito;color:#2E2622">9:00</div>
+            <div style="font:900 9.5px/12px Nunito;color:#B4A996;letter-spacing:.5px">AM</div>
+          </div>
+          <div style="width:9px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px">
+            <div style="width:9px;height:9px;border-radius:5px;background:#FF6F61;flex:none"></div>
+            <div style="width:2px;flex:1;background:#FF6F61;opacity:.4;border-radius:1px;margin-top:3px"></div>
+          </div>
+          <div style="flex:1;min-width:0;padding-bottom:6px">
+            <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Midterm 1</div>
+            <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Physics 13 · 9:00–11:00 AM</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:4px 4px 0;font:800 13px Nunito;color:#C9BEAC">Free</div>
+      </sc-if>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:100px;height:64px;background:linear-gradient(to top,#FAF5EC 12%,rgba(250,245,236,0));pointer-events:none;z-index:2"></div>
+
+    <div style="position:absolute;right:20px;bottom:112px;display:flex;align-items:center;gap:14px;z-index:4">
+      <div style="width:60px;height:60px;border-radius:30px;background:#FF6F61;box-shadow:0 6px 18px rgba(255,111,97,.42);display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;height:100px;background:#FFFDF8;box-shadow:0 -6px 11px rgba(40,20,18,.06);border-top:.5px solid rgba(46,38,34,.08);display:flex;align-items:flex-start;padding:6px 4px 0;box-sizing:border-box;z-index:5">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><path d="M12 2.6 22 10.6H2Z" fill="#E4735F"></path><path d="M12 2.6 22 10.6H12Z" fill="#C4523F"></path><rect x="4.6" y="10.6" width="14.8" height="9.8" fill="#FFF1E0"></rect><rect x="9.7" y="14" width="4.6" height="6.4" rx="1.7" fill="#4FA6D6"></rect><rect x="5.9" y="12.4" width="2.8" height="2.8" rx=".7" fill="#FFC24B"></rect><rect x="3.2" y="20" width="17.6" height="1.8" rx=".9" fill="#C2B5A4"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Home</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><path d="M7.2 4.4h9.6L12 12l4.8 7.6H7.2L12 12Z" fill="#BCD1DB"></path><path d="M8.5 5.9h7L12 11Z" fill="#F0A02A"></path><path d="M12 13.3 16 18.2H8Z" fill="#D97E12"></path><rect x="11.4" y="10.9" width="1.2" height="3.2" rx=".6" fill="#F0A02A"></rect><rect x="6.4" y="4.4" width="1.3" height="15.2" fill="#9A7550"></rect><rect x="16.3" y="4.4" width="1.3" height="15.2" fill="#9A7550"></rect><rect x="5.2" y="2" width="13.6" height="2.6" rx="1.3" fill="#7C5A3C"></rect><rect x="5.2" y="19.4" width="13.6" height="2.6" rx="1.3" fill="#7C5A3C"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Focus</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><rect x="3.4" y="16.4" width="17.2" height="4" rx="1.3" fill="#2E6E9E"></rect><rect x="5" y="16.4" width="1.6" height="4" fill="#FFF1E0"></rect><rect x="4.6" y="12.1" width="14.8" height="4" rx="1.3" fill="#4FA6D6"></rect><rect x="6.2" y="12.1" width="1.6" height="4" fill="#FFF1E0"></rect><rect x="3.4" y="7.8" width="17.2" height="4" rx="1.3" fill="#89C6E8"></rect><rect x="5" y="7.8" width="1.6" height="4" fill="#FFF1E0"></rect></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Learn</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;background:#FFE0DA;border-radius:16px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><rect x="3" y="5.4" width="18" height="15.6" rx="3" fill="#FFF1E0"></rect><path d="M3 8.4a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v1.2H3Z" fill="#E4735F"></path><rect x="6.6" y="2.4" width="2.4" height="4.6" rx="1.2" fill="#C4523F"></rect><rect x="15" y="2.4" width="2.4" height="4.6" rx="1.2" fill="#C4523F"></rect><rect x="6.6" y="12.6" width="3.4" height="3.4" rx="1" fill="#F2B9AF"></rect><rect x="11.6" y="12.6" width="3.4" height="3.4" rx="1" fill="#FF6F61"></rect><rect x="6.6" y="17.2" width="3.4" height="2.4" rx="1" fill="#F2B9AF"></rect></svg>
+        <span style="font:900 10.5px Nunito;color:#C24A3E">Calendar</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <svg width="27" height="27" viewBox="0 0 24 24"><circle cx="15.8" cy="12.6" r="4.6" fill="#F2A0BE"></circle><circle cx="14.4" cy="12.2" r=".85" fill="#2E2622"></circle><circle cx="17.4" cy="12.2" r=".85" fill="#2E2622"></circle><circle cx="8.6" cy="10.8" r="5.6" fill="#F5AE79"></circle><circle cx="6.9" cy="10.4" r="1" fill="#2E2622"></circle><circle cx="10.4" cy="10.4" r="1" fill="#2E2622"></circle><path d="M7.7 12.9q.9.9 1.8 0" stroke="#2E2622" stroke-width="1" fill="none" stroke-linecap="round"></path></svg>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Friends</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px">
+        <div style="width:27px;height:27px;border-radius:14px;border:2px dashed #CFC3B2;display:flex;align-items:center;justify-content:center;box-sizing:border-box">
+          <span style="font:900 7px ui-monospace,Menlo,monospace;color:#B4A996">KIN</span>
+        </div>
+        <span style="font:800 10.5px Nunito;color:#6E5F53">Kin</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:402px;font:700 11px/1.7 ui-monospace,Menlo,monospace;color:#7B6C63;margin-top:2px">
+    <div>cell 51.1×50 · disc 25 · bars 11×3 horizontal, up to 3, then +n · other-month numbers #D8CFC0</div>
+    <div>paging: swipe left/right, grid cross-fades 0.18s easeInOut while the rows slide ±28pt</div>
+  </div>
+</div>
+
+<!-- MONTH CELL SPECIMEN -->
+<div id="1d" style="display:flex;flex-direction:column;gap:10px;flex:none;scroll-margin-top:16px">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <a href="#1d" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px">1d</a>
+    <span style="font:900 12.5px Nunito;color:#2E2622">Month cell — every state</span>
+  </div>
+  <div style="width:300px;background:#FAF5EC;border-radius:24px;padding:20px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:52px;height:50px;background:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box">
+        <span style="width:25px;height:25px;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#2E2622">4</span>
+      </div>
+      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#7B6C63">nothing on it</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:52px;height:50px;background:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box">
+        <span style="width:25px;height:25px;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#2E2622">11</span>
+        <div style="display:flex;gap:2.5px;margin-top:4px"><div style="width:11px;height:3px;border-radius:1.5px;background:#9BC8F2"></div></div>
+      </div>
+      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#7B6C63">one item</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:52px;height:50px;background:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box">
+        <span style="width:25px;height:25px;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#2E2622">10</span>
+        <div style="display:flex;gap:2.5px;margin-top:4px"><div style="width:11px;height:3px;border-radius:1.5px;background:#B4A996"></div><div style="width:11px;height:3px;border-radius:1.5px;background:#57C79B"></div><div style="width:11px;height:3px;border-radius:1.5px;background:#9BC8F2"></div></div>
+      </div>
+      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#7B6C63">three items</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:52px;height:50px;background:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box">
+        <span style="width:25px;height:25px;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#2E2622">17</span>
+        <div style="display:flex;align-items:center;gap:2.5px;margin-top:4px"><div style="width:11px;height:3px;border-radius:1.5px;background:#FF6F61"></div><div style="width:11px;height:3px;border-radius:1.5px;background:#57C79B"></div><span style="font:900 8.5px Nunito;color:#B4A996">+2</span></div>
+      </div>
+      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#7B6C63">five items — two bars, then +2</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:52px;height:50px;background:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box">
+        <span style="width:25px;height:25px;border-radius:13px;background:#FF6F61;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#fff">9</span>
+        <div style="display:flex;gap:2.5px;margin-top:4px"><div style="width:11px;height:3px;border-radius:1.5px;background:#FF6F61"></div></div>
+      </div>
+      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#7B6C63">today</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:52px;height:50px;background:#FFE9E5;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box">
+        <span style="width:25px;height:25px;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#2E2622">10</span>
+        <div style="display:flex;gap:2.5px;margin-top:4px"><div style="width:11px;height:3px;border-radius:1.5px;background:#B4A996"></div><div style="width:11px;height:3px;border-radius:1.5px;background:#57C79B"></div><div style="width:11px;height:3px;border-radius:1.5px;background:#9BC8F2"></div></div>
+      </div>
+      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#7B6C63">selected</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:52px;height:50px;background:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:3px;box-sizing:border-box">
+        <span style="width:25px;height:25px;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#D8CFC0">31</span>
+      </div>
+      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#7B6C63">other month</span>
+    </div>
+  </div>
+</div>
+
+<!-- ARTBOARD 4 — THE ROWS -->
+<div id="1e" style="display:flex;flex-direction:column;gap:10px;flex:none;scroll-margin-top:16px">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <a href="#1e" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px">1e</a>
+    <span style="font:900 12.5px Nunito;color:#2E2622">The rows — eight states</span>
+  </div>
+
+  <div style="width:436px;background:#FAF5EC;border-radius:28px;padding:22px 17px;box-sizing:border-box">
+    <div style="font:900 10px Nunito;color:#B4A996;letter-spacing:1.5px;padding:0 4px 10px">CALENDARTASKROW</div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:0 4px 6px">1 · open — {course} · all day</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#FF6F61"></div>
+      <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box"><svg width="30" height="30" viewBox="0 0 24 24"><rect x="3.6" y="8.4" width="16.8" height="7.2" rx="1.8" fill="#7FB2D4"></rect><path d="M3.6 12.4h16.8v1.4a1.8 1.8 0 0 1-1.8 1.8H5.4a1.8 1.8 0 0 1-1.8-1.8Z" fill="#5E97BF"></path><rect x="6.8" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect><rect x="11.2" y="8.4" width="1.7" height="3.9" rx=".6" fill="#fff"></rect><rect x="15.6" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect></svg></div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+        <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Physics 13 · all day</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;flex:none">
+        <div style="display:flex;align-items:center;gap:3px"><svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg><span style="font:900 13px Nunito;color:#A8761D">30</span></div>
+        <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+      </div>
+    </div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:18px 4px 6px">2 · done — fades to 62%, no strikethrough</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity:.62">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#FF6F61"></div>
+      <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box"><svg width="30" height="30" viewBox="0 0 24 24"><rect x="3.6" y="8.4" width="16.8" height="7.2" rx="1.8" fill="#7FB2D4"></rect><path d="M3.6 12.4h16.8v1.4a1.8 1.8 0 0 1-1.8 1.8H5.4a1.8 1.8 0 0 1-1.8-1.8Z" fill="#5E97BF"></path><rect x="6.8" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect><rect x="11.2" y="8.4" width="1.7" height="3.9" rx=".6" fill="#fff"></rect><rect x="15.6" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect></svg></div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+        <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Physics 13 · all day</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;flex:none">
+        <div style="display:flex;align-items:center;gap:3px"><svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg><span style="font:900 13px Nunito;color:#A8761D">30</span></div>
+        <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      </div>
+    </div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:18px 4px 6px">3 · Canvas says handed in — {course} · handed in · cannot be un-ticked</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;opacity:.62">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#57C79B"></div>
+      <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box"><svg width="30" height="30" viewBox="0 0 24 24"><rect x="9.4" y="3" width="5.2" height="3" rx="1.4" fill="#FF9E94"></rect><rect x="9.4" y="5.8" width="5.2" height="1.8" fill="#A99F8E"></rect><rect x="9.4" y="7.2" width="5.2" height="9.4" fill="#FFC24B"></rect><rect x="12" y="7.2" width="2.6" height="9.4" fill="#EDAE33"></rect><path d="M9.4 16.6h5.2L12 20.8Z" fill="#E8C58F"></path><path d="M11 19.1h2L12 20.8Z" fill="#4A4038"></path></svg></div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Essay outline</div>
+        <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Writing 5 · handed in</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:none">
+        <div style="display:flex;align-items:center;gap:3px"><svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg><span style="font:900 13px Nunito;color:#A8761D">30</span></div>
+        <svg width="14" height="14" viewBox="0 0 24 24"><path d="M7.6 10a4.4 4.4 0 0 1 8.8 0" fill="none" stroke="#B4A996" stroke-width="2.4" stroke-linecap="round"></path><rect x="5" y="10" width="14" height="10" rx="3" fill="#B4A996"></rect></svg>
+        <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      </div>
+    </div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:18px 4px 6px">4 · overdue, still open — {course} · was due {EEE} · no red anywhere</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#FF6F61"></div>
+      <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box"><svg width="30" height="30" viewBox="0 0 24 24"><rect x="3.6" y="8.4" width="16.8" height="7.2" rx="1.8" fill="#7FB2D4"></rect><path d="M3.6 12.4h16.8v1.4a1.8 1.8 0 0 1-1.8 1.8H5.4a1.8 1.8 0 0 1-1.8-1.8Z" fill="#5E97BF"></path><rect x="6.8" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect><rect x="11.2" y="8.4" width="1.7" height="3.9" rx=".6" fill="#fff"></rect><rect x="15.6" y="8.4" width="1.7" height="3" rx=".6" fill="#fff"></rect></svg></div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+        <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Physics 13 · was due Tue</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;flex:none">
+        <div style="display:flex;align-items:center;gap:3px"><svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg><span style="font:900 13px Nunito;color:#A8761D">30</span></div>
+        <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+      </div>
+    </div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:18px 4px 6px">5 · typed, with a note — {kind} · all day, note on a second line</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 13px 11px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#B4A996"></div>
+      <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box"><svg width="30" height="30" viewBox="0 0 24 24"><rect x="4.4" y="5.8" width="15.2" height="10.4" rx="2.4" fill="#C98F2E" transform="rotate(-9 12 13)"></rect><rect x="4.4" y="8.2" width="15.2" height="10.6" rx="2.4" fill="#F5CE79"></rect><rect x="7.2" y="11.2" width="9.6" height="1.8" rx=".9" fill="#96631A"></rect><rect x="7.2" y="14.4" width="6.2" height="1.8" rx=".9" fill="#B57E28"></rect></svg></div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Bio quiz ch 3-4</div>
+        <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Study · all day</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:4px">
+          <svg width="11" height="11" viewBox="0 0 24 24" style="flex:none"><rect x="4" y="4" width="16" height="16" rx="3.5" fill="none" stroke="#C9BEAC" stroke-width="2.4"></rect><rect x="7.6" y="9" width="8.8" height="1.8" rx=".9" fill="#C9BEAC"></rect><rect x="7.6" y="13" width="5.6" height="1.8" rx=".9" fill="#C9BEAC"></rect></svg>
+          <span style="font:700 11.5px/1.3 Nunito;color:#B4A996;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ch 3 and 4, skip the diagrams</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;flex:none">
+        <div style="display:flex;align-items:center;gap:3px"><svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.74" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.52"></circle></svg><span style="font:900 13px Nunito;color:#A8761D">20</span></div>
+        <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+      </div>
+    </div>
+
+    <div style="font:900 10px Nunito;color:#B4A996;letter-spacing:1.5px;padding:30px 4px 4px">EVENTROW — no card, no checkbox, no coins</div>
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:0 4px 6px">rail height = duration · 44pt for the first hour, +20pt per hour after</div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:10px 4px 2px">6 · timed, with a room — {course} · {h:mm}–{h:mm A} · {location}</div>
+    <div style="display:flex;gap:11px;padding:8px 8px 0 4px;min-height:44px;box-sizing:border-box">
+      <div style="width:44px;flex:none;text-align:right"><div style="font:900 13px/14px Nunito;color:#2E2622">2:00</div><div style="font:900 9.5px/12px Nunito;color:#B4A996;letter-spacing:.5px">PM</div></div>
+      <div style="width:9px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px"><div style="width:9px;height:9px;border-radius:5px;background:#9BC8F2;flex:none"></div><div style="width:2px;flex:1;background:#9BC8F2;opacity:.4;border-radius:1px;margin-top:3px"></div></div>
+      <div style="flex:1;min-width:0;padding-bottom:6px"><div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Office hours</div><div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Intro Psych · 2:00–3:00 PM · Moore 202</div></div>
+    </div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:16px 4px 2px">7 · all day — hollow dot, no rail, pinned above the timed items</div>
+    <div style="display:flex;gap:11px;padding:8px 8px 0 4px;min-height:38px;box-sizing:border-box">
+      <div style="width:44px;flex:none;text-align:right;padding-top:2px"><div style="font:900 9.5px/12px Nunito;color:#B4A996;letter-spacing:.4px">ALL DAY</div></div>
+      <div style="width:9px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px"><div style="width:9px;height:9px;border-radius:5px;background:#fff;border:2px solid #9BC8F2;box-sizing:border-box;flex:none"></div></div>
+      <div style="flex:1;min-width:0;padding-bottom:6px"><div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Add/drop deadline</div><div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Intro Psych · all day</div></div>
+    </div>
+
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#96877F;padding:16px 4px 2px">8 · happening now — {course} · until {h:mm A} · {location}</div>
+    <div style="display:flex;gap:11px;padding:8px 8px 0 4px;min-height:44px;box-sizing:border-box">
+      <div style="width:44px;flex:none;text-align:right"><div style="font:900 13px/14px Nunito;color:#2E2622">2:00</div><div style="font:900 9.5px/12px Nunito;color:#B4A996;letter-spacing:.5px">PM</div></div>
+      <div style="width:9px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:1px">
+        <div style="width:13px;height:13px;border-radius:7px;border:2.5px solid #FF6F61;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:none;animation:nowPulse 2.4s ease-in-out infinite"><div style="width:5px;height:5px;border-radius:3px;background:#FF6F61"></div></div>
+        <div style="width:3px;flex:1;background:#9BC8F2;opacity:.55;border-radius:1.5px;margin-top:3px"></div>
+      </div>
+      <div style="flex:1;min-width:0;padding-bottom:6px">
+        <div style="display:flex;align-items:center;gap:7px"><span style="font:900 15.5px/1.2 Nunito;color:#2E2622">Office hours</span><span style="padding:2px 7px;border-radius:100px;background:#FFE9E5;font:900 9.5px Nunito;color:#C4523F;letter-spacing:.6px">NOW</span></div>
+        <div style="font:800 12.5px/1.35 Nunito;color:#96877F;margin-top:2px">Intro Psych · until 3:00 PM · Moore 202</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARTBOARD 5 — FLOATING ACTIONS -->
+<div id="1f" style="display:flex;flex-direction:column;gap:10px;flex:none;scroll-margin-top:16px">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <a href="#1f" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.1);color:#2E2622;border-radius:5px">1f</a>
+    <span style="font:900 12.5px Nunito;color:#2E2622">One button, and what it opens</span>
+  </div>
+
+  <div style="width:402px;height:300px;background:#FAF5EC;border-radius:0 0 44px 44px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(46,38,34,.16)">
+    <div style="position:absolute;left:16px;right:16px;top:0">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 13px 10px 17px;background:#fff;border-radius:20px;box-shadow:0 2px 3px rgba(40,20,18,.07);position:relative;overflow:hidden;min-height:60px;box-sizing:border-box;margin-bottom:8px">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:#9BC8F2"></div>
+        <div style="width:42px;height:42px;border-radius:21px;background:#FDF9F4;border:1.5px solid #EDE1D3;flex:none;box-sizing:border-box"></div>
+        <div style="flex:1"><div style="font:900 15.5px Nunito;color:#2E2622">Week 3 quiz</div><div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Intro Psych · due 3:00 PM</div></div>
+        <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:16px 4px 4px"><span style="font:900 13px Nunito;color:#B4A996">Saturday</span><span style="font:800 12.5px Nunito;color:#C9BEAC">Sep 12</span><div style="flex:1"></div><span style="font:800 12.5px Nunito;color:#C9BEAC">Free</span></div>
+      <div style="display:flex;justify-content:center;margin-top:22px">
+        <div style="width:78px;height:44px;border:2px dashed #CFC3B2;border-radius:22px 22px 0 0;border-bottom:none;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;box-sizing:border-box"><span style="font:900 9.5px ui-monospace,Menlo,monospace;color:#B4A996;letter-spacing:1.4px">KIN</span></div>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:100px;height:64px;background:linear-gradient(to top,#FAF5EC 12%,rgba(250,245,236,0));pointer-events:none;z-index:2"></div>
+
+    <div style="position:absolute;right:20px;bottom:112px;display:flex;align-items:center;gap:14px;z-index:4">
+      <div style="position:relative">
+        <div style="width:52px;height:52px;border-radius:26px;background:#fff;box-shadow:0 4px 14px rgba(46,38,34,.16);display:flex;align-items:center;justify-content:center">
+          <svg width="25" height="25" viewBox="0 0 24 24"><path d="M4 8.6h3.4l1.5-2.2h6.2l1.5 2.2H20a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.2a2 2 0 0 1 2-2Z" fill="#2E2622"></path><circle cx="12" cy="14.2" r="3.9" fill="#FAF5EC"></circle><circle cx="12" cy="14.2" r="2.2" fill="#2E2622"></circle></svg>
+        </div>
+        <div style="position:absolute;top:-6px;right:-8px;padding:2px 6px;border-radius:100px;background:#FFF3D6;border:1px solid #E8A62E;font:900 8.5px Nunito;color:#A8761D;letter-spacing:.7px">PLUS</div>
+      </div>
+      <div style="width:60px;height:60px;border-radius:30px;background:#FF6F61;box-shadow:0 6px 18px rgba(255,111,97,.42);display:flex;align-items:center;justify-content:center">
+        <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;height:100px;background:#FFFDF8;border-top:.5px solid rgba(46,38,34,.08);box-shadow:0 -6px 11px rgba(40,20,18,.06);z-index:5;display:flex;align-items:center;justify-content:center">
+      <span style="font:900 10px Nunito;color:#C9BEAC;letter-spacing:1.5px">ROOTVIEW.TABBAR — 100pt</span>
+    </div>
+  </div>
+
+  <div style="width:402px;font:700 11px/1.75 ui-monospace,Menlo,monospace;color:#7B6C63;margin-top:2px">
+    <div>coral + : 60pt, right 20, bottom 112 — the only thing floating</div>
+    <div>fade: 64pt, paper → transparent, at bottom 100, pointer-events none</div>
+    <div>scroll inset: 206pt bottom — the last row clears the button and the bar</div>
+    <div>press: scale 0.94, spring(0.22, 0.7) — the same TabPressStyle Home uses</div>
+  </div>
+
+  <div style="font:900 12.5px Nunito;color:#2E2622;margin-top:22px">What + opens</div>
+  <div style="width:402px;height:330px;background:#FAF5EC;border-radius:0 0 44px 44px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(46,38,34,.16)">
+    <div style="position:absolute;inset:0;background:rgba(46,38,34,.34)"></div>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:28px 28px 0 0;padding:10px 20px 30px;box-sizing:border-box;box-shadow:0 -8px 30px rgba(46,38,34,.18)">
+      <div style="width:38px;height:4.5px;border-radius:3px;background:#E6DFD7;margin:0 auto 16px"></div>
+      <div style="font:900 17px Nunito;color:#2E2622;padding:0 4px 2px">Add to Thursday</div>
+      <div style="font:800 12.5px Nunito;color:#96877F;padding:0 4px 14px">Sep 10</div>
+
+      <div style="display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:20px;background:#FDF9F4;border:1.5px solid #EDE1D3;box-sizing:border-box;cursor:pointer">
+        <div style="width:44px;height:44px;border-radius:22px;background:#fff;border:1.5px solid #EDE1D3;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:none">
+          <svg width="26" height="26" viewBox="0 0 24 24"><rect x="9.4" y="3" width="5.2" height="3" rx="1.4" fill="#FF9E94"></rect><rect x="9.4" y="5.8" width="5.2" height="1.8" fill="#A99F8E"></rect><rect x="9.4" y="7.2" width="5.2" height="9.4" fill="#FFC24B"></rect><rect x="12" y="7.2" width="2.6" height="9.4" fill="#EDAE33"></rect><path d="M9.4 16.6h5.2L12 20.8Z" fill="#E8C58F"></path><path d="M11 19.1h2L12 20.8Z" fill="#4A4038"></path></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font:900 15.5px Nunito;color:#2E2622">Type it</div>
+          <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">One thing, on one day</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" style="flex:none"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#C9BEAC" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:13px;padding:12px 14px;margin-top:10px;border-radius:20px;background:#DFF3E9;border:1.5px solid #57C79B;box-sizing:border-box;cursor:pointer">
+        <div style="width:44px;height:44px;border-radius:22px;background:#fff;display:flex;align-items:center;justify-content:center;flex:none">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 8.6h3.4l1.5-2.2h6.2l1.5 2.2H20a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.2a2 2 0 0 1 2-2Z" fill="#2E2622"></path><circle cx="12" cy="14.2" r="3.9" fill="#fff"></circle><circle cx="12" cy="14.2" r="2.2" fill="#2E2622"></circle></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="font:900 15.5px Nunito;color:#2E2622">Scan a syllabus</span>
+            <span style="padding:2px 6px;border-radius:100px;background:#FFF3D6;border:1px solid #E8A62E;font:900 8.5px Nunito;color:#A8761D;letter-spacing:.7px">PLUS</span>
+          </div>
+          <div style="font:800 12.5px Nunito;color:#7B6C63;margin-top:2px">One photo and I'll fill in the dates</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" style="flex:none"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#8FB9A6" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:402px;font:700 11px/1.75 ui-monospace,Menlo,monospace;color:#7B6C63;margin-top:2px">
+    <div>sheet: white, r28 top, detents [.height(260)] — never full screen</div>
+    <div>title takes the selected day; on today it reads "Add to today"</div>
+    <div>scrim rgba(46,38,34,.34), fades 0.2s easeOut; sheet spring(0.42, 0.86)</div>
+    <div>PLUS tag sits on the label, not the row — the row is never disabled or padlocked</div>
+    <div>free user taps Scan → the paywall sheet replaces this one, no error, no shake</div>
+  </div>
+</div>
+
+</div>
+
+<p style="max-width:820px;margin:34px 0 0;font:700 12px/1.7 Nunito;color:#7B6C63">Try next: "make the event rail thicker in <a href="#1a">1a</a>" · "show the week strip with a heavier week" · "fold Saturday into the past line too"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1000,&quot;height&quot;:1080}}">
+class Component extends DCLogic {
+  state = { done: {}, coins: 1240, pastOpen: false, sel: 9, capOpen: true, msel: 10 };
+
+  monthBars = {
+    9: ['#FF6F61'],
+    10: ['#B4A996', '#57C79B', '#9BC8F2'],
+    11: ['#9BC8F2'],
+    13: ['#FF6F61'],
+  };
+
+  monthGrid() {
+    const cells = [];
+    for (let i = 0; i < 42; i++) {
+      const off = i - 2;                       // grid starts Sun Aug 30
+      const inMonth = off >= 1 && off <= 30;
+      const n = off < 1 ? 30 + off : (off > 30 ? off - 30 : off);
+      const day = inMonth ? off : null;
+      const sel = day !== null && day === this.state.msel;
+      const today = day === 9;
+      cells.push({
+        n,
+        bars: (inMonth && this.monthBars[day] ? this.monthBars[day] : []).map(c => ({ c })),
+        bg: sel ? '#FFE9E5' : 'transparent',
+        disc: today ? '#FF6F61' : 'transparent',
+        fg: today ? '#ffffff' : (inMonth ? '#2E2622' : '#D8CFC0'),
+        pick: inMonth ? () => this.setState({ msel: day }) : () => {},
+      });
+    }
+    return cells;
+  }
+
+  rewards = { 1: 30, 2: 20, 3: 30, 4: 30 };
+
+  toggle(k) {
+    this.setState(s => {
+      const done = { ...s.done, [k]: !s.done[k] };
+      const delta = done[k] ? this.rewards[k] : -this.rewards[k];
+      return { done, coins: s.coins + delta };
+    });
+  }
+
+  /// Sep 2026 starts on a Tuesday, so Sep 1 is index 2 in a Sunday-first week.
+  weekdayOf(d) {
+    const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return names[(d + 1) % 7];
+  }
+
+  renderVals() {
+    const s = this.state;
+    const v = {
+      wallet: s.coins.toLocaleString('en-US'),
+      pastOpen: s.pastOpen,
+      pastShut: !s.pastOpen,
+      togglePast: () => this.setState(p => ({ pastOpen: !p.pastOpen })),
+      capOpen: s.capOpen,
+      onScroll: e => {
+        const shut = e.target.scrollTop > 10;
+        if (shut === s.capOpen) this.setState({ capOpen: !shut });
+      },
+      goToday: () => this.setState({ sel: 9 }),
+      prevWeek: () => {},
+      nextWeek: () => {},
+      emptyWeek: [
+        { l: 'S', n: 6 }, { l: 'M', n: 7 }, { l: 'T', n: 8 }, { l: 'W', n: 9 },
+        { l: 'T', n: 10 }, { l: 'F', n: 11 }, { l: 'S', n: 12 },
+      ],
+      monthCells: this.monthGrid(),
+      mToday: () => this.setState({ msel: 9 }),
+      mIs9: s.msel === 9,
+      mIs10: s.msel === 10,
+      mIs11: s.msel === 11,
+      mIs13: s.msel === 13,
+      mEmpty: ![9, 10, 11, 13].includes(s.msel),
+      mDayName: s.msel === 9 ? 'Today' : this.weekdayOf(s.msel),
+      mDayDate: 'Sep ' + s.msel,
+      mHeadColor: s.msel === 9 ? '#C4523F' : '#2E2622',
+    };
+    for (let d = 6; d <= 12; d++) {
+      v['bg' + d] = s.sel === d ? '#FFE9E5' : 'transparent';
+      v['pick' + d] = () => this.setState({ sel: d });
+    }
+    for (let k = 1; k <= 4; k++) {
+      v['d' + k] = !!s.done[k];
+      v['n' + k] = !s.done[k];
+      v['op' + k] = s.done[k] ? 0.62 : 1;
+      v['tg' + k] = () => this.toggle(k);
+    }
+    return v;
+  }
+}
+</script>
+</body>
+</html>

@@ -18,8 +18,8 @@ final class PlayPoolTests: XCTestCase {
     func testOnlyTheFirstGameOfTheDayPays() {
         var s = fresh(on: day1)
         XCTAssertNil(s.playBanked(on: day1))
-        XCTAssertEqual(s.recordPlaySolve(\.ladderPlay, reason: .ladder), 30)
-        XCTAssertEqual(s.playBanked(on: day1), .ladder)
+        XCTAssertEqual(s.recordPlaySolve(\.sortPlay, reason: .sort), 30)
+        XCTAssertEqual(s.playBanked(on: day1), .sort)
         XCTAssertTrue(s.playClaimedToday)
 
         XCTAssertEqual(s.recordWordleWin(), 0, "the word still counts, but the pool is spent")
@@ -38,7 +38,7 @@ final class PlayPoolTests: XCTestCase {
         s.recordPlaySolve(\.balancePlay, reason: .balance)
         s.advance(to: day2)
         XCTAssertFalse(s.playClaimedToday)
-        XCTAssertEqual(s.recordPlaySolve(\.threadPlay, reason: .thread), 30)
+        XCTAssertEqual(s.recordPlaySolve(\.weavePlay, reason: .weave), 30)
         XCTAssertEqual(s.ledger.balance, 60)
     }
 
@@ -61,10 +61,10 @@ final class PlayPoolTests: XCTestCase {
     func testASolveSettlesTheDayItWasDealt() {
         var s = fresh(on: day1)
         s.advance(to: day2)
-        XCTAssertEqual(s.recordPlaySolve(\.ladderPlay, reason: .ladder, day: day1), 30)
+        XCTAssertEqual(s.recordPlaySolve(\.sortPlay, reason: .sort, day: day1), 30)
         XCTAssertFalse(s.playClaimedToday)
-        XCTAssertEqual(s.recordPlaySolve(\.ladderPlay, reason: .ladder, day: day2), 30)
-        XCTAssertEqual(s.ladderPlay.solved, 2)
+        XCTAssertEqual(s.recordPlaySolve(\.sortPlay, reason: .sort, day: day2), 30)
+        XCTAssertEqual(s.sortPlay.solved, 2)
     }
 
     func testProgressIsGoodOnlyForTheDayItWasDealt() {
@@ -72,28 +72,29 @@ final class PlayPoolTests: XCTestCase {
         s.savePlayProgress(\.balancePlay, [0, 1, -1, -1], day: day1)
         XCTAssertEqual(s.playProgress(\.balancePlay, for: day1), [0, 1, -1, -1])
         XCTAssertNil(s.playProgress(\.balancePlay, for: day2))
-        s.savePlayProgress(\.ladderPlay, ["BLANK", "BLAND"], day: day1)
-        XCTAssertEqual(s.playProgress(\.ladderPlay, for: day1), ["BLANK", "BLAND"])
+        s.savePlayProgress(\.weavePlay, ["w:0:LATTE", "x:tale"], day: day1)
+        XCTAssertEqual(s.playProgress(\.weavePlay, for: day1), ["w:0:LATTE", "x:tale"])
     }
 
     func testTheRecordsSurviveASaveAndLoad() throws {
         var s = fresh(on: day1)
-        s.recordPlaySolve(\.threadPlay, reason: .thread)
+        s.recordPlaySolve(\.weavePlay, reason: .weave)
         s.savePlayProgress(\.pearlsPlay, [0, 0, 2, 1], day: day1)
         let data = try JSONEncoder().encode(s)
         let back = try JSONDecoder().decode(GameState.self, from: data)
-        XCTAssertEqual(back.threadPlay, s.threadPlay)
+        XCTAssertEqual(back.weavePlay, s.weavePlay)
         XCTAssertEqual(back.pearlsPlay, s.pearlsPlay)
-        XCTAssertEqual(back.playBanked(on: day1), .thread)
+        XCTAssertEqual(back.playBanked(on: day1), .weave)
     }
 
     /// A save from before the pool existed decodes with empty records.
     func testAnOldSaveOpensWithEmptyRecords() throws {
         let s = fresh(on: day1)
         var json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(s)) as! [String: Any]
-        for k in ["ladderPlay", "threadPlay", "balancePlay", "pearlsPlay"] { json.removeValue(forKey: k) }
+        for k in ["sortPlay", "weavePlay", "balancePlay", "pearlsPlay"] { json.removeValue(forKey: k) }
         let back = try JSONDecoder().decode(GameState.self, from: JSONSerialization.data(withJSONObject: json))
-        XCTAssertEqual(back.ladderPlay, PlayRecord<[String]>())
+        XCTAssertEqual(back.sortPlay, PlayRecord<[Int]>())
+        XCTAssertEqual(back.weavePlay, PlayRecord<[String]>())
         XCTAssertEqual(back.pearlsPlay.solved, 0)
     }
 }

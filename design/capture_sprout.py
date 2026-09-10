@@ -8,6 +8,9 @@ Two things the layout depends on, both preserved here:
   * every still is a SQUARE box, bottom-anchored, and the three-star art fills the width;
   * stages 1 and 2 are smaller INSIDE that same box, so the size ladder survives.
 That means one shared crop measured across every capture, not a per-image tight crop.
+
+After recapturing, run design/portraits.py so the round kin portraits stay
+centred on each still's face.
 """
 import asyncio, json, os, subprocess, sys, time
 from PIL import Image
@@ -23,7 +26,7 @@ COAT_DEFAULT = {"mint": "scholar", "coral": "ninja", "sky": "hoodie",
 FAMILIES = (
     [("sprout", "", c) for c in COAT_DEFAULT]
     + [("sprout", "ninja-", c) for c in COAT_DEFAULT]
-    + [("orca", "", "sky"), ("axolotl", "", "lilac"), ("axolotl", "", "coral")]
+    # The orca and axolotl rigs came out of the app on 2026-09-10 (Sprout only at launch).
 )
 SHOT = 1400          # capture canvas, px
 RADIUS = 300         # stage-III radius in that canvas

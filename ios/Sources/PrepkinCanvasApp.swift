@@ -4,12 +4,16 @@ import Combine
 @main
 struct PrepkinCanvasApp: App {
     @StateObject private var state = AppState()
+    /// One store for the whole app: the Plus sheet and the scanner both read it.
+    @StateObject private var plus = PlusStore()
     @Environment(\.scenePhase) private var phase
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(state)
+                .environmentObject(plus)
+                .task { await plus.load() }
                 // The four moments the day can turn over: coming back to the app,
                 // crossing midnight with it open, changing time zone, and a hand-set
                 // clock. Each one rebuilds today's list from the templates.

@@ -221,201 +221,174 @@ final class PlayGameTests: XCTestCase {
     }
 }
 
-/// Ladder and Thread, driven through their models.
+/// Sort and Weave, driven through their models on fixed boards.
 @MainActor
 final class PlayWordGameTests: XCTestCase {
     private let monday = Calendar.current.date(from: DateComponents(year: 2026, month: 9, day: 7))!
+    private let sortBoard = Catalog.fallbackSorts[0]
+    private let weaveBoard = Catalog.fallbackWeaves[0]
 
-    private func type(_ word: String, into g: LadderGame) {
-        for l in word.map(String.init) { g.key(l) }
+    // MARK: Sort
+
+    func testSortDealsSixteenAndLocksAGroup() {
+        let g = SortGame(date: monday, puzzle: sortBoard)
+        XCTAssertEqual(g.board.count, 16)
+        XCTAssertEqual(Set(g.board), Set(0..<16))
+        for w in 0..<4 { g.toggle(w) }
+        XCTAssertEqual(g.selected.count, 4)
+        g.toggle(5)
+        XCTAssertEqual(g.selected.count, 4, "four is the most you can pick")
+        XCTAssertEqual(g.submit(), .group(0))
+        XCTAssertEqual(g.solved, [0])
+        XCTAssertEqual(g.board.count, 12)
+        XCTAssertTrue(g.selected.isEmpty)
+        XCTAssertEqual(g.mistakes, 0)
     }
 
-    /// Solves every middle rung by tapping it and typing its word, in whatever
-    /// order the deal put them.
-    private func solveMiddle(_ g: LadderGame) {
-        for i in 1...5 {
-            g.tapRow(i)
-            XCTAssertEqual(g.selected, i)
-            type(g.words[i], into: g)
-            XCTAssertTrue(g.isSolved(i), g.words[i])
+    func testSortOneAwayAndMissesEndAtFour() {
+        let g = SortGame(date: monday, puzzle: sortBoard)
+        for w in [0, 1, 2, 4] { g.toggle(w) }
+        XCTAssertEqual(g.submit(), .oneAway)
+        XCTAssertEqual(g.mistakes, 1)
+        XCTAssertEqual(g.selected, [0, 1, 2, 4], "a miss keeps the pick so it can be fixed")
+        XCTAssertEqual(g.submit(), .repeated, "the same four again is not a second miss")
+        XCTAssertEqual(g.mistakes, 1)
+        g.deselect()
+        XCTAssertNil(g.submit(), "nothing picked, nothing to submit")
+        for four in [[0, 4, 8, 12], [1, 5, 9, 13], [2, 6, 10, 14]] {
+            for w in four { g.toggle(w) }
+            XCTAssertEqual(g.submit(), .miss)
+            g.deselect()
         }
-    }
-
-    /// Swaps rows until the middle reads `target`, top to bottom.
-    private func arrange(_ g: LadderGame, _ target: [Int]) {
-        for (pos, want) in target.enumerated() where g.order[pos] != want {
-            g.tapRow(g.order[pos])     // pick up what sits there
-            g.tapRow(want)             // drop it on the row that belongs there
-        }
-        XCTAssertEqual(g.order, target)
-    }
-
-    func testLadderChecksTheWordAsTheFifthLetterLands() {
-        let g = LadderGame(date: monday)
-        let i = try! XCTUnwrap(g.selected)
-        XCTAssertEqual(g.rows.count, 5, "only the middle shows until it is ordered")
-        type("ZZZZZ", into: g)
-        XCTAssertEqual(g.wrong, i, "a wrong word is called out at once")
-        XCTAssertEqual(g.typed[i], "ZZZZZ", "and stays on the row to be fixed")
-        XCTAssertFalse(g.isSolved(i))
-        g.key("A")
-        XCTAssertEqual(g.typed[i], "A", "typing over a miss restarts the row")
-        XCTAssertNil(g.wrong, "and clears the mark")
-        g.backspace()
-        type(g.words[i], into: g)
-        XCTAssertTrue(g.isSolved(i))
-        XCTAssertNotEqual(g.selected, i, "the cursor moves on to the next open rung")
-        XCTAssertNotNil(g.startedAt, "the clock starts on the first letter")
-    }
-
-    func testLadderMiddleThenOrderThenTheEndRungs() {
-        let g = LadderGame(date: monday)
-        solveMiddle(g)
-        XCTAssertTrue(g.middleDone)
-        XCTAssertFalse(g.ordered, "the deal is never already in order")
-        XCTAssertNil(g.selected, "nothing to type until the rungs are ordered")
-        arrange(g, [1, 2, 3, 4, 5])
-        XCTAssertTrue(g.ordered)
-        XCTAssertEqual(g.rows, [0, 1, 2, 3, 4, 5, 6])
-        XCTAssertEqual(g.selected, 0, "the top rung opens first")
-        XCTAssertNil(g.lifted)
-        g.tapRow(1)
-        XCTAssertNil(g.lifted, "ordered rungs no longer pick up")
-        type(g.words[0], into: g)
-        XCTAssertEqual(g.selected, 6)
-        type(g.words[6], into: g)
         XCTAssertTrue(g.finished)
-        XCTAssertNotNil(g.solvedIn)
-        XCTAssertEqual(g.solvedCount, 7)
+        XCTAssertFalse(g.won)
+        XCTAssertEqual(g.shownGroups, [0, 1, 2, 3], "a loss shows every group")
     }
 
-    func testLadderAMissClearsOnTheNextKeyOrTheTimer() {
-        let g = LadderGame(date: monday)
-        let i = try! XCTUnwrap(g.selected)
-        type("ZZZZZ", into: g)
-        XCTAssertEqual(g.wrong, i)
-        let stamp = g.wrongStamp
-        g.key("A")
-        XCTAssertEqual(g.typed[i], "A", "typing over a miss starts the row again")
-        XCTAssertNil(g.wrong)
-        g.clearWrong(stamp: stamp)
-        XCTAssertEqual(g.typed[i], "A", "a stale timer clears nothing")
-        for _ in 0..<1 { g.backspace() }
-        type("QQQQQ", into: g)
-        g.clearWrong(stamp: g.wrongStamp)
-        XCTAssertEqual(g.typed[i], "", "the timer clears the miss it saw")
-        XCTAssertNil(g.wrong)
-        type("PPPPP", into: g)
-        g.backspace()
-        XCTAssertEqual(g.typed[i], "", "delete on a miss clears the whole row")
+    func testSortWinsOnTheFourthGroupAndRestores() {
+        let g = SortGame(date: monday, puzzle: sortBoard)
+        for w in [0, 1, 2, 4] { g.toggle(w) }
+        g.submit()
+        g.deselect()
+        for group in 0..<4 {
+            for w in (group * 4)..<(group * 4 + 4) { g.toggle(w) }
+            XCTAssertEqual(g.submit(), .group(group))
+        }
+        XCTAssertTrue(g.finished)
+        XCTAssertTrue(g.won)
+        XCTAssertEqual(g.mistakes, 1)
+        XCTAssertEqual(g.progress.count, 20)
+        let back = SortGame(date: monday, puzzle: sortBoard, restoring: g.progress)
+        XCTAssertTrue(back.won)
+        XCTAssertEqual(back.solved, [0, 1, 2, 3])
+        XCTAssertEqual(back.mistakes, 1)
+        XCTAssertEqual(SortGame(date: monday, puzzle: sortBoard, restoring: [0, 1, 2, 3]).board.count, 12)
+        XCTAssertTrue(SortGame.isOver(g.progress))
+        XCTAssertFalse(SortGame.isOver([0, 1, 2, 4]))
+        XCTAssertTrue(SortGame.isOver([0, 1, 2, 4, 0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14]))
     }
 
-    func testLadderHintRevealsTheNextLetterAndDropsWrongOnes() {
-        let g = LadderGame(date: monday)
-        let i = try! XCTUnwrap(g.selected)
-        let answer = g.words[i]
+    func testSortShuffleKeepsTheSameWords() {
+        let g = SortGame(date: monday, puzzle: sortBoard)
+        var rng = SystemRandomNumberGenerator()
+        g.shuffle(using: &rng)
+        XCTAssertEqual(Set(g.board), Set(0..<16))
+    }
+
+    // MARK: Weave
+
+    func testWeaveFindsThemeWordsOnTheirOwnCells() {
+        let g = WeaveGame(date: monday, puzzle: weaveBoard)
+        XCTAssertEqual(g.total, 8)
+        for c in weaveBoard.words[0].c { g.touch(c) }
+        XCTAssertEqual(g.spelled, "LATTES")
+        XCTAssertEqual(g.submit(), .theme(0))
+        XCTAssertEqual(g.foundCount, 1)
+        XCTAssertTrue(g.path.isEmpty, "a submit clears the line")
+        XCTAssertEqual(g.owner(6), .word(0))
+        for c in weaveBoard.span.c { g.touch(c) }
+        XCTAssertEqual(g.submit(), .span)
+        XCTAssertEqual(g.owner(0), .span)
+        XCTAssertFalse(g.touch(0), "a found letter is out of play")
+        XCTAssertTrue(g.path.isEmpty)
+    }
+
+    func testWeaveTapRulesAndTooShort() {
+        let g = WeaveGame(date: monday, puzzle: weaveBoard)
+        XCTAssertFalse(g.touch(12))
+        XCTAssertFalse(g.touch(13))
+        XCTAssertTrue(g.touch(13), "landing on the end of the line is a submit-on-lift")
+        XCTAssertEqual(g.submit(), .short)
+        g.touch(12); g.touch(13); g.touch(14)
+        XCTAssertFalse(g.touch(12), "tapping back into the line cuts it there")
+        XCTAssertEqual(g.path, [12])
+        g.touch(20)
+        XCTAssertEqual(g.path, [20], "a far tap starts over")
+    }
+
+    func testWeaveExtrasEarnAHintThatOutlinesAWord() {
+        let g = WeaveGame(date: monday, puzzle: weaveBoard)
+        // Rows 3, 4, 5 read ROASTS, CREAMS, SUGARS; the first five letters of each
+        // are real words that are not theme words.
+        for c in 18...22 { g.touch(c) }                       // ROAST
+        XCTAssertEqual(g.submit(), .extra)
+        for c in 18...22 { g.touch(c) }
+        XCTAssertEqual(g.submit(), .already)
+        for c in (18...22).reversed() { g.touch(c) }          // TSAOR
+        XCTAssertEqual(g.submit(), .notWord)
+        XCTAssertEqual(g.hintsAvailable, 0)
+        XCTAssertEqual(g.extrasToNextHint, 2)
+        for c in 24...28 { g.touch(c) }                       // CREAM
+        XCTAssertEqual(g.submit(), .extra)
+        for c in 30...34 { g.touch(c) }                       // SUGAR
+        XCTAssertEqual(g.submit(), .extra)
+        XCTAssertEqual(g.extras, ["roast", "cream", "sugar"])
+        XCTAssertEqual(g.hintsAvailable, 1)
         g.hint()
-        XCTAssertEqual(g.typed[i], String(answer.prefix(1)))
-        XCTAssertEqual(g.hints, 1)
-        XCTAssertNotNil(g.startedAt, "a hint starts the clock too")
-        g.key("Z"); g.key("Z")
+        XCTAssertEqual(g.hintsUsed, 1)
+        XCTAssertEqual(g.revealed, 0, "the first hidden word is outlined")
+        XCTAssertEqual(g.hintsAvailable, 0)
+        XCTAssertTrue(g.isRevealed(6))
         g.hint()
-        XCTAssertEqual(g.typed[i], String(answer.prefix(2)), "wrong letters after the reveal are dropped")
-        for _ in 0..<3 { g.hint() }
-        XCTAssertTrue(g.isSolved(i), "five hints spell the word and it locks like a typed one")
-        XCTAssertEqual(g.hints, 5)
-        XCTAssertNotEqual(g.selected, i)
+        XCTAssertEqual(g.hintsUsed, 1, "one outline at a time")
+        let back = WeaveGame(date: monday, puzzle: weaveBoard, restoring: g.progress)
+        XCTAssertEqual(back.extras, g.extras)
+        XCTAssertEqual(back.revealed, 0)
+        XCTAssertEqual(back.hintsUsed, 1)
+        for c in weaveBoard.words[0].c { g.touch(c) }
+        XCTAssertEqual(g.submit(), .theme(0))
+        XCTAssertNil(g.revealed, "finding the outlined word clears the outline")
     }
 
-    func testLadderHintInTheOrderingStepMovesOneRungHome() {
-        let g = LadderGame(date: monday)
-        solveMiddle(g)
-        let before = g.order
-        while !g.ordered { g.hint() }
-        XCTAssertNotEqual(before, g.order)
-        XCTAssertLessThanOrEqual(g.hints, 4, "never more moves than rungs out of place")
-        XCTAssertEqual(g.selected, g.top)
-        let back = LadderGame(date: monday, restoring: g.progress)
-        XCTAssertEqual(back.hints, g.hints, "the count survives a restore")
-        XCTAssertTrue(back.ordered)
-    }
-
-    func testLadderLinksLightUpAsPairsMeet() {
-        let g = LadderGame(date: monday)
-        solveMiddle(g)
-        arrange(g, [1, 2, 3, 4, 5])
-        for (a, b) in zip(g.order, g.order.dropFirst()) { XCTAssertTrue(g.linked(a, b)) }
-        XCTAssertFalse(g.linked(0, 1), "an end rung is not linked until it is typed")
-        type(g.words[0], into: g)
-        XCTAssertTrue(g.linked(0, 1))
-        XCTAssertFalse(g.linked(1, 3), "two apart are not a link")
-    }
-
-    func testLadderAcceptsTheMiddleUpsideDown() {
-        let g = LadderGame(date: monday)
-        solveMiddle(g)
-        arrange(g, [5, 4, 3, 2, 1])
-        XCTAssertTrue(g.ordered)
-        XCTAssertTrue(g.reversed)
-        XCTAssertEqual(g.rows.first, 6, "the top rung is then the last word")
-        XCTAssertEqual(g.selected, 6)
-    }
-
-    func testLadderRestoresTypedRowsAndOrder() {
-        let g = LadderGame(date: monday)
-        g.tapRow(g.order[2]); type(g.words[g.order[2]], into: g)
-        g.tapRow(g.order[0]); type("QQQQQ", into: g)
-        let back = LadderGame(date: monday, restoring: g.progress)
-        XCTAssertEqual(back.typed, g.typed)
-        XCTAssertEqual(back.order, g.order)
-        XCTAssertFalse(back.finished)
-        XCTAssertTrue(back.isSolved(g.order[2]))
-    }
-
-    func testThreadTurnsACluePerMissAndStopsAtFive() {
-        let g = ThreadGame(date: monday)
-        XCTAssertEqual(g.shown, 1)
-        for i in 1...4 {
-            XCTAssertFalse(g.guess("nope \(i)"))
-            XCTAssertEqual(g.shown, i + 1)
+    func testWeaveFinishesWhenEveryWordIsFound() {
+        let g = WeaveGame(date: monday, puzzle: weaveBoard)
+        for w in weaveBoard.words {
+            for c in w.c { g.touch(c) }
+            g.submit()
         }
         XCTAssertFalse(g.finished)
-        XCTAssertFalse(g.guess("still nope"))
+        for c in weaveBoard.span.c { g.touch(c) }
+        XCTAssertEqual(g.submit(), .span)
         XCTAssertTrue(g.finished)
-        XCTAssertEqual(g.got, 0)
-        XCTAssertEqual(g.misses.count, 5)
+        XCTAssertEqual(g.foundCount, g.total)
+        XCTAssertTrue(WeaveGame(date: monday, puzzle: weaveBoard, restoring: g.progress).finished)
     }
 
-    func testThreadMatchingIgnoresFillerAndPlurals() {
-        let p = ThreadPuzzle(id: "due", name: "Things that are due", accept: ["due"],
-                             clues: ["Respect", "A baby", "Rent", "A library book", "An assignment"])
-        XCTAssertTrue(ThreadGame.matches("things that are due", p))
-        XCTAssertTrue(ThreadGame.matches("Due!", p))
-        XCTAssertTrue(ThreadGame.matches("stuff that's due soon", p))
-        XCTAssertFalse(ThreadGame.matches("things", p), "filler alone is not a guess")
-        XCTAssertFalse(ThreadGame.matches("", p))
-        let cards = ThreadPuzzle(id: "card", name: "___ card", accept: ["card"], clues: ["a", "b", "c", "d", "e"])
-        XCTAssertTrue(ThreadGame.matches("kinds of cards", cards))
-        XCTAssertTrue(ThreadGame.matches("CARD", cards))
+    func testWeaveRightWordWrongCellsIsElsewhere() {
+        let g = WeaveGame(date: monday, puzzle: weaveBoard)
+        // The span is COFFEE on row 0. Spell it on the same cells but a different order: not possible,
+        // so spell a theme word backwards, which is neither its cells' order nor a word.
+        for c in weaveBoard.words[0].c.reversed() { g.touch(c) }
+        XCTAssertEqual(g.spelled, "SETTAL")
+        XCTAssertEqual(g.submit(), .notWord)
     }
 
-    func testThreadACloseMissIsCalledClose() {
-        let p = ThreadPuzzle(id: "cc", name: "Credit card", accept: ["credit card"], clues: ["a", "b", "c", "d", "e"])
-        XCTAssertTrue(ThreadGame.isClose("card", p))
-        XCTAssertTrue(ThreadGame.isClose("kinds of cards", p))
-        XCTAssertFalse(ThreadGame.isClose("zebra", p))
-        XCTAssertFalse(ThreadGame.matches("card", p), "close is still a miss")
-    }
-
-    func testThreadHitScoresTheClueItWasGotOn() {
-        let g = ThreadGame(date: monday)
-        g.guess("wrong")
-        g.guess("also wrong")
-        XCTAssertTrue(g.guess(g.puzzle.accept[0]))
-        XCTAssertEqual(g.got, 3)
-        XCTAssertTrue(g.finished)
-        let back = ThreadGame(date: monday, restoring: g.misses, solved: true)
-        XCTAssertEqual(back.got, 3, "a solved round restores with its score")
+    func testWeaveIsWordTakesPlainEndings() {
+        XCTAssertTrue(WeaveGame.isWord("latte"))
+        XCTAssertTrue(WeaveGame.isWord("lattes"))
+        XCTAssertTrue(WeaveGame.isWord("roasted"))
+        XCTAssertTrue(WeaveGame.isWord("roasting"))
+        XCTAssertFalse(WeaveGame.isWord("xqzt"))
     }
 }
 

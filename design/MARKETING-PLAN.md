@@ -16,7 +16,7 @@ Narrow to traditional college age and about 2.9M are also reachable through stud
 subreddits and student papers. They pay with their own Apple Account. No parent approval, no Ask to
 Buy, no card typed into a web form. 85% carry a debit card and 77% of 18 to 29 year olds already pay
 for at least one app subscription. Their ceiling is about $10 to $12 a month across every app they
-pay for, which is why Prepkin Plus is $19.99 a year and not Finch's $69.99.
+pay for. The price that follows from it is in `design/PLUS-SPEC.md` section 5.
 
 What blocks them: the extension is Chrome only, the paywall sits one hop downstream of the install
 behind a pairing step nobody has measured, and a broken Canvas page during midterms ends everything.
@@ -97,16 +97,22 @@ sentence on the paywall screen, not in the terms.
 
 **Name:** Prepkin Plus.
 
-**Price:** $3.99 a month, or **$19.99 a year**, which is the default and the only plan shown first.
-Monthly sits behind a "see other plans" tap. No lifetime tier in 2026.
+**Price: see `design/PLUS-SPEC.md` section 5. That is the only price table in this repo, and this
+document names no numbers of its own.**
 
-This matches Focus Friend exactly, which is the closest living comparable: same buyer age, same
-pet-plus-timer shape, and it just raised its own prices to $3.99 and $19.99. The runner-up was
-$29.99 a year, from the Hanover draft. It loses because Focus Friend has a fanbase and we have none,
-so asking 50% more with zero brand equity is not defensible, and because $19.99 gives the sharper
-line on the pricing page: **BetterCampus Pro is $119 a year. Prepkin Plus is $20, and finishing your
-work is free.** The lifetime tier is dropped because at any price under about $100 it is worth more
-than the subscription it replaces, which contradicts the whole reason we chose a subscription.
+The $3.99 / $19.99 ladder argued for here until 2026-09-10 is dead. It was read off Focus Friend,
+which is the closest living comparable by audience and shape. It loses to the RevenueCat price-band
+figures written up in `LAUNCH-PLAN.md`: low-priced apps convert *worse* (1.4% against 2.0%) and
+return about a fifth of the year-one value per payer ($10.69 against $62.19). Monthly is now $9.99.
+The yearly number and the argument for it are in `PLUS-SPEC.md` section 5, together with the
+Finch / BetterCampus / Quizlet comparison. The lifetime tier stays dropped, for the reason it was
+always dropped: at any price under about $100 it is worth more than the subscription it replaces,
+which contradicts the whole reason we chose a subscription.
+
+**The perk list in this section is also superseded.** `PLUS-SPEC.md` section 2 is the live list:
+eight perks, seven of them a direct copy of something Finch or BetterCampus already charges for.
+The free-forever list below and the lapse promise below both survive unchanged and are quoted into
+that spec.
 
 **Free trial.** No paywall on day one. When a student has finished her third Canvas assignment, Plus
 switches on for seven days as a gift. No card, no charge, nothing to cancel, one quiet line when it
@@ -211,8 +217,10 @@ Finch's custom emoji is **not** copied, because ours would have had to live in t
 
 Deliberately different, and each one is a fix a skeptic forced:
 
-- **Price is 29% of Finch's annual.** Finch sells to employed women aged 25 to 35. We sell to broke
-  sophomores.
+- **Price matches Finch's, and is a third of BetterCampus's.** See `PLUS-SPEC.md` section 5. An
+  earlier draft here priced at 29% of Finch's annual on the argument that Finch sells to employed
+  women aged 25 to 35 while we sell to broke sophomores. That argument lost to the price-band
+  data; the answer to broke sophomores is the hardship path, not a price nobody can build against.
 - **No second currency.** An earlier draft added "pearls" that bought a shelf coins could never
   reach. That is a member-only shelf, which contradicts the sentence printed one paragraph above it.
   Dropped.
@@ -227,7 +235,7 @@ Deliberately different, and each one is a fix a skeptic forced:
 - **No gift subscriptions in 2026.** Finch sells a year on a Stripe page redeemed by friend code. The
   rule here is contested and a first-time developer account is the wrong place to test it. Revisit in
   spring as a non-consumable in-app purchase.
-- **Family Sharing stays off.** Turning it on is the irreversible direction, one $19.99 covers six
+- **Family Sharing stays off.** Turning it on is the irreversible direction, one yearly plan would cover six
   people, and the target user lives with five roommates. Switch it on later if we ever want it.
 
 **Apple rules that apply, and they are not optional:**
@@ -636,8 +644,8 @@ come back the week the port lands.
     show the coin count, 20 seconds. Phone app only.
 22. **Roommate.** "My roommate typed six characters and now our Canvas matches." Two laptops in
     frame, 13 seconds.
-23. **The price line.** "The other one is $119 a year. Mine's $20, and the Canvas part is free."
-    Plain text card, 10 seconds.
+23. **The price line.** "The other one is $119 a year. Mine's $70, and the Canvas part is free."
+    Plain text card, 10 seconds. Read the number off `PLUS-SPEC.md` section 5 on the day you film.
 24. **Sponsor a stranger.** "If you can't afford it, there's a link that just gives it to you." 12
     seconds, said plainly, no music.
 25. **Semester Wrapped.** "Semester Wrapped, but it's your Canvas." Ship 2026-12-07 and cut ten
@@ -687,8 +695,10 @@ created in App Store Connect, let alone submitted:**
 - Accept the **Paid Applications Agreement**. George, Monday.
 - Submit **banking details** and the **US tax forms** (W-9 and the tax residency questionnaire).
   George, Monday. Apple will not create a paid product until all three are in the Accepted state.
-- Create the two subscription products, **`prepkin.plus.monthly` at $3.99 and `prepkin.plus.annual`
-  at $19.99**, in one subscription group with annual as the higher level. George, Tuesday.
+- Create the two subscription products in one subscription group with annual as the higher level.
+  **The ids are `com.prepkin.canvas.plus.monthly` and `com.prepkin.canvas.plus.yearly`** — they are
+  already live in `ios/Sources/Core/Plus.swift` and `ios/PrepkinCanvas.storekit`, so anything else
+  will not resolve. Prices from `design/PLUS-SPEC.md` section 5. George, Tuesday.
 - Set the **billing grace period to 16 days** on the group, and write the App Review notes explaining
   that the preview is a gift with no card and the paywall appears only after it ends. George, Tuesday.
 - Apply to the **Small Business Program** the day the developer account activates.
@@ -852,7 +862,7 @@ separately from now on:
 - **Payers actually charged by 2026-12-31: 0 to 1.** Installs are back-loaded and the paywall opens on
   2026-10-19, so roughly half of eventual payers are charged after New Year.
 - **Trials running on 2026-12-31: about 5.**
-- **Gross revenue in 2026: about $20.** Realistically that is one annual at $19.99, or nothing at all. Net after
+- **Gross revenue in 2026: about $70.** Realistically that is one annual plan, or nothing at all. Net after
   Apple's 15%: about **$17**. The old plan's $44 came from adding 2 annual and 1 monthly, which was
   the mature number wearing the in-year label.
 
@@ -870,10 +880,10 @@ base and the store rank that January monetises. That is what the high case is fo
 "Education annual renews at about 24%" and "yearly plans overall renew at 83.4%", and then concluded
 from the flattering one that the 2026 payers are still there next September. They are not.
 
-- **Annual, $19.99: use 24%,** the Education figure, because Prepkin is an Education app. **Of every 4
+- **Annual: use 24%,** the Education figure, because Prepkin is an Education app. **Of every 4
   annual payers, about 1 renews in September 2027.** At a base case of 1 payer, the honest sentence is
   that there is a one-in-four chance the 2026 cohort still exists a year later.
-- **Monthly, $3.99: assume 50% gone by month three.** *Estimate, no source.* A $3.99 line item on a
+- **Monthly: assume 50% gone by month three.** *Estimate, no source.* A $9.99 line item on a
   student's card is the first thing cut in January. So a monthly payer is worth about $10, not $48.
 - The mixed-plan revenue therefore **decays**, it does not sit flat. Any January projection that draws
   a straight line from December is wrong.
@@ -1073,7 +1083,7 @@ followed as written.
   meter the brand rules ban, and teaches the best users to wait.
 - **A lifetime tier.** At any price under about $100 it is worth more than the subscription, which is
   the one thing a subscription was chosen to fix.
-- **Family Sharing.** Turning it on is the irreversible direction and one $19.99 would cover six
+- **Family Sharing.** Turning it on is the irreversible direction and one yearly plan would cover six
   roommates.
 - **Stripe gift subscriptions.** The rule about a web purchase unlocking an iOS feature is contested
   and a first submission is the wrong place to test it. Revisit in spring as an in-app purchase.

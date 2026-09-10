@@ -42,30 +42,24 @@ def save(name, data):
 # Each returns "how hard", higher being harder. Only the ORDER matters; the
 # numbers never leave this file.
 
-def word_ranks():
-    """Position in words.json, which is ordered common-first. Missing is rarest."""
-    words = [w.upper() for w in load('words')]
-    return {w: i for i, w in enumerate(words)}, len(words)
+def rate_sorts(puzzles):
+    # The author's own 1-5 call, made while writing the traps. Nothing in the
+    # words themselves says how misleading a group is.
+    return [p['hard'] for p in puzzles]
 
 
-def rate_ladders(puzzles):
-    ranks, missing = word_ranks()
-    # A rung of rare words is a harder climb, both to guess from the clue and to
-    # order afterwards.
-    return [sum(ranks.get(w.upper(), missing) for w in p['words']) / len(p['words'])
-            for p in puzzles]
-
-
-def rate_threads(puzzles):
-    ranks, missing = word_ranks()
-    # Rare clue words are harder to see the thread through, and a category that
-    # accepts only one wording is harder than one that accepts four.
-    out = []
-    for p in puzzles:
-        clue_words = [w for c in p['clues'] for w in c.replace('-', ' ').split()]
-        rank = sum(ranks.get(w.upper(), missing) for w in clue_words) / max(1, len(clue_words))
-        out.append(rank + 400.0 / max(1, len(p['accept'])))
-    return out
+def rate_weaves(puzzles):
+    # A word that bends is harder to see than one that runs straight. Count the
+    # turns across every path, spanning word included.
+    def turns(cells, cols):
+        t = 0
+        for a, b, c in zip(cells, cells[1:], cells[2:]):
+            d1 = (b // cols - a // cols, b % cols - a % cols)
+            d2 = (c // cols - b // cols, c % cols - b % cols)
+            if d1 != d2:
+                t += 1
+        return t
+    return [sum(turns(w['c'], p['cols']) for w in p['words'] + [p['span']]) for p in puzzles]
 
 
 def rate_balance(puzzles):
@@ -98,8 +92,8 @@ def rate_trace(puzzles):
 
 
 MEASURES = {
-    'ladders': rate_ladders,
-    'threads': rate_threads,
+    'sorts': rate_sorts,
+    'weaves': rate_weaves,
     'balance': rate_balance,
     'pearls': rate_pearls,
     'trace': rate_trace,

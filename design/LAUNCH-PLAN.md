@@ -4,7 +4,7 @@ Written 2026-09-06. The goal on the desk was 1,000 paying customers by 2026-12-3
 
 ## The bet
 
-We sell one thing: The Lamp, a $9.99 one-time purchase in the iPhone app that adds a coat, three tank scenes and a small name plate that coins can never buy. We sell it to US college students who use Canvas on their own laptop, and we reach them with short video that points at the App Store, not at the Chrome Web Store, because the phone the student is holding is the phone that can buy. Everything that exists today stays free forever, including all 20 Canvas looks, the Receipt, put-back, the buddy panel, the timer, coins, Learn, Games, leagues and every accessibility setting. The free Chrome extension is the reason people stay, and the phone app is the front door and the till. Honest reach by 2026-12-31: about 23 paying customers, range 10 to 60, with a real but small chance of 150 to 250 if one video breaks out.
+We sell one thing: **Prepkin Plus**, a subscription in the iPhone app. **Its price and its eight perks live in `design/PLUS-SPEC.md` and nowhere else.** Perk 1 there is what this document used to call The Lamp: a look, three tank scenes and a small name plate that coins can never buy. We sell it to US college students who use Canvas on their own laptop, and we reach them with short video that points at the App Store, not at the Chrome Web Store, because the phone the student is holding is the phone that can buy. Everything that exists today stays free forever, including all 20 Canvas looks, the Receipt, put-back, the buddy panel, the timer, coins, Learn, Games, leagues and every accessibility setting. The free Chrome extension is the reason people stay, and the phone app is the front door and the till. Honest reach by 2026-12-31: about 23 paying customers, range 10 to 60, with a real but small chance of 150 to 250 if one video breaks out.
 
 ## The goal we are changing
 
@@ -44,9 +44,33 @@ At 1.2%, with the day-35 lag and the refund haircut, 1,000 payers needs about 82
 
 ## What we sell
 
-**The Lamp. $9.99, once, in the iPhone app, through Apple.**
+**Prepkin Plus, a subscription in the iPhone app, through Apple. `design/PLUS-SPEC.md` section 5 holds the only price table in this repo, and this document names no numbers of its own.**
 
-**Price decision.** We sell one non-consumable at $9.99 rather than a $2.99 tip-sized pass, because low-priced apps convert worse in the same dataset (1.4% against 2.0%) and return about a fifth of the year-one value per buyer ($10.69 against $62.19). The runner-up was the Lamp Plan's $2.99 Founder Pass, and it is rejected because a lower price does not raise the count enough to pay for the lost value, and because a price we may want to raise later is a hidden deadline.
+> **Superseded on 2026-09-10, and read this before trusting any arithmetic below.** This section
+> and everything downstream of it was written for **one non-consumable at $9.99, bought once**.
+> Plus is a subscription. Three things are now stale and none of them is fixed here, because
+> quietly rewriting a revenue model is worse than flagging it:
+>
+> - **"A paying customer" no longer means one unit.** It means an active subscriber, and the
+>   same person can lapse and come back. The definition below, the case table, the weekly grid
+>   and the 2026-11-26 column all count units. **They need rebuilding against monthly recurring
+>   revenue before anyone quotes them again.**
+> - **"Revenue is The Lamp alone at $9.99"** in the weekly grid is a first-month figure now,
+>   not a lifetime one. Under a subscription the same 23 payers are worth more over a year and
+>   less on day one.
+> - **Two brand rules below do not survive a subscription** — "no trial that ends" and "nothing
+>   is ever taken away". Their replacement is `PLUS-SPEC.md` section 7, and it is signature 1 in
+>   that file's section 10. Do not ship Plus until George has signed it.
+>
+> What does survive, unchanged, and is used by `PLUS-SPEC.md`: the price-band argument in the
+> next paragraph, the free-forever list, and every brand rule except the two named above.
+
+**Price decision.** The argument for a high price band over a low one still stands and is the
+reason Plus is $9.99 a month rather than the $3.99 `MARKETING-PLAN.md` used to argue for: low-priced
+apps convert worse in the same dataset (1.4% against 2.0%) and return about a fifth of the year-one
+value per buyer ($10.69 against $62.19). Note what that pair does **not** decide — it separates a low
+band from a high one, and says nothing about $69.99 against $79.99 within the high band. That choice
+is made on the pricing-page sentence, in `PLUS-SPEC.md` section 5.
 
 **Where $10.69 against $62.19 comes from, and the one thing to check.** Both figures are read off the price-band table in the RevenueCat State of Subscription Apps report (https://www.revenuecat.com/state-of-subscription-apps), year-one revenue per payer by price band, low band against high band. This single pair is the whole argument for $9.99 over $2.99, so it is the one number in the plan worth re-reading at the source before 2026-09-08. If it cannot be found on that page, mark it "own estimate, no source" and redo the price decision from scratch. Note also that the report measures subscriptions, and The Lamp is a one-time purchase, so the ratio travels better than the absolute dollars do.
 
@@ -54,15 +78,15 @@ At 1.2%, with the day-35 lag and the refund haircut, 1,000 payers needs about 82
 
 | Item | Price | When |
 |---|---|---|
-| The Lamp | $9.99, one time, non-consumable | Launch |
-| Night Reef (one tank scene, standalone) | $2.99, one time, non-consumable | 2026-11-02 update, as a measured low step |
-| Gift codes for testers and creators | $0 App Store Connect promo codes | Any time, counted as zero payers |
+| Prepkin Plus, monthly and yearly | **`design/PLUS-SPEC.md` section 5** | Launch |
+| Night Reef (one tank scene, standalone) | Dropped. It became a Plus scene — `PLUS-SPEC.md` perk 1. | — |
+| Gift codes for testers, creators, and the hardship path | $0 App Store Connect promo codes | Any time, counted as zero payers |
 
-The $9.99 price is fixed through at least 2027-08-31. That boundary is a promise to ourselves and it stays in this plan. It does **not** go on the product card, because a price guaranteed until a named date is a soft deadline, and this plan already rejects any "get it before it goes up" line. The card says "One price. It does not go up." No launch discount, no season, no countdown.
+The price is fixed through at least 2027-08-31. That boundary is a promise to ourselves and it stays in this plan. It does **not** go on the sheet, because a price guaranteed until a named date is a soft deadline, and this plan already rejects any "get it before it goes up" line. No launch discount, no season, no countdown.
 
-**What The Lamp contains**
+**What used to be The Lamp is now perk 1 of Plus.** The list below is unchanged in content; what changed is that it arrives with a subscription instead of a single purchase, and that it stays yours after that subscription lapses (`PLUS-SPEC.md` section 7). In the code a "coat" of this kind is a **look** — the same `skinID` axis as `ninja` — not a new field.
 
-- The Lamp coat, a colourway Sprout wears on any kin at any stage, money-only forever.
+- The Lamp look, a colourway Sprout wears on any kin at any stage, money-only forever.
 - Three tank scenes: Observatory, Lantern Street, Snow Cabin.
 - A small Lamp plate under the fish's name on Home, in the Shop and in Looks.
 - Two scenes added later for everyone who already owns it: Desk Lamp and Long Night. They arrive silently in an update. No note, no date named in the app.
@@ -84,10 +108,10 @@ At launch it does not cross, and that is deliberate. Nothing paid lives on the l
 
 **Brand rules, one by one**
 
-- Nothing is ever taken away: one-time, non-consumable, no trial that ends, no season. The only removal is the buyer's own refund, and the Shop card says so in one line.
+- ~~Nothing is ever taken away: one-time, non-consumable, no trial that ends, no season.~~ **Superseded 2026-09-10, and this is the one rule Plus actually costs.** Plus is a subscription, so it lapses, and it opens with a gift week that stops. The replacement rule is `PLUS-SPEC.md` section 7 — you keep your fish, your coins, every coin item, every Plus look and scene you wore, and every combination you saved; only new Plus *actions* stop. It is signature 1 in that file and Plus does not ship until it is signed.
 - Every number can only go up: the pass grows with two extra scenes for everyone who owns it, and the plate is a mark, not a meter.
 - Coins pay for finishing, never for grades: no coin item ever moves behind money, and coins are never sold.
-- Accessibility is never behind money: contrast, reduced motion and the laptop's dark paper stay free, and the free Night Tank scene ships before any paid night scene, so the rule is visible in the product and not only stated here.
+- Accessibility is never behind money: contrast, reduced motion and the laptop's dark paper stay free, and a dark scene is already coin-reachable today — `deep` is `isDark: true` at 280 coins in `Theme.swift:205` — so the rule is visible in the product and not only stated here.
 - No padlocks, meters, countdowns or question-mark tiles: the Lamp card sits in full colour with a price on its own screen, and the coat previews on an example fish, never on the student's own fish.
 - No scolding: nothing in the app names midterms or finals at a student, and nothing dated appears in the app.
 - The page belongs to the school: nothing on the Canvas page sells anything.
@@ -109,17 +133,22 @@ This is on the Canvas page, which means it is in the Chrome store screenshots, a
 
 The sweep in the week of 2026-09-07 covers both, plus the banned engineering words, and ends in a test.
 
-**Exact shop copy**
+**Exact shop copy — superseded.** The card copy written here was for a one-time purchase and says
+"$9.99, once" and "Yours for good", neither of which is true of a subscription. The live copy is
+`design/PLUS-SPEC.md` section 3 (the two paragraphs) and section 7 (the lapse promise), and the
+sheet brief is `design/CLAUDE-DESIGN-PROMPT-PLUS.md`.
 
-Card header: "The Lamp. The one part of Prepkin that costs money. Everything else stays free, and coins are never for sale."
-Card body: "$9.99, once. A coat coins cannot buy, three tank scenes, and a small plate by your name. Yours for good. One price. It does not go up."
-Restore link: "Bought it before? Restore purchases."
-After buying: "Thanks. The coat is on and the scenes are in Home."
-First-coins note, shown once, one button that dismisses it forever: "First coins. That is the whole thing: finish something real, Sprout gets paid. There is one paid item in the Shop if you ever want it. Nothing on it is needed."
+One line from the old copy survives and should be kept word for word, because it is the honest
+first line of the whole pitch: **"The one part of Prepkin that costs money. Everything else stays
+free, and coins are never for sale."**
+
+The first-coins note also survives, with one word changed: "First coins. That is the whole thing:
+finish something real, Sprout gets paid. There is one paid plan if you ever want it. Nothing in it
+is needed."
 
 ## The math
 
-**A paying customer** is one non-refunded App Store unit of The Lamp or Night Reef. Counted from App Store Connect Sales and Trends units minus refunds. From 2026-11-02, when entitlement rows start existing, that count is reconciled monthly against our own rows. **When the two disagree, Apple wins.** Our rows are a check on our code, not on Apple's ledger. A $0 promo code is zero. A family-shared copy is zero, and Family Sharing is off anyway, because it cannot be turned off later.
+**A paying customer** is one non-refunded App Store unit of The Lamp or Night Reef. **(Stale — see the banner in "What we sell". Under a subscription this must be an active subscriber, and this whole section needs rebuilding.)** Counted from App Store Connect Sales and Trends units minus refunds. From 2026-11-02, when entitlement rows start existing, that count is reconciled monthly against our own rows. **When the two disagree, Apple wins.** Our rows are a check on our code, not on Apple's ledger. A $0 promo code is zero. A family-shared copy is zero, and Family Sharing is off anyway, because it cannot be turned off later.
 
 **Which table is the source of truth.** Installs are decided in one place, the channel table, further down. The weekly grid below spreads those channel totals across the weeks each channel is live. The case table is a summary read off the weekly grid. So the order is: channel table, then weekly grid, then case table. **If any two disagree, the channel table wins, and the other two are wrong and get rebuilt.**
 
@@ -350,7 +379,7 @@ Targets: 1,115 phone, 550 extension, 4 payers.
 
 ### Week of 2026-11-02 (Mon) to 2026-11-08 (Sun) - The second window
 This is the best acquisition week after September, and it holds the two real decisions.
-1. Ship iOS 1.1: verified entitlements, refund handling, and Night Reef at $2.99 as the low step if the days are there. Night Reef is the first thing cut from this week, because the funnel math does not need it.
+1. Ship iOS 1.1: verified entitlements and refund handling. ~~Night Reef at $2.99 as the low step~~ — dropped 2026-09-10; that scene became a Plus scene in `design/PLUS-SPEC.md` perk 1, and a second paid tier alongside a subscription is a second price to explain.
 2. Publish extension 0.7, already approved: the share card in the popup, drawn locally, no new permission.
 3. Read the day-35 buy rate on 2026-11-08. Under 0.8% means fix the path to the Shop, not the price.
 4. Read the total-payers tripwire on 2026-11-08. The base case here is 6, so the threshold is under 4.
@@ -541,7 +570,7 @@ The extension reads only the Canvas the student connects, and it sends the stude
 | Share card in the popup, drawn locally, finished in time for the 2026-10-19 submit of 0.7 or cut from 2026 | 1 | By 2026-10-19 |
 | Edge Function receipt check plus App Store Server Notifications for refunds | 2 | Week of 2026-11-02 |
 | Counting, part two: add the entitlement-row reconcile on top of Sales and Trends. Apple wins any disagreement | 0.3 | Week of 2026-11-02 |
-| Night Reef at $2.99: StoreKit product, card, and the scene art, which is a full tank scene and was not budgeted anywhere | 2 to 2.5 | Week of 2026-11-02, first thing cut if the days are not there |
+| ~~Night Reef at $2.99~~ — dropped 2026-09-10, folded into Plus perk 1. The scene art is still needed and still unbudgeted. | 2 to 2.5 | Week of 2026-11-02 |
 | Submit the Night Reef IAP with the 1.1 version, with its own review screenshot | 0.2 | Week of 2026-11-02 |
 | Friends code swap with a cosmetic reward, capped at three | 2 | Week of 2026-11-23 |
 | Pairing expiry fix before the 2027-01-04 restart: raise expires_at to 120 days for rows that have ever had a bound writer, or add a silent re-pair path. Test by fast-forwarding a row's expires_at in the live suite | 1 | Week of 2026-11-30 |

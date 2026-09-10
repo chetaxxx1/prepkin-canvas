@@ -38,7 +38,7 @@ struct KinView: View {
                     togetherStrip.padding(.top, 22)
                     collectionCard.padding(.top, 16)
                 }
-                .padding(.bottom, 120)
+                .padding(.bottom, Theme.tabClearance)
             }
             .scrollIndicators(.hidden)
             .background(Theme.paper)
@@ -126,24 +126,18 @@ struct KinView: View {
             .padding(.bottom, 16)
         }
         .frame(height: 430)
+        // Same chip, same gutter, same y as Home. Kin used to carry a separate shop
+        // door beside a plain wallet, which put two shop entrances on the tab and
+        // sat 4pt off Home's gutter — enough that switching tabs made the corner
+        // jump.
         .overlay(alignment: .topTrailing) {
-            HStack(spacing: 10) {
-                Button { showShop = true } label: {
-                    KinIcon(.shopDoor, size: 21, color: scene.isDark ? .white : Theme.ink)
-                        .frame(width: 40, height: 40)
-                        .background(GlassPill(onDark: scene.isDark, strong: false))
-                        .padding(2)
-                        .contentShape(Rectangle())
-                        .padding(-2)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Shop")
-
-                WalletChip(coins: state.coins, onDark: scene.isDark)
-                    .onTapGesture { showShop = true }
+            Button { showShop = true } label: {
+                WalletChip(coins: state.coins, onDark: scene.isDark, showsShop: true)
             }
-            .padding(.trailing, 24)
-            .padding(.top, 58)
+            .buttonStyle(.plain)
+            .accessibilityLabel("Coins and shop")
+            .padding(.trailing, 20)
+            .padding(.top, 64)
         }
     }
 

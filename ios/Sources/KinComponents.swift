@@ -121,6 +121,10 @@ struct WalletChip: View {
     let coins: Int
     var compact = false
     var onDark = false
+    /// Appends the shop's bag behind a hairline, the way Home's chip does. The shop
+    /// is entered from the coin count everywhere it can be entered at all, so a
+    /// second, differently-drawn shop button on one tab was the odd one out.
+    var showsShop = false
 
     var body: some View {
         HStack(spacing: 6) {
@@ -130,6 +134,15 @@ struct WalletChip: View {
                 .foregroundStyle(onDark ? .white : Theme.ink)
                 .contentTransition(.numericText())
                 .animation(.snappy, value: coins)
+            if showsShop {
+                Rectangle()
+                    .fill(onDark ? Color.white.opacity(0.25) : Theme.chipDivider)
+                    .frame(width: 1, height: 16)
+                    .padding(.leading, 3)
+                Image(systemName: "bag.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(onDark ? .white : Theme.bagInk)
+            }
         }
         .padding(.horizontal, compact ? 13 : 14)
         .padding(.vertical, compact ? 7 : 8)
@@ -330,10 +343,13 @@ struct CareButton: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 7) {
-                KinIcon(glyph, size: 24, color: Theme.ink)
+                // A circle rather than the app's squircle tile: these are the only
+                // three things on the tab you *do* to your kin, and a round button
+                // reads as press-me where a tile reads as a row you open. The fill
+                // is still the icon's own tint, so it stays inside the six.
+                KinIcon(glyph, size: 30, color: Theme.ink)
                     .frame(width: 60, height: 60)
-                    .background(Circle().fill(Theme.card)
-                        .shadow(color: Theme.hex(0x2E2822).opacity(0.09), radius: 10, y: 2))
+                    .background(Circle().fill(glyph.tint?.soft ?? Theme.card))
                 Text(label)
                     .font(Theme.font(11.5, .heavy))
                     .foregroundStyle(Theme.muted)
@@ -353,6 +369,25 @@ struct CareButton: View {
 enum KinGlyph {
     case shopDoor, dock, lock, reroll, die, info, share
     case pet, highFive, snack
+
+    /// The illustrated icon this glyph has been replaced by, if it has one.
+    ///
+    /// The Canvas drawings below are the app's third icon language and they are on
+    /// their way out. The ones that name a *thing* — a hand, a cookie, a set of
+    /// cards — are drawn from the shared set now. The ones left are marks on
+    /// controls (a lock, a reroll arrow, an info dot), which stay flat and take the
+    /// colour of the control they sit on.
+    var asset: String? {
+        switch self {
+        case .pet:      return "pet"
+        case .highFive: return "highFive"
+        case .snack:    return "snack"
+        case .dock:     return "collection"
+        default:        return nil
+        }
+    }
+
+    var tint: IconTint? { asset.map(IconTint.of) }
 }
 
 struct KinIcon: View {
@@ -367,6 +402,18 @@ struct KinIcon: View {
     }
 
     var body: some View {
+        if let asset = glyph.asset {
+            Image("icon-" + asset)
+                .resizable()
+                .scaledToFit()
+                .frame(width: size, height: size)
+                .accessibilityHidden(true)
+        } else {
+            drawn
+        }
+    }
+
+    private var drawn: some View {
         Canvas { ctx, sz in
             let s = min(sz.width, sz.height) / 24
             func p(_ build: (inout Path) -> Void) -> Path {

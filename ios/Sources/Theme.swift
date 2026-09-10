@@ -16,6 +16,9 @@ enum Theme {
     static let dim = hex(0xB4A996)          // muted gray
     static let inactive = hex(0xC9BEAC)     // inactive tab icon
     static let hairline = hex(0xF0E9DC)
+    /// One step under the page: the segmented track, the ‹ Today › pill and the
+    /// folded-past strip on Calendar. Sunk, not raised — nothing on it floats.
+    static let paperSunk = hex(0xF3ECE0)
 
     /// Task-row tile: one constant near-white circle for every category, so six
     /// objects give the variety without six competing backgrounds.
@@ -121,15 +124,54 @@ enum Theme {
         switch id {
         // Sprout's coat bodies (`palettes.ts` in the Sprout repo), so a tint drawn
         // next to the character is the character's own colour.
-        case "ember", "mochi", "axolotl-coral": return hex(0xE07A72)   // coral
+        case "ember", "mochi": return hex(0xE07A72)   // coral
         case "droplet", "puff": return hex(0x6BAFE0)  // sky
-        case "wisp", "axolotl": return hex(0xB08EE0)  // lilac
-        case "orca": return hex(0x46566A)             // the orca's fixed charcoal
+        case "wisp": return hex(0xB08EE0)  // lilac
         case "sprout": return hex(0xE9A07C)           // peach
         case "comet": return hex(0xE4C45C)            // butter
         default: return hex(0x58CC9F)                 // mint
         }
     }
+
+    /// The disc behind a kin's portrait. Colour theory, not a lookup: the
+    /// complement of the kin's own colour (hue + 180°), held pastel at a fixed
+    /// saturation and brightness, so any coat — mint on rose, coral on aqua,
+    /// butter on periwinkle — pops instead of sinking into a tint of itself. A new kin gets the right plate without anyone picking one.
+    /// Chosen 2026-09-10 from a sheet of four saturations at ship size.
+    static func plate(for speciesID: String) -> Color {
+        var h: CGFloat = 0, sat: CGFloat = 0, bri: CGFloat = 0, alpha: CGFloat = 0
+        UIColor(species(speciesID)).getHue(&h, saturation: &sat, brightness: &bri, alpha: &alpha)
+        return Color(hue: (h + 0.5).truncatingRemainder(dividingBy: 1), saturation: 0.32, brightness: 0.97)
+    }
+
+    // MARK: - Shape
+
+    /// Five radii. Before this the tree held 23 different values, which is what
+    /// made six tabs read as six apps. If a shape is not on this list it is a bug;
+    /// `ios/Tests/UniformTests.swift` fails the build over a new one.
+    enum Radius {
+        /// Small chips, checkboxes, day cells.
+        static let chip: CGFloat = 10
+        /// Buttons, fields, and the 44pt icon tile.
+        static let control: CGFloat = 14
+        /// Every card and row on a page.
+        static let card: CGFloat = 20
+        /// Sheets, the hero card, a full-bleed art band.
+        static let sheet: CGFloat = 28
+        /// A tile's corner is a constant fraction of its side, so the 44 and 52
+        /// sizes land on `control` and one step above it without a second rule.
+        static func tile(_ size: CGFloat) -> CGFloat { size * 0.32 }
+    }
+
+    /// The page gutter. Every header, section label and card edge lines up on it.
+    static let gutter: CGFloat = 18
+    /// Between two bands of a page.
+    static let band: CGFloat = 14
+
+    /// What anything that scrolls has to leave at its bottom so the last row is not
+    /// under the floating tab bar. Four different values were in the tree (104, 120,
+    /// 124 and a local 58) and the last row clipped on two screens because of it.
+    static let tabClearance: CGFloat = 112
 
     static func hex(_ v: UInt32) -> Color {
         Color(red: Double((v >> 16) & 0xFF) / 255,
@@ -185,19 +227,31 @@ struct Scene0: Identifiable, Equatable {
     }
 }
 
+/// A card: white, one hairline, no shadow.
+///
+/// The shadow used to be here and it was the wrong call. A page of eight shadowed
+/// cards has no hierarchy left to spend — everything is lifted, so nothing is.
+/// Shadows now belong only to things that genuinely float above the page: the tab
+/// bar and a presented sheet.
 struct CardStyle: ViewModifier {
-    var radius: CGFloat = 20
+    var radius: CGFloat = Theme.Radius.card
+    var padding: CGFloat = 16
     func body(content: Content) -> some View {
         content
-            .padding(16)
+            .padding(padding)
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .fill(Theme.card)
-                    .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(Theme.cardEdge, lineWidth: 1)
             )
     }
 }
 
 extension View {
-    func card(radius: CGFloat = 20) -> some View { modifier(CardStyle(radius: radius)) }
+    func card(radius: CGFloat = Theme.Radius.card, padding: CGFloat = 16) -> some View {
+        modifier(CardStyle(radius: radius, padding: padding))
+    }
 }

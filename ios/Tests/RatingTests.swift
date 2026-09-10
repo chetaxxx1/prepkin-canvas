@@ -97,8 +97,8 @@ final class RatingTests: XCTestCase {
 
     func testABoardSolvedOnItsOwnDayIsNeverSettledAsALoss() {
         var s = fresh(on: day1)
-        s.savePlayProgress(\.ladderPlay, ["A"], day: day1, puzzleRating: 1500)
-        s.recordPlaySolve(\.ladderPlay, reason: .ladder, day: day1)
+        s.savePlayProgress(\.sortPlay, [0, 1, 2, 3], day: day1, puzzleRating: 1500)
+        s.recordPlaySolve(\.sortPlay, reason: .sort, day: day1)
         let won = s.rating.value
         s.advance(to: day2)
         XCTAssertEqual(s.rating.value, won)
@@ -125,8 +125,8 @@ final class RatingTests: XCTestCase {
         for (name, ratings) in [("balance", Catalog.balance.map(\.rating)),
                                 ("pearls", Catalog.pearls.map(\.rating)),
                                 ("trace", Catalog.trace.map(\.rating)),
-                                ("ladders", Catalog.ladders.map(\.rating)),
-                                ("threads", Catalog.threads.map(\.rating))] {
+                                ("sorts", Catalog.sorts.map(\.rating)),
+                                ("weaves", Catalog.weaves.map(\.rating))] {
             XCTAssertFalse(ratings.isEmpty, "\(name) is empty")
             for r in ratings {
                 XCTAssertGreaterThanOrEqual(r, 400, "\(name) has a puzzle rated below the floor")

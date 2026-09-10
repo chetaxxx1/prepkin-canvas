@@ -272,50 +272,75 @@ extension Catalog {
 
 // MARK: - Play puzzles
 
-/// A Crossclimb-type ladder: seven words in order, each one letter off the next,
-/// with a clue each. `deal` is the scrambled order the middle five (indices 1...5)
-/// are shown in. Words 0 and 6 are the locked top and bottom rungs.
-struct LadderPuzzle: Codable, Equatable, RatedPuzzle {
+/// One of the four groups in a Sort board (a Connections-type game).
+struct SortGroup: Codable, Equatable {
+    let name: String
     let words: [String]
-    let clues: [String]
+}
+
+/// Sixteen words in four groups, easiest group first. Word `i` on the board is
+/// `groups[i / 4].words[i % 4]`; `deal` is the shuffled order the sixteen are
+/// laid out in.
+struct SortPuzzle: Codable, Equatable, RatedPuzzle {
+    let groups: [SortGroup]
     let deal: [Int]
     var rating: Int = Rating.unrated
 
-    init(words: [String], clues: [String], deal: [Int], rating: Int = Rating.unrated) {
-        self.words = words; self.clues = clues; self.deal = deal; self.rating = rating
+    init(groups: [SortGroup], deal: [Int], rating: Int = Rating.unrated) {
+        self.groups = groups; self.deal = deal; self.rating = rating
     }
 
-    private enum CodingKeys: String, CodingKey { case words, clues, deal, rating }
+    private enum CodingKeys: String, CodingKey { case groups, deal, rating }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        words = try c.decode([String].self, forKey: .words)
-        clues = try c.decode([String].self, forKey: .clues)
+        groups = try c.decode([SortGroup].self, forKey: .groups)
         deal = try c.decode([Int].self, forKey: .deal)
         rating = try c.decodeIfPresent(Int.self, forKey: .rating) ?? Rating.unrated
     }
+
+    /// Word `i`, 0..<16.
+    func word(_ i: Int) -> String { groups[i / 4].words[i % 4] }
 }
 
-/// Five clues, hardest first, that share one link. `accept` is the list of words a
-/// guess has to contain to count; `name` is what the end card shows.
-struct ThreadPuzzle: Codable, Equatable, Identifiable, RatedPuzzle {
-    let id: String
-    let name: String
-    let accept: [String]
-    let clues: [String]
+/// One word on a Weave board and the cells it runs through, first letter first.
+struct WeaveWord: Codable, Equatable {
+    let w: String
+    let c: [Int]
+}
+
+/// A Strands-type board: `rows` strings of `cols` letters, one spanning word that
+/// touches two opposite sides, and the theme words that fill every other cell.
+struct WeavePuzzle: Codable, Equatable, RatedPuzzle {
+    let theme: String
+    let cols: Int
+    let rows: Int
+    let grid: [String]
+    let span: WeaveWord
+    let words: [WeaveWord]
     var rating: Int = Rating.unrated
 
-    init(id: String, name: String, accept: [String], clues: [String], rating: Int = Rating.unrated) {
-        self.id = id; self.name = name; self.accept = accept; self.clues = clues; self.rating = rating
+    init(theme: String, cols: Int, rows: Int, grid: [String], span: WeaveWord, words: [WeaveWord],
+         rating: Int = Rating.unrated) {
+        self.theme = theme; self.cols = cols; self.rows = rows; self.grid = grid
+        self.span = span; self.words = words; self.rating = rating
     }
 
-    private enum CodingKeys: String, CodingKey { case id, name, accept, clues, rating }
+    private enum CodingKeys: String, CodingKey { case theme, cols, rows, grid, span, words, rating }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = try c.decode(String.self, forKey: .id)
-        name = try c.decode(String.self, forKey: .name)
-        accept = try c.decode([String].self, forKey: .accept)
-        clues = try c.decode([String].self, forKey: .clues)
+        theme = try c.decode(String.self, forKey: .theme)
+        cols = try c.decode(Int.self, forKey: .cols)
+        rows = try c.decode(Int.self, forKey: .rows)
+        grid = try c.decode([String].self, forKey: .grid)
+        span = try c.decode(WeaveWord.self, forKey: .span)
+        words = try c.decode([WeaveWord].self, forKey: .words)
         rating = try c.decodeIfPresent(Int.self, forKey: .rating) ?? Rating.unrated
+    }
+
+    /// The letter in cell `i`, row-major.
+    func letter(_ i: Int) -> String {
+        let row = grid[i / cols]
+        return String(row[row.index(row.startIndex, offsetBy: i % cols)])
     }
 }
 
@@ -392,26 +417,55 @@ struct PearlsPuzzle: Codable, Equatable, RatedPuzzle {
 extension Catalog {
     /// Dealt by design/games/gen.py, which checks every puzzle has one answer that
     /// a rule-only solver can reach. The app never runs a solver; it only counts.
-    static let ladders: [LadderPuzzle] = load("ladders", fallback: fallbackLadders)
-    static let threads: [ThreadPuzzle] = load("threads", fallback: fallbackThreads)
+    static let sorts: [SortPuzzle] = load("sorts", fallback: fallbackSorts)
+    static let weaves: [WeavePuzzle] = load("weaves", fallback: fallbackWeaves)
+
+    /// Where each three-star still's face is, [x, y] as fractions of the image,
+    /// from design/portraits.py. A still not in the table draws at the mint one's.
+    static let portraits: [String: [Double]] = load("portraits", fallback: [:])
+
+    /// Every word Weave takes as a non-theme find: the system word list plus every
+    /// theme word, lowercase, one a line. Read once, on first use.
+    static let dictionary: Set<String> = {
+        var words = Set<String>()
+        if let url = Bundle.main.url(forResource: "dictionary", withExtension: "txt"),
+           let text = try? String(contentsOf: url, encoding: .utf8) {
+            for line in text.split(separator: "\n") where line.count >= 4 { words.insert(String(line)) }
+        } else {
+            NSLog("Prepkin: dictionary.txt missing, Weave takes only theme words")
+        }
+        for p in weaves {
+            words.insert(p.span.w.lowercased())
+            for w in p.words { words.insert(w.w.lowercased()) }
+        }
+        return words
+    }()
     static let balance: [BalancePuzzle] = load("balance", fallback: fallbackBalance)
     static let pearls: [PearlsPuzzle] = load("pearls", fallback: fallbackPearls)
     static let trace: [TracePuzzle] = load("trace", fallback: fallbackTrace)
 
     /// One of each, so a missing file still deals a playable puzzle.
-    static let fallbackLadders = [LadderPuzzle(
-        words: ["BLAND", "BLEND", "BLIND", "BLINK", "BRINK", "BRISK", "BRICK"],
-        clues: ["Lacking flavor", "Mix in a smoothie", "Window shade", "Quick eye shut",
-                "Edge of a cliff", "Quick and energetic", "Wall building block"],
-        deal: [3, 1, 5, 2, 4])]
+    static let fallbackSorts = [SortPuzzle(
+        groups: [SortGroup(name: "Coffee orders", words: ["LATTE", "MOCHA", "ESPRESSO", "CORTADO"]),
+                 SortGroup(name: "In a backpack", words: ["LAPTOP", "CHARGER", "NOTEBOOK", "PENCIL"]),
+                 SortGroup(name: "Ways to say yes", words: ["SURE", "YEP", "TOTALLY", "ABSOLUTELY"]),
+                 SortGroup(name: "___ hall", words: ["DINING", "STUDY", "LECTURE", "TOWN"])],
+        deal: [9, 3, 13, 10, 11, 6, 5, 4, 0, 7, 14, 8, 12, 15, 1, 2])]
+    /// A 6×8 with the spanning word straight across the top row and a six-letter
+    /// word on each row under it, so a missing file still deals a board that plays.
+    static let fallbackWeaves: [WeavePuzzle] = {
+        let rows = ["COFFEE", "LATTES", "MOCHAS", "ROASTS", "CREAMS", "SUGARS", "DECAFS", "GRINDS"]
+        func cells(_ r: Int) -> [Int] { (0..<6).map { r * 6 + $0 } }
+        return [WeavePuzzle(
+            theme: "Coffee run", cols: 6, rows: 8, grid: rows,
+            span: WeaveWord(w: rows[0], c: cells(0)),
+            words: (1..<8).map { WeaveWord(w: rows[$0], c: cells($0)) })]
+    }()
     static let fallbackTrace = [TracePuzzle(n: 4, numbers: [
         [1, 0, 0, 2],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [4, 0, 0, 3]], walls: [])]
-    private static let fallbackThreads = [ThreadPuzzle(
-        id: "card", name: "___ card", accept: ["card"],
-        clues: ["Wild", "Green", "Report", "Business", "Credit"])]
     private static let fallbackBalance = [BalancePuzzle(n: 6, givens: [
         [ 1,  0, -1, -1, -1, -1],
         [-1,  0,  0, -1, -1, -1],

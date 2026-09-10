@@ -20,14 +20,20 @@ struct RootView: View {
     /// Every icon is a full-colour object, so a tab is found by silhouette and colour
     /// rather than by parsing a grey glyph. If the icons are ever reduced to
     /// monochrome, this bar has to be cut again.
+    ///
+    /// Six since 2026-09-09: Calendar is its own tab, by George's call
+    /// (design/CALENDAR-PLAN.md). It sits after Learn so the two school tabs
+    /// are neighbours. If the bar ever fails the largest-type sweep, the
+    /// fallback is a Today / Week / Month switch on Home, not cutting it.
     enum Tab: String, CaseIterable {
-        case home, focus, learn, friends, kin
+        case home, focus, learn, calendar, friends, kin
 
         var label: String {
             switch self {
             case .home: return "Home"
             case .focus: return "Focus"
             case .learn: return "Learn"
+            case .calendar: return "Calendar"
             case .friends: return "Friends"
             case .kin: return "Kin"
             }
@@ -50,6 +56,7 @@ struct RootView: View {
                 case .home: HomeView()
                 case .focus: FocusView()
                 case .learn: LearnView()
+                case .calendar: CalendarView()
                 case .friends: FriendsView()
                 case .kin: KinView()
                 }
@@ -77,26 +84,80 @@ struct RootView: View {
             withAnimation(switchAnimation) { tab = .friends }
             Task { @MainActor in state.openFriendsRequest = false }
         }
+        // Sitting down with a friend from their card. The tab switch is Root's; the
+        // shift is Focus's, which clears the request once it has started one.
+        .onChange(of: state.joinShiftRequest) { _, new in
+            guard new != nil else { return }
+            withAnimation(switchAnimation) { tab = .focus }
+        }
+        // Home's Tomorrow line. The tab switch is Root's; the day is Calendar's,
+        // which clears the request once it has landed on it.
+        .onChange(of: state.openCalendarOn) { _, new in
+            guard new != nil else { return }
+            withAnimation(switchAnimation) { tab = .calendar }
+        }
     }
 
     // MARK: - Tab bar
 
+    /// A floating bar, in two pieces: a capsule holding the five places you go, and
+    /// the kin in a bubble of its own at the right.
+    ///
+    /// Two pieces rather than six-in-a-row because the kin is not a destination in
+    /// the same sense — it is who you are carrying. Given its own bubble it stops
+    /// competing with Calendar and Friends for the same reading, and the five that
+    /// *are* destinations get room for a legible label.
+    ///
+    /// Floating, so the page runs under it and the screen keeps its full height.
+    /// Anything that scrolls has to end with `Theme.tabClearance` of padding.
     private var tabBar: some View {
-        HStack(alignment: .bottom, spacing: 2) {
-            ForEach(Tab.allCases, id: \.self) { t in
-                tabButton(t)
+        HStack(spacing: 10) {
+            HStack(spacing: 0) {
+                ForEach(Tab.allCases.filter { $0 != .kin }, id: \.self) { t in
+                    tabButton(t)
+                }
             }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 5)
+            .background(barSurface(Capsule(style: .continuous)))
+
+            kinBubble
         }
-        .padding(.horizontal, 4)
-        .padding(.top, 6)
-        .background(
-            Theme.tabBar
-                .ignoresSafeArea(edges: .bottom)
-                .shadow(color: Theme.hex(0x281412).opacity(0.06), radius: 11, y: -6)
-        )
-        .overlay(alignment: .top) {
-            Rectangle().fill(Theme.ink.opacity(0.08)).frame(height: 0.5)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 4)
+    }
+
+    /// Cream, one hairline, one soft shadow. The tab bar and a presented sheet are
+    /// the only two things in the app allowed a shadow — everything else is flat on
+    /// the page with a hairline, so a shadow always means "this floats".
+    private func barSurface<S: InsettableShape>(_ shape: S) -> some View {
+        shape
+            .fill(Theme.tabBar)
+            .shadow(color: Theme.hex(0x281412).opacity(0.14), radius: 18, y: 7)
+            .overlay(shape.strokeBorder(Theme.ink.opacity(0.06), lineWidth: 1))
+    }
+
+    private var kinBubble: some View {
+        let active = tab == .kin
+        return Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            withAnimation(switchAnimation) { tab = .kin }
+        } label: {
+            // Exempt from the inactive dimming — a face that dims reads as an
+            // unwell pet.
+            KinChip(speciesID: state.activeChibiID, size: 42,
+                    plate: Theme.plate(for: state.activeChibiID))
+                .frame(width: 58, height: 58)
+                .background(barSurface(Circle()))
+                .overlay(
+                    Circle().strokeBorder(Theme.tabActiveInk.opacity(active ? 0.55 : 0),
+                                          lineWidth: 2.5)
+                )
         }
+        .buttonStyle(TabPressStyle())
+        .accessibilityLabel("Kin")
+        .accessibilityAddTraits(active ? [.isSelected, .isButton] : .isButton)
     }
 
     private func tabButton(_ t: Tab) -> some View {
@@ -105,28 +166,23 @@ struct RootView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             withAnimation(switchAnimation) { tab = t }
         } label: {
-            VStack(spacing: 3) {
-                ZStack {
-                    if t == .kin {
-                        // Exempt from the inactive dimming — a face that dims reads as
-                        // an unwell pet.
-                        KinChip(speciesID: state.activeChibiID, size: 28)
-                    } else {
-                        TabIcon(tab: t, size: 27)
-                            .opacity(active ? 1 : 0.82)
-                            .saturation(active ? 1 : 0.72)
-                    }
-                }
-                .frame(height: 28)
-
+            VStack(spacing: 2) {
+                TabIcon(tab: t, size: 25)
+                    .opacity(active ? 1 : 0.85)
+                    .saturation(active ? 1 : 0.7)
                 Text(t.label)
-                    .font(Theme.fixedFont(10.5, active ? .black : .heavy))
+                    .font(Theme.fixedFont(9.5, active ? .black : .heavy))
                     .foregroundStyle(active ? Theme.tabActiveInk : Theme.tabInk)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, 7).padding(.bottom, 5)
-            .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(active ? Theme.tabActiveFill : .clear))
+            .padding(.vertical, 6)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(active ? Theme.tabActiveFill : .clear)
+                    .padding(.horizontal, 2)
+            )
             .contentShape(Rectangle())
         }
         .buttonStyle(TabPressStyle())
@@ -151,7 +207,6 @@ struct SlimeAvatar: View {
     var size: CGFloat = 56
 
     var body: some View {
-        SproutFace(speciesID: speciesID, size: size,
-                   plate: Theme.species(speciesID).opacity(0.35))
+        SproutFace(speciesID: speciesID, size: size, plate: Theme.plate(for: speciesID))
     }
 }

@@ -12,7 +12,7 @@ import Foundation
 ///    on the main thread mid-animation.
 final class Store {
     /// Bump when `GameState`'s shape changes, and add a step to `migrate`.
-    static let currentVersion = 4
+    static let currentVersion = 6
 
     /// The v1 shape: the `snapshot2` blob in UserDefaults, from before there was a file.
     static let legacyDefaultsKey = "snapshot2"
@@ -59,7 +59,11 @@ final class Store {
             save(legacy, immediately: true)
             return legacy
         }
-        return GameState()
+        // A phone with no save has just installed. Stamp it now: this is the only
+        // moment the date is knowable, and every later release depends on it.
+        var fresh = GameState()
+        fresh.installedAt = Date()
+        return fresh
     }
 
     private func read(_ url: URL) -> GameState? {
@@ -109,6 +113,25 @@ final class Store {
                     }
                 }
             }
+        }
+        // v5 made friends real. Everything a v4 file holds about them is now untrue:
+        // its `friends` are the four invented rows the tab used to draw, its
+        // `pendingFriendCodes` were never sent anywhere (that key is simply gone,
+        // so it drops on decode), and its `friendCode` was generated on this phone,
+        // which means nobody could ever have looked it up. All three go, and the
+        // real ones arrive from `my_code` and `fetch_friends` on the next open.
+        if envelope.version < 5 {
+            state.friends = []
+            state.friendCode = nil
+        }
+        // v6 wrote down when a phone first ran Prepkin, so a release that ever
+        // lowers a free number can leave the people who were already here on the
+        // old one (`PlusGate.restriction`). An old file has no such date, so it is
+        // read off the oldest ledger line — the same trick v4 used for `adoptedAt`.
+        // An empty ledger means a save that has never earned a coin, and the
+        // earliest honest answer for that one is now.
+        if envelope.version < 6, state.installedAt == nil {
+            state.installedAt = state.ledger.entries.map(\.at).min() ?? Date()
         }
         state.advance()
         return state
@@ -226,6 +249,10 @@ final class Store {
         }
         let replayed = entries.reduce(0) { $0 + $1.amount }
         state.ledger = Ledger(openingBalance: old.coins - replayed, entries: entries)
+        // A v1 blob predates every gate, so this phone was here first and keeps
+        // whatever a later release ever lowers. The blob never wrote down when it
+        // arrived; the day it was last saved is the earliest date it can prove.
+        state.installedAt = old.savedOn
         return state
     }
 

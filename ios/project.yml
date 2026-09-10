@@ -30,6 +30,10 @@ targets:
         # Every upload asks the export question unless this says no. We only use
         # the system's TLS, which is exempt.
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        # The syllabus scanner. Both strings are what the system permission
+        # sheet shows, so they say what happens to the photo.
+        INFOPLIST_KEY_NSCameraUsageDescription: "To read a syllabus or planner page into your calendar. The photo is read once and not kept."
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "To pick a photo of a syllabus or planner page to read into your calendar."
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: 1
         TARGETED_DEVICE_FAMILY: "1"

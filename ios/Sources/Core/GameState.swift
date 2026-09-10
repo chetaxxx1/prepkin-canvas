@@ -8,18 +8,184 @@ struct AppSettings: Codable, Equatable {
     var nudgeHour = 19
     var dueRemindersEnabled = true
     var comeBackRemindersEnabled = true
+    /// The student has read the line about a photo going to the server, once.
+    var scanConsentGiven = false
+
+    init() {}
+
+    /// Every field optional on the way in, so adding one never breaks an old save.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        remindersEnabled = try c.decodeIfPresent(Bool.self, forKey: .remindersEnabled) ?? false
+        nudgeHour = try c.decodeIfPresent(Int.self, forKey: .nudgeHour) ?? 19
+        dueRemindersEnabled = try c.decodeIfPresent(Bool.self, forKey: .dueRemindersEnabled) ?? true
+        comeBackRemindersEnabled = try c.decodeIfPresent(Bool.self, forKey: .comeBackRemindersEnabled) ?? true
+        scanConsentGiven = try c.decodeIfPresent(Bool.self, forKey: .scanConsentGiven) ?? false
+    }
 }
 
-/// A friend, as the Friends tab draws them. Nothing writes one yet — there is no
-/// friend bridge — so on a real device the list stays empty.
+/// A friend, as the Friends tab draws them.
+///
+/// Everything down to `onShiftUntil` is what `fetch_friends` sends: two indices for a
+/// name, four ids for a picture, a level, a water, when the pair was made, and when
+/// their current shift runs out. **No coins and no string a student typed** — see
+/// `design/SOCIAL-PLAN.md` F5 and F6 for why those two are the whole safety model.
+///
+/// The last two fields never leave this phone. `nickname` is what you call them, the
+/// way a contact name works in Phone: it is stored in the save file, shown on your
+/// screen, and there is no call that could send it anywhere. `seenAt` is how the tab
+/// knows whether it has already told you about them.
 struct Friend: Identifiable, Codable, Equatable {
+    /// The other player's id on the bridge. The one thing that goes back out, in
+    /// Remove, Block and Report.
     let id: String
-    let name: String
+    /// Index into `Catalog.podNames.adjectives`.
+    let adjective: Int
+    /// Index into `Catalog.podNames.nouns`.
+    let noun: Int
     let speciesID: String
+    let lookID: String
+    let costumeID: String
+    let sceneID: String
     /// `OwnedChibi.level`, 1…3, drawn as `StarPips`.
     let level: Int
-    let weekCoins: Int
-    let lastActivity: String
+    /// The deepest water they have reached. Company, never a ranking.
+    let tier: LeagueTier
+    let friendsSince: Date
+    /// When their current shift ends, if they are working right now.
+    let onShiftUntil: Date?
+
+    /// What you call them, on this phone only. `nil` means the word-list name shows.
+    var nickname: String?
+    /// When this phone last put them in front of you. `never` until it has, which
+    /// is exactly what makes the "added you" card appear once and then stop.
+    var seenAt: Date
+
+    /// Fourteen characters, the same rule as naming a kin.
+    static let nicknameLimit = 14
+
+    /// The stamp that means "this phone has not shown them to you yet". The epoch
+    /// rather than `distantPast` because this value is written to the save file as
+    /// a date string and read back, and year one is a bad thing to rely on.
+    static let never = Date(timeIntervalSince1970: 0)
+
+    var displayName: String {
+        if let nickname, !nickname.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return nickname
+        }
+        return PodName.name(adjective: adjective, noun: noun)
+    }
+
+    /// This phone has never shown them to you. Drives the "added you" card and
+    /// nothing else — there is no unread count anywhere in this app.
+    ///
+    /// Anything at or before the epoch counts, so a stamp that came back from a
+    /// save file a shade off is still read as never rather than as this morning.
+    var isNew: Bool { seenAt.timeIntervalSince1970 <= 0 }
+
+    /// Trimmed and cut to length, and empty means none. `GameState.rename` does the
+    /// same to a kin's name, so a nickname cannot be longer than a kin can be.
+    static func cleanNickname(_ raw: String) -> String? {
+        let clean = String(raw.trimmingCharacters(in: .whitespacesAndNewlines).prefix(nicknameLimit))
+        return clean.isEmpty ? nil : clean
+    }
+
+    /// Whole minutes left in their shift, rounded up so "1 min left" is not shown
+    /// as none. Zero once the clock has run out.
+    func minutesLeftOnShift(at date: Date = Date()) -> Int {
+        guard let onShiftUntil else { return 0 }
+        return max(0, Int(ceil(onShiftUntil.timeIntervalSince(date) / 60)))
+    }
+
+    /// The one line under a name, or nothing at all.
+    ///
+    /// Absent, not empty, when they are not working: a friend who is not at a desk
+    /// has no line, because "no session" and "hasn't studied" are the same sentence
+    /// and this app does not write the second one.
+    func shiftLine(at date: Date = Date()) -> String? {
+        let left = minutesLeftOnShift(at: date)
+        guard left > 0 else { return nil }
+        return "on shift · \(left) min left"
+    }
+
+    init(id: String, adjective: Int, noun: Int, speciesID: String, lookID: String,
+         costumeID: String, sceneID: String, level: Int, tier: LeagueTier,
+         friendsSince: Date, onShiftUntil: Date?,
+         nickname: String? = nil, seenAt: Date = Friend.never) {
+        self.id = id
+        self.adjective = adjective
+        self.noun = noun
+        self.speciesID = speciesID
+        self.lookID = lookID
+        self.costumeID = costumeID
+        self.sceneID = sceneID
+        self.level = min(max(level, 1), 3)
+        self.tier = tier
+        self.friendsSince = friendsSince
+        self.onShiftUntil = onShiftUntil
+        self.nickname = nickname
+        self.seenAt = seenAt
+    }
+
+    /// The wire keys, short because a whole list comes down on every open. The two
+    /// local fields are in here too, because this same shape is what the save file
+    /// holds; a row read from the bridge simply has neither.
+    private enum CodingKeys: String, CodingKey {
+        case id, adj, noun, species, look, costume, scene, level, tier, since, shift
+        case nickname, seenAt
+    }
+
+    /// Tolerant for the reason `PodMember`'s decoder is: this shape is also what a
+    /// cached list decodes from, and one missing key must never cost the save file.
+    /// A level outside 1…3 is clamped rather than trusted — the art only has three
+    /// evolutions, and a friend list is not the place to find that out.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let since = try c.decodeIfPresent(String.self, forKey: .since) ?? ""
+        let shift = try c.decodeIfPresent(String.self, forKey: .shift) ?? ""
+        self.init(id: try c.decodeIfPresent(String.self, forKey: .id) ?? "",
+                  adjective: try c.decodeIfPresent(Int.self, forKey: .adj) ?? 0,
+                  noun: try c.decodeIfPresent(Int.self, forKey: .noun) ?? 0,
+                  speciesID: try c.decodeIfPresent(String.self, forKey: .species) ?? "slime",
+                  lookID: try c.decodeIfPresent(String.self, forKey: .look) ?? "classic",
+                  costumeID: try c.decodeIfPresent(String.self, forKey: .costume) ?? "none",
+                  sceneID: try c.decodeIfPresent(String.self, forKey: .scene) ?? "lagoon",
+                  level: try c.decodeIfPresent(Int.self, forKey: .level) ?? 1,
+                  tier: LeagueTier(rawValue: try c.decodeIfPresent(Int.self, forKey: .tier) ?? 0) ?? .tidepool,
+                  // A friendship with no date is one that was just made: `add_friend`
+                  // answers with a public row and no date on it.
+                  friendsSince: Friend.wireDate.date(from: since) ?? Date(),
+                  onShiftUntil: Friend.wireDate.date(from: shift),
+                  nickname: try c.decodeIfPresent(String.self, forKey: .nickname),
+                  seenAt: try c.decodeIfPresent(Date.self, forKey: .seenAt) ?? Friend.never)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(adjective, forKey: .adj)
+        try c.encode(noun, forKey: .noun)
+        try c.encode(speciesID, forKey: .species)
+        try c.encode(lookID, forKey: .look)
+        try c.encode(costumeID, forKey: .costume)
+        try c.encode(sceneID, forKey: .scene)
+        try c.encode(level, forKey: .level)
+        try c.encode(tier.rawValue, forKey: .tier)
+        try c.encode(Friend.wireDate.string(from: friendsSince), forKey: .since)
+        if let onShiftUntil {
+            try c.encode(Friend.wireDate.string(from: onShiftUntil), forKey: .shift)
+        }
+        try c.encodeIfPresent(nickname, forKey: .nickname)
+        try c.encode(seenAt, forKey: .seenAt)
+    }
+
+    /// Postgres hands back ISO 8601 with fractional seconds, the same spelling
+    /// `FocusPresence` reads.
+    static let wireDate: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
 }
 
 /// Everything that survives a relaunch. Pure value type with no UI and no I/O, so
@@ -31,6 +197,13 @@ struct GameState: Codable, Equatable {
     var sceneID = "lagoon"
     var ownedScenes: Set<String> = ["lagoon"]
     var completedLessons: Set<String> = []
+    /// When this phone first ran Prepkin. Read only by `PlusGate.value`, to keep a
+    /// student on the free number a later release lowered. Nothing lowers one today
+    /// (`PlusGate.restriction` is nil for every gate), so nothing reads it yet —
+    /// it is here because the promise has to be recorded on the day the student
+    /// arrives, not on the day someone decides to break it. `nil` on saves written
+    /// before it existed; the v6 migration fills those from the oldest ledger line.
+    var installedAt: Date?
 
     /// How far into each deck the student has read, by lesson id. Drives Continue on
     /// Learn, the current node on a track map, and where Resume puts you back.
@@ -56,6 +229,10 @@ struct GameState: Codable, Equatable {
     var templates: [TaskTemplate] = TaskTemplate.starterSet()
     var canvasItems: [CanvasItem] = []
     var canvasCourses: [CanvasCourse] = []
+    /// Course-calendar events from the last sync. Shown on the calendar only.
+    var canvasEvents: [CanvasEvent] = []
+    /// Tasks the student put on a day themselves, typed or scanned.
+    var datedTasks: [DatedTask] = []
 
     /// The day the list on screen was last built for.
     var currentDay: DayKey = .today()
@@ -108,14 +285,19 @@ struct GameState: Codable, Equatable {
     /// Best round accuracy, 0–100. `nil` until the first round.
     var numberLineBest: Int?
 
-    /// The four Play puzzles added 2026-09-08 (design/GAMES-PLAN.md). Same shape as
+    /// The Play puzzles added 2026-09-08 (design/GAMES-PLAN.md). Same shape as
     /// the Daily Word record above, one struct each instead of five fields each.
-    var ladderPlay = PlayRecord<[String]>()
-    var threadPlay = PlayRecord<[String]>()
     var balancePlay = PlayRecord<[Int]>()
     var pearlsPlay = PlayRecord<[Int]>()
     /// Trace (2026-09-08) replaced Number Line on the rail; the old fields stay for old saves.
     var tracePlay = PlayRecord<[Int]>()
+    /// Sort and Weave (2026-09-10) replaced Ladder and Thread. Sort keeps its guesses,
+    /// four word indices at a time; Weave keeps a line per find.
+    var sortPlay = PlayRecord<[Int]>()
+    var weavePlay = PlayRecord<[String]>()
+    /// Ladder and Thread, retired 2026-09-10. Read so an old save still opens; never written.
+    var ladderPlay = PlayRecord<[String]>()
+    var threadPlay = PlayRecord<[String]>()
 
     /// The code the student types into the Chrome extension. Optional on purpose:
     /// nothing is created until they actually open the connect screen, and the app
@@ -133,37 +315,67 @@ struct GameState: Codable, Equatable {
     var requestsAppliedAt: Date?
     var lastCanvasSyncAt: Date?
 
-    /// The code a student reads out to a friend. Separate from `pairingCode` on
-    /// purpose: that one ties this phone to one laptop and is revoked by
-    /// `unpair()`; this one is the person, and disconnecting Canvas must not
-    /// change it.
+    /// The code a student reads out to a friend, as the bridge last handed it out.
+    ///
+    /// **A cache, not a source.** The bridge mints it (`my_code`) and the bridge can
+    /// replace it (`rotate_code`); this phone only remembers the last one it was
+    /// given so the screen has something to draw before the call comes back. It used
+    /// to be generated here, which meant nobody could look it up.
+    ///
+    /// Separate from `pairingCode` on purpose: that one ties this phone to one
+    /// laptop and is revoked by `unpair()`; this one is the person, and
+    /// disconnecting Canvas must not change it.
     var friendCode: String?
 
     /// The puzzle rating. See `Rating.swift` for why this is the one number in the
     /// app that is allowed to go down.
     var rating = PlayerRating()
 
-    /// The friends whose kins show on the tab. Empty until there is a bridge to
-    /// fill it: a student must never see a person who does not exist.
-    var friends: [Friend] = []
+    /// What friends are allowed to see beyond the fish. Mirrors the two flags on
+    /// the bridge so the toggles have something to draw before a call returns.
+    ///
+    /// **Sharing today is off until a student turns it on.** There is no accept
+    /// step, so anybody handed a code is a friend on the spot; a fortnight of
+    /// somebody's study log should not be readable before they have seen a screen
+    /// about it. The board is the fish and a solve time, which is the thing the
+    /// code was handed over for, so that one starts on.
+    var shareToday = false
+    var shareBoard = true
 
-    /// Codes typed into "Add a friend" that nobody has answered. Local only —
-    /// there is nowhere to send them yet, so this is a note to self.
-    var pendingFriendCodes: [String] = []
+    /// The day the three wave sets below belong to. They are all one day long.
+    var wavesDay: DayKey = .today()
+    /// Friends you have waved at today, so the button shows its settled state
+    /// without asking the bridge friend by friend.
+    var wavesSent: Set<String> = []
+    /// Friends who have waved at you today.
+    var wavesIn: Set<String> = []
+    /// The ones you have already been shown. What is in `wavesIn` and not in here
+    /// is what the card at the top of the tab is about.
+    var wavesSeen: Set<String> = []
+
+    /// The friends whose kins show on the tab, as `fetch_friends` last sent them,
+    /// with this phone's own nicknames carried across. Kept so opening the tab with
+    /// no signal shows the list it last saw rather than a blank card.
+    ///
+    /// Empty until somebody real is in it: a student must never see a person who
+    /// does not exist.
+    var friends: [Friend] = []
 
     // MARK: - Decoding
 
     private enum CodingKeys: String, CodingKey {
-        case ledger, owned, activeChibiID, sceneID, ownedScenes, completedLessons
+        case ledger, owned, activeChibiID, sceneID, ownedScenes, completedLessons, installedAt
         case templates, canvasItems, canvasCourses, currentDay, maxDayReached
+        case canvasEvents, datedTasks
         case settings, lastOpenedAt, pairingCode, lastCanvasSyncAt, bestShift, friendCode, rating
         case pairingToken, ownedLooks, requestsAppliedAt
-        case friends, pendingFriendCodes
+        case friends, wavesDay, wavesSent, wavesIn, wavesSeen
+        case shareToday, shareBoard
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
         case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick
         case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
-        case ladderPlay, threadPlay, balancePlay, pearlsPlay, tracePlay
+        case ladderPlay, threadPlay, balancePlay, pearlsPlay, tracePlay, sortPlay, weavePlay
         case league
     }
 
@@ -181,6 +393,12 @@ struct GameState: Codable, Equatable {
         ledger = try c.decodeIfPresent(Ledger.self, forKey: .ledger) ?? blank.ledger
         owned = try c.decodeIfPresent([OwnedChibi].self, forKey: .owned) ?? blank.owned
         activeChibiID = try c.decodeIfPresent(String.self, forKey: .activeChibiID) ?? blank.activeChibiID
+        // Kin that left the catalogue (the orca and axolotls, 2026-09-10) drop out
+        // of a save rather than draw as a blank. Nothing shipped with them, so no
+        // refund is owed; the starter stays if that leaves nothing.
+        owned.removeAll { kin in ChibiSpecies.catalog.first(where: { $0.id == kin.speciesID }) == nil }
+        if owned.isEmpty { owned = blank.owned }
+        if !owned.contains(where: { $0.speciesID == activeChibiID }) { activeChibiID = owned[0].speciesID }
         sceneID = try c.decodeIfPresent(String.self, forKey: .sceneID) ?? blank.sceneID
         ownedScenes = try c.decodeIfPresent(Set<String>.self, forKey: .ownedScenes) ?? blank.ownedScenes
         // Land scenes became tanks. Carry over anything already paid for.
@@ -188,9 +406,13 @@ struct GameState: Codable, Equatable {
         ownedScenes = Set(ownedScenes.map { Scene0.find($0).id })
         ownedScenes.insert(Scene0.all[0].id)
         completedLessons = try c.decodeIfPresent(Set<String>.self, forKey: .completedLessons) ?? blank.completedLessons
+        installedAt = try c.decodeIfPresent(Date.self, forKey: .installedAt)
         templates = try c.decodeIfPresent([TaskTemplate].self, forKey: .templates) ?? blank.templates
+        templates = TaskTemplate.addingMissingPresets(to: templates)
         canvasItems = try c.decodeIfPresent([CanvasItem].self, forKey: .canvasItems) ?? blank.canvasItems
         canvasCourses = try c.decodeIfPresent([CanvasCourse].self, forKey: .canvasCourses) ?? blank.canvasCourses
+        canvasEvents = try c.decodeIfPresent([CanvasEvent].self, forKey: .canvasEvents) ?? blank.canvasEvents
+        datedTasks = try c.decodeIfPresent([DatedTask].self, forKey: .datedTasks) ?? blank.datedTasks
         currentDay = try c.decodeIfPresent(DayKey.self, forKey: .currentDay) ?? blank.currentDay
         maxDayReached = try c.decodeIfPresent(DayKey.self, forKey: .maxDayReached) ?? blank.maxDayReached
         settings = try c.decodeIfPresent(AppSettings.self, forKey: .settings) ?? blank.settings
@@ -203,7 +425,12 @@ struct GameState: Codable, Equatable {
         friendCode = try c.decodeIfPresent(String.self, forKey: .friendCode)
         rating = try c.decodeIfPresent(PlayerRating.self, forKey: .rating) ?? blank.rating
         friends = try c.decodeIfPresent([Friend].self, forKey: .friends) ?? blank.friends
-        pendingFriendCodes = try c.decodeIfPresent([String].self, forKey: .pendingFriendCodes) ?? blank.pendingFriendCodes
+        shareToday = try c.decodeIfPresent(Bool.self, forKey: .shareToday) ?? blank.shareToday
+        shareBoard = try c.decodeIfPresent(Bool.self, forKey: .shareBoard) ?? blank.shareBoard
+        wavesDay = try c.decodeIfPresent(DayKey.self, forKey: .wavesDay) ?? blank.wavesDay
+        wavesSent = try c.decodeIfPresent(Set<String>.self, forKey: .wavesSent) ?? blank.wavesSent
+        wavesIn = try c.decodeIfPresent(Set<String>.self, forKey: .wavesIn) ?? blank.wavesIn
+        wavesSeen = try c.decodeIfPresent(Set<String>.self, forKey: .wavesSeen) ?? blank.wavesSeen
         bestShift = try c.decodeIfPresent(Int.self, forKey: .bestShift) ?? blank.bestShift
         deckProgress = try c.decodeIfPresent([String: Int].self, forKey: .deckProgress) ?? blank.deckProgress
         savedCards = try c.decodeIfPresent([SavedCard].self, forKey: .savedCards) ?? blank.savedCards
@@ -228,6 +455,8 @@ struct GameState: Codable, Equatable {
         balancePlay = try c.decodeIfPresent(PlayRecord<[Int]>.self, forKey: .balancePlay) ?? blank.balancePlay
         pearlsPlay = try c.decodeIfPresent(PlayRecord<[Int]>.self, forKey: .pearlsPlay) ?? blank.pearlsPlay
         tracePlay = try c.decodeIfPresent(PlayRecord<[Int]>.self, forKey: .tracePlay) ?? blank.tracePlay
+        sortPlay = try c.decodeIfPresent(PlayRecord<[Int]>.self, forKey: .sortPlay) ?? blank.sortPlay
+        weavePlay = try c.decodeIfPresent(PlayRecord<[String]>.self, forKey: .weavePlay) ?? blank.weavePlay
         // A save written before the league existed opens in Tidepool with no
         // pennants. There is no history to reconstruct and inventing one would be a
         // keepsake nobody earned.
@@ -298,6 +527,11 @@ struct GameState: Codable, Equatable {
     /// one still open tomorrow, must not pay a second time.
     func canvasKey(_ id: String) -> String { "task:\(id)" }
 
+    /// A dated task is one-shot too: finished on the 12th, it stays finished.
+    func datedKey(_ id: String) -> String { "dated:\(id)" }
+
+    func isDatedDone(_ id: String) -> Bool { ledger.isClaimed(datedKey(id)) }
+
     /// Ever paid, under the day-less key or under a day-keyed line written before
     /// day-less keys existed.
     private func isCanvasPaid(_ id: String) -> Bool {
@@ -327,13 +561,106 @@ struct GameState: Codable, Equatable {
                           done: item.isSubmitted || isCanvasPaid(item.id),
                           isLocked: item.isSubmitted)
             }
+        // Your own dated work joins today when it is due today, or is overdue
+        // and still open. Finished overdue rows stay on their own day.
+        let dated = datedTasks
+            .filter { $0.day == day || ($0.day < day && $0.day >= day.adding(days: -7) && !isDatedDone($0.id)) }
+            .sorted { ($0.day, $0.minute ?? 1439) < ($1.day, $1.minute ?? 1439) }
+            .map { datedRow($0) }
         let mine = templates
             .filter { $0.isActive && $0.retiredOn == nil }
             .map { t in
                 DailyTask(id: t.id, title: t.title, kind: t.kind,
                           done: ledger.isClaimed(taskKey(t.id, on: day)))
             }
-        return canvas + mine
+        return canvas + dated + mine
+    }
+
+    private func datedRow(_ t: DatedTask) -> DailyTask {
+        DailyTask(id: t.id, title: t.title, kind: t.kind, detail: t.detail,
+                  dueAt: t.dueAt(), done: isDatedDone(t.id), isLocked: false,
+                  colorHex: nil, isDated: true)
+    }
+
+    /// The list for any one day, for the calendar: Canvas work on its due day
+    /// and dated tasks on their day. The daily templates stay off it — a habit
+    /// that comes back every morning is Home's, and seven copies of "drink
+    /// water" drown the week.
+    func tasks(on day: DayKey, calendar: Calendar = .current) -> [DailyTask] {
+        var seen: Set<String> = []
+        let canvas = canvasItems
+            .filter { item in
+                guard let due = item.dueAt else { return false }
+                return DayKey(due, calendar: calendar) == day
+            }
+            .sorted { ($0.dueAt ?? .distantFuture) < ($1.dueAt ?? .distantFuture) }
+            .filter { item in
+                let key = "\(item.title)|\(item.courseName)|\(item.dueAt?.timeIntervalSince1970 ?? -1)"
+                return seen.insert(key).inserted
+            }
+            .map { item in
+                DailyTask(id: item.id, title: item.title, kind: .canvas,
+                          detail: item.courseName, dueAt: item.dueAt,
+                          done: item.isSubmitted || isCanvasPaid(item.id),
+                          isLocked: item.isSubmitted,
+                          colorHex: item.colorHex ?? courseColor(item.courseName))
+            }
+        let dated = datedTasks
+            .filter { $0.day == day }
+            .sorted { ($0.minute ?? 1439) < ($1.minute ?? 1439) }
+            .map { datedRow($0) }
+        return canvas + dated
+    }
+
+    /// The one-line preview of tomorrow, or `nil` when tomorrow is empty.
+    ///
+    /// Two titles and then a count, never a second list. The question Home answers
+    /// at 11 PM is "is tonight the last chance", not "what does the whole week look
+    /// like". It reads the same two sources today's list reads — Canvas work and
+    /// your own dated tasks — and leaves out the daily habits, which are on every
+    /// tomorrow there will ever be. Anything already finished is not coming.
+    func tomorrowLine(calendar: Calendar = .current) -> String? {
+        let titles = tasks(on: effectiveDay.adding(days: 1), calendar: calendar)
+            .filter { !$0.done }
+            .map(\.title)
+        guard let first = titles.first else { return nil }
+        let shown = titles.count == 1 ? first : "\(first), \(titles[1])"
+        let more = titles.count - min(2, titles.count)
+        return more > 0 ? "Tomorrow: \(shown) and \(more) more" : "Tomorrow: \(shown)"
+    }
+
+    /// Course-calendar events on one day, earliest first.
+    func events(on day: DayKey, calendar: Calendar = .current) -> [CanvasEvent] {
+        canvasEvents
+            .filter { DayKey($0.startAt, calendar: calendar) == day }
+            .sorted { ($0.allDay ? 0 : 1, $0.startAt) < ($1.allDay ? 0 : 1, $1.startAt) }
+    }
+
+    private func courseColor(_ name: String) -> String? {
+        canvasCourses.first { $0.name == name }?.colorHex
+    }
+
+    // MARK: - Dated tasks
+
+    mutating func addDated(_ task: DatedTask) {
+        var t = task
+        t.title = t.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !t.title.isEmpty else { return }
+        datedTasks.append(t)
+    }
+
+    mutating func updateDated(_ task: DatedTask) {
+        guard let i = datedTasks.firstIndex(where: { $0.id == task.id }) else { return }
+        var t = task
+        t.title = t.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !t.title.isEmpty else { return }
+        datedTasks[i] = t
+    }
+
+    /// Deleting a finished task keeps the coins. It was done; the student is only
+    /// tidying the list.
+    mutating func deleteDated(_ id: String) {
+        datedTasks.removeAll { $0.id == id }
     }
 
     var allDone: Bool { !tasks.isEmpty && tasks.allSatisfy(\.done) }
@@ -342,6 +669,16 @@ struct GameState: Codable, Equatable {
 
     var activeChibi: OwnedChibi {
         owned.first { $0.speciesID == activeChibiID } ?? owned[0]
+    }
+
+    /// What the active kin is wearing, as a friend's screen names it.
+    ///
+    /// The phone stores one id for how a kin looks (`OwnedChibi.skinID`) and the
+    /// costume rack is still only in the web build, so anything that is not Classic
+    /// *is* the costume. `none` is the id the bridge uses for a plain kin.
+    var activeCostumeID: String {
+        let skin = activeChibi.skinID
+        return skin == "classic" ? "none" : skin
     }
 
     // MARK: - Tasks
@@ -356,6 +693,12 @@ struct GameState: Codable, Equatable {
             let posted = ledger.post(CoinEntry(key: canvasKey(taskID), amount: reward,
                                                reason: .task, day: day, at: now))
             if posted { lifetime.tasksFinished += 1; lifetime.canvasFinished += 1 }
+            return posted ? reward : 0
+        }
+        if datedTasks.contains(where: { $0.id == taskID }) {
+            let posted = ledger.post(CoinEntry(key: datedKey(taskID), amount: reward,
+                                               reason: .task, day: day, at: now))
+            if posted { lifetime.tasksFinished += 1 }
             return posted ? reward : 0
         }
         let posted = ledger.post(CoinEntry(key: taskKey(taskID, on: day), amount: reward,
@@ -472,7 +815,7 @@ struct GameState: Codable, Equatable {
     /// solved count still moves. One pool keeps six games from out-earning real work,
     /// and one number is easier to read than six (design/GAMES-PLAN.md §4).
     static let playReward = 30
-    static let playReasons: Set<CoinReason> = [.wordle, .numberLine, .ladder, .thread, .balance, .pearls, .trace]
+    static let playReasons: Set<CoinReason> = [.wordle, .numberLine, .ladder, .thread, .balance, .pearls, .trace, .sort, .weave]
 
     /// The game that banked `day`'s coins, or nil while the pool is still open.
     func playBanked(on day: DayKey) -> CoinReason? {
@@ -543,8 +886,8 @@ struct GameState: Codable, Equatable {
         settleRating(\.balancePlay, to: day)
             + settleRating(\.pearlsPlay, to: day)
             + settleRating(\.tracePlay, to: day)
-            + settleRating(\.ladderPlay, to: day)
-            + settleRating(\.threadPlay, to: day)
+            + settleRating(\.sortPlay, to: day)
+            + settleRating(\.weavePlay, to: day)
     }
 
     private mutating func settleRating<P>(_ path: WritableKeyPath<GameState, PlayRecord<P>>,
@@ -708,6 +1051,7 @@ struct GameState: Codable, Equatable {
     mutating func applyCanvas(_ snapshot: CanvasSnapshot, now: Date = Date()) {
         canvasItems = snapshot.tasks
         canvasCourses = snapshot.courses
+        canvasEvents = snapshot.events
         lastCanvasSyncAt = now
         for item in snapshot.tasks where item.isSubmitted {
             complete(taskID: item.id, reward: TaskKind.canvas.reward, now: now)
@@ -725,6 +1069,10 @@ struct GameState: Codable, Equatable {
                 lifetime.tasksFinished = max(0, lifetime.tasksFinished - 1)
                 lifetime.canvasFinished = max(0, lifetime.canvasFinished - 1)
             }
+        } else if datedTasks.contains(where: { $0.id == taskID }) {
+            if ledger.revoke(datedKey(taskID)) {
+                lifetime.tasksFinished = max(0, lifetime.tasksFinished - 1)
+            }
         } else if ledger.revoke(taskKey(taskID, on: effectiveDay)) {
             lifetime.tasksFinished = max(0, lifetime.tasksFinished - 1)
         }
@@ -740,26 +1088,102 @@ struct GameState: Codable, Equatable {
         return code
     }
 
-    /// Made the first time the Friends tab is opened, then kept. A friend who
-    /// wrote the old one down must still be able to use it.
-    @discardableResult
-    mutating func ensureFriendCode() -> String {
-        if let existing = friendCode { return existing }
-        let code = PairingCode.generate()
-        friendCode = code
-        return code
+    // MARK: - Friends
+
+    /// Takes the list the bridge just sent, keeping what only this phone knows.
+    ///
+    /// Anybody the bridge no longer returns drops out — that is what Remove and
+    /// Block look like from the other side, and there is no tombstone for either.
+    mutating func applyFriends(_ rows: [Friend], now: Date = Date()) {
+        friends = FriendList.merge(fetched: rows, cached: friends)
     }
 
-    /// Remembers a code the student typed. Nothing is sent; the row is only so the
-    /// tab can say who they are still waiting on. Typing the same code twice is a
-    /// no-op rather than a second row.
-    mutating func addPendingFriendCode(_ code: String) {
-        guard !pendingFriendCodes.contains(code) else { return }
-        pendingFriendCodes.append(code)
+    /// Puts somebody you just added by code straight into the list, already seen.
+    ///
+    /// Already seen because you did the adding: the "added you" card is for the
+    /// other direction, and a card telling you about a person you typed a code for
+    /// ten seconds ago would be noise.
+    mutating func addFriend(_ friend: Friend, now: Date = Date()) {
+        var row = friend
+        row.seenAt = now
+        if let i = friends.firstIndex(where: { $0.id == row.id }) {
+            row.nickname = friends[i].nickname
+            friends[i] = row
+        } else {
+            friends.append(row)
+        }
     }
 
-    mutating func removePendingFriendCode(_ code: String) {
-        pendingFriendCodes.removeAll { $0 == code }
+    /// What you call them, on this phone. Empty clears it and the word-list name
+    /// comes back.
+    mutating func setNickname(_ raw: String, for id: String) {
+        guard let i = friends.firstIndex(where: { $0.id == id }) else { return }
+        friends[i].nickname = Friend.cleanNickname(raw)
+    }
+
+    /// The tab has shown them to you, so the card is done.
+    mutating func markFriendSeen(_ id: String, at now: Date = Date()) {
+        guard let i = friends.firstIndex(where: { $0.id == id }) else { return }
+        friends[i].seenAt = now
+    }
+
+    /// Drops the row here. The caller tells the bridge; this is what makes the row
+    /// leave the screen at the moment of the tap rather than a fetch later.
+    mutating func dropFriend(_ id: String) {
+        friends.removeAll { $0.id == id }
+        wavesSent.remove(id)
+        wavesSeen.remove(id)
+        wavesIn.remove(id)
+    }
+
+    // MARK: - Waves
+
+    /// Everything about waves is one day long, so all three sets are emptied the
+    /// moment the day they belong to is not today any more. Keeping a day beside
+    /// them rather than clearing on a timer means a phone that was asleep across
+    /// midnight is right the moment it wakes.
+    private mutating func rollWaves(to day: DayKey) {
+        guard wavesDay != day else { return }
+        wavesDay = day
+        wavesSent = []
+        wavesSeen = []
+        wavesIn = []
+    }
+
+    /// You have waved at them today. Nothing about it is undoable, and nothing says
+    /// so out loud — the button simply shows its settled state.
+    mutating func markWaved(at id: String, on day: DayKey = .today()) {
+        rollWaves(to: day)
+        wavesSent.insert(id)
+    }
+
+    func hasWaved(at id: String, on day: DayKey = .today()) -> Bool {
+        wavesDay == day && wavesSent.contains(id)
+    }
+
+    /// What `fetch_sent` says. The bridge is the truth after a reinstall, when this
+    /// phone has no memory of today at all.
+    mutating func applyWavesSent(_ ids: [String], on day: DayKey = .today()) {
+        rollWaves(to: day)
+        wavesSent.formUnion(ids)
+    }
+
+    /// What `fetch_visits` says: who waved at you.
+    mutating func applyWavesReceived(_ ids: [String], on day: DayKey = .today()) {
+        rollWaves(to: day)
+        wavesIn.formUnion(ids)
+    }
+
+    /// Waves you have not looked at yet. The same shape as the "added you" card and
+    /// for the same reason: there is no unread count anywhere in this app.
+    func unseenWaves(on day: DayKey = .today()) -> [String] {
+        guard wavesDay == day else { return [] }
+        return friends.map(\.id).filter { wavesIn.contains($0) && !wavesSeen.contains($0) }
+    }
+
+    mutating func markWaveSeen(_ id: String, on day: DayKey = .today()) {
+        rollWaves(to: day)
+        wavesSeen.insert(id)
     }
 
     /// Forgets the pairing. The caller deletes the bridge row first — leaving it
@@ -771,6 +1195,7 @@ struct GameState: Codable, Equatable {
         requestsAppliedAt = nil
         canvasItems = []
         canvasCourses = []
+        canvasEvents = []
         lastCanvasSyncAt = nil
     }
 }

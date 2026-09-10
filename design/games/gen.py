@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Deal a year of Play puzzles into ios/Resources/Content/.
 
-Four files, all checked before they are written:
+Six files, all checked before they are written:
 
-  ladders.json   [{words, clues, deal}]     hand-written in ladders.py (Crossclimb-type)
-  threads.json   [{id, name, accept, clues}] hand-written below (Pinpoint-type)
+  sorts.json     [{groups, hard, deal}]     hand-written in sorts.py (Connections-type)
+  weaves.json    [{theme, grid, span, words}] themes in weaves.py, tiled here (Strands-type)
+  dictionary.txt one word a line            what Weave accepts as a non-theme word
   balance.json   [{n, givens, signs}]       6x6 Takuzu with = / x signs (Tango-type), one answer, by rule
   pearls.json    [{n, regions}]             Star Battle one-star (Queens-type), one answer, by rule
   trace.json     [{n, numbers, walls}]      one path through every cell, numbers in order (Zip-type), one answer
@@ -15,7 +16,6 @@ Seeded, so re-running reproduces the same files. Run from the repo root:
 
     python3 design/games/gen.py            # everything
     python3 design/games/gen.py trace      # one file
-    python3 design/games/gen.py candidates # print ladder chains to author from
 """
 import json, random, sys, os, itertools, collections
 
@@ -23,217 +23,230 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 CONTENT = os.path.join(ROOT, 'ios', 'Resources', 'Content')
 SEED = 20260908
 
-# ---------------------------------------------------------------- ladders
+# ---------------------------------------------------------------- sorts (Connections-type)
 
-def word_graph(words):
-    buckets = collections.defaultdict(list)
-    for w in words:
-        for i in range(5):
-            buckets[w[:i] + '*' + w[i+1:]].append(w)
-    nb = {w: set() for w in words}
-    for group in buckets.values():
-        for a in group:
-            for b in group:
-                if a != b:
-                    nb[a].add(b)
-    return nb
-
-def bfs(nb, start, limit):
-    dist = {start: 0}
-    q = collections.deque([start])
-    while q:
-        w = q.popleft()
-        if dist[w] >= limit:
-            continue
-        for n in nb[w]:
-            if n not in dist:
-                dist[n] = dist[w] + 1
-                q.append(n)
-    return dist
-
-def common_words():
-    return [w.upper() for w in json.load(open(os.path.join(CONTENT, 'words.json')))]
-
-def gen_ladders(rng):
-    """ladders.py, checked: common words, one letter a rung, no repeats, and the
-    middle five have exactly one order (up to reversal). `deal` is the scrambled
-    order the middle rows are shown in, never the answer or its reverse."""
+def gen_sorts(rng):
+    """sorts.py, checked: four groups of four, sixteen different words, a hard
+    tag of 1-5. `deal` is the shuffled order the sixteen tiles are laid out in
+    (word i is group i // 4, word i % 4), never four rows that are the answer."""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from ladders import LADDERS
-    common = set(common_words())
+    from sorts import SORTS
     out, seen = [], set()
-    for words, clues in LADDERS:
-        assert len(words) == 7 and len(clues) == 7, words
-        assert len(set(words)) == 7, f"repeat in {words}"
-        for w in words:
-            assert w in common, f"{w} is not in words.json"
-        for a_, b_ in zip(words, words[1:]):
-            assert sum(x != y for x, y in zip(a_, b_)) == 1, f"{a_}->{b_} is not one letter"
-        assert all(c.strip() for c in clues), words
-        mid = words[1:6]
-        orders = [p for p in itertools.permutations(range(5))
-                  if all(sum(x != y for x, y in zip(mid[p[i]], mid[p[i+1]])) == 1 for i in range(4))]
-        assert len(orders) == 2, f"middle of {words} has {len(orders)//2} orders"
-        key = tuple(words)
-        assert key not in seen, f"duplicate ladder {words}"
+    for hard, groups in SORTS:
+        assert len(groups) == 4, groups
+        assert 1 <= hard <= 5, groups
+        words = [w for _, ws in groups for w in ws]
+        assert len(words) == 16, groups
+        assert len(set(words)) == 16, f"repeat in {groups}: {sorted(w for w in set(words) if words.count(w) > 1)}"
+        for name, ws in groups:
+            assert name.strip() and len(ws) == 4, groups
+            for w in ws:
+                assert w == w.upper() and 1 <= len(w) <= 12 and ' ' not in w, w
+        key = tuple(sorted(words))
+        assert key not in seen, f"duplicate sort {groups[0]}"
         seen.add(key)
         while True:
-            deal = list(range(1, 6)); rng.shuffle(deal)
-            if deal != [1, 2, 3, 4, 5] and deal != [5, 4, 3, 2, 1]:
+            deal = list(range(16)); rng.shuffle(deal)
+            # No row of the dealt board may already be a whole group.
+            if all(len({deal[r * 4 + k] // 4 for k in range(4)}) > 1 for r in range(4)):
                 break
-        out.append({'words': words, 'clues': clues, 'deal': deal})
+        out.append({'groups': [{'name': n, 'words': ws} for n, ws in groups], 'hard': hard, 'deal': deal})
     return out
 
-def print_candidates(rng, count=80):
-    """Chains to author from: seven common words, one letter a rung, middle order unique."""
-    common = common_words()
-    nb = word_graph([w.lower() for w in common])
-    seen = set(); shown = 0
-    for _ in range(50000):
-        if shown >= count: break
-        w = rng.choice(common).lower(); path = [w]
-        for _ in range(6):
-            opts = [x for x in nb[path[-1]] if x not in path]
-            if not opts: break
-            path.append(rng.choice(opts))
-        if len(path) != 7: continue
-        mid = path[1:6]
-        orders = [p for p in itertools.permutations(range(5))
-                  if all(sum(x != y for x, y in zip(mid[p[i]], mid[p[i+1]])) == 1 for i in range(4))]
-        if len(orders) != 2: continue
-        key = tuple(sorted(path))
-        if key in seen: continue
-        seen.add(key); shown += 1
-        print(' '.join(x.upper() for x in path))
+# ---------------------------------------------------------------- weaves (Strands-type)
 
-# ---------------------------------------------------------------- threads
+W_COLS, W_ROWS = 6, 8
+W_MIN = 4
 
-THREADS = [
-  ('card',      '___ card',                  ['card'],                       ['Wild','Green','Report','Business','Credit']),
-  ('drop',      'Things you drop',           ['drop'],                       ['A beat','A hint','The ball','A class','The mic']),
-  ('bank',      '___ bank',                  ['bank'],                       ['Power','River','Blood','Piggy','Food']),
-  ('money',     'Slang for money',           ['money','cash'],               ['Bands','Cheddar','Bread','Dough','Bucks']),
-  ('keys',      'Things with keys',          ['key','keys'],                 ['Florida','Map','Locksmith','Piano','Keyboard']),
-  ('schools',   'Fictional schools',         ['fictional school','made-up school','tv school','fake school','school'], ['Greendale','Bayside',"Xavier's",'Monsters University','Hogwarts']),
-  ('pull',      'Things you pull',           ['pull'],                       ['Strings','A muscle','Weight','A prank','An all-nighter']),
-  ('office',    'Office ___',                ['office'],                     ['Chair','Supplies','Space','Party','Hours']),
-  ('loans',     'Kinds of loan',             ['loan','loans'],               ['Payday','Auto','Personal','Mortgage','Student']),
-  ('due',       'Things that are due',       ['due'],                        ['Respect','A baby','Rent','A library book','An assignment']),
-  ('elements',  'Elements named after places', ['element','elements','named after places','places'], ['Polonium','Germanium','Francium','Americium','Californium']),
-  ('group',     'Group ___',                 ['group'],                      ['Therapy','Discount','Text','Project','Chat']),
-  ('accounts',  'Kinds of account',          ['account','accounts'],         ['Roth IRA','Email','Checking','Savings','Instagram']),
-  ('space',     '___ space',                 ['space'],                      ['White','Head','Outer','Storage','Office']),
-  ('credits',   'Things with credits',       ['credit','credits'],           ['Tax','Film','Movies','Transfer','Classes']),
-  ('dropouts',  'College dropouts',          ['dropout','dropouts','dropped out','drop out','left college','never graduated'], ['Lady Gaga','Steve Jobs','Kanye','Bill Gates','Zuckerberg']),
-  ('run',       'Things you run',            ['run'],                        ['The numbers','A fever','Late','A business','A mile']),
-  ('study',     'Study ___',                 ['study'],                      ['Buddy','Hall','Break','Abroad','Group']),
-  ('compound',  'Things that compound',      ['compound'],                   ['Fractures','Sentences','Pharmacies','Words','Interest']),
-  ('file',      'Things you file',           ['file'],                       ['For divorce','Nails','A complaint','Papers','Taxes']),
-  ('coffee',    'Coffee orders',             ['coffee','espresso'],          ['Cortado','Flat white','Americano','Cold brew','Oat latte']),
-  ('hall',      '___ hall',                  ['hall'],                       ['Town','Concert','Residence','Lecture','Dining']),
-  ('shot',      '___ shot',                  ['shot'],                       ['Long','Mug','Moon','Flu','Screen']),
-  ('take',      'Things you take',           ['take'],                       ['The L','A hint','A shot','A break','Notes']),
-  ('terms',     'Things with terms',         ['term','terms'],               ['Presidents','Contracts','Dictionaries','Loans','Semesters']),
-  ('major',     '___ major',                 ['major','majors'],             ['Ursa','Canis','Sergeant','Drum','Double']),
-  # --- batch two, 2026-09-08. Hardest clue first, giveaway last. Adult voice.
-  ('break',     'Things you break',          ['break'],                      ['A record','The ice','A habit','The news','A promise']),
-  ('bar',       '___ bar',                   ['bar'],                        ['Crow','Sand','Space','Candy','Salad']),
-  ('deadline',  'Things with deadlines',     ['deadline','deadlines'],       ['Taxes','Grant applications','Transfers','Newspapers','Essays']),
-  ('rate',      'Kinds of rate',             ['rate','rates'],               ['Exchange','Heart','Interest','Tax','Hourly']),
-  ('ball',      '___ ball',                  ['ball'],                       ['Curve','Eye','Odd','Snow','Foot']),
-  ('lose',      'Things you lose',           ['lose'],                       ['Your voice','Track of time','Sleep','Weight','Your keys']),
-  ('mac',       'Mac ___',                   ['mac','macs','apple','apple products'], ['Mini','Studio','Pro','Air','Book']),
-  ('capital',   'Kinds of capital',          ['capital','capitals'],         ['Venture','Human','Social','Working','State']),
-  ('degree',    'Things with degrees',       ['degree','degrees'],           ['Burns','Murder','Angles','Fevers','Graduates']),
-  ('shift',     'Kinds of shift',            ['shift','shifts'],             ['Paradigm','Night','Gear','Stick','Key']),
-  ('plan',      'Kinds of plan',             ['plan','plans'],               ['Floor','Lesson','Payment','Meal','Backup']),
-  ('roman',     'Roman numerals',            ['roman numeral','roman numerals','numerals','roman'], ['M','D','C','L','X']),
-  ('bond',      'Kinds of bond',             ['bond','bonds'],               ['James','Covalent','Municipal','Bail','Savings']),
-  ('ghost',     'Things you ghost',          ['ghost','ghosting'],           ['A recruiter','A group chat','A landlord','A date','A friend']),
-  ('cap',       'Things with caps',          ['cap','caps'],                 ['Bottles','Salaries','Knees','Mushrooms','Pens']),
-  ('charge',    'Things you charge',         ['charge'],                     ['A battery','A fee','A suspect','The net','Your phone']),
-  ('bass',      'Fish that are also words',  ['fish'],                       ['Bass','Perch','Sole','Ray','Fluke']),
-  ('mouse',     'Things with a mouse',       ['mouse','mice'],               ['Mickey','A trap','A pad','A lab','A laptop']),
-  ('interview', 'Interview questions',       ['interview question','interview questions','interview','job interview'], ['Tell me about yourself','Why here?','Biggest weakness?','Where in five years?','Any questions for us?']),
-  ('season',    'Things with seasons',       ['season','seasons'],           ['Chefs','Tickets','Pans','TV shows','Years']),
-  ('bill',      'Things with bills',         ['bill','bills'],               ['Ducks','Congress','Restaurants','Wallets','Utilities']),
-  ('draw',      'Things you draw',           ['draw'],                       ['A bath','Blood','A conclusion','The line','A picture']),
-  ('planet',    'Planets',                   ['planet','planets','solar system'], ['Neptune','Uranus','Mercury','Saturn','Mars']),
-  ('hard',      'Hard ___',                  ['hard'],                       ['Drive','Copy','Cider','Launch','Boiled']),
-  ('cover',     'Kinds of cover',            ['cover','covers'],             ['Album','Book','Cloud','Duvet','Song']),
-  ('bank2',     'Things you bank',           ['bank'],                       ['Coins','A shot','On it','Hours','Blood']),
-  ('cold',      'Cold ___',                  ['cold'],                       ['Call','Case','Turkey','Shoulder','Brew']),
-  ('game',      'Things with games',         ['game','games'],               ['Hunger','Squid','The Olympics','Consoles','Friday nights']),
-  ('chain',     'Kinds of chain',            ['chain','chains'],             ['Supply','Food','Block','Key','Bike']),
-  ('stream',    'Things you stream',         ['stream'],                     ['A conscience','Data','A river','A game','A show']),
-  ('flat',      'Flat ___',                  ['flat'],                       ['Earth','Iron','Rate','Tire','White']),
-  ('quarter',   'Things with quarters',      ['quarter','quarters'],         ['Football','Fiscal years','Dollars','The moon','Semesters']),
-  ('root',      'Kinds of root',             ['root','roots'],               ['Square','Grass','Tooth','Hair','Ginger']),
-  ('crush',     'Things you crush',          ['crush'],                      ['Candy','A can','Ice','A test','An interview']),
-  ('post',      '___ post',                  ['post'],                       ['Guard','Goal','Lamp','Blog','Sign']),
-  ('bench',     'Things with benches',       ['bench','benches'],            ['Courts','Gyms','Labs','Parks','Teams']),
-  ('open',      'Open ___',                  ['open'],                       ['Source','Mic','Bar','House','Tab']),
-  ('notes',     'Things you take notes on',  ['note','notes','take notes'],  ['A phone','Sticky paper','Lectures','A napkin','A laptop']),
-  ('spring',    'Spring ___',                ['spring'],                     ['Roll','Break','Cleaning','Onion','Water']),
-  ('field',     'Kinds of field',            ['field','fields'],             ['Magnetic','Force','Track and','Corn','Football']),
-  ('table',     'Things with tables',        ['table','tables'],             ['Contents','Periodic','Poker','Spreadsheets','Restaurants']),
-  ('screen',    'Things you screen',         ['screen'],                     ['Calls','A film','Applicants','A window','A porch']),
-  ('block',     'Kinds of block',            ['block','blocks'],             ['Writer\'s','Mental','City','Cinder','Butcher']),
-  ('float',     'Things that float',         ['float','floats'],             ['Ideas','Currencies','Root beer','Parades','Boats']),
-  ('order',     'Things you order',          ['order'],                      ['Someone around','Numbers','A pizza','Takeout','Groceries']),
-  ('sharp',     'Things that are sharp',     ['sharp'],                      ['Cheddar','Dressers','A tongue','Knives','Pencils']),
-  ('pitch',     'Kinds of pitch',            ['pitch','pitches'],            ['Elevator','Sales','Perfect','Cricket','Baseball']),
-  ('save',      'Things you save',           ['save'],                       ['A seat','A file','A goal','Face','Money']),
-  ('free',      'Free ___',                  ['free'],                       ['Fall','Trial','Range','Throw','Wifi']),
-  ('press',     'Things you press',          ['press'],                      ['Charges','Flowers','A suit','Snooze','A button']),
-  ('cycle',     'Kinds of cycle',            ['cycle','cycles'],             ['Krebs','Water','News','Spin','Wash']),
-  ('lead',      'Things you lead',           ['lead'],                       ['A horse to water','A double life','A team','A meeting','The way']),
-  ('mass',      'Kinds of mass',             ['mass'],                       ['Critical','Body','Sunday','Molar','Land']),
-  ('mile',      'Kinds of mile',             ['mile','miles'],               ['Nautical','Green','Country','Extra','Air']),
-  ('log',       'Kinds of log',              ['log','logs'],                 ['Yule','Captain\'s','Change','Natural','Fire']),
-  ('ship',      '___ship',                   ['ship'],                       ['Friend','Intern','Scholar','Relation','Member']),
-  ('trip',      'Kinds of trip',             ['trip','trips'],               ['Guilt','Ego','Power','Road','Field']),
-  ('brand',     'Brands that became verbs',  ['brand','brands','verbs','company','companies'], ['Xerox','Hoover','Photoshop','Uber','Google']),
-  ('zero',      'Things with zeros',         ['zero','zeros','zeroes'],      ['Coke','Binary','Patient','Ground','Absolute']),
-  ('patch',     'Kinds of patch',            ['patch','patches'],            ['Software','Eye','Nicotine','Pumpkin','Bald']),
-  ('pass',      'Things you pass',           ['pass'],                       ['Out','Judgment','A law','The salt','A test']),
-  ('minor',     'Things that are minor',     ['minor','minors'],             ['Keys','Leagues','Injuries','Under-18s','Second majors']),
-  ('gross',     'Gross ___',                 ['gross'],                      ['Domestic product','Margin','Income','Weight','Anatomy']),
-  ('point',     'Kinds of point',            ['point','points'],             ['Boiling','Bullet','Tipping','Match','Power']),
-  ('house',     '___ house',                 ['house'],                      ['Ware','Green','Light','Full','Open']),
-  ('shell',     'Things with shells',        ['shell','shells'],             ['Companies','Pasta','Taco Bell','Beaches','Turtles']),
-  ('fold',      'Things you fold',           ['fold'],                       ['In poker','A protein','A map','Laundry','Paper']),
-  ('apple',     'Apple ___',                 ['apple'],                      ['Sauce','Cider','Pie','Watch','Music']),
-  ('run2',      'Kinds of run',              ['run','runs'],                 ['Bank','Dry','Home','Fun','Trial']),
-  ('circle',    'Kinds of circle',           ['circle','circles'],           ['Vicious','Arctic','Crop','Inner','Full']),
-  ('rush',      'Kinds of rush',             ['rush'],                       ['Gold','Sugar','Sorority','Hour','Adrenaline']),
-  ('current',   'Things with currents',      ['current','currents'],         ['Oceans','Events','Wires','Rivers','Batteries']),
-  ('mean',      'Kinds of mean',             ['mean','means','average'],     ['Geometric','Golden','Harmonic','Arithmetic','Sample']),
-  ('hook',      'Things with hooks',         ['hook','hooks'],               ['Songs','Essays','Pirates','Boxers','Fishing']),
-  ('turn',      'Things you turn',           ['turn'],                       ['A phrase','A profit','21','A corner','A page']),
-  ('school',    'Kinds of school',           ['school','schools'],           ['Fish','Old','Thought','Boarding','Grad']),
-  ('cell',      'Kinds of cell',             ['cell','cells'],               ['Sleeper','Prison','Stem','Spreadsheet','Battery']),
-  ('crash',     'Things that crash',         ['crash'],                      ['Waves','Markets','Parties','Apps','Cars']),
-  ('gap',       'Kinds of gap',              ['gap','gaps'],                 ['Wage','Generation','Thigh','Year','Tooth']),
-  ('drive',     'Kinds of drive',            ['drive','drives'],             ['Sex','Flash','Test','Four-wheel','Hard']),
-  ('mid',       'Mid___',                    ['mid'],                        ['Life','Night','Terms','Town','West']),
-  ('press2',    'Kinds of press',            ['press'],                      ['Garlic','French','Bench','Printing','Full-court']),
-  ('nobel',     'Nobel Prize categories',    ['nobel','nobel prize','prize','prizes'], ['Economics','Literature','Peace','Chemistry','Physics']),
-  ('date',      'Things you date',           ['date'],                       ['A cheque','A fossil','A letter','A coworker','A person']),
-  ('law',       'Named laws',                ['law','laws','named laws'],    ["Godwin's","Moore's","Murphy's","Ohm's","Newton's"]),
-  ('lab',       'Kinds of lab',              ['lab','labs'],                 ['Meth','Chem','Computer','Sleep','Labrador']),
-  ('fee',       'Kinds of fee',              ['fee','fees'],                 ['Convenience','Late','Overdraft','Tuition','Delivery']),
-  ('read',      'Things you read',           ['read'],                       ['The room','Minds','Lips','A meter','A book']),
-  ('cast',      'Things you cast',           ['cast'],                       ['A spell','Doubt','A shadow','A vote','A line']),
-  ('salt',      'Kinds of salt',             ['salt','salts'],               ['Epsom','Rock','Table','Sea','Bath']),
-  ('battery',   'Things with batteries',     ['battery','batteries'],        ['Assault and','Tests','Remotes','Cars','Phones']),
-  ('exam',      'Standardized tests',        ['test','tests','exam','exams','standardized'], ['LSAT','MCAT','GRE','ACT','SAT']),
-  ('draft',     'Kinds of draft',            ['draft','drafts'],             ['Military','Beer','Fantasy','Rough','First']),
-  ('sink',      'Things that sink',          ['sink'],                       ['Ships','Hearts','Putts','Stones','Teeth']),
-]
+def w_nbrs(i):
+    r, c = divmod(i, W_COLS)
+    for dr in (-1, 0, 1):
+        for dc in (-1, 0, 1):
+            if dr == 0 and dc == 0: continue
+            rr, cc = r + dr, c + dc
+            if 0 <= rr < W_ROWS and 0 <= cc < W_COLS:
+                yield rr * W_COLS + cc
 
-def gen_threads():
-    return [{'id': i, 'name': n, 'accept': a, 'clues': c} for i, n, a, c in THREADS]
+def w_cross(a, b):
+    """The other diagonal of the 2x2 a diagonal step a->b sits in, or None for a
+    straight step. Two words cross when one takes a step and another takes its cross."""
+    ra, ca = divmod(a, W_COLS); rb, cb = divmod(b, W_COLS)
+    if ra == rb or ca == cb: return None
+    return frozenset((ra * W_COLS + cb, rb * W_COLS + ca))
+
+def w_components(free):
+    seen, out = set(), []
+    for s in free:
+        if s in seen: continue
+        stack, comp = [s], set()
+        seen.add(s)
+        while stack:
+            i = stack.pop(); comp.add(i)
+            for j in w_nbrs(i):
+                if j in free and j not in seen:
+                    seen.add(j); stack.append(j)
+        out.append(comp)
+    return out
+
+def w_sums(lengths):
+    """Every total some subset of `lengths` can make."""
+    s = {0}
+    for L in lengths:
+        s |= {x + L for x in s}
+    return s
+
+def w_fill(rng, free, words, diag, budget):
+    """Lay every word in `words` (longest first) as a path through `free`.
+    Returns [(word, cells)] or None. `diag` is the set of diagonal edges in use."""
+    if not words:
+        return [] if not free else None
+    word, rest = words[0], words[1:]
+    L = len(word)
+    starts = list(free); rng.shuffle(starts)
+    for s in starts:
+        path = [s]; used = {s}; mydiag = []
+        def rec():
+            budget[0] -= 1
+            if budget[0] < 0: return None
+            if len(path) == L:
+                left = free - used
+                rest_len = [len(w) for w in rest]
+                sums = w_sums(rest_len)
+                for comp in w_components(left):
+                    if len(comp) not in sums: return None
+                got = w_fill(rng, left, rest, diag | set(mydiag), budget)
+                return got if got is None else [(word, list(path))] + got
+            here = path[-1]
+            opts = [j for j in w_nbrs(here) if j in free and j not in used]
+            rng.shuffle(opts)
+            for j in opts:
+                x = w_cross(here, j)
+                if x is not None and (x in diag or x in mydiag): continue
+                path.append(j); used.add(j)
+                # Record the step itself; a later step is refused when ITS cross is here.
+                if x is not None: mydiag.append(frozenset((here, j)))
+                got = rec()
+                if got is not None: return got
+                path.pop(); used.discard(j)
+                if x is not None: mydiag.pop()
+            return None
+        got = rec()
+        if got is not None: return got
+        if budget[0] < 0: return None
+    return None
+
+def w_span(rng, word, budget):
+    """A path for the spanning word that touches two opposite sides."""
+    L = len(word)
+    horizontal = rng.random() < 0.5 if L >= W_ROWS else True
+    cells = list(range(W_COLS * W_ROWS)); rng.shuffle(cells)
+    for s in cells:
+        path = [s]; used = {s}; mydiag = []
+        def rec():
+            budget[0] -= 1
+            if budget[0] < 0: return None
+            if len(path) == L:
+                if horizontal:
+                    ok = any(i % W_COLS == 0 for i in path) and any(i % W_COLS == W_COLS - 1 for i in path)
+                else:
+                    ok = any(i // W_COLS == 0 for i in path) and any(i // W_COLS == W_ROWS - 1 for i in path)
+                return list(path) if ok else None
+            here = path[-1]
+            opts = [j for j in w_nbrs(here) if j not in used]
+            rng.shuffle(opts)
+            for j in opts:
+                x = w_cross(here, j)
+                if x is not None and x in mydiag: continue
+                path.append(j); used.add(j)
+                if x is not None: mydiag.append(frozenset((here, j)))
+                got = rec()
+                if got is not None: return got
+                path.pop(); used.discard(j)
+                if x is not None: mydiag.pop()
+            return None
+        got = rec()
+        if got is not None: return got, set(mydiag)
+        if budget[0] < 0: return None
+    return None
+
+def w_pick(rng, cands, need):
+    """A subset of candidates whose lengths add to `need`, 4 to 8 words, random."""
+    cands = [w for w in cands if len(w) >= W_MIN]
+    for _ in range(400):
+        pool = cands[:]; rng.shuffle(pool)
+        chosen, total = [], 0
+        for w in pool:
+            if total + len(w) <= need and len(chosen) < 8:
+                chosen.append(w); total += len(w)
+            if total == need: break
+        if total == need and len(chosen) >= 4:
+            return chosen
+    return None
+
+def gen_weave_one(rng, theme, span, cands):
+    need = W_COLS * W_ROWS - len(span)
+    # Many short tries beat one long one: a bad spanning path or word set is
+    # abandoned fast and a fresh random one drawn.
+    for attempt in range(600):
+        words = w_pick(rng, cands, need)
+        if words is None: continue
+        budget = [20000]
+        got = w_span(rng, span, budget)
+        if got is None: continue
+        spath, diag = got
+        free = set(range(W_COLS * W_ROWS)) - set(spath)
+        order = sorted(words, key=len, reverse=True)
+        budget = [30000]
+        laid = w_fill(rng, free, order, diag, budget)
+        if laid is None: continue
+        grid = [''] * (W_COLS * W_ROWS)
+        for i, ch in zip(spath, span): grid[i] = ch
+        for w, cells in laid:
+            for i, ch in zip(cells, w): grid[i] = ch
+        assert all(grid), theme
+        rows = [''.join(grid[r * W_COLS:(r + 1) * W_COLS]) for r in range(W_ROWS)]
+        # Word order on the board is by first cell, so the file gives nothing away.
+        laid.sort(key=lambda wc: wc[1][0])
+        return {'theme': theme, 'cols': W_COLS, 'rows': W_ROWS, 'grid': rows,
+                'span': {'w': span, 'c': spath},
+                'words': [{'w': w, 'c': cells} for w, cells in laid]}
+    return None
+
+def gen_weaves(rng):
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from weaves import WEAVES
+    out, seen = [], set()
+    for theme, span, cands in WEAVES:
+        assert theme.strip() and span == span.upper() and len(span) >= W_COLS, theme
+        assert len(set(cands) | {span}) == len(cands) + 1, f"repeat in {theme}"
+        assert theme not in seen, f"duplicate theme {theme}"
+        seen.add(theme)
+        p = gen_weave_one(rng, theme, span, cands)
+        print(f"  weave {theme!r}: {'ok' if p else 'FAILED'}", file=sys.stderr, flush=True)
+        if p is None:
+            print(f"  weave: could not tile {theme!r}", file=sys.stderr, flush=True)
+            continue
+        out.append(p)
+    return out
+
+def write_dictionary():
+    """Every word Weave accepts as a non-theme find: the system word list, 4-10
+    lowercase letters, plus every theme word. Newline separated, one file."""
+    words = set()
+    with open('/usr/share/dict/words') as f:
+        for line in f:
+            w = line.strip()
+            if 4 <= len(w) <= 10 and w.isalpha() and w.islower():
+                words.add(w)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from weaves import WEAVES
+    for _, span, cands in WEAVES:
+        words.add(span.lower())
+        for w in cands: words.add(w.lower())
+    path = os.path.join(CONTENT, 'dictionary.txt')
+    with open(path, 'w') as f:
+        f.write('\n'.join(sorted(words)) + '\n')
+    print(f"  dictionary.txt: {len(words)} words, {os.path.getsize(path)//1024} KB", file=sys.stderr, flush=True)
 
 # ---------------------------------------------------------------- balance (Takuzu)
 
@@ -634,12 +647,12 @@ def write(name, data):
     print(f"  {name}: {len(data)} puzzles, {os.path.getsize(path)//1024} KB", file=sys.stderr, flush=True)
 
 if __name__ == '__main__':
-    only = set(sys.argv[1:])   # e.g. `gen.py ladders threads` re-deals just those
-    if 'candidates' in only:
-        print_candidates(random.Random()); sys.exit(0)
+    only = set(sys.argv[1:])   # e.g. `gen.py sorts weaves` re-deals just those
     print("dealing...", file=sys.stderr)
-    if not only or 'ladders' in only: write('ladders.json', gen_ladders(random.Random(SEED + 1)))
-    if not only or 'threads' in only: write('threads.json', gen_threads())
+    if not only or 'sorts' in only: write('sorts.json', gen_sorts(random.Random(SEED + 1)))
+    if not only or 'weaves' in only:
+        write('weaves.json', gen_weaves(random.Random(SEED + 5)))
+        write_dictionary()
     if not only or 'balance' in only: write('balance.json', gen_balance(random.Random(SEED + 2)))
     if not only or 'pearls' in only: write('pearls.json', gen_pearls(random.Random(SEED + 3)))
     if not only or 'trace' in only: write('trace.json', gen_trace(random.Random(SEED + 4)))

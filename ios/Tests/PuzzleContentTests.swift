@@ -7,61 +7,77 @@ import XCTest
 /// generator bug cannot vouch for itself.
 final class PuzzleContentTests: XCTestCase {
 
-    // MARK: - Ladders
+    // MARK: - Sorts
 
-    func testLaddersAreSevenCommonWordsOneLetterApart() {
-        XCTAssertGreaterThanOrEqual(Catalog.ladders.count, 30, "ladders.json did not load")
-        for l in Catalog.ladders {
-            XCTAssertEqual(l.words.count, 7, "\(l.words)")
-            XCTAssertEqual(l.clues.count, 7, "\(l.words)")
-            XCTAssertEqual(Set(l.words).count, 7, "repeat in \(l.words)")
-            XCTAssertTrue(l.clues.allSatisfy { !$0.isEmpty }, "\(l.words) has an empty clue")
-            for w in l.words {
-                XCTAssertEqual(w.count, 5, w)
-                XCTAssertTrue(Catalog.wordleAnswers.contains(w), "\(w) is not a common word")
+    func testSortsAreFourGroupsOfFourDifferentWords() {
+        XCTAssertGreaterThanOrEqual(Catalog.sorts.count, 30, "sorts.json did not load")
+        for (i, p) in Catalog.sorts.enumerated() {
+            XCTAssertEqual(p.groups.count, 4, "sort \(i)")
+            let words = p.groups.flatMap(\.words)
+            XCTAssertEqual(words.count, 16, "sort \(i)")
+            XCTAssertEqual(Set(words).count, 16, "sort \(i) repeats a word")
+            for g in p.groups {
+                XCTAssertFalse(g.name.isEmpty, "sort \(i)")
+                XCTAssertEqual(g.words.count, 4, "sort \(i) \(g.name)")
+                XCTAssertTrue(g.words.allSatisfy { !$0.isEmpty && $0 == $0.uppercased() }, "sort \(i) \(g.name)")
             }
-            for (x, y) in zip(l.words, l.words.dropFirst()) {
-                XCTAssertEqual(zip(x, y).filter { $0 != $1 }.count, 1, "\(x)→\(y) is not one letter")
+            XCTAssertEqual(Set(p.deal), Set(0..<16), "sort \(i) deal \(p.deal)")
+            for r in 0..<4 {
+                let row = (0..<4).map { p.deal[r * 4 + $0] / 4 }
+                XCTAssertGreaterThan(Set(row).count, 1, "sort \(i) is dealt with a whole group in row \(r)")
             }
-            XCTAssertEqual(Set(l.deal), Set(1...5), "\(l.words) deal \(l.deal)")
-            XCTAssertNotEqual(l.deal, [1, 2, 3, 4, 5], "\(l.words) is dealt already solved")
-            XCTAssertNotEqual(l.deal, [5, 4, 3, 2, 1], "\(l.words) is dealt already solved")
         }
     }
 
-    /// The middle five must have exactly one order (either way up), or the game
-    /// could refuse an arrangement that is just as valid as the intended one.
-    func testLadderMiddleHasOneOrder() {
-        for l in Catalog.ladders {
-            let mid = Array(l.words[1...5])
-            var valid = 0
-            func perms(_ rest: [String], _ acc: [String]) {
-                if rest.isEmpty {
-                    if zip(acc, acc.dropFirst()).allSatisfy({ zip($0, $1).filter { $0 != $1 }.count == 1 }) { valid += 1 }
-                    return
+    // MARK: - Weaves
+
+    /// Every letter belongs to exactly one word, every word is a path through
+    /// touching cells with no diagonal crossing another, and the spanning word
+    /// touches two opposite sides.
+    func testWeavesTileTheBoardExactly() {
+        XCTAssertGreaterThanOrEqual(Catalog.weaves.count, 30, "weaves.json did not load")
+        for (i, p) in Catalog.weaves.enumerated() {
+            let n = p.cols * p.rows
+            XCTAssertEqual(p.grid.count, p.rows, "weave \(i)")
+            XCTAssertTrue(p.grid.allSatisfy { $0.count == p.cols }, "weave \(i)")
+            XCTAssertFalse(p.theme.isEmpty, "weave \(i)")
+            let all = [p.span] + p.words
+            var covered: [Int] = []
+            var diagonals = Set<Set<Int>>()
+            for w in all {
+                XCTAssertGreaterThanOrEqual(w.w.count, 4, "weave \(i) \(w.w)")
+                XCTAssertEqual(w.w.count, w.c.count, "weave \(i) \(w.w)")
+                XCTAssertEqual(w.c.map(p.letter).joined(), w.w, "weave \(i) \(w.w) is not what its cells spell")
+                for (a, b) in zip(w.c, w.c.dropFirst()) {
+                    let (ra, ca) = (a / p.cols, a % p.cols), (rb, cb) = (b / p.cols, b % p.cols)
+                    XCTAssertTrue(a != b && abs(ra - rb) <= 1 && abs(ca - cb) <= 1, "weave \(i) \(w.w) jumps")
+                    if ra != rb, ca != cb {
+                        let cross: Set<Int> = [ra * p.cols + cb, rb * p.cols + ca]
+                        XCTAssertFalse(diagonals.contains(cross), "weave \(i) \(w.w) crosses another word")
+                        diagonals.insert([a, b])
+                    }
                 }
-                for (i, w) in rest.enumerated() {
-                    var r = rest; r.remove(at: i)
-                    perms(r, acc + [w])
-                }
+                covered += w.c
             }
-            perms(mid, [])
-            XCTAssertEqual(valid, 2, "\(l.words) middle has \(valid / 2) orders")
+            XCTAssertEqual(covered.count, n, "weave \(i) covers \(covered.count) of \(n)")
+            XCTAssertEqual(Set(covered), Set(0..<n), "weave \(i) does not tile the board")
+            let cols = p.span.c.map { $0 % p.cols }, rows = p.span.c.map { $0 / p.cols }
+            let across = cols.contains(0) && cols.contains(p.cols - 1)
+            let down = rows.contains(0) && rows.contains(p.rows - 1)
+            XCTAssertTrue(across || down, "weave \(i) \(p.span.w) does not span the board")
+            XCTAssertEqual(Set(all.map(\.w)).count, all.count, "weave \(i) repeats a word")
         }
+        let themes = Catalog.weaves.map(\.theme)
+        XCTAssertEqual(Set(themes).count, themes.count, "duplicate weave themes")
     }
 
-    // MARK: - Threads
-
-    func testThreadsHaveFiveCluesAndAnAnswer() {
-        XCTAssertGreaterThanOrEqual(Catalog.threads.count, 20, "threads.json did not load")
-        for t in Catalog.threads {
-            XCTAssertEqual(t.clues.count, 5, t.id)
-            XCTAssertFalse(t.name.isEmpty, t.id)
-            XCTAssertFalse(t.accept.isEmpty, t.id)
-            XCTAssertTrue(t.clues.allSatisfy { !$0.isEmpty }, t.id)
+    func testTheDictionaryLoadsAndHoldsEveryThemeWord() {
+        XCTAssertGreaterThan(Catalog.dictionary.count, 50_000, "dictionary.txt did not load")
+        XCTAssertTrue(Catalog.dictionary.contains("latte"))
+        for p in Catalog.weaves {
+            XCTAssertTrue(Catalog.dictionary.contains(p.span.w.lowercased()), p.span.w)
+            for w in p.words { XCTAssertTrue(Catalog.dictionary.contains(w.w.lowercased()), w.w) }
         }
-        let ids = Catalog.threads.map(\.id)
-        XCTAssertEqual(Set(ids).count, ids.count, "duplicate thread ids")
     }
 
     // MARK: - Balance

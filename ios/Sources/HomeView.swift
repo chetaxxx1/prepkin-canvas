@@ -94,6 +94,7 @@ struct HomeView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         taskList
+                        tomorrowLine
                         footerLinks
                     }
                     .padding(.bottom, 88)
@@ -538,7 +539,10 @@ struct HomeView: View {
     private var header: some View {
         VStack(spacing: 12) {
             levelBand
-            goalsRow
+            VStack(alignment: .leading, spacing: 4) {
+                goalsRow
+                underGoals
+            }
         }
         .padding(.horizontal, 18)
         .padding(.top, 12)
@@ -547,55 +551,42 @@ struct HomeView: View {
 
     /// A translucent tint of the floor, never a new hue — it has to read as a darker
     /// patch of the same surface.
+    ///
+    /// **No bar.** A capsule that fills as coins arrive is a meter, and at three
+    /// stars it was a *full* meter with nothing left to do — a promise the screen
+    /// could not keep (PRODUCT.md: no meters). The pips say the stage, the words
+    /// say what is left, and neither of them moves. The pips also replace the tile:
+    /// three stars next to the word "stars" was the same fact drawn twice.
     private var levelBand: some View {
         HStack(spacing: 11) {
-            Image(systemName: "bolt.fill")
-                .font(.system(size: 15, weight: .black))
-                .foregroundStyle(Theme.hex(0x7A4A12))
-                .frame(width: 32, height: 32)
-                .background(RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .fill(Theme.coin))
-
-            VStack(alignment: .leading, spacing: 5) {
-                Text(levelLabel)
-                    .font(Theme.font(12.5, .black))
-                    .foregroundStyle(Theme.ink)
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(Theme.ink.opacity(0.14))
-                        Capsule().fill(Theme.coin)
-                            .frame(width: max(0, geo.size.width * levelProgress))
-                    }
-                }
-                .frame(height: 7)
-            }
+            StarPips(level: state.activeChibi.level, size: 17, spacing: 5)
+            Text(levelLabel)
+                .font(Theme.font(12.5, .black))
+                .foregroundStyle(Theme.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
         }
         .padding(.horizontal, 14).padding(.vertical, 11)
         .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
             .fill(Theme.ink.opacity(0.08)))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(starsSpoken). \(levelLabel)")
     }
 
+    /// The pips carry the count, so the words never repeat it. In `HomeCopy` so a
+    /// test can read every stage without a view.
     private var levelLabel: String {
-        let chibi = state.activeChibi
-        let stars = chibi.level == 1 ? "1 star" : "\(chibi.level) stars"
-        guard let cost = chibi.nextUpgradeCost else { return "\(stars) · fully grown" }
-        let left = max(0, cost - state.coins)
-        if left == 0 { return "\(stars) · ready for the next one" }
-        return "\(stars) · \(left) to the next"
+        HomeCopy.levelLabel(nextUpgradeCost: state.activeChibi.nextUpgradeCost, coins: state.coins)
     }
 
-    private var levelProgress: Double {
-        guard let cost = state.activeChibi.nextUpgradeCost, cost > 0 else { return 1 }
-        return min(1, Double(state.coins) / Double(cost))
+    private var starsSpoken: String {
+        state.activeChibi.level == 1 ? "1 star" : "\(state.activeChibi.level) stars"
     }
 
     /// State the goal, never the ratio. "1 of 5 done" makes the four undone ones the
     /// headline; "4 goals left today" is the thing a student can act on.
     private var goalsRow: some View {
         HStack(spacing: 9) {
-            Image(systemName: "calendar")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(Theme.ink)
             Text(goalsLine)
                 .font(Theme.font(16, .black))
                 .foregroundStyle(Theme.ink)
@@ -623,6 +614,29 @@ struct HomeView: View {
         case 1: return "1 goal left today"
         default: return "\(left) goals left today"
         }
+    }
+
+    /// One quiet line under the goals row. Never a card, never a button, never an
+    /// ask — a statement the student can ignore.
+    ///
+    /// It does two jobs that used to have no home. When the list is empty the space
+    /// between the goals row and the rest of the screen was blank, which reads as a
+    /// screen that failed to load rather than a day with nothing due. And when the
+    /// laptop's list is a few hours old, only the day editor knew — so a student
+    /// looking at four rows at 11 PM had no way to tell whether they were tonight's
+    /// four. Both are answered here, in muted type, in one line.
+    @ViewBuilder private var underGoals: some View {
+        if let line = underGoalsLine {
+            Text(line)
+                .font(Theme.font(12.5, .bold))
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private var underGoalsLine: String? {
+        HomeCopy.underGoals(hasTasks: !state.tasks.isEmpty, lastList: state.lastCanvasSyncAt)
     }
 
     // MARK: - Tasks
@@ -773,14 +787,56 @@ struct HomeView: View {
         return date.formatted(.dateTime.hour().minute())
     }
 
+    // MARK: - Tomorrow
+
+    /// What is on tomorrow, in one line under today's list.
+    ///
+    /// Two titles and a count, never a second list — the point is whether tonight
+    /// is the last chance, and a student who wants the rest taps through to the
+    /// calendar. Gone entirely when tomorrow is empty: "nothing tomorrow" is not
+    /// news, and a row that is always there stops being read.
+    @ViewBuilder private var tomorrowLine: some View {
+        if let text = state.tomorrowLine {
+            Button {
+                state.openCalendarOn = DayKey.today().adding(days: 1)
+            } label: {
+                HStack(spacing: 8) {
+                    Text(text)
+                        .font(Theme.font(12.5, .bold))
+                        .foregroundStyle(Theme.muted)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(Theme.dim)
+                }
+                .padding(.horizontal, 13)
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 14)
+            .padding(.top, 10)
+            .accessibilityLabel(text)
+            .accessibilityHint("Opens tomorrow in the calendar")
+        }
+    }
+
+    // TODO: the widget install card. Same shell as the Day 1 offers, shown once
+    // after the first coin on the second day:
+    //   title     "Want \(name) on your home screen?"
+    //   primary   "Show me how"  -> a three-step sheet with pictures
+    //   secondary "Not now"
+    // Not built: `ios/project.yml` has two targets, the app and its tests, and no
+    // widget extension. A card that opens instructions for a widget that cannot be
+    // installed is the one thing Home must never do — promise something that is not
+    // there. Build the target first, then this card.
+
     private var footerLinks: some View {
         NavigationLink { GradeCalcView() } label: {
             HStack(spacing: 12) {
-                Image(systemName: "target")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 42, height: 42)
-                    .background(Circle().fill(Theme.coralDeep))
+                IconTile(icon: "calculator", size: 44)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Grade calculator")
                         .font(Theme.font(15.5, .black)).foregroundStyle(Theme.ink)
@@ -901,10 +957,7 @@ private struct TaskRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 12) {
-                CategoryIcon(category: task.category, size: 32)
-                    .frame(width: 42, height: 42)
-                    .background(Circle().fill(Theme.tile))
-                    .overlay(Circle().strokeBorder(Theme.tileRing, lineWidth: 1.5))
+                IconTile(icon: task.category.rawValue, size: 44)
 
                 VStack(alignment: .leading, spacing: 1) {
                     // Two lines, not one: three "Quiz - Computing Servi…" rows in a row

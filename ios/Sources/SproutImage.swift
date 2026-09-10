@@ -164,14 +164,32 @@ struct SproutFace: View {
     var size: CGFloat = 28
     var plate: Color = Theme.kinChip
 
+    /// A portrait, not a thumbnail. The three-star stills are wide and short (fins
+    /// spread, 0.66 tall), so the old crop showed a plate with a face sunk at the
+    /// bottom of it. Measured on the mint still at @3x: the head runs 617–900 of
+    /// 1293 and is 560 wide, so drawing the still at 2.15× the circle and lifting
+    /// it so the point 60% down sits on the centre fills the circle with the face,
+    /// tuft just in, collar just showing. Checked on every rig 2026-09-10.
+    ///
+    /// Each still is centred on its own eyes (`Catalog.portraits`, written by
+    /// design/portraits.py), because a headband tail or a costume shifts the face
+    /// off the image's centre and the tab-bar kin drifted sideways by rig.
     var body: some View {
-        Circle()
+        let asset = SproutImage.asset(speciesID: speciesID, level: 3, skin: "classic")
+        let face = Catalog.portraits[asset] ?? [0.5, 0.60, 2.15]
+        // Third value: how many circle-widths wide the still is drawn, per still,
+        // in case a rig ever needs a looser crop than the Sprout portrait.
+        let drawn = size * (face.count > 2 ? face[2] : 2.15)
+        return Circle()
             .fill(plate)
             .frame(width: size, height: size)
             .overlay {
-                SproutImage(speciesID: speciesID, level: 3, size: size * 1.9)
-                    // Feet out of frame; eyes and tuft in it.
-                    .offset(y: size * 0.34)
+                Image(asset)
+                    .resizable()
+                    .interpolation(.high)
+                    .scaledToFit()
+                    .frame(width: drawn, height: drawn)
+                    .offset(x: (0.5 - face[0]) * drawn, y: (0.5 - face[1]) * drawn)
             }
             .clipShape(Circle())
             .accessibilityHidden(true)

@@ -50,6 +50,15 @@ struct FocusView: View {
             // On appearing, not on a timer: a table of three friends is not worth a
             // poll, and a row is filtered again on read so a stale one cannot show.
             .task { await state.refreshFriendsFocusing() }
+            // Sitting down with a friend, asked for on their card in the Friends
+            // tab. Only from the ready screen: a shift already running is not
+            // something another screen gets to restart.
+            .onChange(of: state.joinShiftRequest) { _, new in
+                guard let new, phase == .ready else { return }
+                minutes = new
+                state.joinShiftRequest = nil
+                start()
+            }
             .onDisappear { state.hideTabBar = false }
         }
     }
@@ -140,7 +149,7 @@ struct FocusView: View {
             .buttonStyle(PressStyle())
         }
         .padding(24)
-        .padding(.bottom, 104)
+        .padding(.bottom, Theme.tabClearance)
     }
 
     // MARK: - Study Together

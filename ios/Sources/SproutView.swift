@@ -325,24 +325,18 @@ struct SproutView: UIViewRepresentable {
     /// unrecognised stay mint, which is Sprout's default.
     static func coat(_ speciesID: String) -> String {
         switch speciesID {
-        case "ember", "mochi", "axolotl-coral": return "coral"
-        case "droplet", "puff", "orca": return "sky"
-        case "wisp", "axolotl": return "lilac"
+        case "ember", "mochi": return "coral"
+        case "droplet", "puff": return "sky"
+        case "wisp": return "lilac"
         case "comet": return "butter"
         case "sprout": return "peach"
         default: return "mint"
         }
     }
 
-    /// Which Sprout-repo type draws the kin. Everything on the original ladder is
-    /// a Sprout coat; the edge-lane kin are their own rigs (`?type=`).
-    static func type(_ speciesID: String) -> String {
-        switch speciesID {
-        case "orca": return "orca"
-        case "axolotl", "axolotl-coral": return "axolotl"
-        default: return "sprout"
-        }
-    }
+    /// Which Sprout-repo type draws the kin. Sprout only since 2026-09-10; the
+    /// orca and axolotl rigs still exist in the web bundle but nothing asks for them.
+    static func type(_ speciesID: String) -> String { "sprout" }
 
     /// Chibi level onto the three-star line: 1 the pear, 2 long fins, 3 belly badge.
     static func evo(_ level: Int) -> String { String(min(max(level, 1), 3)) }

@@ -35,12 +35,18 @@ insert into kin_costumes (id) values
   ('astronaut'), ('racer'), ('biker'), ('pajamas')
 on conflict do nothing;
 
+-- **Keep these in step with `Scene0.all` in ios/Sources/Theme.swift.** An id the
+-- app sends that is not in here is not an error: `set_tank` coalesces it away and
+-- silently keeps the old value, so a student at Deep would show to their friends
+-- as whatever they were before. The first three ids below are the land scenes the
+-- app retired; they stay so a row already carrying one still validates.
 insert into kin_scenes (id) values
-  ('classic'), ('reef'), ('kelp'), ('harbor'), ('night')
+  ('lagoon'), ('reef'), ('kelp'), ('dusk'), ('deep'),
+  ('classic'), ('harbor'), ('night')
 on conflict do nothing;
 
 alter table players add column if not exists costume text not null default 'none';
-alter table players add column if not exists scene   text not null default 'classic';
+alter table players add column if not exists scene   text not null default 'lagoon';
 
 do $$ begin
   alter table players add constraint players_costume_fk
@@ -233,7 +239,13 @@ create table if not exists play_results (
   seconds   integer,
   at        timestamptz not null default now(),
   primary key (player, puzzle_no, game),
-  constraint play_results_game check (game in ('word','ladder','thread','balance','pearls','trace')),
+  -- **Keep in step with `CoinReason`'s play kinds in ios/Sources/Core/Ledger.swift.**
+  -- Unlike every other allowlist in these files, this one throws rather than
+  -- coalescing, so a game id the app ships and this list does not is a hard error
+  -- on push. Ladder and Thread were retired 2026-09-10 and replaced by Sort and
+  -- Weave; the two old ids stay so an already-written row still validates.
+  constraint play_results_game check (game in ('word','balance','pearls','trace','sort','weave',
+                                               'ladder','thread')),
   constraint play_results_number  check (puzzle_no between 1 and 100000),
   constraint play_results_seconds check (seconds is null or seconds between 0 and 86400)
 );
@@ -365,7 +377,12 @@ begin
                             order by v.at), '[]'::jsonb)
     into v_rows
     from vibes v
-   where v.receiver = p_player and v.day = p_day;
+   -- Yesterday too, on purpose. `day` is the SENDER's local day, and this is
+   -- called with the RECEIVER's: a sender twelve hours ahead writes day D while
+   -- the receiver is still on D-1, and an exact match loses the visit for a day
+   -- and then shows it late. The app keeps the newest row per sender, so the
+   -- extra day cannot draw anybody twice. See SOCIAL-PLAN.md F2.
+   where v.receiver = p_player and v.day between p_day - 1 and p_day;
   return v_rows;
 end;
 $$;

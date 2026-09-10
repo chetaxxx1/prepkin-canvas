@@ -17,8 +17,11 @@ psychology, philosophy, people skills and work — not the SAT. A small mascot, 
 **kin**, lives on the home screen like Finch's bird. Real Canvas LMS assignments sync in
 through a Chrome extension and appear as tasks. Finishing daily tasks — coursework and
 life care — earns coins. Coins grow the kin (three stars) and adopt new kin and room
-scenes. Six daily puzzle games live on the Play rail. Five tabs: Home, Focus, Learn,
-Friends, Kin. No accounts. Nothing is ever taken away **except the puzzle
+scenes. Six daily puzzle games live on the Play rail. Six tabs since 2026-09-09: Home,
+Focus, Learn, **Calendar**, Friends, Kin. The Calendar tab shows dated things only:
+Canvas due dates, course events from the Canvas calendar, and tasks the student put on a
+day by typing or by photographing a syllabus (the scanner is the one **Prepkin Plus**
+feature; prices live in `design/PLUS-SPEC.md` section 5 and nowhere else). No accounts. Nothing is ever taken away **except the puzzle
 rating**, which is the one number allowed to fall (design/SOCIAL-PLAN.md §3).
 
 ## Read these files first
@@ -30,12 +33,13 @@ rating**, which is the one number allowed to fall (design/SOCIAL-PLAN.md §3).
   `CoinDisc`, `TaskRow`, `CategoryIcon`, `KinChip`, `SproutFace`, `CareButton`).
   Do not restyle a component that exists.
 - `ios/Sources/Models.swift`, `Core/GameState.swift`, `Core/TaskTemplate.swift`,
-  `CanvasSync.swift` — the only data the app has. Design against real fields. Never
+  `Core/DatedTask.swift`, `CanvasSync.swift` — the only data the app has. Design against real fields. Never
   invent a stat, a preset list, or a number the app could not already know. Never ask
   the student to type a number the app could work out.
 - `design/SOCIAL-PLAN.md` — the friend board, tank visits and the rating, and the
   working app each one copies. Read this before any social screen.
-- `design/screenshots/` — the app as it runs today (`18`–`23` are the newest).
+- `design/screenshots/` — the app as it runs today (`calendar-2026-09-09/24`–`31` are
+  the newest).
 - The most recent finished handoffs, for the level to match:
   `design/handoff-kin/README.md`, `design/handoff-friends/README.md`,
   `design/handoff-first-run/README.md`.
@@ -74,10 +78,21 @@ idle, bounce, celebrate, wave, sleep, dance, peek, startle, slump.
   which is why it is allowed to fall. It appears on the game end card and on the Play
   header. It never appears on Home, never in red, and never in a notification.
 - **No free text between students.** Anything a student can send is chosen from a fixed
-  set of drawn cards. No DMs, no captions, no photos, no camera.
+  set of drawn cards. No DMs, no captions, no photos, no camera between students. The
+  one camera in the app is the syllabus scanner: one photo to Prepkin's own server, read
+  once, kept nowhere, never shown to another student.
 - **Ranking is opt-in, never the default.** The default social number is a group total.
 - Copy is plain, warm, no exclamation marks, no engineering words ("sync", "M2",
   "bridge"). A student should never read a roadmap.
+
+## Mobbin
+
+You have the **Mobbin** connector (claude.ai → Settings → Connectors). Every brief names
+searches to run with `search_screens` (platform `ios`) before you draw. Look at the
+returned images, not the metadata. Borrow mechanics and structure, never a look: every
+colour, radius and font still comes from `Theme.swift`. List every screen you leaned on in
+the README under **References**, as a link to its `mobbin_url`, one line on what you took.
+If a search returns nothing useful, say so in the README rather than inventing a source.
 
 ## What to return
 

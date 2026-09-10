@@ -41,12 +41,8 @@ extension ChibiSpecies {
         ChibiSpecies(id: "sprout",  name: "Sprout",  price: 500,  tier: 3),
         ChibiSpecies(id: "wisp",    name: "Wisp",    price: 800,  tier: 4),
         ChibiSpecies(id: "comet",   name: "Comet",   price: 1200, tier: 5),
-        // Lane 3, "edge" (2026-09-04): two new Sprout-repo types on the same pear rig.
-        // Names are placeholders until George picks. `axolotl-coral` is the same
-        // rig in the coral coat.
-        ChibiSpecies(id: "orca",          name: "Orca",  price: 900,  tier: 4),
-        ChibiSpecies(id: "axolotl",       name: "Axel",  price: 700,  tier: 4),
-        ChibiSpecies(id: "axolotl-coral", name: "Rosa",  price: 700,  tier: 4),
+        // The edge lane (orca, axolotl; 2026-09-04) came out on 2026-09-10: launch
+        // is Sprout only. A save that owned one drops it on load (GameState).
     ]
 
     static func find(_ id: String) -> ChibiSpecies {
@@ -140,6 +136,10 @@ struct DailyTask: Identifiable, Codable, Equatable {
     /// Canvas says this was handed in, so the check-off is not the student's to
     /// undo. Only ever true for synced work.
     var isLocked: Bool = false
+    /// The course colour Canvas gave, for calendar chips. Nil for your own tasks.
+    var colorHex: String? = nil
+    /// A `DatedTask` row, so the calendar knows it opens the editor on tap.
+    var isDated: Bool = false
 
     var reward: Int { kind.reward }
 }

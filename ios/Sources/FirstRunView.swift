@@ -323,12 +323,8 @@ struct FirstRunView: View {
 
     private func row(_ t: TaskTemplate) -> some View {
         let on = picked.contains(t.id)
-        let tint = DayEditorView.rowTint(t)
         return HStack(spacing: 14) {
-            RoundedRectangle(cornerRadius: 17, style: .continuous)
-                .fill(tint.bg)
-                .frame(width: 50, height: 50)
-                .overlay(CategoryIcon(category: DayEditorView.category(t), size: 30))
+            IconTile(icon: DayEditorView.category(t).rawValue, size: 50)
             VStack(alignment: .leading, spacing: 4) {
                 Text(t.title)
                     .font(Theme.font(17, .bold))
