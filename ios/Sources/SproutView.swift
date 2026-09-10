@@ -51,6 +51,11 @@ struct SproutView: UIViewRepresentable {
     /// Reduce Motion, pushed to the page on ready and on change. The page also
     /// reads the system setting itself; this is the belt to that brace.
     var reduceMotion: Bool = false
+    /// True while the host has this off screen — another tab, or the app in the
+    /// background. The web view outlives its host, so nothing else tells the page to
+    /// stop: without this it keeps running its animation loop, writing attributes and
+    /// re-running the rim filter, behind whatever the student is actually looking at.
+    var paused: Bool = false
     /// Fires with `true` once the page has drawn, `false` when a look change
     /// forces a reload. Lets the host cover the view until then.
     var onReady: ((Bool) -> Void)? = nil
@@ -167,6 +172,15 @@ struct SproutView: UIViewRepresentable {
             return
         }
 
+        if coordinator.paused != paused {
+            coordinator.paused = paused
+            // Straight to the web view, not through `send`: a pause has to land even
+            // when the page has not reported ready, and a queued pause is pointless.
+            if coordinator.ready {
+                webView.evaluateJavaScript("window.RiverSprite.setPaused(\(paused))")
+            }
+        }
+
         if coordinator.reduceMotion != reduceMotion {
             coordinator.reduceMotion = reduceMotion
             if coordinator.ready {
@@ -239,6 +253,7 @@ struct SproutView: UIViewRepresentable {
         var pending: String?
         var onReady: ((Bool) -> Void)?
         var reduceMotion = false
+        var paused = false
         var band: Band?
         var onLayout: ((Band) -> Void)?
 

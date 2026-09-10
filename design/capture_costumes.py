@@ -28,12 +28,20 @@ SIDE = 1293          # the box every still in Assets.xcassets already uses
 HEIGHT_RATIO = 0.700 # must match SproutImage.heightRatio, or a card reserves the wrong height
 
 COATS = ["mint", "coral", "sky", "peach", "lilac", "butter"]
+# What a coat wears at stage III before anyone chooses. Mirrors COAT_DEFAULT in the web build.
+COAT_DEFAULT = {"mint": "scholar", "coral": "ninja", "sky": "hoodie",
+                "peach": "flannel", "lilac": "astronaut", "butter": "racer"}
 # The whole rack from costumes.ts, in the order the rail shows it.
 COSTUMES = ["hoodie", "flannel", "barista", "scholar", "varsity", "pajamas", "keynote",
             "happi", "idol", "racer", "ballet", "hanbok", "biker", "astronaut", "monster",
             "ninja", "sorcerer", "grad", "hex"]
 # Recapture a few: `python3 design/capture_costumes.py astronaut sorcerer`.
-if len(sys.argv) > 1:
+# `--plain` instead captures the undressed families — six coats, three stages, the coat's
+# own default costume at stage III — into the same box, which is what capture_sprout.py
+# used to do with a box it measured itself. One box for all 132 stills, or the ladder
+# drifts between a dressed kin and an undressed one.
+PLAIN = "--plain" in sys.argv[1:]
+if not PLAIN and len(sys.argv) > 1:
     COSTUMES = [c for c in COSTUMES if c in sys.argv[1:]]
 
 
@@ -48,11 +56,19 @@ async def main():
             b = await p.chromium.launch(channel="chrome")
             pg = await (await b.new_context(viewport={"width": SHOT, "height": SHOT},
                                             device_scale_factor=1)).new_page()
-            for costume in COSTUMES:
-                for coat in COATS:
-                    name = f"sprout-{costume}-{coat}-3"
-                    q = ["embed=1", "type=sprout", f"coat={coat}", "evo=3",
-                         f"radius={RADIUS}", "skin=classic", f"costume={costume}"]
+            # (name, query costume, evo) for everything this run captures.
+            if PLAIN:
+                jobs = [(f"sprout-{coat}-{evo}", COAT_DEFAULT[coat] if evo == 3 else None, evo, coat)
+                        for coat in COATS for evo in (1, 2, 3)]
+            else:
+                jobs = [(f"sprout-{costume}-{coat}-3", costume, 3, coat)
+                        for costume in COSTUMES for coat in COATS]
+            for name, costume, evo, coat in jobs:
+                if True:
+                    q = ["embed=1", "type=sprout", f"coat={coat}", f"evo={evo}",
+                         f"radius={RADIUS}", "skin=classic"]
+                    if costume:
+                        q.append(f"costume={costume}")
                     await pg.goto(f"http://127.0.0.1:{PORT}/index.html?" + "&".join(q))
                     await pg.wait_for_function("() => !!window.RiverSprite", timeout=20000)
                     # The idle sway swings the fins, and with them anything held: the same

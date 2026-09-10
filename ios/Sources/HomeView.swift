@@ -31,6 +31,10 @@ struct HomeView: View {
     /// He goes nowhere at all — the page's own wandering is off in embed and Home
     /// no longer steers him — so this is where he is.
     @State private var swimBand: SproutView.Band?
+    /// True while this tab is not the one on screen, or the app is in the background.
+    /// The page is told, because it does not otherwise stop.
+    @State private var tankPaused = false
+    @Environment(\.scenePhase) private var scenePhase
     /// The emote wheel: where it opened, and which slot the finger is nearest.
     /// `nil` origin means it is closed.
     @State private var wheelAt: CGPoint?
@@ -153,6 +157,7 @@ struct HomeView: View {
                        tank: tank.id,
                        placeholder: UIColor(tankFloor),
                        reduceMotion: reduceMotion,
+                       paused: tankPaused,
                        onReady: { ready in
                            withAnimation(.easeOut(duration: 0.25)) { stageReady = ready }
                        },
@@ -216,6 +221,14 @@ struct HomeView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: bubble)
         .animation(.spring(response: 0.28, dampingFraction: 0.72), value: wheelAt)
         .animation(.spring(response: 0.22, dampingFraction: 0.7), value: wheelPick)
+        // The tabs are a switch, so leaving Home takes this view out of the hierarchy
+        // and these both fire. The web view itself is shared and outlives the host, so
+        // the page has to be told; nothing else stops it.
+        .onAppear { tankPaused = false }
+        .onDisappear { tankPaused = true }
+        .onChange(of: scenePhase) { _, phase in
+            tankPaused = phase != .active
+        }
     }
 
     // MARK: - Touching the tank
