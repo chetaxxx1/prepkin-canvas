@@ -1848,12 +1848,19 @@
         guessed: see design/capture_costumes.py.
       -->
       <g ${U}>
-        <path d="M 406 66 L 452 -318" fill="none" stroke="#C9CED6" stroke-width="19" stroke-linecap="round" />
-        <circle cx="454" cy="-326" r="16" fill="#C9CED6" />
-        <path fill="#EDF0F4" d="M 452 -306 L 272 -266 L 284 -142 L 464 -182 Z" />
-        <path fill="#2E3A5C" d="M 452 -306 L 272 -266 L 278 -204 L 458 -244 Z" />
-        <circle cx="388" cy="-266" r="13" fill="#F6E7A8" />
-        <circle cx="328" cy="-244" r="9" fill="#F6E7A8" />
+        <!--
+          The offset goes on an INNER group. SvgPuppet.apply writes a transform attribute onto
+          every held-swing element every frame to swing it from the shoulder, so a transform on
+          the outer group is silently wiped - two measuring rounds were lost to that.
+        -->
+        <g transform="translate(-75 0)">
+          <path d="M 406 66 L 452 -318" fill="none" stroke="#C9CED6" stroke-width="19" stroke-linecap="round" />
+          <circle cx="454" cy="-326" r="16" fill="#C9CED6" />
+          <path fill="#EDF0F4" d="M 452 -306 L 602 -273 L 590 -149 L 440 -182 Z" />
+          <path fill="#2E3A5C" d="M 452 -306 L 602 -273 L 597 -211 L 446 -244 Z" />
+          <circle cx="506" cy="-272" r="13" fill="#F6E7A8" />
+          <circle cx="558" cy="-252" r="9" fill="#F6E7A8" />
+        </g>
       </g>
     `,body:`
       <defs>

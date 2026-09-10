@@ -27,19 +27,16 @@ struct HomeView: View {
     private enum Offer { case notify, canvas }
     @State private var offer: Offer?
     @State private var offerTask: Task<Void, Never>?
-    /// Where the student last told Sprout to swim, as a fraction of the tank.
-    /// `SproutView` forwards it to the page; he swims there and stops.
-    @State private var swimTo: CGPoint?
     /// The band the page will actually let him into, as fractions of the tank.
-    /// He goes nowhere Home does not send him — the page's own wandering is off
-    /// in embed — so this plus `swimTo` is where he is.
+    /// He goes nowhere at all — the page's own wandering is off in embed and Home
+    /// no longer steers him — so this is where he is.
     @State private var swimBand: SproutView.Band?
     /// The emote wheel: where it opened, and which slot the finger is nearest.
     /// `nil` origin means it is closed.
     @State private var wheelAt: CGPoint?
     @State private var wheelPick: Int?
     /// What the finger currently on the tank turned out to be.
-    private enum Touch { case none, pressing, swimming, wheeling }
+    private enum Touch { case none, pressing, dragging, wheeling }
     @State private var touch: Touch = .none
     /// The hold that opens the wheel. Cancelled if the finger moves first.
     @State private var pressTask: Task<Void, Never>?
@@ -153,7 +150,6 @@ struct HomeView: View {
                        skin: state.activeChibi.skinID,
                        animation: state.animation,
                        radius: mascotSize * SproutView.radiusRatio,
-                       swimTo: swimTo,
                        tank: tank.id,
                        placeholder: UIColor(tankFloor),
                        reduceMotion: reduceMotion,
@@ -218,18 +214,18 @@ struct HomeView: View {
         // the costume rack is on Kin, and nothing on the page here is meant to be tapped.
         .gesture(tankGesture)
         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: bubble)
-        // The swim is physics on the page, so the pill travelling with him is a
-        // near match rather than a synced one. Still better than a jump cut.
-        .animation(.easeOut(duration: 0.55), value: swimTo)
         .animation(.spring(response: 0.28, dampingFraction: 0.72), value: wheelAt)
         .animation(.spring(response: 0.22, dampingFraction: 0.7), value: wheelPick)
     }
 
     // MARK: - Touching the tank
     //
-    // One drag gesture does both jobs. Touch and let go and Sprout swims to where
-    // you touched; hold and a small wheel of emotes opens under your thumb, and
-    // you flick toward one and let go to play it — the TFT wheel, four slots.
+    // Tap and he says hello; hold and a small wheel of emotes opens under your thumb,
+    // and you flick toward one and let go to play it — the TFT wheel, four slots.
+    //
+    // Tapping the water used to send him swimming there. George, 2026-09-10: "I don't
+    // think you should be able to make the mascot move on the home page when you click
+    // around." He stays where the page parks him now, and a drag does nothing at all.
 
     /// The four emotes on the wheel, left to right. Four is the cap: past that the
     /// slots get narrower than a thumb and the flick lands on the wrong one.
@@ -275,22 +271,6 @@ struct HomeView: View {
         return d > 180 ? d - 360 : (d < -180 ? d + 360 : d)
     }
 
-    /// A touch turned into the fraction of the tank `SproutView.swimTo` wants.
-    ///
-    /// Only the top edge is Prepkin's business — Sprout should not park behind the
-    /// name and coin chips. Keeping the fins and the glow inside the water is the
-    /// page's job, in `RiverSprite.goTo`, which is the only place that knows how
-    /// far the drawing actually reaches.
-    private func swimTarget(_ p: CGPoint) -> CGPoint {
-        // A plain fraction of the tank. Where he may actually stop is the page's
-        // call — `swimBounds` there insets for the drawing's reach and for the
-        // biggest jump any emote makes, and clamps whatever arrives. The only
-        // thing added here is the top: Prepkin puts chips over the water, and the
-        // page has no idea they exist.
-        CGPoint(x: min(max(p.x / screenWidth, 0), 1),
-                y: min(max(p.y, chipsTop + 30) / sceneHeight, 1))
-    }
-
     /// Slide the wheel in from the edges so every slot is on screen. The finger
     /// stays where it is — only the ring moves — because the pick is read from
     /// how far the thumb travels, not from where the chips ended up.
@@ -322,14 +302,13 @@ struct HomeView: View {
                         wheelPick = nil
                     }
                 case .pressing:
-                    // Moved before the hold landed, so this is a swim.
+                    // Moved before the hold landed. Nothing follows a finger any more,
+                    // so the touch is spent — but it must not fall back to `.none`, or
+                    // the next change would start a second hold mid-drag.
                     guard moved > Self.slop else { return }
                     pressTask?.cancel()
-                    touch = .swimming
-                    swimTo = swimTarget(value.location)
-                case .swimming:
-                    swimTo = swimTarget(value.location)
-                case .wheeling:
+                    touch = .dragging
+                case .dragging, .wheeling:
                     break
                 }
             }
@@ -350,8 +329,7 @@ struct HomeView: View {
                     }
                     return
                 }
-                swimTo = swimTarget(value.location)
-                // A plain tap still greets you; a drag is just steering.
+                // A plain tap greets you. A drag is nothing.
                 if hypot(value.translation.width, value.translation.height) <= Self.slop {
                     showBubble(greeting)
                 }
@@ -493,15 +471,14 @@ struct HomeView: View {
         mascotSize * SproutView.radiusRatio * SproutView.heightPerRadius
     }
 
-    /// The point the page steers him by, in points down from the top of the tank:
-    /// the last place Home sent him, trimmed to the band the page reported. He
-    /// stays put between sends, so this is where he is, not where he is heading.
+    /// The point the page steers him by, in points down from the top of the tank.
+    /// Nothing moves him, so this is his resting height, trimmed to the band the
+    /// page reported — which is where he is, always.
     private var mascotAnchorY: CGFloat {
         let rest = sceneHeight * (1 - Self.restLift)
             - mascotHeight * (1 - SproutView.riseRatio)
-        let y = swimTo.map { $0.y * sceneHeight } ?? rest
-        guard let band = swimBand else { return y }
-        return min(max(y, band.top * sceneHeight), band.bottom * sceneHeight)
+        guard let band = swimBand else { return rest }
+        return min(max(rest, band.top * sceneHeight), band.bottom * sceneHeight)
     }
 
     /// Top of his tuft and bottom of his fins, in points down from the top.

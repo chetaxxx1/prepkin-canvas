@@ -41,13 +41,6 @@ struct SproutView: UIViewRepresentable {
     /// rather than filling the view, because the view is deliberately larger
     /// than the character to give the jumping emotes room.
     var radius: CGFloat
-    /// Where the student last asked him to swim, as a fraction of this view:
-    /// `(0,0)` top-left, `(1,1)` bottom-right. Fractions rather than points
-    /// because the page lays itself out in CSS pixels that do not line up with
-    /// the view's points, and because only the page knows how far the drawing
-    /// reaches — it trims the target to what fits. Set a new value to send him;
-    /// he stops where he arrives.
-    var swimTo: CGPoint?
     /// Tank plate to draw behind him. The page then paints the whole scene, so
     /// the web view can stay opaque — a see-through WKWebView composites
     /// nothing at all, which leaves the character invisible.
@@ -62,9 +55,9 @@ struct SproutView: UIViewRepresentable {
     /// forces a reload. Lets the host cover the view until then.
     var onReady: ((Bool) -> Void)? = nil
     /// Fires with the band the page will actually let him into, whenever the page
-    /// reports its layout. Read it rather than assume: the page trims every `swimTo`
-    /// to this, so a host that lays something out above him and does not trim the
-    /// same way draws above a fish who never got that high.
+    /// reports its layout. Read it rather than assume: it is where the page parks
+    /// him, so a host that lays something out above him and does not trim the same
+    /// way draws above a fish who is not that high.
     var onLayout: ((Band) -> Void)? = nil
 
     /// The strip of the view his steering point is allowed into, top and bottom as
@@ -181,11 +174,6 @@ struct SproutView: UIViewRepresentable {
             }
         }
 
-        if let swimTo, swimTo != coordinator.lastSwim {
-            coordinator.lastSwim = swimTo
-            coordinator.send("window.RiverSprite.goTo(\(swimTo.x), \(swimTo.y))", to: webView)
-
-        }
 
         guard animation != coordinator.lastAnimation else { return }
         coordinator.lastAnimation = animation
@@ -246,7 +234,6 @@ struct SproutView: UIViewRepresentable {
     /// played during launch is not swallowed.
     final class Coordinator: NSObject, WKScriptMessageHandler, WKNavigationDelegate {
         var lastAnimation: ChibiAnimation?
-        var lastSwim: CGPoint?
         var look: Look?
         var ready = false
         var pending: String?
