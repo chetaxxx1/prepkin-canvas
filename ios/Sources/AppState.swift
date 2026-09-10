@@ -864,8 +864,11 @@ final class AppState: ObservableObject {
 
     // MARK: - Other earnings
 
-    func recordFocus(minutes: Int) {
-        let paid = game.recordFocus(minutes: minutes)
+    /// `sessionID` is the ledger's idempotency key. Focus passes the id it wrote down
+    /// when the shift started, so a shift restored after the app was killed pays once
+    /// however many times the app is opened.
+    func recordFocus(minutes: Int, sessionID: String = UUID().uuidString) {
+        let paid = game.recordFocus(minutes: minutes, sessionID: sessionID)
         if paid > 0 { play(minutes >= 25 ? .celebrate : .bounce) }
     }
 

@@ -93,6 +93,33 @@ enum NotificationPlanner {
         guard calendar.component(.hour, from: date) < earliestHour else { return date }
         return calendar.date(bySettingHour: earliestHour, minute: 0, second: 0, of: date) ?? date
     }
+
+    // MARK: - The fourth kind: the end of a shift
+
+    /// The one notification that is not a reminder.
+    ///
+    /// The other three are the app deciding to speak, so they all sit behind
+    /// `remindersEnabled` and behind the quiet hours. This one is the student asking
+    /// for a timer: they tapped Start and put the phone face down, and the whole
+    /// promise of the tab is that they do not have to watch it. So it fires whether
+    /// or not reminders are on, at the second the shift runs out, at whatever hour
+    /// that is — and it survives `reschedule`, which replaces everything else.
+    ///
+    /// `nil` unless a shift is actually counting down. A paused shift has no end
+    /// time, which is precisely why pausing takes it off the queue.
+    static func shiftEnd(for shift: FocusShift, kinName: String,
+                         now: Date = Date()) -> PlannedNotification? {
+        guard let endsAt = shift.endsAt(at: now) else { return nil }
+        let minutes = shift.plannedMinutes
+        let lengths = FocusShift.lengths(inMinutes: minutes)
+        return PlannedNotification(
+            id: shiftEndID,
+            title: "Shift over. \(minutes) coin\(minutes == 1 ? "" : "s") paid.",
+            body: "\(kinName) swam \(lengths) length\(lengths == 1 ? "" : "s").",
+            fireAt: endsAt)
+    }
+
+    static let shiftEndID = "shift-end"
 }
 
 /// Posts the plan to iOS. Local notifications only — no server, no push
@@ -119,10 +146,24 @@ final class NotificationScheduler {
         await center.notificationSettings().authorizationStatus == .denied
     }
 
+    /// Nobody has ever been asked. The first Start checks this so it can explain
+    /// itself once, in one line, instead of throwing the system prompt at a student
+    /// who only wanted a timer.
+    func isUndecided() async -> Bool {
+        await center.notificationSettings().authorizationStatus == .notDetermined
+    }
+
     /// Replaces every pending reminder with the current plan. Cheap enough to call
     /// on each change, which is what keeps a finished task from still buzzing.
+    ///
+    /// Everything *except* a running shift's own alarm. `removeAllPendingNotificationRequests`
+    /// used to stand here, and it also cancelled the timer the student had asked for —
+    /// checking off a task mid-shift would have silently killed the end of the shift.
     func reschedule(for state: GameState) async {
-        center.removeAllPendingNotificationRequests()
+        let stale = await center.pendingNotificationRequests()
+            .map(\.identifier)
+            .filter { $0 != NotificationPlanner.shiftEndID }
+        center.removePendingNotificationRequests(withIdentifiers: stale)
         let plan = NotificationPlanner.plan(for: state)
         guard !plan.isEmpty, await isAuthorized() else { return }
         for item in plan {
@@ -134,5 +175,48 @@ final class NotificationScheduler {
             let trigger = UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
             try? await center.add(UNNotificationRequest(identifier: item.id, content: content, trigger: trigger))
         }
+    }
+
+    // MARK: - The running shift
+
+    /// Bumped by every cancel. `scheduleShiftEnd` suspends twice before it posts
+    /// anything, and a clock-out landing in that gap would otherwise leave a
+    /// "Shift over. 25 coins paid." queued for a shift that paid nothing.
+    private var shiftEndGeneration = 0
+
+    /// Books the end of the shift. Called on Start and again on Resume; the second
+    /// call replaces the first, because a resumed shift ends later than the one that
+    /// was paused.
+    ///
+    /// An interval trigger, not the calendar one the reminders use: a calendar
+    /// trigger is only good to the minute, so a 15 started at 10:00:40 would have
+    /// gone off at 10:15:00 — forty seconds before the coins were earned.
+    ///
+    /// Nothing here shows while the app is open. Prepkin sets no
+    /// `UNUserNotificationCenterDelegate`, so iOS suppresses a foreground banner —
+    /// which is what we want: a student watching the shift screen gets the report,
+    /// not a note telling them what they can already see.
+    func scheduleShiftEnd(_ item: PlannedNotification, from now: Date = Date()) async {
+        cancelShiftEnd()
+        let mine = shiftEndGeneration
+        let seconds = item.fireAt.timeIntervalSince(now)
+        guard seconds > 0, await isAuthorized(), mine == shiftEndGeneration else { return }
+        let content = UNMutableNotificationContent()
+        content.title = item.title
+        content.body = item.body
+        content.sound = .default
+        // No badge, here or anywhere. A finished shift is not a pile of unread
+        // things, and a red dot on the icon is the opposite of putting the phone down.
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
+        try? await center.add(UNNotificationRequest(identifier: item.id, content: content, trigger: trigger))
+        guard mine == shiftEndGeneration else { return cancelShiftEnd() }
+    }
+
+    /// Pause and clock out both call this. So does the app on the way to the report,
+    /// so a shift that ended while the screen was open cannot also buzz.
+    func cancelShiftEnd() {
+        shiftEndGeneration += 1
+        center.removePendingNotificationRequests(withIdentifiers: [NotificationPlanner.shiftEndID])
+        center.removeDeliveredNotifications(withIdentifiers: [NotificationPlanner.shiftEndID])
     }
 }

@@ -10,11 +10,17 @@ targets:
     sources:
       - Sources
       - Resources
+      # Shared with the Live Activity extension. Only the attributes live here —
+      # the shape of what the lock screen is told.
+      - Shared
       # Folder reference, not a group: the built Sprout page loads its assets by
       # relative path (./assets/...), so the directory has to survive into the
       # bundle instead of being flattened like Resources/ is.
       - path: SproutWeb
         type: folder
+    dependencies:
+      - target: PrepkinActivity
+        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prepkin.canvas
@@ -27,6 +33,9 @@ targets:
         # .preferredColorScheme never did.
         INFOPLIST_KEY_UIUserInterfaceStyle: Light
         INFOPLIST_KEY_CFBundleDisplayName: "Prepkin for Canvas"
+        # The lock screen and Dynamic Island for a running shift. Without this key
+        # `Activity.request` throws and the shift runs with nothing outside the app.
+        INFOPLIST_KEY_NSSupportsLiveActivities: YES
         # Every upload asks the export question unless this says no. We only use
         # the system's TLS, which is exempt.
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
@@ -40,6 +49,40 @@ targets:
         SWIFT_VERSION: "5.9"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: FLN528LLJ6
+  # The Live Activity, and only that. Home-screen widgets are their own job: they
+  # would need the save file and an app group, and this needs neither.
+  PrepkinActivity:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Activity
+      - Shared
+      # The same tokens the app draws with, so the paper and the coin gold on the
+      # lock screen cannot drift from the paper and the coin gold in the tab.
+      - path: Sources/Theme.swift
+    # A real plist, not GENERATE_INFOPLIST_FILE. `NSExtensionPointIdentifier` is a
+    # nested key, and the generated plist dropped it silently — which builds a
+    # perfectly good extension that iOS never loads.
+    info:
+      path: Activity/Info.plist
+      properties:
+        CFBundleDisplayName: Prepkin
+        UIUserInterfaceStyle: Light
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.prepkin.canvas.activity
+        PRODUCT_NAME: PrepkinActivity
+        GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: 1
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"
+        SKIP_INSTALL: YES
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: FLN528LLJ6
+
   PrepkinCanvasTests:
     type: bundle.unit-test
     platform: iOS
