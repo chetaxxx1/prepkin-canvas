@@ -5,7 +5,7 @@ URL.** The Chrome Web Store and App Store listings will not accept a link into a
 git repo. Put it on a plain page you control, then paste that URL into both store
 listings.
 
-Last updated: 8 September 2026
+Last updated: 10 September 2026
 
 ---
 
@@ -48,7 +48,7 @@ money, cannot be sold, and can change or go away as Prepkin changes.
 
 Prepkin Plus is an optional paid plan on the iPhone app. Apple handles the bill:
 
-- $3.99 a month, or $19.99 a year
+- $9.99 a month, or $69.99 a year
 - Cancel any time in your Apple settings
 - When the plan ends, you keep everything you already had
 

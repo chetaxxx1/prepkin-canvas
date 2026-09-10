@@ -1,11 +1,24 @@
-# Prepkin facts — updated 2026-09-09
+# Prepkin facts — updated 2026-09-10
 
 ## What it is
 Prepkin is two things that pair with each other:
 1. A Chrome extension that reskins Canvas (the LMS most US colleges run) and can
    send coursework to the phone app.
-2. An iPhone app where finishing schoolwork feeds a pet fish called Sprout, who
-   lives in a tank the student decorates.
+2. An iPhone app where a pet fish called Sprout lives in a tank the student
+   decorates.
+
+## The reward loop — read this twice, it is the most-misdescribed part
+Sprout does NOT eat. There is no food, no hunger, no feeding, no meter. Verified in
+the code on 2026-09-10: no feed function, no hunger state, no food asset exists.
+
+What actually happens:
+- Finish a Canvas task and you earn 30 coins. A study task earns 20.
+- The coins fly up over the tank on the Home screen. That is the whole moment.
+- Coins buy things: the five tank scenes (Lagoon is free, then Reef 200, Kelp 220,
+  Dusk 250, Deep 280), costumes, and looks.
+
+So the sentence is "finish an assignment, get coins, buy Sprout a nicer tank."
+NEVER write "feed Sprout", "Sprout eats", "Sprout is hungry", or "fish fed".
 
 The Learn section holds 57 life-skills lessons for undergrads — finance, study,
 psychology, philosophy, people, work. Titles like "Why compound interest wins",
@@ -67,9 +80,11 @@ Three rates carry the whole forecast and all three are currently guesses:
 - paywall seen to paid: 1.5%
 Measuring these is worth more than any single campaign.
 
-## Known blockers, as of 2026-09-09
-- The Chrome extension still draws the OLD SLIME mascot, not Sprout. Every video's
-  voice is "it's the fish one", so this is broken until the port lands.
+## Known blockers, as of 2026-09-10
+- The slime blocker is CLEARED. It was fixed in commit edf422c, "Extension draws
+  Sprout, not the slime", and the word "slime" now appears nowhere in the extension
+  code. The extension UI is fine to show on camera. Any instruction to crop the
+  slime out or to avoid the extension is out of date — ignore it.
 - The Chrome data declaration must NOT say "no data collected". Coursework and
   course grades are sent by the sync half. A false declaration is a removal offence.
 - The Chrome Featured badge does not exist any more. Google closed self-nominations
@@ -77,3 +92,12 @@ Measuring these is worth more than any single campaign.
 - There is no theme editor, so students have nothing of their own to publish. The
   share unit is a Look Card image plus a six-character palette code. No upload, no
   server.
+
+## The five tank scenes, by their real names and prices
+Lagoon (free), Reef (200 coins), Kelp (220), Dusk (250), Deep (280). Deep is the
+only dark one. They are called SCENES, not backgrounds or rooms. Four of the five
+cost coins, so nobody switches them casually — do not write copy implying a student
+flips between them for free.
+
+Careful: Reef, Lagoon, Kelp, Dusk and Deep are ALSO the league tier names. A tank
+scene and a league tier are different things that share a word.
