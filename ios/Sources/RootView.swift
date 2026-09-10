@@ -27,13 +27,13 @@ struct RootView: View {
     /// are neighbours. If the bar ever fails the largest-type sweep, the
     /// fallback is a Today / Week / Month switch on Home, not cutting it.
     enum Tab: String, CaseIterable {
-        case home, focus, learn, calendar, friends, kin
+        case home, focus, play, calendar, friends, kin
 
         var label: String {
             switch self {
             case .home: return "Home"
             case .focus: return "Focus"
-            case .learn: return "Learn"
+            case .play: return "Play"
             case .calendar: return "Calendar"
             case .friends: return "Friends"
             case .kin: return "Kin"
@@ -56,7 +56,7 @@ struct RootView: View {
                 switch tab {
                 case .home: HomeView()
                 case .focus: FocusView()
-                case .learn: LearnView()
+                case .play: LearnView()
                 case .calendar: CalendarView()
                 case .friends: FriendsView()
                 case .kin: KinView()

@@ -97,7 +97,7 @@ struct CategoryIcon: View {
 
 // MARK: - Tab icons
 
-/// The Play section's mark on Learn, from the same illustrated set as the tabs.
+/// The Play tab's own mark, for use inside the page. Same illustrated set as the tabs.
 struct PlayIcon: View {
     var size: CGFloat = 22
 
@@ -138,7 +138,7 @@ struct TabIcon: View {
         switch tab {
         case .home:     return "tabHome"
         case .focus:    return "tabFocus"
-        case .learn:    return "tabLearn"
+        case .play:     return "tabPlay"
         case .calendar: return "tabCalendar"
         case .friends:  return "tabFriends"
         case .kin:      return nil

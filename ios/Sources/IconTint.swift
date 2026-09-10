@@ -24,11 +24,11 @@ enum IconTint: String {
     /// crashing, so a task category added before its art still draws a tile.
     static func of(_ icon: String) -> IconTint {
         switch icon {
-        case "problemSet", "lifeCare", "connect", "psychology", "tabLearn": return .sky
+        case "problemSet", "lifeCare", "connect", "psychology", "tabLearn", "tabPlay": return .sky
         case "writing", "tidy", "finance", "star", "tabFocus", "snack": return .gold
         case "labs", "walk", "outdoors", "studyTrack", "highFive": return .mint
         case "reading", "meal", "people", "calculator", "heart", "tabHome", "tabFriends", "pet": return .coral
-        case "study", "stretch", "philosophy", "tabCalendar", "tabPlay", "collection": return .lilac
+        case "study", "stretch", "philosophy", "tabCalendar", "collection": return .lilac
         case "sleep", "work": return .indigo
         default: return .sky
         }

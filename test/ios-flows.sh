@@ -35,11 +35,15 @@ hit=next((n for n in ns if n['AXLabel']=='$1'), None) or next((n for n in ns if 
 if hit: f=hit['frame']; print(int(f['x']+f['width']-30), int(f['y']+f['height']/2))" | { read x y; [ -n "${x:-}" ] && tap "$x" "$y" "${2:-1.2}" || { echo "  FAIL tap '$1': not found"; FAIL=$((FAIL+1)); }; }; }
 # Every flow starts from a fresh launch on Home, so a sheet or deck left open by
 # a failed step cannot take the next flow down with it.
+# Tab centres since Calendar made it six (2026-09-09), y=805: home 47, focus 107,
+# play 167, calendar 227, friends 287, kin 361. The five-tab numbers this used to
+# carry put "lesson" on Calendar, which is why that flow failed on every run since.
+TAB_HOME=47; TAB_FOCUS=107; TAB_PLAY=167; TAB_FRIENDS=287
 home() { xcrun simctl terminate "$U" com.prepkin.canvas >/dev/null 2>&1
-         xcrun simctl launch "$U" com.prepkin.canvas >/dev/null 2>&1; sleep 2.5; tap 43 812 0.8; }
+         xcrun simctl launch "$U" com.prepkin.canvas >/dev/null 2>&1; sleep 2.5; tap $TAB_HOME 805 0.8; }
 
 flow_focus() {
-  echo "focus"; tap 122 812
+  echo "focus"; tap $TAB_FOCUS 805
   assert focus ready "Start focus"
   tapl "Start focus" 2;         assert focus running "Pause"; shot focus-running
   tapl "Pause";                 assert focus paused "Resume"
@@ -49,11 +53,22 @@ flow_focus() {
   tapl "Clock out early"; tapl "no pay yet"; assert focus back-to-ready "Start focus"
 }
 flow_lesson() {
-  echo "lesson"; tap 201 812
+  echo "lesson"; tap $TAB_PLAY 805
   assert lesson learn-root "Saved cards"
-  # The first card is a lesson (opens a preview with Start) or, after a half-read
-  # lesson, a resume card that opens the deck directly. Both are fine.
-  tap 201 275 1.5
+  # Today's card (a lesson, opens a preview with Start) or, after a half-read
+  # lesson, the resume hero, which opens the deck directly. Both are fine. Found by
+  # its label, since the puzzles grid sits above it now and its y moves with them.
+  xy=$(tree | python3 -c "
+import json,sys
+for n in json.load(sys.stdin):
+    l = n.get('AXLabel') or ''
+    # The resume hero ('Resume …, card 2 of 7') or today's card ('…, 8 cards · 3 min').
+    # Buttons only: the section title 'Pick up where you left off' is a StaticText
+    # with the same words and a tap on it does nothing.
+    if n.get('type') == 'Button' and (l.startswith('Resume ') or ' cards · ' in l):
+        f = n['frame']; print(int(f['x']+f['width']/2), int(f['y']+f['height']/2)); break")
+  [ -n "$xy" ] || { echo "  FAIL no lesson card on screen"; FAIL=$((FAIL+1)); return; }
+  tap $xy 1.5
   if labels | grep -q "^Start$"; then
     echo "  ok   preview"; PASS=$((PASS+1)); shot lesson-preview
     tapl "Start" 2
@@ -115,7 +130,7 @@ for n in json.load(sys.stdin):
   return 0
 }
 flow_pod() {
-  echo "pod"; tap 280 812
+  echo "pod"; tap $TAB_FRIENDS 805
   if labels | grep -q "Join a pod"; then
     tapl "Join a pod" 4
     if labels | grep -q "No pod yet\|Looking for a pod"; then echo "  ok   honest-state"; PASS=$((PASS+1)); shot pod-joined; else echo "  FAIL join: no honest state on screen"; shot FAIL-pod-join; FAIL=$((FAIL+1)); fi

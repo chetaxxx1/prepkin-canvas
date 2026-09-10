@@ -353,6 +353,173 @@ struct PlayGlyphView: View {
     }
 }
 
+// MARK: - Mini boards
+
+/// A puzzle's tile art: a small board that shows the mechanic, not a mark that
+/// stands for it. NYT's and Apple News's game icons are all tiny boards — Wordle a
+/// block of tiles, Connections four coloured rows, a Strands grid with a word lit —
+/// and at a glance that is what says "you know this one" to someone who plays them.
+/// The 18pt glyphs in a white box this replaces (2026-09-10) said "an icon".
+///
+/// Everything is drawn in the tile's own ink at three strengths, so six boards on six
+/// colours still read as one family: solid for what's found, a mid wash for what's
+/// there, faint for the empty grid.
+struct MiniBoard: View {
+    let glyph: PlayGlyph
+    let ink: Color
+    var size: CGFloat = 58
+
+    private var faint: Color { ink.opacity(0.22) }
+    private var mid: Color { ink.opacity(0.42) }
+
+    var body: some View {
+        Group {
+            switch glyph {
+            case .letter: wordBoard
+            case .trace: traceBoard
+            case .pearl: pearlBoard
+            case .dots: balanceBoard
+            case .sort: sortBoard
+            case .weave: weaveBoard
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
+    }
+
+    // Shared grid maths: three cells across, a two-point gap.
+    private var gap: CGFloat { size * 0.06 }
+    private var cell: CGFloat { (size - gap * 2) / 3 }
+    private func at(_ col: Int, _ row: Int) -> CGPoint {
+        CGPoint(x: cell / 2 + CGFloat(col) * (cell + gap), y: cell / 2 + CGFloat(row) * (cell + gap))
+    }
+    private func square(_ fill: Color, ring: Bool = false) -> some View {
+        RoundedRectangle(cornerRadius: cell * 0.22, style: .continuous)
+            .fill(ring ? .clear : fill)
+            .overlay(RoundedRectangle(cornerRadius: cell * 0.22, style: .continuous)
+                .strokeBorder(ring ? fill : .clear, lineWidth: max(1.5, size * 0.035)))
+            .frame(width: cell, height: cell)
+    }
+
+    /// Daily Word: a solved row on top, the next row half in, the last still empty.
+    private var wordBoard: some View {
+        VStack(spacing: gap) {
+            HStack(spacing: gap) {
+                square(ink).overlay(Text("A").font(Theme.font(cell * 0.62, .black)).foregroundStyle(.white))
+                square(ink); square(ink)
+            }
+            HStack(spacing: gap) { square(ink); square(mid, ring: true); square(mid, ring: true) }
+            HStack(spacing: gap) { square(faint, ring: true); square(faint, ring: true); square(faint, ring: true) }
+        }
+    }
+
+    /// Trace: one line through every cell, numbered where it starts.
+    private var traceBoard: some View {
+        ZStack {
+            VStack(spacing: gap) {
+                ForEach(0..<3, id: \.self) { _ in
+                    HStack(spacing: gap) { ForEach(0..<3, id: \.self) { _ in square(faint, ring: true) } }
+                }
+            }
+            Path { p in
+                p.move(to: at(0, 0)); p.addLine(to: at(2, 0)); p.addLine(to: at(2, 1))
+                p.addLine(to: at(0, 1)); p.addLine(to: at(0, 2)); p.addLine(to: at(2, 2))
+            }
+            .stroke(ink, style: StrokeStyle(lineWidth: max(2.5, size * 0.07), lineCap: .round, lineJoin: .round))
+            Circle().fill(ink).frame(width: cell * 0.72, height: cell * 0.72)
+                .overlay(Text("1").font(Theme.font(cell * 0.46, .black)).foregroundStyle(.white))
+                .position(at(0, 0))
+            Circle().fill(ink).frame(width: cell * 0.5, height: cell * 0.5).position(at(2, 2))
+        }
+    }
+
+    /// Pearls: two reefs, one pearl, the crosses it rules out.
+    private var pearlBoard: some View {
+        ZStack {
+            VStack(spacing: gap) {
+                HStack(spacing: gap) { square(mid); square(mid); square(faint) }
+                HStack(spacing: gap) { square(faint); square(mid); square(faint) }
+                HStack(spacing: gap) { square(faint); square(faint); square(faint) }
+            }
+            Circle().fill(.white)
+                .overlay(Circle().strokeBorder(ink, lineWidth: max(2, size * 0.05)))
+                .frame(width: cell * 0.7, height: cell * 0.7)
+                .position(at(1, 1))
+            // Indexed, not keyed on the column: (1, 0) and (1, 2) share a column,
+            // and SwiftUI quietly drew one cross for the two of them.
+            ForEach(Array([(0, 1), (2, 1), (1, 0), (1, 2)].enumerated()), id: \.offset) { c in
+                cross.position(at(c.element.0, c.element.1))
+            }
+        }
+    }
+    private var cross: some View {
+        Path { p in
+            let r = cell * 0.16
+            p.move(to: CGPoint(x: -r, y: -r)); p.addLine(to: CGPoint(x: r, y: r))
+            p.move(to: CGPoint(x: r, y: -r)); p.addLine(to: CGPoint(x: -r, y: r))
+        }
+        .stroke(ink, style: StrokeStyle(lineWidth: max(1.5, size * 0.04), lineCap: .round))
+        .frame(width: 1, height: 1)
+    }
+
+    /// Balance: suns and moons, an = between a pair that match.
+    private var balanceBoard: some View {
+        ZStack {
+            VStack(spacing: gap) {
+                ForEach(0..<3, id: \.self) { _ in
+                    HStack(spacing: gap) { ForEach(0..<3, id: \.self) { _ in square(faint, ring: true) } }
+                }
+            }
+            sun.position(at(0, 0)); moon.position(at(1, 0)); moon.position(at(2, 0))
+            moon.position(at(0, 1)); sun.position(at(1, 1))
+            sun.position(at(2, 2))
+            Text("=").font(Theme.font(cell * 0.6, .black)).foregroundStyle(ink)
+                .position(x: (at(1, 0).x + at(2, 0).x) / 2, y: at(1, 0).y)
+        }
+    }
+    private var sun: some View { Circle().fill(ink).frame(width: cell * 0.5, height: cell * 0.5) }
+    private var moon: some View {
+        Circle().strokeBorder(ink, lineWidth: max(2, size * 0.05)).frame(width: cell * 0.5, height: cell * 0.5)
+    }
+
+    /// Sort: four groups of four, the first one found.
+    private var sortBoard: some View {
+        let g = gap * 0.8
+        let w = (size - g * 3) / 4
+        let h = (size - g * 3) / 4
+        return VStack(spacing: g) {
+            ForEach(0..<4, id: \.self) { row in
+                HStack(spacing: g) {
+                    ForEach(0..<4, id: \.self) { _ in
+                        RoundedRectangle(cornerRadius: w * 0.22, style: .continuous)
+                            .fill(row == 0 ? ink : .clear)
+                            .overlay(RoundedRectangle(cornerRadius: w * 0.22, style: .continuous)
+                                .strokeBorder(row == 0 ? .clear : (row == 1 ? mid : faint),
+                                              lineWidth: max(1.5, size * 0.035)))
+                            .frame(width: w, height: h)
+                    }
+                }
+            }
+        }
+    }
+
+    /// Weave: letters in a grid, one word threaded through.
+    private var weaveBoard: some View {
+        let lit: [(Int, Int)] = [(0, 2), (1, 1), (2, 0)]
+        return ZStack {
+            ForEach(0..<9, id: \.self) { i in
+                let c = i % 3, r = i / 3
+                let on = lit.contains { $0 == (c, r) }
+                Circle().fill(on ? ink : faint)
+                    .frame(width: cell * (on ? 0.5 : 0.34), height: cell * (on ? 0.5 : 0.34))
+                    .position(at(c, r))
+            }
+            Path { p in p.move(to: at(0, 2)); p.addLine(to: at(1, 1)); p.addLine(to: at(2, 0)) }
+                .stroke(ink, style: StrokeStyle(lineWidth: max(2.5, size * 0.07), lineCap: .round, lineJoin: .round))
+        }
+    }
+}
+
 // MARK: - Hint and controls
 
 /// The hint pill every Play game shows: free, counted, the count on the pill.

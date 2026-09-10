@@ -1043,6 +1043,14 @@ struct GameState: Codable, Equatable {
         return ledger.entries.filter { $0.reason == .lesson && month.contains($0.at) }.count
     }
 
+    /// Puzzles finished this month, by the same rule. Every finish posts a ledger
+    /// line — the first of the day for coins, the rest at zero (`postPlay`) — so the
+    /// lines are the count, and a lost Sort, which posts nothing, is not one.
+    func puzzlesThisMonth(now: Date = Date(), calendar: Calendar = .current) -> Int {
+        guard let month = calendar.dateInterval(of: .month, for: now) else { return 0 }
+        return ledger.entries.filter { Self.playReasons.contains($0.reason) && month.contains($0.at) }.count
+    }
+
     // MARK: - Spending
 
     @discardableResult

@@ -47,7 +47,10 @@ SET = [
     ("tabLearn",    "Learn",    "Tab bar", "sky",    "grid-f", 2),
     ("tabCalendar", "Calendar", "Tab bar", "lilac",  "grid-f", 3),
     ("tabFriends",  "Friends",  "Tab bar", "coral",  "grid-f", 4),
-    ("tabPlay",     "Play",     "Tab bar", "lilac",  "grid-f", 5),
+    # Sky since 2026-09-10, when Play took Learn's slot in the bar: lilac sat beside
+    # Calendar's lilac, and the bar's findability is one hue family per tab. The
+    # cut PNGs were hue-shifted (+sat) rather than the sheet regenerated (PLAY-TAB.md).
+    ("tabPlay",     "Play",     "Tab bar", "sky",    "grid-f", 5),
     # grid-g came back 3x2 with the palm and the card set drawn twice, so the
     # indices skip the repeats rather than the sheet being regenerated.
     ("pet",        "Pet",        "Kin", "coral", "grid-g", 0),

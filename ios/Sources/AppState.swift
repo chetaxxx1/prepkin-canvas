@@ -199,6 +199,7 @@ final class AppState: ObservableObject {
     var firstRunDone: Bool { game.firstRunDone }
     var firstRunOffersDone: Bool { game.firstRunOffersDone }
     var lessonsThisMonth: Int { game.lessonsThisMonth() }
+    var puzzlesThisMonth: Int { game.puzzlesThisMonth() }
     var sceneID: String { game.sceneID }
     var ownedScenes: Set<String> { game.ownedScenes }
     var templates: [TaskTemplate] { game.templates }

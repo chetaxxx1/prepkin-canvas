@@ -35,6 +35,16 @@ struct LearnView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     header
 
+                    // First since 2026-09-10, when the tab became Play. The six
+                    // puzzles used to sit fifth, in a rail that hid four of them, under
+                    // a header that said Play inside a tab that said Learn. The
+                    // retention evidence is theirs (GAMES-PLAN.md §2), so they lead;
+                    // the lessons follow in the order they always had (PLAY-TAB.md).
+                    VStack(alignment: .leading, spacing: 12) {
+                        puzzlesTitle
+                        puzzleGrid
+                    }
+
                     if let cont = state.continueLesson {
                         VStack(alignment: .leading, spacing: 12) {
                             sectionTitle("Pick up where you left off")
@@ -64,11 +74,6 @@ struct LearnView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         sectionTitle("Tracks")
                         trackShelf
-                    }
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        playTitle
-                        playRail
                     }
 
                     savedRow
@@ -149,20 +154,25 @@ struct LearnView: View {
         .padding(.top, 8)
     }
 
-    /// The track the half-finished lesson belongs to, or an invitation when nothing
-    /// has been started — there is no track to name yet, and a new student needs to
-    /// hear that any of them is a fine place to begin.
-    private var headline: String {
-        if let cont = state.continueLesson { return Catalog.track(cont.lesson.trackID).name }
-        return "Start anywhere"
-    }
+    /// An invitation, always. It used to become the name of the track a half-read
+    /// lesson belonged to — right when the page was Learn and that track was the
+    /// unit you were in. On Play the unit is today's set, and the Continue hero
+    /// below already names its track; a page titled "Personal finance" over six
+    /// puzzles named nothing.
+    private var headline: String { "Start anywhere" }
 
+    /// The only counter on the screen, and it can only go up. Both rituals count
+    /// (2026-09-10): a Play tab that tallied lessons alone under six puzzles was
+    /// keeping score for the wrong half of the page.
     private var monthLine: String {
-        let n = state.lessonsThisMonth
-        switch n {
-        case 0: return "Two minutes is enough to start"
-        case 1: return "1 lesson this month"
-        default: return "\(n) lessons this month"
+        let puzzles = state.puzzlesThisMonth
+        let lessons = state.lessonsThisMonth
+        func n(_ k: Int, _ word: String) -> String { "\(k) \(word)\(k == 1 ? "" : "s")" }
+        switch (puzzles, lessons) {
+        case (0, 0): return "Two minutes is enough to start"
+        case (_, 0): return "\(n(puzzles, "puzzle")) this month"
+        case (0, _): return "\(n(lessons, "lesson")) this month"
+        default:     return "\(n(puzzles, "puzzle")) and \(n(lessons, "lesson")) this month"
         }
     }
 
@@ -348,11 +358,12 @@ struct LearnView: View {
     /// is past the five-equal-choices rule, so it is a catalog: a rail that sorts
     /// today's unplayed games first and never cuts one. No hero: the one big thing
     /// on this screen stays the lesson.
-    private var playTitle: some View {
+    /// "Today's puzzles", not "Play": the tab already says Play, four points below,
+    /// and the Game Boy that used to sit here is now the tab's own icon.
+    private var puzzlesTitle: some View {
         HStack(alignment: .top, spacing: 10) {
-            PlayIcon(size: 28).padding(.top, 1)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Play")
+                Text("Today's puzzles")
                     .font(Theme.font(19, .black))
                     .foregroundStyle(Theme.ink)
                 Text(playLine)
@@ -391,21 +402,25 @@ struct LearnView: View {
             ? ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"][n - 1] : "\(n)"
     }
 
-    private var playRail: some View {
+    /// All six at once. A rail showed two and a sliver, and a puzzle you cannot see
+    /// is a puzzle you do not play; NYT and Apple News both lay the day's set out in
+    /// full. Six same-shaped tiles is well inside what a glance can hold. Done ones
+    /// still sort to the end, so what is left to play is always top-left.
+    private var puzzleGrid: some View {
         let tiles = playTiles
         let ordered = tiles.filter { !$0.played } + tiles.filter { $0.played }
-        return ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(ordered) { tile in
-                    NavigationLink(value: tile.route) {
-                        playTile(tile)
-                    }
-                    .buttonStyle(PressStyle(scale: 0.97))
-                    .accessibilityLabel("\(tile.name), \(tile.line)")
+        let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+        return LazyVGrid(columns: columns, spacing: 12) {
+            ForEach(ordered) { tile in
+                NavigationLink(value: tile.route) {
+                    playTile(tile)
                 }
+                .buttonStyle(PressStyle(scale: 0.97))
+                .accessibilityLabel("\(tile.name), \(tile.line)")
             }
-            .padding(.horizontal, 20)
         }
+        .padding(.horizontal, 20)
+        .animation(.spring(response: 0.34, dampingFraction: 0.74), value: ordered.map(\.id))
     }
 
     /// One tile per game. `played` is whether today's is done; it sorts to the end.
@@ -422,7 +437,10 @@ struct LearnView: View {
 
     private var playTiles: [PlayTile] {
         let today = state.game.effectiveDay
-        let plus = state.playClaimedToday ? "" : " · +30"
+        // No "+30" on the tiles (removed 2026-09-10). One finish a day pays it, and
+        // six tiles each promising it read as 180 coins on offer — a rail only ever
+        // showed two of them, and the grid shows all six. The section line says it
+        // once, the way it actually works: "First finish banks 30."
         let number = PlayDeal.number()
         let pearlsDone = state.game.pearlsPlay.lastDay == today
         let balanceDone = state.game.balancePlay.lastDay == today
@@ -436,36 +454,33 @@ struct LearnView: View {
                      played: state.wordleClaimedToday,
                      fill: Theme.hex(0xFFC94D), ink: Theme.hex(0x3A2A05), glyph: .letter("A", Theme.hex(0x7A5C1E))),
             PlayTile(route: .trace, name: "Trace",
-                     line: traceDone ? "Solved" : "Board \(number)\(plus)",
+                     line: traceDone ? "Solved" : "Board \(number)",
                      played: traceDone,
                      fill: Theme.hex(0x9B7BEA), ink: Theme.hex(0x2A1A57), glyph: .trace),
             PlayTile(route: .pearls, name: "Pearls",
-                     line: pearlsDone ? "Solved" : "\(PlayDeal.isSunday() ? "8×8" : "7×7") · reef \(number)\(plus)",
+                     line: pearlsDone ? "Solved" : "\(PlayDeal.isSunday() ? "8×8" : "7×7") · reef \(number)",
                      played: pearlsDone,
                      fill: Theme.hex(0x4CA8E8), ink: Theme.hex(0x0B3652), glyph: .pearl),
             PlayTile(route: .balance, name: "Balance",
-                     line: balanceDone ? "Solved" : "Grid \(number)\(plus)",
+                     line: balanceDone ? "Solved" : "Grid \(number)",
                      played: balanceDone,
                      fill: Theme.hex(0xA5CE6B), ink: Theme.hex(0x2F4712), glyph: .dots),
             PlayTile(route: .sort, name: "Sort",
-                     line: sortDone ? (state.game.sortPlay.lastDay == today ? "Solved" : "See the groups") : "Board \(number)\(plus)",
+                     line: sortDone ? (state.game.sortPlay.lastDay == today ? "Solved" : "See the groups") : "Board \(number)",
                      played: sortDone,
                      fill: Theme.hex(0xF5A15C), ink: Theme.hex(0x5A2A0E), glyph: .sort),
             PlayTile(route: .weave, name: "Weave",
-                     line: weaveDone ? "Solved" : "Board \(number)\(plus)",
+                     line: weaveDone ? "Solved" : "Board \(number)",
                      played: weaveDone,
                      fill: Theme.hex(0x5CC8C0), ink: Theme.hex(0x0E4744), glyph: .weave),
         ]
     }
 
-    /// The Games rail card, at half the screen width.
+    /// One puzzle, half the screen wide.
     private func playTile(_ tile: PlayTile) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            RoundedRectangle(cornerRadius: 11, style: .continuous)
-                .fill(Theme.card)
-                .frame(width: 34, height: 34)
-                .overlay { PlayGlyphView(glyph: tile.glyph) }
-            Spacer(minLength: 10)
+            MiniBoard(glyph: tile.glyph, ink: tile.ink, size: 54)
+            Spacer(minLength: 12)
             Text(tile.name)
                 .font(Theme.font(17, .black))
                 .tracking(-0.3)
@@ -479,8 +494,8 @@ struct LearnView: View {
                 .minimumScaleFactor(0.85)
                 .padding(.top, 5)
         }
-        .padding(13)
-        .frame(minWidth: 168, maxWidth: 168, minHeight: 118, alignment: .leading)
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 134, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous).fill(tile.fill)
                 .overlay(alignment: .topTrailing) {
@@ -497,7 +512,7 @@ struct LearnView: View {
             return guesses.count == 1 ? "Solved, first try" : "Solved in \(guesses.count)"
         }
         if guesses.count >= 6 { return "See the answer" }
-        return state.playClaimedToday ? "Word \(WordleGame.puzzleNumber())" : "Word \(WordleGame.puzzleNumber()) · +30"
+        return "Word \(WordleGame.puzzleNumber())"
     }
 
     private var savedRow: some View {
