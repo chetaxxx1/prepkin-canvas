@@ -128,9 +128,13 @@ struct CalendarView: View {
     private var titleBand: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 1) {
-                Text("Calendar")
+                // The month, not the word "Calendar" — the tab bar already says that, and
+                // the day strip underneath can show you days but never which month they
+                // are in. Same job Apple Calendar gives its big line.
+                Text(monthName(anchor))
                     .font(Theme.font(34, .black))
                     .foregroundStyle(Theme.ink)
+                    .contentTransition(.numericText())
                 if captionVisible {
                     Text(countLine)
                         .font(Theme.font(12.5, .heavy))

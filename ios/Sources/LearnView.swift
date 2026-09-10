@@ -126,9 +126,15 @@ struct LearnView: View {
     private var header: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Learn")
+                // Not the word "Learn". The tab bar says that four points below, and a
+                // line that repeats the tab is a line that earns nothing — Duolingo names
+                // the unit you are in, Chick-fil-A greets you, Apple News just starts.
+                // This names where you are: the track you are part way through.
+                Text(headline)
                     .font(Theme.font(34, .black))
                     .foregroundStyle(Theme.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 // The only counter on the screen, and it can only go up. No streak,
                 // no target, nothing that resets to zero overnight.
                 Text(monthLine)
@@ -141,6 +147,14 @@ struct LearnView: View {
         }
         .padding(.horizontal, 24)
         .padding(.top, 8)
+    }
+
+    /// The track the half-finished lesson belongs to, or an invitation when nothing
+    /// has been started — there is no track to name yet, and a new student needs to
+    /// hear that any of them is a fine place to begin.
+    private var headline: String {
+        if let cont = state.continueLesson { return Catalog.track(cont.lesson.trackID).name }
+        return "Start anywhere"
     }
 
     private var monthLine: String {

@@ -404,12 +404,11 @@ struct FriendsView: View {
 
     // MARK: - Title
 
+    /// No title. It used to say "Friends" at 34pt, four points above a tab bar already
+    /// saying it, over the one screen whose whole point is the water underneath. What is
+    /// left is the button, and on an empty board not even that.
     private var title: some View {
         HStack(alignment: .bottom) {
-            Text("Friends")
-                .font(Theme.font(34, .black))
-                .kerning(-0.9)
-                .foregroundStyle(Theme.ink)
             Spacer(minLength: 0)
             if !friends.isEmpty {
                 Button { showAdd = true } label: {
@@ -422,7 +421,7 @@ struct FriendsView: View {
                 .accessibilityLabel("Add a friend")
             }
         }
-        .frame(height: 40, alignment: .bottom)
+        .frame(height: friends.isEmpty ? 0 : 40, alignment: .bottom)
     }
 
     // MARK: - Add a friend
