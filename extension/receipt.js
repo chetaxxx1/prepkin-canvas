@@ -118,6 +118,7 @@ function stockFor(look, dark) {
 const RULES = [
   { key: 'paper', kind: 'fixed', label: (ctx) => `Page paper: ${paperLine(ctx.stock)}`, when: () => true },
   { key: 'rail', kind: 'fixed', label: 'Left menu in the theme colour', when: () => true },
+  { key: 'title', kind: 'fixed', label: 'One page title on every page', when: () => true },
   { key: 'hero', kind: 'fixed', label: 'Course colour band, thinner', hook: 'cardHero' },
   { key: 'logo-dup', kind: 'taken', label: 'The school logo, twice. One kept', detect: 'logoDup' },
   { key: 'todo-dup', kind: 'fixed', label: 'One To Do list instead of two', detect: 'todoDup' },

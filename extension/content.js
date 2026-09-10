@@ -1472,14 +1472,15 @@ const SEARCH_ID = 'pk-search';
 
 function renderSearchChip() {
   const existing = document.getElementById(SEARCH_ID);
-  // On the dashboard the pill belongs on the title's line. Canvas has renamed
-  // the inner layout div before; without the two fallbacks the pill fell
-  // through to the breadcrumb strip and hung under the bar with nothing in it.
+  // Only two homes, both of them rows: the dashboard's own bar, or the
+  // breadcrumb strip on every other page. The dashboard bar is React and is
+  // not in the DOM at document_end, so on the dashboard this finds nothing on
+  // the first pass and the observer mounts the pill when the bar arrives.
+  // Anything else — the container, a print-only action header — is not a row,
+  // and the pill lands on top of the title or at 0,0.
   const bar = document.querySelector('#dashboard_header_container .ic-Dashboard-header__layout')
-    ?? document.querySelector('#dashboard_header_container .ic-Dashboard-header')
-    ?? document.querySelector('#dashboard_header_container')
-    ?? document.querySelector('.ic-Action-header')
-    ?? document.querySelector('.ic-app-nav-toggle-and-crumbs');
+    ?? (document.getElementById('dashboard_header_container') ? null
+      : document.querySelector('.ic-app-nav-toggle-and-crumbs'));
   if (!bar || !skin.cards || killed || skin.search === false || !skin.mascot || !shadow) { existing?.remove(); return; }
   if (existing && existing.parentElement === bar) return;
   existing?.remove();

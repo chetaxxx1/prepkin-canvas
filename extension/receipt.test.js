@@ -131,7 +131,7 @@ test('the skin is classes only, and off means no classes at all', () => {
 
 test('a row is on the receipt only when its hook is on the page', () => {
   const none = receiptRows({ present: () => false });
-  assert.deepEqual(none.map((r) => r.key), ['paper', 'rail', 'search', 'dense', 'buddy'], 'paper, the rail, search, compact and the buddy are always there');
+  assert.deepEqual(none.map((r) => r.key), ['paper', 'rail', 'title', 'search', 'dense', 'buddy'], 'paper, the rail, the page title, search, compact and the buddy are always there');
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'today'), 'the Today block is on the dashboard receipt');
   const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, wordPaste: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
@@ -231,8 +231,10 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // The `opt` rows are the student's own switches, not changes to the page, so
   // they sit outside the cap. Raised to 16 on 2026-09-10 for `card-art`: a
   // picture a student puts on a course card is still a change to the page, so
-  // it is still on the receipt and still comes off in one click.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 16, 'sixteen keys at most, so it cannot sprawl');
+  // it is still on the receipt and still comes off in one click. Raised to 17
+  // the same day for `title`: one page title on every page is the largest
+  // single change the skin makes, so it is the last row that should be hidden.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 17, 'seventeen keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names

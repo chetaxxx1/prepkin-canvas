@@ -213,11 +213,23 @@ html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header_
   background-color: var(--pk-paper) !important; border-bottom: 1px solid var(--pk-rule) !important; box-shadow: none !important;
 }
 /* On an image theme the page is the wall, so a solid bar reads as a slab. The
- * bar and the breadcrumb strip take the page's own wash instead: they melt
- * into the wallpaper and still cover what scrolls under them. */
+ * bar and the breadcrumb strip paint the page's own ground instead, and they
+ * have to paint the whole of it — the wash AND the wallpaper under it.
+ *
+ * A `background-color: var(--pk-paper-wash)` here was the bug: the body has
+ * already laid that wash over the wallpaper, so a second one on top is two
+ * coats of the same paper, and the bar came out as a pale slab across the top
+ * of the page. Both backgrounds are `fixed`, so this copy lands on exactly the
+ * pixels the body already drew and the bar disappears into the wall. It is
+ * still fully opaque — 0.82 of paper over an opaque wallpaper — so content
+ * scrolling under the sticky bar stays hidden, which is what it is for. */
 html.pk-on.pk-art:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout,
 html.pk-on.pk-art:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs {
-  background-color: var(--pk-paper-wash) !important; border-bottom: 0 !important;
+  background-color: transparent !important;
+  background-image: linear-gradient(var(--pk-paper-wash), var(--pk-paper-wash)), var(--pk-wallpaper) !important;
+  background-size: auto, cover !important;
+  background-attachment: fixed !important;
+  background-position: center !important;
 }
 html.pk-on:not(.pk-back-paper) .ig-row:hover { background-color: var(--pk-hover) !important; }
 /* The list containers behind module and assignment groups are painted white by
@@ -634,12 +646,66 @@ html.pk-back-week #pk-week { display: none; }
 #pk-week .pk-w-league .track i { display: block; height: 100%; border-radius: 999px; background: var(--tier); }
 #pk-week .pk-w-league .pod { font-size: 12px; font-weight: 700; color: var(--pk-ink-2); }
 
-/* MARK: - Titles: bare, one hairline, a search pill in the corner. */
-html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout { display: flex !important; align-items: center !important; gap: 12px; }
-html.pk-on:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__title { flex: 1 1 auto; font-size: 34px !important; font-weight: 800 !important; letter-spacing: -.02em !important; }
-html.pk-on.pk-art:not(.pk-back-paper) #dashboard_header_container .ic-Dashboard-header__layout,
-html.pk-on.pk-art:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs { border-bottom: 1px solid var(--pk-rule) !important; }
-html.pk-on:not(.pk-back-paper) #content > h1, html.pk-on:not(.pk-back-paper) .ic-Action-header__Heading { font-weight: 800 !important; letter-spacing: -.02em !important; }
+/* MARK: - Title: one page header, on every page ---------------------------
+ *
+ * Measured on a real Canvas, not guessed: only two pages in six draw a title
+ * at all. The dashboard's is an InstUI heading at 38px/700; an assignment has
+ * `h1.title`. The Assignments index, Modules, Grades and a wiki page render
+ * their h1 screen-reader-only — one pixel wide, `clip: rect(0,0,0,0)` — so a
+ * student gets breadcrumbs, then content, with nothing naming the page. That
+ * is the real reason the top of Canvas reads differently on every page.
+ *
+ * Three things happen here: the h1 Canvas already wrote is un-clipped, every
+ * title is set to one size, and one hairline goes under it. Never a
+ * font-family — the size, the weight and the air are ours, the face stays the
+ * school's. Put back → Canvas's own titles, clipped ones included.
+ */
+
+/* 1. The title Canvas hid: its own words, its own element, unclipped. Not on
+ *    the dashboard, which draws a visible heading of its own already. */
+html.pk-on:not(.pk-back-title) body:not(:has(#dashboard_header_container)) #content > h1.screenreader-only {
+  position: static !important; width: auto !important; height: auto !important;
+  clip: auto !important; clip-path: none !important; overflow: visible !important;
+}
+/* 2. One size, every page. `[class*="-view-heading"]` is InstUI's stable
+ *    suffix: the dashboard heading has no other hook, and its hash is never
+ *    named. `.ic-Dashboard-header__title` is not on this Canvas at all. */
+html.pk-on:not(.pk-back-title) #dashboard_header_container [class*="-view-heading"],
+html.pk-on:not(.pk-back-title) #content > h1,
+html.pk-on:not(.pk-back-title) #content h1.title,
+html.pk-on:not(.pk-back-title) #content h1.page-title,
+html.pk-on:not(.pk-back-title) .ic-Action-header__Heading {
+  font-size: 28px !important; line-height: 36px !important;
+  font-weight: 800 !important; letter-spacing: -.02em !important;
+  color: var(--pk-ink) !important;
+}
+/* 3. The hairline and the air under it. A title still clipped — a page this
+ *    did not reach, or Put back — is absolutely positioned, so it takes the
+ *    padding and the rule without drawing either. */
+html.pk-on:not(.pk-back-title) #content > h1,
+html.pk-on:not(.pk-back-title) #content h1.title,
+html.pk-on:not(.pk-back-title) #content h1.page-title {
+  padding-top: 10px !important; padding-bottom: 14px !important;
+  margin: 0 0 20px !important;
+  border-bottom: 1px solid var(--pk-rule) !important;
+}
+/* The dashboard's own bar is the one page header Canvas builds. Title left,
+ * our search pill right, one line. `nowrap` is load-bearing: without it the
+ * pill drops to a second row and hangs out of the bar. Vertical padding only,
+ * so the title keeps the horizontal inset that lines it up with the cards. */
+html.pk-on:not(.pk-back-title) #dashboard_header_container .ic-Dashboard-header__layout {
+  display: flex !important; align-items: center !important; flex-wrap: nowrap !important;
+  gap: 12px !important; min-height: 56px !important;
+  padding-top: 10px !important; padding-bottom: 14px !important;
+  margin: 0 0 20px !important;
+  border-bottom: 1px solid var(--pk-rule) !important;
+}
+/* Every other page starts with the breadcrumb strip, so that is where its
+ * line goes. Not on the dashboard: the bar above already drew one, and two
+ * hairlines 20px apart is a seam, not a header. */
+html.pk-on:not(.pk-back-title) body:not(:has(#dashboard_header_container)) .ic-app-nav-toggle-and-crumbs {
+  border-bottom: 1px solid var(--pk-rule) !important;
+}
 #pk-search {
   display: inline-flex; align-items: center; gap: 8px; margin-left: auto; flex: none;
   height: 36px; padding: 0 12px 0 12px; border-radius: 999px; cursor: pointer;
