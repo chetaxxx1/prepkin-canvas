@@ -86,6 +86,7 @@ struct CanvasSnapshot: Equatable {
     var courses: [CanvasCourse] = []
     var requests: [BridgeRequest] = []
     var extensionVersion: String? = nil
+    var events: [CanvasEvent] = []
 
     static let minimumExtensionVersion = "0.6.0"
 
@@ -258,6 +259,7 @@ struct SupabaseCanvasClient: CanvasSyncClient {
             var tasks: [WireItem]?
             var courses: [CanvasCourse]?
             var requests: [WireRequest]?
+            var events: [WireEvent]?
         }
         let payload = try decoder.decode(Payload.self, from: data)
         // A request with an unreadable timestamp has no idempotency key worth
@@ -269,7 +271,31 @@ struct SupabaseCanvasClient: CanvasSyncClient {
         }
         return CanvasSnapshot(tasks: (payload.tasks ?? []).map(\.item),
                               courses: payload.courses ?? [], requests: requests,
-                              extensionVersion: payload.version)
+                              extensionVersion: payload.version,
+                              events: (payload.events ?? []).compactMap(\.event))
+    }
+
+    /// A course-calendar event. One without a readable start is dropped: there
+    /// is no day to put it on.
+    private struct WireEvent: Decodable {
+        let id: String
+        let title: String
+        var courseName: String?
+        var courseId: String?
+        var colorHex: String?
+        var startAt: String?
+        var endAt: String?
+        var allDay: Bool?
+        var location: String?
+        var url: String?
+
+        var event: CanvasEvent? {
+            guard let start = SupabaseCanvasClient.date(from: startAt) else { return nil }
+            return CanvasEvent(id: id, title: title, courseName: courseName ?? "",
+                               courseId: courseId, colorHex: colorHex, startAt: start,
+                               endAt: SupabaseCanvasClient.date(from: endAt),
+                               allDay: allDay ?? false, location: location, url: url)
+        }
     }
 
     /// One task as the wire carries it. The extension deliberately keeps an
@@ -317,8 +343,10 @@ struct SupabaseCanvasClient: CanvasSyncClient {
 struct MockCanvasClient: CanvasSyncClient {
     func fetchTodo() async throws -> CanvasSnapshot {
         let cal = Calendar.current
+        // 23:59 is Canvas's own end-of-day default and the app reads it as "all
+        // day". Every other hour is on the hour, or the screen reads "due 8:59".
         func due(_ days: Int, hour: Int) -> Date {
-            cal.date(bySettingHour: hour, minute: 59, second: 0,
+            cal.date(bySettingHour: hour, minute: hour == 23 ? 59 : 0, second: 0,
                      of: cal.date(byAdding: .day, value: days, to: Date())!)!
         }
         return CanvasSnapshot(
@@ -331,6 +359,12 @@ struct MockCanvasClient: CanvasSyncClient {
                 CanvasCourse(id: "1", name: "Physics 13", code: "PHYS 13", score: 88.5, grade: "B+", colorHex: "#FF6F61"),
                 CanvasCourse(id: "2", name: "Writing 5", code: "WRIT 5", score: 92.0, grade: "A-", colorHex: "#57C79B"),
                 CanvasCourse(id: "3", name: "Intro Psych", code: "PSYC 1", score: nil, grade: nil, colorHex: "#9BC8F2"),
+            ],
+            events: [
+                CanvasEvent(id: "e-201", title: "Midterm 1", courseName: "Physics 13", colorHex: "#FF6F61",
+                            startAt: due(4, hour: 9), endAt: due(4, hour: 11)),
+                CanvasEvent(id: "e-202", title: "Office hours", courseName: "Intro Psych", colorHex: "#9BC8F2",
+                            startAt: due(1, hour: 14), endAt: due(1, hour: 15), location: "Moore 202"),
             ])
     }
 }
