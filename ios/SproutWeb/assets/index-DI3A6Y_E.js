@@ -1657,9 +1657,12 @@
         <path d="M 404 66 L 452 -252" fill="none" stroke="#4A3524" stroke-width="23" stroke-linecap="round" />
         <path d="M 404 66 L 420 -38" fill="none" stroke="#2F2116" stroke-width="28" stroke-linecap="round" />
         <path d="M 424 -44 L 430 -78" fill="none" stroke="#C9A33A" stroke-width="17" stroke-linecap="round" />
-        ${K(458,-290,46,`#E7C24B`)}
-        ${K(414,-196,17,`#F2DA92`)}
-        ${K(492,-214,14,`#F2DA92`)}
+        <!--
+          No stars. There used to be a gold topper past the tip and two sparkles floating
+          beside the shaft; George, 2026-09-10: "make it so that the wand is just the wand,
+          don't have stars around the wand". Losing the topper also brings the sorcerer back
+          inside the stills' shared box, which its 46-unit star was the tallest thing in.
+        -->
       </g>
     `,headOverFit:`
       <!--
@@ -1838,13 +1841,19 @@
         </g>
       </g>
     `},astronaut:{armRHeld:`
+      <!--
+        Pulled in 40 units and scaled to 0.75 about the grip, angle untouched (all three held
+        props share one angle). At full size the flag reached 1384px of art where the stills'
+        shared box is 1293, so its fly was cut off on every card outside Home. Measured, not
+        guessed: see design/capture_costumes.py.
+      -->
       <g ${U}>
         <path d="M 406 66 L 452 -318" fill="none" stroke="#C9CED6" stroke-width="19" stroke-linecap="round" />
         <circle cx="454" cy="-326" r="16" fill="#C9CED6" />
-        <path fill="#EDF0F4" d="M 452 -306 L 632 -266 L 620 -142 L 440 -182 Z" />
-        <path fill="#2E3A5C" d="M 452 -306 L 632 -266 L 626 -204 L 446 -244 Z" />
-        <circle cx="516" cy="-266" r="13" fill="#F6E7A8" />
-        <circle cx="576" cy="-244" r="9" fill="#F6E7A8" />
+        <path fill="#EDF0F4" d="M 452 -306 L 272 -266 L 284 -142 L 464 -182 Z" />
+        <path fill="#2E3A5C" d="M 452 -306 L 272 -266 L 278 -204 L 458 -244 Z" />
+        <circle cx="388" cy="-266" r="13" fill="#F6E7A8" />
+        <circle cx="328" cy="-244" r="9" fill="#F6E7A8" />
       </g>
     `,body:`
       <defs>

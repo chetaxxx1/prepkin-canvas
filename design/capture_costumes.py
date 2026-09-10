@@ -20,15 +20,21 @@ WEB = "/Users/georgeshi/Downloads/Sprout-handoff/dist"
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "sprout-stills", "out-costumes")
 PORT = 8931
-SHOT = 1400
+# 2400, not 1400. At 1400 the astronaut's flag ran off the right edge of the canvas and was
+# screenshotted in half — the art was cut before any box maths happened. Leave room.
+SHOT = 2400
 RADIUS = 300
 SIDE = 1293          # the box every still in Assets.xcassets already uses
+HEIGHT_RATIO = 0.700 # must match SproutImage.heightRatio, or a card reserves the wrong height
 
 COATS = ["mint", "coral", "sky", "peach", "lilac", "butter"]
 # The whole rack from costumes.ts, in the order the rail shows it.
 COSTUMES = ["hoodie", "flannel", "barista", "scholar", "varsity", "pajamas", "keynote",
             "happi", "idol", "racer", "ballet", "hanbok", "biker", "astronaut", "monster",
             "ninja", "sorcerer", "grad", "hex"]
+# Recapture a few: `python3 design/capture_costumes.py astronaut sorcerer`.
+if len(sys.argv) > 1:
+    COSTUMES = [c for c in COSTUMES if c in sys.argv[1:]]
 
 
 async def main():
@@ -49,7 +55,12 @@ async def main():
                          f"radius={RADIUS}", "skin=classic", f"costume={costume}"]
                     await pg.goto(f"http://127.0.0.1:{PORT}/index.html?" + "&".join(q))
                     await pg.wait_for_function("() => !!window.RiverSprite", timeout=20000)
-                    await pg.wait_for_timeout(600)
+                    # The idle sway swings the fins, and with them anything held: the same
+                    # costume measured 1339 to 1404 px wide across eight samples. Reduce
+                    # motion parks the pose, so the box these get pasted into is a number
+                    # rather than a coin toss.
+                    await pg.evaluate("() => window.RiverSprite.setReduceMotion(true)")
+                    await pg.wait_for_timeout(1200)
                     await pg.add_style_tag(content="#fx{display:none}")
                     # Rest pose, eyes open: a still caught mid-blink looks broken on a card.
                     for _ in range(90):
@@ -71,7 +82,7 @@ async def main():
         if not bb:
             print("  SKIPPED (empty)", name); continue
         art = im.crop(bb)
-        if art.width > SIDE or art.height > int(SIDE * 0.660):
+        if art.width > SIDE or art.height > int(SIDE * HEIGHT_RATIO):
             over.append((name, art.width, art.height))
         box = Image.new("RGBA", (SIDE, SIDE), (0, 0, 0, 0))
         box.paste(art, ((SIDE - art.width) // 2, SIDE - art.height), art)
@@ -84,6 +95,6 @@ async def main():
     if over:
         print("TALLER OR WIDER THAN THE SHARED BOX — these will look bigger than the rest:")
         for n, w, h in over:
-            print(f"  {n}  {w}x{h}  (box {SIDE}, art height budget {int(SIDE * 0.660)})")
+            print(f"  {n}  {w}x{h}  (box {SIDE}, art height budget {int(SIDE * HEIGHT_RATIO)})")
 
 asyncio.run(main())
