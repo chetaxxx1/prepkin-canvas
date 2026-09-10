@@ -2,10 +2,23 @@ import Foundation
 
 /// True only in a DEBUG build launched with `-unlockAll`. Views that gate on
 /// Plus read this too, so the scanner can be tried on a simulator.
+///
+/// Sticky, on purpose. A phone trial is installed from Xcode once — which passes the
+/// argument — and then opened from the home screen, where no launch argument survives.
+/// So the first launch that sees the argument writes it down, and every tap after that
+/// still finds the whole catalogue open. It is still `#if DEBUG`, so a shipped build
+/// never compiles the reading at all and the remembered bit can never be consulted.
 enum DebugUnlock {
+    /// Where an earlier launch's argument is remembered. Read by the costume rail too.
+    static let stickyKey = "debug.unlockAll"
+
     static let isOn: Bool = {
         #if DEBUG
-        return ProcessInfo.processInfo.arguments.contains("-unlockAll")
+        if ProcessInfo.processInfo.arguments.contains("-unlockAll") {
+            UserDefaults.standard.set(true, forKey: stickyKey)
+            return true
+        }
+        return UserDefaults.standard.bool(forKey: stickyKey)
         #else
         return false
         #endif
@@ -13,12 +26,26 @@ enum DebugUnlock {
 }
 
 #if DEBUG
+extension DebugUnlock {
+    /// The whole rack the web build ships (`costumes.ts`), plus the plain coat. Owning
+    /// all of it is what makes the costume rail read as bought rather than window
+    /// shopping, and it is what the extension's shop is told after a sync.
+    static let everyCostume: Set<String> = [
+        "classic",
+        "hoodie", "flannel", "barista",
+        "scholar", "varsity", "pajamas", "keynote",
+        "happi", "idol", "racer", "ballet", "hanbok",
+        "biker", "astronaut", "monster",
+        "ninja", "sorcerer", "grad", "hex",
+    ]
+}
+
 extension GameState {
     /// Testing switch: grant the whole catalogue.
     ///
-    /// Every kin at stage III (which is where the costume rack lives), every tank, every look,
-    /// and a balance big enough that nothing in the shop is out of reach. For playing with the
-    /// art without grinding for it.
+    /// Every kin at stage III (which is where the costume rack lives), every tank, every
+    /// costume, and a balance big enough that nothing in the shop is out of reach. For
+    /// playing with the art without grinding for it.
     ///
     /// Two guards, on purpose. It is `#if DEBUG`, so it is not compiled into a shipped build at
     /// all; and it only runs behind the `-unlockAll` launch argument, so an ordinary debug run —
@@ -35,7 +62,7 @@ extension GameState {
         // behind naming a kin. Skip it — this switch exists to get straight to the art.
         firstRunDone = true
         firstRunOffersDone = true
-        ownedLooks.formUnion(["classic", "ninja"])
+        ownedLooks.formUnion(DebugUnlock.everyCostume)
         // Idempotent by the ledger's own key rule, so relaunching does not stack up balances.
         _ = ledger.post(CoinEntry(key: "debug:unlock-all", amount: 99_000,
                                   reason: .legacy, units: 1, day: DayKey(now), at: now))

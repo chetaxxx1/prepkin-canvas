@@ -1,9 +1,11 @@
 import Foundation
 
-/// True only in a DEBUG build launched with `-unlockAll`. Gates the in-app costume rail.
+/// True only in a DEBUG build launched with `-unlockAll`, or one that remembered the
+/// argument from an earlier launch. Gates the in-app costume rail. See `DebugUnlock`.
 let sproutShowsCostumeTray: Bool = {
     #if DEBUG
     return ProcessInfo.processInfo.arguments.contains("-unlockAll")
+        || UserDefaults.standard.bool(forKey: DebugUnlock.stickyKey)
     #else
     return false
     #endif

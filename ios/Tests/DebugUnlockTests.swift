@@ -5,40 +5,55 @@ import XCTest
 /// row — are testing furniture. They must never reach a student.
 ///
 /// Two independent guards, and this checks both. `DebugUnlock.isOn` and
-/// `sproutShowsCostumeTray` read a launch argument, so they are false whenever
-/// nobody passed one; and both sit inside `#if DEBUG`, so a Release build does
-/// not compile the reading at all and returns false unconditionally. The second
-/// guard is the one that matters for the App Store, and the only way to check it
-/// from a debug test bundle is to read the source.
+/// `sproutShowsCostumeTray` read a launch argument — or the bit an earlier
+/// launch's argument wrote down, so a phone trial survives being opened from the
+/// home screen — and are false when there has never been one; and both sit inside
+/// `#if DEBUG`, so a Release build does not compile the reading at all and returns
+/// false unconditionally. The second guard is the one that matters for the App
+/// Store, and the only way to check it from a debug test bundle is to read the source.
 final class DebugUnlockTests: XCTestCase {
 
-    /// The launch argument is the only thing that can turn either flag on.
+    /// The launch argument, or the bit it wrote on an earlier launch, is the only
+    /// thing that can turn either flag on.
     ///
     /// Asserted as an equivalence rather than a flat `false` because the scheme's
     /// test action inherits the Run action's arguments, so this bundle is itself
     /// launched with `-unlockAll`. The equivalence is the claim that matters and
-    /// it holds either way: no argument, no rails.
+    /// it holds either way: no argument ever, no rails.
     func testBothFlagsFollowTheLaunchArgumentAndNothingElse() {
         let passed = ProcessInfo.processInfo.arguments.contains("-unlockAll")
-        XCTAssertEqual(DebugUnlock.isOn, passed)
-        XCTAssertEqual(sproutShowsCostumeTray, passed,
+        let on = DebugUnlock.isOn
+        let remembered = UserDefaults.standard.bool(forKey: DebugUnlock.stickyKey)
+        XCTAssertEqual(on, passed || remembered)
+        XCTAssertEqual(sproutShowsCostumeTray, passed || remembered,
                        "the costume rail on Home is -unlockAll only")
     }
 
-    /// Belt to the equivalence's braces: with the argument stripped, the same
-    /// expression both flags are built from is false.
+    /// Belt to the equivalence's braces: with the argument stripped and nothing
+    /// remembered, the same expression both flags are built from is false.
     func testUnlockIsOffWhenTheArgumentIsAbsent() {
         let withoutIt = ProcessInfo.processInfo.arguments.filter { $0 != "-unlockAll" }
         XCTAssertFalse(withoutIt.contains("-unlockAll"))
-        XCTAssertFalse(Self.railsAreOn(givenArguments: withoutIt))
-        XCTAssertTrue(Self.railsAreOn(givenArguments: withoutIt + ["-unlockAll"]))
+        XCTAssertFalse(Self.railsAreOn(givenArguments: withoutIt, remembered: false))
+        XCTAssertTrue(Self.railsAreOn(givenArguments: withoutIt, remembered: true))
+        XCTAssertTrue(Self.railsAreOn(givenArguments: withoutIt + ["-unlockAll"], remembered: false))
+    }
+
+    /// Every costume the web build ships is owned, so the rail is a wardrobe and
+    /// not a shop window.
+    func testUnlockOwnsTheWholeRack() {
+        var game = GameState()
+        game.unlockEverythingForTesting()
+        XCTAssertTrue(DebugUnlock.everyCostume.isSubset(of: game.ownedLooks))
+        XCTAssertTrue(game.ownedLooks.contains("ninja"))
+        XCTAssertTrue(game.ownedLooks.contains("hex"))
     }
 
     /// The one expression `DebugUnlock.isOn` and `sproutShowsCostumeTray` are
-    /// both built from, with the argument list injected.
-    private static func railsAreOn(givenArguments arguments: [String]) -> Bool {
+    /// both built from, with the argument list and the remembered bit injected.
+    private static func railsAreOn(givenArguments arguments: [String], remembered: Bool) -> Bool {
         #if DEBUG
-        return arguments.contains("-unlockAll")
+        return arguments.contains("-unlockAll") || remembered
         #else
         return false
         #endif

@@ -165,8 +165,9 @@ final class AppState: ObservableObject {
         loaded.lastOpenedAt = Date()
         game = loaded
         #if DEBUG
-        // Launch with `-unlockAll` to open the whole catalogue. See DebugUnlock.swift.
-        if ProcessInfo.processInfo.arguments.contains("-unlockAll") {
+        // Launch with `-unlockAll` to open the whole catalogue, and it stays open on the
+        // launches after that one. See DebugUnlock.swift.
+        if DebugUnlock.isOn {
             game.unlockEverythingForTesting()
         }
         #endif
