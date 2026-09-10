@@ -23,6 +23,25 @@ enum DebugUnlock {
         return false
         #endif
     }()
+
+    /// Plus on, and **nothing else**. `-plusOn`.
+    ///
+    /// Separate from `-unlockAll` because the two want opposite things. `-unlockAll`
+    /// grants the whole catalogue, which empties the shop's draw pool — so the one
+    /// screen that most needs checking at seven slots is the one screen `-unlockAll`
+    /// cannot show. This turns the entitlement on and leaves the collection alone,
+    /// which is what a walkthrough of the paid surfaces actually needs.
+    ///
+    /// Not sticky: an entitlement that outlives its launch is the bug this whole
+    /// file is one prompt-injection away from. It is `#if DEBUG`, so a shipped build
+    /// never compiles the read.
+    static let plusOn: Bool = {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("-plusOn")
+        #else
+        return false
+        #endif
+    }()
 }
 
 #if DEBUG

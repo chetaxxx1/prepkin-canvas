@@ -30,6 +30,9 @@ struct CalendarView: View {
     @State private var editing: TaskEditorSheet.Mode?
     @State private var showScan = false
     @State private var showPlus = false
+    /// Which entry point opened the sheet. The top third of it changes with this.
+    @State private var plusReason: PlusSheet.Reason = .scan
+    @State private var exportFile: ExportFile?
     @State private var peek = 0
     /// Ticks so "happening now" stops being true when the hour is over.
     @State private var now = Date()
@@ -89,7 +92,10 @@ struct CalendarView: View {
                 .environmentObject(state).environmentObject(plus)
         }
         .sheet(isPresented: $showPlus) {
-            PlusSheet(reason: .scan).environmentObject(plus)
+            PlusSheet(reason: plusReason).environmentObject(plus)
+        }
+        .sheet(item: $exportFile) { file in
+            ShareLinkSheet(url: file.url)
         }
         .onAppear {
             snapAnchor()
@@ -133,12 +139,67 @@ struct CalendarView: View {
                 }
             }
             Spacer(minLength: 8)
+            exportButton.padding(.top, 6)
             CoinBadge(coins: state.coins)
                 .padding(.top, 4)
         }
         .padding(.horizontal, 20)
         .padding(.top, 4)
         .padding(.bottom, 8)
+    }
+
+    // MARK: - Out to a real calendar
+
+    /// Dated work, sent out to the calendar the student already uses.
+    ///
+    /// Two ways and no third: Apple Calendar through EventKit, and a file any other
+    /// calendar imports — Google's included. There is no Google account anywhere in
+    /// this, which is the point (`PLUS-SPEC.md` signature 5).
+    private var exportButton: some View {
+        Menu {
+            Button("Add to Apple Calendar") { sendToCalendar() }
+            Button("Save a calendar file") { shareFile() }
+        } label: {
+            Image(systemName: "square.and.arrow.up")
+                .font(.system(size: 15, weight: .black))
+                .foregroundStyle(Theme.muted)
+                .frame(width: 34, height: 30)
+        }
+        .accessibilityLabel("Send your work to your calendar")
+        .disabled(state.game.datedTasks.isEmpty)
+    }
+
+    /// Everything with a date on it. Undated work has nowhere to land in a calendar,
+    /// so it is not sent and not mentioned.
+    private var datedForExport: [DatedTask] { state.game.datedTasks }
+
+    private func sendToCalendar() {
+        guard isPlus else { showPlusFor(.calendarExport); return }
+        Task { @MainActor in
+            do {
+                let n = try await CalendarExport.send(datedForExport)
+                state.show(n == 1 ? "1 thing added to your calendar."
+                                  : "\(n) things added to your calendar.")
+            } catch CalendarExport.Failure.notAllowed {
+                state.show("Prepkin can't add to your calendar yet. Turn it on in Settings.")
+            } catch {
+                state.show("That didn't go through. Nothing was added.")
+            }
+        }
+    }
+
+    private func shareFile() {
+        guard isPlus else { showPlusFor(.calendarExport); return }
+        do {
+            exportFile = ExportFile(url: try CalendarExport.writeFile(datedForExport))
+        } catch {
+            state.show("That didn't go through. Nothing was saved.")
+        }
+    }
+
+    private func showPlusFor(_ reason: PlusSheet.Reason) {
+        plusReason = reason
+        showPlus = true
     }
 
     /// One line, about the range on screen. Says what is left, never a ratio.
@@ -711,7 +772,10 @@ struct CalendarView: View {
         }
     }
 
-    private var isPlus: Bool { plus.entitlement.isActive || DebugUnlock.isOn }
+    /// One read, through `AppState`, so the gift week and the debug flag are in it
+    /// too. A view that spells this out for itself is a view that will one day
+    /// disagree with the Shop about whether a student is Plus.
+    private var isPlus: Bool { state.isPlus }
 
     private func openAdd(on day: DayKey) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -1201,4 +1265,24 @@ extension Theme {
 /// sheet directly.
 extension DayKey: Identifiable {
     var id: String { raw }
+}
+
+
+/// A written calendar file, on its way to the share sheet.
+struct ExportFile: Identifiable {
+    let url: URL
+    var id: String { url.path }
+}
+
+/// The system share sheet, for the calendar file. `ShareLink` would do, but this is
+/// presented from a menu action rather than tapped directly, so it needs to be a
+/// sheet that can be raised from code.
+struct ShareLinkSheet: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }

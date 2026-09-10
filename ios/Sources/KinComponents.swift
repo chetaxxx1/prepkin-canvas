@@ -101,9 +101,12 @@ struct KinCostBadge: View {
                 .font(Theme.font(compact ? 11 : 12.5, .black))
                 .foregroundStyle(Theme.ink)
                 .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                // 0.75 was enough for five slots. At seven a four-figure price ran
+                // out of room and the badge printed "…", which is the one thing a
+                // price may never do.
+                .minimumScaleFactor(0.5)
         }
-        .padding(.horizontal, compact ? 7 : 10)
+        .padding(.horizontal, compact ? 5 : 10)
         .padding(.vertical, compact ? 2 : 3)
         .background(
             Capsule()

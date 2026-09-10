@@ -13,6 +13,14 @@ struct PlusRecord {
     var productID: String
     var expiresAt: Date?
     var revokedAt: Date?
+    /// Apple's billing grace period: the card bounced, Apple is retrying, and the
+    /// student still has the subscription.
+    ///
+    /// This has to be carried separately because a transaction in grace has an
+    /// `expirationDate` **in the past** — so the plain date check below would drop
+    /// it, and a student whose card expired would lose their shop row and their
+    /// 90-minute chip for a fortnight through no fault of their own.
+    var inGracePeriod = false
 }
 
 struct PlusEntitlement: Equatable {
@@ -26,6 +34,8 @@ struct PlusEntitlement: Equatable {
                   record.revokedAt == nil else {
                 return false
             }
+            // In grace, the date is already past and the entitlement is still live.
+            if record.inGracePeriod { return true }
             return record.expiresAt.map { $0 > now } ?? true
         }
 
@@ -119,6 +129,7 @@ final class PlusStore: ObservableObject {
 
     private func readEntitlement() async -> PlusEntitlement? {
         var records: [PlusRecord] = []
+        let grace = await gracePeriodProductIDs()
 
         for await result in Transaction.currentEntitlements {
             guard let transaction = try? checkVerified(result) else {
@@ -127,11 +138,28 @@ final class PlusStore: ObservableObject {
             records.append(PlusRecord(
                 productID: transaction.productID,
                 expiresAt: transaction.expirationDate,
-                revokedAt: transaction.revocationDate
+                revokedAt: transaction.revocationDate,
+                inGracePeriod: grace.contains(transaction.productID)
             ))
         }
 
         return PlusEntitlement.resolve(records, now: Date())
+    }
+
+    /// Products whose subscription is in Apple's billing grace period right now.
+    ///
+    /// Read from the subscription status rather than from the transaction, because
+    /// the transaction only carries a date and the date is what grace makes a liar.
+    private func gracePeriodProductIDs() async -> Set<String> {
+        var out: Set<String> = []
+        for product in products {
+            guard let statuses = try? await product.subscription?.status else { continue }
+            for status in statuses ?? [] where status.state == .inGracePeriod {
+                guard let transaction = try? checkVerified(status.transaction) else { continue }
+                out.insert(transaction.productID)
+            }
+        }
+        return out
     }
 
     private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {

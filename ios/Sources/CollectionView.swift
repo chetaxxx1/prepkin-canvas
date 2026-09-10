@@ -291,7 +291,7 @@ struct KinDetailSheet: View {
                 HStack(spacing: 8) {
                     Text("\(species.price)")
                         .font(Theme.font(13, .heavy)).foregroundStyle(Theme.dim).strikethrough()
-                    Text("Today's pick · 20% off")
+                    Text("Today's pick · \(state.game.discountPercent)% off")
                         .font(Theme.font(12, .black)).foregroundStyle(Theme.ink)
                         .padding(.horizontal, 9).padding(.vertical, 3)
                         .background(Capsule().fill(Theme.tier(species.tier)))
@@ -304,7 +304,7 @@ struct KinDetailSheet: View {
                 VStack(spacing: 0) {
                     priceRow("Collection price", value: "\(species.price)", struck: price < species.price)
                     if price < species.price {
-                        priceRow("Today's pick · 20% off", value: "\(price)", emphasis: true)
+                        priceRow("Today's pick · \(state.game.discountPercent)% off", value: "\(price)", emphasis: true)
                     }
                     Rectangle().fill(Theme.hairline).frame(height: 1).padding(.vertical, 4)
                     priceRow("Wallet after", value: "\(state.coins - price)", emphasis: true)

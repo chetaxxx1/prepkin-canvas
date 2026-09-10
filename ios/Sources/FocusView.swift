@@ -18,6 +18,11 @@ struct FocusView: View {
     @EnvironmentObject var state: AppState
 
     @State private var minutes = 25
+    /// The custom length field. Separate from `minutes` so typing a 6 on the way to
+    /// 60 does not start a six-minute shift.
+    @State private var customMinutes = 60
+    /// Non-nil while the Plus sheet is up, and it carries which chip was tapped.
+    @State private var plusReason: PlusSheet.Reason?
     private var scene: Scene0 { Scene0.find(state.sceneID) }
     @State private var shift = FocusShift()
     @State private var confirmingClockOut = false
@@ -138,27 +143,24 @@ struct FocusView: View {
                 .padding(.top, 22)
                 .accessibilityHidden(true)
 
-            // Three lengths, the same three the Canvas extension offers, with 25
-            // already chosen. The − / + steppers came out on 2026-09-06: a second
+            // Three free lengths, the same three the Canvas extension offers, with
+            // 25 already chosen. The − / + steppers came out on 2026-09-06: a second
             // way to set the same number (design/hicks-law-plan.md).
-            HStack(spacing: 8) {
-                ForEach([15, 25, 45], id: \.self) { m in
-                    Button { minutes = m } label: {
-                        Text("\(m)")
-                            .font(Theme.font(14.5, .black))
-                            .foregroundStyle(minutes == m ? Theme.onDarkWarm : Theme.ink)
-                            .frame(width: 56, height: 36)
-                            .background(Capsule().fill(minutes == m ? Theme.ink : Theme.card)
-                                .shadow(color: .black.opacity(0.05), radius: 5, y: 2))
-                            .padding(.vertical, 4)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("\(m) minutes")
-                    .accessibilityAddTraits(minutes == m ? [.isSelected] : [])
+            //
+            // 60 and 90 sit in the same row, in full colour, with "Plus" under them.
+            // Never greyed, never a padlock: a Plus thing is drawn exactly like a
+            // coin item is drawn with its price (`PLUS-SPEC.md` section 4).
+            HStack(spacing: 7) {
+                ForEach(Self.freeLengths, id: \.self) { m in
+                    lengthChip(m, plus: false)
+                }
+                ForEach(Self.plusLengths, id: \.self) { m in
+                    lengthChip(m, plus: true)
                 }
             }
             .padding(.top, 14)
+
+            customLengthRow.padding(.top, 10)
 
             HStack(spacing: 6) {
                 CoinDisc(size: 15)
@@ -174,7 +176,9 @@ struct FocusView: View {
             workingOnChip
                 .padding(.top, 14)
 
-            if let week = weekLine {
+            if state.isPlus {
+                weekGraph.padding(.top, 14)
+            } else if let week = weekLine {
                 Text(week)
                     .font(Theme.font(12.5, .heavy))
                     .foregroundStyle(Theme.bagInk)
@@ -198,12 +202,122 @@ struct FocusView: View {
         .padding(24)
         .padding(.bottom, Theme.tabClearance)
         .sheet(isPresented: $pickingWorkingOn) { workingOnSheet }
+        .sheet(item: $plusReason) { PlusSheet(reason: $0) }
         .sheet(isPresented: $explainingAlerts) { alertsSheet }
     }
 
-    /// "3 shifts · 1h 15m", off the ledger, absent for a week with nothing in it. No
-    /// graph and no calendar: a graph of focus time is a Plus perk if it is ever
-    /// wanted (`design/PLUS-PROMPT.md`), not a thing to put above the Start button.
+    // MARK: - Lengths
+
+    /// Free, and untouched. These three were free before Plus existed and are
+    /// checked by `PlusGateTests` on every build.
+    static let freeLengths = [15, 25, 45]
+    /// Two more, plus any number typed into the custom row.
+    static let plusLengths = [60, 90]
+
+    private func lengthChip(_ m: Int, plus: Bool) -> some View {
+        let on = minutes == m
+        return Button {
+            guard !plus || state.isPlus else { plusReason = .focus; return }
+            minutes = m
+        } label: {
+            VStack(spacing: 2) {
+                Text("\(m)")
+                    .font(Theme.font(14.5, .black))
+                    .foregroundStyle(on ? Theme.onDarkWarm : (plus ? Theme.coralShade : Theme.ink))
+                if plus && !state.isPlus {
+                    Text("Plus")
+                        .font(Theme.fixedFont(8.5, .black))
+                        .foregroundStyle(on ? Theme.onDarkWarm : Theme.coralShade)
+                }
+            }
+            .frame(width: 50, height: 36)
+            .background(Capsule().fill(on ? Theme.ink : (plus && !state.isPlus ? Theme.coralSoft : Theme.card))
+                .shadow(color: .black.opacity(0.05), radius: 5, y: 2))
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(plus && !state.isPlus ? "\(m) minutes, in Plus" : "\(m) minutes")
+        .accessibilityAddTraits(on ? [.isSelected] : [])
+    }
+
+    /// Any length you type. Plus only, and it opens the sheet rather than refusing.
+    @ViewBuilder
+    private var customLengthRow: some View {
+        if state.isPlus {
+            HStack(spacing: 8) {
+                Text("Any length")
+                    .font(Theme.font(12.5, .heavy))
+                    .foregroundStyle(Theme.muted)
+                TextField("", value: $customMinutes, format: .number)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.center)
+                    .font(Theme.font(13.5, .black))
+                    .foregroundStyle(Theme.ink)
+                    .frame(width: 52, height: 30)
+                    .background(Capsule().fill(Theme.card)
+                        .shadow(color: .black.opacity(0.05), radius: 4, y: 2))
+                    .onChange(of: customMinutes) { _, new in
+                        // Clamped rather than validated with a message: a shift is
+                        // between five minutes and four hours, and typing 900 gets
+                        // you 240 rather than an error.
+                        minutes = min(240, max(5, new))
+                    }
+                Text("min")
+                    .font(Theme.font(12.5, .heavy))
+                    .foregroundStyle(Theme.muted)
+            }
+        } else {
+            Button { plusReason = .focus } label: {
+                Text("Any length you type · Plus")
+                    .font(Theme.font(12, .heavy))
+                    .foregroundStyle(Theme.muted)
+                    .underline()
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    // MARK: - A week of your own hours
+
+    /// Seven bars, one a day, of minutes finished. Bars only: no goal line, no
+    /// target, nothing that can fall short. It counts what was done.
+    private var weekGraph: some View {
+        let days = state.game.ledger.focusDays()
+        let peak = max(1, days.map(\.minutes).max() ?? 1)
+        return VStack(spacing: 7) {
+            HStack(alignment: .bottom, spacing: 7) {
+                ForEach(days, id: \.day.raw) { entry in
+                    VStack(spacing: 5) {
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .fill(entry.minutes == 0 ? Theme.hairline : Theme.coral)
+                            .frame(width: 24, height: max(4, 46 * CGFloat(entry.minutes) / CGFloat(peak)))
+                        Text(Self.weekdayInitial(entry.day))
+                            .font(Theme.fixedFont(9.5, .black))
+                            .foregroundStyle(Theme.dim)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(entry.minutes) minutes")
+                }
+            }
+            if let week = weekLine {
+                Text(week)
+                    .font(Theme.font(12, .heavy))
+                    .foregroundStyle(Theme.bagInk)
+            }
+        }
+    }
+
+    private static func weekdayInitial(_ day: DayKey) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        guard let date = f.date(from: day.raw) else { return "" }
+        let symbols = Calendar.current.veryShortWeekdaySymbols
+        let i = Calendar.current.component(.weekday, from: date) - 1
+        return symbols.indices.contains(i) ? symbols[i] : ""
+    }
+
+    /// "3 shifts · 1h 15m", off the ledger, absent for a week with nothing in it.
     private var weekLine: String? {
         let week = state.game.ledger.focusWeek()
         guard let body = FocusWeek.line(shifts: week.shifts, minutes: week.minutes) else { return nil }

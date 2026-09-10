@@ -17,7 +17,7 @@ final class PlusGateTests: XCTestCase {
         .scanPhoto:      0,   // never was free
         .calendarExport: 0,   // does not exist yet
         .shopSlots:      5,   // KinState.pickSlots today
-        .shopHolds:      1,   // GameState.lockedPick, one slot
+        .shopHolds:      1,   // GameState.lockedPicks, one slot
         .shopDiscount:   20,  // "Every pick is 20% off its Collection price"
         .shopRerolls:    3,   // KinState.rerollsPerDay
         .focusLengths:   3,   // 15, 25, 45

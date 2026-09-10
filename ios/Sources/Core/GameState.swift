@@ -735,7 +735,14 @@ struct GameState: Codable, Equatable {
             guard !isCanvasPaid(taskID) else { return 0 }
             let posted = ledger.post(CoinEntry(key: canvasKey(taskID), amount: reward,
                                                reason: .task, day: day, at: now))
-            if posted { lifetime.tasksFinished += 1; lifetime.canvasFinished += 1 }
+            if posted {
+                lifetime.tasksFinished += 1
+                lifetime.canvasFinished += 1
+                // The gift week arrives here rather than on a screen, so it lands on
+                // the third finished task whether or not anyone is looking at the
+                // tab that would have noticed. It is never announced beforehand.
+                armGiftWeekIfEarned(now: now)
+            }
             return posted ? reward : 0
         }
         if datedTasks.contains(where: { $0.id == taskID }) {

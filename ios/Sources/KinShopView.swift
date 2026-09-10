@@ -2,11 +2,19 @@ import SwiftUI
 
 /// The shop, built on TFT's grammar of value and none of its grammar of loss.
 ///
-/// Kept from TFT: a row of up to five slots, tier-coloured cost badges and plates,
-/// and the lock. Refused: paying to reroll, a countdown to a refresh, exclusivity,
-/// and odds you cannot check. A pick here is a 20% discount on something that is
+/// Kept from TFT: a drawn row that rerolls, tier colour, and the hold. Refused:
+/// paying to reroll, a countdown to a refresh, exclusivity, and odds you cannot
+/// check. A pick here is a discount — 20%, or 30% on Plus — on something that is
 /// also in the Collection at full price, forever — so rerolling can never cost you
 /// a thing you wanted, which is why the reroll button carries no price at all.
+///
+/// **The 2026-09-10 rebuild.** The row used to be five 68pt slots, so the art — the
+/// only thing anybody is here to look at — rendered at 54pt behind a border, a
+/// colour strip, a price pill and a "320 to go" pill. Chrome outweighed product,
+/// five identical rejections stacked across the screen, and the bottom 60% was
+/// empty. Now one pick is the hero at full width over a 176pt band of art, the rest
+/// sit in a two-up grid over 112pt, and the shortfall is told **once**, on the hero,
+/// as a bar filling toward a number rather than five pills counting what you lack.
 struct KinShopView: View {
     /// The Kin tab pushes this screen, Home's coin chip presents it as a sheet.
     /// A sheet closes rather than goes back, so the caller says which it is instead
@@ -21,43 +29,65 @@ struct KinShopView: View {
     @State private var showHonesty = false
     @State private var showingPlus = false
 
+    private let columns = [GridItem(.flexible(), spacing: 12),
+                           GridItem(.flexible(), spacing: 12)]
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                sectionHead("Today's picks", trailing: "New picks tomorrow")
-                    .padding(.top, 4)
+                header.padding(.top, 2)
 
-                picksRow.padding(.top, 12)
-
-                Text("Every pick is \(state.pickDiscountPercent)% off its Collection price. Press and hold a slot to keep its price.")
-                    .font(Theme.font(11.5, .heavy))
-                    .foregroundStyle(Theme.dim)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 20).padding(.top, 12)
-
-                ForEach(state.lockedPicks.sorted(), id: \.self) { id in
-                    if let pick = state.game.resolvePick(id) {
-                        heldPanel(pick).padding(.top, 12)
+                if state.picks.isEmpty {
+                    soldOutPanel.padding(.top, 16)
+                } else {
+                    if let hero = heroPick {
+                        FeaturedPick(pick: hero,
+                                     held: state.isHeld(hero.id),
+                                     coins: state.coins,
+                                     work: state.workToAfford(hero.id))
+                            .padding(.horizontal, 20).padding(.top, 14)
+                            .onTapGesture { open(hero) }
+                            .onLongPressGesture { hold(hero) }
                     }
+
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(restOfPicks) { pick in
+                            PickCard(pick: pick,
+                                     held: state.isHeld(pick.id),
+                                     affordable: pick.price <= state.coins)
+                                .onTapGesture { open(pick) }
+                                .onLongPressGesture { hold(pick) }
+                        }
+                    }
+                    .padding(.horizontal, 20).padding(.top, 12)
+                    .animation(.spring(response: 0.34, dampingFraction: 0.74), value: state.picks)
+
+                    if let held = heldNote {
+                        Text(held)
+                            .font(Theme.font(11.5, .heavy))
+                            .foregroundStyle(Theme.dim)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 20).padding(.top, 12)
+                    }
+
+                    rerollButton.padding(.top, 16)
+
+                    if !state.rerollCanChange {
+                        Text(rerollOffReason)
+                            .font(Theme.font(10.5, .heavy))
+                            .foregroundStyle(Theme.dim)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 20).padding(.top, 8)
+                    }
+
+                    plusRow.padding(.top, 12)
                 }
 
-                plusRow.padding(.top, 16)
+                collectionEntry.padding(.top, 24)
 
-                rerollButton.padding(.top, 14)
-
-                if !state.rerollCanChange {
-                    Text(rerollOffReason)
-                        .font(Theme.font(10.5, .heavy))
-                        .foregroundStyle(Theme.dim)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 20).padding(.top, 8)
-                }
-
-                collectionEntry.padding(.top, 26)
-
-                honestyEntry.padding(.top, 12)
+                honestyEntry.padding(.top, 10)
             }
             .padding(.bottom, 40)
         }
@@ -111,47 +141,72 @@ struct KinShopView: View {
         .background(Theme.paper)
     }
 
-    private func sectionHead(_ title: String, trailing: String) -> some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text(title).font(Theme.font(18, .black)).foregroundStyle(Theme.ink)
-            Spacer()
-            Text(trailing).font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.muted)
+    /// The discount is said once, here, instead of stamped on every card. Every pick
+    /// is off by the same percent, so five −20% tags were five copies of one fact;
+    /// the cards carry the struck-through Collection price instead, which is the part
+    /// that actually differs item to item.
+    /// Both lines go quiet once the row is empty. A screen with nothing on it used to
+    /// still promise "everything here is 20% off" and "new picks tomorrow" — two
+    /// sentences about merchandise that does not exist, over a card explaining that
+    /// it never will again.
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Today's picks").font(Theme.font(22, .black)).foregroundStyle(Theme.ink)
+                Spacer()
+                if !state.picks.isEmpty {
+                    Text("New picks tomorrow")
+                        .font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.muted)
+                }
+            }
+            if !state.picks.isEmpty {
+                Text("Everything here is \(state.pickDiscountPercent)% off. Press and hold one to keep its price.")
+                    .font(Theme.font(12, .heavy)).foregroundStyle(Theme.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(.horizontal, 20)
     }
 
     // MARK: Picks
 
-    private var picksRow: some View {
-        HStack(alignment: .top, spacing: 6) {
-            ForEach(state.picks) { pick in
-                PickSlot(pick: pick,
-                         locked: state.isHeld(pick.id),
-                         gap: max(0, pick.price - state.coins))
-                    .onTapGesture { open(pick) }
-                    .onLongPressGesture {
-                        UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                        state.toggleLock(pick.id)
-                    }
-            }
+    /// Which pick gets the big card. A held pick first, because holding one is the
+    /// student saying out loud that this is the one they want. Otherwise the best
+    /// thing today's coins can actually buy — a shop should open on something you can
+    /// take home. If nothing is affordable, the *closest* one leads, so the bar under
+    /// it is a target rather than a wall.
+    private var heroPick: ShopPick? {
+        let picks = state.picks
+        if let held = picks.filter({ state.isHeld($0.id) }).max(by: { $0.price < $1.price }) {
+            return held
         }
-        .padding(.horizontal, 20)
-        .animation(.spring(response: 0.34, dampingFraction: 0.74), value: state.picks)
+        if let best = picks.filter({ $0.price <= state.coins }).max(by: { $0.price < $1.price }) {
+            return best
+        }
+        return picks.min(by: { $0.price < $1.price })
     }
 
-    private func heldPanel(_ pick: ShopPick) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("\(pick.name) is held at \(pick.price)")
-                .font(Theme.font(13, .black)).foregroundStyle(Theme.ink)
-            Text("A held slot keeps its discount through every reroll and overnight into tomorrow's picks. Long-press again to release it.")
-                .font(Theme.font(12, .bold)).foregroundStyle(Theme.muted)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
-            .fill(Theme.tier(pick.tier).opacity(0.16)))
-        .padding(.horizontal, 20)
+    private var restOfPicks: [ShopPick] {
+        guard let hero = heroPick else { return state.picks }
+        return state.picks.filter { $0.id != hero.id }
     }
+
+    private func hold(_ pick: ShopPick) {
+        UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+        state.toggleLock(pick.id)
+    }
+
+    /// One line for every held slot, instead of a stacked explainer panel each. The
+    /// rule is the same for all of them, so it is stated once.
+    private var heldNote: String? {
+        let held = state.picks.filter { state.isHeld($0.id) }
+        guard !held.isEmpty else { return nil }
+        let names = held.map(\.name).joined(separator: ", ")
+        let verb = held.count == 1 ? "is" : "are"
+        return "\(names) \(verb) held. A held price survives every reroll and tonight's redraw. Press and hold again to let go."
+    }
+
+    // MARK: Reroll
 
     private var rerollNote: String {
         if !state.rerollCanChange { return "Nothing new to draw" }
@@ -230,6 +285,11 @@ struct KinShopView: View {
         } else {
             Button { showingPlus = true } label: {
                 HStack(spacing: 10) {
+                    // Reroll, Collection and How-the-picks-work all open with a 19pt
+                    // mark, so this row's text used to start in a column of its own.
+                    Spark().fill(Theme.dim)
+                        .frame(width: 17, height: 17)
+                        .frame(width: 19)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Seven picks, three holds, 30% off")
                             .font(Theme.font(14, .black)).foregroundStyle(Theme.ink)
@@ -255,8 +315,33 @@ struct KinShopView: View {
 
     // MARK: Sections
 
+    /// Owning everything used to leave a blank screen under a dead reroll button.
+    /// It is the end of the game, so it gets a card that says so.
+    private var soldOutPanel: some View {
+        VStack(spacing: 8) {
+            // Drawn, not 🎉. An emoji renders in the system font, which is the one
+            // thing on a Prepkin screen that is not in the palette (`Spark`).
+            HStack(spacing: 6) {
+                Spark().fill(Theme.coin).frame(width: 14, height: 14)
+                Spark().fill(Theme.coin).frame(width: 26, height: 26)
+                Spark().fill(Theme.coin).frame(width: 14, height: 14)
+            }
+            .padding(.bottom, 4)
+            Text("You own all of it")
+                .font(Theme.font(19, .black)).foregroundStyle(Theme.ink)
+            Text("Every kin and every scene is yours. There is nothing left for the shop to put on sale — spend what you earn on stars instead.")
+                .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(22)
+        .frame(maxWidth: .infinity)
+        .background(RoundedRectangle(cornerRadius: 24, style: .continuous).fill(Theme.card))
+        .padding(.horizontal, 20)
+    }
+
     /// The nine kin and five scenes live in the Collection, one screen deeper, so
-    /// this screen opens on the five picks alone: 21 cards at once became six
+    /// this screen opens on the picks alone: 21 cards at once became six
     /// (design/hicks-law-plan.md).
     private var collectionEntry: some View {
         NavigationLink { CollectionView() } label: {
@@ -308,72 +393,267 @@ struct KinShopView: View {
     }
 }
 
-// MARK: - Slot
+// MARK: - Featured pick
 
-/// One slot in the row. A held slot reads by promotion — wider, lifted, white, ringed —
-/// never by dimming the others into a wall.
-private struct PickSlot: View {
+/// The one big card. Everything the old 68pt slot could only gesture at gets said
+/// here at full size: the art, the name, what it costs, what it used to cost, and —
+/// for exactly one item on the screen — how far off you are and what closes the gap.
+private struct FeaturedPick: View {
     let pick: ShopPick
-    let locked: Bool
-    let gap: Int
+    let held: Bool
+    let coins: Int
+    /// `GameState.workToAfford` in plain English — "That's 2 more assignments
+    /// finished." Nil once you can afford it.
+    let work: String?
+
+    private var gap: Int { max(0, pick.price - coins) }
+    private var tint: Color { Theme.tier(pick.tier) }
 
     var body: some View {
-        VStack(spacing: 5) {
-            // One strip owns the top edge: the discount, or HELD while the slot is
-            // held. Two pills used to share this edge and read "HELD 20%". The pin
-            // is there in both states so the press-and-hold has something to point at.
-            HStack(spacing: 3) {
-                if locked {
-                    KinIcon(.lock, size: 9, color: Theme.ink)
-                } else {
-                    Image(systemName: "pin.fill")
-                        .font(.system(size: 7.5, weight: .black))
-                        .foregroundStyle(Theme.ink.opacity(0.55))
-                }
-                Text(locked ? "HELD" : "−20%")
-                    .font(Theme.font(9.5, .black))
-                    .foregroundStyle(Theme.ink)
+        VStack(spacing: 0) {
+            art
+            details
+        }
+        .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous)
+            .strokeBorder(held ? tint : Theme.cardEdge, lineWidth: held ? 3 : 1.5))
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .shadow(color: .black.opacity(0.07), radius: 16, y: 6)
+        .accessibilityElement(children: .combine)
+    }
+
+    // MARK: Art
+
+    /// A kin stands on a wash of its tier colour; a scene *is* the wash, bled to all
+    /// four edges. Two different shapes of thing, so two different treatments — the
+    /// old row cropped a wide painting into a 60pt square and showed the middle
+    /// fifth of it.
+    ///
+    /// The art is asked for at 196 to fill a 176pt band, not 176: `SproutImage` crops
+    /// its square to `size × 0.7` and a stage-I kin only paints part of that again, so
+    /// a number that matches the band leaves the character floating in a third of it.
+    /// 196 is the detail sheet's 180 plus the crop, and it is bottom-aligned so the
+    /// kin stands on the card instead of hovering in the middle of it.
+    private var art: some View {
+        ZStack(alignment: .topLeading) {
+            switch pick.kind {
+            case .kin(let species):
+                LinearGradient(colors: [tint.opacity(0.42), tint.opacity(0.12)],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: 176)
+                    .overlay(alignment: .bottom) {
+                        KinArtView(speciesID: species.id, size: 196)
+                            .padding(.bottom, 6)
+                    }
+            case .scene(let scene):
+                Image(scene.asset)
+                    .resizable().scaledToFill()
+                    .frame(height: 176)
+                    .clipped()
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 17)
-            .background(Theme.tier(pick.tier))
 
-            Group {
-                switch pick.kind {
-                case .kin(let species):
-                    KinArtView(speciesID: species.id, size: locked ? 60 : 54)
-                        .frame(height: locked ? 54 : 49)
-                case .scene(let scene):
-                    Image(scene.asset)
-                        .resizable().scaledToFill()
-                        .frame(height: locked ? 54 : 49)
-                        .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
-                }
-            }
-            .padding(.horizontal, 4)
+            tag
+                .padding(12)
+        }
+        .frame(height: 176)
+        .frame(maxWidth: .infinity)
+        .clipped()
+    }
 
-            // One number. The full price is one screen deeper, in the Collection.
-            KinCostBadge(price: pick.price, tier: pick.tier)
-
-            if gap > 0 {
-                Text("\(gap) to go")
-                    .font(Theme.font(11, .heavy))
-                    .foregroundStyle(Theme.coinDark)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)   // "785 to go" in a 70pt slot at 1.3× type
-                    .padding(.horizontal, 6).padding(.vertical, 2)
-                    .background(Capsule().fill(Theme.coinSoft))
+    private var tag: some View {
+        HStack(spacing: 4) {
+            if held {
+                KinIcon(.lock, size: 9, color: Theme.ink)
+                Text("HELD AT THIS PRICE")
+            } else {
+                Text(kindLabel)
             }
         }
-        .padding(.bottom, 8)
+        .font(Theme.font(9.5, .black))
+        .foregroundStyle(Theme.ink)
+        .padding(.horizontal, 9).padding(.vertical, 5)
+        .background(Capsule().fill(held ? tint : Theme.card.opacity(0.92)))
+    }
+
+    private var kindLabel: String {
+        switch pick.kind {
+        case .kin: return "\(Theme.tierName(pick.tier)) KIN"
+        case .scene: return "SCENE"
+        }
+    }
+
+    // MARK: Details
+
+    private var details: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(pick.name)
+                    .font(Theme.font(21, .black)).foregroundStyle(Theme.ink)
+                    .lineLimit(1).minimumScaleFactor(0.7)
+                Spacer(minLength: 10)
+                priceStack
+            }
+
+            if gap > 0 { shortfall } else { buyButton }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Today's price large, the Collection price struck through beside it. This is the
+    /// only place the discount is shown as money rather than a percent, which is the
+    /// form a student can check: 400 becomes 320.
+    private var priceStack: some View {
+        VStack(alignment: .trailing, spacing: 1) {
+            HStack(spacing: 5) {
+                CoinDisc(size: 17)
+                Text("\(pick.price)")
+                    .font(Theme.font(23, .black)).foregroundStyle(Theme.ink)
+                    .lineLimit(1).minimumScaleFactor(0.6)
+            }
+            Text("\(pick.fullPrice)")
+                .font(Theme.font(12, .heavy)).foregroundStyle(Theme.dim)
+                .strikethrough()
+        }
+    }
+
+    private var buyButton: some View {
+        HStack(spacing: 7) {
+            Text(buyLabel).font(Theme.font(15, .black))
+        }
+        .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
-        .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
-            .fill(locked ? Theme.card : Theme.unowned))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
-            .strokeBorder(Theme.tier(pick.tier), lineWidth: locked ? 2.5 : 2))
-        .scaleEffect(locked ? 1.04 : 1, anchor: .bottom)
-        .zIndex(locked ? 1 : 0)
+        .padding(.vertical, 14)
+        .background(Capsule().fill(Theme.coral)
+            .shadow(color: Theme.coral.opacity(0.32), radius: 14, y: 5))
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var buyLabel: String {
+        switch pick.kind {
+        case .kin(let s): return "Adopt \(s.name)"
+        case .scene: return "Take this scene"
+        }
+    }
+
+    /// The shortfall, said once on the whole screen. A bar that is mostly full reads
+    /// as progress; five yellow "320 to go" pills read as five refusals, which is
+    /// what this screen used to open with.
+    private var shortfall: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            CoinBar(have: coins, need: pick.price, tint: tint)
+            HStack(alignment: .firstTextBaseline, spacing: 5) {
+                Text("\(gap) to go")
+                    .font(Theme.font(13, .black)).foregroundStyle(Theme.coinDark)
+                if let work {
+                    Text(work)
+                        .font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.muted)
+                        .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+}
+
+/// Coins over price, as a bar. Never empty at zero — a hairline of colour says the
+/// bar is a thing that fills rather than a thing that is broken.
+private struct CoinBar: View {
+    let have: Int
+    let need: Int
+    let tint: Color
+
+    var body: some View {
+        GeometryReader { geo in
+            let f = need > 0 ? min(1, max(0, Double(have) / Double(need))) : 1
+            ZStack(alignment: .leading) {
+                Capsule().fill(Theme.paperSunk)
+                Capsule().fill(tint)
+                    .frame(width: max(6, geo.size.width * f))
+            }
+        }
+        .frame(height: 9)
+    }
+}
+
+// MARK: - Grid card
+
+/// One of the picks that isn't the hero. Half the screen wide, so the art gets 78pt
+/// instead of 54 and a scene finally gets a landscape crop.
+private struct PickCard: View {
+    let pick: ShopPick
+    let held: Bool
+    let affordable: Bool
+
+    private var tint: Color { Theme.tier(pick.tier) }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            art
+            VStack(alignment: .leading, spacing: 6) {
+                Text(pick.name)
+                    .font(Theme.font(14.5, .black)).foregroundStyle(Theme.ink)
+                    .lineLimit(1).minimumScaleFactor(0.75)
+
+                HStack(spacing: 6) {
+                    // Solid badge: you can buy this right now. Outline: not yet.
+                    //
+                    // This replaced a mint tick, which collided with the ramp — tier 2
+                    // *is* mint, so an Ember you could not afford wore a green price
+                    // pill next to a green "you can afford it" tick. One mark now
+                    // carries both facts, in the badge's own existing vocabulary.
+                    //
+                    // It is not the greyed-out wall the affordance panel refuses: the
+                    // art, the name and the number stay at full strength, and the card
+                    // is as tappable either way. Only the fill behind the price moves.
+                    KinCostBadge(price: pick.price, tier: pick.tier, filled: affordable)
+                    Text("\(pick.fullPrice)")
+                        .font(Theme.font(10.5, .heavy)).foregroundStyle(Theme.dim)
+                        .strikethrough()
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                }
+            }
+            .padding(.horizontal, 11).padding(.top, 9).padding(.bottom, 11)
+        }
+        .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
+            .strokeBorder(held ? tint : Theme.cardEdge, lineWidth: held ? 3 : 1.5))
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .shadow(color: .black.opacity(0.05), radius: 9, y: 3)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var art: some View {
+        ZStack(alignment: .topLeading) {
+            switch pick.kind {
+            case .kin(let species):
+                LinearGradient(colors: [tint.opacity(0.38), tint.opacity(0.11)],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: 112)
+                    .overlay(alignment: .bottom) {
+                        KinArtView(speciesID: species.id, size: 126)
+                            .padding(.bottom, 4)
+                    }
+            case .scene(let scene):
+                Image(scene.asset)
+                    .resizable().scaledToFill()
+                    .frame(height: 112)
+                    .clipped()
+            }
+
+            if held {
+                HStack(spacing: 3) {
+                    KinIcon(.lock, size: 8, color: Theme.ink)
+                    Text("HELD").font(Theme.font(8.5, .black)).foregroundStyle(Theme.ink)
+                }
+                .padding(.horizontal, 7).padding(.vertical, 4)
+                .background(Capsule().fill(tint))
+                .padding(8)
+            }
+        }
+        .frame(height: 112)
+        .frame(maxWidth: .infinity)
+        .clipped()
     }
 }
 
@@ -460,17 +740,17 @@ struct HonestyPanel: View {
                     "You own every kin and every scene. The row is empty because there is nothing left to offer at a discount.")
         }
         if !state.rerollCanChange {
-            return ("\(slots) slot\(slots == 1 ? "" : "s"), all of what's left",
-                    "Everything you don't own is already in the row. There are no weights and no rare slot.")
+            return ("\(slots) pick\(slots == 1 ? "" : "s"), all of what's left",
+                    "Everything you don't own is already on this screen. There are no weights and no rare slot.")
         }
-        return ("\(slots) slots, drawn evenly",
+        return ("\(slots) picks, drawn evenly",
                 "Every kin and scene you don't own has exactly the same chance of showing up. There are no weights and no rare slot.")
     }
 
     private var claims: [(String, String)] {
         [drawClaim,
          ("A pick is a discount, not a prize",
-          "Everything in the row is in the Collection too, at full price, always. A pick just takes 20% off."),
+          "Everything on this screen is in the Collection too, at full price, always. A pick just takes \(state.pickDiscountPercent)% off."),
          ("Rerolling costs nothing, ever",
           "Three rerolls a day, no coins, no cooldown. You always end up with exactly the coins you started with."),
          ("Nothing ever leaves",

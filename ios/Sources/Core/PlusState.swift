@@ -17,7 +17,7 @@ extension GameState {
     /// Everything the app knows about whether this student is Plus right now.
     /// `paid` comes from StoreKit and `debug` from `-unlockAll`; the gift week is
     /// the only part that lives in the save file.
-    func plusAccess(paid: Bool, debug: Bool = DebugUnlock.isOn) -> PlusAccess {
+    func plusAccess(paid: Bool, debug: Bool = DebugUnlock.isOn || DebugUnlock.plusOn) -> PlusAccess {
         PlusAccess(paid: paid, giftEndsAt: plus.giftEndsAt, debug: debug)
     }
 

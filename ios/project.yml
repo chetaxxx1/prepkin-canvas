@@ -43,6 +43,10 @@ targets:
         # sheet shows, so they say what happens to the photo.
         INFOPLIST_KEY_NSCameraUsageDescription: "To read a syllabus or planner page into your calendar. The photo is read once and not kept."
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "To pick a photo of a syllabus or planner page to read into your calendar."
+        # Sending dated work out to Apple Calendar. Write-only on purpose: Prepkin
+        # adds events and never reads what is already in the calendar, and this is
+        # the key that asks for exactly that and nothing more.
+        INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription: "To add your dated work to your calendar. Prepkin adds events and never reads what is already there."
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: 1
         TARGETED_DEVICE_FAMILY: "1"
@@ -86,7 +90,13 @@ targets:
   PrepkinCanvasTests:
     type: bundle.unit-test
     platform: iOS
-    sources: [Tests]
+    sources:
+      - Tests
+      # `SKTestSession` loads the config out of the test bundle, so the same file the
+      # scheme runs the app against is the file the purchase tests buy from. One
+      # source of truth for the products and the prices.
+      - path: PrepkinCanvas.storekit
+        buildPhase: resources
     dependencies:
       - target: PrepkinCanvas
     settings:

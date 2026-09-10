@@ -11,6 +11,14 @@ final class AppState: ObservableObject {
     @Published private(set) var game: GameState {
         didSet {
             store.save(game)
+            // The gift week arms itself inside `GameState`, on the third finished
+            // Canvas task, because it has to land whether or not anyone is looking
+            // at the screen that would have noticed. This is the only place that can
+            // say so: one line, once, and never announced before it arrives.
+            if oldValue.plus.giftStartedAt == nil, game.plus.giftStartedAt != nil {
+                syncPlus(paid: plusAccess.paid)
+                show("Plus is on for a week. Nothing to cancel.")
+            }
             // Both are cheap: a handful of values compared, and each leaves
             // immediately unless the thing it publishes actually changed.
             pushTankIfNeeded()
@@ -230,8 +238,48 @@ final class AppState: ObservableObject {
         // The row is five slots long or seven; changing the entitlement changes it
         // today, not tomorrow.
         game.refreshPicksIfNeeded(now: now)
-        save()
     }
+
+    /// Today's season rung, claimed. Returns what was handed over, or nil when
+    /// today is not claimable — the card asks `SeasonClaim.check` for the reason.
+    @discardableResult
+    func claimSeasonRung(_ season: Season, now: Date = Date()) -> GameState.SeasonPayout? {
+        guard let payout = game.claimSeasonRung(season, isPlus: isPlus, now: now) else { return nil }
+        play(.celebrate)
+        return payout
+    }
+
+    /// The season running today, if there is one. Nothing is drawn between seasons.
+    var currentSeason: Season? { Season.current(on: DayKey.today()) }
+
+    // MARK: - Saved looks
+
+    var savedLooks: [SavedLook] { game.plus.savedLooks }
+    var savedLookLimit: Int { game.savedLookLimit(plusAccess) }
+    var canSaveLook: Bool { game.plus.canSave(savedLookLimit) }
+
+    @discardableResult
+    func saveLook(named name: String) -> Bool {
+        let ok = game.saveCurrentLook(name: name, access: plusAccess)
+        show(ok ? "\(name) saved." : "Three saved looks on free. Plus saves as many as you like.")
+        return ok
+    }
+
+    func wearSavedLook(_ id: String) {
+        game.wearSavedLook(id)
+        play(.bounce)
+    }
+
+    /// Always allowed, at any number, paid or not. Nobody has to pay to get out of
+    /// a full shelf.
+    func removeSavedLook(_ id: String) { game.plus.removeLook(id) }
+
+    /// The one moment the sheet is owed: the week was given, it has run out, and
+    /// nobody has been shown it yet.
+    var giftJustEnded: Bool { game.plus.giftJustEnded() }
+
+    /// Marks it shown, so it can never appear a second time.
+    func markGiftSheetShown() { game.plus.giftSheetShown = true }
 
     /// The gift week, armed the first time three Canvas tasks are finished.
     /// Returns true on the single call that starts it, which is the only time the
@@ -242,7 +290,6 @@ final class AppState: ObservableObject {
         plusAccess = game.plusAccess(paid: plusAccess.paid)
         game.plusIsOn = plusAccess.isOn(at: now)
         game.refreshPicksIfNeeded(now: now)
-        save()
         return true
     }
 
@@ -1083,6 +1130,15 @@ final class AppState: ObservableObject {
 
     /// Wears a costume, and says so. The bounce is the same one care gives: the point
     /// of the rail is watching the kin change, so the change needs a beat of motion.
+    /// Puts a Plus look on. Owning it is checked in `GameState.wear`, so a lapsed
+    /// subscription keeps every look that was ever worn — signature 4, in code.
+    func wear(plusLook id: String) {
+        guard game.activeChibi.skinID != id else { return }
+        game.ownedLooks.insert(id)
+        game.wear(id)
+        play(.bounce)
+    }
+
     func wear(_ costume: Costume) {
         guard game.activeChibi.skinID != costume.id else { return }
         game.wear(costume.id)

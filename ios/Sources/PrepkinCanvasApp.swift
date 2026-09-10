@@ -13,7 +13,15 @@ struct PrepkinCanvasApp: App {
             RootView()
                 .environmentObject(state)
                 .environmentObject(plus)
-                .task { await plus.load() }
+                .task {
+                    await plus.load()
+                    state.syncPlus(paid: plus.entitlement.isActive)
+                }
+                // A subscription can start, lapse, be restored on another phone or
+                // be refunded while the app is open. `PlusStore` watches
+                // `Transaction.updates` for all four; this is the one line that
+                // carries the answer into the gates.
+                .onReceive(plus.$entitlement) { state.syncPlus(paid: $0.isActive) }
                 // The four moments the day can turn over: coming back to the app,
                 // crossing midnight with it open, changing time zone, and a hand-set
                 // clock. Each one rebuilds today's list from the templates.

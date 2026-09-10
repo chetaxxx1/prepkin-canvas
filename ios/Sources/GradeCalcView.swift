@@ -12,6 +12,9 @@ struct GradeCalcView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var current = 88
+    /// The grade this course is aiming at, as a percent. `nil` until one is picked.
+    @State private var goal: Double?
+    @State private var showingPlus = false
     @State private var target = 90
     @State private var weight = 20      // final's share of the course grade, percent
 
@@ -132,6 +135,7 @@ struct GradeCalcView: View {
                 resultCard
                 stepperRow
                 ladderCard
+                termCard
             }
             .padding(.horizontal, 18)
             .padding(.top, 60)
@@ -379,6 +383,111 @@ struct GradeCalcView: View {
         .padding(.bottom, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(card(28))
+    }
+
+    // MARK: - Your term
+
+    /// One row under the free what-if: every course at once, on a 4.0 scale.
+    ///
+    /// The what-if above stays free and untouched. This is a tool and not a grade —
+    /// it reads the percentages already on the phone and does arithmetic. Nothing
+    /// here changes a mark or talks to Canvas.
+    @ViewBuilder private var termCard: some View {
+        let scored = state.courses.compactMap(\.score)
+        if !scored.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Your term")
+                        .font(Theme.font(15, .black))
+                        .foregroundStyle(G.ink)
+                    Spacer()
+                    if state.isPlus, let gpa = GradeProjection.termGPA(scored) {
+                        Text(GradeProjection.format(gpa))
+                            .font(Theme.font(22, .black))
+                            .foregroundStyle(G.ink)
+                    }
+                }
+
+                if state.isPlus {
+                    ForEach(state.courses.filter { $0.score != nil }, id: \.id) { c in
+                        HStack(spacing: 8) {
+                            Text(c.code.isEmpty ? c.name : c.code)
+                                .font(Theme.font(12.5, .heavy))
+                                .foregroundStyle(G.ink2)
+                                .lineLimit(1)
+                            Spacer(minLength: 6)
+                            Text(GradeProjection.letter(forPercent: c.score ?? 0))
+                                .font(Theme.fixedFont(11.5, .black))
+                                .foregroundStyle(G.muted)
+                            Text(String(format: "%.1f", GradeProjection.points(forPercent: c.score ?? 0)))
+                                .font(Theme.fixedFont(11.5, .black))
+                                .foregroundStyle(G.ink)
+                                .frame(width: 28, alignment: .trailing)
+                        }
+                    }
+                    Text("Unweighted, every course once. Canvas does not send credit hours.")
+                        .font(Theme.font(10.5, .heavy))
+                        .foregroundStyle(G.muted2)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    goalRow
+                } else {
+                    Button { showingPlus = true } label: {
+                        HStack(spacing: 8) {
+                            Text("Your GPA for the term, and a target you set per course")
+                                .font(Theme.font(12.5, .heavy))
+                                .foregroundStyle(G.ink2)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Spacer(minLength: 4)
+                            Text("Plus")
+                                .font(Theme.fixedFont(10, .black))
+                                .foregroundStyle(G.coral)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(card(28))
+            .sheet(isPresented: $showingPlus) { PlusSheet(reason: .grades) }
+        }
+    }
+
+    /// A target for the course the what-if above is about, and what is still needed
+    /// to land it. Three honest answers and no fourth: already there, this average,
+    /// or out of reach — never a percentage over 100.
+    @ViewBuilder private var goalRow: some View {
+        if let c = course, let score = c.score {
+            Divider().padding(.vertical, 2)
+            HStack(spacing: 10) {
+                Text("Aiming for")
+                    .font(Theme.font(12.5, .heavy))
+                    .foregroundStyle(G.ink2)
+                Spacer(minLength: 4)
+                ForEach([90.0, 80.0, 70.0], id: \.self) { t in
+                    Button { goal = (goal == t) ? nil : t } label: {
+                        Text(GradeProjection.letter(forPercent: t))
+                            .font(Theme.fixedFont(11, .black))
+                            .foregroundStyle(goal == t ? .white : G.ink2)
+                            .frame(width: 32, height: 26)
+                            .background(Capsule().fill(goal == t ? G.coral : G.well))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            if let goal {
+                Text(GradeProjection.line(
+                    GradeProjection.need(current: score, target: goal, remainingWeight: w),
+                    target: goal
+                ))
+                .font(Theme.font(12, .heavy))
+                .foregroundStyle(G.hitInk)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     // MARK: - Shared bits

@@ -79,6 +79,9 @@ extension GameState {
     /// inside SwiftUI bodies dozens of times a frame. `AppState` keeps it current;
     /// it is deliberately not in `CodingKeys`, because an entitlement that survives
     /// in a save file is an entitlement that outlives the subscription.
+    /// The free slot count, as a constant the views can compare against without
+    /// reading an entitlement of their own.
+    static let pickSlotsFree = PlusGate.shopSlots.free
     var pickSlots: Int { PlusGate.value(.shopSlots, isPlus: plusIsOn, installedAt: installedAt) }
     var holdLimit: Int { PlusGate.value(.shopHolds, isPlus: plusIsOn, installedAt: installedAt) }
     var discountPercent: Int { PlusGate.value(.shopDiscount, isPlus: plusIsOn, installedAt: installedAt) }

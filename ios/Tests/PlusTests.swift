@@ -58,3 +58,45 @@ final class PlusTests: XCTestCase {
         }
     }
 }
+
+/// Apple's billing grace period, which `PlusEntitlement.resolve` did not handle
+/// before 2026-09-10.
+extension PlusTests {
+
+    /// A card that bounced must not cost a student a perk. In grace the expiration
+    /// date is already in the past, so the plain date check would drop it.
+    func testAGracePeriodRecordStaysActiveAfterItsDatePasses() {
+        let now = Date()
+        let record = PlusRecord(
+            productID: PlusProduct.monthly.rawValue,
+            expiresAt: now.addingTimeInterval(-86_400),
+            revokedAt: nil,
+            inGracePeriod: true
+        )
+        XCTAssertTrue(PlusEntitlement.resolve([record], now: now).isActive)
+    }
+
+    /// The same record, not in grace, is expired. Grace is the only thing that
+    /// keeps a past date alive.
+    func testAnExpiredRecordWithoutGraceIsInactive() {
+        let now = Date()
+        let record = PlusRecord(
+            productID: PlusProduct.monthly.rawValue,
+            expiresAt: now.addingTimeInterval(-86_400),
+            revokedAt: nil
+        )
+        XCTAssertFalse(PlusEntitlement.resolve([record], now: now).isActive)
+    }
+
+    /// A refund revokes it, grace or not.
+    func testARevokedRecordIsInactiveEvenInGrace() {
+        let now = Date()
+        let record = PlusRecord(
+            productID: PlusProduct.yearly.rawValue,
+            expiresAt: now.addingTimeInterval(86_400),
+            revokedAt: now,
+            inGracePeriod: true
+        )
+        XCTAssertFalse(PlusEntitlement.resolve([record], now: now).isActive)
+    }
+}

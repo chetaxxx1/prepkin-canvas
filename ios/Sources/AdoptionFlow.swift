@@ -68,7 +68,7 @@ struct BuyConfirmSheet: View {
             VStack(spacing: 0) {
                 row("Collection price", value: "\(species.price)", struck: discounted)
                 if discounted {
-                    row("Today's pick · 20% off", value: "\(price)", emphasis: true)
+                    row("Today's pick · \(state.pickDiscountPercent)% off", value: "\(price)", emphasis: true)
                 }
                 Rectangle().fill(Theme.hairline).frame(height: 1).padding(.vertical, 4)
                 row("Wallet after", value: "\(state.coins - price)", emphasis: true)

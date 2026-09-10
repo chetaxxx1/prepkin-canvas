@@ -81,6 +81,31 @@ extension Ledger {
         }
         return (shifts, minutes)
     }
+
+    /// Minutes of finished shift per day, oldest first, for the last `days` days.
+    ///
+    /// A count of work done, never a target — there is no goal line over it and no
+    /// number on it goes down, which is what keeps a graph of your own hours on the
+    /// right side of "nothing that resets".
+    ///
+    /// Read off the ledger's `units`, the same field the weekly line uses, so the
+    /// graph and the line can never disagree.
+    func focusDays(
+        ending: Date = Date(),
+        days: Int = 7,
+        calendar: Calendar = .current
+    ) -> [(day: DayKey, minutes: Int)] {
+        let today = calendar.startOfDay(for: ending)
+        var byDay: [String: Int] = [:]
+        for e in entries where e.reason == .focus {
+            byDay[e.day.raw, default: 0] += e.units
+        }
+        return (0..<days).reversed().compactMap { back in
+            guard let date = calendar.date(byAdding: .day, value: -back, to: today) else { return nil }
+            let key = DayKey(date, calendar: calendar)
+            return (key, byDay[key.raw] ?? 0)
+        }
+    }
 }
 
 /// What the student says they are working on this shift.

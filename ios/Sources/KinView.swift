@@ -16,6 +16,9 @@ struct KinView: View {
     @State private var bubble: String?
     @State private var bubbleTask: Task<Void, Never>?
     @State private var showCollection = false
+    @State private var savingLook = false
+    @State private var lookName = ""
+    @State private var showingPlus = false
     @State private var showShop = false
     @State private var detail: ChibiSpecies?
 
@@ -36,6 +39,12 @@ struct KinView: View {
                             .padding(.top, 10)
                     }
                     wardrobeCard.padding(.top, 20)
+                    savedLooksCard.padding(.top, 16)
+                    if let season = state.currentSeason {
+                        SeasonCard(season: season)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 16)
+                    }
                     togetherStrip.padding(.top, 16)
                     collectionCard.padding(.top, 16)
                 }
@@ -236,9 +245,21 @@ struct KinView: View {
                     .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
+                    // Lazy on purpose. Every swatch is a 646px still, so a plain HStack
+                    // decodes nineteen of them — about 32MB — the moment the tab opens,
+                    // and the whole page hitches. Lazily, only what is on screen is built.
+                    LazyHStack(spacing: 6) {
                         ForEach(Costume.catalog) { costume in
                             costumeSwatch(costume)
+                        }
+                        // Plus looks sit in the same rail, in full colour, with
+                        // "Plus" where a coin price would be — exactly how a coin
+                        // item is drawn (`PLUS-SPEC.md` section 4). Nothing is
+                        // greyed and nothing carries a lock. An empty catalogue
+                        // draws nothing at all: an empty Plus shelf reads as a thing
+                        // taken away.
+                        ForEach(PlusLooks.looks) { look in
+                            plusLookSwatch(look)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -294,6 +315,125 @@ struct KinView: View {
         .disabled(!owned)
         .accessibilityLabel(owned ? "\(costume.name)\(worn ? ", worn" : "")"
                                   : "\(costume.name), \(costume.price) coins, not bought")
+    }
+
+    /// A Plus coat, previewed on an **example** fish rather than the student's own.
+    ///
+    /// Showing a coat they do not have on the animal they love is the padlock
+    /// feeling wearing a costume. The example fish is the whole reason this is a
+    /// separate swatch and not a branch inside `costumeSwatch`.
+    private func plusLookSwatch(_ look: PlusLooks.Look) -> some View {
+        let owned = state.game.ownedLooks.contains(look.skinID)
+        return Button {
+            if owned || state.isPlus {
+                state.wear(plusLook: look.skinID)
+            } else {
+                showingPlus = true
+            }
+        } label: {
+            VStack(spacing: 3) {
+                KinArtView(speciesID: PlusLooks.exampleSpeciesID, level: 3,
+                           skin: look.skinID, size: 40)
+                    .frame(width: 52, height: 44)
+                Text(owned ? look.name : "Plus")
+                    .font(Theme.fixedFont(9.5, .black))
+                    .foregroundStyle(owned ? Theme.muted : Theme.coralShade)
+                    .lineLimit(1)
+            }
+            .padding(6)
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(owned ? Theme.paperSunk : Theme.coralSoft))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(owned ? "\(look.name), yours"
+                                  : "\(look.name), in Plus, shown on an example fish")
+    }
+
+    // MARK: - Saved looks
+
+    /// Combinations of kin, costume and scene, kept so they can be put back on.
+    ///
+    /// Free saves three, Plus saves as many as you like. The thing that matters
+    /// here is the sentence in `PLUS-SPEC.md` section 7: **every combination already
+    /// saved stays applicable forever, including the ones above three.** A lapse
+    /// stops new saves. It never deletes one and never greys one out, so this rail
+    /// looks the same the day after a subscription ends as it did the day before.
+    @ViewBuilder private var savedLooksCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Saved looks")
+                    .font(Theme.font(15, .black))
+                    .foregroundStyle(Theme.ink)
+                Spacer()
+                if state.canSaveLook {
+                    Button { savingLook = true } label: {
+                        Text("Save this one")
+                            .font(Theme.font(12, .heavy))
+                            .foregroundStyle(Theme.coralShade)
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    Button { showingPlus = true } label: {
+                        Text("More saves · Plus")
+                            .font(Theme.font(12, .heavy))
+                            .foregroundStyle(Theme.muted)
+                            .underline()
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            if state.savedLooks.isEmpty {
+                Text("Save how your kin looks right now, and put it back on any time.")
+                    .font(Theme.font(12, .heavy))
+                    .foregroundStyle(Theme.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 10) {
+                        ForEach(state.savedLooks) { look in
+                            Button { state.wearSavedLook(look.id) } label: {
+                                VStack(spacing: 4) {
+                                    KinArtView(speciesID: look.speciesID, level: 3,
+                                               skin: look.costumeID, size: 40)
+                                        .frame(width: 52, height: 44)
+                                    Text(look.name)
+                                        .font(Theme.fixedFont(9.5, .black))
+                                        .foregroundStyle(Theme.muted)
+                                        .lineLimit(1)
+                                }
+                                .padding(6)
+                                .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(Theme.paperSunk))
+                            }
+                            .buttonStyle(.plain)
+                            .contextMenu {
+                                Button("Remove", role: .destructive) {
+                                    state.removeSavedLook(look.id)
+                                }
+                            }
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(Theme.card).shadow(color: .black.opacity(0.05), radius: 8, y: 2))
+        .padding(.horizontal, 20)
+        .alert("Name this look", isPresented: $savingLook) {
+            TextField("Look", text: $lookName)
+                .autocorrectionDisabled()
+            Button("Save") {
+                let clean = lookName.trimmingCharacters(in: .whitespacesAndNewlines)
+                state.saveLook(named: clean.isEmpty ? "Look" : clean)
+                lookName = ""
+            }
+            Button("Cancel", role: .cancel) { lookName = "" }
+        }
+        .sheet(isPresented: $showingPlus) { PlusSheet(reason: .look) }
     }
 
     // MARK: - Together since

@@ -3,6 +3,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var state: AppState
     @State private var tab: Tab = .home
+    @State private var showingGiftEnded = false
     /// `Theme.font` reads the system text size when a body runs; rebuilding the
     /// tabs when it changes is what makes a Settings change show without a relaunch.
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -70,6 +71,16 @@ struct RootView: View {
         }
         .animation(.easeInOut(duration: 0.22), value: state.hideTabBar)
         .background(Theme.paper.ignoresSafeArea())
+        // The sheet the day the gift week runs out. Once, ever, and never with the
+        // words "your trial is ending" — `PLUS-SPEC.md` section 6. After this the
+        // only way back to it is a student tapping something on purpose.
+        .sheet(isPresented: $showingGiftEnded, onDismiss: { state.markGiftSheetShown() }) {
+            PlusSheet(reason: .general)
+        }
+        .onAppear { showingGiftEnded = state.giftJustEnded }
+        .onChange(of: state.plusAccess) { _, _ in
+            if state.giftJustEnded { showingGiftEnded = true }
+        }
         .onChange(of: state.meetKinRequest) { _, new in
             guard new != nil else { return }
             withAnimation(switchAnimation) { tab = .kin }

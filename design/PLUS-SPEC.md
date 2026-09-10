@@ -50,6 +50,18 @@ charges for. Nothing here was invented to pad the list.
 | **7. Unlimited saved looks** | Save any number of coat-plus-costume-plus-scene combinations; free saves three. | Finch, "unlimited saved outfit combos". | **Allowed, on one condition.** No saved-look feature exists in the app today, so the free three is not a reduction. **The free version ships first or in the same build.** Every combination already saved stays applicable forever, including any above three — that promise is already written into MARKETING-PLAN and stays. | 3 | new; `GameState` + `KinView` Looks rail |
 | **8. "Can't swing it? Ask."** | A plain row that opens mail. George replies with an App Store promo code for a month, then a hardship price. | Finch's Guardians raffle ([mobbin](https://mobbin.com/screens/5476a849-e09a-437e-b4c8-c39260617658)), done by hand at our scale. | **Allowed.** No rule touched. It sits on the sheet as a plain text row, never a `?` tile and never a padlock. | 0.5 | `PlusSheet.swift`, a `mailto:` row under Restore |
 
+### Added 2026-09-10, after the build brief
+
+Four more rows, same columns. Nine through eleven ship in this build; twelve is a 1.1 item
+with its row written and no code behind it.
+
+| Perk | What the student gets | Copies | Rule check | Days | Hooks in code |
+|---|---|---|---|---|---|
+| **9. The season** | A three-week ladder tied to the term. Finishing anything real claims the day. The Free column pays coins; the Plus column hands over a costume as well, and Plus is guaranteed the whole set by the last day. | Finch's monthly seasonal event, which is the conversion engine of that whole app — a Free column and a Plus column on the same daily ladder ([mobbin](https://mobbin.com/screens/b09243d3-db07-4dc3-8954-e5b46913d083), [mobbin](https://mobbin.com/screens/8d96ed66-fee8-4c32-8266-fddd6d8291ab)). | **Allowed, and it clears R6 by construction.** A rung is claimed by *count*, never by calendar position, so a missed day costs nothing and nothing resets — `testAGapCostsNothing` holds that down. Every costume on the Plus track is also on the shelf at its coin price forever, so nothing moved behind money (R1, R2). The card says "Ends Oct 12", a date, never a clock (R5). The first season uses costumes that already exist, so no new art is owed. **Needs signature 12.** | 3 | `Core/Season.swift`; `Core/PlusLocal.swift` claim rule; `SeasonCard.swift` on the Kin tab; `GameState.claimSeasonRung` |
+| **10. The compare table** | Free and Plus side by side, as the second screen of the sheet behind "See everything". | Structured's and Forest's Free-vs-Pro tables ([mobbin](https://mobbin.com/screens/164379e9-258f-4b6c-9f91-7a02a3f4c277), [mobbin](https://mobbin.com/screens/8a070d7a-f8b0-4994-9607-226d31348a50)). | **Allowed, with one rule of its own.** A table that only lists what you do not have is a padlock with a header on it, so this one opens with six rows that are ticked in both columns. Its numbers are read off `PlusGate`, so a row cannot promise something the gate does not hand over. | 1 | `Core/PlusCompare.swift`; `PlusSheet.compare` |
+| **11. "Support our mission"** | One line, last on the sheet: "Plus keeps Canvas, coins and every lesson free for everyone else." | Finch's last perk row and Duolingo's "Support our mission to keep education free for millions" ([mobbin](https://mobbin.com/screens/11ec5a8d-7a51-4e18-b70c-9d2da2a0e59a)). | **Allowed.** No rule touched, and it is true: Plus is the only money in the app. | 0.25 | `PlusSheet.mission` |
+| **12. Refer a friend** | Fourteen days of Plus to both sides of a friend code. | BetterCampus ("14 days of Pro to both"), Forest ("Refer a friend, get 30 mins") ([mobbin](https://mobbin.com/screens/040ad744-79df-4557-92be-9b900c0acc7e)). | **Not built.** It needs App Store offer codes wired to the friend code, which is a server and a redemption path neither of which exists. **1.1 item.** The row is here so it is not re-invented. | 2, in 1.1 | none yet; would sit on `FriendsView` and `PlusSheet` |
+
 ### Cut from the brief's list, with the reason
 
 | Was proposed | Verdict | Why |
@@ -339,6 +351,26 @@ un-spent. Nothing in this spec ships until the ones it depends on are signed.
 
 ---
 
+### What George signed, 2026-09-10
+
+All twelve were put to him in one message with the recommendations above, and all twelve came
+back ticked — including 5, 9 and 11, which were on the "do not sign" list.
+
+| # | Signed | Built in this session |
+|---|---|---|
+| 1 | Yes | Yes. `PlusAccess`, and section 7's lapse promise is what `PlusGateTests` enforces. |
+| 2 | Yes | Yes. `PlusGift`, with no reminder, no countdown and no "trial is ending". |
+| 3 | Yes | Yes. `PlusGate.shopDiscount`, 20 free and 30 Plus. |
+| 4 | Yes | Yes, by construction: `ownedLooks` and `PlusLocal.savedLooks` are in the save file, not in a receipt. |
+| 5 | Yes | **No, and held.** Signing it contradicts the build brief's own "do not add… any AI feature that needs an account", and it is the first account Prepkin would ever ask for. Apple Calendar and an `.ics` file shipped instead, which is what the recommendation said. Needs a plain second yes before any Google code is written. |
+| 6 | Yes | Already true. There is no `introductoryOffer` in `PrepkinCanvas.storekit`, and `testTheStoreKitConfigHasNoIntroductoryOffer` keeps it that way. |
+| 7 | Yes | Already true. `displayPrice` is `69.99`, and a test fails the build on `79.99`. |
+| 8 | Yes | Gate in place at 3/6, unused — Friends phase 2 vibe cards are not built, so there is nothing to split yet. |
+| 9 | Yes | **No, and held.** A daily coin reward is selling coins, it breaks R2 head-on, and the build brief separately says "do not add… a coin boost". `testThePlusTrackNeverPaysCoins` currently fails the build on any attempt to add one. Needs a plain second yes. |
+| 10 | Yes | Gate in place, unused, same reason as 8. |
+| 11 | Yes | **No, and held.** Capping free Learn breaks R1 and R4 and is the loudest complaint on a competitor's board. Section 2a is the argument. Needs a plain second yes. |
+| 12 | Yes | Yes. `Core/Season.swift`, `SeasonCard.swift`, one seeded season. |
+
 ## References
 
 Mobbin screens looked at on 2026-09-10. Structure and honesty borrowed; none of the look.
@@ -349,4 +381,9 @@ Mobbin screens looked at on 2026-09-10. Structure and honesty borrowed; none of 
 - [Quizlet "Choose your plan"](https://mobbin.com/screens/858c67d1-85ef-40e6-951e-42edbd774d0e) — two plain plan cards and, below them, "How monthly subscriptions work" as a dated vertical list. That list is the shape of our section 6 timeline.
 - [Headspace "How your trial works"](https://mobbin.com/screens/a9bf58c3-250a-4565-9808-c4722933ea54) — same idea, three dated rows, "Today / In 12 days / In 14 days". The cleanest version of a timeline that does not read as a countdown.
 - [Headspace 50%-off cancellation save](https://mobbin.com/screens/c995f167-095b-40b4-b8e1-13e2a3c54cc1) — an **anti-reference**. A crossed-out price on the way out of the door. We do not build this.
+- [Finch cancellation save](https://mobbin.com/screens/ccd5acdc-1b85-4092-a306-dc2aa52bb3c7) — an **anti-reference**, and the second one on this list. "Are you sure? Don't lose all the wonderful perks" on the way out of the door. We do not build a cancel-save screen, in any wording.
+- [Imprint trial timeline](https://mobbin.com/screens/fce611cd-bedb-4502-a2b6-2155bf1b934c) — "Now / In 5 days a reminder / In 7 days charged". The shape of our gift-week timeline, with the last line changed to the truth: nothing is charged, because no card was ever taken.
+- [Imprint's cards, fanned out](https://mobbin.com/screens/9036a4f7-80dd-4781-b9c3-695383698d5a) — the goods as pictures rather than icon rows. `PlusArt.swift` is the Prepkin version.
+- [Duolingo Super plans](https://mobbin.com/screens/2e2f5144-d03d-46b2-9b8d-cf9a22456852) and [Max](https://mobbin.com/screens/a31bee03-1770-4f41-86f2-06959309ba66) — "Cancel anytime, no penalties or fees" and two plain plan cards. Taken. The gradient and the crowd of mascots, not taken.
+- [Structured's scholarship](https://mobbin.com/screens/30fab178-fcdf-4e6a-b41d-ff8a8c08b64f) — a hardship path with a name on it. Ours is one mail row.
 - [Duolingo Super family plan](https://mobbin.com/screens/0bedb164-b0a5-4d16-857d-6668670b0995) — mascots on a paywall, checked to confirm what to avoid: gradient, glow, a crowd of characters selling at you. Our kin does what it does on Home and nothing else.
