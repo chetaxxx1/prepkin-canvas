@@ -1105,8 +1105,9 @@ final class AppState: ObservableObject {
     func buyScene(_ scene: Scene0) {
         let price = game.currentPrice("scene:\(scene.id)")
         guard coins >= price else {
-            // The picks row already prints "N to go" on the slot; a tap that does
-            // nothing at all was the only place the shop went quiet.
+            // Since the 10 Sept rebuild the grid cards do not print the gap at all
+            // — the shortfall lives on the featured card alone — so this toast is
+            // the whole answer to a tap on a scene you cannot afford yet.
             show("\(price - coins) to go. Nothing here expires.")
             return
         }

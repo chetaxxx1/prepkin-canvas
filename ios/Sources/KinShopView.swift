@@ -44,7 +44,10 @@ struct KinShopView: View {
                         FeaturedPick(pick: hero,
                                      held: state.isHeld(hero.id),
                                      coins: state.coins,
-                                     work: state.workToAfford(hero.id))
+                                     work: state.workToAfford(hero.id),
+                                     homeScene: homeScene,
+                                     homeSpecies: homeSpecies,
+                                     homeLevel: homeLevel)
                             .padding(.horizontal, 20).padding(.top, 14)
                             .onTapGesture { open(hero) }
                             .onLongPressGesture { hold(hero) }
@@ -54,7 +57,10 @@ struct KinShopView: View {
                         ForEach(restOfPicks) { pick in
                             PickCard(pick: pick,
                                      held: state.isHeld(pick.id),
-                                     affordable: pick.price <= state.coins)
+                                     affordable: pick.price <= state.coins,
+                                     homeScene: homeScene,
+                                     homeSpecies: homeSpecies,
+                                     homeLevel: homeLevel)
                                 .onTapGesture { open(pick) }
                                 .onLongPressGesture { hold(pick) }
                         }
@@ -145,6 +151,11 @@ struct KinShopView: View {
     /// is off by the same percent, so five −20% tags were five copies of one fact;
     /// the cards carry the struck-through Collection price instead, which is the part
     /// that actually differs item to item.
+    ///
+    /// "off its **Collection** price" is not decoration. A bare "20% off" is a
+    /// discount against nothing; naming the Collection is what makes the number
+    /// checkable, and it points at the screen where you can go and check it.
+    /// `test/ios-flows.sh` asserts the word is here.
     /// Both lines go quiet once the row is empty. A screen with nothing on it used to
     /// still promise "everything here is 20% off" and "new picks tomorrow" — two
     /// sentences about merchandise that does not exist, over a card explaining that
@@ -160,7 +171,7 @@ struct KinShopView: View {
                 }
             }
             if !state.picks.isEmpty {
-                Text("Everything here is \(state.pickDiscountPercent)% off. Press and hold one to keep its price.")
+                Text("Everything here is \(state.pickDiscountPercent)% off its Collection price. Press and hold one to keep it.")
                     .font(Theme.font(12, .heavy)).foregroundStyle(Theme.muted)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -185,6 +196,11 @@ struct KinShopView: View {
         }
         return picks.min(by: { $0.price < $1.price })
     }
+
+    /// The student's own Home, which is the set every card is photographed on.
+    private var homeScene: Scene0 { Scene0.find(state.sceneID) }
+    private var homeSpecies: String { state.activeChibiID ?? ChibiSpecies.catalog[0].id }
+    private var homeLevel: Int { state.ownedKin(homeSpecies)?.level ?? 1 }
 
     private var restOfPicks: [ShopPick] {
         guard let hero = heroPick else { return state.picks }
@@ -329,7 +345,7 @@ struct KinShopView: View {
             .padding(.bottom, 4)
             Text("You own all of it")
                 .font(Theme.font(19, .black)).foregroundStyle(Theme.ink)
-            Text("Every kin and every scene is yours. There is nothing left for the shop to put on sale — spend what you earn on stars instead.")
+            Text("Every kin and every scene is yours. There is nothing left for the shop to put on sale, so spend what you earn on stars instead.")
                 .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -393,6 +409,121 @@ struct KinShopView: View {
     }
 }
 
+// MARK: - Tank tile
+
+/// The art on every card in the shop: a painted tank, bled to all four edges, with a
+/// kin standing on its floor.
+///
+/// This is the whole second pass. The first rebuild made the cards big but left the kin
+/// on a flat wash of its tier colour, which on Prepkin's pale ramp is a small blob on
+/// near-white — the thing George called ugly, correctly. Every shop worth copying
+/// (Finch, Forest, Alan, the Reddit avatar store) puts the item **in a place** and lets
+/// the art reach the edges. Prepkin already owns five painted places, so no new art was
+/// needed; the scenes were simply never used anywhere but Home.
+///
+/// What each card shows is a picture of the student's own Home with one thing changed:
+/// a kin card puts that kin in the tank they already have, a scene card puts the kin
+/// they already have in that tank. One variable per card, and every card is an honest
+/// product shot rather than a swatch.
+private struct TankTile: View {
+    let scene: Scene0
+    let speciesID: String
+    /// Stage of the kin standing in it. Unowned picks are stage I; the student's own
+    /// kin, which is who stands in a *scene* card, can be any of the three.
+    var level: Int = 1
+    let height: CGFloat
+    /// How tall the drawn kin should be as a fraction of the tile. Real ink, not frame.
+    var kinHeight: CGFloat = 0.60
+    /// -1…1. Slides the crop across the painting so four cards on one tank are four
+    /// framings of it rather than four copies. Honest — it is the same water.
+    var pan: CGFloat = 0
+
+    /// **`KinArtView(size:)` is not the drawn height of the kin.**
+    ///
+    /// The stills are square frames the rig drew into, and the kin sits flush to the
+    /// bottom of one filling only part of it — measured off the catalogue, 0.42 of the
+    /// frame at stage I, 0.50 at II, 0.62 at III. Asking for `size: 176` to fill a
+    /// 176pt band is what left the first pass floating in a third of its card. Divide
+    /// by this and the drawn kin is the size you asked for, at any stage.
+    private static func inkRatio(_ level: Int) -> CGFloat {
+        switch level {
+        case 3: return 0.62
+        case 2: return 0.50
+        default: return 0.42
+        }
+    }
+
+    /// The tanks are all 1440 × 1080.
+    private static let art: CGFloat = 4.0 / 3.0
+
+    var body: some View {
+        GeometryReader { geo in
+            // Sized by hand rather than left to `scaledToFill`, for two reasons.
+            //
+            // Bottom-anchored: the floor is the bottom third of every painting, and a
+            // centred crop of a 4:3 tank in a wide card shows the middle of the water
+            // and none of the ground to stand on. A `ZStack(alignment: .bottom)` over an
+            // oversized image does that; `scaledToFill` centres and cannot be told not to.
+            //
+            // And wide enough to pan: a 4:3 painting covering a card this shape has only
+            // a few points of horizontal slack, so the first cut slid it clean off its
+            // own card and printed a white strip down the left. The width is stretched
+            // 14% past cover so there is always room, and the offset is clamped to the
+            // slack that actually exists.
+            let w = max(geo.size.width, 1)
+            let drawnW = max(w * 1.14, height * Self.art)
+            let drawnH = drawnW / Self.art
+            let slack = (drawnW - w) / 2
+
+            ZStack(alignment: .bottom) {
+                Image(scene.asset)
+                    .resizable()
+                    .frame(width: drawnW, height: max(drawnH, height))
+                    .offset(x: min(max(pan * slack, -slack), slack))
+
+                // The transparent top of the still overhangs the sky and costs nothing;
+                // the tile clips it. Feet land just above the card's bottom edge.
+                KinArtView(speciesID: speciesID, level: level,
+                           size: height * kinHeight / Self.inkRatio(level))
+                    .padding(.bottom, height * 0.05)
+            }
+            // `.bottom`, not the default centre. The stack is taller than the tile —
+            // the stretched painting is, and so is the kin's own frame — and a centred
+            // crop takes half that overflow off the bottom, which is the half with the
+            // floor and the kin's feet in it. Centring here cut the hero off at the chin.
+            .frame(width: w, height: height, alignment: .bottom)
+            .clipped()
+        }
+        .frame(height: height)
+    }
+}
+
+/// A small pill over the top-left of a tile. The one thing the art cannot say on its
+/// own is which of the two things on this screen you are looking at — a scene card and
+/// a kin card are both a kin in a tank, and only the tag separates them.
+private struct TileTag: View {
+    let text: String
+    var tint: Color?
+    var lock = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            if lock { KinIcon(.lock, size: 9, color: Theme.ink) }
+            Text(text).font(Theme.font(9.5, .black)).foregroundStyle(Theme.ink)
+        }
+        .padding(.horizontal, 9).padding(.vertical, 5)
+        .background(Capsule().fill(tint ?? Theme.card.opacity(0.92)))
+    }
+}
+
+/// A stable number in -1…1 from a pick's id, for `TankTile.pan`.
+///
+/// `hashValue` is seeded per process, so it would repan every card on every launch.
+private func stablePan(_ id: String) -> CGFloat {
+    let sum = id.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0xFFFF }
+    return CGFloat(sum % 5 - 2) / 2
+}
+
 // MARK: - Featured pick
 
 /// The one big card. Everything the old 68pt slot could only gesture at gets said
@@ -405,6 +536,12 @@ private struct FeaturedPick: View {
     /// `GameState.workToAfford` in plain English — "That's 2 more assignments
     /// finished." Nil once you can afford it.
     let work: String?
+    /// The student's own tank and their own kin. A kin pick stands in that tank; a
+    /// scene pick is that kin standing in the new one. Either way the card is a
+    /// picture of their Home with one thing changed.
+    let homeScene: Scene0
+    let homeSpecies: String
+    let homeLevel: Int
 
     private var gap: Int { max(0, pick.price - coins) }
     private var tint: Color { Theme.tier(pick.tier) }
@@ -419,60 +556,63 @@ private struct FeaturedPick: View {
             .strokeBorder(held ? tint : Theme.cardEdge, lineWidth: held ? 3 : 1.5))
         .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
         .shadow(color: .black.opacity(0.07), radius: 16, y: 6)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel(axLabel)
+        .accessibilityHint(axHint)
+    }
+
+    /// Combining the children read out "RARE KIN, Droplet, 320, 400" — four numbers
+    /// and no verb. Spelled out instead, because the press-and-hold is invisible to
+    /// VoiceOver otherwise and it is the only way to keep a price.
+    private var axLabel: String {
+        let kind: String
+        switch pick.kind {
+        case .kin: kind = "\(Theme.tierName(pick.tier).lowercased()) kin"
+        case .scene: kind = "scene"
+        }
+        let money = "\(pick.price) coins, down from \(pick.fullPrice)"
+        // The same "You can afford it." the grid cards use, so one rule tells a
+        // reader — and `test/ios-flows.sh` — whether any card on the screen is
+        // within reach, hero or not.
+        let can = gap > 0 ? "" : " You can afford it."
+        return held ? "\(pick.name), \(kind). \(money). Held at this price.\(can)"
+                    : "\(pick.name), \(kind). \(money).\(can)"
+    }
+
+    private var axHint: String {
+        let holdPart = held ? "Press and hold to release it."
+                            : "Press and hold to keep this price."
+        if gap > 0 { return "\(gap) coins to go. Opens the details. \(holdPart)" }
+        switch pick.kind {
+        case .kin(let s): return "Adopts \(s.name). \(holdPart)"
+        case .scene: return "Buys this scene. \(holdPart)"
+        }
     }
 
     // MARK: Art
 
-    /// A kin stands on a wash of its tier colour; a scene *is* the wash, bled to all
-    /// four edges. Two different shapes of thing, so two different treatments — the
-    /// old row cropped a wide painting into a 60pt square and showed the middle
-    /// fifth of it.
-    ///
-    /// The art is asked for at 196 to fill a 176pt band, not 176: `SproutImage` crops
-    /// its square to `size × 0.7` and a stage-I kin only paints part of that again, so
-    /// a number that matches the band leaves the character floating in a third of it.
-    /// 196 is the detail sheet's 180 plus the crop, and it is bottom-aligned so the
-    /// kin stands on the card instead of hovering in the middle of it.
+    /// Whichever of the two things is being sold, the picture is the same picture:
+    /// a kin standing in a tank. A kin pick swaps the kin, a scene pick swaps the
+    /// water, and `TileTag` is what says which.
     private var art: some View {
         ZStack(alignment: .topLeading) {
             switch pick.kind {
             case .kin(let species):
-                LinearGradient(colors: [tint.opacity(0.42), tint.opacity(0.12)],
-                               startPoint: .top, endPoint: .bottom)
-                    .frame(height: 176)
-                    .overlay(alignment: .bottom) {
-                        KinArtView(speciesID: species.id, size: 196)
-                            .padding(.bottom, 6)
-                    }
+                TankTile(scene: homeScene, speciesID: species.id,
+                         height: 196, kinHeight: 0.62)
             case .scene(let scene):
-                Image(scene.asset)
-                    .resizable().scaledToFill()
-                    .frame(height: 176)
-                    .clipped()
+                TankTile(scene: scene, speciesID: homeSpecies, level: homeLevel,
+                         height: 196, kinHeight: 0.56)
             }
 
-            tag
+            TileTag(text: held ? "HELD AT THIS PRICE" : kindLabel,
+                    tint: held ? tint : nil, lock: held)
                 .padding(12)
         }
-        .frame(height: 176)
+        .frame(height: 196)
         .frame(maxWidth: .infinity)
         .clipped()
-    }
-
-    private var tag: some View {
-        HStack(spacing: 4) {
-            if held {
-                KinIcon(.lock, size: 9, color: Theme.ink)
-                Text("HELD AT THIS PRICE")
-            } else {
-                Text(kindLabel)
-            }
-        }
-        .font(Theme.font(9.5, .black))
-        .foregroundStyle(Theme.ink)
-        .padding(.horizontal, 9).padding(.vertical, 5)
-        .background(Capsule().fill(held ? tint : Theme.card.opacity(0.92)))
     }
 
     private var kindLabel: String {
@@ -583,6 +723,9 @@ private struct PickCard: View {
     let pick: ShopPick
     let held: Bool
     let affordable: Bool
+    let homeScene: Scene0
+    let homeSpecies: String
+    let homeLevel: Int
 
     private var tint: Color { Theme.tier(pick.tier) }
 
@@ -620,40 +763,50 @@ private struct PickCard: View {
             .strokeBorder(held ? tint : Theme.cardEdge, lineWidth: held ? 3 : 1.5))
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         .shadow(color: .black.opacity(0.05), radius: 9, y: 3)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel(axLabel)
+        .accessibilityHint(held ? "Press and hold to release this price."
+                                : "Press and hold to keep this price.")
     }
 
+    /// The solid-versus-outline badge is the only thing on the card that says whether
+    /// you can buy it, and a fill is not a thing VoiceOver reads. It says so here.
+    private var axLabel: String {
+        let money = "\(pick.price) coins, down from \(pick.fullPrice)"
+        let can = affordable ? "You can afford it." : ""
+        return [held ? "\(pick.name), held." : "\(pick.name).", "\(money).", can]
+            .filter { !$0.isEmpty }.joined(separator: " ")
+    }
+
+    /// Four kin cards drawing the same equipped tank would read as four copies of one
+    /// picture, so each one slides the crop across the painting by a stable amount.
+    /// Same water, four framings — the way a lookbook shoots a set.
     private var art: some View {
         ZStack(alignment: .topLeading) {
             switch pick.kind {
             case .kin(let species):
-                LinearGradient(colors: [tint.opacity(0.38), tint.opacity(0.11)],
-                               startPoint: .top, endPoint: .bottom)
-                    .frame(height: 112)
-                    .overlay(alignment: .bottom) {
-                        KinArtView(speciesID: species.id, size: 126)
-                            .padding(.bottom, 4)
-                    }
+                TankTile(scene: homeScene, speciesID: species.id,
+                         height: 142, kinHeight: 0.60, pan: stablePan(pick.id))
             case .scene(let scene):
-                Image(scene.asset)
-                    .resizable().scaledToFill()
-                    .frame(height: 112)
-                    .clipped()
+                TankTile(scene: scene, speciesID: homeSpecies, level: homeLevel,
+                         height: 142, kinHeight: 0.54)
             }
 
-            if held {
-                HStack(spacing: 3) {
-                    KinIcon(.lock, size: 8, color: Theme.ink)
-                    Text("HELD").font(Theme.font(8.5, .black)).foregroundStyle(Theme.ink)
-                }
-                .padding(.horizontal, 7).padding(.vertical, 4)
-                .background(Capsule().fill(tint))
-                .padding(8)
-            }
+            TileTag(text: held ? "HELD" : kindLabel,
+                    tint: held ? tint : nil, lock: held)
+                .padding(9)
         }
-        .frame(height: 112)
+        .frame(height: 142)
         .frame(maxWidth: .infinity)
         .clipped()
+    }
+
+    private var kindLabel: String {
+        switch pick.kind {
+        case .kin: return "KIN"
+        case .scene: return "SCENE"
+        }
     }
 }
 

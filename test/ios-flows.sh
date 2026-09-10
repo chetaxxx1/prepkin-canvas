@@ -78,29 +78,41 @@ flow_shop() {
 }
 flow_shophold() {
   echo "shophold"; home; tap 326 81
-  # Pick slots are tap targets, not buttons, so they are addressed by position:
-  # the row sits between the −20% strips (y 157) and the "to go" pills (y 258).
-  # A hold persists in the save, so the flow is relative to whatever it finds:
-  # each long-press must flip the HELD strip, whichever way it starts.
-  if labels | grep -q "HELD"; then was=held; else was=free; fi
-  idb ui tap 56 205 --duration 0.8 --udid "$U"; sleep 1.6
-  if [ "$was" = free ]; then assert shophold held "HELD"; shot shop-held; else refute shophold released "HELD"; fi
-  idb ui tap 56 205 --duration 0.8 --udid "$U"; sleep 1.6
-  if [ "$was" = free ]; then refute shophold released "HELD"; else assert shophold held-again "HELD"; shot shop-held; fi
+  # Cards are tap targets, not buttons, so they are addressed by position. The
+  # featured card runs y 192-485 and 260 is inside its art, well clear of the
+  # header above and the grid below. It is the stable target for a toggle: a held
+  # pick always wins the hero slot, so both presses land on the same card.
+  # A hold persists in the save, so the flow is relative to whatever it finds.
+  if labels | grep -qi "held"; then was=held; else was=free; fi
+  idb ui tap 201 260 --duration 0.8 --udid "$U"; sleep 1.6
+  if [ "$was" = free ]; then assert shophold held "[Hh]eld"; shot shop-held; else refute shophold released "[Hh]eld"; fi
+  idb ui tap 201 260 --duration 0.8 --udid "$U"; sleep 1.6
+  if [ "$was" = free ]; then refute shophold released "[Hh]eld"; else assert shophold held-again "[Hh]eld"; shot shop-held; fi
   tapl "Close"
 }
 flow_shopshort() {
   echo "shopshort"; home; tap 326 81
-  # A slot the student cannot afford: its "to go" pill is on screen. Tap it; the
-  # toast must say so instead of failing silently (the 4 Sept finding).
-  labels | grep -q "to go" || { echo "  skip: every pick is affordable on this save"; tapl "Close"; return; }
-  # Tap the slot above the first "to go" pill (the slot itself is not a button).
-  x=$(tree | python3 -c "
+  # A card you cannot afford no longer prints the gap on itself — since 10 Sept the
+  # shortfall is on the featured card only — so the tap is what has to answer. A
+  # scene toasts; a kin opens its sheet on the affordance panel. Both must print
+  # "to go" rather than doing nothing at all (the 4 Sept finding).
+  #
+  # Every card's label ends "You can afford it." when it is within reach, so the
+  # ones without it are exactly the ones this flow wants.
+  xy=$(tree | python3 -c "
 import json,sys
 for n in json.load(sys.stdin):
-    if n.get('AXLabel') and 'to go' in n['AXLabel']: f=n['frame']; print(int(f['x']+f['width']/2)); break")
-  tap "$x" 205 0.6;             assert shopshort toast "to go. Nothing here expires."
-  sleep 1.5; tapl "Close"
+    l = n.get('AXLabel') or ''
+    if 'coins, down from' in l and 'You can afford it' not in l:
+        f = n['frame']; print(int(f['x']+f['width']/2), int(f['y']+f['height']/2)); break")
+  [ -n "$xy" ] || { echo "  skip: every pick is affordable on this save"; tapl "Close"; return; }
+  tap $xy 1.2;                  assert shopshort answer "to go"
+  sleep 1.5
+  # A kin opened a sheet over the shop and a scene only toasted, so tear down what
+  # is actually there. Swiping blind closed the shop itself on the scene path.
+  labels | grep -q "Open today's tasks" && { idb ui swipe 201 300 201 760 --udid "$U" >/dev/null 2>&1; sleep 0.8; }
+  labels | grep -q "Reroll picks" && tapl "Close"
+  return 0
 }
 flow_pod() {
   echo "pod"; tap 280 812
