@@ -194,7 +194,12 @@ test('R11 an image theme: the wallpaper under a paper wash, four banners across 
   assert.match(bodyBg, /linear-gradient\(rgba\(247, 246, 243, 0\.82\)/, 'the paper wash');
   assert.match(bodyBg, /chrome-extension:\/\/[a-z0-9-]+\/art\/(graffiti\/wallpaper\.webp|_placeholder\/wallpaper\.svg)/, 'the wallpaper, from inside the extension');
   assert.equal(await style(page, '#content', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'the columns let the wallpaper through');
-  assert.equal(await style(page, '#dashboard_header_container .ic-Dashboard-header__layout', 'backgroundColor'), 'rgba(247, 246, 243, 0.82)', 'the sticky bar wears the wash, never a solid slab');
+  // The sticky bar paints the page's whole ground, not a second wash on top of
+  // it. This line used to assert the wash as a flat colour, which is the bug
+  // R22 now guards: the body had already laid that wash over the wallpaper, so
+  // the bar came out a coat paler than the page. It paints both layers now.
+  assert.equal(await style(page, '#dashboard_header_container .ic-Dashboard-header__layout', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'no flat wash on the sticky bar');
+  assert.equal(await style(page, '#dashboard_header_container .ic-Dashboard-header__layout', 'backgroundImage'), bodyBg, 'it paints what the page paints');
   const heroes = await page.$$eval('.ic-DashboardCard__header_hero', (els) => els.map((e) => { const s = getComputedStyle(e); return [s.backgroundImage.match(/card-(\d)/)?.[1], s.backgroundColor, s.height, s.backgroundSize]; }));
   assert.deepEqual(heroes.map((x) => x[0]), ['1', '2'], 'banners rotate across cards');
   assert.equal(heroes[0][1], 'rgb(255, 111, 97)', 'the course colour is still there, as the strip');
@@ -667,4 +672,43 @@ test('R21 a picture the student chose goes on that one card, and comes off with 
   assert.equal(await page.$('.ic-DashboardCard.pk-own-art'), null, 'Put back takes the class off');
   assert.ok(!(await style(page, hero, 'backgroundImage')).includes('data:image/gif'), 'and the picture with it');
   await page.close();
+});
+
+// MARK: - R22: one ground, painted once
+
+test('R22 an image theme paints its wash exactly once, so no bar reads as a paler slab', async () => {
+  await h.setStorage({ skin: SKIN(), wallet: { coins: 900, owned: ['classic', 'deepsea'], wearing: 'deepsea' } });
+
+  // The bar behind the page title used to take `background-color: var(--pk-paper-wash)`
+  // on top of a body that had already laid that same wash over the wallpaper.
+  // Two coats of the same paper is a pale slab across the top of the page, which
+  // is what a student reported. It paints the whole ground now — wash and
+  // wallpaper, both fixed — so it lands on the pixels the body already drew.
+  let page = await open('/');
+  const bar = '#dashboard_header_container .ic-Dashboard-header__layout';
+  assert.equal(await style(page, bar, 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'no flat wash on the bar');
+  const paint = await style(page, bar, 'backgroundImage');
+  assert.match(paint, /linear-gradient\(rgba\(237, 243, 248, 0\.82\).*wallpaper/, paint);
+  assert.equal(await style(page, bar, 'backgroundAttachment'), 'fixed, fixed', 'so it lines up with the body');
+  assert.equal(await style(page, 'body', 'backgroundImage'), paint, 'the bar paints what the page paints');
+  await page.close();
+
+  // And nowhere else on any page does the wash get used as a flat colour: that
+  // is the signature of the bug, wherever it turns up next.
+  for (const path of ['/', '/courses', '/courses/1/modules', '/courses/1/assignments/11', '/courses/1/grades']) {
+    page = await open(path);
+    const doubled = await page.evaluate(() => {
+      const wash = getComputedStyle(document.documentElement).getPropertyValue('--pk-paper-wash').trim();
+      const out = new Set();
+      for (const el of document.querySelectorAll('*')) {
+        const c = getComputedStyle(el);
+        if (c.backgroundColor === wash && c.backgroundImage === 'none') {
+          out.add(`${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}.${[...el.classList].slice(0, 2).join('.')}`);
+        }
+      }
+      return [...out];
+    });
+    assert.deepEqual(doubled, [], `${path} paints the page wash twice`);
+    await page.close();
+  }
 });

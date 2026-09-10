@@ -716,7 +716,11 @@ html.pk-on:not(.pk-back-title) body:not(:has(#dashboard_header_container)) .ic-a
 #pk-search:focus-visible { outline: 2px solid var(--pk-mark); outline-offset: 2px; }
 #pk-search kbd { font: inherit; font-size: 11px; font-weight: 800; color: var(--pk-ink-2); border: 1px solid var(--pk-rule); border-radius: 6px; padding: 1px 6px; margin-left: 4px; }
 .ic-app-nav-toggle-and-crumbs #pk-search { margin-right: 16px; height: 32px; font-size: 13px; }
-html.pk-art #pk-search { background: var(--pk-paper-wash); }
+/* On an image theme the pill sits on the wallpaper rather than on paper, so it
+ * takes the opaque stock. A wash here is the same two-coats problem as the bar
+ * above, and a control that half-dissolves into a photograph is worse than one
+ * that reads as a control. */
+html.pk-art #pk-search { background: var(--pk-paper-2); }
 
 /* MARK: - Courses you have finished.
  *
