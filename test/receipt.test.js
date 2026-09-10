@@ -313,10 +313,56 @@ test('R17 this week: our rail card reports finished work, counts by course, and 
   await modules.close();
 });
 
-test('R18 a quiz being taken gets nothing from us, not even paper', async () => {
+/// Every selector in our own stylesheet, read off disk rather than out of the
+/// page: how Chrome exposes an injected content-script sheet is its business,
+/// and the claim here is about the file we ship.
+const SKIN_SELECTORS = (() => {
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '../extension/skin.css'), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+  const out = new Set();
+  // Innermost blocks only, so an @media prelude is left behind as its own
+  // match and dropped by the `@` filter below.
+  for (const m of css.matchAll(/([^{}]+)\{[^{}]*\}/g)) {
+    for (const one of m[1].split(',')) {
+      const sel = one.trim();
+      if (!sel || sel.startsWith('@') || sel.includes('::')) continue;
+      out.add(sel);
+    }
+  }
+  return [...out];
+})();
+
+/// Which of them actually match something on the page in front of us. A rule
+/// that matches nothing changes nothing, which is the claim a school's IT
+/// department actually cares about.
+const skinReaches = (page) => page.evaluate((sels) => sels.filter((sel) => {
+  try { return !!document.querySelector(sel); } catch { return false; }
+}), SKIN_SELECTORS);
+
+test('R18 a quiz being taken gets nothing from us: no node, no attribute, and not one rule that matches', async () => {
+  // First prove the measurement works, on a page the skin is meant to be on.
+  assert.ok(SKIN_SELECTORS.length > 100, `only ${SKIN_SELECTORS.length} selectors were read off disk`);
+  const dash = await open('/');
+  assert.ok((await skinReaches(dash)).length > 0, 'the skin does reach an ordinary page');
+  await dash.close();
+
   const page = await open('/courses/1/quizzes/1/take');
   assert.deepEqual(await classes(page), [], 'no classes at all');
   assert.equal(await page.$('#prepkin-buddy'), null, 'no buddy either');
+  const marks = await page.evaluate(() => ({
+    ids: [...document.querySelectorAll('[id]')].map((e) => e.id).filter((i) => i.startsWith('pk-')),
+    classed: [...document.querySelectorAll('[class]')].filter((e) => [...e.classList].some((c) => c.startsWith('pk-'))).length,
+    attrs: document.querySelectorAll('[data-pk-course], [data-pk-name], [data-sig]').length,
+    styles: document.querySelectorAll('style[id^="pk-"]').length,
+  }));
+  assert.deepEqual(marks.ids, [], 'no element of ours by id');
+  assert.equal(marks.classed, 0, 'no element carries a class of ours');
+  assert.equal(marks.attrs, 0, 'no attribute of ours on anybody');
+  assert.equal(marks.styles, 0, 'no stylesheet element of ours');
+
+  // The stylesheet is still injected — it is registered at document_start for
+  // the whole site — so the claim that matters is that none of it reaches.
+  assert.deepEqual(await skinReaches(page), [], 'not one rule of ours matches anything on a quiz being taken');
   await page.close();
 });
 
@@ -559,5 +605,66 @@ test('R9 the popup is the extension; one button opens the buddy on the page, and
   await popup.click('#open-buddy');
   await page.waitForSelector('#prepkin-buddy[data-open]', { timeout: 5000 });
   await popup.close().catch(() => {});
+  await page.close();
+});
+
+// MARK: - R20: courses you have finished
+
+test('R20 past and future enrolments fold away only when the student turns it on, and the heading goes with the table', async () => {
+  let page = await open('/courses');
+  assert.notEqual(await style(page, '#past_enrollments_table', 'display'), 'none', 'off by default: the table is where Canvas put it');
+  await page.close();
+
+  await h.setStorage({ skin: SKIN({ hidePast: true }) });
+  page = await open('/courses');
+  assert.ok((await classes(page)).includes('pk-hide-past'));
+  assert.equal(await style(page, '#past_enrollments_table', 'display'), 'none');
+  assert.equal(await style(page, '#future_enrollments_table', 'display'), 'none');
+  // No orphan title left pointing at nothing.
+  const heading = await page.evaluate(() => {
+    const h2 = [...document.querySelectorAll('h2')].find((e) => e.nextElementSibling?.id === 'past_enrollments_table');
+    return h2 ? getComputedStyle(h2).display : 'missing';
+  });
+  assert.equal(heading, 'none', 'the heading goes with its table');
+  // The courses the student is actually taking are untouched.
+  assert.notEqual(await style(page, '#my_courses_table', 'display'), 'none', 'current courses stay');
+  await page.close();
+
+  // And it is a courses-page rule only: no other page loses anything.
+  page = await open('/');
+  assert.ok(await page.$('.ic-DashboardCard'), 'the dashboard is unaffected');
+  await page.close();
+});
+
+// MARK: - R21: a picture the student put on a course card
+//
+// The picker itself lives inside the panel's closed shadow root, which
+// Playwright cannot reach into, so what is driven here is the painting half:
+// given a stored picture, the card wears it, the receipt says so, and Put back
+// takes it off. `scrimFor` is proved separately in extension/receipt.test.js.
+
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+
+test('R21 a picture the student chose goes on that one card, and comes off with Put back', async () => {
+  await h.setStorage({ cardArt: { 1: { src: PIXEL, scrim: 0.4, thumb: PIXEL } } });
+  let page = await open('/');
+  const hero = '.ic-DashboardCard[data-pk-course="1"] .ic-DashboardCard__header_hero';
+  assert.ok(await page.$(hero), 'the card says which course it is for');
+  assert.ok(await page.$('.ic-DashboardCard.pk-own-art'), 'and that it wears a picture of the student\'s');
+  const image = await style(page, hero, 'backgroundImage');
+  assert.ok(image.includes('data:image/gif'), image.slice(0, 80));
+  assert.ok(image.includes('rgba(0, 0, 0, 0.4)'), `the measured scrim is in the paint: ${image.slice(0, 120)}`);
+  assert.equal(await style(page, hero, 'backgroundSize'), 'cover, cover', 'the scrim and the picture are both laid over the whole band');
+  // Only that card. A course with no picture keeps Canvas's own band.
+  const others = await page.evaluate(() => [...document.querySelectorAll('.ic-DashboardCard')]
+    .filter((c) => c.dataset.pkCourse !== '1')
+    .map((c) => getComputedStyle(c.querySelector('.ic-DashboardCard__header_hero')).backgroundImage));
+  assert.ok(others.every((b) => !b.includes('data:image/gif')), 'no other card was repainted');
+  await page.close();
+
+  await h.setStorage({ putBack: { 'card-art': true } });
+  page = await open('/');
+  assert.equal(await page.$('.ic-DashboardCard.pk-own-art'), null, 'Put back takes the class off');
+  assert.ok(!(await style(page, hero, 'backgroundImage')).includes('data:image/gif'), 'and the picture with it');
   await page.close();
 });

@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
-const { PAPERS, RULES, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, shouldStepAside } = require('./receipt.js');
+const { PAPERS, RULES, contrast, scrimFor, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, shouldStepAside } = require('./receipt.js');
 const { SELECTORS } = require('./selectors.js');
 const { LOOKS } = require('./looks.js');
 
@@ -133,7 +133,7 @@ test('a row is on the receipt only when its hook is on the page', () => {
   const none = receiptRows({ present: () => false });
   assert.deepEqual(none.map((r) => r.key), ['paper', 'rail', 'search', 'dense', 'buddy'], 'paper, the rail, search, compact and the buddy are always there');
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'today'), 'the Today block is on the dashboard receipt');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, wordPaste: true }, dark: true, cardGrades: true, nicknames: 1 });
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, wordPaste: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
   assert.ok(!light.some((r) => r.key === 'word-paste' || r.key === 'seam'), 'dark-only rows stay off in light');
@@ -174,14 +174,65 @@ test('the paper row prints the measured stock', () => {
   assert.equal(paper.label, 'Page paper: Vellum · 9.6:1 · cream, softest');
 });
 
+// MARK: - A picture the student chose
+
+test('a picture takes exactly enough scrim for Canvas\'s own white controls, and is never refused', () => {
+  // The claim, checked against the real contrast function rather than the model
+  // scrimFor uses: after the scrim, white clears 4.5:1 over the picture.
+  const hex = (v) => `#${[v, v, v].map((c) => Math.round(c * 255).toString(16).padStart(2, '0')).join('')}`;
+  // The sRGB value whose relative luminance is `l`, so a mean luminance can be
+  // turned back into a colour and measured.
+  const srgb = (l) => (l <= 0.0031308 ? l * 12.92 : 1.055 * l ** (1 / 2.4) - 0.055);
+  for (const l of [0, 0.05, 0.1, 0.18, 0.2, 0.3, 0.5, 0.75, 0.9, 1]) {
+    const a = scrimFor(l);
+    assert.ok(a >= 0 && a <= 0.85, `${l} asked for ${a}`);
+    const after = srgb(l) * (1 - a);
+    assert.ok(contrast('#FFFFFF', hex(after)) >= 4.5, `white on a ${l} picture at scrim ${a}`);
+  }
+  // A picture dark enough already is left alone.
+  assert.equal(scrimFor(0), 0);
+  assert.equal(scrimFor(0.1), 0);
+  // Brighter never means less scrim, and no picture is ever turned away.
+  let last = 0;
+  for (let l = 0; l <= 1; l += 0.05) {
+    const a = scrimFor(l);
+    assert.ok(a >= last - 1e-9, `scrim went down at ${l}`);
+    assert.ok(a < 1, 'a picture is dimmed, never blacked out');
+    last = a;
+  }
+  // Junk is not a reason to refuse either: it reads as the darkest picture.
+  for (const junk of [undefined, null, NaN, 'x', -5, 99]) assert.ok(scrimFor(junk) >= 0 && scrimFor(junk) <= 0.85);
+});
+
+test('the picture row is on the receipt only where there are cards, and counts them', () => {
+  const onCards = receiptRows({ present: () => true, ownArt: 3 }).find((r) => r.key === 'card-art');
+  assert.equal(onCards.label, '3 course pictures you chose');
+  assert.equal(receiptRows({ present: () => true, ownArt: 1 }).find((r) => r.key === 'card-art').label, '1 course picture you chose');
+  assert.equal(receiptRows({ present: () => true, ownArt: 0 }).find((r) => r.key === 'card-art'), undefined, 'no pictures, no row');
+  assert.equal(receiptRows({ present: () => false, ownArt: 3 }).find((r) => r.key === 'card-art'), undefined, 'no cards on this page, no row');
+});
+
+test('courses you have finished are folded only when the student asks, and only where the table is', () => {
+  const off = receiptRows({ present: () => true }).find((r) => r.key === 'past-courses');
+  assert.equal(off.back, true, 'off by default');
+  assert.equal(off.undo, 'Turn on');
+  assert.equal(off.kind, 'taken');
+  assert.equal(receiptRows({ present: () => true, hidePast: true }).find((r) => r.key === 'past-courses').back, false);
+  assert.equal(receiptRows({ present: () => false, hidePast: true }).find((r) => r.key === 'past-courses'), undefined, 'no table, no row');
+  assert.ok(skinClasses({ on: true, look: LOOKS[0], hidePast: true }).includes('pk-hide-past'));
+  assert.ok(!skinClasses({ on: true, look: LOOKS[0] }).includes('pk-hide-past'));
+});
+
 test('every rule names a hook that exists, and no hook is a hashed class', () => {
   for (const rule of RULES) {
     if (rule.hook) assert.ok(SELECTORS[rule.hook], `${rule.key} → ${rule.hook}`);
   }
   for (const [k, v] of Object.entries(SELECTORS)) assert.doesNotMatch(v.sel, /css-/, k);
-  // The three `opt` rows are the student's own switches, not changes to the
-  // page, so they sit outside the cap.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 15, 'fifteen keys at most, so it cannot sprawl');
+  // The `opt` rows are the student's own switches, not changes to the page, so
+  // they sit outside the cap. Raised to 16 on 2026-09-10 for `card-art`: a
+  // picture a student puts on a course card is still a change to the page, so
+  // it is still on the receipt and still comes off in one click.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 16, 'sixteen keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names

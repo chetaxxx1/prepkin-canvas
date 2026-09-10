@@ -210,6 +210,12 @@ function pageFor(url) {
     main = `<div class="header-bar"><div class="ic-Action-header"><h1 class="ic-Action-header__Heading">All Courses</h1></div></div>
 <table id="my_courses_table" class="ic-Table ic-Table--bordered course-list-table"><thead><tr><th class="course-list-column-header">Course</th><th>Term</th></tr></thead>
 <tbody><tr class="course-list-table-row"><td><a href="/courses/1">AP Physics C</a></td><td>Fall 2026</td></tr></tbody></table>
+<h2>Past Enrollments</h2>
+<table id="past_enrollments_table" class="ic-Table ic-Table--bordered course-list-table"><thead><tr><th class="course-list-column-header">Course</th><th>Term</th></tr></thead>
+<tbody><tr class="course-list-table-row"><td><a href="/courses/9">Intro Chemistry</a></td><td>Spring 2025</td></tr></tbody></table>
+<h2>Future Enrollments</h2>
+<table id="future_enrollments_table" class="ic-Table ic-Table--bordered course-list-table"><thead><tr><th class="course-list-column-header">Course</th><th>Term</th></tr></thead>
+<tbody><tr class="course-list-table-row"><td><a href="/courses/8">Organic Chemistry</a></td><td>Spring 2027</td></tr></tbody></table>
 <p><span class="css-k2x9q1-text">Nickname</span> <a class="css-4h7pq3-view-link" href="/courses/1">Open</a></p>`;
   } else {
     main = `<h1>Canvas</h1><p>Fake Canvas for Prepkin tests.</p>`;

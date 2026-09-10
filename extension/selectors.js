@@ -22,6 +22,7 @@ const SELECTORS = {
   comingUpMore:    { sel: '.events_list.coming_up a.more_link', page: 'dashboard', conf: 'verified' },
   recentFeedback:  { sel: '.events_list.recent_feedback', page: 'dashboard', conf: 'verified', never: true },
   courseNav:       { sel: '#section-tabs', page: 'course', conf: 'verified' },
+  pastCourses:     { sel: '#past_enrollments_table, #future_enrollments_table', page: 'courses', conf: 'likely' },
   courseNavLowUse: { sel: '#section-tabs a.files, #section-tabs a.outcomes, #section-tabs a.conferences, #section-tabs a.collaborations', page: 'course', conf: 'verified' },
   moduleHeader:    { sel: '.context_module .ig-header.header', page: 'modules', conf: 'verified' },
   moduleDue:       { sel: '.context_module .due_date_display', page: 'modules', conf: 'verified' },

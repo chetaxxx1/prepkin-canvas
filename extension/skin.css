@@ -288,6 +288,21 @@ html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+1) .ic-Dashb
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+2) .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-2) !important; }
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+3) .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-3) !important; }
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard:nth-child(4n+4) .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-4) !important; }
+/* A picture the student put there themselves outranks every banner, under any
+ * theme, image or not. content.js writes only the two variables; the scrim is
+ * measured from the picture so Canvas's own white card controls stay readable
+ * on it (receipt.js `scrimFor`). A bright photo is dimmed, never refused. */
+html.pk-on:not(.pk-back-hero):not(.pk-back-card-art) .ic-DashboardCard.pk-own-art .ic-DashboardCard__header_hero {
+  background-image: linear-gradient(var(--pk-own-scrim), var(--pk-own-scrim)), var(--pk-own-art) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  height: 146px !important;
+}
+html.pk-on.pk-dense:not(.pk-back-hero):not(.pk-back-card-art) .ic-DashboardCard.pk-own-art .ic-DashboardCard__header_hero {
+  height: 110px !important;
+}
+
 /* A banner the student picked for a course outranks the rotation. */
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-1 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-1) !important; }
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-2 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-2) !important; }
@@ -636,3 +651,26 @@ html.pk-on:not(.pk-back-paper) #content > h1, html.pk-on:not(.pk-back-paper) .ic
 #pk-search kbd { font: inherit; font-size: 11px; font-weight: 800; color: var(--pk-ink-2); border: 1px solid var(--pk-rule); border-radius: 6px; padding: 1px 6px; margin-left: 4px; }
 .ic-app-nav-toggle-and-crumbs #pk-search { margin-right: 16px; height: 32px; font-size: 13px; }
 html.pk-art #pk-search { background: var(--pk-paper-wash); }
+
+/* MARK: - Courses you have finished.
+ *
+ * Off unless the student turns it on from the receipt: a table that vanished
+ * without being asked for is exactly the surprise the receipt exists to stop.
+ * The heading goes with its table (`:has` is Chrome 105+, and the manifest
+ * already floors at 116), so no orphan title is left pointing at nothing. If
+ * Canvas renames either id the rule matches nothing, the hook misses, and the
+ * row is simply not on the receipt. */
+html.pk-on.pk-hide-past #past_enrollments_table,
+html.pk-on.pk-hide-past #future_enrollments_table { display: none !important; }
+html.pk-on.pk-hide-past h2:has(+ #past_enrollments_table),
+html.pk-on.pk-hide-past h2:has(+ #future_enrollments_table) { display: none !important; }
+/* Show me brings the table back for the few seconds the outline is up, so the
+ * student sees what "folded away" actually means before deciding. */
+html.pk-on.pk-show.pk-hide-past h2:has(+ #past_enrollments_table),
+html.pk-on.pk-show.pk-hide-past h2:has(+ #future_enrollments_table),
+html.pk-on.pk-show.pk-hide-past #past_enrollments_table,
+html.pk-on.pk-show.pk-hide-past #future_enrollments_table {
+  display: revert !important;
+  outline: 1.5px dashed var(--pk-mark) !important;
+  outline-offset: 3px;
+}

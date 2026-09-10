@@ -115,6 +115,46 @@ Three ways to settle it:
 | #8 submit-button contrast | R3's "never write a property on a button" + a lint test |
 | #9 weighted GPA | small, panel |
 
+## F. Built 2026-09-10, from the BetterCampus evidence
+
+Four changes, from `STEAL-BRIEF.md`. Two of the parity gaps above are now closed
+and one is answered differently than section D expected.
+
+| Row | What | Where | Tests |
+|---|---|---|---|
+| — | **Trio-first copy.** The listing, the manifest, the popup subline, first-run and the README lead with dark mode + one to-do list + your grades, free, no account, no AI. Three separate top-voted Reddit comments say that trio is the whole product. | `design/store/chrome-listing.md`, `manifest.json`, `popup.html`, `popup.js`, `extension/README.md` | copy sweep |
+| **R20** | **Courses you have finished, folded away.** An `opt` receipt row (`hidePast`), off by default, CSS only. The heading goes with its table via `:has`, and Show me brings both back while the outline is up. | `selectors.js` `pastCourses`, `receipt.js`, `skin.css`, `boot.js` | unit + e2e R20 |
+| **R21** | **A picture the student chose, on a course card.** A local file, shrunk in the page to at most 720px wide, kept in this browser, never uploaded and never pushed to the phone. `scrimFor()` measures how bright it is and dims it exactly enough that Canvas's own white card controls clear 4.5:1 — **it never refuses a picture.** Variables from JS, rules in `skin.css`, one receipt row, one Put back. | `receipt.js` `scrimFor`, `content.js` `readPicture`/`applyCardArt`/`picturesSection`, `panel.css`, `skin.css` | unit (scrim, row) + e2e R21 |
+| — | **What's due, in Chrome's side panel.** The list with no Canvas tab open — the most-upvoted thing on BetterCampus's own board that they never built. Reads what the worker already collected, makes no request of its own, never writes. | `sidepanel.html`, `sidepanel.js`, `manifest.json`, `popup.js` | — |
+
+### R18 grew teeth
+
+The exam risk is the strongest finding in the Reddit corpus: BetterCampus's
+worst-voted post is an extension that lagged a final-exam timer and blocked a
+submission, and three schools now block it. R18 no longer just checks for
+classes. It reads **every selector in `skin.css` off disk** and asserts that on a
+quiz being taken, not one of them matches anything, no element carries an id,
+class or attribute of ours, and no `<style>` of ours exists.
+
+It found a real one on its first run: `applySkin` was creating an empty
+`#pk-theme-vars` element on pages the skin is switched off for, including a quiz
+being taken. Fixed — the element is removed instead.
+
+### Where this differs from section D
+
+- **D says "card images: rejected by design (hotlinks)".** Still true of a
+  *marketplace* of hotlinked images. R21 is the local-file version: nothing is
+  fetched, so the privacy and reliability objection does not apply.
+- **"hide completed" (#2)** is unchanged; R20 hides finished *courses*, not
+  finished items.
+
+### Not built, and why
+
+- **Firefox and Edge.** Nine distinct people on Reddit ask, and BetterCampus has
+  promised it for nine months. Real, and bigger than a session.
+- **A term recap ("Canvas Wraps").** The only feature in the whole corpus that
+  produced plain delight. Worth doing, end-of-term only.
+
 ## E. Testing plan for whatever is chosen
 
 Every feature gets: unit rows where it has logic, an e2e row on the fake page,

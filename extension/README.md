@@ -1,7 +1,13 @@
 # Prepkin for Canvas — Chrome extension
 
-Reads your Canvas to-do list with the session already in your browser, and pushes
-it to the bridge so the iPhone app can pick it up. No password is asked for,
+**Dark mode, one to-do list, and your grades.** That is what students install this
+kind of extension for, so that is what it leads with. Everything else — the buddy,
+the focus timer, the phone — is optional and stays out of the way if you ignore it.
+
+Free, no account, and no AI anywhere in it.
+
+It reads your Canvas with the session already in your browser and pushes your work
+list to the bridge so the iPhone app can pick it up. No password is asked for,
 stored, or sent anywhere.
 
 ## Works with any school
@@ -138,8 +144,15 @@ Click Sprout, bottom-right of any connected Canvas page.
 - **Today, at the top of the dashboard.** The buddy's line, what is due today,
   what still counts, what is due this week, and the next thing with Start and a
   focus timer. On the receipt, one click off.
-- **Themes.** Twelve, each a paper, an accent, a card-header wash and a faint
+- **Themes.** Twenty-six, each a paper, an accent, a card-header wash and a faint
   texture, all drawn on the laptop. Every ink measured.
+- **Course pictures.** Under Themes, a picture of your own on any course card,
+  under any theme. You pick a file; it is shrunk here to at most 720px wide and
+  kept in this browser. It is never uploaded, never fetched, and never pushed to
+  the phone. Canvas paints its own white controls on that band, so the picture
+  takes a scrim measured from how bright it is — just enough that white clears
+  4.5:1 (`scrimFor` in `receipt.js`). **A bright picture is dimmed, never
+  refused.** It is one receipt row with one Put back.
 - **Next due, on the card.** Every dashboard card of a course you are a student
   in carries one line: what is due next and when, or "still counts" in amber if
   it slipped. Updates on every sync; goes away with the cards toggle.
@@ -148,6 +161,19 @@ Click Sprout, bottom-right of any connected Canvas page.
   type, layout and Canvas's own course colours never change.
 
 Dark mode is a warm charcoal, not a grey filter. Sprout never recolours.
+
+## What's due, in the side panel
+
+The popup's **Keep what's due beside you** opens `sidepanel.html` in Chrome's own
+side panel: Today, Still counts, This week and Missing, with no Canvas tab open
+at all. It reads what the worker last collected and nothing else — it makes no
+request of its own and never writes.
+
+## Courses you have finished
+
+Off unless you turn it on, from the receipt on the Courses page. It folds the
+Past and Future Enrolments tables away, heading and all. It is CSS with no
+JavaScript behind it, and Show me brings both back while the outline is up.
 
 ## Tests
 
@@ -174,6 +200,7 @@ scenario it covers and how to set it up on a new Mac.
 | `looks.js` | The look catalog and the buddy's accessories |
 | `skin.css` | The Canvas reskin and the panel, all through CSS custom properties |
 | `popup.html/js` | Due next, the receipt, pairing, connected schools, toggles, first-run |
+| `sidepanel.html/js` | What's due, in Chrome's side panel. Reads storage, writes nothing |
 
 ## Two-way bridge
 

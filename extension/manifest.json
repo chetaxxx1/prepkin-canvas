@@ -2,13 +2,14 @@
   "manifest_version": 3,
   "name": "Prepkin for Canvas",
   "version": "0.6.0",
-  "description": "Brings your Canvas work to the Prepkin app on your phone, with a study buddy and focus timer on Canvas itself.",
+  "description": "Dark mode, one to-do list and your grades, on Canvas. Free, no account. Everything it changes has a Put back.",
   "homepage_url": "https://prepkin.com",
   "permissions": [
     "storage",
     "alarms",
     "activeTab",
-    "scripting"
+    "scripting",
+    "sidePanel"
   ],
   "host_permissions": [
     "https://*.supabase.co/*"
@@ -18,6 +19,9 @@
   ],
   "background": {
     "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
   },
   "action": {
     "default_title": "Prepkin for Canvas",

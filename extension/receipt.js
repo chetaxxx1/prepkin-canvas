@@ -67,6 +67,33 @@ function contrast(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
+/// How much black a student's own picture takes behind a course card.
+///
+/// Canvas paints its own white controls — the three-dot menu — on that band, so
+/// a pale photo would swallow them. This walks the scrim up a hundredth at a
+/// time and stops at the first one where white clears 4.5:1 over the picture,
+/// measured with the same `contrast` every paper is held to, and on the byte
+/// the screen actually gets. A bright picture is dimmed; it is never refused,
+/// and the loop always answers well below its own cap.
+///
+/// `luminance` is the mean over the whole picture, so this is a fair answer for
+/// the picture and not a promise about every pixel: a mostly dark photo with one
+/// white corner can still be bright under the button. That is the student's
+/// picture to choose, and the alternative — refusing it — is the thing this
+/// deliberately does not do.
+const OWN_ART_FLOOR = 4.5;
+function scrimFor(luminance) {
+  const l = Math.min(1, Math.max(0, Number(luminance) || 0));
+  // The one grey of that brightness: what a flat scrim actually has to cope with.
+  const value = l <= 0.0031308 ? l * 12.92 : 1.055 * l ** (1 / 2.4) - 0.055;
+  for (let step = 0; step <= 85; step += 1) {
+    const c = Math.round(value * (1 - step / 100) * 255) / 255;
+    const lin = c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    if (1.05 / (lin + 0.05) >= OWN_ART_FLOOR) return step / 100;
+  }
+  return 0.85;
+}
+
 /// "Manila · 11.9:1 · warm" — exactly this shape, on every card.
 function paperLine(stockId) {
   const p = PAPERS[stockId];
@@ -103,6 +130,8 @@ const RULES = [
   { key: 'word-paste', kind: 'fixed', label: 'Text pasted from Word, made readable', detect: 'wordPaste', darkOnly: true },
   { key: 'seam', kind: 'fixed', label: 'Pages from other companies, dimmed to match', hook: 'ltiFrame', darkOnly: true },
   { key: 'card-due', kind: 'added', label: 'Next due date on each course card', hook: 'card' },
+  { key: 'card-art', kind: 'added', hook: 'card', when: (ctx) => ctx.ownArt > 0,
+    label: (ctx) => `${ctx.ownArt} course picture${ctx.ownArt === 1 ? '' : 's'} you chose` },
   // `opt` rows are the student's own switches, listed here instead of in a
   // settings card: the row is struck through while the switch is off and its
   // button turns it on. Same receipt, one fewer panel of toggles.
@@ -113,6 +142,10 @@ const RULES = [
   { key: 'nickname', kind: 'fixed', when: (ctx) => ctx.nicknames > 0,
     label: (ctx) => `${ctx.nicknames} course name${ctx.nicknames === 1 ? '' : 's'} you chose` },
   { key: 'dense', kind: 'added', label: 'Compact pages, tighter rows', when: () => true, opt: 'dense', undo: 'Turn on' },
+  // Off by default: a table that vanished without being asked for is the kind
+  // of surprise the whole receipt exists to avoid. Turning it on is one click,
+  // and this row is what says the table is gone and how to get it back.
+  { key: 'past-courses', kind: 'taken', label: 'Courses you have finished, folded away', hook: 'pastCourses', opt: 'hidePast', undo: 'Turn on' },
   { key: 'buddy', kind: 'added', label: 'The buddy, bottom right', when: () => true, opt: 'mascot', putBack: 'Take off', undo: 'Bring back' },
 ];
 
@@ -126,11 +159,12 @@ const WORD_INKS = ['#000000', '#000', 'black', 'rgb(0,0,0)', 'rgb(0, 0, 0)', 'wi
 
 /// The <html> classes for one page state. boot.js runs this before first
 /// paint; content.js runs it again with what the DOM turned out to hold.
-function skinClasses({ on, dark, look, dense = false, putBack = {}, detect = {} }) {
+function skinClasses({ on, dark, look, dense = false, hidePast = false, putBack = {}, detect = {} }) {
   if (!on) return [];
   const classes = ['pk-on', `pk-paper-${stockFor(look, !!dark)}`];
   if (dark) classes.push('pk-dark');
   if (dense) classes.push('pk-dense');
+  if (hidePast) classes.push('pk-hide-past');
   if (look?.id) classes.push(`pk-theme-${look.id}`);
   if (look?.header === 'wash') classes.push('pk-head-wash');
   if (look?.texture && look.texture !== 'none') classes.push('pk-textured');
@@ -145,12 +179,14 @@ function skinClasses({ on, dark, look, dense = false, putBack = {}, detect = {} 
 /// put back. `present(hookName)` says how many times the hook matches (a
 /// boolean reads as one); the content script supplies it from the DOM, tests
 /// supply it directly.
-function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = false, dense = false, nicknames = 0, search = true }) {
-  const ctx = { dark, mascot, stock, detect, cardGrades, dense, nicknames, search };
+function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = false, dense = false, hidePast = false, nicknames = 0, ownArt = 0, search = true }) {
+  const ctx = { dark, mascot, stock, detect, cardGrades, dense, hidePast, nicknames, ownArt, search };
   return RULES.flatMap((rule) => {
     if (rule.darkOnly && !dark) return [];
     const hits = rule.hook ? Number(present(rule.hook)) || 0 : 0;
-    const applies = rule.when ? rule.when(ctx, hits)
+    // A rule with both a hook and a `when` needs both: the picture row is only
+    // true on a page that actually has cards on it.
+    const applies = rule.when ? rule.when(ctx, hits) && (!rule.hook || hits > 0)
       : rule.detect ? !!detect[rule.detect]
       : hits > 0;
     if (!applies) return [];
@@ -289,5 +325,5 @@ function shouldStepAside({ mine, current, alive }) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, shouldStepAside };
+  module.exports = { PAPERS, RULES, WORD_INKS, contrast, scrimFor, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, shouldStepAside };
 }

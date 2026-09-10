@@ -366,6 +366,30 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 }
 .pk-thumbs button:hover { transform: translateY(-1px); }
 .pk-thumbs button[aria-pressed="true"] { border-color: var(--pk-ink); }
+/* Without the theme's four banners the row is just the student's own picture
+ * and the button that sets it, so it stops pretending to be a four-up grid. */
+.pk-thumbs.own-only { grid-template-columns: 28px 1fr; }
+.pk-thumbs.own-only:not(:has(.pk-own)) { grid-template-columns: 1fr; }
+/* The student's own picture: a thumbnail that removes itself, the × only on
+ * hover and on focus so the picture is the thing you see. */
+.pk-thumbs .pk-own { position: relative; }
+.pk-thumbs .pk-own i {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; background: rgba(0, 0, 0, .55); color: #fff; font-size: 15px; font-weight: 800;
+  font-style: normal; opacity: 0; transition: opacity .12s var(--pk-ease);
+}
+.pk-thumbs .pk-own:hover i, .pk-thumbs .pk-own:focus-visible i { opacity: 1; }
+.pk-pic {
+  display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 10px;
+  border: 1px dashed var(--pk-line); border-radius: 8px; cursor: pointer;
+  font-size: 12px; font-weight: 700; color: var(--pk-text-2); white-space: nowrap;
+}
+.pk-pic:hover { color: var(--pk-text); border-color: var(--pk-text-2); }
+.pk-pic:focus-within { outline: 2px solid var(--pk-mint); outline-offset: 2px; }
+.pk-pic.busy { cursor: default; opacity: .6; }
+/* The file input is the label; a bare one prints its own file name, which is
+ * neither ours to style nor anything the student needs to read here. */
+.pk-pic input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 /* Own tasks, nicknames and search. */
 .pk-listfoot { display: flex; gap: 8px; margin: 6px 0 14px; }

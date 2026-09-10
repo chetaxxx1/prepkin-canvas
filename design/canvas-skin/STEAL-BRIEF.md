@@ -185,9 +185,35 @@ already removes a duplicate Canvas logo. We must not add ours in its place.
    because a rule of ours disapproved of it.
 3. **Never be the reason an exam went wrong**, and be able to prove it in a test.
 
+---
+
+## Built 2026-09-10
+
+Four of the seven takes are in the extension. Details and test names in
+`EXTENSION-FEATURES.md` §F.
+
+| Take | Status |
+|---|---|
+| 1. Trio-first copy | **Done.** Store listing, manifest, popup subline, first-run, README |
+| 2. Your own picture on a course card | **Done.** Local file, shrunk in the page, never uploaded. `scrimFor()` dims a bright picture exactly enough for Canvas's white controls and never refuses one |
+| 3. Hide past courses | **Done.** Opt-in receipt row, CSS only, heading folds with its table |
+| 5. What's due in the Chrome side panel | **Done.** Reads what was already collected, makes no request, never writes |
+| 4. Term recap | Not built |
+| 6. Firefox and Edge | Not built |
+| 7. The Plus promise, written down | Not built — it is a copy decision, not code |
+
+Plus the refusal that mattered most: **R18, the quiz-page proof.** The test now
+reads every selector in `skin.css` off disk and asserts none of them matches
+anything on a quiz being taken, and that no element carries an id, class or
+attribute of ours. It caught a real one on its first run — an empty
+`#pk-theme-vars` element was being created on pages the skin is off for.
+
 ## Open for George
 
-- **Local images on cards** is the one real build (M). Worth doing before launch, or after?
-- **Side panel** and **Firefox** are both wedges into their weakest flank. Which first?
-- The trio-first copy rewrite touches the store listing, the popup's first-run and
-  `README.md`. Want me to draft it?
+- **Firefox** is the biggest unserved gap and their longest-broken promise.
+  Worth a session?
+- **A term recap** is the only feature in the corpus that made anyone happy.
+  Build it now, or at the end of the first real term?
+- The Plus promise — *"Plus may add. Plus may never take away something that was
+  free, and never something a student already made"* — belongs in the listing and
+  the popup. Want it written in?

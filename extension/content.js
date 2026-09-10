@@ -33,6 +33,7 @@ function teardown() {
     delete el.dataset.pkName;
   });
   document.querySelectorAll('[id^="pk-"], .pk-card-due, .pk-card-grade').forEach((el) => el.remove());
+  document.querySelectorAll('[data-pk-course]').forEach((el) => delete el.dataset.pkCourse);
   document.querySelectorAll('[class*="pk-"]').forEach((el) => {
     for (const name of [...el.classList]) if (name.startsWith('pk-')) el.classList.remove(name);
   });
@@ -239,16 +240,20 @@ function applySkin(s) {
   killed = detectKill();
   facts = detectFacts();
   const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
-  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, look, putBack, detect: facts }));
+  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
     if (c.startsWith('pk-') && c !== 'pk-show' && !next.has(c)) root.classList.remove(c);
   }
   for (const c of next) root.classList.add(c);
   // The theme's variables, as a stylesheet element boot.js may already have made.
+  // With no classes there is nothing for it to hold, and an empty <style> of
+  // ours on a page we said we would leave alone is still a node of ours on that
+  // page. It goes. (test/receipt.test.js R18 is what says so.)
   let style = document.getElementById('pk-theme-vars');
+  if (!next.size) { style?.remove(); return; }
   if (!style) { style = document.createElement('style'); style.id = 'pk-theme-vars'; root.append(style); }
   if (!alive()) return;
-  const css = next.size ? themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f))) : '';
+  const css = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)));
   if (style.textContent !== css) style.textContent = css;
 }
 
@@ -261,7 +266,7 @@ function receiptForPage() {
     on: !!skin.cards,
     rows: killed || !skin.cards ? [] : receiptRows({
       present: (k) => document.querySelectorAll(SELECTORS[k].sel).length,
-      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: !!skin.cardGrades, dense: !!skin.dense, nicknames: Object.keys(nicknames).length, search: skin.search !== false,
+      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: !!skin.cardGrades, dense: !!skin.dense, hidePast: !!skin.hidePast, nicknames: Object.keys(nicknames).length, ownArt: Object.keys(cardArt).length, search: skin.search !== false,
       stock: stockFor(look, !!skin.dark), putBack,
     }),
   };
@@ -990,26 +995,45 @@ function panelViewFallback() {
   return '';
 }
 
-/// For an image theme the student is wearing: which banner each course
-/// wears. A tap saves it; the dashboard follows without a reload.
-function bannerPicker(look) {
+/// Course pictures: the theme's own banners for the theme being worn, and a
+/// picture of the student's own for any course, under any theme.
+///
+/// One control, not two. A student who wants their dog on their Chemistry card
+/// should not have to work out that banners live inside a theme sheet and
+/// pictures live somewhere else.
+function picturesSection(look) {
   if (!alive()) return '';
   const art = artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f));
-  if (!art || wallet.wearing !== look.id) return '';
-  const courses = data.courses.filter((c) => c.name).slice(0, 8);
+  const showBanners = !!art && wallet.wearing === look.id;
+  const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id))).slice(0, 8);
   if (!courses.length) return '';
+  const row = (c) => {
+    const own = cardArt[c.id];
+    const busy = ui.picBusy === String(c.id);
+    return `
+      <div class="pk-bannerrow">
+        <b>${escapeHTML(c.name)}</b>
+        <div class="pk-thumbs${showBanners ? '' : ' own-only'}">
+          ${showBanners ? art.cards.map((u, i) => `
+            <button type="button" data-banner-course="${escapeHTML(c.id)}" data-banner="${i + 1}"
+              aria-label="Banner ${i + 1}" aria-pressed="${!own && banners[c.id] === i + 1}"
+              style="background-image:url(&quot;${u}&quot;)"></button>`).join('') : ''}
+          ${own ? `<button type="button" class="pk-own" data-pic-clear="${escapeHTML(c.id)}"
+              aria-label="Remove your picture from ${escapeHTML(c.name)}" aria-pressed="true"
+              style="background-image:url(&quot;${own.thumb ?? own.src}&quot;)"><i aria-hidden="true">×</i></button>` : ''}
+          <label class="pk-pic${busy ? ' busy' : ''}">
+            <input type="file" accept="image/*" data-pic-course="${escapeHTML(c.id)}" ${busy ? 'disabled' : ''} />
+            <span>${busy ? 'Reading…' : own ? 'Change' : 'Your picture'}</span>
+          </label>
+        </div>
+      </div>`;
+  };
   return `
     <div class="pk-banners">
-      <span class="pk-label">Banners</span>
-      ${courses.map((c) => `
-        <div class="pk-bannerrow">
-          <b>${escapeHTML(c.name)}</b>
-          <div class="pk-thumbs">${art.cards.map((u, i) => `
-            <button type="button" data-banner-course="${escapeHTML(c.id)}" data-banner="${i + 1}"
-              aria-label="Banner ${i + 1}" aria-pressed="${banners[c.id] === i + 1}" style="background-image:url(&quot;${u}&quot;)"></button>`).join('')}
-          </div>
-        </div>`).join('')}
-      <div class="pk-foot">No pick means the banners take turns.</div>
+      <span class="pk-label">Course pictures</span>
+      ${courses.map(row).join('')}
+      ${ui.picError ? '<div class="pk-foot">That file could not be read. Any photo your browser can open will work.</div>' : ''}
+      <div class="pk-foot">${showBanners ? 'No pick means the banners take turns. ' : ''}A picture you choose is shrunk here and kept in this browser. It is never uploaded, and it never goes to your phone.</div>
     </div>`;
 }
 
@@ -1034,7 +1058,6 @@ function looksView() {
               ? 'Link your phone in the Prepkin popup to spend coins.'
               : `${look.price - wallet.coins} more coins to go. Verified work earns ${COIN_REWARD} each.`}</div>`}
         <button class="pk-no" data-sheet="">Not now</button>
-        ${bannerPicker(look)}
       </div>`;
   }
 
@@ -1077,6 +1100,7 @@ function looksView() {
     <div class="pk-foot">A theme picks the paper Canvas is printed on, its accent, and what your
       buddy wears. Earned with coins from verified work, never bought. Dark is free. It always will be.</div>
     <div class="pk-shop">${tiles}</div>
+    ${picturesSection(LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic)}
     <div class="pk-foot center">${Object.keys(PAPERS).length} papers under ${LOOKS.length} themes, every ink measured. Nothing on it ever leaves.</div>`;
 }
 
@@ -1136,6 +1160,104 @@ const CARD_GRADE_CLASS = 'pk-card-grade';
 let banners = {};
 const BANNER_COUNT = 4;
 
+/// A picture the student chose for a course card, by course id:
+/// `{ src, scrim, w, h }`. It is read from a file they pick, shrunk here, and
+/// kept in this browser. It is never uploaded, never fetched, and never pushed
+/// to the phone — the whole point is that it is theirs and it stays put.
+let cardArt = {};
+/// Twice the widest card band, so it still looks sharp on a retina screen.
+const OWN_ART_W = 720;
+/// chrome.storage.local holds ten megabytes for everything. A course picture
+/// gets a fifth of a megabyte, which at this size is a generous photograph.
+const OWN_ART_MAX = 200_000;
+/// Tried in order until one fits. The last one is used even if it does not,
+/// because a picture that is slightly too big is not a reason to say no.
+const OWN_ART_STEPS = [[720, 0.72], [560, 0.6], [420, 0.5], [320, 0.4]];
+
+/// A 96px copy for the picker. The panel redraws on every keystroke somewhere
+/// else in it, and a full-size picture in the markup each time is a megabyte of
+/// string for a 28px-tall thumbnail.
+async function thumbnail(bmp) {
+  const w = Math.max(1, Math.min(96, bmp.width));
+  const h = Math.max(1, Math.round(bmp.height * (w / bmp.width)));
+  const canvas = new OffscreenCanvas(w, h);
+  canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
+  return blobToDataURL(await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.6 }));
+}
+
+function blobToDataURL(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(r.error ?? new Error('unreadable'));
+    r.readAsDataURL(blob);
+  });
+}
+
+/// Mean relative luminance of a decoded picture, sampled every sixteenth pixel.
+/// Sampling, not summing: a 720-wide photo is a quarter of a million pixels and
+/// the answer to two decimal places is the same either way.
+function meanLuminance(px) {
+  const lin = (c) => { const v = c / 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+  let sum = 0; let n = 0;
+  for (let i = 0; i < px.length; i += 64) {
+    sum += 0.2126 * lin(px[i]) + 0.7152 * lin(px[i + 1]) + 0.0722 * lin(px[i + 2]);
+    n += 1;
+  }
+  return n ? sum / n : 0;
+}
+
+/// A file the student picked, turned into something a card can wear. Anything
+/// the browser can decode is accepted; brightness only decides how much scrim
+/// goes over it, never whether it is allowed.
+async function readPicture(file) {
+  const bmp = await createImageBitmap(file);
+  let out = null;
+  try {
+    for (const [width, quality] of OWN_ART_STEPS) {
+      const w = Math.max(1, Math.min(width, bmp.width));
+      const h = Math.max(1, Math.round(bmp.height * (w / bmp.width)));
+      const canvas = new OffscreenCanvas(w, h);
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(bmp, 0, 0, w, h);
+      const scrim = scrimFor(meanLuminance(ctx.getImageData(0, 0, w, h).data));
+      const src = await blobToDataURL(await canvas.convertToBlob({ type: 'image/jpeg', quality }));
+      out = { src, scrim, w, h, thumb: await thumbnail(bmp) };
+      if (src.length <= OWN_ART_MAX) break;
+    }
+  } finally { bmp.close(); }
+  return out;
+}
+
+/// The pictures, as one stylesheet of custom properties.
+///
+/// Variables here, rules in skin.css — the same split themeStyle uses, so
+/// nothing in this file has to write a page-visible declaration and Put back is
+/// still one class away. A <style> element, never an inline property, so
+/// teardown leaves Canvas exactly as it found it.
+///
+/// If a school runs a Content-Security-Policy that bars `data:` images the rule
+/// simply does not paint and the card keeps its own colour band, the same way
+/// every other rule here fails.
+function applyCardArt() {
+  const ids = Object.keys(cardArt).filter((id) => /^\d+$/.test(id) && typeof cardArt[id]?.src === 'string');
+  const on = skin?.cards && !killed && ids.length > 0;
+  let style = document.getElementById('pk-card-art');
+  if (!on) { style?.remove(); return; }
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'pk-card-art';
+    document.documentElement.append(style);
+  }
+  const css = ids.map((id) => {
+    const a = Math.min(0.85, Math.max(0, Number(cardArt[id].scrim) || 0));
+    return 'html.pk-on .ic-DashboardCard[data-pk-course="' + id + '"]{'
+      + '--pk-own-art:url("' + cardArt[id].src + '");'
+      + '--pk-own-scrim:rgba(0,0,0,' + a + ')}';
+  }).join('\n');
+  if (style.textContent !== css) style.textContent = css;
+}
+
 /// The rows a card shows under "Due": up to three, pending first (overdue,
 /// then soonest, then undated), then the latest handed-in work, struck.
 /// Work the school marked missing more than a week ago. It belongs in the
@@ -1180,6 +1302,15 @@ function nextUpFor(courseId, now = new Date()) {
 function decorateCards() {
   const cards = [...document.querySelectorAll('.ic-DashboardCard')];
   const courseOf = (card) => card.querySelector('a[href*="/courses/"]')?.getAttribute('href')?.match(/\/courses\/(\d+)/)?.[1];
+  // Which course a card is for, so a stylesheet can name one card. Canvas has
+  // no attribute that says it; the id is only in an href.
+  for (const card of cards) {
+    const id = courseOf(card);
+    if (id) card.dataset.pkCourse = id; else delete card.dataset.pkCourse;
+    const own = skin.cards && !killed && !putBack['card-art'] && !putBack.hero && !!cardArt[id]?.src;
+    card.classList.toggle('pk-own-art', own);
+  }
+  applyCardArt();
   // The banner a course was given, as a class on its card; none means rotate.
   for (const card of cards) {
     const pick = skin.cards && !killed ? banners[courseOf(card)] : null;
@@ -1341,7 +1472,14 @@ const SEARCH_ID = 'pk-search';
 
 function renderSearchChip() {
   const existing = document.getElementById(SEARCH_ID);
-  const bar = document.querySelector('#dashboard_header_container .ic-Dashboard-header__layout') ?? document.querySelector('.ic-app-nav-toggle-and-crumbs');
+  // On the dashboard the pill belongs on the title's line. Canvas has renamed
+  // the inner layout div before; without the two fallbacks the pill fell
+  // through to the breadcrumb strip and hung under the bar with nothing in it.
+  const bar = document.querySelector('#dashboard_header_container .ic-Dashboard-header__layout')
+    ?? document.querySelector('#dashboard_header_container .ic-Dashboard-header')
+    ?? document.querySelector('#dashboard_header_container')
+    ?? document.querySelector('.ic-Action-header')
+    ?? document.querySelector('.ic-app-nav-toggle-and-crumbs');
   if (!bar || !skin.cards || killed || skin.search === false || !skin.mascot || !shadow) { existing?.remove(); return; }
   if (existing && existing.parentElement === bar) return;
   existing?.remove();
@@ -1703,6 +1841,34 @@ function wire(root) {
   root.querySelectorAll('[data-view]').forEach((el) => el.addEventListener('click', () => {
     ui.view = el.dataset.view; ui.sheet = null; render();
   }));
+  root.querySelectorAll('[data-pic-course]').forEach((el) => el.addEventListener('change', async () => {
+    const id = el.dataset.picCourse;
+    const file = el.files?.[0];
+    if (!file) return;
+    ui.picBusy = String(id); ui.picError = false; render();
+    try {
+      const pic = await readPicture(file);
+      // A picture wins over a banner for that course: the student just chose it.
+      if (pic) {
+        cardArt = { ...cardArt, [id]: pic };
+        banners = { ...banners, [id]: undefined };
+        await chrome.storage.local.set({ cardArt, banners });
+      }
+    } catch (e) {
+      logError('picture', e);
+      ui.picError = true;
+    } finally {
+      ui.picBusy = null;
+      decorateCards();
+      render();
+    }
+  }));
+  root.querySelectorAll('[data-pic-clear]').forEach((el) => el.addEventListener('click', async () => {
+    const { [el.dataset.picClear]: gone, ...rest } = cardArt;
+    cardArt = rest;
+    await chrome.storage.local.set({ cardArt });
+    decorateCards(); render();
+  }));
   root.querySelectorAll('[data-banner]').forEach((el) => el.addEventListener('click', async () => {
     const id = el.dataset.bannerCourse, n = Number(el.dataset.banner);
     banners = { ...banners, [id]: banners[id] === n ? undefined : n };
@@ -1890,7 +2056,7 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags']);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags']);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
@@ -1899,6 +2065,7 @@ async function mount() {
   plans = stored.plans ?? {};
   targets = stored.targets ?? {};
   banners = stored.banners ?? {};
+  cardArt = stored.cardArt ?? {};
   putBack = stored.putBack ?? {};
   flags = stored.flags ?? null;
   wallet = { ...wallet, ...(stored.wallet ?? {}) };
@@ -1943,7 +2110,7 @@ if (typeof module !== 'undefined') {
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {
-    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.nicknames || changes.ownTasks || changes.flags) mount();
+    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.nicknames || changes.ownTasks || changes.flags) mount();
     // Not plans, levels or targets: the tab that set one has already redrawn,
     // and a remount here would throw the student back to the top of the panel
     // they just tapped in.

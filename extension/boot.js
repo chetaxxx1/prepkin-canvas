@@ -15,7 +15,7 @@
     const skin = { dark: false, cards: true, mascot: true, ...(s.skin ?? {}) };
     if (skin.mode === 'auto') skin.dark = matchMedia('(prefers-color-scheme: dark)').matches;
     const classes = skinClasses({
-      on: !!skin.cards, dark: !!skin.dark, dense: !!skin.dense,
+      on: !!skin.cards, dark: !!skin.dark, dense: !!skin.dense, hidePast: !!skin.hidePast,
       look: LOOKS_BY_ID[s.wallet?.wearing] ?? LOOKS_BY_ID.classic,
       putBack: s.putBack ?? {},
     });

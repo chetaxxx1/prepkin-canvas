@@ -444,6 +444,33 @@ chrome.storage.local.get('wallet').then(({ wallet: storedWallet }) => {
   chip.hidden = false;
 });
 
+// MARK: - The side panel
+//
+// Chrome only opens it from inside a user gesture, so this handler does no
+// awaiting before the call. It is hidden entirely on a Chrome too old to have
+// the API rather than shown as a button that does nothing.
+
+if (chrome.sidePanel?.open) {
+  const btn = document.getElementById('open-side');
+  const hint = document.getElementById('side-hint');
+  // The window is looked up now, while nothing is waiting, so the click handler
+  // itself can call open() with nothing awaited in front of it.
+  let windowId = null;
+  chrome.windows.getCurrent().then((w) => {
+    windowId = w?.id ?? null;
+    if (windowId == null) return;
+    btn.hidden = false;
+    hint.hidden = false;
+  }).catch(() => {});
+  btn.addEventListener('click', () => {
+    if (windowId == null) return;
+    chrome.sidePanel.open({ windowId }).then(
+      () => window.close(),
+      (e) => { document.getElementById('status').textContent = 'Chrome would not open the side panel.'; console.warn('Prepkin', e); },
+    );
+  });
+}
+
 // MARK: - First run
 //
 // Three steps, every one skippable, and re-reachable later from the popup.
@@ -468,10 +495,10 @@ function onboardingStep(step) {
   if (step === 0) {
     onbEl.innerHTML = `<div class="onb">
       ${kinAt(72)}
-      <h2>Hi, I'm your buddy</h2>
-      <p>I keep your Canvas due dates, grades and progress in one calm place.</p>
+      <h2>Dark mode, one list, your grades</h2>
+      <p>That is what Prepkin is for. Everything else is optional.</p>
       <button class="mint wide" id="onb-next" style="margin:0">Let's set up</button>
-      <small style="font-size:11px;font-weight:600;color:#a8977f">Free · no account needed</small>
+      <small style="font-size:11px;font-weight:600;color:#a8977f">Free · no account · no AI</small>
       ${dots(0)}
     </div>`;
     document.getElementById('onb-next').addEventListener('click', () => onboardingStep(1));

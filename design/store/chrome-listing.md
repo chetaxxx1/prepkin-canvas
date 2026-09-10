@@ -6,21 +6,29 @@ Prepkin for Canvas
 
 ## Summary
 
-Quiet your Canvas, see today on the page, and get your work on your phone. Coins for finished work.
+Dark mode, one to-do list and your grades, on Canvas. Free, no account, no AI. Everything it changes has a Put back.
 
-Character count: 99 (limit 132)
+Character count: 115 (limit 132)
 
 ## Description
 
-Open Canvas and the page is quieter. A study buddy sits on the corner with Today, This week, and what still counts. Every change the quiet look makes is listed in the popup, and each one has a Put back.
+Dark mode, one to-do list, and your grades. That is what this is for.
 
-Reads only the Canvas you connect. Sends your coursework list and course grades to your own phone, and makes no other request.
+**Dark mode** that is a real reading surface, not a grey filter — 26 papers, every ink measured, and it follows your Mac or PC if you want it to. Free, and it always will be.
 
-The buddy helps you start the next thing. Finish real work that Canvas can check, and coins land in the Prepkin phone app for a small fish that grows and never shrinks. Looks you earn stay yours.
+**One to-do list.** Today, This week, Overdue, and Missing, in one place, so you are not opening five course pages to find out what is due. Every course card says what is due next.
 
-Everything the skin does is one click from coming back.
+**Your grades**, with the class average beside each score, a grade you are aiming for, and "what do I need on the final?".
 
-Word count: about 120 (limit 400)
+Free. No account. Nothing to unlock, and no AI anywhere.
+
+It reads only the Canvas you connect, one school at a time, and it asks Chrome for that school in front of you. It never touches the sign-in page, a quiz you are taking, or a page where you are handing work in.
+
+Every single change it makes to a Canvas page is listed in the popup — taken off, fixed, added — and each one has a Put back that is remembered forever. Nothing you set up ever disappears in an update.
+
+There is also a buddy in the corner with a focus timer, and a free Prepkin app for iPhone that shares the same list. Both are optional, and both stay out of the way if you leave them alone.
+
+Word count: about 250 (limit 400)
 
 ## Category
 
@@ -43,6 +51,11 @@ Remembers the schools you connected, your pairing with the phone app, and where 
 ### alarms
 
 Wakes every 30 minutes while Chrome is open to refresh your coursework list, and runs the focus timer across page changes.
+
+### sidePanel
+
+Shows what is due in Chrome's side panel, so the list is there without a Canvas
+tab open. That page reads only what the extension already collected.
 
 ### activeTab
 
