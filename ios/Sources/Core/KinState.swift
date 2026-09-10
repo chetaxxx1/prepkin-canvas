@@ -21,8 +21,15 @@ struct ShopPick: Identifiable, Equatable {
     let id: String          // "kin:ember" / "scene:meadow"
     let kind: Kind
 
-    /// Every pick is the same 20% off. There is no rare discount to chase.
-    static let discount = 0.20
+    /// Every pick in a row is off by the same amount. There is no rare discount to
+    /// chase, and there never is one: the number is 20 for everyone and 30 for
+    /// Plus (`PlusGate.shopDiscount`), set once when the row is resolved.
+    ///
+    /// It is a field rather than a constant because it is the one number on a pick
+    /// that money moves. Every item is still in the Collection at `fullPrice`
+    /// forever, which is the sentence that keeps this off the wrong side of "coins
+    /// are never sold".
+    var discountPercent: Int = PlusGate.shopDiscount.free
 
     var fullPrice: Int {
         switch kind {
@@ -30,7 +37,9 @@ struct ShopPick: Identifiable, Equatable {
         case .scene(let s): return s.price
         }
     }
-    var price: Int { Int((Double(fullPrice) * (1 - Self.discount)).rounded()) }
+    var price: Int {
+        Int((Double(fullPrice) * (1 - Double(discountPercent) / 100)).rounded())
+    }
 
     var name: String {
         switch kind {
@@ -62,7 +71,17 @@ extension GameState {
 
     // MARK: Picks
 
-    static let pickSlots = 5
+    /// Slots in today's row, rerolls a day, holds, and the percent off — all four
+    /// read from the one gate table so a reviewer can see what money changes by
+    /// reading `PlusGate`, not by reading the shop.
+    ///
+    /// `plusIsOn` is a plain stored flag rather than a lookup because these are read
+    /// inside SwiftUI bodies dozens of times a frame. `AppState` keeps it current;
+    /// it is deliberately not in `CodingKeys`, because an entitlement that survives
+    /// in a save file is an entitlement that outlives the subscription.
+    var pickSlots: Int { PlusGate.value(.shopSlots, isPlus: plusIsOn, installedAt: installedAt) }
+    var holdLimit: Int { PlusGate.value(.shopHolds, isPlus: plusIsOn, installedAt: installedAt) }
+    var discountPercent: Int { PlusGate.value(.shopDiscount, isPlus: plusIsOn, installedAt: installedAt) }
 
     /// Everything the student does not own yet, kin first, then scenes. This is the
     /// pool the row draws from, and it is also exactly the Collection minus what they
@@ -82,10 +101,10 @@ extension GameState {
         switch parts[0] {
         case "kin":
             guard let s = ChibiSpecies.catalog.first(where: { $0.id == parts[1] }) else { return nil }
-            return ShopPick(id: id, kind: .kin(s))
+            return ShopPick(id: id, kind: .kin(s), discountPercent: discountPercent)
         case "scene":
             guard let s = Scene0.all.first(where: { $0.id == parts[1] }) else { return nil }
-            return ShopPick(id: id, kind: .scene(s))
+            return ShopPick(id: id, kind: .scene(s), discountPercent: discountPercent)
         default: return nil
         }
     }
@@ -103,21 +122,27 @@ extension GameState {
         } else if shopPicks.isEmpty || shopPicks.contains(where: { !isStillAvailable($0) }) {
             // Something in the row was bought. Backfill rather than leave a hole.
             drawPicks()
+        } else if shopPicks.count != min(pickSlots, pickPool.count + shopPicks.count) {
+            // Plus turned on or off mid-day and the row is the wrong length now.
+            // Redrawing keeps the two extra slots from waiting until tomorrow, and
+            // held slots survive it because `drawPicks` keeps them first.
+            drawPicks()
         }
     }
 
     /// Free, but three a day. Unlimited rerolls made "today's picks" mean nothing —
     /// the row was whatever you shuffled to. Three keeps the discount honest and
     /// still costs no coins.
-    static let rerollsPerDay = 3
-    var rerollsLeft: Int { max(0, Self.rerollsPerDay - rerollCount) }
+    static let rerollsPerDay = PlusGate.shopRerolls.free
+    var rerollsPerDay: Int { PlusGate.value(.shopRerolls, isPlus: plusIsOn, installedAt: installedAt) }
+    var rerollsLeft: Int { max(0, rerollsPerDay - rerollCount) }
 
     /// Whether a reroll could actually change the row.
     ///
     /// Late on, when there is less left to own than the row has slots, every draw
     /// is the same draw. Spending one of three free rerolls to watch nothing move
     /// is worse than not offering it, so the Shop asks this first.
-    var rerollCanChange: Bool { pickPool.count > Self.pickSlots }
+    var rerollCanChange: Bool { pickPool.count > pickSlots }
 
     @discardableResult
     mutating func rerollPicks() -> Bool {
@@ -131,7 +156,17 @@ extension GameState {
     /// tomorrow's row. The only shop control kept from TFT, because it is the only
     /// one that can only help.
     mutating func toggleLock(_ id: String) {
-        lockedPick = (lockedPick == id) ? nil : id
+        if lockedPicks.contains(id) {
+            lockedPicks.remove(id)
+        } else if lockedPicks.count < holdLimit {
+            lockedPicks.insert(id)
+        }
+    }
+
+    /// Whether one more slot can be held. The Shop asks before it offers, so a
+    /// long-press that cannot do anything is never offered in the first place.
+    func canHoldMore(_ id: String) -> Bool {
+        lockedPicks.contains(id) || lockedPicks.count < holdLimit
     }
 
     private func isStillAvailable(_ id: String) -> Bool { pickPool.contains(id) }
@@ -141,17 +176,21 @@ extension GameState {
     /// honesty panel says out loud.
     private mutating func drawPicks() {
         var pool = pickPool
+        // Held slots come back first, in the row's own order so they do not shuffle
+        // around underneath a student who is holding them on purpose.
+        let held = shopPicks.filter { lockedPicks.contains($0) }
+        let extra = lockedPicks.subtracting(held).sorted()
         var kept: [String] = []
-        if let locked = lockedPick, pool.contains(locked) {
-            kept.append(locked)
-            pool.removeAll { $0 == locked }
-        } else if lockedPick != nil, !pool.contains(lockedPick!) {
-            lockedPick = nil   // it was bought; stop holding a slot for it
+        for id in held + extra where pool.contains(id) {
+            kept.append(id)
+            pool.removeAll { $0 == id }
         }
+        // Anything held that was bought stops holding a slot.
+        lockedPicks = lockedPicks.intersection(pool).union(kept)
 
         var rng = SplitMix64(seed: Self.seed(day: shopPickDay, nonce: rerollCount))
         var drawn: [String] = []
-        while !pool.isEmpty && drawn.count < Self.pickSlots - kept.count {
+        while !pool.isEmpty && drawn.count < pickSlots - kept.count {
             drawn.append(pool.remove(at: Int(rng.next() % UInt64(pool.count))))
         }
         shopPicks = kept + drawn
@@ -202,7 +241,7 @@ extension GameState {
         owned.append(OwnedChibi(speciesID: species.id, level: 1, adoptedAt: now,
                                 statsAtAdoption: lifetime))
         activeChibiID = species.id
-        if lockedPick == "kin:\(species.id)" { lockedPick = nil }
+        lockedPicks.remove("kin:\(species.id)")
         refreshPicksIfNeeded(now: now)
         return true
     }

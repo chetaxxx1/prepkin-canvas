@@ -204,7 +204,48 @@ final class AppState: ObservableObject {
     var league: LeagueState { game.league }
     var leaguePoints: Int { game.leaguePoints }
     var leaguePointsToNextTier: Int? { game.leaguePointsToNextTier }
-    var lockedPick: String? { game.lockedPick }
+    var lockedPicks: Set<String> { game.lockedPicks }
+    func isHeld(_ id: String) -> Bool { game.lockedPicks.contains(id) }
+    func canHoldMore(_ id: String) -> Bool { game.canHoldMore(id) }
+    var holdLimit: Int { game.holdLimit }
+    var pickSlots: Int { game.pickSlots }
+    var pickDiscountPercent: Int { game.discountPercent }
+
+    // MARK: - Plus
+
+    /// Everything that can make this student Plus: a live subscription, the gift
+    /// week, or `-unlockAll`. Set by `syncPlus` and read by every gate.
+    @Published private(set) var plusAccess = PlusAccess.none
+    var isPlus: Bool { plusAccess.isOn() }
+
+    /// Takes StoreKit's answer and folds in the gift week and the debug flag.
+    ///
+    /// Called on launch, whenever the entitlement changes, and after the gift is
+    /// armed. `game.plusIsOn` is the shop's cached copy; nothing else caches it.
+    func syncPlus(paid: Bool, now: Date = Date()) {
+        plusAccess = game.plusAccess(paid: paid)
+        let on = plusAccess.isOn(at: now)
+        guard game.plusIsOn != on else { return }
+        game.plusIsOn = on
+        // The row is five slots long or seven; changing the entitlement changes it
+        // today, not tomorrow.
+        game.refreshPicksIfNeeded(now: now)
+        save()
+    }
+
+    /// The gift week, armed the first time three Canvas tasks are finished.
+    /// Returns true on the single call that starts it, which is the only time the
+    /// quiet line is shown.
+    @discardableResult
+    func armGiftWeekIfEarned(now: Date = Date()) -> Bool {
+        guard game.armGiftWeekIfEarned(now: now) else { return false }
+        plusAccess = game.plusAccess(paid: plusAccess.paid)
+        game.plusIsOn = plusAccess.isOn(at: now)
+        game.refreshPicksIfNeeded(now: now)
+        save()
+        return true
+    }
+
     func currentPrice(_ id: String) -> Int { game.currentPrice(id) }
     func workToAfford(_ id: String) -> String? { game.workToAfford(id) }
     func ownedKin(_ speciesID: String) -> OwnedChibi? {
@@ -1040,6 +1081,15 @@ final class AppState: ObservableObject {
         if let kin = ownedKin(speciesID) { show("\(kin.displayName) is your active kin") }
     }
 
+    /// Wears a costume, and says so. The bounce is the same one care gives: the point
+    /// of the rail is watching the kin change, so the change needs a beat of motion.
+    func wear(_ costume: Costume) {
+        guard game.activeChibi.skinID != costume.id else { return }
+        game.wear(costume.id)
+        play(.bounce)
+        show("\(activeChibi.displayName) is wearing the \(costume.name)")
+    }
+
     // MARK: - Kin
 
     /// The purchase ceremony, as one path: confirm, arrival, naming, certificate.
@@ -1120,7 +1170,7 @@ final class AppState: ObservableObject {
     /// stagger; nothing is disabled while it runs, because there is no cost to
     /// protect against a double tap.
     func rerollPicks() {
-        let held = game.lockedPick.flatMap { game.resolvePick($0)?.name }
+        let heldNames = game.lockedPicks.compactMap { game.resolvePick($0)?.name }.sorted()
         // Late on there is less left to own than the row has slots, so every draw is
         // the same draw. Spending a free reroll to watch nothing move is worse than
         // not offering one.
@@ -1133,10 +1183,11 @@ final class AppState: ObservableObject {
             return
         }
         rerolling = true
-        // Counted, never the hard-coded five: the row shrinks as the collection fills.
-        let changed = max(0, game.picks.count - (held == nil ? 0 : 1))
+        // Counted, never the hard-coded five: the row shrinks as the collection fills,
+        // and Plus holds up to three slots through the draw.
+        let changed = max(0, game.picks.count - heldNames.count)
         let noun = changed == 1 ? "1 new pick" : "\(changed) new picks"
-        show(held.map { "\(noun) · \($0) kept" } ?? noun)
+        show(heldNames.isEmpty ? noun : "\(noun) · \(heldNames.joined(separator: ", ")) kept")
         Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(420))
             rerolling = false
@@ -1147,9 +1198,18 @@ final class AppState: ObservableObject {
     func refreshPicks() { game.refreshPicksIfNeeded() }
 
     func toggleLock(_ id: String) {
-        let wasLocked = game.lockedPick == id
+        let wasLocked = game.lockedPicks.contains(id)
+        guard let pick = game.resolvePick(id) else { return }
+        // A hold that cannot be taken says why, and says what the shelf is. It never
+        // drops somebody else's hold to make room.
+        guard wasLocked || game.canHoldMore(id) else {
+            let n = game.holdLimit
+            show(n == 1 ? "One slot at a time. Release the one you're holding first."
+                        : "\(n) slots at a time. Release one first.")
+            return
+        }
         game.toggleLock(id)
-        guard !wasLocked, let pick = game.resolvePick(id) else { return }
+        guard !wasLocked else { return }
         show("\(pick.name) held at \(pick.price) · long-press again to release")
     }
 

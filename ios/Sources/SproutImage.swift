@@ -30,19 +30,23 @@ struct SproutImage: View {
     /// 2026-09-09: 0.999 -> 0.660. The stills were recaptured from the current rig, where a
     /// stage-III kin spreads its fins 1293px wide against 853px of height. The old set was
     /// nearly square because its tallest art was headphones reaching above the crown.
-    static let heightRatio: CGFloat = 0.660
+    ///
+    /// 2026-09-10: 0.660 -> 0.700. The whole costume rack was captured into the same box,
+    /// and the sorcerer hat reaches 905px of it.
+    static let heightRatio: CGFloat = 0.700
 
     @State private var trigger = 0
 
-    /// Looks that have their own eighteen stills in the catalogue. A look that is
-    /// not here — Classic, or one whose stills are not captured yet — draws the
+    /// Costumes that have their own six stills in the catalogue — the whole rack, one
+    /// per coat, captured by `design/capture_costumes.py`. Anything not here draws the
     /// plain set rather than a blank frame.
-    static let looksWithStills: Set<String> = ["ninja"]
+    static let looksWithStills: Set<String> = Costume.ids
 
     static func asset(speciesID: String, level: Int, skin: String) -> String {
         let type = SproutView.type(speciesID)
-        // Looks exist for Sprout only; the edge-lane rigs have no Ninja stills.
-        let look = type == "sprout" && looksWithStills.contains(skin) ? "\(skin)-" : ""
+        // Costumes exist for Sprout only, and only at stage III — the rig has no costume
+        // slot before that, so a younger kin in a costume draws the plain art.
+        let look = type == "sprout" && level >= 3 && looksWithStills.contains(skin) ? "\(skin)-" : ""
         return "\(type)-\(look)\(SproutView.coat(speciesID))-\(SproutView.evo(level))"
     }
 

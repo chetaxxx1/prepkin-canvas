@@ -4,10 +4,12 @@
 each trio in `ios/Resources/Assets.xcassets/<name>.imageset` with the Contents.json
 Xcode expects, creating the folder if the look is new.
 """
-import json, os, re, shutil
+import json, os, re, shutil, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "out")
+# Which staging folder to install. `out` is capture_sprout.py's; capture_costumes.py
+# writes `out-costumes`.
+OUT = os.path.join(HERE, sys.argv[1] if len(sys.argv) > 1 else "out")
 ASSETS = os.path.join(HERE, "..", "..", "ios", "Resources", "Assets.xcassets")
 
 names = sorted({re.sub(r"@\dx\.png$", "", f) for f in os.listdir(OUT) if f.endswith(".png")})

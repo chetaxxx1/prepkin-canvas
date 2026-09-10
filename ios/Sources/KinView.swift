@@ -35,7 +35,8 @@ struct KinView: View {
                             .foregroundStyle(Theme.dim)
                             .padding(.top, 10)
                     }
-                    togetherStrip.padding(.top, 22)
+                    wardrobeCard.padding(.top, 20)
+                    togetherStrip.padding(.top, 16)
                     collectionCard.padding(.top, 16)
                 }
                 .padding(.bottom, Theme.tabClearance)
@@ -208,6 +209,91 @@ struct KinView: View {
             guard !Task.isCancelled else { return }
             bubble = nil
         }
+    }
+
+    // MARK: - Wardrobe
+
+    /// The whole rack, on the tab the kin is on.
+    ///
+    /// It used to be a rail on the page inside Home's tank, which meant tapping a
+    /// costume and tapping the water were the same gesture, and the shop lived on one
+    /// tab while the wearing lived on another. Here it sits under the kin it dresses,
+    /// and every swatch is that kin actually wearing the thing.
+    @ViewBuilder private var wardrobeCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Text("Wardrobe")
+                    .font(Theme.font(15, .black)).foregroundStyle(Theme.ink)
+                Spacer()
+                Text("\(ownedCostumes) of \(Costume.catalog.count)")
+                    .font(Theme.font(12, .heavy)).foregroundStyle(Theme.muted)
+            }
+
+            if kin.level < 3 {
+                // A costume has nowhere to sit on a one- or two-star kin — the rig has no
+                // slot until stage III — so say that rather than show a rail that does nothing.
+                Text("Costumes fit at three stars. \(kin.displayName) has \(kin.level).")
+                    .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(Costume.catalog) { costume in
+                            costumeSwatch(costume)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+                .padding(.horizontal, -16)
+            }
+        }
+        .padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 12)
+        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(Theme.card).shadow(color: .black.opacity(0.05), radius: 8, y: 2))
+        .padding(.horizontal, 20)
+    }
+
+    private var ownedCostumes: Int {
+        Costume.catalog.filter { state.game.ownedLooks.contains($0.id) }.count
+    }
+
+    /// What the kin has on. `classic` is not a costume: it means nobody has chosen, and
+    /// the page puts the kin in its coat's default — so that is the swatch to tick.
+    private var wornCostumeID: String {
+        if Costume.ids.contains(kin.skinID) { return kin.skinID }
+        return Costume.coatDefault[SproutView.coat(kin.speciesID)] ?? ""
+    }
+
+    private func costumeSwatch(_ costume: Costume) -> some View {
+        let owned = state.game.ownedLooks.contains(costume.id)
+        let worn = wornCostumeID == costume.id
+        return Button {
+            guard owned else { return }
+            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+            state.wear(costume)
+        } label: {
+            VStack(spacing: 4) {
+                SproutImage(speciesID: kin.speciesID, level: 3, skin: costume.id, size: 46)
+                    .frame(width: 54, height: 34)
+                    .opacity(owned ? 1 : 0.35)
+                    .overlay(alignment: .topTrailing) {
+                        if !owned { KinIcon(.lock, size: 11, color: Theme.dim) }
+                    }
+                Text(owned ? costume.name : "\(costume.price)")
+                    .font(Theme.font(10, .heavy))
+                    .foregroundStyle(owned ? Theme.ink : Theme.dim)
+                    .lineLimit(1)
+            }
+            .frame(width: 62)
+            .padding(.vertical, 7)
+            .background(RoundedRectangle(cornerRadius: 13, style: .continuous)
+                .fill(owned ? Theme.hex(0xF6F1E6) : Theme.unowned)
+                .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .strokeBorder(worn ? Theme.mint : Theme.hairline, lineWidth: 2)))
+        }
+        .buttonStyle(.plain)
+        .disabled(!owned)
+        .accessibilityLabel(owned ? "\(costume.name)\(worn ? ", worn" : "")"
+                                  : "\(costume.name), \(costume.price) coins, not bought")
     }
 
     // MARK: - Together since

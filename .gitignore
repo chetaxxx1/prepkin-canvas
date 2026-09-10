@@ -10,3 +10,7 @@ dist/
 # Claude Code worktrees are copies of this repo, never content
 .claude/worktrees/
 __pycache__/
+
+# Staging for design/capture_costumes.py. Everything it makes is installed into
+# Assets.xcassets, so a second copy here is 21MB of the same pixels.
+design/sprout-stills/out-costumes/

@@ -30,14 +30,7 @@ extension DebugUnlock {
     /// The whole rack the web build ships (`costumes.ts`), plus the plain coat. Owning
     /// all of it is what makes the costume rail read as bought rather than window
     /// shopping, and it is what the extension's shop is told after a sync.
-    static let everyCostume: Set<String> = [
-        "classic",
-        "hoodie", "flannel", "barista",
-        "scholar", "varsity", "pajamas", "keynote",
-        "happi", "idol", "racer", "ballet", "hanbok",
-        "biker", "astronaut", "monster",
-        "ninja", "sorcerer", "grad", "hex",
-    ]
+    static let everyCostume: Set<String> = Costume.ids.union(["classic"])
 }
 
 extension GameState {

@@ -205,6 +205,20 @@ struct GameState: Codable, Equatable {
     /// before it existed; the v6 migration fills those from the oldest ledger line.
     var installedAt: Date?
 
+    /// The gift week's dates, what the season has paid out, and the looks that were
+    /// saved. One property rather than six, because this file has more than one
+    /// editor. Nothing in it is an entitlement — that is StoreKit's, read through
+    /// `PlusAccess` — and everything in it survives a lapse untouched.
+    var plus = PlusLocal()
+
+    /// Whether this student is Plus right now, cached for the shop.
+    ///
+    /// Deliberately **not** in `CodingKeys`. An entitlement written into the save
+    /// file is an entitlement that outlives the subscription, and the only honest
+    /// source is StoreKit plus the gift week. `AppState.syncPlus` sets this on every
+    /// change; a fresh decode starts it false and the first refresh corrects it.
+    var plusIsOn = false
+
     /// How far into each deck the student has read, by lesson id. Drives Continue on
     /// Learn, the current node on a track map, and where Resume puts you back.
     /// Cleared on finish, so a finished lesson stops asking to be continued.
@@ -266,7 +280,13 @@ struct GameState: Codable, Equatable {
     /// `rerollsPerDay`. Resets with the row at the day boundary.
     var rerollCount = 0
     /// A slot the student is holding. Survives every reroll and the day boundary.
+    /// The old single hold. Kept only so a save written before three holds shipped
+    /// still decodes; `lockedPicks` is seeded from it and this is left nil after.
     var lockedPick: String?
+    /// Slots held through a reroll and overnight. Free holds one, Plus holds three
+    /// (`PlusGate.shopHolds`). A hold can only ever help: it never costs a coin and
+    /// it never blocks a draw.
+    var lockedPicks: Set<String> = []
 
     /// Daily Word record, kept here rather than derived from the ledger because the
     /// ledger compacts lines older than 90 days and these should never go down.
@@ -372,11 +392,12 @@ struct GameState: Codable, Equatable {
         case friends, wavesDay, wavesSent, wavesIn, wavesSeen
         case shareToday, shareBoard
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
-        case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick
+        case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick, lockedPicks
         case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
         case ladderPlay, threadPlay, balancePlay, pearlsPlay, tracePlay, sortPlay, weavePlay
         case league
+        case plus
     }
 
     init() {}
@@ -443,6 +464,15 @@ struct GameState: Codable, Equatable {
         shopPickDay = try c.decodeIfPresent(DayKey.self, forKey: .shopPickDay) ?? blank.shopPickDay
         rerollCount = try c.decodeIfPresent(Int.self, forKey: .rerollCount) ?? blank.rerollCount
         lockedPick = try c.decodeIfPresent(String.self, forKey: .lockedPick)
+        // A save from before three holds carries one id in `lockedPick`. Seed the
+        // set from it and clear it, so the hold survives the upgrade rather than
+        // being silently dropped on the student's first open.
+        if let set = try c.decodeIfPresent(Set<String>.self, forKey: .lockedPicks) {
+            lockedPicks = set
+        } else {
+            lockedPicks = Set([lockedPick].compactMap { $0 })
+            lockedPick = nil
+        }
         wordleSolved = try c.decodeIfPresent(Int.self, forKey: .wordleSolved) ?? blank.wordleSolved
         wordleBest = try c.decodeIfPresent(Int.self, forKey: .wordleBest)
         wordleLastDay = try c.decodeIfPresent(DayKey.self, forKey: .wordleLastDay)
@@ -461,6 +491,7 @@ struct GameState: Codable, Equatable {
         // pennants. There is no history to reconstruct and inventing one would be a
         // keepsake nobody earned.
         league = try c.decodeIfPresent(LeagueState.self, forKey: .league) ?? blank.league
+        plus = try c.decodeIfPresent(PlusLocal.self, forKey: .plus) ?? blank.plus
     }
 
     // MARK: - Day
@@ -669,6 +700,18 @@ struct GameState: Codable, Equatable {
 
     var activeChibi: OwnedChibi {
         owned.first { $0.speciesID == activeChibiID } ?? owned[0]
+    }
+
+    /// Puts a costume on the active kin.
+    ///
+    /// Only a costume the student owns, and `classic` — which is not a costume but the
+    /// absence of a choice, and leaves the page to dress the kin in its coat's default.
+    /// Stage is not checked here: a two-star kin can be dressed, and simply does not
+    /// show it until it grows into the costume slot.
+    mutating func wear(_ costumeID: String) {
+        guard costumeID == "classic" || ownedLooks.contains(costumeID) else { return }
+        guard let i = owned.firstIndex(where: { $0.speciesID == activeChibiID }) else { return }
+        owned[i].skinID = costumeID
     }
 
     /// What the active kin is wearing, as a friend's screen names it.
@@ -1028,7 +1071,7 @@ struct GameState: Codable, Equatable {
         sceneID = scene.id
         // Same as adopting a kin: release the slot it was held in and backfill the row,
         // so a bought scene does not sit in today's picks pretending to still be for sale.
-        if lockedPick == "scene:\(scene.id)" { lockedPick = nil }
+        lockedPicks.remove("scene:\(scene.id)")
         refreshPicksIfNeeded(now: now)
         return true
     }

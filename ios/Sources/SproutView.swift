@@ -1,16 +1,5 @@
 import Foundation
 
-/// True only in a DEBUG build launched with `-unlockAll`, or one that remembered the
-/// argument from an earlier launch. Gates the in-app costume rail. See `DebugUnlock`.
-let sproutShowsCostumeTray: Bool = {
-    #if DEBUG
-    return ProcessInfo.processInfo.arguments.contains("-unlockAll")
-        || UserDefaults.standard.bool(forKey: DebugUnlock.stickyKey)
-    #else
-    return false
-    #endif
-}()
-
 import SwiftUI
 import WebKit
 
@@ -113,11 +102,10 @@ struct SproutView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         if let view = Shared.webView {
             view.removeFromSuperview()
-            // The page is normally deaf to touches — the app drives it entirely through JS, so
-            // the web view is created with interaction off. The costume rail is the exception:
-            // it is a real control on the page and has to be tappable. Set on the reused view
-            // too, because Shared.webView outlives any one host.
-            view.isUserInteractionEnabled = sproutShowsCostumeTray
+            // The page is deaf to touches: the app drives it entirely through JS, and the
+            // tank's own drag gesture sits on top. Set on the reused view too, because
+            // Shared.webView outlives any one host.
+            view.isUserInteractionEnabled = false
             context.coordinator.onReady = onReady
             context.coordinator.onLayout = onLayout
             // The page is already up, but this host starts covered and has to be
@@ -151,7 +139,7 @@ struct SproutView: UIViewRepresentable {
         // hands the page a safe-area inset and the tank stops short of the
         // bottom edge, leaving a band of bare page colour.
         view.scrollView.contentInsetAdjustmentBehavior = .never
-        view.isUserInteractionEnabled = sproutShowsCostumeTray
+        view.isUserInteractionEnabled = false
         view.backgroundColor = placeholder
         view.scrollView.backgroundColor = placeholder
         // Both of the above are invisible while the view is opaque, and it has to
@@ -209,7 +197,15 @@ struct SproutView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Shared.coordinator }
 
     private var currentLook: Look {
-        Look(type: Self.type(speciesID), coat: Self.coat(speciesID), evo: Self.evo(level), skin: skin, radius: radius, tank: tank)
+        Look(type: Self.type(speciesID), coat: Self.coat(speciesID), evo: Self.evo(level),
+             skin: skin, costume: Self.costume(skin, level: level), radius: radius, tank: tank)
+    }
+
+    /// The costume the page should put on, or empty for the coat's default. Only
+    /// stage III wears one, so a younger kin always asks for the default.
+    static func costume(_ skin: String, level: Int) -> String {
+        guard level >= 3, Costume.ids.contains(skin) else { return "" }
+        return skin
     }
 
     struct Look: Equatable {
@@ -217,6 +213,7 @@ struct SproutView: UIViewRepresentable {
         var coat: String
         var evo: String
         var skin: String
+        var costume: String
         var radius: CGFloat
         var tank: String
 
@@ -234,10 +231,12 @@ struct SproutView: UIViewRepresentable {
                 URLQueryItem(name: "radius", value: String(format: "%.2f", radius)),
                 URLQueryItem(name: "tank", value: tank),
             ]
-            // Testing switch: show the page's own costume rail inside the app so the whole rack
-            // can be tried on a phone. DEBUG-only and behind -unlockAll, so it never ships.
-            if sproutShowsCostumeTray {
-                components.queryItems?.append(URLQueryItem(name: "tray", value: "1"))
+            // Empty means the kin has never been dressed, and the page puts it in its
+            // coat's default. Sending "classic" instead would be an unknown costume id,
+            // which the page would ignore — the same picture, by accident rather than on
+            // purpose.
+            if !costume.isEmpty {
+                components.queryItems?.append(URLQueryItem(name: "costume", value: costume))
             }
             return components.url!
         }

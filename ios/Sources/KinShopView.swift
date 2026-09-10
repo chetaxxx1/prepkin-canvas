@@ -19,6 +19,7 @@ struct KinShopView: View {
 
     @State private var detail: ChibiSpecies?
     @State private var showHonesty = false
+    @State private var showingPlus = false
 
     var body: some View {
         ScrollView {
@@ -28,16 +29,20 @@ struct KinShopView: View {
 
                 picksRow.padding(.top, 12)
 
-                Text("Every pick is 20% off its Collection price. Press and hold a slot to keep its price.")
+                Text("Every pick is \(state.pickDiscountPercent)% off its Collection price. Press and hold a slot to keep its price.")
                     .font(Theme.font(11.5, .heavy))
                     .foregroundStyle(Theme.dim)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 20).padding(.top, 12)
 
-                if let held = state.lockedPick, let pick = state.game.resolvePick(held) {
-                    heldPanel(pick).padding(.top, 12)
+                ForEach(state.lockedPicks.sorted(), id: \.self) { id in
+                    if let pick = state.game.resolvePick(id) {
+                        heldPanel(pick).padding(.top, 12)
+                    }
                 }
+
+                plusRow.padding(.top, 16)
 
                 rerollButton.padding(.top, 14)
 
@@ -58,6 +63,7 @@ struct KinShopView: View {
         }
         .scrollIndicators(.hidden)
         .background(Theme.paper)
+        .sheet(isPresented: $showingPlus) { PlusSheet(reason: .shop) }
         .navigationBarBackButtonHidden(true)
         .safeAreaInset(edge: .top) { navRow }
         .hidesTabBar()
@@ -120,7 +126,7 @@ struct KinShopView: View {
         HStack(alignment: .top, spacing: 6) {
             ForEach(state.picks) { pick in
                 PickSlot(pick: pick,
-                         locked: state.lockedPick == pick.id,
+                         locked: state.isHeld(pick.id),
                          gap: max(0, pick.price - state.coins))
                     .onTapGesture { open(pick) }
                     .onLongPressGesture {
@@ -169,8 +175,8 @@ struct KinShopView: View {
     /// away from the draw rule the way a hard-coded "four" did.
     private var rerollLabel: String {
         if state.rerolling { return "Rerolling…" }
-        guard state.lockedPick != nil, state.rerollCanChange else { return "Reroll picks" }
-        let others = max(0, state.picks.count - 1)
+        guard !state.lockedPicks.isEmpty, state.rerollCanChange else { return "Reroll picks" }
+        let others = max(0, state.picks.count - state.lockedPicks.count)
         return others == 1 ? "Reroll the other one" : "Reroll the other \(others)"
     }
 
@@ -201,6 +207,50 @@ struct KinShopView: View {
         .buttonStyle(.plain)
         .disabled(!state.rerollCanChange)
         .padding(.horizontal, 20)
+    }
+
+    // MARK: Plus
+
+    /// A plain row, never a coral one. Coral is the primary action on every screen
+    /// and Plus is never the primary action (`PLUS-SPEC.md` section 4).
+    ///
+    /// Already Plus? Then it says what the row is doing rather than selling it
+    /// again. Nothing here is a padlock and nothing is greyed out — the numbers
+    /// a free student has are the numbers on their screen, and these are the other
+    /// ones, in plain text.
+    @ViewBuilder
+    private var plusRow: some View {
+        if state.isPlus {
+            Text("Seven picks, three holds, \(state.pickDiscountPercent)% off. Thanks for the Plus.")
+                .font(Theme.font(11.5, .heavy))
+                .foregroundStyle(Theme.dim)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 20)
+        } else {
+            Button { showingPlus = true } label: {
+                HStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Seven picks, three holds, 30% off")
+                            .font(Theme.font(14, .black)).foregroundStyle(Theme.ink)
+                        Text("In Plus")
+                            .font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.muted)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .black))
+                        .foregroundStyle(Theme.dim)
+                }
+                .padding(.horizontal, 18).padding(.vertical, 13)
+                .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Theme.card)
+                    .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .strokeBorder(Theme.hairline, lineWidth: 2)))
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 20)
+            .accessibilityLabel("Seven picks, three holds, 30 percent off. In Plus.")
+        }
     }
 
     // MARK: Sections

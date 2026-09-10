@@ -3,6 +3,7 @@ import Foundation
 /// Why coins moved. Positive amounts are earnings, negative are purchases.
 enum CoinReason: String, Codable {
     case task, focus, wordle, lesson, numberLine   // earn
+    case season                             // earn, a claimed rung on the season ladder
     case balance, pearls, trace, sort, weave    // earn, the Play pool
     case ladder, thread                     // retired 2026-09-10; kept so old ledgers decode
     case upgrade, species, scene            // spend
