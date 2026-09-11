@@ -569,7 +569,7 @@ function panelView(b, said, now) {
 
   const filterBtn = (key, label, count, amber) => `
     <button data-filter="${key}" aria-pressed="${filter === key}" class="${filter === key ? `on${amber ? ' amber' : ''}` : ''}">
-      ${label}<em>${count}</em>
+      ${label}${count ? `<em>${count}</em>` : ''}
     </button>`;
 
   return `
@@ -1647,9 +1647,8 @@ function renderWeek() {
   }
 
   const foot = el('div', 'pk-w-foot');
-  const left = w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week`
-    : b.overdue.length ? `${b.overdue.length} past due` : 'Nothing finished yet this week';
-  foot.append(el('span', '', left));
+  // Finished work is worth a line; nothing finished is not worth a scold.
+  foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
   const more = el('span', 'more', 'See the week');
   more.setAttribute('role', 'button'); more.tabIndex = 0;
   const openWeek = () => { ui.open = true; ui.view = 'week'; ui.sheet = null; render(); };

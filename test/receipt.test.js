@@ -309,7 +309,7 @@ test('R17 this week: our rail card reports finished work, counts by course, and 
   assert.ok(await page.$('#pk-week + *'), 'Canvas\'s own sidebar follows it, folded, not gone');
   assert.match(await page.$eval('#pk-week .pk-w-centre b', (e) => e.textContent), /^\d+\/\d+$|^0$/);
   const finished = await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent);
-  assert.match(finished, /^(?:\d+ things? finished this week|Nothing finished yet this week)$/);
+  assert.match(finished, /^(?:\d+ things? finished this week|)$/, 'finished work gets a line; nothing finished gets no scold');
   assert.doesNotMatch(finished, /streak|in a row/i, 'the rail no longer presents a streak');
   const legend = await page.$$eval('#pk-week .pk-w-legend li span', (els) => els.map((e) => e.textContent));
   assert.ok(legend.length === 0 || legend.includes('AP Physics C'), legend.join(','));

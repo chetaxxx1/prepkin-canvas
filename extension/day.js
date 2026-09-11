@@ -91,8 +91,8 @@ function voice({ overdue, today, doneToday }) {
   if (o) {
     return {
       face: 'faceDeadpan', worried: true,
-      headline: o === 1 ? 'One past due' : `${count(o)} past due`,
-      subline: 'Late work still counts. Pick one to start.',
+      headline: 'Late work still counts',
+      subline: 'Pick one to start. Ten minutes is enough.',
     };
   }
   if (!t) {

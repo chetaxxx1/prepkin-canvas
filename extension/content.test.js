@@ -196,7 +196,7 @@ test('old missing work is its own list, so the buddy still counts only this week
   const b = buckets([recent, ancient], now);
   assert.deepEqual(b.overdue.map((t) => t.id), ['a'], 'this week still slipped');
   assert.deepEqual(b.missed.map((t) => t.id), ['b']);
-  assert.equal(voice(b).headline, 'One past due', 'a term of old zeros is not a scolding');
+  assert.equal(voice(b).headline, 'Late work still counts', 'a term of old zeros is not a scolding');
 });
 
 test('work overdue a long time but never flagged stays overdue, not missing', () => {
