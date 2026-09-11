@@ -127,32 +127,29 @@ def two_ways():
 # ---------------------------------------------------------------- 7: the box on the statement
 def warning_box():
     """The Minimum Payment Warning every US card statement has carried since 2010,
-    filled in with this card's numbers."""
+    filled in with this card's numbers. Sized so the words survive the card."""
     c = Canvas()
-    # a sheet of statement paper, slightly rotated feel is skipped; a plain sheet
-    c.rrect(90, 60, 1110, 840, 18, WHITE, outline=FAINT, ow=3)
-    c.text("Minimum Payment Warning", 130, 130, 34, INK, anchor="lm")
-    c.text("If you make only the minimum payment each period, you will pay more", 130, 186, 23, MUTED, "Bold", anchor="lm")
-    c.text("in interest and it will take you longer to pay off your balance.", 130, 216, 23, MUTED, "Bold", anchor="lm")
-    # table
-    cols = [130, 540, 800, 1070]
-    y = 290
-    c.line([(130, y), (1070, y)], FAINT, 3)
-    heads = ["If you pay each month", "You will pay off in", "And pay a total of"]
-    for i, h in enumerate(heads):
-        c.text(h, cols[i] + 14, y + 40, 22, MUTED, "Bold", anchor="lm")
-    y = 372
-    c.line([(130, y), (1070, y)], FAINT, 3)
+    c.rrect(40, 40, 1160, 860, 22, WHITE, outline=FAINT, ow=3)
+    c.text("Minimum Payment Warning", 90, 120, 42, INK, anchor="lm")
+    c.text("Pay only the minimum each month and you will pay more in interest", 90, 190, 27, MUTED, "Bold", anchor="lm")
+    c.text("and it will take you longer to pay off your balance.", 90, 228, 27, MUTED, "Bold", anchor="lm")
+    cols = [90, 560, 830]
+    y = 300
+    c.line([(90, y), (1110, y)], FAINT, 3)
+    for i, h in enumerate(["If you pay each month", "Paid off in", "Total paid"]):
+        c.text(h, cols[i] + 10, y + 40, 25, MUTED, "Bold", anchor="lm")
+    y = 380
+    c.line([(90, y), (1110, y)], FAINT, 3)
     rows = [("Only the minimum", "6 years", money(MIN_PAID), CORAL_SOFT, CORAL),
-            (f"${int(round(THREE_YEAR))}", "3 years", f"{money(TY_PAID)}", MINT_SOFT, MINT)]
+            (f"${int(round(THREE_YEAR))} a month", "3 years", money(TY_PAID), MINT_SOFT, MINT)]
     for r, (a, b, t, soft, col) in enumerate(rows):
-        yy = y + r * 150
-        c.rrect(130, yy + 18, 1070, yy + 134, 20, soft)
-        c.text(a, cols[0] + 26, yy + 76, 32, INK, anchor="lm")
-        c.text(b, cols[1] + 14, yy + 76, 32, INK, anchor="lm")
-        c.text(t, cols[2] + 14, yy + 76, 32, col, anchor="lm")
-    c.text(f"(savings of {money(MIN_PAID - TY_PAID)})", cols[2] + 14, y + 150 + 118, 22, MUTED, "Bold", anchor="lm")
-    c.text("Required on every US card statement since 2010", 600, 790, 22, MUTED, "Bold")
+        yy = y + r * 175
+        c.rrect(90, yy + 20, 1110, yy + 150, 24, soft)
+        c.text(a, cols[0] + 26, yy + 85, 38, INK, anchor="lm")
+        c.text(b, cols[1] + 10, yy + 85, 38, INK, anchor="lm")
+        c.text(t, cols[2] + 10, yy + 85, 38, col, anchor="lm")
+    c.text(f"saves {money(MIN_PAID - TY_PAID)}", cols[2] + 10, y + 175 + 165, 26, MINT, "Bold", anchor="lm")
+    c.text("Required on every US card statement since 2010", 600, 810, 24, MUTED, "Bold")
     c.save(f"{OUT}/fig-07-warning-box.png")
 
 if __name__ == "__main__":

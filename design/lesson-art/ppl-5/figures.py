@@ -58,24 +58,23 @@ def wrap(c, s, size, maxw, weight="Bold"):
 
 def text_message():
     c = Canvas()
-    c.text("One in full, by text", 600, 80, 44)
-    # phone
-    c.rrect(300, 150, 900, 860, 60, WHITE, outline=FAINT, ow=5)
-    c.rrect(520, 170, 680, 196, 13, FAINT)
+    c.text("One in full, by text", 600, 70, 44)
+    # a wide phone, cropped to the message so the words stay legible at card size
+    c.rrect(150, 130, 1050, 780, 60, WHITE, outline=FAINT, ow=5)
+    c.rrect(510, 150, 690, 178, 14, FAINT)
     msg = ("I told Maya what you said about the party. That wasn't mine to share, and I get "
            "why you don't want to tell me things right now. I'm not doing that again.")
-    lines = wrap(c, msg, 26, 440)
-    lh = 40; top = 300; h = len(lines) * lh + 50
-    c.rrect(340, top, 850, top + h, 36, SKY)
+    lines = wrap(c, msg, 34, 700)
+    lh = 52; top = 240; h = len(lines) * lh + 60
+    c.rrect(190, top, 1010, top + h, 44, SKY)
     for i, ln in enumerate(lines):
-        c.text(ln, 370, top + 40 + i * lh, 26, WHITE, "Bold", anchor="lm")
-    # the three parts, tagged under the bubble
-    y = top + h + 50
+        c.text(ln, 230, top + 52 + i * lh, 34, WHITE, "Bold", anchor="lm")
+    y = top + h + 60
     for i, (label, col) in enumerate((("what I did", CORAL), ("what it cost", GOLD), ("what changes", MINT))):
-        x = 360 + i * 170
-        c.dot(x, y, 12, col)
-        c.text(label, x + 24, y, 22, MUTED, "Bold", anchor="lm")
-    c.text("No but. No if. No excuses.", 600, 800, 26, MUTED, "Bold")
+        x = 220 + i * 270
+        c.dot(x, y, 14, col)
+        c.text(label, x + 28, y, 26, MUTED, "Bold", anchor="lm")
+    c.text("No but. No if. No excuses.", 600, 700, 28, MUTED, "Bold")
     c.save(f"{OUT}/fig-07-text.png")
 
 if __name__ == "__main__":
