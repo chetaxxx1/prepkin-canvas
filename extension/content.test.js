@@ -307,3 +307,15 @@ test('classes are separate lines, biggest first', () => {
   ], courses, {});
   assert.deepEqual(rows.map((r) => [r.name, r.points]), [['English 11', 60], ['AP Physics C', 10]]);
 });
+
+test('dayShort: the rail row gets one word for the day', () => {
+  const { dayShort } = require('./content.js');
+  const now = new Date(2026, 8, 11, 14); // a Friday
+  const at = (d, h = 9) => ({ dueAt: new Date(2026, 8, d, h).toISOString() });
+  assert.equal(dayShort(at(11, 23), now), 'Today');
+  assert.equal(dayShort(at(12), now), 'Tomorrow');
+  assert.equal(dayShort(at(14), now), 'Mon');
+  assert.equal(dayShort(at(9), now), 'Wed', 'a late one names the day it was due');
+  assert.equal(dayShort(at(1), now), 'Sep 1', 'past a week, the date');
+  assert.equal(dayShort({ dueAt: 'nope' }, now), '');
+});

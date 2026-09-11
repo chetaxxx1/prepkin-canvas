@@ -1504,6 +1504,18 @@ function shortCourse(name) {
   return n.length > 20 && n.includes(':') ? n.split(':')[0].trim() : n;
 }
 
+/// The day alone, for a row with room for one word: Today, Tomorrow, Mon, or
+/// the date once it is more than a week off either way.
+function dayShort(t, now) {
+  const due = new Date(t.dueAt);
+  if (isNaN(due)) return '';
+  const days = Math.round((startOfDay(due) - startOfDay(now)) / DAY_MS);
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Tomorrow';
+  if (Math.abs(days) <= 6) return due.toLocaleDateString([], { weekday: 'short' });
+  return due.toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
 /// Whether the rail belongs on this page: the dashboard, the skin on, nothing
 /// killed or put back, and a sync to show. Shown from the first sync on, even
 /// with nothing due: the empty week is still the student's.
@@ -1614,7 +1626,8 @@ function renderWeek() {
     const overdue = new Date(first.dueAt) < now;
     const top = el('li', 'pk-w-first');
     const info = el('div');
-    info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now)}`));
+    // Amber and "Was due" already say late; the row does not add a comment.
+    info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now).replace(' · still counts', '')}`));
     const actions = el('div', 'pk-w-actions');
     const url = safeURL(first.url);
     if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
@@ -1629,16 +1642,16 @@ function renderWeek() {
     actions.append(focusBtn);
     top.append(info, actions);
     list.append(top);
+    // The next few are one line each: the dot is the course, the day is on
+    // the right. The full course and time sit in the title for a hover.
     for (const t of then) {
       const late = new Date(t.dueAt) < now;
       const li = el('li');
       const dot = el('i', late ? 'late' : '');
       const color = safeColor(t.colorHex); if (color && !late) dot.style.background = color;
-      const row = el('div');
-      // One line: the course and when. The ring dot already says late.
-      const when = late ? dueLabel(t, now).replace(' · still counts', '') : dueLabel(t, now);
-      row.append(el('b', '', t.title), el('small', late ? 'amber' : '', `${shortCourse(t.courseName)} · ${when}`));
-      li.append(dot, row);
+      const name = el('b', '', t.title);
+      name.title = `${t.courseName} · ${dueLabel(t, now)}`;
+      li.append(dot, name, el('small', late ? 'amber' : '', dayShort(t, now)));
       list.append(li);
     }
     box.append(list);
@@ -2401,7 +2414,7 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
                      panelView, looksView, weekView, whatIfView, courseView, addTaskView, searchView, focusCard, gradesCard, leagueCard,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {

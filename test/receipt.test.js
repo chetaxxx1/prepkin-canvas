@@ -485,7 +485,8 @@ test('R10 the rail is one list: the thing to start on top, the next few, Canvas 
   assert.equal(await page.$('#pk-today'), null, 'no banner above the cards any more');
   const first = await page.$eval('#pk-week .pk-w-first', (el) => el.textContent.replace(/\s+/g, ' ').trim());
   assert.match(first, /Overdue reading/, 'the one to start is the one that slipped');
-  assert.match(first, /still counts/, 'amber, never red, and plain words');
+  assert.match(first, /Was due/, 'plain words, and amber below, never red');
+  assert.doesNotMatch(first, /still counts/, 'the amber says late; no comment on top');
   assert.match(first, /Focus 25 min/);
   assert.equal(await page.$eval('#pk-week .pk-w-first small', (el) => el.className), 'amber');
   assert.equal(await page.$eval('#pk-week a.start', (a) => a.getAttribute('href')), 'https://localhost:8443/courses/1/assignments/15');
