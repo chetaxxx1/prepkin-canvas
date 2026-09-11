@@ -53,19 +53,18 @@ struct SwimSceneView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            // The porthole is cut on each canvas, not on the stack: a clipping ancestor
-            // stops a WKWebView's out-of-process layer from drawing at all. He never
-            // reaches the rim himself — the water he swims in is well inside it.
             Canvas(rendersAsynchronously: false) { ctx, _ in drawBack(&ctx) }
                 .frame(width: Self.base, height: Self.base)
-                .clipShape(Circle())
             sprout
             Canvas(rendersAsynchronously: false) { ctx, _ in drawFront(&ctx) }
                 .frame(width: Self.base, height: Self.base)
-                .clipShape(Circle())
                 .allowsHitTesting(false)
         }
         .frame(width: Self.base, height: Self.base)
+        // The porthole, cut over him too — checked on 2026-09-11, a transparent web view
+        // draws fine under this clip — so a jump can never carry him outside the circle.
+        // George: "he should not jump past the circle."
+        .clipShape(Circle())
         .scaleEffect(size / Self.base)
         .frame(width: size, height: size)
     }
@@ -74,8 +73,9 @@ struct SwimSceneView: View {
 
     private let kinSize: CGFloat = 128
     /// His feet while swimming. 124 with the still; the rig jumps when it wakes and on
-    /// every length, about 47 points, and the web view is deliberately not clipped, so
-    /// from 124 the top of his head cleared the porthole. From here the peak stays inside.
+    /// every length, about 47 points, and from 124 the top of his head hit the porthole.
+    /// From here the peak stays inside the circle with a little to spare, so the clip
+    /// above is a guarantee rather than something you see.
     private var swimBottom: Double { 146 }
     private var sleepBottom: Double { Self.sand + 4 }
 

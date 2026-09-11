@@ -53,9 +53,8 @@ struct SproutView: UIViewRepresentable {
     /// tank, and the two are never on screen together but both keep their view alive.
     /// The page already has no background in embed mode; only the web view had one.
     ///
-    /// The old note on Home said a non-opaque WKWebView composites nothing at all. What
-    /// actually stopped it was a clipping ancestor — SwiftUI's mask over the whole
-    /// subtree. Clip the neighbours, leave the web view unclipped, and it draws fine.
+    /// The old note on Home said a non-opaque WKWebView composites nothing at all.
+    /// Checked on 2026-09-11: this instance draws fine, under a `clipShape` ancestor too.
     var transparent: Bool = false
     /// Asleep on the sand — a paused shift. A toggle on the page, not a one-shot emote,
     /// so it is its own switch rather than an `animation` value that would time out.
