@@ -17,13 +17,13 @@
         "kind": "image",
         "image": "lesson-fin1-02",
         "eyebrow": "Year one",
-        "body": "Put $1,000 in an account paying 8% a year. Twelve months later it has grown by $80."
+        "body": "Put $1,000 in an account paying 8% a year. Twelve months later it has grown by $80. Nothing clever yet. That is just the rate doing its job."
       },
       {
         "kind": "image",
         "image": "lesson-fin1-03",
         "eyebrow": "Year two",
-        "body": "Year 2 you earn $86, not $80. The $80 from last year is earning now too."
+        "body": "Year 2 you earn $86, not $80. The $80 from last year is sitting in the account now, so it earns interest too. That extra $6 is the whole trick."
       },
       {
         "kind": "image",
@@ -47,7 +47,7 @@
         "kind": "image",
         "image": "lesson-fin1-07",
         "eyebrow": "Two savers",
-        "body": "Two people both put away $200 a month. One starts at 18. The other starts at 28."
+        "body": "Two people both put away $200 a month, every month, into the same kind of account. One starts at 18. The other waits and starts at 28."
       },
       {
         "kind": "image",
@@ -616,12 +616,12 @@
         "kind": "image",
         "image": "lesson-study1-01",
         "eyebrow": "The night before",
-        "body": "The night before a test, one long cram. It goes in fast."
+        "body": "The night before a test, one long cram. Three hours, one desk, one energy drink. It all goes in fast, and it feels like it is working."
       },
       {
         "kind": "image",
         "image": "lesson-study1-02",
-        "body": "And it leaks just as fast. A week later, most of it is gone."
+        "body": "And it leaks just as fast. By the next morning some of it is already gone. A week later, most of what you crammed has gone with it."
       },
       {
         "kind": "image",
@@ -632,13 +632,13 @@
       {
         "kind": "image",
         "image": "lesson-study1-04",
-        "body": "Split the same hour over six days. Each session catches the memory just before it slips."
+        "body": "Split the same hour over six days. Each ten-minute session catches the memory just before it slips, and lifts it a little higher than last time."
       },
       {
         "kind": "image",
         "image": "lesson-study1-05",
         "eyebrow": "Why",
-        "body": "Your brain strengthens a memory each time it nearly forgets it, then pulls it back."
+        "body": "Your brain strengthens a memory each time it nearly forgets it, then pulls it back. A memory you never have to reach for stays weak."
       },
       {
         "kind": "image",
@@ -650,19 +650,19 @@
         "kind": "image",
         "image": "lesson-study1-07",
         "eyebrow": "Do it",
-        "body": "Put the sessions in your calendar the day you get the material. Ten minutes each."
+        "body": "Put the sessions in your calendar the day you get the material. Ten minutes each, a day apart. If it is not on the calendar, it will not happen."
       },
       {
         "kind": "image",
         "image": "lesson-study1-08",
         "eyebrow": "If the test is tomorrow",
-        "body": "This lesson can't save you tonight. Cram, then space the next one."
+        "body": "This lesson can't save you tonight. If the test is tomorrow, cram, then get some sleep. Space the next one and feel the difference."
       },
       {
         "kind": "image",
         "image": "lesson-study1-09",
         "eyebrow": "Where it works",
-        "body": "Anything you have to remember: vocab, formulas, dates."
+        "body": "Anything you have to remember: vocab, formulas, dates, names. It also works for skills like problem sets, as long as you spread the practice out."
       },
       {
         "kind": "key",
@@ -1217,53 +1217,53 @@
         "kind": "image",
         "image": "lesson-psy6-01",
         "eyebrow": "The idea",
-        "body": "A habit is a loop with three parts. It runs on its own, which is why it's so hard to fight head on."
+        "body": "A habit is a loop with three parts. It runs on its own, without you deciding anything, which is why it's so hard to fight head on."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-02",
-        "body": "Cue, routine, reward. Round and round."
+        "body": "Cue, routine, reward. Round and round. Every habit you have, good or bad, runs on this same loop. Once you can see the parts, you can work on it."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-03",
         "eyebrow": "The cue",
-        "body": "The cue is the trigger. You sit down on your bed after school."
+        "body": "The cue is the trigger. You sit down on your bed after school, bag still on. Nothing has happened yet, but the loop has already started."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-04",
         "eyebrow": "The routine",
-        "body": "The routine is what you do. Phone out, feed open. The only part you notice."
+        "body": "The routine is what you do. Phone out, feed open, thumb moving. It is the only part of the loop you actually notice, so it gets all the blame."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-05",
         "eyebrow": "The reward",
-        "body": "The reward is what you get. Twenty minutes of not thinking. The loop runs to get this."
+        "body": "The reward is what you get. Twenty minutes of not thinking about anything. The loop runs to get this, and it will run again tomorrow."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-06",
         "eyebrow": "The swap",
-        "body": "You can't delete a cue or a reward. But you can swap the middle."
+        "body": "You can't delete a cue or a reward. The bed is still there and you still need the break. But you can swap what happens in the middle."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-07",
-        "body": "Same bed. Same twenty minutes off. Different thing in your hand."
+        "body": "Same bed. Same twenty minutes off. Different thing in your hand. A book, a sketchpad, a guitar. The loop still gets its reward, so it keeps running."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-08",
         "eyebrow": "Everywhere",
-        "body": "Bedtime scroll, after-class snack, the coffee you need to start. All loops."
+        "body": "Bedtime scroll, after-class snack, the coffee you need before you can start anything. All loops, all built the same way. Look for the three parts."
       },
       {
         "kind": "image",
         "image": "lesson-psy6-09",
         "eyebrow": "Catch the cue",
-        "body": "Where are you, what time is it, what just happened. That's the cue."
+        "body": "Next time the habit fires, stop and ask three things. Where are you, what time is it, what just happened. That is the cue, and now you can see it coming."
       },
       {
         "kind": "key",
@@ -1803,13 +1803,13 @@
         "kind": "image",
         "image": "lesson-phil6-01",
         "eyebrow": "The setup",
-        "body": "A runaway trolley is coming down the track. The brakes are gone."
+        "body": "A runaway trolley is coming down the track. The brakes are gone, and it is not slowing down. Nobody on board can stop it."
       },
       {
         "kind": "image",
         "image": "lesson-phil6-02",
         "eyebrow": "The setup",
-        "body": "Ahead, the track splits in two."
+        "body": "Ahead, the track splits in two. Which way the trolley goes depends on a lever beside the track. Right now it points down the main line."
       },
       {
         "kind": "image",
@@ -1821,19 +1821,19 @@
         "kind": "image",
         "image": "lesson-phil6-04",
         "eyebrow": "The setup",
-        "body": "On the side track: one person. And you’re standing at the lever."
+        "body": "On the side track: one person, just as stuck. And you’re standing at the lever. You have a few seconds to decide."
       },
       {
         "kind": "image",
         "image": "lesson-phil6-05",
         "eyebrow": "The choice",
-        "body": "Pull it, and the trolley turns. One person dies instead of five. Most people say: pull."
+        "body": "Pull it, and the trolley turns. One person dies instead of five. Ask a room full of people and most of them say the same thing: pull."
       },
       {
         "kind": "image",
         "image": "lesson-phil6-06",
         "eyebrow": "The choice",
-        "body": "It feels like simple math. Five is more than one. Now change one detail."
+        "body": "It feels like simple math. Five is more than one, so you save the five. Now change one detail and watch how fast that math stops working."
       },
       {
         "kind": "image",
@@ -1845,7 +1845,7 @@
         "kind": "image",
         "image": "lesson-phil6-08",
         "eyebrow": "The twist",
-        "body": "Still one death instead of five. The math hasn’t changed. But almost nobody pushes."
+        "body": "Still one death instead of five. The math hasn’t changed at all. But almost nobody says they would push. Something else is going on."
       },
       {
         "kind": "image",
@@ -1867,7 +1867,7 @@
         "kind": "image",
         "image": "lesson-phil6-12",
         "eyebrow": "Where it shows up",
-        "body": "An emergency room decides who gets treated first. Same argument. Real people."
+        "body": "An emergency room decides who gets treated first when there isn’t time for everyone. Same argument, no lever. Real people."
       },
       {
         "kind": "check",
