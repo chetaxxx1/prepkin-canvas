@@ -68,6 +68,9 @@ function mapCourses(raw, colors = {}, { now = Date.now() } = {}) {
       score: numberOrNull(enrollment?.computed_current_score),
       grade: enrollment?.computed_current_grade ?? null,
       colorHex: safeColor(colors[`course_${course.id}`]),
+      // When the term ends, so the recap knows when a term has ended. The
+      // course's own end date stands in when the term has none.
+      termEndsAt: typeof course.term?.end_at === 'string' ? course.term.end_at : (typeof course.end_at === 'string' ? course.end_at : null),
       // Only when Canvas says so either way; absent means "assume weighted".
       ...(typeof course.apply_assignment_group_weights === 'boolean'
         ? { weighted: course.apply_assignment_group_weights } : {}),

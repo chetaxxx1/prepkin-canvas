@@ -9,7 +9,7 @@ const SYNC_ALARM = 'prepkin-sync';
 const FLAGS_ALARM = 'prepkin-flags';
 const UPDATE_WAITING = 'updateWaiting';
 const BOOT_SCRIPTS = ['receipt.js', 'themes.js', 'art/manifest.js', 'looks.js', 'boot.js'];
-const CONTENT_SCRIPTS = ['podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'content.js'];
+const CONTENT_SCRIPTS = ['podnames.js', 'canvas.js', 'selectors.js', 'day.js', 'recap.js', 'content.js'];
 
 /// No request may hang a sync. A school behind a dead SSO hop, or a bridge that
 /// accepts the connection and never answers, used to stall syncAll forever —

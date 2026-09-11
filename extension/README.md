@@ -4,7 +4,9 @@
 kind of extension for, so that is what it leads with. Everything else — the buddy,
 the focus timer, the phone — is optional and stays out of the way if you ignore it.
 
-Free, no account, and no AI anywhere in it.
+Free, no account, and no AI anywhere in it. The app has a paid plan, Prepkin
+Plus. Plus may add. Plus never takes away something that was free, and never
+something a student already made.
 
 It reads your Canvas with the session already in your browser and pushes your work
 list to the bridge so the iPhone app can pick it up. No password is asked for,

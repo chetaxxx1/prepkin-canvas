@@ -26,9 +26,11 @@ It reads only the Canvas you connect, one school at a time, and it asks Chrome f
 
 Every single change it makes to a Canvas page is listed in the popup — taken off, fixed, added — and each one has a Put back that is remembered forever. Nothing you set up ever disappears in an update.
 
+The app has a paid plan, Prepkin Plus. Plus may add. Plus will never take away something that was free, and never something you already made.
+
 There is also a buddy in the corner with a focus timer, and a free Prepkin app for iPhone that shares the same list. Both are optional, and both stay out of the way if you leave them alone.
 
-Word count: about 250 (limit 400)
+Word count: about 280 (limit 400)
 
 ## Category
 

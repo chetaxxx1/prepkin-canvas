@@ -7,7 +7,7 @@
 
 if (typeof module !== 'undefined') {
   // Under node the sibling scripts are modules, not page globals.
-  Object.assign(globalThis, require('./receipt.js'), require('./themes.js'), require('./art/manifest.js'), require('./selectors.js'), require('./looks.js'), require('./canvas.js'), require('./day.js'), require('./podnames.js'));
+  Object.assign(globalThis, require('./receipt.js'), require('./themes.js'), require('./art/manifest.js'), require('./selectors.js'), require('./looks.js'), require('./canvas.js'), require('./day.js'), require('./podnames.js'), require('./recap.js'));
 }
 
 const ROOT_ID = 'prepkin-buddy';
@@ -583,6 +583,7 @@ function panelView(b, said, now) {
     ${filter === 'missed' ? '' : nextUp ? nextUpCard(nextUp, now) : ''}
     <ul class="pk-list">${rows.join('') || (nextUp ? '' : '<li class="empty">Nothing here. Enjoy it.</li>')}</ul>
     <div class="pk-listfoot"><button class="pk-add" data-view="addtask">+ Add a task</button><button class="pk-add" data-view="search">Search <kbd>⌘K</kbd></button></div>
+    ${recapDue(data.courses, data.tasks, now) ? '<button class="pk-recaprow" data-view="recap"><b>Your term, in numbers</b><span>The whole term, from your own laptop</span></button>' : ''}
     ${gradesCard()}
     ${leagueCard()}
     <div class="pk-foot center">Settings, and what changed on this page, are in the toolbar button.</div>`;
@@ -1869,6 +1870,83 @@ function unmountSprite() {
   sprite = null;
 }
 
+
+// MARK: - The term, in numbers
+//
+// Once, when a term ends: what was handed in, how much of it on time, which
+// course took the most, the busiest week and the hour it all went in. The
+// picture a student can save carries course names and counts, never a grade.
+
+function recapView(now) {
+  const r = termRecap(data.tasks, now);
+  const fmt = (d) => d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  const span = r.firstDue && r.lastDue ? `${fmt(r.firstDue)} to ${fmt(r.lastDue)}` : '';
+  const most = r.byCourse.reduce((m, c) => (m && m.total >= c.total ? m : c), null);
+  const bars = r.byCourse.slice(0, 6).map((c) => `
+    <li><span class="pk-cdot" style="background:${escapeHTML(safeColor(c.colorHex) ?? '#51CFA0')}"></span>
+      <b>${escapeHTML(shortCourse(c.name))}</b><em>${c.done} of ${c.total}</em>
+      <i><u style="width:${c.total ? Math.round((c.done / c.total) * 100) : 0}%;background:${escapeHTML(safeColor(c.colorHex) ?? '#51CFA0')}"></u></i></li>`).join('');
+  const lines = [
+    r.onTimePct !== null ? `${r.onTimePct}% of it on time` : null,
+    r.busiestWeek ? `Busiest week: ${fmt(r.busiestWeek.start)} to ${fmt(r.busiestWeek.end)}, ${r.busiestWeek.count} handed in` : null,
+    r.hour ? `Most often handed in around ${hourLabel(r.hour.hour)}` : null,
+    most ? `${escapeHTML(shortCourse(most.name))} asked the most of you` : null,
+  ].filter(Boolean);
+  return `
+    <div class="pk-viewhead">
+      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
+      <h2>Your term</h2><span class="pk-label">${escapeHTML(span)}</span>
+    </div>
+    <div class="pk-recap">
+      <div class="pk-recap-big"><strong>${r.handedIn}</strong><span>thing${r.handedIn === 1 ? '' : 's'} handed in${r.total ? ` of ${r.total}` : ''}</span></div>
+      <ul class="pk-recap-lines">${lines.map((l) => `<li>${l}</li>`).join('')}</ul>
+      ${bars ? `<ul class="pk-recap-courses">${bars}</ul>` : ''}
+      <div class="pk-listfoot"><button class="pk-add" data-recap-save>Save as a picture</button></div>
+      <div class="pk-foot">Counted on your own laptop. Nothing was sent anywhere, and the picture has no grades in it.</div>
+    </div>`;
+}
+
+/// The picture: paper, the big number, the lines, the course bars. Drawn on a
+/// canvas of our own and handed to the browser as a download, so nothing
+/// leaves the page and nothing on the page is touched.
+function saveRecapPicture(now) {
+  const r = termRecap(data.tasks, now);
+  const W = 1080, H = 1350, pad = 88;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  const font = (w, s) => `${w} ${s}px ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif`;
+  g.fillStyle = '#F7F6F3'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#51CFA0'; g.fillRect(0, 0, W, 28);
+  g.fillStyle = '#776D62'; g.font = font(800, 30); g.textBaseline = 'top';
+  const fmt = (d) => d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  g.fillText(`MY TERM${r.firstDue && r.lastDue ? ` · ${fmt(r.firstDue).toUpperCase()} TO ${fmt(r.lastDue).toUpperCase()}` : ''}`, pad, 120);
+  g.fillStyle = '#1B1F24'; g.font = font(900, 220); g.fillText(String(r.handedIn), pad - 8, 170);
+  g.font = font(800, 56); g.fillText(`thing${r.handedIn === 1 ? '' : 's'} handed in`, pad, 396);
+  let y = 496; g.font = font(600, 40); g.fillStyle = '#454B54';
+  const lines = [
+    r.onTimePct !== null ? `${r.onTimePct}% on time` : null,
+    r.busiestWeek ? `Busiest week: ${fmt(r.busiestWeek.start)} to ${fmt(r.busiestWeek.end)}` : null,
+    r.hour ? `Handed in most often around ${hourLabel(r.hour.hour)}` : null,
+  ].filter(Boolean);
+  for (const l of lines) { g.fillText(l, pad, y); y += 62; }
+  y += 40;
+  for (const c of r.byCourse.slice(0, 6)) {
+    g.fillStyle = '#1B1F24'; g.font = font(800, 38); g.fillText(shortCourse(c.name), pad, y);
+    g.fillStyle = '#776D62'; g.font = font(700, 34); g.textAlign = 'right'; g.fillText(`${c.done} of ${c.total}`, W - pad, y + 4); g.textAlign = 'left';
+    g.fillStyle = '#E3E0D9'; g.fillRect(pad, y + 56, W - 2 * pad, 16);
+    g.fillStyle = safeColor(c.colorHex) ?? '#51CFA0'; g.fillRect(pad, y + 56, Math.round((W - 2 * pad) * (c.total ? c.done / c.total : 0)), 16);
+    y += 108;
+  }
+  g.fillStyle = '#776D62'; g.font = font(700, 30); g.fillText('Prepkin for Canvas', pad, H - 120);
+  cv.toBlob((blob) => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'my-term.png';
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }, 'image/png');
+}
+
 // MARK: - Render
 
 function render() {
@@ -1891,6 +1969,7 @@ function render() {
     : ui.view === 'whatif' ? whatIfView()
     : ui.view === 'course' ? courseView(now)
     : ui.view === 'looks' ? looksView()
+    : ui.view === 'recap' ? recapView(now)
     : panelView(b, said, now);
 
   const showHeader = ui.view === 'panel';
@@ -2048,6 +2127,7 @@ function wire(root) {
     if (key === 'week') { ui.view = 'week'; } else { ui.filter = key; }
     render();
   }));
+  root.querySelector('[data-recap-save]')?.addEventListener('click', () => saveRecapPicture(new Date()));
   root.querySelectorAll('[data-view]').forEach((el) => el.addEventListener('click', () => {
     ui.view = el.dataset.view; ui.sheet = null; render();
   }));
@@ -2316,7 +2396,7 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES,
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; } };
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.

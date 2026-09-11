@@ -64,6 +64,29 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   display: grid; place-items: center;
 }
 
+/* ---- The term, in numbers -------------------------------------------------- */
+.pk-recaprow {
+  width: 100%; margin: 12px 0 0; padding: 12px 14px; border: 0; border-radius: 14px; cursor: pointer; text-align: left;
+  background: var(--pk-inset); color: var(--pk-text); font: inherit;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.pk-recaprow:hover { background: var(--pk-card); box-shadow: inset 0 0 0 1px var(--pk-line); }
+.pk-recaprow b { font-size: 14px; font-weight: 800; }
+.pk-recaprow span { font-size: 13px; font-weight: 600; color: var(--pk-text-2); }
+.pk-recap { display: flex; flex-direction: column; gap: 14px; padding: 6px 0 0; }
+.pk-recap-big { display: flex; align-items: baseline; gap: 10px; }
+.pk-recap-big strong { font-size: 56px; line-height: 1; font-weight: 900; letter-spacing: -.03em; }
+.pk-recap-big span { font-size: 16px; font-weight: 800; }
+.pk-recap-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pk-recap-lines li { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--pk-text-2); padding-left: 14px; position: relative; }
+.pk-recap-lines li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 999px; background: var(--pk-mint); }
+.pk-recap-courses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.pk-recap-courses li { display: grid; grid-template-columns: 8px 1fr auto; column-gap: 8px; row-gap: 6px; align-items: center; font-size: 13px; }
+.pk-recap-courses b { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-recap-courses em { font-style: normal; font-weight: 700; color: var(--pk-text-2); }
+.pk-recap-courses i { grid-column: 2 / 4; display: block; height: 8px; border-radius: 999px; background: var(--pk-track); overflow: hidden; }
+.pk-recap-courses i u { display: block; height: 100%; border-radius: 999px; }
+
 /* ---- The panel shell ------------------------------------------------------ */
 .pk-panel {
   grid-column: 2; grid-row: 2; margin-bottom: 8px;

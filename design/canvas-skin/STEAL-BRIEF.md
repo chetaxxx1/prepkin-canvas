@@ -198,9 +198,9 @@ Four of the seven takes are in the extension. Details and test names in
 | 2. Your own picture on a course card | **Done.** Local file, shrunk in the page, never uploaded. `scrimFor()` dims a bright picture exactly enough for Canvas's white controls and never refuses one |
 | 3. Hide past courses | **Done.** Opt-in receipt row, CSS only, heading folds with its table |
 | 5. What's due in the Chrome side panel | **Done.** Reads what was already collected, makes no request, never writes |
-| 4. Term recap | Not built |
+| 4. Term recap | **Done 2026-09-11.** `recap.js`: shows only when a term is ending or just ended (term end within a week ahead or three behind; or every due date two weeks gone), one row in the panel, a view, a picture with no grade in it |
 | 6. Firefox and Edge | Not built |
-| 7. The Plus promise, written down | Not built — it is a copy decision, not code |
+| 7. The Plus promise, written down | **Done 2026-09-11.** Listing, popup foot, README |
 
 Plus the refusal that mattered most: **R18, the quiz-page proof.** The test now
 reads every selector in `skin.css` off disk and asserts none of them matches

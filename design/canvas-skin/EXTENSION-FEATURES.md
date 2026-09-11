@@ -86,6 +86,16 @@ the pull BetterCampus's have, and for a summary on the first page. Built:
   Tasks for Canvas's (Coursicle) sidebar, which students run next to
   BetterCampus; the rings are theirs, the one-thing-first is ours.
 - **The timer stays on screen while it runs**, panel open or not.
+- **Your term, in numbers** (`recap.js`, 2026-09-11): the BetterCampus corpus's
+  one delight, on our rules. `recapDue()` opens it only when a course's term
+  end is within a week ahead or three weeks behind (courses now carry
+  `termEndsAt`), or, with no dates, when every due date is two weeks gone and
+  there were at least ten things. Then one quiet row in the panel opens a
+  view: things handed in of total, on-time share, busiest week, the hour it
+  all went in, which course asked the most, a bar per course. "Save as a
+  picture" draws a 1080×1350 PNG on a canvas of our own and downloads it;
+  the picture holds course names and counts, never a grade. Never a daily
+  counter, never a streak.
 - **Sprout, on the page** (2026-09-11): the app's own Sprout web build, copied
   into `extension/sprout/` by `sync.sh` from `ios/SproutWeb`, runs in a frame
   of the extension's origin (`#prepkin-sprout`, its own closed host, because
