@@ -1938,35 +1938,63 @@
     "id": "fin-7",
     "title": "Where your paycheck goes",
     "track": "finance",
-    "figure": "paycheck",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Your first paycheck is smaller than the number you agreed to. You'll see exactly who takes what from $1,000, and why some of it comes back in April.",
     "takeaway": "You learned the difference between gross and take-home.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You earn $1,000 in a month. That's your gross pay. It's not what lands in your account."
+        "kind": "image",
+        "image": "lesson-fin7-01",
+        "eyebrow": "Gross pay",
+        "body": "You earn $1,000 in a month. That is your gross pay, the number on the offer. It is not what lands in your account. Something takes a bite first, and it helps to know who."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Social Security takes 6.2%. That's $62. It funds payments to retired people, and one day, to you."
+        "kind": "image",
+        "image": "lesson-fin7-02",
+        "eyebrow": "The split",
+        "body": "Here is the whole split of $1,000 at a glance. Two fixed bites for Social Security and Medicare, one that varies for income tax, and the rest is yours."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Medicare takes 1.45%. That's $14.50. Together with Social Security, these are called FICA, and almost every worker pays them."
+        "kind": "image",
+        "image": "lesson-fin7-03",
+        "eyebrow": "Social Security",
+        "body": "Social Security takes 6.2%. That is $62 of the $1,000. It funds monthly payments to people who are retired now, and one day, to you."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Income tax varies. It depends on the W-4 form you filled out and your state. For a student earning this little, often $0 to $100 of the $1,000."
+        "kind": "image",
+        "image": "lesson-fin7-04",
+        "eyebrow": "Medicare",
+        "body": "Medicare takes 1.45%. That is $14.50. Together with Social Security these are called FICA, 7.65% of every paycheck, and almost every worker pays them."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "What's left is your net pay, or take-home. Around $825 to $925 of the $1,000. If too much tax was taken, you get it back as a refund after you file."
+        "kind": "image",
+        "image": "lesson-fin7-05",
+        "eyebrow": "Income tax",
+        "body": "Income tax varies. It depends on the W-4 form you fill in on day one and on your state. For a student earning this little, it is often $0 to $100 of the $1,000."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin7-06",
+        "eyebrow": "Net pay",
+        "body": "What is left is your net pay, or take-home. Around $825 to $925 of the $1,000. Gross is what you earned. Net is what you get."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin7-07",
+        "eyebrow": "The refund",
+        "body": "If too much income tax was taken during the year, you get it back after you file in April. A refund is not a gift. It is your own money coming home late."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin7-08",
+        "eyebrow": "The stub",
+        "body": "Your pay stub lists every line. Gross at the top, each bite in the middle, net at the bottom. Read the first one you get. After that you will never be surprised again."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin7-09",
+        "eyebrow": "The half you don't see",
+        "body": "Your employer pays another 7.65% on top, matching your FICA. It never shows on your stub, but it is part of what you cost them, and part of what the job is worth."
       },
       {
         "kind": "key",
@@ -1976,9 +2004,9 @@
         "kind": "check",
         "question": "Which of these does every worker pay, no matter what?",
         "choices": [
-          "State income tax",
-          "Social Security and Medicare",
-          "A refund"
+          "State income tax on every paycheck.",
+          "Social Security and Medicare, called FICA.",
+          "A refund at the end of the tax year."
         ],
         "answer": 1,
         "why": "FICA comes off almost every paycheck at fixed rates. Income tax depends on your state and your form, and some people owe none."
@@ -1989,39 +2017,63 @@
     "id": "fin-8",
     "title": "Tax brackets aren't what you think",
     "track": "finance",
-    "figure": "brackets",
     "minutes": 3,
     "blurb": "Moving into a higher bracket never costs you money. You'll see how brackets work like stacked buckets, and why a raise is always worth taking.",
     "takeaway": "You learned that only the top slice pays the top rate.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Tax brackets are stacked buckets. Your taxable income (your pay minus the standard deduction) fills them from the bottom up. Each bucket has its own rate."
+        "kind": "image",
+        "image": "lesson-fin8-01",
+        "eyebrow": "The myth",
+        "body": "Everyone has heard it: do not take the raise, it will push you into a higher bracket and you will take home less. It is wrong, and a picture of stacked buckets shows why."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The first $11,925 you earn is taxed at 10%. That's the bottom bucket. Everyone's first dollars go here."
+        "kind": "image",
+        "image": "lesson-fin8-02",
+        "eyebrow": "Stacked buckets",
+        "body": "Tax brackets are stacked buckets. Your taxable income, your pay minus the standard deduction, fills them from the bottom up. Each bucket has its own rate."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The next chunk, up to $48,475, is taxed at 12%. Only the money in this bucket pays 12%. The bottom bucket still pays 10%."
+        "kind": "image",
+        "image": "lesson-fin8-03",
+        "eyebrow": "The bottom bucket",
+        "body": "The first $11,925 you earn is taxed at 10%. That is the bottom bucket, and everyone's first dollars go here, whether they earn $20,000 or $2 million."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Above that, up to $103,350, the rate is 22%. Have $50,000 of taxable income and only about $1,500 of it is in this bucket. The rest sits in the cheaper ones below."
+        "kind": "image",
+        "image": "lesson-fin8-04",
+        "eyebrow": "The next bucket",
+        "body": "The next chunk, up to $48,475, is taxed at 12%. Only the money in this bucket pays 12%. The bottom bucket still pays 10%. Nothing below it moves."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "So a raise that pushes you into a higher bracket only taxes the new dollars higher. You never take home less by earning more."
+        "kind": "image",
+        "image": "lesson-fin8-05",
+        "eyebrow": "The spill",
+        "body": "Above that, up to $103,350, the rate is 22%. Have $50,000 of taxable income and only $1,525 of it is in this bucket. The rest sits in the cheaper ones below."
       },
       {
-        "kind": "example",
-        "body": "Someone with $50,000 of taxable income doesn't pay 22% of $50,000. They pay 10% on the first bucket, 12% on the second, and 22% on the ~$1,500 that spills over. About $6,000 total, not $11,000."
+        "kind": "image",
+        "image": "lesson-fin8-06",
+        "eyebrow": "The total",
+        "body": "So $50,000 of taxable income does not pay 22% of $50,000. It pays $1,193, plus $4,386, plus $336. About $5,900 in total, not $11,000. Under 12% overall."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin8-07",
+        "eyebrow": "The raise",
+        "body": "A raise that pushes you into a higher bracket only taxes the new dollars at the higher rate. You never take home less by earning more. Take the raise."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin8-08",
+        "eyebrow": "Taxable is not pay",
+        "body": "Taxable income is smaller than your pay. The standard deduction takes $15,000 off the top first, for a single filer in 2025. Earn $60,000 and only $45,000 goes into the buckets."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin8-09",
+        "eyebrow": "Why it matters",
+        "body": "Knowing the buckets kills the fear. A raise is a raise. A bonus is a bonus. The only number that matters is the one at the bottom of the stub, and it only goes up."
       },
       {
         "kind": "key",
@@ -2031,9 +2083,9 @@
         "kind": "check",
         "question": "You have $50,000 of taxable income and the 22% bracket starts at $48,475. How much is taxed at 22%?",
         "choices": [
-          "All $50,000",
-          "About $1,500",
-          "None of it"
+          "All $50,000, once you cross the line.",
+          "About $1,500, the part above the line.",
+          "None of it until you reach $103,350."
         ],
         "answer": 1,
         "why": "Only the money above the bracket line, about $1,525, pays 22%. Everything below it stays in the cheaper buckets."
@@ -2123,30 +2175,63 @@
     "id": "fin-10",
     "title": "Why a dollar shrinks",
     "track": "finance",
-    "figure": "burrito",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Inflation is why the burrito that cost $8 now costs $10. You'll see what that does to cash sitting still, and why a savings account has to beat it to keep up.",
     "takeaway": "You learned why cash sitting still loses.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "In 2020 this burrito cost $8. Same burrito, same place."
+        "kind": "image",
+        "image": "lesson-fin10-01",
+        "eyebrow": "2020",
+        "body": "In 2020 this burrito cost $8. Same burrito, same place, same person behind the counter. Keep that $8 in your head for a moment."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "In 2025 it costs about $10. Prices across everything rose roughly a quarter in those five years. That's inflation."
+        "kind": "image",
+        "image": "lesson-fin10-02",
+        "eyebrow": "2025",
+        "body": "In 2025 it costs about $10. Prices across almost everything rose roughly a quarter in those five years. That is inflation: not one shop being greedy, but the whole price level moving."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Your $8 didn't change. But now it buys about four-fifths of a burrito. The number stayed. The dollar shrank."
+        "kind": "image",
+        "image": "lesson-fin10-03",
+        "eyebrow": "The dollar shrank",
+        "body": "Your $8 did not change. But now it buys about four-fifths of a burrito. The number on the bill stayed the same. The dollar got smaller."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Cash under a mattress loses around 3% of its buying power a year, in a normal year. A savings account paying 4% stays a bit ahead. One paying 0.1% doesn't."
+        "kind": "image",
+        "image": "lesson-fin10-04",
+        "eyebrow": "Cash sitting still",
+        "body": "Cash under a mattress loses around 3% of its buying power a year, in a normal year. It looks safe because the number never moves. That is exactly the problem."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin10-05",
+        "eyebrow": "The race",
+        "body": "A savings account paying 4% stays a bit ahead of prices. One paying 0.1% does not. Over ten years the gap between those two is the difference between keeping up and quietly falling behind."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin10-06",
+        "eyebrow": "Why it happens",
+        "body": "A little inflation is normal and mostly planned. Central banks aim for about 2% a year. Your grandparents' story about the movie that cost a quarter is the same story, told from the other end."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin10-07",
+        "eyebrow": "$500 in a drawer",
+        "body": "Keep $500 in cash for five years at 3% inflation and it buys what $430 buys today. The bills still say $500. The shelf disagrees."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin10-08",
+        "eyebrow": "Your pay",
+        "body": "This is why a raise that only matches inflation is not a raise. If prices rose 3% and your pay rose 3%, you can buy exactly what you could last year. Nothing more."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin10-09",
+        "eyebrow": "What to do",
+        "body": "Keep this month's money in cash. Keep this year's in a savings account that pays close to inflation. Anything you will not touch for years goes where it can grow faster than prices."
       },
       {
         "kind": "key",
@@ -2156,9 +2241,9 @@
         "kind": "check",
         "question": "You keep $500 in cash for five years. What happens to it?",
         "choices": [
-          "Nothing, it's still $500",
-          "It buys less than it used to",
-          "It grows a little"
+          "Nothing, it is still exactly $500 in the drawer.",
+          "It buys less than it did when you put it there.",
+          "It grows a little, because cash earns a bit too."
         ],
         "answer": 1,
         "why": "The bills say $500, but prices went up around it. The same cash buys fewer burritos than it did."
@@ -3125,40 +3210,64 @@
     "id": "fin-12",
     "title": "What an apartment really costs",
     "track": "finance",
-    "figure": "movein",
     "minutes": 3,
     "triggers": [],
     "blurb": "Rent is only part of what an apartment costs you. You'll see the money due on move-in day, the bills that come every month, and what to have saved first.",
     "takeaway": "You learned that the listing price isn't the price.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A listing shows one number. Say $1,200 a month. Two piles of money hide behind it: what you pay once, and what you pay every month."
+        "kind": "image",
+        "image": "lesson-fin12-01",
+        "eyebrow": "The listing",
+        "body": "A listing shows one number. Say $1,200 a month. Two piles of money hide behind it: what you pay once to get in, and what you pay every month after."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Before you get a key, most landlords want first month's rent plus a deposit. That's $2,400 on day one. You get the deposit back when you move out clean."
+        "kind": "image",
+        "image": "lesson-fin12-02",
+        "eyebrow": "Day one",
+        "body": "Before you get a key, most landlords want the first month's rent plus a deposit of about the same. That is $2,400 on day one. You get the deposit back when you move out clean."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Then the monthly extras. Power, water, and wifi run about $240. Renters insurance is $15 more, and it covers your stuff after a fire or a theft. That's $255."
+        "kind": "image",
+        "image": "lesson-fin12-03",
+        "eyebrow": "Every month",
+        "body": "Then the monthly extras. Power, water, gas and wifi run about $240. Renters insurance is $15 more and covers your stuff after a fire or a theft. That is $255 on top of rent."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "An empty apartment is really empty. A bed, a table, a lamp, pots, a shower curtain. Even buying used, that's about $800."
+        "kind": "image",
+        "image": "lesson-fin12-04",
+        "eyebrow": "Empty means empty",
+        "body": "An empty apartment is really empty. A bed, a table, a lamp, pots, a shower curtain. Even buying used, that is about $800 before it feels like a place to live."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Add it up. About $3,200 to walk in the door, and $1,455 every month after. The listing said $1,200."
+        "kind": "image",
+        "image": "lesson-fin12-05",
+        "eyebrow": "Add it up",
+        "body": "About $3,200 to walk in the door, and $1,455 every month after. The listing said $1,200. The listing was telling the truth about one line."
       },
       {
-        "kind": "example",
-        "body": "Two roommates take a $1,600 place. Rent looks like $800 each. On day one they each hand over $2,000: first month, half the deposit, half the furniture. Then it's $935 a month each, not $800."
+        "kind": "image",
+        "image": "lesson-fin12-06",
+        "eyebrow": "With a roommate",
+        "body": "Two roommates take a $1,600 place. Rent looks like $800 each. On day one they each hand over about $2,000: first month, half the deposit, half the furniture. Then it is $935 a month each, not $800."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin12-07",
+        "eyebrow": "The deposit",
+        "body": "Photograph every mark on move-in day and send the photos to the landlord. The deposit comes back when you leave the place as you found it, and the photos prove how you found it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin12-08",
+        "eyebrow": "The rule of thumb",
+        "body": "About three months' rent to get in the door. Then rent plus about 20% every month. Use those two numbers on any listing and the surprise disappears."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin12-09",
+        "eyebrow": "Worth it",
+        "body": "None of this is a reason not to move. It is a reason to save three months' rent first, so the first month in the place is fun instead of frightening."
       },
       {
         "kind": "key",
@@ -3168,9 +3277,9 @@
         "kind": "check",
         "question": "The rent is $1,000. About how much should you have saved before move-in day?",
         "choices": [
-          "About $2,000",
-          "About $3,000",
-          "About $1,000"
+          "About $2,000: the first month plus the deposit.",
+          "About $3,000: first month, deposit and furniture.",
+          "About $1,000: only the first month is due up front."
         ],
         "answer": 1,
         "why": "First month is $1,000. The deposit is usually another $1,000. Filling an empty apartment costs about a month's rent on top of that."
