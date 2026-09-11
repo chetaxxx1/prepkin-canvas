@@ -2709,8 +2709,7 @@
     "id": "study-7",
     "title": "Notes you'll actually reread",
     "track": "study",
-    "figure": "cornell",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study",
       "reading"
@@ -2719,29 +2718,58 @@
     "takeaway": "You learned to make notes that test you.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "One page, three zones. Draw the lines before class starts. It takes ten seconds."
+        "kind": "image",
+        "image": "lesson-study7-01",
+        "eyebrow": "One page, three zones",
+        "body": "One page, three zones. Draw the lines before class starts. A wide zone on the right, a thin column on the left, a strip along the bottom. Ten seconds."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The big zone on the right is for class. Write what's said, fast and messy. Don't fix it live."
+        "kind": "image",
+        "image": "lesson-study7-02",
+        "eyebrow": "During class",
+        "body": "The big zone on the right is for class. Write what is said, fast and messy. Do not fix it live. Neat can wait. Catching it cannot."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The thin column on the left is for after class. Turn each chunk of notes into a question. 'What does the mitochondria do?'"
+        "kind": "image",
+        "image": "lesson-study7-03",
+        "eyebrow": "After class",
+        "body": "The thin column on the left is for after class. Turn each chunk of notes into a question. 'What does the mitochondria do?' Ten minutes, the same day."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The strip at the bottom is one sentence that sums up the page. If you can't write it, you didn't get the class yet."
+        "kind": "image",
+        "image": "lesson-study7-04",
+        "eyebrow": "The bottom strip",
+        "body": "The strip at the bottom is one sentence that sums up the page. If you cannot write it, you did not get the class yet. Useful to know on Tuesday, not in the exam."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "To study: cover the right side. Read the questions on the left. Answer out loud. Uncover and check. That's a quiz you built yourself."
+        "kind": "image",
+        "image": "lesson-study7-05",
+        "eyebrow": "To study",
+        "body": "Cover the right side. Read the questions on the left. Answer out loud. Uncover and check. That is a quiz you built yourself, from your own class."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study7-06",
+        "eyebrow": "Transcript or quiz",
+        "body": "Notes that cannot quiz you are just a transcript. You will never reread a transcript. You will reread a page that asks you things."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study7-07",
+        "eyebrow": "Where it comes from",
+        "body": "A Cornell professor, Walter Pauk, designed it in the 1950s for students who took pages of notes and never opened them again. It has not needed changing since."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study7-08",
+        "eyebrow": "When",
+        "body": "Write in class. Add the questions the same day, while you still remember what the scribble meant. Quiz yourself a week later. Three touches, one page."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study7-09",
+        "eyebrow": "Later",
+        "body": "By the end of term you have a notebook that is also a question bank. Revision is reading the left column and checking the right. No new material to make."
       },
       {
         "kind": "key",
@@ -2751,9 +2779,9 @@
         "kind": "check",
         "question": "What goes in the left column?",
         "choices": [
-          "Neat copies of the notes",
-          "Questions the notes answer",
-          "Page numbers"
+          "A neat rewritten copy of the class notes.",
+          "Questions that the notes on the right answer.",
+          "The page numbers of the matching textbook."
         ],
         "answer": 1,
         "why": "The left column turns the page into a test. Cover the right side and the questions are all you see."
@@ -2764,8 +2792,7 @@
     "id": "study-8",
     "title": "Explain it to a twelve-year-old",
     "track": "study",
-    "figure": "feynman",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study",
       "labs"
@@ -2774,24 +2801,58 @@
     "takeaway": "You learned where your understanding runs out.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Take a blank page. Write the topic at the top. Photosynthesis, say."
+        "kind": "image",
+        "image": "lesson-study8-01",
+        "eyebrow": "Step one",
+        "body": "Take a blank page. Write the topic at the top. Photosynthesis, say. Then explain it in words a twelve-year-old would follow, with no terms you would have to define."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Now explain it in words a twelve-year-old would follow. No terms you'd have to define. 'The plant catches sunlight and uses it to turn air and water into sugar.'"
+        "kind": "image",
+        "image": "lesson-study8-02",
+        "eyebrow": "Plain words",
+        "body": "'The plant catches sunlight and uses it to turn air and water into sugar.' That is the whole idea in one plain line. If you can write that line, you have it."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Keep going until you hit a spot where the words go vague. 'And then it... does something with the light?' That's the gap. That's the exact thing you don't know yet."
+        "kind": "image",
+        "image": "lesson-study8-03",
+        "eyebrow": "The vague spot",
+        "body": "Keep going until you hit a spot where the words go vague. 'And then it... does something with the light?' That is the gap. That is the exact thing you do not know yet."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Go back to the textbook for that one gap only. Fill it, then rewrite the sentence plainly. Repeat until there's no vague spot left."
+        "kind": "image",
+        "image": "lesson-study8-04",
+        "eyebrow": "One gap only",
+        "body": "Go back to the textbook for that one gap only. Fill it, then rewrite the sentence plainly. Repeat until there is no vague spot left."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study8-05",
+        "eyebrow": "The loop",
+        "body": "Explain, find the vague spot, look it up, explain again. Each lap the vague spots get fewer. When there are none, you are done. Not before."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study8-06",
+        "eyebrow": "Who",
+        "body": "Richard Feynman, a physicist, was famous for explaining hard things in plain words. He said if you cannot explain it simply, you do not understand it well enough. This is his method."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study8-07",
+        "eyebrow": "Find a real one",
+        "body": "A real twelve-year-old is better than an imaginary one. A younger sibling, a cousin, a friend who does not take the class. They ask the question you skipped."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study8-08",
+        "eyebrow": "Big words hide gaps",
+        "body": "'Chlorophyll absorbs photons for the light-dependent reactions' can be said by someone who understands nothing. 'The green stuff catches the light' cannot. Big words hide gaps. Plain words find them."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study8-09",
+        "eyebrow": "The check",
+        "body": "You are done when you can say it to a friend in one breath with no terms and no pauses. Try it before every test. It takes a minute per topic and finds every hole."
       },
       {
         "kind": "key",
@@ -2801,9 +2862,9 @@
         "kind": "check",
         "question": "What does it mean when your explanation goes vague?",
         "choices": [
-          "You need a bigger word",
-          "You found the exact thing you don't know",
-          "The topic is too hard"
+          "You need a bigger, more precise word there.",
+          "You found the exact thing you do not know yet.",
+          "The topic is too hard to explain simply."
         ],
         "answer": 1,
         "why": "Vague words are where understanding runs out. That spot tells you what to go back and learn."
@@ -2814,8 +2875,7 @@
     "id": "study-9",
     "title": "Sleep is part of studying",
     "track": "study",
-    "figure": "sleep",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study",
       "sleep"
@@ -2824,33 +2884,58 @@
     "takeaway": "You learned that the night does the filing.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You study, then you sleep. Most people think the learning stopped when the book closed. It didn't."
+        "kind": "image",
+        "image": "lesson-study9-01",
+        "eyebrow": "The idea",
+        "body": "You study, then you sleep. Most people think the learning stopped when the book closed. It did not. Some of the most important part is about to happen."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Sleep runs in cycles, about ninety minutes each. Five or so in a full night."
+        "kind": "image",
+        "image": "lesson-study9-02",
+        "eyebrow": "Cycles",
+        "body": "Sleep runs in cycles, about ninety minutes each. Five or so in a full night. The early cycles and the late cycles do different jobs."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The deep sleep comes early in the night. The best evidence says this is when the day's facts get moved from short-term storage into long-term."
+        "kind": "image",
+        "image": "lesson-study9-03",
+        "eyebrow": "Early: filing",
+        "body": "The deep sleep comes early in the night. The best evidence says this is when the day's facts get moved from short-term storage into long-term. The filing shift."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The dream-heavy sleep comes late. This is when the brain connects new things to what you already knew."
+        "kind": "image",
+        "image": "lesson-study9-04",
+        "eyebrow": "Late: connecting",
+        "body": "The dream-heavy sleep comes late. This is when the brain connects new things to what you already knew. The part that turns facts into understanding."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Cut the night to four hours and you keep the filing but lose the connecting. Skip the night and you lose both. Studying at 3am is writing to a drive that won't save."
+        "kind": "image",
+        "image": "lesson-study9-05",
+        "eyebrow": "Cut the night",
+        "body": "Cut the night to four hours and you keep the filing but lose the connecting. Skip the night and you lose both. Studying at 3am is writing to a drive that will not save."
       },
       {
-        "kind": "example",
-        "body": "In studies, people who learned something and then slept remembered more the next day than people who learned it and stayed up, even with the same hours of study."
+        "kind": "image",
+        "image": "lesson-study9-06",
+        "eyebrow": "3am",
+        "body": "The all-nighter feels productive because you are awake and the pages are turning. The facts you cram after midnight never get moved into storage. You read them. They do not stick."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study9-07",
+        "eyebrow": "The evidence",
+        "body": "In a 1924 study, people who learned a list and then slept remembered about half of it eight hours later. People who learned it and stayed awake remembered about one in ten. Same hours, one difference."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study9-08",
+        "eyebrow": "The next morning",
+        "body": "The night before a test is not the time to cram. It is the time to sleep, so the week's studying gets filed. Review for twenty minutes, then close the book and let the brain finish."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study9-09",
+        "eyebrow": "The plan",
+        "body": "Move the studying earlier in the week. Sleep full nights, especially the last two. The night before, a short review and an early lights-out. Sleep is the last step, not the break."
       },
       {
         "kind": "key",
@@ -2860,9 +2945,9 @@
         "kind": "check",
         "question": "What does an all-nighter before a test cost you?",
         "choices": [
-          "Nothing if you drink coffee",
-          "The filing your brain does overnight",
-          "Only your mood"
+          "Nothing much, if you drink enough coffee.",
+          "The filing your brain does while you sleep.",
+          "Only your mood and your focus in the morning."
         ],
         "answer": 1,
         "why": "The facts you crammed never get moved to long-term storage. You read them, but they don't stick."
@@ -2873,8 +2958,7 @@
     "id": "study-10",
     "title": "The first minute of a test",
     "track": "study",
-    "figure": "exam",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study"
     ],
@@ -2882,29 +2966,58 @@
     "takeaway": "You learned to spend the first minute looking, not writing.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "The test lands on your desk. Don't touch question one yet."
+        "kind": "image",
+        "image": "lesson-study10-01",
+        "eyebrow": "The idea",
+        "body": "The test lands on your desk. Do not touch question one yet. The first minute decides how the next fifty go, and most people spend it on the wrong thing."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Spend sixty seconds reading every question. Just reading. Now you know what's coming and roughly how long you have per point."
+        "kind": "image",
+        "image": "lesson-study10-02",
+        "eyebrow": "Sixty seconds",
+        "body": "Spend sixty seconds reading every question. Just reading. Now you know what is coming, roughly how long you have per point, and where the easy ones are."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Do the ones you're sure about first. Every easy point is worth the same as a hard one, and it's yours in two minutes instead of ten."
+        "kind": "image",
+        "image": "lesson-study10-03",
+        "eyebrow": "Easy first",
+        "body": "Do the ones you are sure about first. Every easy point is worth the same as a hard one, and it is yours in two minutes instead of ten."
       },
       {
-        "kind": "figure",
-        "step": 4,
+        "kind": "image",
+        "image": "lesson-study10-04",
+        "eyebrow": "Mark and skip",
         "body": "Mark the hard ones and skip them. Not stuck, just later. Coming back fresh, with the easy points banked, often makes a hard one look smaller."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Come back with the time you have left, and with the easy points already banked. A hard question you run out of time on costs nothing now."
+        "kind": "image",
+        "image": "lesson-study10-05",
+        "eyebrow": "The budget",
+        "body": "Fifty minutes: one to read, thirty for the ones you know, the rest for the hard ones. The order protects the points you were always going to get."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study10-06",
+        "eyebrow": "Two students",
+        "body": "One student spends fifteen minutes on question one and runs out of time on three easy ones at the end. The other banks the easy ones and comes back. Same knowledge, ten points apart."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study10-07",
+        "eyebrow": "Come back",
+        "body": "Come back with the time you have left, and with the easy points already banked. A hard question you run out of time on costs nothing now. It was a bonus."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study10-08",
+        "eyebrow": "How to mark",
+        "body": "Circle the question number and write one word next to it: 'later', or the method you think it wants. When you come back, the word saves you the reread."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study10-09",
+        "eyebrow": "The feeling",
+        "body": "This is also how you stop panicking. A test you have already read is a known thing. The first minute buys calm for the other forty-nine."
       },
       {
         "kind": "key",
@@ -2914,9 +3027,9 @@
         "kind": "check",
         "question": "Why skip a hard question instead of pushing through it?",
         "choices": [
-          "Hard questions are worth less",
-          "It keeps the easy points from running out of time",
-          "You'll never get it anyway"
+          "Hard questions are worth fewer points anyway.",
+          "It stops the hard one eating time from easy ones.",
+          "You will never get the hard one no matter what."
         ],
         "answer": 1,
         "why": "A hard question can eat ten minutes and three easy questions with it. Bank the easy ones first, then come back."
@@ -3685,35 +3798,64 @@
     "id": "study-11",
     "title": "You forget most of it by tomorrow",
     "track": "study",
-    "figure": "decay",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "Most of what you learn today leaks out within a day. The drop is steepest right at the start, and you'll see how one short review turns the cliff into a slope.",
     "takeaway": "You learned that each review flattens the drop.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You learn something today. The tall bar is all of it. The short ones are how much is still in your head on later days."
+        "kind": "image",
+        "image": "lesson-study11-01",
+        "eyebrow": "The idea",
+        "body": "You learn something today. The tall bar is all of it. The short ones are how much is still in your head on later days. It drops fast, then slowly."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The empty boxes on top are what fell out. Almost all of the loss happens in the first day. After that it drains slowly."
+        "kind": "image",
+        "image": "lesson-study11-02",
+        "eyebrow": "What fell out",
+        "body": "The empty space on top is what fell out. Almost all of the loss happens in the first day. After that it drains slowly. The cliff is day one."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Review it on day one and you are back at the top. One quick recall from memory, not a full reread."
+        "kind": "image",
+        "image": "lesson-study11-03",
+        "eyebrow": "Review on day one",
+        "body": "Review it on day one and you are back at the top. One quick recall from memory, not a full reread. Ten minutes, the next morning."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Now the later days stay much higher. The cliff has turned into a slope."
+        "kind": "image",
+        "image": "lesson-study11-04",
+        "eyebrow": "Cliff to slope",
+        "body": "Now the later days stay much higher. The cliff has turned into a slope. Every review after that can be further apart."
       },
       {
-        "kind": "example",
-        "body": "In the 1880s Hermann Ebbinghaus memorized lists of nonsense syllables and tested himself for a month. About a third was left after a day, about a quarter after a week. Class material you understand fades slower, but the shape is the same."
+        "kind": "image",
+        "image": "lesson-study11-05",
+        "eyebrow": "Who",
+        "body": "In the 1880s Hermann Ebbinghaus memorised lists of nonsense syllables and tested himself for a month. He did it alone, on himself, for years. It was the first careful measurement of forgetting."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study11-06",
+        "eyebrow": "His numbers",
+        "body": "About a third was left after a day, about a quarter after a week. Class material you understand fades slower than nonsense, but the shape is the same."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study11-07",
+        "eyebrow": "The cheapest review",
+        "body": "The cheapest review is the soonest one. Ten minutes tonight does what an hour does the night before the test, because there is still something there to catch."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study11-08",
+        "eyebrow": "Tonight",
+        "body": "So the rule is simple. Whatever you learned today, pull it out of your head once before bed. Not the notes. Your head. Then check."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study11-09",
+        "eyebrow": "The schedule",
+        "body": "Day one, day three, day seven, three weeks. Each review can be shorter and further out than the last, because each one lands on a slope instead of a cliff."
       },
       {
         "kind": "key",
@@ -3723,9 +3865,9 @@
         "kind": "check",
         "question": "You read a chapter today. When is a ten-minute review worth the most?",
         "choices": [
-          "The night before the test",
-          "Tonight or tomorrow",
-          "Halfway through the unit"
+          "The night before the test, when it counts.",
+          "Tonight or tomorrow, before the cliff is done.",
+          "Halfway through the unit, as a checkpoint."
         ],
         "answer": 1,
         "why": "The steepest part of the drop is the first day. A review there costs the least time and saves the most."
