@@ -9,8 +9,13 @@ import SwiftUI
 /// clock and never stops: bubbles, fish, crabs, clams and the far swimmers keep moving
 /// while he sleeps, which is what a reef does.
 ///
-/// Everything is drawn in two `Canvas` passes (back, front) around the still Sprout,
-/// so the sixty-odd sprites cost one draw each per frame.
+/// Everything is drawn in two `Canvas` passes (back, front) around Sprout, so the
+/// sixty-odd sprites cost one draw each per frame.
+///
+/// Sprout himself is the live rig — the same page Home runs, in a see-through web view
+/// of its own — so he swims the way the approved mock swims: fins, blink, breath, and
+/// whatever he is wearing. He was a still that bobbed from the port until 2026-09-11,
+/// which is what George meant by "it should move like before".
 struct SwimSceneView: View {
     var time: Double
     var life: Double
@@ -24,6 +29,9 @@ struct SwimSceneView: View {
     var size: CGFloat = 250
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The page takes about a second to boot. Until it reports ready the still stands in,
+    /// exactly where he will appear, so a shift never opens on an empty porthole.
+    @State private var rigReady = false
 
     /// Seconds between length markers. The floor tile (660) divides 90 × 22, so the arch
     /// lands on the same bare stretch of sand every tick.
@@ -45,15 +53,19 @@ struct SwimSceneView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
+            // The porthole is cut on each canvas, not on the stack: a clipping ancestor
+            // stops a WKWebView's out-of-process layer from drawing at all. He never
+            // reaches the rim himself — the water he swims in is well inside it.
             Canvas(rendersAsynchronously: false) { ctx, _ in drawBack(&ctx) }
                 .frame(width: Self.base, height: Self.base)
+                .clipShape(Circle())
             sprout
             Canvas(rendersAsynchronously: false) { ctx, _ in drawFront(&ctx) }
                 .frame(width: Self.base, height: Self.base)
+                .clipShape(Circle())
                 .allowsHitTesting(false)
         }
         .frame(width: Self.base, height: Self.base)
-        .clipShape(Circle())
         .scaleEffect(size / Self.base)
         .frame(width: size, height: size)
     }
@@ -61,17 +73,41 @@ struct SwimSceneView: View {
     // MARK: - Sprout
 
     private let kinSize: CGFloat = 128
-    private var swimBottom: Double { 124 }
+    /// His feet while swimming. 124 with the still; the rig jumps when it wakes and on
+    /// every length, about 47 points, and the web view is deliberately not clipped, so
+    /// from 124 the top of his head cleared the porthole. From here the peak stays inside.
+    private var swimBottom: Double { 146 }
     private var sleepBottom: Double { Self.sand + 4 }
+
+    /// The page's view. Wider than him for the fins and anything held, taller for a
+    /// jump; the page rests his feet `restLift` of the height above its bottom edge.
+    private static let rigBox = CGSize(width: 200, height: 160)
+    private static let restLift: CGFloat = 0.07
 
     private var sprout: some View {
         let artH = kinSize * SproutImage.heightRatio
         let drift = (paused || reduceMotion) ? 0.0 : sin(time * 2 * .pi / 6) * 8
         let lift = (paused || reduceMotion) ? 0.0 : sin(time * 2 * .pi / 3) * 1.5
         let bottom = paused ? sleepBottom : swimBottom
-        return SproutImage(speciesID: speciesID, level: level, skin: skin, animation: animation, size: kinSize)
-            .offset(x: (Self.base - kinSize) / 2 + drift, y: bottom - artH + lift)
-            .animation(.easeInOut(duration: 0.7), value: paused)
+        // Feet on `bottom`, whichever of the two is drawing him.
+        let boxTop = bottom - Self.rigBox.height * (1 - Self.restLift)
+        return ZStack(alignment: .topLeading) {
+            SproutView(speciesID: speciesID, level: level, skin: skin, animation: animation,
+                       radius: kinSize * SproutView.radiusRatio, tank: "", placeholder: .clear,
+                       transparent: true, sleeping: paused, reduceMotion: reduceMotion,
+                       onReady: { ready in
+                           withAnimation(.easeOut(duration: 0.25)) { rigReady = ready }
+                       })
+                .frame(width: Self.rigBox.width, height: Self.rigBox.height)
+                .offset(x: (Self.base - Self.rigBox.width) / 2 + drift, y: boxTop + lift)
+                .opacity(rigReady ? 1 : 0)
+            if !rigReady {
+                SproutImage(speciesID: speciesID, level: level, skin: skin, animation: animation, size: kinSize)
+                    .offset(x: (Self.base - kinSize) / 2 + drift, y: bottom - artH + lift)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.7), value: paused)
     }
 
     // MARK: - Back: water, rays, far mounds, far swimmers, fish, floor, arch, chest

@@ -48,6 +48,18 @@ struct SproutView: UIViewRepresentable {
     /// Painted under the page until it draws, so a cold launch is never a white
     /// block where the tank will be.
     var placeholder: UIColor = .white
+    /// A see-through instance of its own, for a host that paints its own scene around
+    /// him — the Focus reef. Not the shared Home view: Home's stays opaque and paints its
+    /// tank, and the two are never on screen together but both keep their view alive.
+    /// The page already has no background in embed mode; only the web view had one.
+    ///
+    /// The old note on Home said a non-opaque WKWebView composites nothing at all. What
+    /// actually stopped it was a clipping ancestor — SwiftUI's mask over the whole
+    /// subtree. Clip the neighbours, leave the web view unclipped, and it draws fine.
+    var transparent: Bool = false
+    /// Asleep on the sand — a paused shift. A toggle on the page, not a one-shot emote,
+    /// so it is its own switch rather than an `animation` value that would time out.
+    var sleeping: Bool = false
     /// Reduce Motion, pushed to the page on ready and on change. The page also
     /// reads the system setting itself; this is the belt to that brace.
     var reduceMotion: Bool = false
@@ -88,17 +100,19 @@ struct SproutView: UIViewRepresentable {
     /// units in `aspect`. The other 380 hang below it.
     static let riseRatio: CGFloat = 0.5529
 
-    /// Home is the only host, and the page takes about a second to boot, so one
+    /// Home is the only opaque host, and the page takes about a second to boot, so one
     /// web view and one coordinator live for the whole run. Leaving the tab
     /// detaches the view; coming back re-attaches the same one, already drawn,
-    /// instead of loading the page again and flashing the placeholder.
+    /// instead of loading the page again and flashing the placeholder. A
+    /// `transparent` host (the Focus reef) gets its own view and coordinator and
+    /// lets them go with the screen.
     private enum Shared {
         static var webView: WKWebView?
         static let coordinator = Coordinator()
     }
 
     func makeUIView(context: Context) -> WKWebView {
-        if let view = Shared.webView {
+        if !transparent, let view = Shared.webView {
             view.removeFromSuperview()
             // The page is deaf to touches: the app drives it entirely through JS, and the
             // tank's own drag gesture sits on top. Set on the reused view too, because
@@ -145,6 +159,12 @@ struct SproutView: UIViewRepresentable {
         // has a background of its own, so a reload or a killed web content process
         // shows the tank floor rather than white.
         view.underPageBackgroundColor = placeholder
+        if transparent {
+            view.isOpaque = false
+            view.backgroundColor = .clear
+            view.scrollView.backgroundColor = .clear
+            view.underPageBackgroundColor = .clear
+        }
 
         let look = currentLook
         context.coordinator.look = look
@@ -152,7 +172,7 @@ struct SproutView: UIViewRepresentable {
         context.coordinator.onLayout = onLayout
         context.coordinator.reduceMotion = reduceMotion
         view.load(URLRequest(url: look.url))
-        Shared.webView = view
+        if !transparent { Shared.webView = view }
         return view
     }
 
@@ -170,6 +190,13 @@ struct SproutView: UIViewRepresentable {
             onReady?(false)
             webView.load(URLRequest(url: look.url))
             return
+        }
+
+        if coordinator.sleeping != sleeping {
+            coordinator.sleeping = sleeping
+            coordinator.send(sleeping ? "window.RiverSprite.play('sleep')"
+                                      : "if (window.RiverSprite.isSleeping()) window.RiverSprite.wake()",
+                             to: webView)
         }
 
         if coordinator.paused != paused {
@@ -196,7 +223,7 @@ struct SproutView: UIViewRepresentable {
 
     // The coordinator is the page's message handler and remembers what the page
     // has been told, so it has to outlive the host along with the web view.
-    func makeCoordinator() -> Coordinator { Shared.coordinator }
+    func makeCoordinator() -> Coordinator { transparent ? Coordinator() : Shared.coordinator }
 
     private var currentLook: Look {
         Look(type: Self.type(speciesID), coat: Self.coat(speciesID), evo: Self.evo(level),
@@ -231,8 +258,12 @@ struct SproutView: UIViewRepresentable {
                 URLQueryItem(name: "evo", value: evo),
                 URLQueryItem(name: "skin", value: skin),
                 URLQueryItem(name: "radius", value: String(format: "%.2f", radius)),
-                URLQueryItem(name: "tank", value: tank),
             ]
+            // No tank means no plate: the page leaves its background clear, which is
+            // what a transparent host wants.
+            if !tank.isEmpty {
+                components.queryItems?.append(URLQueryItem(name: "tank", value: tank))
+            }
             // Empty means the kin has never been dressed, and the page puts it in its
             // coat's default. Sending "classic" instead would be an unknown costume id,
             // which the page would ignore — the same picture, by accident rather than on
@@ -254,6 +285,7 @@ struct SproutView: UIViewRepresentable {
         var onReady: ((Bool) -> Void)?
         var reduceMotion = false
         var paused = false
+        var sleeping = false
         var band: Band?
         var onLayout: ((Band) -> Void)?
 
