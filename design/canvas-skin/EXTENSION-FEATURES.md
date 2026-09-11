@@ -89,16 +89,21 @@ the pull BetterCampus's have, and for a summary on the first page. Built:
 - **Sprout, on the page** (2026-09-11): the app's own Sprout web build, copied
   into `extension/sprout/` by `sync.sh` from `ios/SproutWeb`, runs in a frame
   of the extension's origin (`#prepkin-sprout`, its own closed host, because
-  the panel redraws with innerHTML and a moved frame reloads). No bubble: he
-  sits on the page's bottom edge the way a Codex pet sits on the dock, with the
-  panel's launcher laid over him and the count badge above his head. He idles
+  the panel redraws with innerHTML and a moved frame reloads). No bubble. He
+  lives at the foot of Canvas's global nav — the fixed, full-height rail that
+  is empty below its menu on every page and already wears our theme — above
+  the collapse toggle, so nothing ever scrolls under him (Duolingo keeps Duo
+  in a reserved gutter; Toggl and Slack keep the bottom of the rail for the
+  person). The panel's launcher is laid over him and the panel opens to his
+  right, bottom-aligned, like something he holds up. Radius 26 fills the 84px
+  rail fin to fin, 17 the collapsed 54; with no rail on the page he falls back
+  to the bottom right at 36. He idles
   on his own, turns to look when the pointer comes near, waves when clicked;
   pauses in a hidden tab; honours reduced motion. Which kin: the phone now
   publishes `kin: {species, level, skin}` in `push_state` (`BridgeKin`), the
   laptop keeps it on `wallet.kin`; without a phone he is stage-two mint. The
   frame is driven by `sprout/bridge.js`, a message listener that only knows
-  play / wake / paused / reduceMotion / signature. `html.pk-buddy` pads the
-  content wrapper 176px so a long sidebar can scroll clear of him. The six
+  play / wake / paused / reduceMotion / signature. The six
   stills in `art/kin/` (board rows, the track rider) are cut from the current
   rig's stage-two stills.
 

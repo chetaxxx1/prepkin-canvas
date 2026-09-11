@@ -89,10 +89,31 @@ const VIEW = { width: 1280, height: 860 };
   await page.screenshot({ path: path.join(OUT, 'after.png') });
   console.log('after.png');
 
+  // MEASURE=1: print the global nav's geometry and stop.
+  if (process.env.MEASURE) {
+    const geo = await page.evaluate(() => {
+      const r = (el) => { if (!el) return null; const b = el.getBoundingClientRect(); return { x: b.x, y: b.y, w: b.width, h: b.height }; };
+      return {
+        header: r(document.getElementById('header')),
+        main: r(document.querySelector('.ic-app-header__main-navigation')),
+        lastItem: r(document.querySelector('.ic-app-header__menu-list-item:last-child')),
+        secondary: r(document.querySelector('.ic-app-header__secondary-navigation')),
+        toggle: r(document.getElementById('primaryNavToggle')),
+        logo: r(document.querySelector('.ic-app-header__logomark, .ic-sidebar-logo')),
+        bodyClass: document.body.className,
+        headerClass: document.getElementById('header')?.className,
+        vw: innerWidth, vh: innerHeight,
+      };
+    });
+    console.log(JSON.stringify(geo, null, 1));
+    await context.close(); await server.stop(); return;
+  }
+
   // POKE=1: hover Sprout, click him, and keep frames for a GIF of the reaction.
   if (process.env.POKE) {
-    const x = VIEW.width - 12 - 88, y = VIEW.height - 70;
-    const corner = { x: VIEW.width - 420, y: VIEW.height - 330, width: 420, height: 330 };
+    // He lives at the foot of the global nav now: centre of the 84px rail, above the toggle.
+    const x = 42, y = VIEW.height - 50 - 50;
+    const corner = { x: 0, y: VIEW.height - 330, width: 520, height: 330 };
     await page.mouse.move(x, y);
     for (let i = 0; i < 10; i++) { await page.screenshot({ path: path.join(OUT, `poke-hover-${String(i).padStart(2, '0')}.png`), clip: corner }); await page.waitForTimeout(90); }
     await page.mouse.click(x, y);

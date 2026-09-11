@@ -244,7 +244,7 @@ function applySkin(s) {
   killed = detectKill();
   facts = detectFacts();
   const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
-  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, mascot: !!s.mascot, look, putBack, detect: facts }));
+  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
     if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-todo-open' && !next.has(c)) root.classList.remove(c);
   }
@@ -1694,6 +1694,7 @@ function refreshPage() {
   decorateCards();
   renderWeek();
   renderSearchChip();
+  if (sprite) mountSprite();
 }
 function watchPage() {
   if (pageObserver) return;
@@ -1725,11 +1726,28 @@ function watchPage() {
 // and a frame that is moved or rebuilt reloads.
 
 const SPRITE_ID = 'prepkin-sprout';
-/// Frame size and his size. The page anchors his feet to the frame's bottom
-/// and keeps headroom above for the jumping emotes (happy lifts 112 px), so the
-/// frame is taller than he is. `radius` is his stage-three body radius in px.
-const SPRITE_W = 176, SPRITE_H = 268, SPRITE_RADIUS = 44;
-let sprite = null;   // { host, frame, ready, queue }
+let sprite = null;   // { host, frame, url, ready, queue, place }
+let spriteListening = false;
+
+/// Where he lives. Canvas's global nav is a fixed, full-height rail that is
+/// empty below its menu on every page, and it already wears our theme, so
+/// the slot above its collapse toggle is his: nothing scrolls under him
+/// there, the way Toggl or Slack keep the bottom of the rail for the person.
+/// On a page with no rail (a phone-width window, an LTI tool) he falls back
+/// to the bottom right, smaller.
+function spritePlace() {
+  const header = document.getElementById('header');
+  const rail = header ? header.getBoundingClientRect() : null;
+  if (rail && rail.width >= 48 && rail.height >= 400 && rail.left === 0) {
+    const toggle = document.getElementById('primaryNavToggle')?.getBoundingClientRect();
+    const bottom = Math.round(toggle?.height || 44) + 6;
+    // His stage-three body radius: fins reach about 1.6 radii each side, so
+    // 26 fills the 84 px rail edge to edge and 17 the collapsed 54.
+    const radius = rail.width >= 80 ? 26 : 17;
+    return { side: 'left', navW: Math.round(rail.width), bottom, radius, w: Math.round(rail.width) + 24, h: 190 };
+  }
+  return { side: 'right', navW: 0, bottom: 0, radius: 36, w: 150, h: 240 };
+}
 
 /// Old species ids from the first app builds, onto the six coats Sprout has.
 const COAT_OF = { ember: 'coral', mochi: 'coral', droplet: 'sky', puff: 'sky', wisp: 'lilac', comet: 'butter', sprout: 'peach' };
@@ -1745,9 +1763,9 @@ function kinLook() {
   return { coat, evo, skin, costume };
 }
 
-function spriteURL() {
+function spriteURL(radius) {
   const look = kinLook();
-  const q = new URLSearchParams({ embed: '1', type: 'sprout', coat: look.coat, evo: String(look.evo), skin: look.skin, radius: String(SPRITE_RADIUS) });
+  const q = new URLSearchParams({ embed: '1', type: 'sprout', coat: look.coat, evo: String(look.evo), skin: look.skin, radius: String(radius) });
   if (look.costume) q.set('costume', look.costume);
   if (!alive()) return null;
   return `${chrome.runtime.getURL('sprout/index.html')}?${q}`;
@@ -1761,16 +1779,38 @@ function spriteSend(msg) {
   sprite.frame.contentWindow?.postMessage({ prepkin: 'sprout', ...msg }, '*');
 }
 
+/// Lays the frame and the panel's launcher over the same spot. Cheap, so it
+/// runs on every page pass: the rail collapses and expands without a reload.
+function placeSprite(place = spritePlace()) {
+  if (!sprite) return;
+  const st = sprite.host.style;
+  if (place.side === 'left') {
+    st.left = '-12px'; st.right = 'auto'; st.bottom = `${place.bottom}px`;
+  } else {
+    st.left = 'auto'; st.right = '12px'; st.bottom = '0px';
+  }
+  st.width = `${place.w}px`; st.height = `${place.h}px`;
+  sprite.place = place;
+  if (shadow) {
+    const h = shadow.host;
+    h.dataset.side = place.side;
+    h.style.setProperty('--pk-nav-w', `${place.navW || 150}px`);
+    h.style.setProperty('--pk-tab-h', `${place.side === 'left' ? 120 : 150}px`);
+    h.style.setProperty('--pk-tab-bottom', `${place.side === 'left' ? place.bottom : 0}px`);
+  }
+}
+
 function mountSprite() {
-  const url = spriteURL();
+  const place = spritePlace();
+  const url = spriteURL(place.radius);
   if (!url) return;
-  if (sprite && sprite.url === url && document.getElementById(SPRITE_ID)) return;
+  if (sprite && sprite.url === url && document.getElementById(SPRITE_ID)) { placeSprite(place); return; }
   unmountSprite();
   const host = document.createElement('div');
   host.id = SPRITE_ID;
   const root = host.attachShadow({ mode: 'closed' });
   const style = document.createElement('style');
-  style.textContent = `:host{position:fixed;right:12px;bottom:0;width:${SPRITE_W}px;height:${SPRITE_H}px;z-index:2147482999;pointer-events:none;}
+  style.textContent = `:host{position:fixed;z-index:2147482999;pointer-events:none;}
 iframe{display:block;width:100%;height:100%;border:0;background:transparent;color-scheme:normal;}`;
   const frame = document.createElement('iframe');
   frame.src = url;
@@ -1780,7 +1820,8 @@ iframe{display:block;width:100%;height:100%;border:0;background:transparent;colo
   frame.allowTransparency = true;
   root.append(style, frame);
   document.body.append(host);
-  sprite = { host, frame, url, ready: false, queue: [] };
+  sprite = { host, frame, url, ready: false, queue: [], place };
+  placeSprite(place);
   if (!spriteListening) {
     spriteListening = true;
     window.addEventListener('message', (e) => {
@@ -1791,9 +1832,9 @@ iframe{display:block;width:100%;height:100%;border:0;background:transparent;colo
       for (const m of sprite.queue.splice(0)) spriteSend(m);
     });
     document.addEventListener('visibilitychange', () => spriteSend({ do: 'paused', value: document.visibilityState === 'hidden' }));
+    window.addEventListener('resize', () => { if (sprite) mountSprite(); });
   }
 }
-let spriteListening = false;
 
 function unmountSprite() {
   document.getElementById(SPRITE_ID)?.remove();
@@ -1804,6 +1845,7 @@ function unmountSprite() {
 
 function render() {
   if (shadow) { shadow.host.toggleAttribute('data-open', ui.open); shadow.host.dataset.view = ui.view; shadow.host.dataset.league = wallet.league ? tierOf(wallet.league).id : ''; }
+  if (shadow && sprite) placeSprite(sprite.place);
   if (!shadow) return;
   const root = shadow;
   const now = new Date();

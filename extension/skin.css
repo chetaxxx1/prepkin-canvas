@@ -631,11 +631,6 @@ html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--
 #pk-week .pk-w-foot .more:hover { text-decoration: underline; }
 html.pk-back-week #pk-week { display: none; }
 
-/* Room under the page for Sprout, who sits on its bottom edge (content.js,
- * #prepkin-sprout). Without this the last rows of a long sidebar end up
- * behind him with no way to scroll past. */
-html.pk-on.pk-buddy .ic-Layout-contentWrapper { padding-bottom: 176px !important; }
-
 /* Canvas's own To Do, folded to one line under the rail. Show opens it for
  * this page view; Put back on the receipt keeps it open for good. */
 #pk-todo-fold {
