@@ -485,7 +485,7 @@ function taskRow(t, { now, state }) {
       <li class="${state === 'overdue' ? 'overdue' : ''} own">
         <span class="pk-dot"${state !== 'overdue' && color ? ` style="background:${escapeHTML(color)}"` : ''}></span>
         <div><b>${escapeHTML(t.title)}</b>
-             <small>${escapeHTML(t.courseName)} · ${dueLabel(t, now)}</small></div>
+             <small>${escapeHTML(shortCourse(t.courseName))} · ${dueLabel(t, now)}</small></div>
         <button class="pk-done" data-own-done="${escapeHTML(t.id)}">Done</button>
         <button class="pk-x" data-own-remove="${escapeHTML(t.id)}" aria-label="Remove">×</button>
       </li>`;
@@ -498,7 +498,7 @@ function taskRow(t, { now, state }) {
     <li class="${overdue ? 'overdue' : ''}">
       <span class="pk-dot"${!overdue && color ? ` style="background:${escapeHTML(color)}"` : ''}></span>
       <div><b>${escapeHTML(t.title)}</b>
-           <small>${escapeHTML(t.courseName)} · ${dueLabel(t, now)}${isMoved(t) ? ' · you planned this' : ''}</small></div>
+           <small>${escapeHTML(shortCourse(t.courseName))} · ${overdue ? dueLabel(t, now).replace(' · still counts', '') : dueLabel(t, now)}${isMoved(t) ? ' · you planned this' : ''}</small></div>
       ${overdue ? startButton(t, true) : ''}
     </li>`;
 }
@@ -579,13 +579,13 @@ function panelView(b, said, now) {
       ${filterBtn('overdue', 'Overdue', b.overdue.length, true)}
       ${b.missed.length ? filterBtn('missed', 'Missing', b.missed.length, true) : ''}
     </div>
-    ${filter === 'missed' ? `<div class="pk-foot">Work the school marked missing. Old, and it still counts — teachers take late work more often than students ask.</div>${missingCostLines(b.missed)}` : ''}
+    ${filter === 'missed' ? `<div class="pk-foot">Your school marked these missing. Late work still counts. Teachers take it more often than students ask.</div>${missingCostLines(b.missed)}` : ''}
     ${filter === 'missed' ? '' : nextUp ? nextUpCard(nextUp, now) : ''}
     <ul class="pk-list">${rows.join('') || (nextUp ? '' : '<li class="empty">Nothing here. Enjoy it.</li>')}</ul>
     <div class="pk-listfoot"><button class="pk-add" data-view="addtask">+ Add a task</button><button class="pk-add" data-view="search">Search <kbd>⌘K</kbd></button></div>
     ${gradesCard()}
     ${leagueCard()}
-    <div class="pk-foot center">What Prepkin changed on this page, and its settings, are in the toolbar button.</div>`;
+    <div class="pk-foot center">Settings, and what changed on this page, are in the toolbar button.</div>`;
 }
 
 /// Start (the page) and one focus chip at the remembered length, the same words
@@ -599,8 +599,8 @@ function nextUpCard(t, now) {
       <span class="pk-label green">Next up</span>
       <div class="pk-row">
         <div>
-          <b>${escapeHTML(t.title)} · ${escapeHTML(t.courseName)}</b>
-          <small>${dueLabel(t, now)}${t.pointsPossible ? ` · ${t.pointsPossible} pts` : ''}</small>
+          <b>${escapeHTML(t.title)}</b>
+          <small>${escapeHTML(shortCourse(t.courseName))} · ${dueLabel(t, now)}${t.pointsPossible ? ` · ${t.pointsPossible} pts` : ''}</small>
         </div>
         ${startButton(t, false)}
       </div>
@@ -1484,7 +1484,7 @@ function renderWeek() {
   // The oldest slipped task is the one to start; after it, what is coming
   // before what has already gone by, so the list is not a wall of amber.
   const first = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
-  const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 4);
+  const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 3);
   const key = JSON.stringify([weekOffset, w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]),
     first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes,
     wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.league?.bar ?? null, wallet.league?.board?.length ?? null, wallet.league?.board?.findIndex?.((m) => m.you) ?? null]);
@@ -1595,8 +1595,9 @@ function renderWeek() {
       const dot = el('i', overdue ? 'late' : '');
       const color = safeColor(t.colorHex); if (color && !overdue) dot.style.background = color;
       const info = el('div');
-      const pts = Number(t.pointsPossible) > 0 ? ` · ${t.pointsPossible} pts` : '';
-      info.append(el('b', '', t.title), el('small', overdue ? 'amber' : '', `${shortCourse(t.courseName)} · ${dueLabel(t, now)}${overdue ? '' : pts}`));
+      // One line: the course and when. The ring dot already says late.
+      const when = overdue ? dueLabel(t, now).replace(' · still counts', '') : dueLabel(t, now);
+      info.append(el('b', '', t.title), el('small', overdue ? 'amber' : '', `${shortCourse(t.courseName)} · ${when}`));
       li.append(dot, info);
       list.append(li);
     }
@@ -1921,13 +1922,12 @@ function render() {
         <div class="pk-chips">
           <button class="pk-coins" data-view="looks" title="Looks">${COIN_SVG}${
             wallet.coins === null ? (earned ? `+${earned} today` : 'Looks') : wallet.coins}</button>
-          <span class="pk-donechip">${checkSVG(14)}${b.doneToday.length} of ${totalToday} today</span>
-          <span class="pk-label">${now.toLocaleDateString([], { weekday: 'short' })}</span>
+          ${totalToday ? `<span class="pk-donechip">${checkSVG(14)}${b.doneToday.length} of ${totalToday} done today</span>` : ''}
         </div>
-        <div class="pk-track">
+        ${totalToday ? `<div class="pk-track">
           <i style="width:${pct}%"></i>
           <span class="pk-rider" style="left:${pct}%">${kinFace(ownSpecies(), 22, 'pk-buddy')}</span>
-        </div>
+        </div>` : ''}
       </div>` : ''}
       <div class="pk-body">${body}</div>
     </div>`;

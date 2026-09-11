@@ -126,8 +126,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-filters button {
   border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer;
   font-size: 13px; font-weight: 700; background: var(--pk-inset); color: var(--pk-text-2);
-  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease);
-}
+  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease); white-space: nowrap; }
 .pk-filters button:hover { color: var(--pk-text); }
 .pk-filters button em { font-style: normal; opacity: .7; margin-left: 4px; }
 .pk-filters button.on { background: var(--pk-mint-tint-strong); color: var(--pk-green); font-weight: 800; }
@@ -168,8 +167,9 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-start:active, .pk-press:active { transform: translateY(3px); box-shadow: 0 0 0 var(--pk-mint-edge); }
 .pk-press.wide { width: 100%; }
 .pk-press:disabled { opacity: .5; cursor: default; transform: none; }
-.pk-start.soft { background: var(--pk-soft); color: #33291f !important; box-shadow: 0 3px 0 var(--pk-soft-edge); }
-.pk-start.soft:active { box-shadow: 0 0 0 var(--pk-soft-edge); }
+.pk-start.soft { background: var(--pk-card); color: var(--pk-text) !important; box-shadow: inset 0 0 0 1px var(--pk-line); font-size: 13px; padding: 7px 14px; }
+.pk-start.soft:hover { background: var(--pk-inset); filter: none; }
+.pk-start.soft:active { transform: none; box-shadow: inset 0 0 0 1px var(--pk-line); }
 
 .pk-focusrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .pk-focusrow span { font-size: 13px; font-weight: 700; color: var(--pk-text-2); margin-right: 2px; }

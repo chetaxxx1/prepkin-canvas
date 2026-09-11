@@ -91,8 +91,8 @@ function voice({ overdue, today, doneToday }) {
   if (o) {
     return {
       face: 'faceDeadpan', worried: true,
-      headline: o === 1 ? 'One slipped past due' : `${count(o)} slipped past due`,
-      subline: 'Pick one to start. Ten minutes counts.',
+      headline: o === 1 ? 'One past due' : `${count(o)} past due`,
+      subline: 'Late work still counts. Pick one to start.',
     };
   }
   if (!t) {
@@ -102,8 +102,8 @@ function voice({ overdue, today, doneToday }) {
   }
   return {
     face: 'faceIdle',
-    headline: d ? 'Nice pace today' : 'Ready when you are',
-    subline: d ? `${d} down, ${t} to go. No rush.` : `${t === 1 ? 'One thing' : count(t) + ' things'} today. Start small.`,
+    headline: d ? 'Good pace today' : 'Ready when you are',
+    subline: d ? `${d} done, ${t} to go. No rush.` : `${t === 1 ? 'One thing' : count(t) + ' things'} due today. Start small.`,
   };
 }
 
