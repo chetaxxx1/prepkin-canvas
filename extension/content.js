@@ -2427,8 +2427,11 @@ if (typeof module !== 'undefined') {
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {
-    // The timer ran out: the buddy cheers before the card says so.
+    // The timer ran out, or a sync found something newly handed in: the buddy
+    // cheers before the page says so. Real work, real reaction, nothing else.
     if (changes.focus?.oldValue?.state === 'running' && changes.focus?.newValue?.state === 'done') spriteSend({ do: 'play', emote: 'cheer' });
+    const handedIn = (p) => (p?.tasks ?? []).filter((t) => t.submittedAt).length;
+    if (changes.lastPayload?.oldValue && handedIn(changes.lastPayload.newValue) > handedIn(changes.lastPayload.oldValue)) spriteSend({ do: 'play', emote: 'cheer' });
     if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.nicknames || changes.ownTasks || changes.flags) mount();
     // Not plans, levels or targets: the tab that set one has already redrawn,
     // and a remount here would throw the student back to the top of the panel

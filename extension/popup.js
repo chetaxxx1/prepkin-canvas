@@ -484,9 +484,14 @@ function dots(step) {
     `<i class="${i === step ? 'on' : ''}"></i>`).join('')}</div>`;
 }
 
+/// The first-run cards say the tagline themselves, so the head stays out of
+/// the way until setup is done.
+const headEl = document.querySelector('.head');
+
 async function finishOnboarding() {
   await chrome.storage.local.set({ onboarded: true });
   onbEl.hidden = true;
+  headEl.hidden = false;
   mainEl.hidden = false;
   render();
 }
@@ -575,6 +580,7 @@ function onboardingStep(step) {
 Promise.all([chrome.storage.local.get('onboarded'), render()]).then(([{ onboarded }]) => {
   if (onboarded) return;
   mainEl.hidden = true;
+  headEl.hidden = true;
   onbEl.hidden = false;
   onboardingStep(0);
 });

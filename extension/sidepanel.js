@@ -63,7 +63,8 @@ function row(t, now, overdue) {
     body.append(title);
   }
   if (t.courseName) body.append(el('small', '', t.courseName));
-  li.append(dot, body, el('span', 'w', dueLabel(t, now)));
+  // The headline and the section title already say late work counts.
+  li.append(dot, body, el('span', 'w', overdue ? dueLabel(t, now).replace(' · still counts', '') : dueLabel(t, now)));
   return li;
 }
 
