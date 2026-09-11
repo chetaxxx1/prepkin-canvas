@@ -955,33 +955,67 @@
     "id": "study-2",
     "title": "How to study for a science quiz",
     "track": "study",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study",
       "labs"
     ],
     "blurb": "Science quizzes ask you to explain a mechanism, not to recognise a term. Three passes over two evenings does more than one long night with a highlighter.",
     "takeaway": "You learned to draw the mechanism instead of highlighting it.",
-    "figure": "mechanism",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A science quiz almost never asks you to recognise a word. Highlighting the definition feels like work and isn't."
+        "kind": "image",
+        "image": "lesson-study2-01",
+        "eyebrow": "The trap",
+        "body": "A science quiz almost never asks you to recognise a word. Highlighting the definition feels like work and isn't. Your eyes did something. Your memory did not."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Draw the mechanism instead: two sides, which one is saltier, and which way the water goes."
+        "kind": "image",
+        "image": "lesson-study2-02",
+        "eyebrow": "Draw it",
+        "body": "Draw the mechanism instead. Osmosis: two sides, which one is saltier, and which way the water goes. Three marks on a page, and you own the idea."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "If you can draw it from memory, you can answer any wording of the question."
+        "kind": "image",
+        "image": "lesson-study2-03",
+        "eyebrow": "Any wording",
+        "body": "If you can draw it from memory, you can answer any wording of the question. 'Which way does water move?' 'What happens to the cell?' 'Why does the slug shrivel?' Same drawing."
       },
       {
-        "kind": "example",
-        "body": "Don't memorise 'osmosis: movement of water'. Draw the two sides, mark which is saltier, then draw the arrow."
+        "kind": "image",
+        "image": "lesson-study2-04",
+        "eyebrow": "From memory",
+        "body": "Do not memorise 'osmosis: movement of water'. Close the book, draw the two sides, mark the saltier one, then draw the arrow. If the arrow goes the wrong way, you just found the thing you did not know."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study2-05",
+        "eyebrow": "Two nights",
+        "body": "Two evenings before the quiz. Night one: write and draw what you remember, then check. Night two: redraw only the gaps. Rereading the chapter is not on the list."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study2-06",
+        "eyebrow": "It works everywhere",
+        "body": "Almost every science topic is a mechanism with a direction. Photosynthesis. A circuit. The water cycle. If there is an arrow in it, draw it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study2-07",
+        "eyebrow": "On the day",
+        "body": "In the quiz, draw the picture in the margin before you write a word. The drawing answers the question. The words just report what the drawing says."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study2-08",
+        "eyebrow": "The check",
+        "body": "You are ready when you can draw it, label it, say which way it goes and say why. Four checks, no highlighter."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study2-09",
+        "eyebrow": "Why it sticks",
+        "body": "Salt on a slug pulls the water out of it. That is osmosis with a direction, and you will never forget it. Facts with a picture stay. Definitions leave."
       },
       {
         "kind": "key",
@@ -991,9 +1025,9 @@
         "kind": "check",
         "question": "You have two evenings before the quiz. What's the better use of night one?",
         "choices": [
-          "Reread the chapter carefully",
-          "Write what you remember, then check",
-          "Make a colour-coded sheet"
+          "Reread the chapter carefully from the start.",
+          "Write and draw what you remember, then check.",
+          "Make a colour-coded summary sheet of terms."
         ],
         "answer": 1,
         "why": "Writing it first shows you the gaps. Rereading shows you familiar pages and hides what you don't know."
@@ -1086,32 +1120,66 @@
     "id": "study-4",
     "title": "Mix the problems up",
     "track": "study",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "problemSet"
     ],
     "blurb": "Doing twenty of the same problem type teaches you to run one method. Mixing them teaches you to pick one, which is the harder half.",
     "takeaway": "You learned to practise choosing the method, not just running it.",
-    "figure": "interleave",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Most problem sets are blocked: four of type A, then four of type B."
+        "kind": "image",
+        "image": "lesson-study4-01",
+        "eyebrow": "Blocked practice",
+        "body": "Most problem sets are blocked: four of type A, then four of type B. By the third one you are not thinking. You are running the same method again."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "That trains running a method. Mixing them up trains choosing one, which is the harder half."
+        "kind": "image",
+        "image": "lesson-study4-02",
+        "eyebrow": "Two orders",
+        "body": "Blocked trains running a method. Mixed trains choosing one, which is the harder half. On a mixed page, every problem starts with 'what kind is this?'"
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "On the test nothing is labelled. Practise the part that isn't labelled."
+        "kind": "image",
+        "image": "lesson-study4-03",
+        "eyebrow": "The test",
+        "body": "On the test nothing is labelled. The section heading that told you which method to use is gone. Practise the part that isn't labelled."
       },
       {
-        "kind": "example",
-        "body": "Do 5 of A, 5 of B, then shuffle 10 together. The shuffled ten are where the test actually lives."
+        "kind": "image",
+        "image": "lesson-study4-04",
+        "eyebrow": "Do it",
+        "body": "Do 5 of A and 5 of B to learn the moves. Then shuffle 10 together and do those. The shuffled ten are where the test actually lives."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study4-05",
+        "eyebrow": "The evidence",
+        "body": "In a 2007 study, students who practised blocked got 89% right in practice and 20% on the test a week later. The mixed group got 60% in practice and 63% on the test."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study4-06",
+        "eyebrow": "It feels worse",
+        "body": "Mixed practice feels worse while you do it. You make more mistakes, because choosing is the skill being built. The mistakes are the training, not a sign it is not working."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study4-07",
+        "eyebrow": "The first question",
+        "body": "Before you solve anything, say what kind of problem it is and how you know. Out loud if you can. That one sentence is the skill the test is checking."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study4-08",
+        "eyebrow": "Coaches know this",
+        "body": "Coaches have known for years. A tennis player who practises forehands for an hour looks great and loses. One who gets random serves looks worse in practice and wins."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study4-09",
+        "eyebrow": "The week",
+        "body": "Learn each type on its own first. Then every session after that is mixed. If your textbook does not mix them, you do it yourself with a bowl and some slips."
       },
       {
         "kind": "key",
@@ -1121,9 +1189,9 @@
         "kind": "check",
         "question": "Why does mixed practice feel worse than blocked practice?",
         "choices": [
-          "It takes longer",
-          "You make more mistakes while you're learning to choose",
-          "The problems are harder"
+          "It takes longer to get through the same page.",
+          "You make more mistakes while learning to choose.",
+          "The problems in a mixed set are harder ones."
         ],
         "answer": 1,
         "why": "Struggling to pick the right method is the skill being built. The mistakes are the training, not a sign it isn't working."
@@ -1134,48 +1202,66 @@
     "id": "study-5",
     "title": "How to read a chapter once",
     "track": "study",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "reading"
     ],
     "blurb": "Reading a chapter twice is usually reading it badly once, twice. Three moves make one pass enough.",
     "takeaway": "You learned to read once, with a question in hand.",
-    "figure": "reading",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Before reading, turn every heading into a question. 'Cell division' becomes 'how does a cell divide?'"
+        "kind": "image",
+        "image": "lesson-study5-01",
+        "eyebrow": "Reading twice",
+        "body": "Most people read a chapter, remember nothing, and read it again. Reading with no question is moving your eyes over a page and hoping. Twice."
       },
       {
-        "kind": "example",
-        "body": "The reason is simple. Reading with no question is just moving your eyes over a page and hoping. A question gives your brain something to look for, so it notices when the answer shows up."
+        "kind": "image",
+        "image": "lesson-study5-02",
+        "eyebrow": "Headings into questions",
+        "body": "Before reading, turn every heading into a question. 'Cell division' becomes 'how does a cell divide?' Six headings become six questions. That is the whole setup."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Now you're searching for an answer instead of scanning a page, and you notice it when it arrives."
+        "kind": "image",
+        "image": "lesson-study5-03",
+        "eyebrow": "Search, not scan",
+        "body": "A question gives your brain something to look for. Now you are searching for an answer instead of scanning a page, and you notice it when it arrives."
       },
       {
-        "kind": "example",
-        "body": "Do it out loud with the contents page first. Six headings become six questions. That takes about two minutes and it's the whole setup."
+        "kind": "image",
+        "image": "lesson-study5-04",
+        "eyebrow": "Two minutes",
+        "body": "Do it out loud with the contents page first. It takes about two minutes and it is the whole setup. Everything after that is just reading with a purpose."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "At the end, write four sentences with the book shut. That's your whole set of notes."
+        "kind": "image",
+        "image": "lesson-study5-05",
+        "eyebrow": "At the end",
+        "body": "When you finish, shut the book and write four sentences. That is your whole set of notes. Four from memory beats two pages of copying."
       },
       {
-        "kind": "example",
-        "body": "Shut is the important word. If the book is open you'll copy, and copying feels like working while teaching you nothing. Four sentences from memory beats two pages of transcription."
+        "kind": "image",
+        "image": "lesson-study5-06",
+        "eyebrow": "Shut is the word",
+        "body": "If the book is open you will copy, and copying feels like working while teaching you nothing. Shut is the important word."
       },
       {
-        "kind": "example",
-        "body": "If a section has no headings, use the first line of each paragraph instead. Same trick. You're just looking for what this bit is trying to tell me."
+        "kind": "image",
+        "image": "lesson-study5-07",
+        "eyebrow": "No headings?",
+        "body": "If a section has no headings, use the first line of each paragraph instead. Same trick. You are looking for what this bit is trying to tell me."
       },
       {
-        "kind": "example",
-        "body": "The mistake is highlighting. A highlighter marks what looked important while you were reading. That's a decision you make before you understand anything. It also leaves you with a yellow page and no answers."
+        "kind": "image",
+        "image": "lesson-study5-08",
+        "eyebrow": "The mistake",
+        "body": "A highlighter marks what looked important while you were reading. That is a decision you make before you understand anything. It leaves you a yellow page and no answers."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study5-09",
+        "eyebrow": "The whole thing",
+        "body": "Questions first. Read once, looking for the answers. Shut the book. Write four sentences. Open it and check. One pass, and you can say what the chapter said."
       },
       {
         "kind": "key",
@@ -1185,9 +1271,9 @@
         "kind": "check",
         "question": "Why turn headings into questions before you read?",
         "choices": [
-          "It makes the chapter shorter",
-          "It gives you something to be looking for",
-          "It's easier to remember questions"
+          "It makes the chapter shorter to get through.",
+          "It gives you something to be looking for.",
+          "Questions are easier to remember than titles."
         ],
         "answer": 1,
         "why": "A question turns reading from scanning into searching. You notice the answer when it arrives, instead of noticing nothing."
@@ -1198,33 +1284,67 @@
     "id": "study-6",
     "title": "The five-minute start",
     "track": "study",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "writing",
       "problemSet"
     ],
     "blurb": "Procrastination is nearly always about starting, not about working. So make starting the only thing you commit to.",
     "takeaway": "You learned to commit to starting and let finishing follow.",
-    "figure": "start",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Putting something off is almost always about starting it, not about doing it."
+        "kind": "image",
+        "image": "lesson-study6-01",
+        "eyebrow": "The idea",
+        "body": "Putting something off is almost always about starting it, not about doing it. The task is fine. The doorway is the problem."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "So shrink the commitment to five minutes, and mean the part where you're allowed to stop."
+        "kind": "image",
+        "image": "lesson-study6-02",
+        "eyebrow": "Where the cost is",
+        "body": "The hard part is the first minute, not the next forty. Once you are in, the work carries itself along. The wall is at the door."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Most of the time you don't stop. Starting was the hard part and it's behind you."
+        "kind": "image",
+        "image": "lesson-study6-03",
+        "eyebrow": "Shrink it",
+        "body": "So shrink the commitment to five minutes, and mean the part where you are allowed to stop. Five real minutes, then a real choice."
       },
       {
-        "kind": "example",
-        "body": "For an essay, the five minutes is opening the file and writing a bad first sentence. Bad is fine. It gets deleted."
+        "kind": "image",
+        "image": "lesson-study6-04",
+        "eyebrow": "Set a timer",
+        "body": "Set an actual timer. Open the file. Do the ugliest first step you can think of. When it rings, you are free to leave, and you will not want to."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study6-05",
+        "eyebrow": "Most of the time",
+        "body": "Most of the time you do not stop. Starting was the hard part and it is behind you. The five minutes were never the job. They were the door."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study6-06",
+        "eyebrow": "The bad first sentence",
+        "body": "For an essay, the five minutes is opening the file and writing a bad first sentence. Bad is fine. It gets deleted. Its job was to exist."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study6-07",
+        "eyebrow": "The permission is real",
+        "body": "If the five minutes is a trick, your brain stops falling for it. The method works because starting is genuinely cheap. Make stopping allowed, every time."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study6-08",
+        "eyebrow": "Forty minutes later",
+        "body": "The timer rang half an hour ago. You did not hear it. That is not discipline. That is what happens once the door is behind you."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study6-09",
+        "eyebrow": "Five-minute starts",
+        "body": "Every task has a five-minute version. An essay: one bad sentence. A problem set: copy out question one. A chapter: turn the first heading into a question."
       },
       {
         "kind": "key",
@@ -1234,9 +1354,9 @@
         "kind": "check",
         "question": "Why does the five minutes have to be a real permission to stop?",
         "choices": [
-          "Five minutes is enough for most work",
-          "If it's a trick, your brain stops falling for it",
-          "It keeps sessions short"
+          "Five minutes is enough time for most tasks.",
+          "If it is a trick, your brain stops falling for it.",
+          "It keeps every study session short and tidy."
         ],
         "answer": 1,
         "why": "The method works because starting is genuinely cheap. If stopping isn't allowed, starting costs the whole task again."
