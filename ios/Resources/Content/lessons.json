@@ -608,45 +608,61 @@
     "id": "study-1",
     "title": "Spaced practice beats cramming",
     "track": "study",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Same total hours, very different results. Splitting study across days works because forgetting a little is part of how remembering gets strong.",
     "takeaway": "You learned that the gap between sessions does the work.",
-    "figure": "spacing",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "One long cram goes in fast and leaks just as fast. A week later almost none of it is there."
+        "kind": "image",
+        "image": "lesson-study1-01",
+        "eyebrow": "The night before",
+        "body": "The night before a test, one long cram. It goes in fast."
       },
       {
-        "kind": "example",
-        "body": "Spacing just means splitting the time you were going to spend anyway. Not more hours. The same hour, cut into pieces, with days in between them."
+        "kind": "image",
+        "image": "lesson-study1-02",
+        "body": "And it leaks just as fast. A week later, most of it is gone."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Split the same hour over six days and every session catches the memory just before it goes."
+        "kind": "image",
+        "image": "lesson-study1-03",
+        "eyebrow": "Same hour",
+        "body": "Spacing means splitting the time you were going to spend anyway. Not more hours. The same hour, cut into pieces, with days between them."
       },
       {
-        "kind": "example",
-        "body": "So one hour on Sunday becomes ten minutes on Monday, Tuesday, Wednesday, Thursday, Friday and Saturday. Identical hour. Nothing extra. The only thing that changed is the gaps."
+        "kind": "image",
+        "image": "lesson-study1-04",
+        "body": "Split the same hour over six days. Each session catches the memory just before it slips."
       },
       {
-        "kind": "figure",
-        "step": 3,
+        "kind": "image",
+        "image": "lesson-study1-05",
+        "eyebrow": "Why",
         "body": "Your brain strengthens a memory each time it nearly forgets it, then pulls it back."
       },
       {
-        "kind": "example",
-        "body": "Which is why cramming feels better and works worse. When it's all fresh, recalling is easy, so you feel like you know it. The ease is the problem. Nothing had to be pulled back."
+        "kind": "image",
+        "image": "lesson-study1-06",
+        "eyebrow": "The trap",
+        "body": "Cramming feels better and works worse. When it's all fresh, recalling is easy, so you feel like you know it. The ease is the problem."
       },
       {
-        "kind": "example",
-        "body": "To actually do it, put the sessions in your calendar the day you get the material. Ten minutes each. If you wait until you feel like scheduling them, the test will arrive first."
+        "kind": "image",
+        "image": "lesson-study1-07",
+        "eyebrow": "Do it",
+        "body": "Put the sessions in your calendar the day you get the material. Ten minutes each."
       },
       {
-        "kind": "example",
-        "body": "If the test is tomorrow, this lesson can't save you. Cram, then space the next one. The method only pays when there's time between sessions."
+        "kind": "image",
+        "image": "lesson-study1-08",
+        "eyebrow": "If the test is tomorrow",
+        "body": "This lesson can't save you tonight. Cram, then space the next one."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study1-09",
+        "eyebrow": "Where it works",
+        "body": "Anything you have to remember: vocab, formulas, dates."
       },
       {
         "kind": "key",
@@ -656,12 +672,12 @@
         "kind": "check",
         "question": "Why does leaving a gap between study sessions help?",
         "choices": [
-          "You come back less tired",
-          "Partly forgetting makes the recall count for more",
-          "It spreads the boredom out"
+          "You come back rested, so you can focus for longer.",
+          "Partly forgetting makes each recall count for more.",
+          "Shorter sessions are easier to fit into a busy week."
         ],
         "answer": 1,
-        "why": "Effortful recall is what strengthens a memory. If nothing was forgotten, there is nothing to recall."
+        "why": "Rest and fit are nice, but they are not the mechanism. Each time you nearly forget and pull it back, the memory gets stronger."
       }
     ]
   },
@@ -1193,35 +1209,61 @@
     "id": "psy-6",
     "title": "The habit loop",
     "track": "psychology",
-    "figure": "loop",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Every habit has three parts, and only one of them is the part you see. You'll find the cue and reward hiding around a habit, and learn to swap the middle instead of fighting all three.",
     "takeaway": "You learned to swap the routine, not fight the loop.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
+        "kind": "image",
+        "image": "lesson-psy6-01",
+        "eyebrow": "The idea",
         "body": "A habit is a loop with three parts. It runs on its own, which is why it's so hard to fight head on."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The cue is the trigger. You sit down on your bed after school. That's the cue."
+        "kind": "image",
+        "image": "lesson-psy6-02",
+        "body": "Cue, routine, reward. Round and round."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The routine is what you do. Phone comes out, feed opens. This is the only part you notice."
+        "kind": "image",
+        "image": "lesson-psy6-03",
+        "eyebrow": "The cue",
+        "body": "The cue is the trigger. You sit down on your bed after school."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The reward is what you get. Twenty minutes of not thinking about anything. The loop runs to get this."
+        "kind": "image",
+        "image": "lesson-psy6-04",
+        "eyebrow": "The routine",
+        "body": "The routine is what you do. Phone out, feed open. The only part you notice."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "You can't delete a cue or a reward. But you can swap the middle. Same bed, same twenty minutes off, different thing in your hand."
+        "kind": "image",
+        "image": "lesson-psy6-05",
+        "eyebrow": "The reward",
+        "body": "The reward is what you get. Twenty minutes of not thinking. The loop runs to get this."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy6-06",
+        "eyebrow": "The swap",
+        "body": "You can't delete a cue or a reward. But you can swap the middle."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy6-07",
+        "body": "Same bed. Same twenty minutes off. Different thing in your hand."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy6-08",
+        "eyebrow": "Everywhere",
+        "body": "Bedtime scroll, after-class snack, the coffee you need to start. All loops."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy6-09",
+        "eyebrow": "Catch the cue",
+        "body": "Where are you, what time is it, what just happened. That's the cue."
       },
       {
         "kind": "key",
@@ -1231,12 +1273,12 @@
         "kind": "check",
         "question": "Which part of the loop can you actually change?",
         "choices": [
-          "The cue",
-          "The routine",
-          "The reward"
+          "The cue, by avoiding the places and times that trigger it.",
+          "The routine, what you do between the trigger and the payoff.",
+          "The reward, by training yourself to stop wanting the payoff."
         ],
         "answer": 1,
-        "why": "The cue will keep showing up and you'll still want the reward. The routine between them is the part you get to pick."
+        "why": "Cues and rewards are wired in. The bed is still there and you still want the break. The routine in the middle is the part you get to pick."
       }
     ]
   },
