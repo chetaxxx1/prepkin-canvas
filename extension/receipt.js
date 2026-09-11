@@ -138,7 +138,7 @@ const RULES = [
   // button turns it on. Same receipt, one fewer panel of toggles.
   { key: 'card-grade', kind: 'added', label: 'Your grade on each course card', hook: 'card', opt: 'cardGrades', undo: 'Turn on' },
   { key: 'week', kind: 'added', label: 'This week, at the top of the sidebar', hook: 'card' },
-  { key: 'todo-fold', kind: 'taken', label: "Canvas's To Do, folded to one line under it", detect: 'todoFold' },
+  { key: 'todo-fold', kind: 'taken', label: "Canvas's To Do and Coming Up, folded to one line under it", detect: 'todoFold' },
   { key: 'search', kind: 'added', label: 'Search, in the corner of every page', when: () => true, opt: 'search', undo: 'Turn on' },
   { key: 'nickname', kind: 'fixed', when: (ctx) => ctx.nicknames > 0,
     label: (ctx) => `${ctx.nicknames} course name${ctx.nicknames === 1 ? '' : 's'} you chose` },

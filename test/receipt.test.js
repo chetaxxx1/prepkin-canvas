@@ -104,14 +104,17 @@ test('R3 dashboard: paper, thin hero, one To Do, every Coming Up row, one logo â
   assert.equal(await style(page, '.ic-DashboardCard__header_hero', 'backgroundColor'), 'rgb(255, 111, 97)', 'the course colour stays, on the band');
   assert.equal(await style(page, '.ic-DashboardCard__header-title span', 'color'), rgb('#1B1F24'), 'the name is ink, one text stack under the band');
   assert.equal(await style(page, 'ul.right-side-list.to-do-list', 'display'), 'none', 'the second To Do list');
-  // Canvas's own To Do stays open on its own; under our rail it folds to one line.
+  // Canvas's own To Do and Coming Up stay open on their own; under our rail
+  // they fold to one line together, and Coming Up shows every row once opened.
   if (await page.$('#pk-week')) {
     assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'none', 'folded under the rail');
+    assert.equal(await style(page, '.events_list.coming_up', 'display'), 'none', 'Coming Up folds with it');
+    assert.equal(await style(page, '#right-side h2.todo-list-header', 'display'), 'none', 'no stray heading left behind');
     assert.ok(await page.$('#pk-week + #pk-todo-fold'), 'and the fold row says so');
   } else {
     assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'block');
+    assert.equal(await style(page, '.events_list.coming_up li.event[style*="display: none"]', 'display'), 'list-item', 'Coming Up rows');
   }
-  assert.equal(await style(page, '.events_list.coming_up li.event[style*="display: none"]', 'display'), 'list-item', 'Coming Up rows');
   assert.equal(await style(page, '.events_list.coming_up a.more_link', 'display'), 'none');
   assert.equal(await style(page, '.events_list.recent_feedback li.event[style*="display: none"]', 'display'), 'none', 'Recent Feedback is never touched');
   assert.equal(await style(page, '.events_list.recent_feedback a.more_link', 'display'), 'inline');
@@ -434,7 +437,7 @@ test('R21 a pending task of your own counts in the week without inflating the fi
   await page.close();
 });
 
-test('R22 the league the phone publishes shows on the rail and in the buddy, names from the same word lists', async () => {
+test('R22 the league the phone publishes reaches the buddy, not the rail, names from the same word lists', async () => {
   const { FakePhone } = require('./fake-phone');
   const phone = new FakePhone(BRIDGE);
   await h.sw((c) => bindWriter(c), await phone.claim());
@@ -443,12 +446,12 @@ test('R22 the league the phone publishes shows on the rail and in the buddy, nam
     board: [{ you: false, adjective: 3, noun: 4, points: 200, level: 2, species: 'coral', look: 'base' }, { you: true, adjective: 1, noun: 2, points: 120, level: 1, species: 'sky', look: 'base' }] } });
   await h.sw(() => pullWallet());
   const page = await open('/');
-  await page.waitForSelector('#pk-week .pk-w-league', { timeout: 5000 });
-  const text = await page.$eval('#pk-week .pk-w-league', (e) => e.textContent);
-  assert.match(text, /^Shallows/, 'the tier, on the page');
-  assert.match(text, /180 to go for Reef/, 'points to the next tier');
-  assert.match(text, /120 of 300 this week/);
-  assert.match(text, /2nd of 2 in your pod/, 'the place, never the names');
+  await page.waitForSelector('#pk-week', { timeout: 5000 });
+  // The league is the buddy's: the rail is one list, like BetterCampus's,
+  // and the tier reaches the page only as the buddy's own attribute.
+  assert.equal(await page.$('#pk-week .pk-w-league'), null, 'no league card on the rail');
+  assert.equal(await page.$eval('#pk-week', (e) => /Shallows|to go for|in your pod/.test(e.textContent)), false);
+  await page.waitForFunction(() => document.getElementById('prepkin-buddy')?.dataset.league === 'shallows', null, { timeout: 5000 });
   assert.equal(await page.$eval('#prepkin-buddy', (e) => e.dataset.league), 'shallows');
   assert.ok(!(await page.evaluate(() => document.body.textContent)).includes('Otter'), 'no stranger\'s name lands in the page itself');
   await page.close();
@@ -469,7 +472,7 @@ test('R23 a search pill sits at the end of every title bar, opens the buddy on s
 
 // MARK: - R10: Today, at the top of the dashboard
 
-test('R10 the rail opens with the one thing to start, the next few, Canvas To Do folded, and one click off', async () => {
+test('R10 the rail is one list: the thing to start on top, the next few, Canvas To Do and Coming Up folded, one click off', async () => {
   const w = S.plainSemester();
   w.assignments[1].push(S.assignment({ id: 15, name: 'Overdue reading', due: -2, course: 1 }));
   await control('world', { host: 'localhost', world: w });

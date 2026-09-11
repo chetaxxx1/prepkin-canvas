@@ -614,10 +614,10 @@ html.pk-dark #pk-week .pk-w-tank { background: linear-gradient(180deg, #1B3A32 0
 #pk-week .pk-w-empty { margin: 0 0 12px; font-size: 13px; line-height: 18px; color: var(--pk-ink-2); text-align: center; }
 #pk-week .pk-w-label { margin: 0 0 6px; padding-top: 12px; border-top: 1px solid var(--pk-rule);
   font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-ink-2); }
-#pk-week .pk-w-first { display: flex; flex-direction: column; gap: 10px; margin: 0 0 12px; }
-#pk-week .pk-w-first b { display: block; font-size: 14px; line-height: 18px; font-weight: 800; }
-#pk-week .pk-w-first small { display: block; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); margin-top: 2px; }
-#pk-week .pk-w-first small.amber { color: var(--pk-amber-ink); }
+#pk-week .pk-w-list li.pk-w-first { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; }
+#pk-week .pk-w-list li.pk-w-first > div { width: 100%; }
+#pk-week .pk-w-list li.pk-w-first b { font-size: 14px; line-height: 18px; font-weight: 800; white-space: normal; }
+#pk-week .pk-w-list li.pk-w-first small { font-size: 12px; line-height: 16px; margin-top: 2px; }
 #pk-week .pk-w-actions { display: grid; grid-template-columns: auto 1fr; gap: 6px; }
 #pk-week .pk-w-actions a, #pk-week .pk-w-actions span[role="button"] {
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; min-width: 0;
@@ -654,18 +654,11 @@ html.pk-back-week #pk-week { display: none; }
 #pk-todo-fold b { font-weight: 800; color: var(--pk-link); }
 #pk-todo-fold:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
 html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) .Sidebar__TodoListContainer,
-html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) ul.right-side-list.to-do-list { display: none; }
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) ul.right-side-list.to-do-list,
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) #right-side h2.todo-list-header,
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) .events_list.coming_up { display: none; }
 html.pk-back-todo-fold #pk-todo-fold { display: none; }
 
-#pk-week .pk-w-league { display: flex; flex-direction: column; gap: 8px; margin: 0 0 12px; padding: 12px 0 0; border-top: 1px solid var(--pk-rule); cursor: pointer; }
-#pk-week .pk-w-league .head { display: flex; align-items: center; gap: 10px; }
-#pk-week .pk-w-league .head b { display: block; font-size: 15px; font-weight: 900; letter-spacing: -.01em; }
-#pk-week .pk-w-league .head small { display: block; font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-week .pk-w-league .climb b { display: block; font-size: 13px; font-weight: 800; }
-#pk-week .pk-w-league .climb small { display: block; font-size: 11px; font-weight: 700; color: var(--pk-ink-2); margin-top: 3px; }
-#pk-week .pk-w-league .track { height: 8px; border-radius: 999px; background: var(--pk-rule); margin-top: 6px; overflow: hidden; }
-#pk-week .pk-w-league .track i { display: block; height: 100%; border-radius: 999px; background: var(--tier); }
-#pk-week .pk-w-league .pod { font-size: 12px; font-weight: 700; color: var(--pk-ink-2); }
 
 /* MARK: - Title: one page header, on every page ---------------------------
  *

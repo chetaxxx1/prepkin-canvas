@@ -215,6 +215,7 @@ Nothing here adds a feature; every row makes an existing one read faster.
 | Side panel | Todoist | Past-due rows drop "still counts" under a header that already says it | `sidepanel.js` |
 | Popup first run | — | The head hides during setup so the tagline is not on screen twice | `popup.js` |
 | Chips | App Store rows | Filter rows bleed to the edges and scroll instead of clipping the fourth chip | `panel.css` `.pk-filters` |
+| Right column | BetterCampus's To Do sidebar (their product shot + `setupBetterTodo` in their source, which empties `#right-side` and keeps only Recent Feedback) | One list: the thing to start is the first row with its two buttons, the next three under it, one label ("Up next"). The league card left the rail (it is in the panel). Canvas's To Do **and Coming Up** fold to one line together, and the stray `h2.todo-list-header` folds with them. Column 1631 → 1207 px; the rail card 895 → 717 | `content.js` `renderWeek`/`renderFold`, `skin.css`, `receipt.js` |
 
 Renders for every panel view come from `design/canvas-skin/gallery/` — `build.js`
 stubs `chrome`, feeds `content.js` sample data and writes one HTML file per view;

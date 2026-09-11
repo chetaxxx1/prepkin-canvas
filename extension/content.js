@@ -1529,8 +1529,7 @@ function renderWeek() {
   const first = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
   const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 3);
   const key = JSON.stringify([weekOffset, w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]),
-    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes,
-    wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.league?.bar ?? null, wallet.league?.board?.length ?? null, wallet.league?.board?.findIndex?.((m) => m.you) ?? null]);
+    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1606,12 +1605,14 @@ function renderWeek() {
     box.append(el('p', 'pk-w-empty', weekOffset === 0 ? 'Nothing due this week. Good week for a head start.' : 'Nothing due that week.'));
   }
 
-  // The one thing to start, with the two ways to start it. Always today's,
+  // One list, the way BetterCampus keeps one: the thing to start at the top
+  // with its two ways to start it, the next few under it. Always today's,
   // whichever week the rings show.
   if (first) {
+    box.append(el('p', 'pk-w-label', 'Up next'));
+    const list = el('ul', 'pk-w-list');
     const overdue = new Date(first.dueAt) < now;
-    box.append(el('p', 'pk-w-label', 'Start with'));
-    const card = el('div', 'pk-w-first');
+    const top = el('li', 'pk-w-first');
     const info = el('div');
     info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now)}`));
     const actions = el('div', 'pk-w-actions');
@@ -1626,68 +1627,25 @@ function renderWeek() {
     focusBtn.addEventListener('click', go);
     focusBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
     actions.append(focusBtn);
-    card.append(info, actions);
-    box.append(card);
-  }
-  if (then.length) {
-    box.append(el('p', 'pk-w-label', 'Then'));
-    const list = el('ul', 'pk-w-list');
+    top.append(info, actions);
+    list.append(top);
     for (const t of then) {
-      const overdue = new Date(t.dueAt) < now;
+      const late = new Date(t.dueAt) < now;
       const li = el('li');
-      const dot = el('i', overdue ? 'late' : '');
-      const color = safeColor(t.colorHex); if (color && !overdue) dot.style.background = color;
-      const info = el('div');
+      const dot = el('i', late ? 'late' : '');
+      const color = safeColor(t.colorHex); if (color && !late) dot.style.background = color;
+      const row = el('div');
       // One line: the course and when. The ring dot already says late.
-      const when = overdue ? dueLabel(t, now).replace(' · still counts', '') : dueLabel(t, now);
-      info.append(el('b', '', t.title), el('small', overdue ? 'amber' : '', `${shortCourse(t.courseName)} · ${when}`));
-      li.append(dot, info);
+      const when = late ? dueLabel(t, now).replace(' · still counts', '') : dueLabel(t, now);
+      row.append(el('b', '', t.title), el('small', late ? 'amber' : '', `${shortCourse(t.courseName)} · ${when}`));
+      li.append(dot, row);
       list.append(li);
     }
     box.append(list);
   }
 
-  if (wallet.league) {
-    // The league on the page itself: the tier, how far to the next one, and
-    // where the student stands in the pod. Numbers only; the names stay in
-    // the buddy's closed root.
-    const L = wallet.league;
-    const tier = tierOf(L);
-    const next = TIERS[TIERS.indexOf(tier) + 1] ?? null;
-    const pts = Math.max(0, Number(L.points) || 0);
-    const bar = typeof L.bar === 'number' ? L.bar : null;
-    const toGo = bar === null ? null : Math.max(0, bar - pts);
-    const box2 = el('div', 'pk-w-league');
-    box2.setAttribute('role', 'button'); box2.tabIndex = 0;
-    box2.style.setProperty('--tier', tier.color); box2.style.setProperty('--tier-edge', tier.edge);
-    const lhead = el('div', 'head');
-    const flag = document.createElementNS(SVG_NS, 'svg');
-    flag.setAttribute('viewBox', '0 0 30 20'); flag.setAttribute('width', '30'); flag.setAttribute('height', '20'); flag.setAttribute('aria-hidden', 'true');
-    const cloth = document.createElementNS(SVG_NS, 'path');
-    cloth.setAttribute('d', 'M1 1 H29 L22 10 L29 19 H1 Z'); cloth.setAttribute('fill', tier.color); cloth.setAttribute('stroke', tier.edge); cloth.setAttribute('stroke-width', '1.5'); cloth.setAttribute('stroke-linejoin', 'round');
-    const fold = document.createElementNS(SVG_NS, 'path');
-    fold.setAttribute('d', 'M1 1 L8 10 L1 19 Z'); fold.setAttribute('fill', tier.edge);
-    flag.append(cloth, fold);
-    const names = el('div');
-    names.append(el('b', '', tier.name), el('small', '', tier.water));
-    lhead.append(flag, names);
-    const climb = el('div', 'climb');
-    if (bar === null) climb.append(el('b', '', `${pts} this week. Deep is the last one.`));
-    else {
-      climb.append(el('b', '', toGo === 0 ? `Bar cleared. ${next?.name ?? ''} next week.` : `${toGo} to go for ${next?.name ?? 'the next tier'}`));
-      const track = el('div', 'track'); const fill = el('i'); fill.style.width = `${Math.min(100, Math.round((pts / bar) * 100))}%`; track.append(fill);
-      climb.append(track, el('small', '', `${pts} of ${bar} this week`));
-    }
-    const board = Array.isArray(L.board) ? L.board : null;
-    const rank = board ? board.findIndex((m) => m.you) + 1 : 0;
-    const ordinal = (n) => `${n}${['th', 'st', 'nd', 'rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4 || 0] ?? 'th'}`;
-    const pod = el('small', 'pod', board === null ? 'No pod this week' : board.length <= 1 ? 'Only you in the pod this week' : rank ? `${ordinal(rank)} of ${board.length} in your pod` : `${board.length} in your pod`);
-    box2.append(lhead, climb, pod);
-    const openLeague = () => { ui.open = true; ui.view = 'panel'; ui.sheet = null; render(); };
-    box2.addEventListener('click', openLeague);
-    box2.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLeague(); } });
-    box.append(box2);
-  }
+  // The league is the buddy's: it lives in his panel, one tap away, not on
+  // the page. BetterCampus's column is one list, and so is this.
 
   const foot = el('div', 'pk-w-foot');
   // Finished work is worth a line; nothing finished is not worth a scold.
@@ -1704,15 +1662,17 @@ function renderWeek() {
   if (sprite) placeSprite();
 }
 
-/// Canvas's own To Do, folded to one line right under our rail: how many it
-/// holds, and Show to open it for this page view. The fold is a receipt row
-/// (`todo-fold`); Put back keeps the list open for good.
+/// Canvas's own To Do and Coming Up, folded to one line right under our rail:
+/// how many they hold, and Show to open them for this page view. The fold is
+/// a receipt row (`todo-fold`); Put back keeps the lists open for good.
+/// BetterCampus deletes both outright; ours stay one click away.
 function renderFold() {
   const existing = document.getElementById(FOLD_ID);
   const week = document.getElementById(WEEK_ID);
   const list = document.querySelector(SELECTORS.todoReact.sel) ?? document.querySelector(SELECTORS.todoLegacy.sel);
   if (!week || !list || putBack['todo-fold'] || killed) { existing?.remove(); return; }
-  const count = list.querySelectorAll('li').length;
+  const coming = document.querySelector(SELECTORS.comingUp.sel);
+  const count = list.querySelectorAll('li').length + (coming ? coming.querySelectorAll('li.event').length : 0);
   const open = document.documentElement.classList.contains('pk-todo-open');
   const key = `${count}:${open}`;
   if (existing && existing.dataset.key === key) return;
@@ -1720,7 +1680,7 @@ function renderFold() {
   row.id = FOLD_ID; row.dataset.key = key;
   row.setAttribute('role', 'button'); row.tabIndex = 0;
   row.setAttribute('aria-expanded', String(open));
-  row.append(el('span', '', count ? `Canvas To Do · ${count}` : 'Canvas To Do'), el('b', '', open ? 'Hide' : 'Show'));
+  row.append(el('span', '', count ? `To Do & Coming Up · ${count}` : 'To Do & Coming Up'), el('b', '', open ? 'Hide' : 'Show'));
   const toggle = () => { document.documentElement.classList.toggle('pk-todo-open'); renderFold(); };
   row.addEventListener('click', toggle);
   row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
