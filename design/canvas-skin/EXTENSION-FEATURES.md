@@ -216,10 +216,11 @@ Nothing here adds a feature; every row makes an existing one read faster.
 | Popup first run | — | The head hides during setup so the tagline is not on screen twice | `popup.js` |
 | Chips | App Store rows | Filter rows bleed to the edges and scroll instead of clipping the fourth chip | `panel.css` `.pk-filters` |
 
-Renders for every panel view come from a Node harness that stubs `chrome` and
-feeds `content.js` sample data, then screenshots with Playwright; see the
-session scratchpad `gallery/build.js`. The live popup, side panel and panel-on-
-page shots come from `design/site-shots/shoot.js` with `SURFACES=1`.
+Renders for every panel view come from `design/canvas-skin/gallery/` — `build.js`
+stubs `chrome`, feeds `content.js` sample data and writes one HTML file per view;
+`shoot.js` screenshots them with the e2e suite's Playwright (`DARK=1`, `ONLY=`,
+`H=`, `OUT=`). The live popup, side panel and panel-on-page shots come from
+`design/site-shots/shoot.js` with `SURFACES=1`.
 
 ## E. Testing plan for whatever is chosen
 
