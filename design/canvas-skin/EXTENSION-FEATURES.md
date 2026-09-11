@@ -197,6 +197,30 @@ being taken. Fixed — the element is removed instead.
 - **A term recap ("Canvas Wraps").** The only feature in the whole corpus that
   produced plain delight. Worth doing, end-of-term only.
 
+## G. Built 2026-09-11, each surface held against a Mobbin reference
+
+One pass over every surface a student meets, each one compared with the
+best-known app that does the same job, and only the simplifications kept.
+Nothing here adds a feature; every row makes an existing one read faster.
+
+| Surface | Reference | What changed | Where |
+|---|---|---|---|
+| Week view | Todoist Upcoming | One amber "Past due" group, dated headers ("Sep 11 · Today"), no instruction paragraph, Plan only on hover | `content.js` `weekView`, `panel.css` |
+| League card | Duolingo leagues | "3 days left" under the tier, one-sentence foot; no card when there is no league | `content.js` `leagueCard`, `leagueDaysLeft` |
+| Focus timer | Oura session, Tiimo, Forest | Task on top, time left inside the ring, "Ends at 3:41 PM", two quiet words (+5 min, Stop). The buddy is out of the ring; he is live in the tank beside it and **cheers when the timer runs out** | `content.js` `focusCard`, `panel.css` |
+| Theme shop | Numo covers, Snapchat themes | "Yours" first with the worn one ticked in the corner, "Locked" after with a price. Buddy still off every tile. Four-line explainer is one line | `content.js` `looksView`, `panel.css` `.pk-tick` |
+| Search (⌘K) | Linear, Causal palettes | Before typing: Classes, Due soon (three, not handed in), Canvas pages, under small headers; key hints at the foot. Typing is one ranked list | `content.js` `searchGroups`, `resultsHTML` |
+| Buddy | Finch, Duolingo | A sync that finds newly handed-in work plays the cheer. Real work, real reaction, nothing else | `content.js` storage listener |
+| Panel home | — | "Still counts" said once per screen (headline only); GPA foot no longer advertises Honors/AP (the audience is college) | `content.js` `nextUpCard`, `gradesCard` |
+| Side panel | Todoist | Past-due rows drop "still counts" under a header that already says it | `sidepanel.js` |
+| Popup first run | — | The head hides during setup so the tagline is not on screen twice | `popup.js` |
+| Chips | App Store rows | Filter rows bleed to the edges and scroll instead of clipping the fourth chip | `panel.css` `.pk-filters` |
+
+Renders for every panel view come from a Node harness that stubs `chrome` and
+feeds `content.js` sample data, then screenshots with Playwright; see the
+session scratchpad `gallery/build.js`. The live popup, side panel and panel-on-
+page shots come from `design/site-shots/shoot.js` with `SURFACES=1`.
+
 ## E. Testing plan for whatever is chosen
 
 Every feature gets: unit rows where it has logic, an e2e row on the fake page,

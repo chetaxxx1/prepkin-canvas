@@ -725,7 +725,7 @@ function gradesCard() {
       ${est ? `<hr />
         <div class="pk-gpa"><b>GPA (est.)</b><strong>${est.unweighted}</strong></div>
         ${est.weighted ? `<div class="pk-gpa weighted"><b>Weighted</b><strong>${est.weighted}</strong></div>` : ''}
-        <div class="pk-foot">Updated ${freshness()}${est.weighted ? '' : ' · open a class to mark it Honors or AP'}</div>` : ''}
+        <div class="pk-foot">Updated ${freshness()}</div>` : ''}
     </div>`;
 }
 
