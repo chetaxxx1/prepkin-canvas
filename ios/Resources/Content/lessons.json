@@ -183,42 +183,75 @@
     "id": "fin-4",
     "title": "Credit scores, plainly",
     "track": "finance",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "A credit score is a guess about whether you pay people back. Two of the five inputs do most of the work, and both are in your control.",
     "takeaway": "You learned that paying on time beats paying it all.",
-    "figure": "gauge",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A credit score is one number that guesses how likely you are to pay back what you borrow."
+        "kind": "image",
+        "image": "lesson-fin4-01",
+        "eyebrow": "The idea",
+        "body": "A credit score is one number that guesses how likely you are to pay back what you borrow. Landlords, phone companies and banks look at it before they say yes to you."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "It runs from about 300 to 850. Most people sit somewhere in the middle."
+        "kind": "image",
+        "image": "lesson-fin4-02",
+        "eyebrow": "The range",
+        "body": "It runs from 300 to 850. Under 580 counts as poor, 670 to 739 is good, 800 and up is exceptional. The average American sits at about 715."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Paying on time is the heaviest input by a distance. One late mark costs you for years."
+        "kind": "image",
+        "image": "lesson-fin4-03",
+        "eyebrow": "What feeds it",
+        "body": "Five things feed it, and two do most of the work. Paying on time is 35% of the score. How much of your limit you use is another 30%. The other three are small."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Second is how much of your limit you use. Under 30% is the usual advice; under 10% is better."
+        "kind": "image",
+        "image": "lesson-fin4-04",
+        "eyebrow": "On time",
+        "body": "Paying on time is the heaviest input by a distance. One payment 30 days late can knock up to about 100 points off a good score, and the mark stays on your report for seven years."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin4-05",
+        "eyebrow": "The limit",
+        "body": "Second is how much of your limit you use. With a $1,000 limit, a $300 balance is 30%. Under 30% is the usual advice. Under 10% is better, and it counts even if you pay in full, because the statement balance is what gets reported."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin4-06",
+        "eyebrow": "The old card",
+        "body": "Length of history is 15%. That is why closing your oldest card can hurt: it shortens your record and shrinks your total limit. Keep the old card and use it once in a while."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin4-07",
+        "eyebrow": "The surprise",
+        "body": "Paying the whole balance 30 days late hurts more than paying the minimum on time. The late mark lasts seven years. A balance is gone the month you clear it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin4-08",
+        "eyebrow": "Where it lives",
+        "body": "Three companies keep the records: Equifax, Experian and TransUnion. Your bank reports to them every month. You can read your own report for free at annualcreditreport.com, and checking it never hurts your score."
       },
       {
         "kind": "key",
         "body": "Paying on time is worth more than paying it all off. One late payment costs more than a big balance."
       },
       {
+        "kind": "image",
+        "image": "lesson-fin4-10",
+        "eyebrow": "Start now",
+        "body": "Starting at 18 with one card, one small monthly charge, and autopay for the full balance is the whole game. By the time you need a car loan or an apartment, you will have years of on-time history."
+      },
+      {
         "kind": "check",
         "question": "You can only do one this month. Which helps your score more?",
         "choices": [
-          "Pay the full balance a week late",
-          "Pay the minimum on time",
-          "Close an old card"
+          "Pay the whole balance, 30 days late.",
+          "Pay just the minimum, but on time.",
+          "Close your oldest card to simplify."
         ],
         "answer": 1,
         "why": "Payment history is the heaviest single input. A late mark sits on your report for years; a carried balance does not."
@@ -351,28 +384,63 @@
     "id": "phil-1",
     "title": "Stoicism: control what you can",
     "track": "philosophy",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "The Stoics split the world in two and told you to spend your energy on one half. It's two thousand years old and it maps almost exactly onto a bad exam week.",
     "takeaway": "You learned to spend your energy on the half you control.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Stoics split the world in two: things you control, and things you don't."
+        "kind": "image",
+        "image": "lesson-phil1-01",
+        "eyebrow": "The idea",
+        "body": "The Stoics were Greek and Roman thinkers two thousand years ago. Their first move was to split the world in two: the things you control, and the things you do not."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Your effort and your reaction are the first group. Those are always yours."
+        "kind": "image",
+        "image": "lesson-phil1-02",
+        "eyebrow": "Two groups",
+        "body": "Your effort and your reaction are in the first group. Those are always yours. A posted grade, a curve, what somebody else scored: all second group."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "A posted grade, a curve, what somebody else scored. All second group. Epictetus said suffering comes from trying to control those."
+        "kind": "image",
+        "image": "lesson-phil1-03",
+        "eyebrow": "Who said it",
+        "body": "Epictetus was born a slave and walked with a limp all his life. He had less control over his own life than almost anyone. He said suffering comes from trying to control the second group."
       },
       {
-        "kind": "example",
-        "body": "A grade is already up. Refreshing the page is the second group. Emailing to ask what you missed is the first."
+        "kind": "image",
+        "image": "lesson-phil1-04",
+        "eyebrow": "Exam week",
+        "body": "A grade is already up. Refreshing the page is second group. Emailing to ask what you missed is first group. Same evening, two very different uses of it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil1-05",
+        "eyebrow": "Where it goes",
+        "body": "Worry is energy spent on the second group. It feels like doing something and changes nothing on the page. The Stoics were not calm because nothing bothered them. They were calm because they moved the energy."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil1-06",
+        "eyebrow": "The archer",
+        "body": "The Stoics used an archer. The archer controls the aim, the breathing, the release. Once the arrow is gone, the wind owns it. Do your part well, then let it fly."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil1-07",
+        "eyebrow": "Your reaction",
+        "body": "You do not control the traffic. You control whether you spend the twenty minutes furious or listening to something. The event is second group. Your reaction is first."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil1-08",
+        "eyebrow": "One question",
+        "body": "The whole practice fits in one question. Before you stress, ask: is this in my control? If no, let it go. If yes, do the next step today."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil1-09",
+        "eyebrow": "Tonight",
+        "body": "Tonight, list what is worrying you. Cross out everything in the second group. What is left is your to-do list. It is usually shorter than the worry was."
       },
       {
         "kind": "key",
@@ -382,15 +450,14 @@
         "kind": "check",
         "question": "Which of these is in the first group, the part you control?",
         "choices": [
-          "The curve on the test",
-          "How many hours you study",
-          "What your friend scored"
+          "The curve the professor puts on the test.",
+          "How many hours you put in before the test.",
+          "What your friend ended up scoring on it."
         ],
         "answer": 1,
         "why": "Your effort is yours. The curve and other people's scores are outcomes you can influence at best, never control."
       }
-    ],
-    "figure": "control"
+    ]
   },
   {
     "id": "phil-2",
@@ -734,7 +801,7 @@
     "id": "study-3",
     "title": "Active recall in ten minutes",
     "track": "study",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study"
     ],
@@ -742,39 +809,58 @@
     "takeaway": "You learned to start with a blank page, every time.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Active recall means pulling something out of your head, not putting it back in."
+        "kind": "image",
+        "image": "lesson-study3-01",
+        "eyebrow": "The idea",
+        "body": "Active recall means pulling something out of your head, not putting it back in. The blank page does the pulling. It is the highest-value ten minutes in studying."
       },
       {
-        "kind": "example",
-        "body": "There's a difference between knowing something and recognising it. You recognise a face you can't name. Rereading notes trains recognising. Exams ask you to name."
+        "kind": "image",
+        "image": "lesson-study3-02",
+        "eyebrow": "Two directions",
+        "body": "There is a difference between knowing something and recognising it. You recognise a face you cannot name. Rereading trains recognising. Exams ask you to name."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The whole method: close everything, write what you remember, then check what you missed."
+        "kind": "image",
+        "image": "lesson-study3-03",
+        "eyebrow": "The method",
+        "body": "The whole method is three steps. Close everything. Write what you remember on a blank page. Open the notes and mark what was not there."
       },
       {
-        "kind": "example",
-        "body": "Ten minutes, for real. Two minutes shutting the laptop and the notes. Five minutes writing everything you can remember on a blank page. Three minutes opening the notes and marking what wasn't there."
+        "kind": "image",
+        "image": "lesson-study3-04",
+        "eyebrow": "Ten minutes",
+        "body": "Ten minutes, for real. Two minutes shutting the laptop and the notes. Five minutes writing everything you can remember. Three minutes opening the notes and marking what you missed."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The part you missed is your entire study list. Everything else is already learned."
+        "kind": "image",
+        "image": "lesson-study3-05",
+        "eyebrow": "Your list",
+        "body": "The part you missed is your entire study list. Everything else is already learned. Most people study the whole chapter again. You only need the gaps."
       },
       {
-        "kind": "example",
-        "body": "This is why rereading fools people. It feels smooth and quick, and that smoothness gets mistaken for knowing. A blank page feels awful because it's actually measuring you."
+        "kind": "image",
+        "image": "lesson-study3-06",
+        "eyebrow": "The trap",
+        "body": "Rereading fools people. It feels smooth and quick, and that smoothness gets mistaken for knowing. A blank page feels awful because it is actually measuring you."
       },
       {
-        "kind": "example",
-        "body": "You don't need materials for it. Walking to class, try to list the four things from the last lecture. Whatever you can't get is what you open the notes to later."
+        "kind": "image",
+        "image": "lesson-study3-07",
+        "eyebrow": "No materials",
+        "body": "You do not need anything for it. Walking to class, try to list the four things from the last lecture. Whatever you cannot get is what you open the notes for later."
       },
       {
-        "kind": "example",
-        "body": "The mistake is checking too early. If you peek the second it gets hard, you've turned it back into reading. Sit in the blank for a bit. That struggle is the part that works."
+        "kind": "image",
+        "image": "lesson-study3-08",
+        "eyebrow": "The evidence",
+        "body": "In a famous 2006 study, students who reread a passage four times remembered 40% of it a week later. Students who read it once and then tested themselves three times remembered 61%."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study3-09",
+        "eyebrow": "Sit in it",
+        "body": "The mistake is checking too early. If you peek the second it gets hard, you have turned it back into reading. Sit in the blank for a bit. That struggle is the part that works."
       },
       {
         "kind": "key",
@@ -784,15 +870,14 @@
         "kind": "check",
         "question": "Rereading your notes feels much easier than a blank page. Why is that a warning sign?",
         "choices": [
-          "Easy means you already know it",
-          "Recognising is easier than remembering, and only one is tested",
-          "Notes are shorter than the textbook"
+          "Easy means it has already gone into long-term memory.",
+          "Recognising is easier than recalling, and tests need recall.",
+          "Notes are shorter than the textbook, so they read faster."
         ],
         "answer": 1,
         "why": "Familiarity feels like knowledge. A blank page is uncomfortable precisely because it measures the thing a test measures."
       }
-    ],
-    "figure": "recall"
+    ]
   },
   {
     "id": "study-4",
@@ -959,8 +1044,7 @@
     "id": "psy-1",
     "title": "Your brain holds about four things",
     "track": "psychology",
-    "figure": "slots",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study",
       "problemSet"
@@ -969,28 +1053,58 @@
     "takeaway": "You learned why one open tab is a study tool.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Working memory is the scratchpad you think with. It holds about four things at once, and that's it."
+        "kind": "image",
+        "image": "lesson-psy1-01",
+        "eyebrow": "The idea",
+        "body": "Working memory is the scratchpad you think with. It holds about four things at once, and that is it. Every thought you are holding right now is sitting on that pad."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Every open loop takes a slot. The song stuck in your head. The text you haven't answered. The phone face up on the desk."
+        "kind": "image",
+        "image": "lesson-psy1-02",
+        "eyebrow": "Four slots",
+        "body": "Every open loop takes a slot. The song stuck in your head. The text you have not answered. The phone face up on the desk. That is three of four gone before you start."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "When a fifth thing arrives, something falls off. Usually it's the thing you were trying to learn."
+        "kind": "image",
+        "image": "lesson-psy1-03",
+        "eyebrow": "The fifth thing",
+        "body": "When a fifth thing arrives, something falls off. It is usually the thing you were trying to learn, because it is the newest and the least practised."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The trick is chunking: pack several items into one. 8675309 is seven things. 867-5309 is two."
+        "kind": "image",
+        "image": "lesson-psy1-04",
+        "eyebrow": "The phone",
+        "body": "A phone face up on the desk keeps a slot busy even when it is silent. Part of you is waiting for it. Face down in a bag is a different object."
       },
       {
-        "kind": "example",
+        "kind": "image",
+        "image": "lesson-psy1-05",
+        "eyebrow": "Chunking",
+        "body": "The trick is chunking: pack several items into one. 8675309 is seven things. 867-5309 is two. A phone number fits because you learned to chunk it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy1-06",
+        "eyebrow": "On paper",
         "body": "Before a problem set, write the three formulas on a sticky note. Now they live on paper, and the slots are free for the actual problem."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy1-07",
+        "eyebrow": "One tab",
+        "body": "Every open tab is a promise to come back, and each promise takes a slot. Close all but the one you are using. One tab is not a style choice. It is a study tool."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy1-08",
+        "eyebrow": "Seven or four",
+        "body": "In 1956 George Miller put the number at seven, plus or minus two. Later work by Nelson Cowan settled on about four for new, unchunked items. Seven was the number for things you had already chunked."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy1-09",
+        "eyebrow": "Empty the slots",
+        "body": "Before you start, write down everything you are carrying: the text to answer, the errand, the worry. On paper it stops taking a slot. This is why a to-do list feels like relief."
       },
       {
         "kind": "key",
@@ -1000,9 +1114,9 @@
         "kind": "check",
         "question": "Why does a phone face up on the desk hurt studying?",
         "choices": [
-          "It makes the room brighter",
-          "It keeps a slot busy even when it's silent",
-          "It only hurts if it buzzes"
+          "The screen light makes it harder to read the page.",
+          "It keeps a slot busy even when it makes no sound.",
+          "It only hurts if a notification actually buzzes."
         ],
         "answer": 1,
         "why": "An unfinished thing stays open in your head. It sits in a slot whether or not the phone makes a sound."
