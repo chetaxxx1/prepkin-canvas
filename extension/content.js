@@ -516,13 +516,15 @@ function plannerRow(t, now) {
   const dueWord = due && !isNaN(due)
     ? (sameLocalDay(due, now) ? 'due today' : `due ${due.toLocaleDateString([], { weekday: 'short' })}`)
     : 'no due date';
-  const sub = t.submittedAt ? 'submitted' : moved ? `${escapeHTML(t.courseName)} · ${dueWord}` : `${escapeHTML(t.courseName)} · ${time}`;
+  const slipped = due && !isNaN(due) && due < now && !sameLocalDay(due, now) && !t.submittedAt;
+  const when = slipped ? `was due ${due.toLocaleDateString([], { month: 'short', day: 'numeric' })}` : time;
+  const sub = t.submittedAt ? 'submitted' : moved ? `${escapeHTML(shortCourse(t.courseName))} · ${dueWord}` : `${escapeHTML(shortCourse(t.courseName))} · ${when}`;
   return `
     <li class="${t.submittedAt ? 'done' : ''}${moved ? ' moved' : ''}"${t.submittedAt ? '' : ` draggable="true" data-drag="${escapeHTML(t.id)}"`}>
       <span class="pk-bar" style="background:${escapeHTML(color)}"></span>
       ${t.submittedAt ? `<span class="pk-tick">${checkSVG(16)}</span>` : ''}
       <div><b>${escapeHTML(t.title)}</b>
-           <small>${t.submittedAt ? `${escapeHTML(t.courseName)} · submitted` : sub}</small></div>
+           <small>${t.submittedAt ? `${escapeHTML(shortCourse(t.courseName))} · submitted` : sub}</small></div>
       ${t.submittedAt ? (t.pointsPossible ? `<span class="pk-pts">${t.pointsPossible} pts</span>` : '')
         : `<button class="pk-planbtn${plans[t.id] ? ' on' : ''}" data-plan-open="${escapeHTML(t.id)}"
              aria-expanded="${ui.planning === t.id}"
@@ -674,7 +676,7 @@ function leagueCard() {
     <div class="pk-league" style="--tier:${tier.color};--tier-edge:${tier.edge};--tier-ink:${tier.ink}">
       <div class="pk-league-head">
         ${pennantSVG(tier, 34, true)}
-        <div><b>${tier.name}</b><small>${tier.water}</small></div>
+        <div><b>${tier.name}</b><small>${leagueDaysLeft(league) ?? tier.water}</small></div>
       </div>
       <div class="pk-league-week">
         <b>${points} earned this week</b>
@@ -685,8 +687,18 @@ function leagueCard() {
       ${board === null ? '<div class="pk-league-note">No pod this week. Join one from the app to swim with strangers.</div>'
         : board.length <= 1 ? '<div class="pk-league-note">Only you at this tier this week. The bar is the same bar.</div>'
         : `<ol class="pk-league-board">${rows}</ol>`}
-      <div class="pk-foot">A quiet week keeps you where you are. Nothing here ever moves you down.</div>
+      <div class="pk-foot">Nothing here ever moves you down.</div>
     </div>`;
+}
+
+/// "3 days left", the way a league says it, from the week the phone named.
+function leagueDaysLeft(league) {
+  const start = Date.parse(String(league?.week ?? ''));
+  if (!Number.isFinite(start)) return null;
+  const end = start + 7 * DAY_MS;
+  const days = Math.ceil((end - Date.now()) / DAY_MS);
+  if (days <= 0) return 'Week over';
+  return days === 1 ? '1 day left' : `${days} days left`;
 }
 
 function gradesCard() {
@@ -870,17 +882,26 @@ function weekView(b, now) {
   const placed = all.map((t) => ({ t, day: planDay(t) })).filter((x) => x.day);
   const undated = all.filter((t) => !planDay(t));
 
+  // One group for everything that slipped, the way Todoist keeps Overdue
+  // together, then a group per day from today on.
+  const today0 = startOfDay(now);
   const groups = new Map();
   for (const { t, day } of placed.sort((x, y) => x.day - y.day || String(x.t.dueAt ?? '').localeCompare(String(y.t.dueAt ?? '')))) {
-    const key = day.toDateString();
-    if (!groups.has(key)) groups.set(key, { date: day, items: [] });
+    const past = day < today0;
+    const key = past ? 'past' : day.toDateString();
+    if (!groups.has(key)) groups.set(key, { date: past ? null : day, items: [] });
     groups.get(key).items.push(t);
   }
 
+  // Headers the way Todoist writes them: the date, then the word for it.
   const tomorrow = new Date(now.getTime() + DAY_MS);
-  const heading = (d) => sameLocalDay(d, now) ? 'Today'
-    : sameLocalDay(d, tomorrow) ? 'Tomorrow'
-    : d.toLocaleDateString([], { weekday: 'long' });
+  const heading = (d) => {
+    if (!d) return 'Past due';
+    const date = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    if (sameLocalDay(d, now)) return `${date} · Today`;
+    if (sameLocalDay(d, tomorrow)) return `${date} · Tomorrow`;
+    return `${date} · ${d.toLocaleDateString([], { weekday: 'long' })}`;
+  };
 
   // Seven dots from Monday: filled when that day's work is all in. Each one is
   // also where a dragged task lands, so the whole week is a set of drop targets.
@@ -904,10 +925,10 @@ function weekView(b, now) {
     const count = [owed ? `${owed} due` : '', moved ? `${moved} planned` : ''].filter(Boolean).join(' · ');
     return `
     <div class="pk-group">
-      <span class="pk-label${sameLocalDay(g.date, now) ? ' green' : ''}">${heading(g.date)}</span>
+      <span class="pk-label${g.date && sameLocalDay(g.date, now) ? ' green' : ''}${g.date ? '' : ' amber'}">${heading(g.date)}</span>
       <span class="pk-count-txt">${count}</span>
     </div>
-    <ul class="pk-list" data-drop="${dayKey(g.date)}">${g.items.map((t) => plannerRow(t, now)).join('')}</ul>`;
+    <ul class="pk-list"${g.date ? ` data-drop="${dayKey(g.date)}"` : ''}>${g.items.map((t) => plannerRow(t, now)).join('')}</ul>`;
   }).join('');
 
   return `
@@ -917,7 +938,6 @@ function weekView(b, now) {
       <span class="pk-meta">${all.length} tasks · ${done} done</span>
     </div>
     <div class="pk-week">${strip}</div>
-    <div class="pk-foot">Drag a task onto a day, or press Plan, to say when you will do it. The due date does not move.</div>
     ${groupBlocks || '<ul class="pk-list"><li class="empty">Nothing scheduled. Enjoy it.</li></ul>'}
     ${undated.length ? `
       <div class="pk-group">
@@ -2397,7 +2417,8 @@ if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
                      targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
-                     _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; } };
+                     panelView, looksView, weekView, whatIfView, courseView, addTaskView, focusCard, gradesCard, leagueCard,
+                     _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {

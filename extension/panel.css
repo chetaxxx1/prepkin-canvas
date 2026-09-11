@@ -132,6 +132,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   text-transform: uppercase; color: var(--pk-text-2);
 }
 .pk-label.green { color: var(--pk-green); }
+.pk-label.amber { color: var(--pk-amber-text, #8A5A12); }
 
 /* Daily progress, the buddy riding the fill edge. It only ever moves right. */
 .pk-track { position: relative; height: 8px; border-radius: 999px; background: var(--pk-track); }
@@ -495,11 +496,14 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-list.over { border-radius: 12px; box-shadow: inset 0 0 0 2px var(--pk-mint); }
 .pk-list li.dragging { opacity: .5; }
 .pk-list li.moved .pk-bar { opacity: .55; }
+/* Plan shows itself when the pointer is on the row; a row that was moved keeps
+ * its tag so the week still says where things went. Drag works either way. */
 .pk-planbtn {
   flex-shrink: 0; border: 0; background: var(--pk-inset); color: var(--pk-text-2);
   font: inherit; font-size: 11px; font-weight: 800; padding: 4px 8px;
-  border-radius: 999px; cursor: pointer;
+  border-radius: 999px; cursor: pointer; opacity: 0; transition: opacity .12s var(--pk-ease);
 }
+.pk-list li:hover .pk-planbtn, .pk-planbtn:focus-visible, .pk-planbtn[aria-expanded="true"], .pk-planbtn.on { opacity: 1; }
 .pk-planbtn.on { background: var(--pk-mint); color: var(--pk-ink); }
 .pk-planpick {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
