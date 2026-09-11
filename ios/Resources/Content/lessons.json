@@ -524,45 +524,63 @@
     "id": "phil-3",
     "title": "Occam's razor",
     "track": "philosophy",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "The oldest debugging tool there is: when two explanations both fit, start with the one that assumes less. It isn't a law of nature, and that matters too.",
     "takeaway": "You learned which explanation to test first.",
-    "figure": "razor",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Occam's razor: when two explanations fit the same facts, start with the one that assumes less."
+        "kind": "image",
+        "image": "lesson-phil3-01",
+        "eyebrow": "The idea",
+        "body": "Occam's razor: when two explanations fit the same facts, start with the one that assumes less. It is the oldest debugging tool there is, and it is seven hundred years old."
       },
       {
-        "kind": "example",
-        "body": "It's named after William of Ockham. He was a monk who argued you shouldn't invent extra things to explain something if you don't need them. A razor because it shaves off what you don't need."
+        "kind": "image",
+        "image": "lesson-phil3-02",
+        "eyebrow": "Who",
+        "body": "It is named after William of Ockham, a friar in England in the 1300s. He argued you should not invent extra things to explain something if you do not need them. A razor, because it shaves off what you do not need."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Your code broke after you changed one line. That line is one assumption."
+        "kind": "image",
+        "image": "lesson-phil3-03",
+        "eyebrow": "The bug",
+        "body": "Your code broke right after you changed one line. Two explanations fit: you typed something wrong, or the compiler has a bug that nobody else has ever hit."
       },
       {
-        "kind": "example",
-        "body": "Count the assumptions and the choice makes itself. 'I typed it wrong' assumes one thing. 'The compiler has a bug nobody else has hit' assumes four. Both could be true. One is far cheaper to check."
+        "kind": "image",
+        "image": "lesson-phil3-04",
+        "eyebrow": "Count",
+        "body": "Count what each one needs to be true. 'I typed it wrong' needs one thing. 'The compiler is broken' needs four: a bug exists, nobody has found it, it lives in your line, and it only showed up today."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "A compiler bug is four. It might still be right. It is just more expensive to check."
+        "kind": "image",
+        "image": "lesson-phil3-05",
+        "eyebrow": "The order",
+        "body": "So the razor is an order, not an answer. Check the cheap one first. If it holds, you are done in a minute. If it does not, you lost a minute and you now know something."
       },
       {
-        "kind": "example",
-        "body": "So the razor is an order, not an answer. Check the cheap one first. If it holds, you're done in a minute. If it doesn't, you've lost a minute and you now know something."
+        "kind": "image",
+        "image": "lesson-phil3-06",
+        "eyebrow": "The misuse",
+        "body": "The common misuse is treating simplest as truest. Sometimes the weird explanation is the real one. The razor does not say it is wrong. It says check the boring one before you spend a day on the interesting one."
       },
       {
-        "kind": "example",
-        "body": "The common misuse is treating simplest as truest. Sometimes the weird explanation is the real one. The razor doesn't say it's wrong. It says check the boring one before you spend a day on the interesting one."
+        "kind": "image",
+        "image": "lesson-phil3-07",
+        "eyebrow": "Horses, not zebras",
+        "body": "Doctors learn the same rule as a saying: when you hear hoofbeats, think horses, not zebras. A headache is usually a headache. They still check for zebras when the horses do not explain it."
       },
       {
-        "kind": "example",
+        "kind": "image",
+        "image": "lesson-phil3-08",
+        "eyebrow": "Do it",
         "body": "Try it the next time something breaks. Write the two explanations down. Count what each one needs to be true. Test the smaller number first, every time."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil3-09",
+        "eyebrow": "Usually",
+        "body": "Nine times in ten it was the typo. The tenth time, you have already ruled out the cheap answer, so the expensive hunt is worth it. Either way, you started in the right place."
       },
       {
         "kind": "key",
@@ -572,9 +590,9 @@
         "kind": "check",
         "question": "What does the razor actually tell you to do?",
         "choices": [
-          "Believe the simplest answer",
-          "Test the simplest answer first",
-          "Ignore complicated answers"
+          "Believe the simplest answer and stop there.",
+          "Test the simplest answer before the others.",
+          "Ignore any answer that sounds complicated."
         ],
         "answer": 1,
         "why": "It ranks what to check, not what is true. A complicated explanation can still win once the simple one fails."
@@ -1127,34 +1145,63 @@
     "id": "psy-2",
     "title": "Why you can't stop scrolling",
     "track": "psychology",
-    "figure": "refresh",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Feeds are built on the same trick as slot machines: a reward that only sometimes comes. You'll see why 'sometimes' hooks harder than 'always', and the one setting that breaks the loop.",
     "takeaway": "You learned that 'sometimes' is the hook.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Pull down to refresh. Something might be there. Something might not. That uncertainty is the whole design."
+        "kind": "image",
+        "image": "lesson-psy2-01",
+        "eyebrow": "The pull",
+        "body": "Pull down to refresh. Something might be there. Something might not. That uncertainty is the whole design, and it was designed on purpose."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Most pulls give you nothing. Then one gives you a like, a reply, a good post. You keep pulling for the next one."
+        "kind": "image",
+        "image": "lesson-psy2-02",
+        "eyebrow": "Twelve pulls",
+        "body": "Most pulls give you nothing. Then one gives you a like, a reply, a good post. You keep pulling for the next one, because the next one might be it."
       },
       {
-        "kind": "figure",
-        "step": 3,
+        "kind": "image",
+        "image": "lesson-psy2-03",
+        "eyebrow": "Sometimes",
         "body": "A reward that comes every time gets boring fast. A reward that comes sometimes keeps you pulling longest. Slot machines run on exactly this."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The fix isn't willpower. Kill the surprise. With notifications off, nothing arrives unannounced, so there's no pull to answer."
+        "kind": "image",
+        "image": "lesson-psy2-04",
+        "eyebrow": "Slot machines",
+        "body": "A slot machine pays out on a random schedule too. The design is the same: a pull, a pause, and a maybe. Feeds borrowed it because it works."
       },
       {
-        "kind": "example",
-        "body": "Pigeons taught to peck for a seed every time stopped when the seed stopped. Pigeons rewarded at random kept pecking for hours."
+        "kind": "image",
+        "image": "lesson-psy2-05",
+        "eyebrow": "The pigeons",
+        "body": "Pigeons taught to peck for a seed every time stopped when the seed stopped. Pigeons rewarded at random kept pecking for hours. B. F. Skinner ran this in the 1950s."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy2-06",
+        "eyebrow": "In your pocket",
+        "body": "Every notification is a cue for a pull. The buzz says something might be there. That is the same maybe, delivered to your pocket, thirty times a day."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy2-07",
+        "eyebrow": "The fix",
+        "body": "The fix is not willpower. Kill the surprise. With notifications off, nothing arrives unannounced, so there is no pull to answer. You check when you decide to."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy2-08",
+        "eyebrow": "Do it",
+        "body": "Do it once. Turn off notifications for every feed app. Leave on the ones from actual people. It takes two minutes and the pull goes quiet the same day."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy2-09",
+        "eyebrow": "After",
+        "body": "The first few days feel like something is missing. That is the maybe going quiet. Boredom comes back, and boredom is where your own thoughts live."
       },
       {
         "kind": "key",
@@ -1164,9 +1211,9 @@
         "kind": "check",
         "question": "Which reward keeps a habit going the longest?",
         "choices": [
-          "One that comes every time",
-          "One that comes at random",
-          "One that comes on a schedule"
+          "One that arrives every single time you act.",
+          "One that arrives at random, only sometimes.",
+          "One that arrives on a fixed daily schedule."
         ],
         "answer": 1,
         "why": "A random reward means every pull could be the one. There's never a moment where stopping feels safe."
@@ -1538,35 +1585,63 @@
     "id": "ppl-2",
     "title": "How to say no",
     "track": "people",
-    "figure": "no",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "A clean no is short, kind, and doesn't invite a negotiation. You'll see the three-part shape, and why a long excuse is the thing that gets you talked back into it.",
     "takeaway": "You learned that a short no is the kind one.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Saying no feels rude, so most people bury it in a long excuse. The excuse is the problem, not the no."
+        "kind": "image",
+        "image": "lesson-ppl2-01",
+        "eyebrow": "The idea",
+        "body": "Saying no feels rude, so most people bury it in a long excuse. The excuse is the problem, not the no. A clean no is short, kind, and does not invite a negotiation."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Part one: something warm. 'Thanks for thinking of me.' It's true, and it costs nothing."
+        "kind": "image",
+        "image": "lesson-ppl2-02",
+        "eyebrow": "Three parts",
+        "body": "A clean no has three parts. Something warm. The no, plain. And, if you want it, what you can do instead. That is the whole shape."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Part two: the no, plain. 'I can't this weekend.' No 'maybe', no 'I'll try'. A soft no gets treated as a yes."
+        "kind": "image",
+        "image": "lesson-ppl2-03",
+        "eyebrow": "Part one",
+        "body": "Something warm. 'Thanks for thinking of me.' It is true, and it costs nothing. It tells them the no is about the request, not about them."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Part three, if you want it: what you can do. 'But I'm free Tuesday.' Now it's an offer, not a rejection."
+        "kind": "image",
+        "image": "lesson-ppl2-04",
+        "eyebrow": "Part two",
+        "body": "The no, plain. 'I can't this weekend.' No 'maybe', no 'I'll try', no 'let me see'. A soft no gets treated as a yes."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "What you leave out: the reason. Every reason is a door. 'I have homework' gets 'do it after'. No reason, no door."
+        "kind": "image",
+        "image": "lesson-ppl2-05",
+        "eyebrow": "Part three",
+        "body": "If you want it: what you can do. 'But I'm free Tuesday.' Now it is an offer, not a rejection. Skip it if you do not mean it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl2-06",
+        "eyebrow": "Leave out",
+        "body": "What you leave out: the reason. Every reason is a door. 'I have homework' gets 'do it after'. 'I'm tired' gets 'just for an hour'. No reason, no door."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl2-07",
+        "eyebrow": "In full",
+        "body": "Here is one in full, by text. Warm, no, offer. Sixteen words. It reads as kind because it is short, not in spite of it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl2-08",
+        "eyebrow": "If they push",
+        "body": "If they push, say the same no again, in the same words, with the same warmth. You do not need a new reason. The second no is easier than the first."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl2-09",
+        "eyebrow": "After",
+        "body": "The guilt fades in about a minute. The resentment from a yes you did not mean lasts the whole weekend. Short no now, or long yes later."
       },
       {
         "kind": "key",
@@ -1576,9 +1651,9 @@
         "kind": "check",
         "question": "Why skip the reason when you say no?",
         "choices": [
-          "Reasons are rude",
-          "Every reason can be argued with",
-          "It makes you seem busy"
+          "Giving a reason comes across as rude to them.",
+          "Every reason is something they can argue with.",
+          "It makes you look busier than you really are."
         ],
         "answer": 1,
         "why": "A reason turns your no into a problem to solve. 'I have homework' invites 'do it later'. A plain no has nothing to push on."
@@ -1870,46 +1945,75 @@
     "id": "fin-9",
     "title": "A Roth IRA at 18",
     "track": "finance",
-    "figure": "jar",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "It's a jar where money grows for decades and comes out with no tax at all. You'll see why starting at 18 beats starting at 30 by a mile, and the one rule for opening one.",
     "takeaway": "You learned why the early jar wins.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A Roth IRA is a jar for retirement money. Money you already paid tax on goes in. Then it grows for decades."
+        "kind": "image",
+        "image": "lesson-fin9-01",
+        "eyebrow": "The jar",
+        "body": "A Roth IRA is a jar for retirement money. Money you already paid tax on goes in. Then it sits and grows for decades, and the growth is never taxed."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Inside the jar, growth is never taxed. The $2,000 you put in could become $20,000, and you owe nothing on the extra."
+        "kind": "image",
+        "image": "lesson-fin9-02",
+        "eyebrow": "Growth",
+        "body": "Inside the jar, growth is never taxed. One $2,000 deposit at 18 becomes about $48,000 by 65 at 7% a year, and you owe nothing on the extra $46,000."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "After 59½, and once the account is five years old, it all comes out tax-free. And the money you put in, not the growth, can come out any time without penalty."
+        "kind": "image",
+        "image": "lesson-fin9-03",
+        "eyebrow": "Two rules",
+        "body": "After 59½, and once the account is five years old, it all comes out tax-free. The money you put in, not the growth, can come out any time without penalty."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The one rule: you need earned income. A summer job counts. Babysitting money counts if you report it. You can put in up to $7,000 a year, or everything you earned if that's less."
+        "kind": "image",
+        "image": "lesson-fin9-04",
+        "eyebrow": "The one rule",
+        "body": "You need earned income. A summer job counts. Babysitting money counts if you report it. You can put in up to $7,000 a year, or everything you earned if that is less."
       },
       {
-        "kind": "example",
-        "body": "Put in $2,000 a year for seven years, 18 to 24, then stop forever. At 7% growth, that's about $250,000 at 65. Start at 30 and you'd need to save for decades to catch up."
+        "kind": "image",
+        "image": "lesson-fin9-05",
+        "eyebrow": "Early or late",
+        "body": "Put in $2,000 a year from 18 to 24, then stop forever. That is $14,000 in, and about $277,000 at 65. Start at 30 and you need $2,000 every year until 65, $70,000 in, to land in the same place."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin9-06",
+        "eyebrow": "Opening one",
+        "body": "Any big brokerage will open one online in about fifteen minutes. There is no minimum at most of them. Pick a plain index fund inside it and stop touching it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin9-07",
+        "eyebrow": "Jar and fund",
+        "body": "A Roth IRA is the jar, not the thing inside. You still choose what goes in it. For most people that is one broad index fund. The jar just keeps the tax off."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin9-08",
+        "eyebrow": "Why early wins",
+        "body": "The jar rewards years, not amounts. Seven years at 18 can match thirty-five years starting at 30, because the early money has four extra decades to double."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin9-09",
+        "eyebrow": "Automatic",
+        "body": "Set it to automatic. $167 a month is $2,000 a year. If that is too much, $50 a month still counts. The habit matters more than the amount at 18."
       },
       {
         "kind": "key",
-        "body": "The jar rewards years, not amounts. Seven years at 18 can beat thirty years later."
+        "body": "The jar rewards years, not amounts. Seven years at 18 can match thirty-five years later."
       },
       {
         "kind": "check",
         "question": "What do you need before you can open a Roth IRA?",
         "choices": [
-          "To be 21",
-          "Money you earned from work",
-          "A full-time job"
+          "To be at least 21 years old.",
+          "Money you earned from work.",
+          "A full-time job with benefits."
         ],
         "answer": 1,
         "why": "Any earned income counts, including a summer job. Age and hours don't matter, only that the money came from work."
@@ -3131,40 +3235,64 @@
     "id": "study-12",
     "title": "Flashcards that actually work",
     "track": "study",
-    "figure": "leitner",
     "minutes": 3,
     "triggers": [],
     "blurb": "Most flashcards fail because one card is carrying a whole paragraph. You'll see the three rules that fix that: one fact per card, the answer hidden, and the cards you miss coming back sooner.",
     "takeaway": "You learned that the cards you miss come back sooner.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "One card, one fact. Not a paragraph, not a list of six things. If you can't answer it in about five seconds, split it into two cards."
+        "kind": "image",
+        "image": "lesson-study12-01",
+        "eyebrow": "The idea",
+        "body": "Most flashcards fail because one card is carrying a whole paragraph. One card, one fact. If you cannot answer it in about five seconds, split it into two cards."
       },
       {
-        "kind": "figure",
-        "step": 2,
+        "kind": "image",
+        "image": "lesson-study12-02",
+        "eyebrow": "Split it",
+        "body": "'The causes of World War I' is not a card. 'What year did World War I start' is a card. So is 'Which assassination set it off'. Small enough to answer fast."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study12-03",
+        "eyebrow": "Hidden",
         "body": "The answer stays hidden. Say it out loud, then flip. Reading the answer first feels like studying. Pulling it out of your head is what makes it stick."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Each box gets checked less often than the one before. Box one every day, box two every three days, box three once a week. That's a Leitner box."
+        "kind": "image",
+        "image": "lesson-study12-04",
+        "eyebrow": "Three boxes",
+        "body": "Each box gets checked less often than the one before. Box one every day, box two every three days, box three once a week. That is a Leitner box, invented in the 1970s."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Get a card right and it moves up one box. Get it right again and it moves up again. Each box up, you see it less often."
+        "kind": "image",
+        "image": "lesson-study12-05",
+        "eyebrow": "Up",
+        "body": "Get a card right and it moves up one box. Get it right again and it moves up again. Each box up, you see it less often, because you need it less."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Miss it and it drops all the way back to box one. You see it again tomorrow. The cards you're worst at are the ones you see most."
+        "kind": "image",
+        "image": "lesson-study12-06",
+        "eyebrow": "Down",
+        "body": "Miss it and it drops all the way back to box one. You see it again tomorrow. The cards you are worst at are the ones you see most. That is the whole point."
       },
       {
-        "kind": "example",
+        "kind": "image",
+        "image": "lesson-study12-07",
+        "eyebrow": "A week in",
         "body": "Twenty Spanish words. After a week, fourteen have climbed to box three and you barely touch them. The six you keep missing sit in box one, and those are the ones you drill every day."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study12-08",
+        "eyebrow": "Two weeks in",
+        "body": "By week two, box one is nearly empty and box three is full. Ten minutes a day covers everything, because most of the deck is resting."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-study12-09",
+        "eyebrow": "Paper or app",
+        "body": "Apps like Anki do the boxes for you and space the gaps out even further. Paper works just as well. The rules are the same: one fact, answer hidden, misses come back sooner."
       },
       {
         "kind": "key",
@@ -3174,9 +3302,9 @@
         "kind": "check",
         "question": "You miss a card sitting in box three. Where does it go?",
         "choices": [
-          "It stays in box three",
-          "It drops back to box one",
-          "It moves down to box two"
+          "It stays in box three, checked weekly.",
+          "It drops all the way back to box one.",
+          "It moves down one step, to box two."
         ],
         "answer": 1,
         "why": "A miss sends it all the way back to box one. It sits there until you get it right."
@@ -3187,47 +3315,63 @@
     "id": "work-1",
     "title": "Your employer's match is free money",
     "track": "work",
-    "figure": "workmatch",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Your offer letter has a second number hiding in the benefits part. Here's what it's worth, why it beats anything you could buy, and the one catch to ask about.",
     "takeaway": "You learned that skipping the match means turning down part of your pay.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You got the job. It says $52,000 a year. That's the number you'll tell people."
+        "kind": "image",
+        "image": "lesson-work1-01",
+        "eyebrow": "The letter",
+        "body": "You got the job. The letter says $52,000 a year. That is the number you will tell people. There is a second number hiding further down, and almost nobody reads it."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Now scroll down to the benefits part. There's a second number hiding in there. Almost nobody reads it."
+        "kind": "image",
+        "image": "lesson-work1-02",
+        "eyebrow": "The second number",
+        "body": "Scroll down to the benefits part. '401(k) match: 100% of the first 4% of pay.' That line is worth $2,080 a year to you, every year, on top of the salary."
       },
       {
-        "kind": "example",
-        "body": "First, what a 401(k) even is. It's a savings account for retirement that comes with the job. Money moves from your paycheck into it before you ever see it. It's your money. It gets invested, and you can't touch it until you're much older without paying a penalty."
+        "kind": "image",
+        "image": "lesson-work1-03",
+        "eyebrow": "What a 401(k) is",
+        "body": "It is a retirement account that comes with the job. Money moves from your paycheck into it before you see it. It is your money, it gets invested, and you cannot touch it until you are much older without a penalty."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "A match means your job puts money in too, but only when you do. Jobs that offer one usually match your first 3% to 6% of pay. Say yours does 4%."
+        "kind": "image",
+        "image": "lesson-work1-04",
+        "eyebrow": "The match",
+        "body": "A match means your job puts money in too, but only when you do. Jobs that offer one usually match your first 3% to 6% of pay. Yours does 4%. Your $2,080 becomes $4,160 on day one."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "So your $2,080 becomes $4,160 on day one. Growing it yourself at 8% a year would take about nine years to do that."
+        "kind": "image",
+        "image": "lesson-work1-05",
+        "eyebrow": "Nine years",
+        "body": "Growing it yourself at 8% a year would take about nine years to double. The match doubles it on the first day. Nothing you can buy does that."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Put in nothing and they put in nothing. That's not a bonus you missed. That's part of your pay you turned down."
+        "kind": "image",
+        "image": "lesson-work1-06",
+        "eyebrow": "Turned down",
+        "body": "Put in nothing and they put in nothing. That is not a bonus you missed. That is part of your pay you turned down. At 4% of $52,000, it is $2,080 a year left on the table."
       },
       {
-        "kind": "example",
-        "body": "One catch, called vesting. At some jobs their half isn't really yours until you've been there a year or two. Leave before that and you hand it back. Ask which one you're on during the offer call, before you sign."
+        "kind": "image",
+        "image": "lesson-work1-07",
+        "eyebrow": "The catch",
+        "body": "It is called vesting. At some jobs their half is not really yours until you have been there a year or two. Leave before that and you hand it back. Ask which schedule you are on during the offer call."
       },
       {
-        "kind": "example",
-        "body": "Here's how you actually turn it on. In your first month there's a benefits sign-up, usually a website. You pick a percentage of your pay. Type in at least the number they match. It takes about five minutes and then it happens automatically forever."
+        "kind": "image",
+        "image": "lesson-work1-08",
+        "eyebrow": "Turn it on",
+        "body": "In your first month there is a benefits sign-up, usually a website. Pick a percentage of your pay. Type in at least the number they match. Five minutes, then automatic forever."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work1-09",
+        "eyebrow": "Start small",
+        "body": "If 4% feels like too much on a first salary, start at 1% and move it up one point every few months. The habit matters. The match waits for you to reach it."
       },
       {
         "kind": "key",
@@ -3235,11 +3379,11 @@
       },
       {
         "kind": "check",
-        "question": "Your investments had a great year and went up 12%. Why is the match still a better deal?",
+        "question": "Your investments went up 12% this year. Why is the match still the better deal?",
         "choices": [
-          "The match doubles that money right away",
-          "You get the match whether you put in or not",
-          "Matches don't get taxed"
+          "The match doubles your money the day it lands.",
+          "The match is paid whether or not you put in.",
+          "Money from the match is never taxed later on."
         ],
         "answer": 0,
         "why": "Up 12% in a year is great. The match is 100%, straight away. And the match only lands if you put money in first, so 0% in means 0% matched."
