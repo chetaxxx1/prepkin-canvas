@@ -74,7 +74,6 @@ def spaced():
     for day in range(0, 6):
         x = x0 + (x1 - x0) * day / 7
         c.dot(x, y1 - (y1 - y0) * 1.0, 11, MINT); c.dot(x, y1 - (y1 - y0) * 1.0, 5, CREAM)
-    c.text("10 min", x0 + 26, y0 - 2, 22, MINT, "Bold", anchor="lm")
     c.text("each slip is smaller than the last", x0 + 20, y1 - 40, 24, MINT, "Bold", anchor="lm")
     c.save(f"{OUT}/fig-04-spaced.png")
 

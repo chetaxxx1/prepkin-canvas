@@ -76,8 +76,8 @@ def slide():
     x, y = pts[-1]
     c.dot(x, y, 12, CORAL); c.dot(x, y, 6, CREAM)
     n = len(MIN) - 1
-    c.dash(x, y - 24, x, 330, MUTED, 3)
-    c.text(f"paid off after {ym(n)}", x + 16, 300, 26, INK, anchor="rm")
+    c.dash(x, y - 24, x, 280, MUTED, 3)
+    c.text(f"paid off after {ym(n)}", x + 16, 248, 26, INK, anchor="rm")
     c.save(f"{OUT}/fig-03-slide.png")
 
 # ---------------------------------------------------------------- 4: what you paid

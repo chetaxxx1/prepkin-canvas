@@ -29,7 +29,7 @@ def either_way():
         # the ticket under each branch, spent both ways
         c.rrect(x - 150, 600, x + 150, 720, 28, WHITE, outline=FAINT, ow=4)
         c.text("$15", x, 645, 40, MUTED)
-        c.line([(x - 60, 645), (x + 60, 645)], CORAL, 8)
+        c.strike(x - 60, 645, x + 60, 645, CORAL, 8)
         c.text("spent either way", x, 695, 22, MUTED, "Bold")
     c.text("The ticket does not get a vote", 600, 810, 30, MUTED, "Bold")
     c.save(f"{OUT}/fig-02-either-way.png")
@@ -66,7 +66,7 @@ def the_line():
     for label, x in above:
         c.rrect(x - 140, y - 200, x + 140, y - 90, 28, FAINT)
         c.text(label, x, y - 145, 30, MUTED)
-        c.line([(x - 90, y - 145), (x + 90, y - 145)], CORAL, 8)
+        c.strike(x - 90, y - 145, x + 90, y - 145, CORAL, 8)
     below = [("90 minutes", 300), ("tonight", 600), ("3 more semesters", 900)]
     for label, x in below:
         c.rrect(x - 135, y + 90, x + 135, y + 200, 28, MINT)

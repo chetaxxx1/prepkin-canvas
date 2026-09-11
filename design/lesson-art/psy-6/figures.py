@@ -29,7 +29,7 @@ def node(c, x, y, label, fill, ink=(255, 255, 255), sub=None, strike=False):
     c.text(label, x, y - (12 if sub else 0), 34, ink)
     if sub: c.text(sub, x, y + 30, 22, ink, "Bold")
     if strike:
-        c.line([(x - 120, y), (x + 120, y)], CORAL, 10)
+        c.strike(x - 120, y, x + 120, y, CORAL, 10)
 
 def loop(swap=False):
     c = Canvas()

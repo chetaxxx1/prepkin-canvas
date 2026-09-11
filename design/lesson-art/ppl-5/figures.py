@@ -40,7 +40,7 @@ def but_if():
         word = "but" if i == 0 else "if"
         c.rrect(760, y + 20, 1080, y + 110, 30, CORAL_SOFT)
         c.text(word, 920, y + 65, 40, CORAL)
-        c.line([(880, y + 65), (960, y + 65)], CORAL, 8)
+        c.strike(880, y + 65, 960, y + 65, CORAL, 8)
         c.text(means, 120, y + 210, 28, MUTED, "Bold", anchor="lm")
     c.save(f"{OUT}/fig-06-but-if.png")
 

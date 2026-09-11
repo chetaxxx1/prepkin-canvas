@@ -76,10 +76,10 @@ def nine_years():
     c.line(pts, STONE, 9)
     ty = y1 - (y1 - y0) * YOU * 2 / ymax
     c.dash(x0, ty, x1, ty, MINT, 4)
-    c.text(f"{money(YOU * 2)}: the match gets you here on day one", x0 + 10, ty - 28, 24, MINT, "Bold", anchor="lm")
+    c.text(f"{money(YOU * 2)} on day one, with the match", x0 + 10, ty - 30, 24, MINT, "Bold", anchor="lm")
     tx = x0 + (x1 - x0) * 9 / 10
     c.dot(tx, ty, 12, STONE); c.dot(tx, ty, 6, CREAM)
-    c.text("on your own: 9 years", tx - 20, ty + 40, 24, INK, "Bold", anchor="rm")
+    c.text("on your own: 9 years", tx + 6, ty - 44, 24, INK, "Bold", anchor="rm")
     c.save(f"{OUT}/fig-05-nine-years.png")
 
 def vesting():
