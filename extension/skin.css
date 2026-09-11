@@ -412,41 +412,6 @@ html.pk-on.pk-dark:not(.pk-back-seam) .tool_content_wrapper {
 /* ---- today: the summary at the top of the dashboard (content.js) --------
  * In the page, so it is only titles, counts and dates; grades stay in the
  * panel's closed root. */
-#pk-today {
-  margin: 0 0 20px; padding: 14px 16px 14px 18px; border-radius: 16px;
-  background: var(--pk-paper-2); border: 1px solid var(--pk-rule); color: var(--pk-ink);
-  display: grid; grid-template-columns: auto 1fr auto; gap: 8px 16px; align-items: center;
-  font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
-  font-variant-numeric: tabular-nums;
-}
-#pk-today .pk-t-buddy { display: flex; align-items: center; }
-#pk-today .pk-t-say { min-width: 0; }
-#pk-today .pk-t-say b { display: block; font-size: 16px; line-height: 20px; font-weight: 800; letter-spacing: -.01em; }
-#pk-today .pk-t-say small { display: block; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-today .pk-t-counts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-#pk-today .pk-t-counts span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
-  background: var(--pk-paper-sunk); font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
-#pk-today .pk-t-counts span b { color: var(--pk-ink); font-weight: 800; }
-#pk-today .pk-t-counts span.amber { color: var(--pk-amber-ink); }
-#pk-today .pk-t-counts span.amber b { color: var(--pk-amber-ink); }
-#pk-today .pk-t-next { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid var(--pk-rule); }
-#pk-today .pk-t-next i { flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px; background: var(--pk-ink-2); }
-#pk-today .pk-t-next i.amber { background: var(--pk-paper-2); box-shadow: inset 0 0 0 2px var(--pk-amber-rule); }
-#pk-today .pk-t-next > div { flex-grow: 1; min-width: 0; }
-#pk-today .pk-t-next b { display: block; font-size: 14px; line-height: 20px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#pk-today .pk-t-next small { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-today .pk-t-next small.amber { color: var(--pk-amber-ink); }
-#pk-today .pk-t-actions { display: flex; gap: 6px; flex-shrink: 0; }
-#pk-today .pk-t-actions a, #pk-today .pk-t-actions span[role="button"] {
-  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; user-select: none;
-  padding: 7px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; text-decoration: none !important;
-  background: var(--pk-paper-sunk); color: var(--pk-ink) !important; border: 1px solid var(--pk-rule);
-}
-#pk-today .pk-t-actions a.start { background: #51CFA0; color: #101820 !important; border-color: #51CFA0; box-shadow: 0 2px 0 #35A87D; }
-#pk-today .pk-t-actions a:focus-visible, #pk-today .pk-t-actions span:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
-html.pk-back-today #pk-today { display: none; }
-@media (max-width: 700px) { #pk-today { grid-template-columns: auto 1fr; } #pk-today .pk-t-counts { grid-column: 1 / -1; justify-content: flex-start; } }
-
 /* ---- card-due: the next due line on a course card (content.js) ----------- */
 .pk-card-due {
   margin: 12px 16px 0;
@@ -484,7 +449,7 @@ html.pk-on.pk-show .context_module .ig-header.header,
 html.pk-on.pk-show .context_module .due_date_display,
 html.pk-on.pk-show .tool_content_wrapper,
 html.pk-on.pk-show .pk-card-due,
-html.pk-on.pk-show #pk-today,
+html.pk-on.pk-show #pk-week,
 html.pk-on.pk-show #prepkin-buddy {
   outline: 1.5px dashed var(--pk-mark) !important;
   outline-offset: 3px;
@@ -524,7 +489,6 @@ html.pk-on.pk-dense .context_module_item { padding-top: 6px !important; padding-
 html.pk-on.pk-dense .context_module .header { padding: 8px 12px !important; }
 html.pk-on.pk-dense #assignments .assignment { padding-top: 6px !important; padding-bottom: 6px !important; }
 html.pk-on.pk-dense #right-side .Sidebar__TodoListContainer li, html.pk-on.pk-dense #right-side .coming_up li { padding-top: 6px !important; padding-bottom: 6px !important; }
-html.pk-on.pk-dense #pk-today { padding: 10px 14px !important; margin-bottom: 12px !important; }
 html.pk-on.pk-dense .ic-Layout-contentMain h1, html.pk-on.pk-dense .ic-Layout-contentMain h2.ic-Dashboard-header__title { margin-bottom: 8px !important; }
 
 /* MARK: - The left menu, in the theme's rail colour. Painted on the rail,
@@ -612,31 +576,70 @@ html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--
 
 /* MARK: - This week: our rail card at the top of the sidebar (content.js). */
 #pk-week {
-  margin: 0 0 20px; padding: 14px 16px; border-radius: 16px;
+  margin: 0 0 12px; padding: 14px 16px 12px; border-radius: 16px;
   background: var(--pk-paper-2); border: 1px solid var(--pk-rule); color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
 }
-#pk-week .pk-w-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-#pk-week .pk-w-head b { font-size: 15px; font-weight: 800; letter-spacing: -.01em; }
-#pk-week .pk-w-head small { font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-week .pk-w-ring { position: relative; width: 96px; height: 96px; margin: 0 auto 10px; }
+#pk-week .pk-w-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+#pk-week .pk-w-head b { font-size: 15px; font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
+#pk-week .pk-w-head .nav { display: flex; align-items: center; gap: 6px; }
+#pk-week .pk-w-head small { font-size: 12px; font-weight: 700; color: var(--pk-ink-2); white-space: nowrap; }
+#pk-week .pk-w-head i { width: 22px; height: 22px; border-radius: 999px; background: var(--pk-paper-sunk); color: var(--pk-ink-2);
+  display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-size: 14px; line-height: 1; cursor: pointer; user-select: none; }
+#pk-week .pk-w-head i:hover { color: var(--pk-ink); }
+#pk-week .pk-w-ring { position: relative; width: 150px; height: 150px; margin: 4px auto 10px; }
 #pk-week .pk-w-ring svg { display: block; }
 #pk-week .pk-w-centre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
-#pk-week .pk-w-centre b { font-size: 20px; font-weight: 900; letter-spacing: -.02em; }
-#pk-week .pk-w-centre small { font-size: 11px; font-weight: 700; color: var(--pk-ink-2); margin-top: 3px; text-transform: uppercase; letter-spacing: .06em; }
-#pk-week .pk-w-legend { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-#pk-week .pk-w-legend li { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 600; }
+#pk-week .pk-w-centre b { font-size: 26px; font-weight: 900; letter-spacing: -.02em; }
+#pk-week .pk-w-centre small { font-size: 11px; font-weight: 700; color: var(--pk-ink-2); margin-top: 4px; text-transform: uppercase; letter-spacing: .06em; }
+#pk-week .pk-w-legend { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+#pk-week .pk-w-legend li { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 600; min-width: 0; }
 #pk-week .pk-w-legend i { flex: none; width: 8px; height: 8px; border-radius: 999px; background: var(--pk-mark); }
 #pk-week .pk-w-legend span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #pk-week .pk-w-legend b { font-weight: 800; color: var(--pk-ink-2); }
 #pk-week .pk-w-empty { margin: 0 0 10px; font-size: 13px; line-height: 18px; color: var(--pk-ink-2); }
-#pk-week .pk-w-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid var(--pk-rule); font-size: 12px; line-height: 16px; font-weight: 700; color: var(--pk-ink-2); }
+#pk-week .pk-w-label { margin: 0 0 6px; font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-ink-2); }
+#pk-week .pk-w-first { display: flex; flex-direction: column; gap: 8px; margin: 0 0 10px; padding: 10px 12px; border-radius: 12px; background: var(--pk-paper-sunk); }
+#pk-week .pk-w-first b { display: block; font-size: 14px; line-height: 18px; font-weight: 800; }
+#pk-week .pk-w-first small { display: block; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-week .pk-w-first small.amber { color: var(--pk-amber-ink); }
+#pk-week .pk-w-actions { display: flex; gap: 6px; }
+#pk-week .pk-w-actions a, #pk-week .pk-w-actions span[role="button"] {
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; user-select: none;
+  padding: 7px 11px; border-radius: 10px; font-size: 13px; font-weight: 800; text-decoration: none !important; white-space: nowrap;
+  background: var(--pk-paper-2); color: var(--pk-ink) !important; border: 1px solid var(--pk-rule);
+}
+#pk-week .pk-w-actions a.start { background: #51CFA0; color: #101820 !important; border-color: #51CFA0; box-shadow: 0 2px 0 #35A87D; }
+#pk-week .pk-w-actions a:focus-visible, #pk-week .pk-w-actions span:focus-visible, #pk-week .pk-w-head i:focus-visible, #pk-week .pk-w-foot .more:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+#pk-week .pk-w-list { list-style: none; margin: 0; padding: 0; }
+#pk-week .pk-w-list li { display: flex; align-items: flex-start; gap: 9px; padding: 8px 0; border-top: 1px solid var(--pk-rule); }
+#pk-week .pk-w-list li:first-child { border-top: 0; }
+#pk-week .pk-w-list i { flex: none; width: 8px; height: 8px; border-radius: 999px; margin-top: 5px; background: var(--pk-ink-2); }
+#pk-week .pk-w-list i.late { background: transparent; box-shadow: inset 0 0 0 2px var(--pk-amber-rule); }
+#pk-week .pk-w-list li > div { min-width: 0; flex: 1; }
+#pk-week .pk-w-list b { display: block; font-size: 13px; line-height: 17px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pk-week .pk-w-list small { display: block; font-size: 12px; line-height: 15px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-week .pk-w-list small.amber { color: var(--pk-amber-ink); }
+#pk-week .pk-w-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; margin-top: 4px; border-top: 1px solid var(--pk-rule); font-size: 12px; line-height: 16px; font-weight: 700; color: var(--pk-ink-2); }
 #pk-week .pk-w-foot .more { color: var(--pk-link); cursor: pointer; }
 #pk-week .pk-w-foot .more:hover { text-decoration: underline; }
 html.pk-back-week #pk-week { display: none; }
 
-#pk-week .pk-w-league { display: flex; flex-direction: column; gap: 8px; margin: 0 0 12px; padding: 10px 12px; border-radius: 12px; background: var(--pk-paper-sunk); cursor: pointer; }
+/* Canvas's own To Do, folded to one line under the rail. Show opens it for
+ * this page view; Put back on the receipt keeps it open for good. */
+#pk-todo-fold {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 0 20px; padding: 10px 14px;
+  border-radius: 12px; border: 1px dashed var(--pk-rule); color: var(--pk-ink-2); cursor: pointer; user-select: none;
+  font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-size: 12px; line-height: 16px; font-weight: 700;
+}
+#pk-todo-fold b { font-weight: 800; color: var(--pk-link); }
+#pk-todo-fold:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) .Sidebar__TodoListContainer,
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) ul.right-side-list.to-do-list { display: none; }
+html.pk-back-todo-fold #pk-todo-fold { display: none; }
+
+#pk-week .pk-w-league { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 2px; padding: 10px 12px; border-radius: 12px; background: var(--pk-paper-sunk); cursor: pointer; }
 #pk-week .pk-w-league .head { display: flex; align-items: center; gap: 10px; }
 #pk-week .pk-w-league .head b { display: block; font-size: 15px; font-weight: 900; letter-spacing: -.01em; }
 #pk-week .pk-w-league .head small { display: block; font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }

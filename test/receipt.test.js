@@ -104,7 +104,13 @@ test('R3 dashboard: paper, thin hero, one To Do, every Coming Up row, one logo â
   assert.equal(await style(page, '.ic-DashboardCard__header_hero', 'backgroundColor'), 'rgb(255, 111, 97)', 'the course colour stays, on the band');
   assert.equal(await style(page, '.ic-DashboardCard__header-title span', 'color'), rgb('#1B1F24'), 'the name is ink, one text stack under the band');
   assert.equal(await style(page, 'ul.right-side-list.to-do-list', 'display'), 'none', 'the second To Do list');
-  assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'block');
+  // Canvas's own To Do stays open on its own; under our rail it folds to one line.
+  if (await page.$('#pk-week')) {
+    assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'none', 'folded under the rail');
+    assert.ok(await page.$('#pk-week + #pk-todo-fold'), 'and the fold row says so');
+  } else {
+    assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'block');
+  }
   assert.equal(await style(page, '.events_list.coming_up li.event[style*="display: none"]', 'display'), 'list-item', 'Coming Up rows');
   assert.equal(await style(page, '.events_list.coming_up a.more_link', 'display'), 'none');
   assert.equal(await style(page, '.events_list.recent_feedback li.event[style*="display: none"]', 'display'), 'none', 'Recent Feedback is never touched');
@@ -300,7 +306,7 @@ test('R17 this week: our rail card reports finished work, counts by course, and 
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');
   await page.waitForSelector('#right-side > #pk-week', { timeout: 5000 });
-  assert.ok(await page.$('#pk-week + *'), 'Canvas\'s own sidebar follows it, nothing hidden');
+  assert.ok(await page.$('#pk-week + *'), 'Canvas\'s own sidebar follows it, folded, not gone');
   assert.match(await page.$eval('#pk-week .pk-w-centre b', (e) => e.textContent), /^\d+\/\d+$|^0$/);
   const finished = await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent);
   assert.match(finished, /^(?:\d+ things? finished this week|Nothing finished yet this week)$/);
@@ -463,7 +469,7 @@ test('R23 a search pill sits at the end of every title bar, opens the buddy on s
 
 // MARK: - R10: Today, at the top of the dashboard
 
-test('R10 the dashboard opens with today: the buddy, the counts, the next thing, and one click off', async () => {
+test('R10 the rail opens with the one thing to start, the next few, Canvas To Do folded, and one click off', async () => {
   const w = S.plainSemester();
   w.assignments[1].push(S.assignment({ id: 15, name: 'Overdue reading', due: -2, course: 1 }));
   await control('world', { host: 'localhost', world: w });
@@ -472,25 +478,36 @@ test('R10 the dashboard opens with today: the buddy, the counts, the next thing,
   await h.sw((c) => bindWriter(c), await phone.claim());
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');
-  await page.waitForSelector('#pk-today', { timeout: 5000 });
-  const text = await page.$eval('#pk-today', (el) => el.textContent.replace(/\s+/g, ' ').trim());
-  assert.match(text, /slipped past due/, 'the buddy speaks');
-  assert.match(text, /1 still count/, 'amber count, never red');
-  assert.match(text, /Overdue reading/, 'the next thing is the one that slipped');
-  assert.match(text, /Focus 25 min/);
-  assert.equal(await page.$eval('#pk-today a.start', (a) => a.getAttribute('href')), 'https://localhost:8443/courses/1/assignments/15');
-  assert.equal(await page.$eval('#pk-today', (el) => el.compareDocumentPosition(document.querySelector('.ic-DashboardCard')) & Node.DOCUMENT_POSITION_FOLLOWING), 4, 'above the cards');
-  assert.equal(await page.$eval('#pk-today', (el) => /\d+%|GPA/.test(el.textContent)), false, 'no grade leaves the panel');
-  // Put back from the receipt takes it off, and it stays off.
+  await page.waitForSelector('#pk-week .pk-w-first', { timeout: 5000 });
+  assert.equal(await page.$('#pk-today'), null, 'no banner above the cards any more');
+  const first = await page.$eval('#pk-week .pk-w-first', (el) => el.textContent.replace(/\s+/g, ' ').trim());
+  assert.match(first, /Overdue reading/, 'the one to start is the one that slipped');
+  assert.match(first, /still counts/, 'amber, never red, and plain words');
+  assert.match(first, /Focus 25 min/);
+  assert.equal(await page.$eval('#pk-week .pk-w-first small', (el) => el.className), 'amber');
+  assert.equal(await page.$eval('#pk-week a.start', (a) => a.getAttribute('href')), 'https://localhost:8443/courses/1/assignments/15');
+  assert.ok((await page.$$('#pk-week .pk-w-list li')).length >= 1, 'then, the next few');
+  assert.equal(await page.$eval('#pk-week', (el) => /\d+%|GPA/.test(el.textContent)), false, 'no grade leaves the panel');
+  // Rings: one track per course with work this week, a fill only where something is handed in.
+  const rings = await page.$$eval('#pk-week .pk-w-ring circle', (els) => els.map((c) => c.getAttribute('stroke')));
+  assert.ok(rings.length >= 1, 'at least one ring');
+  // Canvas's own To Do folds to one line, Show opens it for this view.
+  await page.waitForSelector('#pk-week + #pk-todo-fold', { timeout: 5000 });
+  const todo = require('../extension/selectors').SELECTORS.todoReact.sel;
+  assert.equal(await page.$eval(todo, (el) => getComputedStyle(el).display), 'none', 'folded');
+  await page.click('#pk-todo-fold');
+  assert.notEqual(await page.$eval(todo, (el) => getComputedStyle(el).display), 'none', 'Show opens it');
+  assert.match(await page.$eval('#pk-todo-fold b', (el) => el.textContent), /Hide/);
+  // Put back from the receipt takes the rail off, and it stays off.
   await page.bringToFront();
   const popup = await openPopup(h);
-  await popup.waitFor('li[data-key="today"] .put');
-  await popup.click('li[data-key="today"] .put');
-  await page.waitForFunction(() => { const t = document.getElementById('pk-today'); return !t || getComputedStyle(t).display === 'none'; });
+  await popup.waitFor('li[data-key="week"] .put');
+  await popup.click('li[data-key="week"] .put');
+  await page.waitForFunction(() => { const t = document.getElementById('pk-week'); return !t || getComputedStyle(t).display === 'none'; });
   await popup.close();
   await page.reload();
   await page.waitForTimeout(400);
-  assert.ok(['none', 'absent'].includes(await page.evaluate(() => { const t = document.getElementById('pk-today'); return t ? getComputedStyle(t).display : 'absent'; })), 'stays off after a reload');
+  assert.ok(['none', 'absent'].includes(await page.evaluate(() => { const t = document.getElementById('pk-week'); return t ? getComputedStyle(t).display : 'absent'; })), 'stays off after a reload');
   await page.close();
 });
 

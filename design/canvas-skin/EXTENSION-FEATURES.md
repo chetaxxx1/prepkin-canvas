@@ -71,11 +71,20 @@ the pull BetterCampus's have, and for a summary on the first page. Built:
   Coastal, Midnight, Sunset, Cherry Blossom, Lo-fi, Cottage, Night Shift.
   Every accent is 4.5:1 or better on both tones of its paper (unit test).
   The shop shows a scrap of the page each makes, and the vibe in a line.
-- **Today, at the top of the dashboard** (`#pk-today`): the buddy's line,
-  counts (today, still count, this week), the next thing with Start, a focus
-  button at the student's chosen length, and a Grades button that opens the
-  panel. Titles, counts and dates only: grades never enter the page DOM. On
-  the receipt as Added, with one-click Put back that survives reload.
+- **This week, at the top of the sidebar** (`#pk-week`, 2026-09-11, replaces
+  the Today banner that sat above the cards): a ring per course in the course
+  colour, filled by how much of that course's week is handed in; the week's
+  count in the middle; arrows to the weeks either side; **Start with** (the
+  oldest slipped task, or the next due) with Start and a focus button at the
+  student's chosen length; **Then**, the next four, coming work before slipped
+  work; the league tier when there is one; a foot that counts. Canvas's own To
+  Do folds to one line under it (`#pk-todo-fold`, receipt key `todo-fold`,
+  Show opens it for the page view, Put back keeps it open). The fold only
+  applies while the rail is on the page: no rail, no fold. Titles, counts and
+  dates only: grades never enter the page DOM. Both on the receipt as Added
+  and Taken, with one-click Put back that survives reload. The pattern is
+  Tasks for Canvas's (Coursicle) sidebar, which students run next to
+  BetterCampus; the rings are theirs, the one-thing-first is ours.
 - **The timer stays on screen while it runs**, panel open or not.
 
 Not built, on purpose: the on-page dashed strip and the proofreader words

@@ -223,6 +223,9 @@ function detectFacts() {
   return {
     logoDup: has('headerLogo') && has('sidebarLogo'),
     todoDup: has('todoReact') && has('todoLegacy'),
+    // Canvas's To Do folds only under our rail: with no rail there is no
+    // other list, and a page with no to-do list is not calmer.
+    todoFold: (has('todoReact') || has('todoLegacy')) && railShows(),
     wordPaste: WORD_INKS.some((ink) =>
       document.querySelector(`.user_content [style*="color:${ink}" i], .user_content [style*="color: ${ink}" i]`)),
   };
@@ -242,7 +245,7 @@ function applySkin(s) {
   const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
   const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
-    if (c.startsWith('pk-') && c !== 'pk-show' && !next.has(c)) root.classList.remove(c);
+    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-todo-open' && !next.has(c)) root.classList.remove(c);
   }
   for (const c of next) root.classList.add(c);
   // The theme's variables, as a stylesheet element boot.js may already have made.
@@ -1390,76 +1393,13 @@ function decorateCards() {
   }
 }
 
-// MARK: - Today, at the top of the dashboard
-//
-// The summary a student asked for on the page their eye lands on first: what
-// the buddy says, three counts, the next thing with Start and a focus timer.
-// Titles, counts and dates only; grades stay behind the panel's closed root.
-
-const TODAY_ID = 'pk-today';
+// MARK: - A small helper the rail uses
 
 function el(tag, cls, text) {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
   if (text != null) n.textContent = text;
   return n;
-}
-
-function renderToday() {
-  const existing = document.getElementById(TODAY_ID);
-  const onDashboard = /^\/(dashboard)?\/?$/.test(location.pathname);
-  const container = document.getElementById('DashboardCard_Container') ?? document.querySelector('.ic-DashboardCard__box');
-  if (!onDashboard || !container || !skin.cards || killed || putBack.today || !data.tasks?.length) {
-    existing?.remove();
-    return;
-  }
-  const now = new Date();
-  const b = buckets(data.tasks, now, plannedOn);
-  const said = voice(b);
-  const next = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
-  const key = JSON.stringify([said.headline, b.overdue.length, b.today.length, b.week.length, b.doneToday.length, next?.id, next?.dueAt]);
-  if (existing && existing.dataset.key === key) return;
-  const box = el('section', '', null);
-  box.id = TODAY_ID;
-  box.dataset.key = key;
-  box.setAttribute('aria-label', 'Prepkin: today');
-  const buddy = el('span', 'pk-t-buddy');
-  buddy.innerHTML = kinFace(ownSpecies(), 44, 'pk-buddy');
-  const say = el('div', 'pk-t-say');
-  say.append(el('b', '', said.headline), el('small', '', said.subline));
-  const counts = el('div', 'pk-t-counts');
-  const chip = (label, n, amber) => { const c = el('span', amber ? 'amber' : ''); c.append(el('b', '', String(n)), document.createTextNode(` ${label}`)); return c; };
-  counts.append(chip('today', b.today.length + b.doneToday.length, false));
-  if (b.overdue.length) counts.append(chip('still count', b.overdue.length, true));
-  counts.append(chip('this week', b.week.length, false));
-  box.append(buddy, say, counts);
-  if (next) {
-    const row = el('div', 'pk-t-next');
-    const overdue = new Date(next.dueAt) < now;
-    const dot = el('i', overdue ? 'amber' : '');
-    const color = safeColor(next.colorHex);
-    if (color && !overdue) dot.style.background = color;
-    const info = el('div');
-    info.append(el('b', '', next.title), el('small', overdue ? 'amber' : '', `${next.courseName} · ${dueLabel(next, now)}`));
-    const actions = el('div', 'pk-t-actions');
-    const url = safeURL(next.url);
-    if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
-    const focusBtn = el('span', '', `Focus ${skin.focusMinutes} min`);
-    focusBtn.setAttribute('role', 'button'); focusBtn.tabIndex = 0;
-    const go = (e) => {
-      if (!e.isTrusted || !alive()) return;
-      chrome.runtime.sendMessage({ type: 'focus-start', taskId: next.id, title: next.title, url: next.url, minutes: skin.focusMinutes });
-    };
-    focusBtn.addEventListener('click', go);
-    focusBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
-    const grades = el('span', '', 'Grades');
-    grades.setAttribute('role', 'button'); grades.tabIndex = 0;
-    grades.addEventListener('click', () => { ui.open = true; ui.view = 'panel'; render(); });
-    actions.append(focusBtn, grades);
-    row.append(dot, info, actions);
-    box.append(row);
-  }
-  if (existing) existing.replaceWith(box); else container.before(box);
 }
 
 // MARK: - Search, in the corner of every page
@@ -1502,61 +1442,95 @@ function renderSearchChip() {
 
 // MARK: - This week, at the top of the sidebar
 //
-// Our own rail: a ring of the week's work by course and a way
-// into the buddy's week. Canvas's To Do and Coming Up stay right under it.
+// Our own rail, at the top of the dashboard sidebar: a ring per course for
+// the week, the one thing to start, the next few, and a way into the buddy's
+// week. Canvas's own To Do folds to one line under it, one click to show.
 // Counts and titles only; grades stay behind the panel's closed root.
 
 const WEEK_ID = 'pk-week';
+const FOLD_ID = 'pk-todo-fold';
 const SVG_NS = 'http://www.w3.org/2000/svg';
+/// Which week the rings show, in weeks from this one. The arrows move it; a
+/// sync brings it home.
+let weekOffset = 0;
+
+/// Whether the rail belongs on this page: the dashboard, the skin on, nothing
+/// killed or put back, and a sync to show. Shown from the first sync on, even
+/// with nothing due: the empty week is still the student's.
+function railShows() {
+  const onDashboard = /^\/(dashboard)?\/?$/.test(location.pathname);
+  return onDashboard && !!document.getElementById('right-side') && !!skin.cards && !killed && !putBack.week && !!(data.tasks?.length || data.at);
+}
 
 function renderWeek() {
   const existing = document.getElementById(WEEK_ID);
-  const onDashboard = /^\/(dashboard)?\/?$/.test(location.pathname);
   const side = document.getElementById('right-side');
-  // Shown from the first sync on, even with nothing due: the empty week is
-  // still the student's.
-  if (!onDashboard || !side || !skin.cards || killed || putBack.week || !(data.tasks?.length || data.at)) {
+  if (!railShows()) {
     existing?.remove();
+    document.getElementById(FOLD_ID)?.remove();
     return;
   }
   const now = new Date();
-  const w = weekStats(data.tasks, now);
-  const key = JSON.stringify([w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]), wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.league?.bar ?? null, wallet.league?.board?.length ?? null, wallet.league?.board?.findIndex?.((m) => m.you) ?? null]);
-  if (existing && existing.dataset.key === key) return;
+  const shown = new Date(now.getTime() + weekOffset * 7 * DAY_MS);
+  const w = weekStats(data.tasks, shown);
+  const b = buckets(data.tasks, now, plannedOn);
+  // The oldest slipped task is the one to start; after it, what is coming
+  // before what has already gone by, so the list is not a wall of amber.
+  const first = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
+  const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 4);
+  const key = JSON.stringify([weekOffset, w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]),
+    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes,
+    wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.league?.bar ?? null, wallet.league?.board?.length ?? null, wallet.league?.board?.findIndex?.((m) => m.you) ?? null]);
+  if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
   box.id = WEEK_ID;
   box.dataset.key = key;
   box.setAttribute('aria-label', 'Prepkin: this week');
-  const range = `${w.start.toLocaleDateString([], { month: 'short', day: 'numeric' })} to ${new Date(w.end - 1).toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
+
+  // Head: the name, and the week it shows, with a way to the weeks either side.
+  const last = new Date(w.end - 1);
+  const mon = (d) => d.toLocaleDateString([], { month: 'short' });
+  const range = w.start.getMonth() === last.getMonth()
+    ? `${mon(w.start)} ${w.start.getDate()}–${last.getDate()}`
+    : `${mon(w.start)} ${w.start.getDate()} – ${mon(last)} ${last.getDate()}`;
   const head = el('div', 'pk-w-head');
-  head.append(el('b', '', 'This week'), el('small', '', range));
+  const nav = el('span', 'nav');
+  const arrow = (dir, label) => {
+    const a = el('i', dir < 0 ? 'prev' : 'next', dir < 0 ? '‹' : '›');
+    a.setAttribute('role', 'button'); a.tabIndex = 0; a.setAttribute('aria-label', label);
+    const go = () => { weekOffset += dir; renderWeek(); };
+    a.addEventListener('click', go);
+    a.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    return a;
+  };
+  nav.append(arrow(-1, 'Previous week'), el('small', '', weekOffset === 0 ? range : `${range}${weekOffset < 0 ? ' · past' : ' · ahead'}`), arrow(1, 'Next week'));
+  head.append(el('b', '', 'This week'), nav);
   box.append(head);
 
-  // The ring: each course owns a slice sized by its share of the week; the
-  // handed-in part of the slice is solid, the rest is faint.
+  // The rings: one per course, in the course's own colour, filled by how much
+  // of that course's week is handed in. The biggest week sits outermost.
   const ring = el('div', 'pk-w-ring');
-  const size = 96, r = 40, c = 2 * Math.PI * r;
+  const size = 150, stroke = 9, step = 12;
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`); svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('aria-hidden', 'true');
-  const circle = (dash, offset, stroke, opacity) => {
+  const g = document.createElementNS(SVG_NS, 'g');
+  g.setAttribute('transform', `rotate(-90 ${size / 2} ${size / 2})`);
+  g.setAttribute('fill', 'none'); g.setAttribute('stroke-width', String(stroke)); g.setAttribute('stroke-linecap', 'round');
+  const circle = (r, color, dash) => {
     const n = document.createElementNS(SVG_NS, 'circle');
-    n.setAttribute('cx', size / 2); n.setAttribute('cy', size / 2); n.setAttribute('r', r);
-    n.setAttribute('fill', 'none'); n.setAttribute('stroke', stroke); n.setAttribute('stroke-width', '10');
-    n.setAttribute('stroke-dasharray', `${dash} ${c}`); n.setAttribute('stroke-dashoffset', `${-offset}`);
-    n.setAttribute('transform', `rotate(-90 ${size / 2} ${size / 2})`);
-    if (opacity) n.setAttribute('opacity', opacity);
+    n.setAttribute('cx', size / 2); n.setAttribute('cy', size / 2); n.setAttribute('r', r); n.setAttribute('stroke', color);
+    if (dash) n.setAttribute('stroke-dasharray', dash);
     return n;
   };
-  svg.append(circle(c, 0, 'var(--pk-rule)', null));
-  let at = 0;
-  for (const course of w.byCourse) {
-    const color = safeColor(course.colorHex) ?? 'var(--pk-mark)';
-    const slice = (course.total / w.total) * c, doneLen = (course.done / w.total) * c;
-    const gap = w.byCourse.length > 1 ? 2 : 0;
-    svg.append(circle(Math.max(0, slice - gap), at, color, '0.28'));
-    if (doneLen > 0) svg.append(circle(Math.max(0, doneLen - gap), at, color, null));
-    at += slice;
-  }
+  const rings = w.byCourse.slice(0, 5);
+  const outer = (size - stroke) / 2 - 2;
+  rings.forEach((course, i) => {
+    const r = outer - i * step, c = 2 * Math.PI * r;
+    g.append(circle(r, 'var(--pk-paper-sunk)', null));
+    if (course.done > 0) g.append(circle(r, safeColor(course.colorHex) ?? 'var(--pk-mark)', `${(course.done / course.total) * c} ${c}`));
+  });
+  if (!rings.length) g.append(circle(outer, 'var(--pk-paper-sunk)', null));
+  svg.append(g);
   const centre = el('div', 'pk-w-centre');
   if (w.total) centre.append(el('b', '', `${w.done}/${w.total}`), el('small', '', 'done'));
   else centre.append(el('b', '', '0'), el('small', '', 'due'));
@@ -1565,17 +1539,61 @@ function renderWeek() {
 
   if (w.total) {
     const legend = el('ul', 'pk-w-legend');
-    for (const course of w.byCourse.slice(0, 5)) {
+    for (const course of w.byCourse) {
       const li = el('li');
       const dot = el('i');
       const color = safeColor(course.colorHex); if (color) dot.style.background = color;
-      li.append(dot, el('span', '', course.name), el('b', '', `${course.done}/${course.total}`));
+      // "AP Physics C: Mechanics" is the course; the legend has room for the course.
+      const short = course.name.length > 20 && course.name.includes(':') ? course.name.split(':')[0].trim() : course.name;
+      li.append(dot, el('span', '', short), el('b', '', `${course.done}/${course.total}`));
+      li.title = course.name;
       legend.append(li);
     }
     box.append(legend);
   } else {
-    box.append(el('p', 'pk-w-empty', 'Nothing due this week. Good week for a head start.'));
+    box.append(el('p', 'pk-w-empty', weekOffset === 0 ? 'Nothing due this week. Good week for a head start.' : 'Nothing due that week.'));
   }
+
+  // The one thing to start, with the two ways to start it. Always today's,
+  // whichever week the rings show.
+  if (first) {
+    const overdue = new Date(first.dueAt) < now;
+    box.append(el('p', 'pk-w-label', 'Start with'));
+    const card = el('div', 'pk-w-first');
+    const info = el('div');
+    info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${first.courseName} · ${dueLabel(first, now)}`));
+    const actions = el('div', 'pk-w-actions');
+    const url = safeURL(first.url);
+    if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
+    const focusBtn = el('span', '', `Focus ${skin.focusMinutes} min`);
+    focusBtn.setAttribute('role', 'button'); focusBtn.tabIndex = 0;
+    const go = (e) => {
+      if (!e.isTrusted || !alive()) return;
+      chrome.runtime.sendMessage({ type: 'focus-start', taskId: first.id, title: first.title, url: first.url, minutes: skin.focusMinutes });
+    };
+    focusBtn.addEventListener('click', go);
+    focusBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
+    actions.append(focusBtn);
+    card.append(info, actions);
+    box.append(card);
+  }
+  if (then.length) {
+    box.append(el('p', 'pk-w-label', 'Then'));
+    const list = el('ul', 'pk-w-list');
+    for (const t of then) {
+      const overdue = new Date(t.dueAt) < now;
+      const li = el('li');
+      const dot = el('i', overdue ? 'late' : '');
+      const color = safeColor(t.colorHex); if (color && !overdue) dot.style.background = color;
+      const info = el('div');
+      const pts = Number(t.pointsPossible) > 0 ? ` · ${t.pointsPossible} pts` : '';
+      info.append(el('b', '', t.title), el('small', overdue ? 'amber' : '', `${t.courseName} · ${dueLabel(t, now)}${overdue ? '' : pts}`));
+      li.append(dot, info);
+      list.append(li);
+    }
+    box.append(list);
+  }
+
   if (wallet.league) {
     // The league on the page itself: the tier, how far to the next one, and
     // where the student stands in the pod. Numbers only; the names stay in
@@ -1615,10 +1633,13 @@ function renderWeek() {
     const openLeague = () => { ui.open = true; ui.view = 'panel'; ui.sheet = null; render(); };
     box2.addEventListener('click', openLeague);
     box2.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLeague(); } });
-    box.insertBefore(box2, head.nextSibling);
+    box.append(box2);
   }
+
   const foot = el('div', 'pk-w-foot');
-  foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : 'Nothing finished yet this week'));
+  const left = w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week`
+    : b.overdue.length ? `${b.overdue.length} past due` : 'Nothing finished yet this week';
+  foot.append(el('span', '', left));
   const more = el('span', 'more', 'See the week');
   more.setAttribute('role', 'button'); more.tabIndex = 0;
   const openWeek = () => { ui.open = true; ui.view = 'week'; ui.sheet = null; render(); };
@@ -1627,6 +1648,30 @@ function renderWeek() {
   foot.append(more);
   box.append(foot);
   if (existing) existing.replaceWith(box); else side.prepend(box);
+  renderFold();
+}
+
+/// Canvas's own To Do, folded to one line right under our rail: how many it
+/// holds, and Show to open it for this page view. The fold is a receipt row
+/// (`todo-fold`); Put back keeps the list open for good.
+function renderFold() {
+  const existing = document.getElementById(FOLD_ID);
+  const week = document.getElementById(WEEK_ID);
+  const list = document.querySelector(SELECTORS.todoReact.sel) ?? document.querySelector(SELECTORS.todoLegacy.sel);
+  if (!week || !list || putBack['todo-fold'] || killed) { existing?.remove(); return; }
+  const count = list.querySelectorAll('li').length;
+  const open = document.documentElement.classList.contains('pk-todo-open');
+  const key = `${count}:${open}`;
+  if (existing && existing.dataset.key === key) return;
+  const row = el('div', '', null);
+  row.id = FOLD_ID; row.dataset.key = key;
+  row.setAttribute('role', 'button'); row.tabIndex = 0;
+  row.setAttribute('aria-expanded', String(open));
+  row.append(el('span', '', count ? `Canvas To Do · ${count} item${count === 1 ? '' : 's'}` : 'Canvas To Do'), el('b', '', open ? 'Hide' : 'Show'));
+  const toggle = () => { document.documentElement.classList.toggle('pk-todo-open'); renderFold(); };
+  row.addEventListener('click', toggle);
+  row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  if (existing) existing.replaceWith(row); else week.after(row);
 }
 
 /// Canvas draws most of a page after it loads and redraws parts of it on its
@@ -1639,7 +1684,6 @@ function refreshPage() {
   if (tornDown) return;
   applySkin(skin);
   decorateCards();
-  renderToday();
   renderWeek();
   renderSearchChip();
 }
@@ -1648,7 +1692,7 @@ function watchPage() {
   const schedule = () => { if (tornDown) return; clearTimeout(pageTimer); pageTimer = setTimeout(refreshPage, 200); };
   // Our own nodes — the buddy's host and the card lines — must not count as
   // the page changing, or every pass would schedule the next one forever.
-  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === TODAY_ID || n.id === WEEK_ID || n.id === SEARCH_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${TODAY_ID}, #${WEEK_ID}, #${SEARCH_ID}, .${CARD_DUE_CLASS}`));
+  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === WEEK_ID || n.id === FOLD_ID || n.id === SEARCH_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${WEEK_ID}, #${FOLD_ID}, #${SEARCH_ID}, .${CARD_DUE_CLASS}`));
   pageObserver = new MutationObserver((records) => {
     const current = document.documentElement.dataset.pkInstance;
     if (shouldStepAside({ mine: instanceId, current, alive: alive() })) { teardown(); return; }
@@ -1763,9 +1807,9 @@ async function setPlan(id, key) {
   ui.planning = null;
   await chrome.storage.local.set({ plans });
   render();
-  // The strip at the top of the dashboard counts the same day the panel does,
-  // so it has to be redrawn here: nothing else in this tab will.
-  renderToday();
+  // The rail counts the same day the panel does, so it has to be redrawn
+  // here: nothing else in this tab will.
+  renderWeek();
 }
 
 function wire(root) {
@@ -2062,6 +2106,7 @@ async function mount() {
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
   data = composeData(stored.lastPayload ?? null, ownTasks, nicknames);
+  weekOffset = 0;
   levels = stored.levels ?? {};
   plans = stored.plans ?? {};
   targets = stored.targets ?? {};
@@ -2075,7 +2120,6 @@ async function mount() {
 
   applySkin(skin);
   decorateCards();
-  renderToday();
   renderWeek();
   renderSearchChip();
   watchPage();

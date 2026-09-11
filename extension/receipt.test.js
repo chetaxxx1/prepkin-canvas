@@ -132,8 +132,10 @@ test('the skin is classes only, and off means no classes at all', () => {
 test('a row is on the receipt only when its hook is on the page', () => {
   const none = receiptRows({ present: () => false });
   assert.deepEqual(none.map((r) => r.key), ['paper', 'rail', 'title', 'search', 'dense', 'buddy'], 'paper, the rail, the page title, search, compact and the buddy are always there');
-  assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'today'), 'the Today block is on the dashboard receipt');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, wordPaste: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
+  assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'week'), 'the rail is on the dashboard receipt');
+  assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'todo-fold'), 'the fold needs a To Do list on the page');
+  assert.ok(receiptRows({ present: () => true, detect: { todoFold: true } }).some((r) => r.key === 'todo-fold'), 'and lists itself when there is one');
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
   assert.ok(!light.some((r) => r.key === 'word-paste' || r.key === 'seam'), 'dark-only rows stay off in light');
@@ -312,10 +314,10 @@ test('page names', () => {
 // MARK: - The stylesheet keeps its promises
 
 const css = fs.readFileSync(path.join(__dirname, 'skin.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-// The lint guards Canvas's own page. Prepkin's own surfaces on it (#pk-today,
-// the card line) are ours to style, so they are read separately below.
+// The lint guards Canvas's own page. Prepkin's own surfaces on it (the rail,
+// the fold row, the card line) are ours to style, so they are read separately below.
 const allRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selectors: m[1].trim(), body: m[2] }));
-const ours = (sel) => /#pk-today|#pk-week|#pk-search|\.pk-card-due|pk-back-card-due|pk-back-today|pk-back-week/.test(sel);
+const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|\.pk-card-due|pk-back-card-due|pk-back-week|pk-back-todo-fold/.test(sel);
 // A rule counts as Canvas's if any selector in it reaches Canvas markup.
 const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours(sel)));
 
@@ -343,7 +345,7 @@ test('the skin never sets font-family, a shadow that is not none, a hover lift, 
 });
 
 test('every receipt key that has CSS is gated on its put-back class', () => {
-  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'word-paste', 'seam']) {
+  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'word-paste', 'seam']) {
     assert.ok(css.includes(`:not(.pk-back-${key})`), `${key} has no put-back gate`);
   }
 });

@@ -99,8 +99,9 @@ const VIEW = { width: 1280, height: 860 };
 
   // Every image theme, light and dark. Wearing one is a storage write; the
   // banners take turns across the cards on their own.
+  // ONLY=deepsea shoots one theme, for a quick look while the skin is changing.
   const { ART_AVAILABLE } = require('../../extension/art/manifest');
-  for (const id of ART_AVAILABLE) {
+  for (const id of ART_AVAILABLE.filter((t) => !process.env.ONLY || t === process.env.ONLY)) {
     for (const dark of [false, true]) {
       await worker.evaluate(async ([look, isDark]) => {
         await chrome.storage.local.set({

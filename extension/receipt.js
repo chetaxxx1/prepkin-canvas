@@ -137,8 +137,8 @@ const RULES = [
   // settings card: the row is struck through while the switch is off and its
   // button turns it on. Same receipt, one fewer panel of toggles.
   { key: 'card-grade', kind: 'added', label: 'Your grade on each course card', hook: 'card', opt: 'cardGrades', undo: 'Turn on' },
-  { key: 'today', kind: 'added', label: 'Today, at the top of the dashboard', hook: 'card' },
   { key: 'week', kind: 'added', label: 'This week, at the top of the sidebar', hook: 'card' },
+  { key: 'todo-fold', kind: 'taken', label: "Canvas's To Do, folded to one line under it", detect: 'todoFold' },
   { key: 'search', kind: 'added', label: 'Search, in the corner of every page', when: () => true, opt: 'search', undo: 'Turn on' },
   { key: 'nickname', kind: 'fixed', when: (ctx) => ctx.nicknames > 0,
     label: (ctx) => `${ctx.nicknames} course name${ctx.nicknames === 1 ? '' : 's'} you chose` },
@@ -173,6 +173,7 @@ function skinClasses({ on, dark, look, dense = false, hidePast = false, putBack 
   for (const [key, back] of Object.entries(putBack)) if (back) classes.push(`pk-back-${key}`);
   if (detect.logoDup) classes.push('pk-logo-dup');
   if (detect.todoDup) classes.push('pk-todo-dup');
+  if (detect.todoFold) classes.push('pk-todo-fold');
   return classes;
 }
 
