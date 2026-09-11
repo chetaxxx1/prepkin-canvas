@@ -64,7 +64,7 @@ body{
   font:500 17px/1.65 var(--sans);-webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-img{max-width:100%}
+img{max-width:100%;height:auto}
 h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0}
 p{margin:0 0 18px}
 a{color:var(--green);text-decoration-color:color-mix(in srgb,var(--green) 40%,transparent);
@@ -117,9 +117,16 @@ a:hover{text-decoration-color:currentColor}
 .hero p{font:600 20px/1.5 var(--sans);color:var(--ink2);max-width:520px;
   text-wrap:pretty;margin:0}
 .hero .btns{margin-top:8px}
-.hero .sprout{position:absolute;right:120px;bottom:-40px;width:300px;pointer-events:none}
+.hero .sprout{position:absolute;right:140px;bottom:-40px;width:234px;pointer-events:none}
 .works{font:700 13px/1.6 var(--sans);color:var(--muted);margin:2px 0 0;
   letter-spacing:.02em}
+
+.shotwide{margin:24px 0 0}
+.shotwide figcaption{display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  font:800 12px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);padding:0 2px 12px}
+.shotwide figcaption span+span{color:var(--green)}
+.shotwide img{display:block;width:100%;height:auto}
 
 .claimblock{margin:64px 0 0;background:var(--mint-soft);border-radius:28px;
   padding:72px 72px 64px}
@@ -153,7 +160,7 @@ a:hover{text-decoration-color:currentColor}
 .frame{margin:28px -38px -38px;height:260px;border-radius:20px 20px 0 0;overflow:hidden;
   display:flex;align-items:flex-end;justify-content:center}
 .frame.tank{background:radial-gradient(ellipse at 50% 100%,var(--tank),var(--mint-soft) 70%)}
-.frame.tank img{width:240px;margin-bottom:-58px}
+.frame.tank img{width:180px;margin-bottom:-52px}
 .frame.shot{border:1px solid var(--hairline);border-bottom:0;align-items:flex-start}
 .frame.shot img{width:100%;object-fit:cover;object-position:top}
 
@@ -303,7 +310,7 @@ a:hover{text-decoration-color:currentColor}
 .oops h1{font-size:clamp(40px,5.6vw,72px);line-height:1.05;letter-spacing:-.03em;
   max-width:720px;margin:12px 0 0}
 .oops p{margin:18px 0 28px;font:500 17px/1.5 var(--sans);color:var(--ink2);max-width:520px}
-.oops .sprout{position:absolute;right:40px;bottom:-30px;width:300px;pointer-events:none}
+.oops .sprout{position:absolute;right:60px;bottom:-30px;width:240px;pointer-events:none}
 .oops .btns{position:relative;z-index:1}
 
 /* --- footer ---------------------------------------------------------- */
@@ -332,7 +339,7 @@ a:hover{text-decoration-color:currentColor}
   .toc .docs{display:flex;gap:8px}
   .toc .docs a{border:1px solid var(--hairline);border-radius:999px;padding:8px 14px}
   .toc .docs [aria-current]{background:var(--inset)}
-  .hero .sprout{right:20px;width:210px}
+  .hero .sprout{right:20px;width:170px}
 }
 @media(max-width:900px){
   .claimblock .three,.twoup,.notlist,.pair,.notes{grid-template-columns:1fr}
@@ -350,7 +357,7 @@ a:hover{text-decoration-color:currentColor}
   .nav ul i{display:none}
   .hero-in{margin-top:64px;gap:18px}
   .hero p{font-size:18px}
-  .hero .sprout{position:static;display:block;margin:24px auto -56px;width:180px}
+  .hero .sprout{position:static;display:block;margin:28px auto -6px;width:150px}
   .hero{padding-bottom:0}
   .btns{width:100%;flex-direction:column}
   .btn{text-align:center}
@@ -376,7 +383,7 @@ a:hover{text-decoration-color:currentColor}
   .foot nav{gap:40px}
   .foot .fine{text-align:left;max-width:none}
   .oops{padding-top:56px}
-  .oops .sprout{position:static;display:block;margin:32px auto -30px;width:200px}
+  .oops .sprout{position:static;display:block;margin:32px auto -30px;width:160px}
 }
 """
 
@@ -627,9 +634,11 @@ def write(rel: str, text: str) -> None:
 def home() -> None:
     wide = ""
     if SHOT_WIDE.exists():
-        wide = ('<figure class="shotwide"><img src="/img/canvas-before-after.png" '
-                'alt="The same Canvas dashboard before and after the Prepkin skin." '
-                'width="1120" height="520"></figure>')
+        wide = ('<figure class="shotwide"><figcaption><span>Before</span>'
+                '<span>After · Prepkin, dark paper</span></figcaption>'
+                '<img src="/img/canvas-before-after.png" '
+                'alt="The same Canvas dashboard: plain on the left, on Prepkin\'s dark paper on the right." '
+                'width="1120" height="480"></figure>')
     card = ""
     if SHOT_CARD.exists():
         card = ('<div class="frame shot"><img src="/img/canvas-card.png" '
@@ -660,7 +669,7 @@ sends nothing.</p>
 <a class="btn btn-ghost" href="{APP_URL}">Get the iPhone app</a></div>
 <p class="works">Works in Chrome, Edge, Brave and Arc.</p>
 </div>
-<img class="sprout" src="/img/sprout.png" alt="" width="300" height="300">
+<img class="sprout" src="/img/sprout.png" alt="" width="662" height="442">
 </header>
 
 <main id="main"><div class="shell">
@@ -685,7 +694,7 @@ sends nothing.</p>
 <h3>A fish called Sprout.</h3>
 <p>Finish a Canvas task, earn 30 coins. Coins buy tank scenes, costumes and looks.
 Sprout does not eat, so there is nothing to keep alive.</p>
-<div class="frame tank"><img src="/img/sprout.png" alt="" width="240" height="240"></div>
+<div class="frame tank"><img src="/img/sprout.png" alt="" width="662" height="442"></div>
 </div>
 </div></section>
 
@@ -786,7 +795,7 @@ def notfound() -> None:
 <a class="btn btn-ghost" href="/privacy/">Privacy</a>
 <a class="btn btn-ghost" href="/terms/">Terms</a>
 <a class="btn btn-ghost" href="/support/">Support</a></div>
-<img class="sprout" src="/img/sprout.png" alt="" width="300" height="300">
+<img class="sprout" src="/img/sprout.png" alt="" width="662" height="442">
 </div>{FOOT}</div></main>"""
     write("404.html", page("Not found — Prepkin", "Page not found.", body))
 

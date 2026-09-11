@@ -86,4 +86,4 @@ async function launch({ headless = !process.env.HEADED } = {}) {
   return h;
 }
 
-module.exports = { launch, SCHOOL_A, SCHOOL_B, BRIDGE };
+module.exports = { launch, stageExtension, DEPS, SCHOOL_A, SCHOOL_B, BRIDGE };
