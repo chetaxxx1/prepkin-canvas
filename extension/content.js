@@ -592,7 +592,8 @@ function panelView(b, said, now) {
 }
 
 /// Start (the page) and one focus chip at the remembered length, the same words
-/// the dashboard strip uses. The three lengths sit behind "change" so most nights
+/// the dashboard strip uses. "Still counts" is the headline whenever this is
+/// late, so the meta line does not say it again. The three lengths sit behind "change" so most nights
 /// the row is two taps wide, not five.
 function nextUpCard(t, now) {
   const mins = [15, 25, 45].map((m) => `
@@ -603,7 +604,7 @@ function nextUpCard(t, now) {
       <div class="pk-row">
         <div>
           <b>${escapeHTML(t.title)}</b>
-          <small>${escapeHTML(shortCourse(t.courseName))} · ${dueLabel(t, now)}${t.pointsPossible ? ` · ${t.pointsPossible} pts` : ''}</small>
+          <small>${escapeHTML(shortCourse(t.courseName))} · ${dueLabel(t, now).replace(' · still counts', '')}${t.pointsPossible ? ` · ${t.pointsPossible} pts` : ''}</small>
         </div>
         ${startButton(t, false)}
       </div>
@@ -1083,12 +1084,13 @@ function looksView() {
       </div>`;
   }
 
-  const tiles = LOOKS.map((look) => {
-    const owned = look.free || wallet.owned.includes(look.id);
+  // Numo's shop: what you have first, the one you wear ticked, the rest under
+  // "Locked" with a price. The tile is the paper itself, nothing else on it.
+  const yours = LOOKS.filter((look) => look.free || wallet.owned.includes(look.id))
+    .sort((a, b) => (b.id === wallet.wearing) - (a.id === wallet.wearing));
+  const locked = LOOKS.filter((look) => !yours.includes(look));
+  const tile = (look) => {
     const wearing = wallet.wearing === look.id;
-    const status = wearing ? '<small>Wearing</small>'
-      : owned ? '<small>Owned</small>'
-      : `<small class="price">${COIN_SVG}${look.price}</small>`;
     const stock = stockFor(look, !!skin.dark);
     const paper = paperLine(stock);
     const p = PAPERS[stock];
@@ -1102,16 +1104,16 @@ function looksView() {
     const tex = art ? `linear-gradient(${scrim}, ${scrim}), url('${art.wallpaper}')` : textureImage(look.texture, p.ink);
     return `
       <button class="pk-look${wearing ? ' wearing' : ''}${p.dark ? ' on-dark' : ''}${art ? ' has-art' : ''}"
-              data-look="${escapeHTML(look.id)}" style="background:${escapeHTML(p.paper)};background-image:${tex};background-size:cover;color:${escapeHTML(p.ink)}">
+              data-look="${escapeHTML(look.id)}" aria-pressed="${wearing}" style="background:${escapeHTML(p.paper)};background-image:${tex};background-size:cover;color:${escapeHTML(p.ink)}">
         <span class="pk-preview" aria-hidden="true">
           <span style="background:${escapeHTML(p.paper2)};border-color:${escapeHTML(p.rule)}"><i style="background:${escapeHTML(accent)}"></i><em style="background:${escapeHTML(p.ink2)}"></em><em style="background:${escapeHTML(p.rule)}"></em></span>
-          ${kinFace(ownSpecies(), 34, 'pk-buddy')}
+          ${wearing ? `<span class="pk-tick">${checkSVG(18)}</span>` : ''}
         </span>
         <b>${escapeHTML(look.name)}</b>
         <small class="pk-paper">${escapeHTML(look.vibe ?? paper)}</small>
-        ${status}
+        ${yours.includes(look) ? '' : `<small class="price">${COIN_SVG}${look.price}</small>`}
       </button>`;
-  }).join('');
+  };
 
   return `
     <div class="pk-viewhead">
@@ -1119,15 +1121,19 @@ function looksView() {
       <h2>Themes</h2>
       <span class="pk-meta">${wallet.coins === null ? '' : `${COIN_SVG} ${wallet.coins}`}</span>
     </div>
-    <div class="pk-foot">A theme picks the paper Canvas is printed on, its accent, and what your
-      buddy wears. Earned with coins from verified work, never bought. Dark is free. It always will be.</div>
-    <div class="pk-shop">${tiles}</div>
-    ${picturesSection(LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic)}
-    <div class="pk-foot center">${Object.keys(PAPERS).length} papers under ${LOOKS.length} themes, every ink measured. Nothing on it ever leaves.</div>`;
+    <div class="pk-foot">Earned with coins from verified work. Dark is always free.</div>
+    <span class="pk-label">Yours</span>
+    <div class="pk-shop">${yours.map(tile).join('')}</div>
+    ${locked.length ? `<span class="pk-label">Locked</span><div class="pk-shop">${locked.map(tile).join('')}</div>` : ''}
+    ${picturesSection(LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic)}`;
 }
 
 /// The running / finished focus card. Replaces the panel entirely, because a
 /// timer you can lose behind a scroll is a timer you forget.
+///
+/// The shape is Oura's and Tiimo's: the task on top, the time left inside a
+/// ring, when it ends underneath, and two quiet words at the foot. The buddy
+/// is not in the ring — he is alive in the tank next to this card already.
 function focusCard() {
   if (focus.state === 'running') {
     const left = Math.max(0, focus.endsAt - Date.now());
@@ -1135,31 +1141,30 @@ function focusCard() {
     const mins = Math.floor(left / 60000);
     const secs = Math.floor((left % 60000) / 1000);
     const pct = Math.min(100, ((total - left) / total) * 100);
-    // A ring around the buddy fills as the session goes. Only ever forward.
-    const R = 30, C = 2 * Math.PI * R;
+    const ends = new Date(focus.endsAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    // The ring fills as the session goes. Only ever forward.
+    const R = 54, C = 2 * Math.PI * R;
     return `
       <div class="pk-timer">
+        <b class="pk-task">${escapeHTML(focus.title ?? 'Focus')}</b>
+        <span class="pk-ring">
+          <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+            <circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--pk-track)" stroke-width="6"/>
+            <circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--pk-mint)" stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - pct / 100)).toFixed(1)}" transform="rotate(-90 60 60)"/>
+          </svg>
+          <span class="pk-clock">${mins}:${String(secs).padStart(2, '0')}</span>
+        </span>
+        <small>Ends at ${escapeHTML(ends)}</small>
         <div class="pk-row">
-          <span class="pk-ring">
-            <svg viewBox="0 0 72 72" width="72" height="72" aria-hidden="true">
-              <circle cx="36" cy="36" r="${R}" fill="none" stroke="var(--pk-track)" stroke-width="4"/>
-              <circle cx="36" cy="36" r="${R}" fill="none" stroke="var(--pk-mint)" stroke-width="4" stroke-linecap="round"
-                      stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - pct / 100)).toFixed(1)}" transform="rotate(-90 36 36)"/>
-            </svg>
-            ${kinFace(ownSpecies(), 40, 'pk-buddy')}
-          </span>
-          <div>
-            <div class="pk-clock">${mins}:${String(secs).padStart(2, '0')}</div>
-            <small>${escapeHTML(focus.title ?? 'Focus')}</small>
-          </div>
-          <button class="pk-mins" data-focus-extend="1" title="Five more minutes">+5</button>
+          <button class="pk-give" data-focus-extend="1">+5 min</button>
+          <button class="pk-give" data-focus-stop="1">Stop</button>
         </div>
-        <button class="pk-give" data-focus-stop="1">Give up for now. Stopping is fine, it'll be here.</button>
       </div>`;
   }
+  // Done. The buddy cheers in the tank, so the card only has the words.
   return `
     <div class="pk-timer done">
-      ${kinFace(ownSpecies(), 56, 'pk-buddy')}
       <b>${focus.durationMin} minutes. Nice.</b>
       <span class="pk-plus">${COIN_SVG}+${focus.durationMin} coins on your phone</span>
       ${safeURL(focus.url)
@@ -2422,6 +2427,8 @@ if (typeof module !== 'undefined') {
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {
+    // The timer ran out: the buddy cheers before the card says so.
+    if (changes.focus?.oldValue?.state === 'running' && changes.focus?.newValue?.state === 'done') spriteSend({ do: 'play', emote: 'cheer' });
     if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.nicknames || changes.ownTasks || changes.flags) mount();
     // Not plans, levels or targets: the tab that set one has already redrawn,
     // and a remount here would throw the student back to the top of the panel
