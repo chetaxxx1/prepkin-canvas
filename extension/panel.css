@@ -146,7 +146,10 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 /* ---- Body ------------------------------------------------------------------ */
 .pk-body { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
 
-.pk-filters { display: flex; gap: 6px; }
+/* Four chips do not fit 324 px, so the row bleeds to the panel's edges and
+   scrolls sideways, the way an App Store category row does. No scrollbar. */
+.pk-filters { display: flex; gap: 6px; overflow-x: auto; margin: 0 -18px; padding: 0 18px; scrollbar-width: none; }
+.pk-filters::-webkit-scrollbar { display: none; }
 .pk-filters button {
   border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer;
   font-size: 13px; font-weight: 700; background: var(--pk-inset); color: var(--pk-text-2);
@@ -325,7 +328,8 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-result div { display: flex; flex-direction: column; gap: 4px; }
 .pk-result b { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; }
 .pk-result small { font-size: 13px; font-weight: 600; color: var(--pk-text-mid); }
-.pk-weightask { display: flex; gap: 8px; align-items: center; }
+/* A row, even inside .pk-context, whose divs stack. */
+.pk-weightask, .pk-context .pk-weightask { display: flex; flex-direction: row; gap: 8px; align-items: center; margin-left: 0; text-align: left; width: 100%; }
 .pk-weightask input {
   width: 72px; border: 0; box-shadow: inset 0 0 0 1px var(--pk-line-soft);
   background: var(--pk-card); color: var(--pk-text); border-radius: 10px;
