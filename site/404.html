@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Not found — Prepkin</title>
 <meta name="description" content="Page not found.">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="light">
 <link rel="icon" href="/img/mark.svg" type="image/svg+xml">
 <style>@font-face {
   font-family: 'Newsreader';
@@ -54,29 +54,20 @@
   src: url(/fonts/nunito-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
 :root{
-  --paper:#FAF5EC; --card:#FFF; --inset:#F3EDE0; --hairline:#E8E0D2;
-  --ink:#2E2822; --ink2:#5E554B; --muted:#776D62;
-  --mint:#57C79B; --green:#2E8C68; --mint-soft:#E3F6EE; --mint-line:rgba(46,140,104,.25);
-  --glow-1:#DDF3E8; --glow-2:#F3EEDF; --glow-3:#FAF5EC; --tank:#CDEFE0;
-  --pill:rgba(255,255,255,.72); --pill-line:rgba(46,40,34,.08);
-  --pill-shadow:0 2px 12px rgba(46,40,34,.06);
-  --ghost:rgba(255,255,255,.7); --ghost-line:rgba(46,40,34,.14); --ghost-hover:#F3EDE0;
-  --dark-hover:#3A342D;
+  --paper:#FFFFFF; --card:#FFFFFF; --inset:#F3F6F5; --hairline:#E3E8E6;
+  --ink:#1B1F24; --ink2:#4B5563; --muted:#6B7280;
+  --mint:#34D399; --green:#0B7A55; --mint-soft:#D9F7EA; --mint-line:rgba(11,122,85,.25);
+  --claim-bg:#34D399; --claim-ink:#0B2A1F; --claim-text:#0B2A1F; --claim-text2:#13402F; --claim-line:rgba(11,42,31,.22);
+  --glow-1:#C9F5E3; --glow-2:#F1FBF7; --glow-3:#FFFFFF; --tank:#A7F3D0;
+  --pill:rgba(255,255,255,.85); --pill-line:rgba(27,31,36,.1);
+  --pill-shadow:0 2px 12px rgba(27,31,36,.08);
+  --ghost:#FFFFFF; --ghost-line:rgba(27,31,36,.16); --ghost-hover:#F3F6F5;
+  --dark-hover:#2D3440;
   --serif:Newsreader,Georgia,serif;
   --sans:Nunito,"SF Pro Rounded",ui-rounded,system-ui,sans-serif;
 }
-@media (prefers-color-scheme:dark){:root{
-  --paper:#17191D; --card:#1E2126; --inset:#121417; --hairline:#2C3037;
-  --ink:#E6E8EA; --ink2:#B4BAC1; --muted:#8D949C;
-  --green:#7FDDB8; --mint-soft:#172A23; --mint-line:rgba(127,221,184,.22);
-  --glow-1:#1E3A31; --glow-2:#1B1F24; --glow-3:#17191D; --tank:#1E3A31;
-  --pill:rgba(30,33,38,.8); --pill-line:rgba(255,255,255,.1);
-  --pill-shadow:0 2px 12px rgba(0,0,0,.3);
-  --ghost:rgba(30,33,38,.7); --ghost-line:rgba(255,255,255,.16); --ghost-hover:#262A30;
-  --dark-hover:#CFD2D5;
-}}
+
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
@@ -148,15 +139,15 @@ a:hover{text-decoration-color:currentColor}
 .shotwide figcaption span+span{color:var(--green)}
 .shotwide img{display:block;width:100%;height:auto}
 
-.claimblock{margin:64px 0 0;background:var(--mint-soft);border-radius:28px;
+.claimblock{margin:64px 0 0;background:var(--claim-bg);border-radius:28px;
   padding:72px 72px 64px}
-.claimblock .label{color:var(--green);margin-bottom:28px}
+.claimblock .label{color:var(--claim-ink);margin-bottom:28px}
 .claimblock h2{font-size:clamp(38px,6.6vw,84px);line-height:1;letter-spacing:-.03em;
-  color:var(--green);max-width:900px;text-wrap:balance}
+  color:var(--claim-ink);max-width:900px;text-wrap:balance}
 .claimblock .three{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;
-  margin-top:64px;padding-top:28px;border-top:1px solid var(--mint-line)}
-.claimblock dt{font:800 17px/1.3 var(--sans);color:var(--ink)}
-.claimblock dd{margin:6px 0 0;font:500 15px/1.55 var(--sans);color:var(--ink2)}
+  margin-top:64px;padding-top:28px;border-top:1px solid var(--claim-line)}
+.claimblock dt{font:800 17px/1.3 var(--sans);color:var(--claim-text)}
+.claimblock dd{margin:6px 0 0;font:500 15px/1.55 var(--sans);color:var(--claim-text2)}
 
 .section{padding-top:128px}
 .section-head{text-align:center;margin-bottom:44px}

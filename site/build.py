@@ -12,6 +12,7 @@ Run from anywhere:  python3 site/build.py
 """
 import html
 import json
+import os
 import re
 from pathlib import Path
 
@@ -36,29 +37,71 @@ SHOT_LABELS = OUT / "img/shots.json"   # written by design/site-shots/compose.py
 
 FACES = (OUT / "fonts/faces.css").read_text(encoding="utf-8")
 
-CSS = FACES + """
-:root{
-  --paper:#FAF5EC; --card:#FFF; --inset:#F3EDE0; --hairline:#E8E0D2;
+# Three colour schemes, picked with PALETTE=paper|duolingo|spotify at build
+# time. George chose `duolingo` on 2026-09-11 from real renders of all three;
+# `paper` is the handoff's cream (follows the viewer's dark mode) and `spotify`
+# the near-black one. Every page colour is a token here, so the markup never
+# changes between them.
+PALETTES = {
+    # The handoff: cream paper, one mint, dark follows the system.
+    "paper": {
+        "light": """--paper:#FAF5EC; --card:#FFF; --inset:#F3EDE0; --hairline:#E8E0D2;
   --ink:#2E2822; --ink2:#5E554B; --muted:#776D62;
   --mint:#57C79B; --green:#2E8C68; --mint-soft:#E3F6EE; --mint-line:rgba(46,140,104,.25);
+  --claim-bg:#E3F6EE; --claim-ink:#2E8C68; --claim-text:#2E2822; --claim-text2:#5E554B; --claim-line:rgba(46,140,104,.25);
   --glow-1:#DDF3E8; --glow-2:#F3EEDF; --glow-3:#FAF5EC; --tank:#CDEFE0;
   --pill:rgba(255,255,255,.72); --pill-line:rgba(46,40,34,.08);
   --pill-shadow:0 2px 12px rgba(46,40,34,.06);
   --ghost:rgba(255,255,255,.7); --ghost-line:rgba(46,40,34,.14); --ghost-hover:#F3EDE0;
-  --dark-hover:#3A342D;
-  --serif:Newsreader,Georgia,serif;
-  --sans:Nunito,"SF Pro Rounded",ui-rounded,system-ui,sans-serif;
-}
-@media (prefers-color-scheme:dark){:root{
-  --paper:#17191D; --card:#1E2126; --inset:#121417; --hairline:#2C3037;
+  --dark-hover:#3A342D;""",
+        "dark": """--paper:#17191D; --card:#1E2126; --inset:#121417; --hairline:#2C3037;
   --ink:#E6E8EA; --ink2:#B4BAC1; --muted:#8D949C;
   --green:#7FDDB8; --mint-soft:#172A23; --mint-line:rgba(127,221,184,.22);
+  --claim-bg:#172A23; --claim-ink:#7FDDB8; --claim-text:#E6E8EA; --claim-text2:#B4BAC1; --claim-line:rgba(127,221,184,.22);
   --glow-1:#1E3A31; --glow-2:#1B1F24; --glow-3:#17191D; --tank:#1E3A31;
   --pill:rgba(30,33,38,.8); --pill-line:rgba(255,255,255,.1);
   --pill-shadow:0 2px 12px rgba(0,0,0,.3);
   --ghost:rgba(30,33,38,.7); --ghost-line:rgba(255,255,255,.16); --ghost-hover:#262A30;
-  --dark-hover:#CFD2D5;
-}}
+  --dark-hover:#CFD2D5;""",
+    },
+    # Duolingo's register: white, one saturated brand colour in full-bleed
+    # blocks, the mascot in the middle. Our hue, their confidence.
+    "duolingo": {
+        "light": """--paper:#FFFFFF; --card:#FFFFFF; --inset:#F3F6F5; --hairline:#E3E8E6;
+  --ink:#1B1F24; --ink2:#4B5563; --muted:#6B7280;
+  --mint:#34D399; --green:#0B7A55; --mint-soft:#D9F7EA; --mint-line:rgba(11,122,85,.25);
+  --claim-bg:#34D399; --claim-ink:#0B2A1F; --claim-text:#0B2A1F; --claim-text2:#13402F; --claim-line:rgba(11,42,31,.22);
+  --glow-1:#C9F5E3; --glow-2:#F1FBF7; --glow-3:#FFFFFF; --tank:#A7F3D0;
+  --pill:rgba(255,255,255,.85); --pill-line:rgba(27,31,36,.1);
+  --pill-shadow:0 2px 12px rgba(27,31,36,.08);
+  --ghost:#FFFFFF; --ghost-line:rgba(27,31,36,.16); --ghost-hover:#F3F6F5;
+  --dark-hover:#2D3440;""",
+        "dark": None,
+    },
+    # Spotify's register: near-black, white type, one green that glows.
+    # The dark pill inverts to white, the way their play button does.
+    "spotify": {
+        "light": """--paper:#121212; --card:#181818; --inset:#222222; --hairline:#2A2A2A;
+  --ink:#FFFFFF; --ink2:#B3B3B3; --muted:#8C8C8C;
+  --mint:#3DDC97; --green:#3DDC97; --mint-soft:#163326; --mint-line:rgba(61,220,151,.25);
+  --claim-bg:#3DDC97; --claim-ink:#121212; --claim-text:#121212; --claim-text2:#0F3B2A; --claim-line:rgba(18,18,18,.22);
+  --glow-1:#1B3A2E; --glow-2:#161A18; --glow-3:#121212; --tank:#1F4A3A;
+  --pill:rgba(24,24,24,.85); --pill-line:rgba(255,255,255,.1);
+  --pill-shadow:0 2px 12px rgba(0,0,0,.4);
+  --ghost:rgba(255,255,255,.06); --ghost-line:rgba(255,255,255,.18); --ghost-hover:#2A2A2A;
+  --dark-hover:#E6E6E6;""",
+        "dark": None,
+    },
+}
+PALETTE = os.environ.get("PALETTE", "duolingo")
+_pal = PALETTES[PALETTE]
+_dark_block = f"@media (prefers-color-scheme:dark){{:root{{\n  {_pal['dark']}\n}}}}" if _pal["dark"] else ""
+
+CSS = FACES + ":root{\n  " + _pal["light"] + """
+  --serif:Newsreader,Georgia,serif;
+  --sans:Nunito,"SF Pro Rounded",ui-rounded,system-ui,sans-serif;
+}
+""" + _dark_block + """
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
@@ -130,15 +173,15 @@ a:hover{text-decoration-color:currentColor}
 .shotwide figcaption span+span{color:var(--green)}
 .shotwide img{display:block;width:100%;height:auto}
 
-.claimblock{margin:64px 0 0;background:var(--mint-soft);border-radius:28px;
+.claimblock{margin:64px 0 0;background:var(--claim-bg);border-radius:28px;
   padding:72px 72px 64px}
-.claimblock .label{color:var(--green);margin-bottom:28px}
+.claimblock .label{color:var(--claim-ink);margin-bottom:28px}
 .claimblock h2{font-size:clamp(38px,6.6vw,84px);line-height:1;letter-spacing:-.03em;
-  color:var(--green);max-width:900px;text-wrap:balance}
+  color:var(--claim-ink);max-width:900px;text-wrap:balance}
 .claimblock .three{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;
-  margin-top:64px;padding-top:28px;border-top:1px solid var(--mint-line)}
-.claimblock dt{font:800 17px/1.3 var(--sans);color:var(--ink)}
-.claimblock dd{margin:6px 0 0;font:500 15px/1.55 var(--sans);color:var(--ink2)}
+  margin-top:64px;padding-top:28px;border-top:1px solid var(--claim-line)}
+.claimblock dt{font:800 17px/1.3 var(--sans);color:var(--claim-text)}
+.claimblock dd{margin:6px 0 0;font:500 15px/1.55 var(--sans);color:var(--claim-text2)}
 
 .section{padding-top:128px}
 .section-head{text-align:center;margin-bottom:44px}
@@ -452,7 +495,7 @@ def page(title: str, desc: str, body: str, script: str = "", cls: str = "") -> s
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="{"light dark" if _pal["dark"] else ("dark" if PALETTE == "spotify" else "light")}">
 <link rel="icon" href="/img/mark.svg" type="image/svg+xml">
 <style>{CSS}</style>
 </head><body{tag}>
