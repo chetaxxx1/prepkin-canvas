@@ -38,7 +38,7 @@ const VIEW = { width: 1280, height: 860 };
     // The Mac may be carrying several simulators; give Chromium time to start.
     timeout: 600_000,
     args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`,
-      '--ignore-certificate-errors', '--no-first-run', '--hide-scrollbars'],
+      '--ignore-certificate-errors', '--no-first-run', '--hide-scrollbars', '--remote-debugging-port=0'],
   });
   await context.route('**/rest/v1/rpc/fetch_flags', (route) => route.fulfill({
     status: 200, contentType: 'application/json',
@@ -154,6 +154,61 @@ const VIEW = { width: 1280, height: 860 };
       await page.screenshot({ path: path.join(OUT, name) });
       console.log(name);
     }
+  }
+
+  // SURFACES=1: the popup on first run and after connecting, the panel's other
+  // views, and the side panel. Everything a student meets that is not the
+  // dashboard.
+  if (process.env.SURFACES) {
+    const { openPopup } = require('../../test/popup');
+    const h = { tmp, sw: (fn, arg) => worker.evaluate(fn, arg) };
+    // First run: the popup before anything is connected.
+    await worker.evaluate(async () => { await chrome.storage.local.clear(); });
+    await page.goto(`${SCHOOL_A}/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(800);
+    let pop = await openPopup(h);
+    await pop.waitFor('#onboarding, #main');
+    await new Promise((r) => setTimeout(r, 600));
+    await pop.screenshot(path.join(OUT, 'surface-popup-firstrun.png'));
+    await pop.close();
+    // Connected: the receipt for the dashboard.
+    await worker.evaluate(async (o) => {
+      await chrome.storage.local.set({ onboarded: true, origins: [o], skin: { dark: false, cards: true, mascot: true }, wallet: { coins: 120, owned: ['classic'], wearing: 'classic' } });
+      await registerFor(o);
+    }, SCHOOL_A);
+    await page.goto(`${SCHOOL_A}/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#pk-week', { timeout: 60_000 }).catch(() => {});
+    await page.waitForTimeout(1500);
+    pop = await openPopup(h);
+    await pop.waitFor('#receipt-count', /./);
+    await new Promise((r) => setTimeout(r, 600));
+    await pop.screenshot(path.join(OUT, 'surface-popup.png'));
+    await pop.close();
+    // The panel's views, through the content script's own state.
+    for (const view of ['looks', 'week', 'whatif', 'search', 'addtask']) {
+      // Open the panel by clicking Sprout's launcher, then switch views by their buttons.
+      const spot = await page.evaluate(() => { const b = document.querySelector('#pk-week .pk-w-tank')?.getBoundingClientRect(); return b ? { x: b.left + b.width / 2, y: b.bottom - 40 } : null; });
+      if (!spot) break;
+      await page.mouse.click(spot.x, spot.y);
+      await page.waitForTimeout(500);
+      const ok = await page.evaluate((v) => {
+        const host = document.getElementById('prepkin-buddy'); if (!host) return false;
+        // The root is closed; the launcher click opened the panel; views open from data-view buttons we cannot reach. Use Command-K for search only.
+        return true;
+      }, view);
+      if (view === 'search') { await page.keyboard.press('Meta+K'); await page.waitForTimeout(500); }
+      await page.screenshot({ path: path.join(OUT, `surface-panel-${view}.png`) });
+      await page.mouse.click(spot.x, spot.y); await page.waitForTimeout(300);
+      if (view === 'search') break;
+    }
+    // Side panel page, as a tab, at the side panel's width.
+    const sp = await context.newPage({ viewport: { width: 380, height: 760 } });
+    await sp.goto(`chrome-extension://${new URL(worker.url()).host}/sidepanel.html`, { waitUntil: 'domcontentloaded' });
+    await sp.waitForTimeout(1200);
+    await sp.screenshot({ path: path.join(OUT, 'surface-sidepanel.png') });
+    await sp.close();
+    console.log('surfaces');
+    await context.close(); await server.stop(); return;
   }
 
   // PROBE=<path>: print the tag, id, classes and computed colour of every text

@@ -110,6 +110,13 @@
   button.mint:active { transform: translateY(3px); box-shadow: 0 0 0 var(--mint-edge); }
   button.mint:disabled { opacity: .5; box-shadow: 0 3px 0 var(--mint-edge); transform: none; cursor: default; }
   button.mint.wide { width: 100%; margin: 8px 0 0; }
+  /* The quiet button: an outline, for the second thing on a row of two. */
+  button.quiet {
+    border: 0; cursor: pointer; padding: 9px 16px; font: inherit; font-size: 14px; font-weight: 800;
+    background: var(--card); color: var(--ink); border-radius: 12px; box-shadow: inset 0 0 0 1px var(--line);
+  }
+  button.quiet:hover { background: var(--inset); }
+  button.quiet.wide { width: 100%; margin: 8px 0 0; }
   button.link {
     border: 0; background: none; cursor: pointer; padding: 4px 6px; border-radius: 8px;
     font: inherit; font-size: 13px; font-weight: 800; color: var(--green);
@@ -186,12 +193,11 @@
 
 <section class="buddy" id="buddy" hidden>
   <button id="open-buddy" class="mint wide">Open the buddy on this page</button>
-  <p class="hint">Your list, your grades and the focus timer live with the buddy. This popup is the extension: what it changed here, and its settings.</p>
 </section>
 
 <section class="side">
-  <button id="open-side" class="mint wide" hidden>Keep what's due beside you</button>
-  <p class="hint" id="side-hint" hidden>Opens in Chrome's side panel, so the list stays put while you work. No Canvas tab needed.</p>
+  <button id="open-side" class="quiet wide" hidden>Keep what's due in the side panel</button>
+  <p class="hint" id="side-hint" hidden></p>
 </section>
 
 <section class="receipt" id="receipt" hidden>

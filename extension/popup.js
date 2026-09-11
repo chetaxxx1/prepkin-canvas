@@ -423,9 +423,10 @@ async function speak() {
   if (!lastPayload?.tasks || !onboarded) return;
   // The panel's day, not a second opinion: a student who moved two things to
   // today should not read a different sentence in the toolbar.
-  const said = voice(buckets(lastPayload.tasks, new Date(), (t) => planDayOf(plans[t.id])));
-  document.getElementById('say-head').textContent = said.headline;
-  document.getElementById('say-sub').textContent = said.subline;
+  // The popup is the extension, not the buddy: it says what it is, and the
+  // buddy does the talking on the page.
+  document.getElementById('say-head').textContent = 'Prepkin';
+  document.getElementById('say-sub').textContent = 'Dark mode, one list, your grades.';
   document.getElementById('kin').innerHTML = kinAt(36);
 }
 speak();
@@ -460,7 +461,6 @@ if (chrome.sidePanel?.open) {
     windowId = w?.id ?? null;
     if (windowId == null) return;
     btn.hidden = false;
-    hint.hidden = false;
   }).catch(() => {});
   btn.addEventListener('click', () => {
     if (windowId == null) return;

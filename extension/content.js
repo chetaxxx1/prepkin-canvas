@@ -653,11 +653,8 @@ function pennantSVG(tier, h = 20, earned = true) {
 /// bar, then the pod, best first, with the student's own row marked.
 function leagueCard() {
   const league = wallet.league;
-  if (!league) {
-    return `
-      <span class="pk-label">League</span>
-      <div class="pk-league empty">${pennantSVG(TIERS[0], 22, false)}<div><b>Your league lives on your phone.</b><small>Link it in the toolbar popup and it shows up here.</small></div></div>`;
-  }
+  // No phone, no league card: the trio is the product, the app is the door.
+  if (!league) return '';
   const tier = tierOf(league);
   const points = Math.max(0, Number(league.points) || 0);
   const bar = typeof league.bar === 'number' ? league.bar : null;

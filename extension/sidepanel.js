@@ -111,7 +111,7 @@ async function draw() {
   document.getElementById('sub').textContent = said.subline;
 
   lists.append(list('Today', b.today, now, { empty: 'Nothing due today.' }));
-  if (b.overdue.length) lists.append(list('Still counts', b.overdue, now, { overdue: true }));
+  if (b.overdue.length) lists.append(list('Past due', b.overdue, now, { overdue: true }));
   lists.append(list('This week', b.week, now, { empty: 'The rest of the week is clear.' }));
   if (b.missed.length) lists.append(list('Missing', b.missed, now, { overdue: true }));
 
