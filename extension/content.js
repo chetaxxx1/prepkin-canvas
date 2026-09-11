@@ -1454,6 +1454,12 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 /// sync brings it home.
 let weekOffset = 0;
 
+/// "AP Physics C: Mechanics" is the course; a narrow line has room for the course.
+function shortCourse(name) {
+  const n = String(name ?? '');
+  return n.length > 20 && n.includes(':') ? n.split(':')[0].trim() : n;
+}
+
 /// Whether the rail belongs on this page: the dashboard, the skin on, nothing
 /// killed or put back, and a sync to show. Shown from the first sync on, even
 /// with nothing due: the empty week is still the student's.
@@ -1487,49 +1493,52 @@ function renderWeek() {
   box.dataset.key = key;
   box.setAttribute('aria-label', 'Prepkin: this week');
 
-  // Head: the name, and the week it shows, with a way to the weeks either side.
+  // Head: the week in words, then a stepper on its own line (the way Life
+  // Reset and Garmin do it), so the title row never has to share.
   const last = new Date(w.end - 1);
   const mon = (d) => d.toLocaleDateString([], { month: 'short' });
   const range = w.start.getMonth() === last.getMonth()
-    ? `${mon(w.start)} ${w.start.getDate()}–${last.getDate()}`
+    ? `${mon(w.start)} ${w.start.getDate()} – ${last.getDate()}`
     : `${mon(w.start)} ${w.start.getDate()} – ${mon(last)} ${last.getDate()}`;
-  const head = el('div', 'pk-w-head');
-  const nav = el('span', 'nav');
+  const title = weekOffset === 0 ? 'This week' : weekOffset === -1 ? 'Last week' : weekOffset === 1 ? 'Next week' : `Week of ${mon(w.start)} ${w.start.getDate()}`;
+  box.append(el('div', 'pk-w-head', title));
+  const step = el('div', 'pk-w-step');
   const arrow = (dir, label) => {
-    const a = el('i', dir < 0 ? 'prev' : 'next', dir < 0 ? '‹' : '›');
+    const a = el('i', dir < 0 ? 'prev' : 'next', null);
     a.setAttribute('role', 'button'); a.tabIndex = 0; a.setAttribute('aria-label', label);
     const go = () => { weekOffset += dir; renderWeek(); };
     a.addEventListener('click', go);
     a.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
     return a;
   };
-  nav.append(arrow(-1, 'Previous week'), el('small', '', weekOffset === 0 ? range : `${range}${weekOffset < 0 ? ' · past' : ' · ahead'}`), arrow(1, 'Next week'));
-  head.append(el('b', '', 'This week'), nav);
-  box.append(head);
+  step.append(arrow(-1, 'Previous week'), el('span', '', range), arrow(1, 'Next week'));
+  box.append(step);
 
   // The rings: one per course, in the course's own colour, filled by how much
   // of that course's week is handed in. The biggest week sits outermost.
   const ring = el('div', 'pk-w-ring');
-  const size = 150, stroke = 9, step = 12;
+  const size = 128, stroke = 9, gapStep = 12;
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`); svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('aria-hidden', 'true');
   const g = document.createElementNS(SVG_NS, 'g');
   g.setAttribute('transform', `rotate(-90 ${size / 2} ${size / 2})`);
   g.setAttribute('fill', 'none'); g.setAttribute('stroke-width', String(stroke)); g.setAttribute('stroke-linecap', 'round');
-  const circle = (r, color, dash) => {
+  const circle = (r, color, dash, opacity) => {
     const n = document.createElementNS(SVG_NS, 'circle');
     n.setAttribute('cx', size / 2); n.setAttribute('cy', size / 2); n.setAttribute('r', r); n.setAttribute('stroke', color);
     if (dash) n.setAttribute('stroke-dasharray', dash);
+    if (opacity) n.setAttribute('stroke-opacity', opacity);
     return n;
   };
-  const rings = w.byCourse.slice(0, 5);
-  const outer = (size - stroke) / 2 - 2;
+  const rings = w.byCourse.slice(0, 4);
+  const outer = (size - stroke) / 2 - 1;
   rings.forEach((course, i) => {
-    const r = outer - i * step, c = 2 * Math.PI * r;
-    g.append(circle(r, 'var(--pk-paper-sunk)', null));
-    if (course.done > 0) g.append(circle(r, safeColor(course.colorHex) ?? 'var(--pk-mark)', `${(course.done / course.total) * c} ${c}`));
+    const r = outer - i * gapStep, c = 2 * Math.PI * r;
+    const color = safeColor(course.colorHex) ?? 'var(--pk-mark)';
+    g.append(circle(r, color, null, skin.dark ? '0.3' : '0.18'));
+    if (course.done > 0) g.append(circle(r, color, `${(course.done / course.total) * c} ${c}`, null));
   });
-  if (!rings.length) g.append(circle(outer, 'var(--pk-paper-sunk)', null));
+  if (!rings.length) g.append(circle(outer, 'var(--pk-ink-2)', null, '0.15'));
   svg.append(g);
   const centre = el('div', 'pk-w-centre');
   if (w.total) centre.append(el('b', '', `${w.done}/${w.total}`), el('small', '', 'done'));
@@ -1543,9 +1552,7 @@ function renderWeek() {
       const li = el('li');
       const dot = el('i');
       const color = safeColor(course.colorHex); if (color) dot.style.background = color;
-      // "AP Physics C: Mechanics" is the course; the legend has room for the course.
-      const short = course.name.length > 20 && course.name.includes(':') ? course.name.split(':')[0].trim() : course.name;
-      li.append(dot, el('span', '', short), el('b', '', `${course.done}/${course.total}`));
+      li.append(dot, el('span', '', shortCourse(course.name)), el('b', '', `${course.done}/${course.total}`));
       li.title = course.name;
       legend.append(li);
     }
@@ -1561,7 +1568,7 @@ function renderWeek() {
     box.append(el('p', 'pk-w-label', 'Start with'));
     const card = el('div', 'pk-w-first');
     const info = el('div');
-    info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${first.courseName} · ${dueLabel(first, now)}`));
+    info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now)}`));
     const actions = el('div', 'pk-w-actions');
     const url = safeURL(first.url);
     if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
@@ -1587,7 +1594,7 @@ function renderWeek() {
       const color = safeColor(t.colorHex); if (color && !overdue) dot.style.background = color;
       const info = el('div');
       const pts = Number(t.pointsPossible) > 0 ? ` · ${t.pointsPossible} pts` : '';
-      info.append(el('b', '', t.title), el('small', overdue ? 'amber' : '', `${t.courseName} · ${dueLabel(t, now)}${overdue ? '' : pts}`));
+      info.append(el('b', '', t.title), el('small', overdue ? 'amber' : '', `${shortCourse(t.courseName)} · ${dueLabel(t, now)}${overdue ? '' : pts}`));
       li.append(dot, info);
       list.append(li);
     }
@@ -1667,7 +1674,7 @@ function renderFold() {
   row.id = FOLD_ID; row.dataset.key = key;
   row.setAttribute('role', 'button'); row.tabIndex = 0;
   row.setAttribute('aria-expanded', String(open));
-  row.append(el('span', '', count ? `Canvas To Do · ${count} item${count === 1 ? '' : 's'}` : 'Canvas To Do'), el('b', '', open ? 'Hide' : 'Show'));
+  row.append(el('span', '', count ? `Canvas To Do · ${count}` : 'Canvas To Do'), el('b', '', open ? 'Hide' : 'Show'));
   const toggle = () => { document.documentElement.classList.toggle('pk-todo-open'); renderFold(); };
   row.addEventListener('click', toggle);
   row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
