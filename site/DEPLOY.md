@@ -71,18 +71,25 @@ three numbers that carry the whole forecast.
 day they go live:** change those two lines, run `python3 site/build.py`, and
 redeploy. Thirty-six links on the site point at the first one.
 
-## The Canvas shot is missing
+## The Canvas shots
 
-The hero and the "On your laptop" card were designed around a before/after shot
-of a real Canvas page. There is no such shot yet, so **the build leaves both
-blocks out entirely** rather than shipping an empty frame. That is why the two
-cards under "Two halves" are different heights right now.
+The hero and the "On your laptop" card show the seeded student's real dashboard
+on the self-hosted Canvas sandbox: plain Canvas on the left, the extension's
+dark paper on the right. The light skin is deliberately quiet and reads as
+"nothing changed" at that size, so the dark paper is the after-frame, and the
+label under the hero says so.
 
-To fill them: put a 1120 x 520 image at `site/img/canvas-before-after.png` and a
-520 x 260 one at `site/img/canvas-card.png`, then rerun the build. Both appear on
-their own. Shoot them on the self-hosted Canvas sandbox — the VM has to be
-started from the Google Cloud console first, and its external IP changes each
-time.
+To reshoot after the skin changes: start the sandbox VM in the Google Cloud
+console, open the tunnel, then
+
+```bash
+node design/site-shots/shoot.js && python3 design/site-shots/compose.py && python3 site/build.py
+```
+
+`shoot.js` writes `before.png`, `after.png` and `after-dark.png` into
+`design/site-shots/`; `compose.py` crops them into `site/img/`. If either site
+image is deleted, the build leaves that block out rather than shipping an empty
+frame. Chromium needs a few minutes to start when the Mac is running simulators.
 
 ## Rebuilding
 
