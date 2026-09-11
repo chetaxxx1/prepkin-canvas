@@ -3,54 +3,84 @@
     "id": "fin-1",
     "title": "Why compound interest wins",
     "track": "finance",
-    "figure": "compound",
     "minutes": 3,
     "blurb": "Interest lands on top of interest, so money grows faster the longer it sits. You'll see what $1,000 does at 8% a year, and the one-line trick for knowing when it doubles.",
     "takeaway": "You learned why time matters more than amount.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Compound interest means you earn interest on your interest. Money grows faster the longer it sits."
+        "kind": "image",
+        "image": "lesson-fin1-01",
+        "eyebrow": "The idea",
+        "body": "Compound interest means you earn interest on your interest. Like a snowball rolling downhill, the money grows faster the longer it goes."
       },
       {
-        "kind": "figure",
-        "step": 2,
+        "kind": "image",
+        "image": "lesson-fin1-02",
+        "eyebrow": "Year one",
         "body": "Put $1,000 in an account paying 8% a year. Twelve months later it has grown by $80."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "$1,000 at 8% a year. Year 1 you earn $80. Year 2 you earn $86. That's because now the $80 is earning too."
+        "kind": "image",
+        "image": "lesson-fin1-03",
+        "eyebrow": "Year two",
+        "body": "Year 2 you earn $86, not $80. The $80 from last year is earning now too."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The rule of 72: divide 72 by the rate to see how many years it takes to double. At 8%, that's 9 years."
+        "kind": "image",
+        "image": "lesson-fin1-04",
+        "eyebrow": "Keep going",
+        "body": "Leave it alone. Year 10 it’s $2,159. Year 20, $4,661. Year 30, over $10,000 — from $1,000 you never touched."
       },
       {
-        "kind": "example",
-        "body": "Two students both put away $200 a month. One starts at 18, the other at 28. By 60 the early one ends up with roughly twice as much."
+        "kind": "image",
+        "image": "lesson-fin1-05",
+        "eyebrow": "Why it isn’t flat",
+        "body": "A flat $80 a year would give you $3,400 after 30 years. Interest on interest gives you $10,063. That gap is compounding."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Same $200 a month either way. The early start just hands interest more years to pile on itself."
+        "kind": "image",
+        "image": "lesson-fin1-06",
+        "eyebrow": "The rule of 72",
+        "body": "Divide 72 by the rate to see how long doubling takes. At 8%, that’s 9 years: $1,000, $2,000, $4,000, $8,000."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin1-07",
+        "eyebrow": "Two savers",
+        "body": "Two people both put away $200 a month. One starts at 18. The other starts at 28."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin1-08",
+        "eyebrow": "Two savers",
+        "body": "By 60, the one who started at 18 has about $824,000. The one who started at 28 has about $355,000."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin1-09",
+        "eyebrow": "Why",
+        "body": "The early saver only put in $24,000 more. Time did the rest — the extra ten years let the interest pile up on itself."
       },
       {
         "kind": "key",
         "body": "Starting at 18 instead of 28 can roughly double what you end up with. Time matters more than amount."
       },
       {
+        "kind": "image",
+        "image": "lesson-fin1-11",
+        "eyebrow": "The catch",
+        "body": "It works against you too. Credit card debt compounds the same way, often at 25% — a small balance rolls into a big one."
+      },
+      {
         "kind": "check",
         "question": "Why does year 2 earn more than year 1?",
         "choices": [
-          "You put in more money",
-          "Interest is now earning interest",
-          "The rate goes up each year"
+          "You added more money to the account during the year.",
+          "The interest from year 1 is now earning interest too.",
+          "The bank raises the rate a little each year you stay."
         ],
         "answer": 1,
-        "why": "Interest is added to your balance, so the next year is worked out on a bigger number."
+        "why": "Interest is added to your balance, so year 2 is worked out on $1,080 instead of $1,000. Nothing else changed."
       }
     ]
   },
