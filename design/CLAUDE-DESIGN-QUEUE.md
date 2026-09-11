@@ -11,7 +11,7 @@ Claude Design reads `github.com/chetaxxx1/prepkin-canvas` (main), so push before
 | 1 | `CLAUDE-DESIGN-PROMPT-FOCUS-CLOCKOUT.md` | Rewritten 2026-09-10 to the reef swim, 15/25/45 and all-or-nothing pay; the sheet, report and two Ready rows are built in code, so this brief is now a designer's pass over three working screens, not a blank page |
 | 2 | `CLAUDE-DESIGN-PROMPT-FRIENDS-V3-A-REAL-FRIENDS.md` | Friends is 100% mock; this is the first slice that can go real |
 | 3 | `CLAUDE-DESIGN-PROMPT-FRIENDS-V3-B-STUDY-TOGETHER.md` | The reason the tab exists |
-| 4 | `CLAUDE-DESIGN-PROMPT-KIN-STARUP.md` | Two frames owed from the Kin handoff (`1o`, `1p`) |
+| 4 | `CLAUDE-DESIGN-PROMPT-KIN.md` | Rewritten 2026-09-11 as the fish's own page: tank + care in the water + four doors + Season row, the Wardrobe editor, Decorate, the Card with Share, the friendship toast, AX-XL, and the two star-up frames (`1o`, `1p`) folded in from the deleted STARUP brief. The tab, editor, card, ladder and Firsts are built; Decorate and the door icons wait on this. |
 | 5 | `CLAUDE-DESIGN-PROMPT-FRIENDS-V3-C-YARD-MOMENTS.md` | After A and B exist |
 | 6 | `CLAUDE-DESIGN-PROMPT-EXTENSION-V4.md` (already written, three prompts) | Extension is done except dark mode, Looks, panel focus timer |
 | 7 | `CLAUDE-DESIGN-PROMPT-DARK-PAPER.md` | App went light-only on 2026-09-05 so system parts stop flipping; a real dark paper is owed to the 11pm student |

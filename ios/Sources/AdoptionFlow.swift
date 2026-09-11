@@ -317,9 +317,10 @@ struct CertificateSheet: View {
             if let kin = state.ownedKin(species.id) {
                 AdoptionCard(species: species, kin: kin,
                              daysTogether: state.daysTogether(kin),
-                             lifetime: state.game.stats(since: kin),
-                             canvasFinished: state.game.canvasFinished(since: kin),
-                             serial: state.owned.count)
+                             stats: KinCardStats(since: kin, in: state.game),
+                             serial: state.owned.count,
+                             stage: state.game.friendshipStage(kin),
+                             friendCode: state.friendCode)
             }
             Button { state.meetKin(species) } label: {
                 Text("Meet \(state.ownedKin(species.id)?.displayName ?? species.name)")
@@ -335,20 +336,36 @@ struct CertificateSheet: View {
     }
 }
 
-/// The keepsake, built to be screenshotted. The four together-since slots ship
-/// **empty on purpose** — on day one the card is a promise, and on day two hundred
-/// it is a record. None of them ever go down on their own.
+/// The keepsake, built to be screenshotted, and kept current for as long as the kin
+/// is around. Since 2026-09-11 it is Finch's pet profile in the shape of a
+/// certificate: the name, the day count, the friendship word, the friend code,
+/// three numbers that only go up, and (on the Card door) the Firsts list. On day one
+/// the numbers are dashes and the card is a promise; on day two hundred it is a
+/// record. None of them ever go down on their own.
 struct AdoptionCard: View {
     let species: ChibiSpecies
     let kin: OwnedChibi
     let daysTogether: Int
-    let lifetime: LifetimeStats
-    let canvasFinished: Int?
+    let stats: KinCardStats
     let serial: Int
+    /// The friendship word. Every surface that has one passes it.
+    var stage: FriendshipStage? = nil
+    /// The code a friend types on the Friends tab, when the bridge has minted one.
+    var friendCode: String? = nil
+    /// The Firsts list. Only the Card door shows it; the adoption ceremony's card
+    /// has to fit above a button on a 0.9 sheet.
+    var firsts: [Firsts.Row]? = nil
 
     private static let dateStyle: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "d MMMM yyyy"
+        return f
+    }()
+
+    /// Short, for the Firsts rows: "2 Sep".
+    static let dayStyle: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "d MMM"
         return f
     }()
 
@@ -363,6 +380,7 @@ struct AdoptionCard: View {
 
                 KinArtView(speciesID: species.id, level: kin.level, skin: kin.skinID, size: 188)
                     .frame(height: 176)
+                    .accessibilityLabel("\(kin.displayName), \(kin.level) of 3 stars")
 
                 Text(kin.displayName)
                     .font(Theme.font(kin.displayName.count > 10 ? 24 : 32, .black))
@@ -379,6 +397,7 @@ struct AdoptionCard: View {
                 }
 
                 StarPips(level: kin.level, size: 19, spacing: 6)
+                    .accessibilityLabel("\(kin.level) of 3 stars")
 
                 Rectangle().fill(Theme.hex(0xEBE2D2)).frame(height: 1).padding(.vertical, 4)
 
@@ -387,20 +406,45 @@ struct AdoptionCard: View {
                         .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
                 }
 
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                    slot("\(daysTogether)",
-                         daysTogether == 1 ? "day together" : "days together", filled: true)
-                    slot(canvasFinished.map(String.init),
-                         canvasFinished == 1 ? "assignment" : "assignments")
-                    slot(lifetime.focusMinutes > 0 ? focusText : nil, "focused")
-                    slot(lifetime.lessonsRead > 0 ? "\(lifetime.lessonsRead)" : nil,
-                         lifetime.lessonsRead == 1 ? "lesson read" : "lessons read")
+                Text("Day \(daysTogether) together")
+                    .font(Theme.font(15, .black)).foregroundStyle(Theme.ink)
+
+                if let stage {
+                    VStack(spacing: 5) {
+                        Text(stage.name)
+                            .font(Theme.font(13, .black))
+                            .foregroundStyle(Theme.ink)
+                            .padding(.horizontal, 13).padding(.vertical, 5)
+                            .background(Capsule().fill(Theme.paperSunk))
+                            .accessibilityLabel("You and \(kin.displayName) are \(stage.name.lowercased())")
+                        Text("Days together and care move this up.")
+                            .font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.muted)
+                    }
+                }
+
+                if let friendCode {
+                    HStack(spacing: 6) {
+                        Text("Friend code").font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.muted)
+                        Text(friendCode).font(Theme.fixedFont(13, .black)).foregroundStyle(Theme.ink)
+                            .tracking(1.2)
+                    }
+                    .padding(.top, 2)
+                }
+
+                HStack(spacing: 0) {
+                    slot(stats.finished, "finished together")
+                    slot(stats.lengths, stats.lengths == 1 ? "length swum" : "lengths swum")
+                    slot(stats.lessons, stats.lessons == 1 ? "lesson read" : "lessons read")
                 }
                 .padding(.top, 4)
 
-                Text("These fill themselves in. None of them ever go down.")
+                Text("They fill in on their own. Never down.")
                     .font(Theme.font(11, .heavy)).foregroundStyle(Theme.dim)
                     .multilineTextAlignment(.center)
+
+                if let firsts {
+                    firstsList(firsts).padding(.top, 6)
+                }
 
                 HStack(spacing: 6) {
                     Circle().fill(Theme.slime).frame(width: 9, height: 9)
@@ -423,20 +467,59 @@ struct AdoptionCard: View {
         .shadow(color: Theme.hex(0x2E2822).opacity(0.13), radius: 28, y: 8)
     }
 
-    private var focusText: String {
-        let h = lifetime.focusMinutes / 60, m = lifetime.focusMinutes % 60
-        return h > 0 ? "\(h)h \(m)m" : "\(m)m"
-    }
-
-    private func slot(_ value: String?, _ label: String, filled: Bool = false) -> some View {
-        VStack(spacing: 1) {
-            Text(value ?? "—")
+    /// A number that is still zero prints a dash, never a 0: a row of zeros reads as
+    /// failure on the one card whose whole promise is that it climbs.
+    private func slot(_ value: Int, _ label: String) -> some View {
+        let filled = value > 0
+        return VStack(spacing: 1) {
+            Text(filled ? "\(value)" : "—")
                 .font(Theme.font(17, .black))
-                .foregroundStyle(value == nil ? Theme.hex(0xDDD3C4) : Theme.ink)
+                .foregroundStyle(filled ? Theme.ink : Theme.hex(0xDDD3C4))
             Text(label)
                 .font(Theme.font(10, .heavy))
-                .foregroundStyle(value == nil ? Theme.hex(0xDDD3C4) : Theme.muted)
+                .foregroundStyle(filled ? Theme.muted : Theme.hex(0xDDD3C4))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(filled ? "\(value) \(label)" : "\(label), none yet")
+    }
+
+    /// Finch's quests without the hints and the counts. A done row has a mint dot
+    /// and its date; a done row from before the list had dates has the dot alone;
+    /// an undone row is the words. Never a "?", never "3/5".
+    private func firstsList(_ rows: [Firsts.Row]) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Firsts")
+                .font(Theme.font(10, .black)).tracking(2)
+                .foregroundStyle(Theme.muted)
+                .padding(.bottom, 6)
+            ForEach(rows) { row in
+                HStack(spacing: 10) {
+                    Circle()
+                        .fill(row.done ? Theme.mint : Theme.hex(0xE5DDD0))
+                        .frame(width: 8, height: 8)
+                    Text(row.title)
+                        .font(Theme.font(13, row.done ? .black : .heavy))
+                        .foregroundStyle(row.done ? Theme.ink : Theme.muted)
+                    Spacer(minLength: 8)
+                    if let date = row.date {
+                        Text(Self.dayStyle.string(from: date))
+                            .font(Theme.font(12, .heavy))
+                            .foregroundStyle(Theme.muted)
+                    }
+                }
+                .frame(minHeight: 30)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(row.done
+                                    ? "\(row.title), done" + (row.date.map { ", \(Self.dayStyle.string(from: $0))" } ?? "")
+                                    : "\(row.title), not yet")
+                if row.id != rows.last?.id {
+                    Rectangle().fill(Theme.hex(0xF0E9DC)).frame(height: 1)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

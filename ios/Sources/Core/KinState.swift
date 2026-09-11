@@ -218,7 +218,13 @@ extension GameState {
     /// Canvas assignments because they are the biggest single line and the most
     /// likely thing already waiting on the student's list.
     func workToAfford(_ id: String) -> String? {
-        let gap = currentPrice(id) - ledger.balance
+        workToAfford(gap: currentPrice(id) - ledger.balance)
+    }
+
+    /// The same sentence for a plain price — a costume on the Wardrobe rack.
+    func workToAfford(price: Int) -> String? { workToAfford(gap: price - ledger.balance) }
+
+    private func workToAfford(gap: Int) -> String? {
         guard gap > 0 else { return nil }
         let canvas = TaskKind.canvas.reward
         let assignments = gap / canvas
@@ -292,6 +298,36 @@ extension GameState {
         // had no way to earn. A received list is the real test.
         (lastCanvasSyncAt == nil && canvasItems.isEmpty && lifetime.canvasFinished == 0)
             ? nil : lifetime.canvasFinished
+    }
+}
+
+/// The three numbers on a kin's card: finished together, lengths swum, lessons read.
+/// Every one is read off `LifetimeStats`, which only ever climbs, and lengths are
+/// the same 90-second lengths the Focus tab counts — so the card cannot say a
+/// number the shift screen would disagree with.
+struct KinCardStats: Equatable {
+    var finished: Int
+    var lengths: Int
+    var lessons: Int
+
+    init(finished: Int, lengths: Int, lessons: Int) {
+        self.finished = finished
+        self.lengths = lengths
+        self.lessons = lessons
+    }
+
+    init(since kin: OwnedChibi, in state: GameState) {
+        let mine = state.stats(since: kin)
+        finished = mine.tasksFinished
+        lengths = Int(TimeInterval(mine.focusMinutes * 60) / FocusShift.secondsPerLength)
+        lessons = mine.lessonsRead
+    }
+
+    var isEmpty: Bool { self == KinCardStats(finished: 0, lengths: 0, lessons: 0) }
+
+    /// True when nothing fell. The card's promise, checkable.
+    func onlyUp(from earlier: KinCardStats) -> Bool {
+        finished >= earlier.finished && lengths >= earlier.lengths && lessons >= earlier.lessons
     }
 }
 

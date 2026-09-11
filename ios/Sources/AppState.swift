@@ -297,6 +297,7 @@ final class AppState: ObservableObject {
 
     func currentPrice(_ id: String) -> Int { game.currentPrice(id) }
     func workToAfford(_ id: String) -> String? { game.workToAfford(id) }
+    func workToAfford(price: Int) -> String? { game.workToAfford(price: price) }
     func ownedKin(_ speciesID: String) -> OwnedChibi? {
         game.owned.first { $0.speciesID == speciesID }
     }
@@ -1146,7 +1147,29 @@ final class AppState: ObservableObject {
         guard game.activeChibi.skinID != costume.id else { return }
         game.wear(costume.id)
         play(.bounce)
-        show("\(activeChibi.displayName) is wearing the \(costume.name)")
+        show(costume.id == Costume.none.id
+             ? "\(activeChibi.displayName) is back to the usual"
+             : "\(activeChibi.displayName) is wearing the \(costume.name)")
+    }
+
+    /// Puts a prop in one of the tank's two slots, or clears it. Owned props only;
+    /// the tray never shows a prop the student cannot place.
+    func place(_ propID: String?, in slot: PropSlot) {
+        game.decor.place(propID, in: slot, tank: game.sceneID)
+    }
+
+    /// Buys a costume off the Wardrobe rack and puts it straight on. Short of coins
+    /// it says the gap once, the way a scene does, and nothing is greyed or locked.
+    func buyCostume(_ costume: Costume) {
+        guard coins >= costume.price else {
+            show("\(costume.price - coins) to go. Nothing here expires.")
+            return
+        }
+        if game.buyCostume(costume) {
+            game.wear(costume.id)
+            play(.celebrate)
+            show("\(activeChibi.displayName) is wearing the \(costume.name)")
+        }
     }
 
     // MARK: - Kin
@@ -1275,9 +1298,24 @@ final class AppState: ObservableObject {
     // MARK: - Care
 
     /// Free, unlimited, no cooldown, no counter, no coins either way. The kin has no
-    /// meter to fill and nothing it needs from the student.
+    /// meter to fill and nothing it needs from the student. A tap does count toward
+    /// the friendship word, which is the one thing care moves.
     func care(_ kind: CareKind) {
         play(kind.animation)
+        if let stage = game.recordCare() { announce(stage) }
+    }
+
+    /// The word under the name plate: Just met, Tankmates, Buddies, Besties, Old friends.
+    var friendshipStage: FriendshipStage { game.friendshipStage(activeChibi) }
+
+    /// A day passing can move the word as well as a tap, so the Kin tab asks on open.
+    func settleFriendship() {
+        if let stage = game.settleFriendship() { announce(stage) }
+    }
+
+    /// The whole ceremony for a stage: one quiet line. No number, no bar, no sheet.
+    private func announce(_ stage: FriendshipStage) {
+        show("You and \(activeChibi.displayName) are \(stage.name.lowercased()) now.")
     }
 
     enum CareKind: CaseIterable {

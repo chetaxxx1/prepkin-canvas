@@ -127,3 +127,16 @@ Small, and all additive:
 - New kin **species art**. Ember, Droplet and Sprout are recoloured slimes today. Real
   distinct silhouettes are asked for in the brief as flat vector proposals; faces stay
   code-drawn from the nine approved set, and George approves them as art before they ship.
+
+## 11. A tankmate, later (2026-09-11)
+
+Finch's micropet egg hatches after a number of goal completions
+([mobbin](https://mobbin.com/screens/08078a81-0ffb-4dab-b3da-b3d810bf56ac)). Ours would be a
+small second creature in the tank — a snail, a shrimp — that arrives after **seven finished
+Canvas tasks** and then just lives there, on the floor, behind the kin in paint order. No
+meter, no egg progress bar, no "N to go": the day it arrives it arrives, with a quiet toast,
+and it never leaves. Needs art (one still per tank floor colour, or one keyed cut-out that
+sits on any floor) and a decision from George on whether a second creature dilutes Sprout.
+**Not built.** The Kin tab's doors, editor and card (`design/CLAUDE-DESIGN-PROMPT-KIN.md`)
+leave the floor clear for it.
+

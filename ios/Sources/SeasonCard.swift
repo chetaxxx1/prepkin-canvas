@@ -187,7 +187,8 @@ struct SeasonCard: View {
         return "\(plus ? "Plus" : "Free"), \(what), \(claimed ? "claimed" : "not claimed yet")"
     }
 
-    private static func endStamp(_ season: Season) -> String {
+    /// "Oct 12". Shared with the Kin tab's one-row Season entry.
+    static func endStamp(_ season: Season) -> String {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         guard let date = f.date(from: season.end.raw) else { return season.end.raw }

@@ -1,10 +1,13 @@
 import SwiftUI
 
-/// The Kin tab root — your kin, large, in its own scene.
+/// The Kin tab root — the kin's own page, the way Finch's home is the bird's house.
 ///
-/// Replaces the two-column shop grid that used to sit on this tab. The shop is still
-/// here, but it is one push away, so the screen you land on is the one with the
-/// character on it rather than the one with the prices on it.
+/// Since 2026-09-11 the tab is the tank and four doors, not a tank and a stack of
+/// cards. The stage holds everything about the kin — the bubble, its name and stars,
+/// the friendship word, the kin in whatever it is wearing — and the care buttons sit
+/// on the water's bottom edge the way Abode keeps feed / clean / play inside the pet's
+/// room. Under the tank: Wardrobe, Decorate, Collection, Card (Finch's Bag as a row
+/// of doors, always all of them, never a "?"), then the Season as one dated row.
 ///
 /// Deviation from the handoff, and the same one Home v2 made: the artboards budget
 /// 20pt of top chrome on a 390x844 canvas, and a real iPhone spends about 99. The
@@ -16,37 +19,39 @@ struct KinView: View {
     @State private var bubble: String?
     @State private var bubbleTask: Task<Void, Never>?
     @State private var showCollection = false
-    @State private var savingLook = false
-    @State private var lookName = ""
-    @State private var showingPlus = false
     @State private var showShop = false
-    @State private var detail: ChibiSpecies?
+    @State private var showWardrobe = false
+    @State private var showDecorate = false
+    @State private var showCard = false
+    @State private var showSeason = false
+    @State private var renaming = false
+    @State private var draftName = ""
 
     private var kin: OwnedChibi { state.activeChibi }
     private var scene: Scene0 { Scene0.find(state.sceneID) }
     private var isFirstRun: Bool { state.owned.count == 1 && state.coins == 0 }
+
+    /// How far the care circles reach up into the water. Half of a 60pt circle.
+    private static let careOverlap: CGFloat = 30
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 0) {
                     stage
-                    careRow.padding(.top, 16)
+                    // Straddles the water's bottom edge: the circles sit half in the
+                    // tank and half on the paper, the labels on the paper.
+                    careRow.padding(.top, -Self.careOverlap)
                     if isFirstRun {
                         Text("Free, unlimited, always. No cooldown.")
                             .font(Theme.font(11.5, .heavy))
                             .foregroundStyle(Theme.dim)
                             .padding(.top, 10)
                     }
-                    wardrobeCard.padding(.top, 20)
-                    savedLooksCard.padding(.top, 16)
+                    doors.padding(.top, 18)
                     if let season = state.currentSeason {
-                        SeasonCard(season: season)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 16)
+                        seasonRow(season).padding(.top, 12)
                     }
-                    togetherStrip.padding(.top, 16)
-                    collectionCard.padding(.top, 16)
                 }
                 .padding(.bottom, Theme.tabClearance)
             }
@@ -59,17 +64,50 @@ struct KinView: View {
             }
             .navigationDestination(isPresented: $showShop) { KinShopView() }
         }
-        .sheet(item: $detail) { species in
-            KinDetailSheet(species: species)
-                .presentationDetents([.fraction(0.78)])
+        .fullScreenCover(isPresented: $showWardrobe) {
+            WardrobeEditor().environmentObject(state)
+        }
+        .fullScreenCover(isPresented: $showDecorate) {
+            DecorateEditor().environmentObject(state)
+        }
+        .sheet(isPresented: $showCard) {
+            KinCardSheet()
+                .environmentObject(state)
+                .presentationDetents([.fraction(0.92)])
                 .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showSeason) {
+            if let season = state.currentSeason {
+                ScrollView {
+                    SeasonCard(season: season)
+                        .padding(.horizontal, 20).padding(.top, 24).padding(.bottom, 34)
+                }
+                .background(Theme.paper)
+                .environmentObject(state)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+            }
+        }
+        .alert("Name your kin", isPresented: $renaming) {
+            TextField(kin.displayName, text: $draftName)
+                .autocorrectionDisabled()
+            Button("Save") {
+                state.rename(kin.speciesID, to: draftName)
+                draftName = ""
+            }
+            Button("Cancel", role: .cancel) { draftName = "" }
+        } message: {
+            Text("You can change this any time.")
         }
         .kinToast(state.toast, bottom: 104)
         .kinAdoptionFlow()
+        .onAppear { state.settleFriendship() }
         .onChange(of: state.meetKinRequest) { _, new in
             guard new != nil else { return }
             showShop = false
             showCollection = false
+            showWardrobe = false
+            showCard = false
         }
     }
 
@@ -103,6 +141,7 @@ struct KinView: View {
                             Image(scene.asset)
                                 .resizable()
                                 .scaledToFit()
+                                .accessibilityLabel("The \(scene.name) tank")
                         }
                 )
                 .overlay(
@@ -119,21 +158,24 @@ struct KinView: View {
                     }
                 }
                 .frame(height: 430)
-                .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 30, bottomTrailingRadius: 30,
+                .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: Theme.Radius.sheet,
+                                                  bottomTrailingRadius: Theme.Radius.sheet,
                                                   style: .continuous))
 
-            VStack(spacing: 8) {
+            VStack(spacing: 2) {
                 speechBubble
                 namePlate
+                stageWord
                 KinArtView(speciesID: kin.speciesID,
                            level: kin.level,
                            skin: kin.skinID,
                            animation: state.animation,
                            size: isFirstRun ? 164 : 212)
-                    .frame(height: isFirstRun ? 158 : 200)
-                starPlate
+                    .frame(height: isFirstRun ? 150 : 170)
+                    .accessibilityLabel("\(kin.displayName), \(kin.level) of 3 stars")
             }
-            .padding(.bottom, 16)
+            // Room under the fins for the care circles' upper halves, and a little water.
+            .padding(.bottom, Self.careOverlap + 10)
         }
         .frame(height: 430)
         // Same chip, same gutter, same y as Home. Kin used to carry a separate shop
@@ -143,6 +185,10 @@ struct KinView: View {
         .overlay(alignment: .topTrailing) {
             Button { showShop = true } label: {
                 WalletChip(coins: state.coins, onDark: scene.isDark, showsShop: true)
+                    // The chip is 34pt tall by design (Home's is the same); the hit
+                    // area is 44, grown downward so the chip's y stays Home's.
+                    .frame(minHeight: 44, alignment: .top)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Coins and shop")
@@ -160,40 +206,49 @@ struct KinView: View {
             .animation(.easeInOut(duration: 0.16), value: bubble)
     }
 
+    /// Nothing here is a guilt trip. The old line ("was fine without you. Mostly.")
+    /// was one, and it went on 2026-09-11.
     private var idleCopy: String {
-        isFirstRun ? "This one is yours. It's free." : "\(kin.displayName) was fine without you. Mostly."
+        isFirstRun ? "This one is yours. It's free." : "\(kin.displayName) is around."
     }
 
-    /// An unnamed kin gets a dashed invitation instead of a plate, because a plate
-    /// reading "Moss" looks like a label rather than a name.
-    @ViewBuilder private var namePlate: some View {
-        if kin.isNamed {
-            Text(kin.displayName)
-                .font(Theme.font(14.5, .black))
-                .foregroundStyle(scene.isDark ? .white : Theme.ink)
-                .padding(.horizontal, 15).padding(.vertical, 6)
-                .background(GlassPill(onDark: scene.isDark, strong: true))
-        } else {
-            Button { state.beginAdoption(kin.species); state.advanceAdoption(to: .naming) } label: {
-                HStack(spacing: 7) {
-                    KinIcon(.die, size: 15, color: Theme.muted)
-                    Text("Name your kin")
-                        .font(Theme.font(13.5, .black))
-                        .foregroundStyle(Theme.muted)
-                }
-                .padding(.horizontal, 15).padding(.vertical, 6)
-                .background(Capsule().fill(Theme.card))
-                .overlay(Capsule().strokeBorder(Theme.hex(0xE5DDD0),
-                                                style: StrokeStyle(lineWidth: 2, dash: [4, 3])))
+    /// One plate: the name and the stars, and a tap renames. It used to be two — a
+    /// dashed "Name your kin" pill for an unnamed kin and a plain plate for a named
+    /// one — which disagreed about what the thing was.
+    private var namePlate: some View {
+        Button {
+            draftName = kin.name ?? ""
+            renaming = true
+        } label: {
+            HStack(spacing: 9) {
+                Text(kin.displayName)
+                    .font(Theme.font(14.5, .black))
+                    .foregroundStyle(scene.isDark ? .white : Theme.ink)
+                StarPips(level: kin.level, size: 13, spacing: 4)
             }
-            .buttonStyle(.plain)
+            .padding(.horizontal, 15).padding(.vertical, 7)
+            .frame(minHeight: 44)
+            .background(GlassPill(onDark: scene.isDark, strong: true).padding(.vertical, 6))
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(kin.displayName), \(kin.level) of 3 stars. Tap to rename")
     }
 
-    private var starPlate: some View {
-        StarPips(level: kin.level, size: 15, spacing: 5)
-            .padding(.horizontal, 12).padding(.vertical, 5)
-            .background(GlassPill(onDark: scene.isDark, strong: true))
+    /// The friendship word, under the name. Just met, Tankmates, Buddies, Besties,
+    /// Old friends — it only ever goes up, and the card explains it in one line.
+    private var stageWord: some View {
+        Button { showCard = true } label: {
+            Text(state.friendshipStage.name)
+                .font(Theme.fixedFont(11.5, .black))
+                .foregroundStyle(scene.isDark ? Theme.onDarkWarm : Theme.muted)
+                .padding(.horizontal, 11).padding(.vertical, 4)
+                .frame(minHeight: 44)
+                .background(GlassPill(onDark: scene.isDark, strong: false).padding(.vertical, 10))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("You and \(kin.displayName) are \(state.friendshipStage.name.lowercased()). Opens the card")
     }
 
     // MARK: - Care
@@ -220,350 +275,83 @@ struct KinView: View {
         }
     }
 
-    // MARK: - Wardrobe
+    // MARK: - Doors
 
-    /// The whole rack, on the tab the kin is on.
-    ///
-    /// It used to be a rail on the page inside Home's tank, which meant tapping a
-    /// costume and tapping the water were the same gesture, and the shop lived on one
-    /// tab while the wearing lived on another. Here it sits under the kin it dresses,
-    /// and every swatch is that kin actually wearing the thing.
-    @ViewBuilder private var wardrobeCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Text("Wardrobe")
-                    .font(Theme.font(15, .black)).foregroundStyle(Theme.ink)
-                Spacer()
-                Text("\(ownedCostumes) of \(Costume.catalog.count)")
-                    .font(Theme.font(12, .heavy)).foregroundStyle(Theme.muted)
+    /// Finch's Bag as a row of doors. Every door is open; none is a "?". Decorate
+    /// joins the row the day its props land (`KinFlags.decorate`).
+    private var doors: some View {
+        HStack(spacing: 10) {
+            door("Wardrobe", symbol: "tshirt.fill", tint: .coral) { showWardrobe = true }
+            if KinFlags.decorate {
+                door("Decorate", symbol: "leaf.fill", tint: .mint) { showDecorate = true }
             }
-
-            if kin.level < 3 {
-                // A costume has nowhere to sit on a one- or two-star kin — the rig has no
-                // slot until stage III — so say that rather than show a rail that does nothing.
-                Text("Costumes fit at three stars. \(kin.displayName) has \(kin.level).")
-                    .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    // Lazy on purpose. Every swatch is a 646px still, so a plain HStack
-                    // decodes nineteen of them — about 32MB — the moment the tab opens,
-                    // and the whole page hitches. Lazily, only what is on screen is built.
-                    LazyHStack(spacing: 6) {
-                        ForEach(Costume.catalog) { costume in
-                            costumeSwatch(costume)
-                        }
-                        // Plus looks sit in the same rail, in full colour, with
-                        // "Plus" where a coin price would be — exactly how a coin
-                        // item is drawn (`PLUS-SPEC.md` section 4). Nothing is
-                        // greyed and nothing carries a lock. An empty catalogue
-                        // draws nothing at all: an empty Plus shelf reads as a thing
-                        // taken away.
-                        ForEach(PlusLooks.looks) { look in
-                            plusLookSwatch(look)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                }
-                .padding(.horizontal, -16)
-            }
+            door("Collection", symbol: "square.grid.2x2.fill", tint: .lilac) { showCollection = true }
+            door("Card", symbol: "person.text.rectangle.fill", tint: .gold) { showCard = true }
         }
-        .padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 12)
-        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-            .fill(Theme.card).shadow(color: .black.opacity(0.05), radius: 8, y: 2))
-        .padding(.horizontal, 20)
+        .padding(.horizontal, Theme.gutter)
     }
 
-    private var ownedCostumes: Int {
-        Costume.catalog.filter { state.game.ownedLooks.contains($0.id) }.count
-    }
-
-    /// What the kin has on. `classic` is not a costume: it means nobody has chosen, and
-    /// the page puts the kin in its coat's default — so that is the swatch to tick.
-    private var wornCostumeID: String {
-        if Costume.ids.contains(kin.skinID) { return kin.skinID }
-        return Costume.coatDefault[SproutView.coat(kin.speciesID)] ?? ""
-    }
-
-    private func costumeSwatch(_ costume: Costume) -> some View {
-        let owned = state.game.ownedLooks.contains(costume.id)
-        let worn = wornCostumeID == costume.id
-        return Button {
-            guard owned else { return }
-            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-            state.wear(costume)
-        } label: {
-            VStack(spacing: 4) {
-                SproutImage(speciesID: kin.speciesID, level: 3, skin: costume.id, size: 46)
-                    .frame(width: 54, height: 34)
-                    .opacity(owned ? 1 : 0.35)
-                    .overlay(alignment: .topTrailing) {
-                        if !owned { KinIcon(.lock, size: 11, color: Theme.dim) }
-                    }
-                Text(owned ? costume.name : "\(costume.price)")
-                    .font(Theme.font(10, .heavy))
-                    .foregroundStyle(owned ? Theme.ink : Theme.dim)
-                    .lineLimit(1)
-            }
-            .frame(width: 62)
-            .padding(.vertical, 7)
-            .background(RoundedRectangle(cornerRadius: 13, style: .continuous)
-                .fill(owned ? Theme.hex(0xF6F1E6) : Theme.unowned)
-                .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous)
-                    .strokeBorder(worn ? Theme.mint : Theme.hairline, lineWidth: 2)))
-        }
-        .buttonStyle(.plain)
-        .disabled(!owned)
-        .accessibilityLabel(owned ? "\(costume.name)\(worn ? ", worn" : "")"
-                                  : "\(costume.name), \(costume.price) coins, not bought")
-    }
-
-    /// A Plus coat, previewed on an **example** fish rather than the student's own.
-    ///
-    /// Showing a coat they do not have on the animal they love is the padlock
-    /// feeling wearing a costume. The example fish is the whole reason this is a
-    /// separate swatch and not a branch inside `costumeSwatch`.
-    private func plusLookSwatch(_ look: PlusLooks.Look) -> some View {
-        let owned = state.game.ownedLooks.contains(look.skinID)
-        return Button {
-            if owned || state.isPlus {
-                state.wear(plusLook: look.skinID)
-            } else {
-                showingPlus = true
-            }
-        } label: {
-            VStack(spacing: 3) {
-                KinArtView(speciesID: PlusLooks.exampleSpeciesID, level: 3,
-                           skin: look.skinID, size: 40)
-                    .frame(width: 52, height: 44)
-                Text(owned ? look.name : "Plus")
-                    .font(Theme.fixedFont(9.5, .black))
-                    .foregroundStyle(owned ? Theme.muted : Theme.coralShade)
-                    .lineLimit(1)
-            }
-            .padding(6)
-            .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(owned ? Theme.paperSunk : Theme.coralSoft))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(owned ? "\(look.name), yours"
-                                  : "\(look.name), in Plus, shown on an example fish")
-    }
-
-    // MARK: - Saved looks
-
-    /// Combinations of kin, costume and scene, kept so they can be put back on.
-    ///
-    /// Free saves three, Plus saves as many as you like. The thing that matters
-    /// here is the sentence in `PLUS-SPEC.md` section 7: **every combination already
-    /// saved stays applicable forever, including the ones above three.** A lapse
-    /// stops new saves. It never deletes one and never greys one out, so this rail
-    /// looks the same the day after a subscription ends as it did the day before.
-    @ViewBuilder private var savedLooksCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("Saved looks")
-                    .font(Theme.font(15, .black))
-                    .foregroundStyle(Theme.ink)
-                Spacer()
-                if state.canSaveLook {
-                    Button { savingLook = true } label: {
-                        Text("Save this one")
-                            .font(Theme.font(12, .heavy))
-                            .foregroundStyle(Theme.coralShade)
-                    }
-                    .buttonStyle(.plain)
-                } else {
-                    Button { showingPlus = true } label: {
-                        Text("More saves · Plus")
-                            .font(Theme.font(12, .heavy))
-                            .foregroundStyle(Theme.muted)
-                            .underline()
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            if state.savedLooks.isEmpty {
-                Text("Save how your kin looks right now, and put it back on any time.")
-                    .font(Theme.font(12, .heavy))
-                    .foregroundStyle(Theme.muted)
-                    .fixedSize(horizontal: false, vertical: true)
-            } else {
-                ScrollView(.horizontal) {
-                    HStack(spacing: 10) {
-                        ForEach(state.savedLooks) { look in
-                            Button { state.wearSavedLook(look.id) } label: {
-                                VStack(spacing: 4) {
-                                    KinArtView(speciesID: look.speciesID, level: 3,
-                                               skin: look.costumeID, size: 40)
-                                        .frame(width: 52, height: 44)
-                                    Text(look.name)
-                                        .font(Theme.fixedFont(9.5, .black))
-                                        .foregroundStyle(Theme.muted)
-                                        .lineLimit(1)
-                                }
-                                .padding(6)
-                                .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Theme.paperSunk))
-                            }
-                            .buttonStyle(.plain)
-                            .contextMenu {
-                                Button("Remove", role: .destructive) {
-                                    state.removeSavedLook(look.id)
-                                }
-                            }
-                        }
-                    }
-                }
-                .scrollIndicators(.hidden)
-            }
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-            .fill(Theme.card).shadow(color: .black.opacity(0.05), radius: 8, y: 2))
-        .padding(.horizontal, 20)
-        .alert("Name this look", isPresented: $savingLook) {
-            TextField("Look", text: $lookName)
-                .autocorrectionDisabled()
-            Button("Save") {
-                let clean = lookName.trimmingCharacters(in: .whitespacesAndNewlines)
-                state.saveLook(named: clean.isEmpty ? "Look" : clean)
-                lookName = ""
-            }
-            Button("Cancel", role: .cancel) { lookName = "" }
-        }
-        .sheet(isPresented: $showingPlus) { PlusSheet(reason: .look) }
-    }
-
-    // MARK: - Together since
-
-    /// Real numbers, and every one of them only ever goes up. With nothing on it yet
-    /// the strip says the day out loud instead of printing three zeros, because a row
-    /// of zeros reads as failure on the one strip whose whole promise is that it climbs.
-    /// Counted from the day this kin arrived, like its card.
-    private var mine: LifetimeStats { state.game.stats(since: kin) }
-
-    @ViewBuilder private var togetherStrip: some View {
-        if mine == LifetimeStats() {
-            VStack(spacing: 4) {
-                Text("Day \(state.daysTogether(kin)) together")
-                    .font(Theme.font(15, .black))
-                    .foregroundStyle(Theme.ink)
-                Text("Finished assignments, focus time and lessons start showing up here.")
-                    .font(Theme.font(12.5, .bold))
-                    .foregroundStyle(Theme.muted)
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.horizontal, 20).padding(.vertical, 16)
-            .frame(maxWidth: .infinity)
-            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Theme.card).shadow(color: .black.opacity(0.05), radius: 8, y: 2))
-            .padding(.horizontal, 20)
-        } else {
+    // The four icons are owed from the icon pipeline (`design/icons/`); until then
+    // SF Symbols whose metaphor is literally the thing named stand in.
+    private func door(_ title: String, symbol: String, tint: IconTint, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             VStack(spacing: 8) {
-                HStack(spacing: 0) {
-                    ForEach(Array(cells.enumerated()), id: \.offset) { i, cell in
-                        VStack(spacing: 2) {
-                            Text(cell.value).font(Theme.font(16, .black)).foregroundStyle(Theme.ink)
-                            Text(cell.label).font(Theme.font(10.5, .heavy)).foregroundStyle(Theme.muted)
-                        }
-                        .frame(maxWidth: .infinity)
-                        if i < cells.count - 1 {
-                            Rectangle().fill(Theme.hairline).frame(width: 1, height: 30)
-                        }
-                    }
-                }
-                .padding(.vertical, 8).padding(.horizontal, 8)
-                .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Theme.card).shadow(color: .black.opacity(0.05), radius: 8, y: 2))
-
-                Text("Every one of these only ever goes up.")
-                    .font(Theme.font(10.5, .heavy))
-                    .foregroundStyle(Theme.dim)
+                Image(systemName: symbol)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Theme.ink)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(tint.soft))
+                Text(title)
+                    .font(Theme.font(12, .heavy))
+                    .foregroundStyle(Theme.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
             }
-            .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+                .fill(Theme.card))
+            .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+                .strokeBorder(Theme.cardEdge, lineWidth: 1))
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
     }
 
-    /// The Canvas cell is dropped rather than zeroed when Canvas was never connected —
-    /// a hard 0 there is a number the student has no way to earn.
-    private var cells: [(value: String, label: String)] {
-        let days = state.daysTogether(kin)
-        var out: [(String, String)] = [("\(days)", days == 1 ? "day together" : "days together")]
-        if let canvas = state.game.canvasFinished(since: kin), canvas > 0 {
-            out.append(("\(canvas)", canvas == 1 ? "assignment" : "assignments"))
-        }
-        let h = mine.focusMinutes / 60, m = mine.focusMinutes % 60
-        out.append((h > 0 ? "\(h)h \(m)m" : "\(m)m", "focused"))
-        if out.count < 3 {
-            out.append(("\(mine.lessonsRead)", mine.lessonsRead == 1 ? "lesson" : "lessons"))
-        }
-        return out
-    }
+    // MARK: - Season
 
-    // MARK: - Collection card
-
-    private var collectionCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Button { showCollection = true } label: {
-                HStack(spacing: 8) {
-                    KinIcon(.dock, size: 18, color: Theme.ink)
-                    Text(isFirstRun
-                         ? "\(ChibiSpecies.catalog.count - state.owned.count) more to meet"
-                         : "Collection")
-                        .font(Theme.font(15, .black)).foregroundStyle(Theme.ink)
-                    Spacer()
-                    Text("\(state.owned.count) of \(ChibiSpecies.catalog.count)")
-                        .font(Theme.font(12, .heavy)).foregroundStyle(Theme.muted)
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .black)).foregroundStyle(Theme.dim)
+    /// One row, dated, no countdown. The whole ladder opens as a sheet.
+    private func seasonRow(_ season: Season) -> some View {
+        let progress = state.game.plus.progress(season)
+        return Button { showSeason = true } label: {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(season.name)
+                        .font(Theme.font(14.5, .black)).foregroundStyle(Theme.ink)
+                    Text("\(progress.rungsClaimed) of \(season.rungs.count) days claimed")
+                        .font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.muted)
                 }
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
+                Spacer(minLength: 8)
+                // A date, not a clock. Nothing here ticks.
+                Text("Ends \(SeasonCard.endStamp(season))")
+                    .font(Theme.fixedFont(10.5, .black))
+                    .foregroundStyle(Theme.bagInk)
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(Capsule().fill(Theme.paperSunk))
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .black)).foregroundStyle(Theme.dim)
             }
-            .buttonStyle(.plain)
-
-            // Fixed-width tiles in a rail that scrolls. With six species the row
-            // filled the card; at nine a plain HStack grew past the screen and
-            // dragged the whole tab's layout out with it.
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    ForEach(ChibiSpecies.catalog) { species in
-                        let mine = state.ownedKin(species.id)
-                        Button { detail = species } label: {
-                            KinArtView(speciesID: species.id, level: mine?.level ?? 1,
-                                       skin: mine?.skinID ?? "classic", size: 42)
-                                .frame(width: 50, height: 38)
-                                .padding(.vertical, 7)
-                                .background(RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                    .fill(mine == nil ? Theme.unowned : Theme.hex(0xF6F1E6))
-                                    .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                        .strokeBorder(borderColor(species), lineWidth: 2)))
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(mine.map { "\(species.name), \($0.level) of 3 stars" }
-                                            ?? "\(species.name), not met yet")
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-            .padding(.horizontal, -16)
-
-            if isFirstRun {
-                Text("Finishing things earns coins. Nothing here ever expires.")
-                    .font(Theme.font(11.5, .heavy)).foregroundStyle(Theme.dim)
-            }
+            .padding(.horizontal, 14).padding(.vertical, 12)
+            .frame(minHeight: 56)
+            .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+                .fill(Theme.card))
+            .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+                .strokeBorder(Theme.cardEdge, lineWidth: 1))
+            .contentShape(Rectangle())
         }
-        .padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 12)
-        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-            .fill(Theme.card).shadow(color: .black.opacity(0.05), radius: 8, y: 2))
-        .padding(.horizontal, 20)
-    }
-
-    private func borderColor(_ species: ChibiSpecies) -> Color {
-        if state.activeChibiID == species.id { return Theme.mint }
-        if species.tier == 5 { return Theme.tier(5) }
-        return Theme.hairline
+        .buttonStyle(.plain)
+        .padding(.horizontal, Theme.gutter)
+        .accessibilityLabel("\(season.name), \(progress.rungsClaimed) of \(season.rungs.count) days claimed, ends \(SeasonCard.endStamp(season))")
     }
 }

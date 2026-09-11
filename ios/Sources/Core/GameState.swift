@@ -273,6 +273,15 @@ struct GameState: Codable, Equatable {
     /// DOWN over time, and the one promise this strip makes is that it only goes up.
     var lifetime = LifetimeStats()
 
+    /// Things that happened once and stay, with the day they did — the Firsts list
+    /// on a kin's card. Stamped where each thing happens (`wear`, `equipScene`,
+    /// `addFriend`, `recordFocus`, `upgradeActiveChibi`), never derived.
+    var firsts = Firsts()
+
+    /// What stands in each tank's two prop slots. Empty until the Decorate door
+    /// opens (`KinFlags.decorate`); kept here so a placed prop survives a relaunch.
+    var decor = TankDecor()
+
     /// Today's shop picks, up to five, as `"kin:ember"` / `"scene:meadow"`.
     var shopPicks: [String] = []
     var shopPickDay: DayKey = DayKey(raw: "")
@@ -392,7 +401,7 @@ struct GameState: Codable, Equatable {
         case friends, wavesDay, wavesSent, wavesIn, wavesSeen
         case shareToday, shareBoard
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
-        case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick, lockedPicks
+        case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick, lockedPicks, firsts, decor
         case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
         case ladderPlay, threadPlay, balancePlay, pearlsPlay, tracePlay, sortPlay, weavePlay
@@ -492,6 +501,14 @@ struct GameState: Codable, Equatable {
         // keepsake nobody earned.
         league = try c.decodeIfPresent(LeagueState.self, forKey: .league) ?? blank.league
         plus = try c.decodeIfPresent(PlusLocal.self, forKey: .plus) ?? blank.plus
+        // A save from before the Firsts list keeps what it can prove — done, date
+        // unknown — rather than stamping a costume worn last week with today.
+        if let kept = try c.decodeIfPresent(Firsts.self, forKey: .firsts) {
+            firsts = kept
+        } else {
+            firsts = Firsts.inferred(from: self)
+        }
+        decor = try c.decodeIfPresent(TankDecor.self, forKey: .decor) ?? blank.decor
     }
 
     // MARK: - Day
@@ -708,10 +725,28 @@ struct GameState: Codable, Equatable {
     /// absence of a choice, and leaves the page to dress the kin in its coat's default.
     /// Stage is not checked here: a two-star kin can be dressed, and simply does not
     /// show it until it grows into the costume slot.
-    mutating func wear(_ costumeID: String) {
+    mutating func wear(_ costumeID: String, now: Date = Date()) {
         guard costumeID == "classic" || ownedLooks.contains(costumeID) else { return }
         guard let i = owned.firstIndex(where: { $0.speciesID == activeChibiID }) else { return }
         owned[i].skinID = costumeID
+        if Costume.ids.contains(costumeID) { firsts.mark(Firsts.costume, at: now) }
+    }
+
+    /// The Wardrobe editor's tiles. `Costume.none` writes `classic`, which is no costume.
+    mutating func wear(_ costume: Costume, now: Date = Date()) {
+        wear(costume.id, now: now)
+    }
+
+    /// Buys a costume off the rack at its coin price. Owning it is what `wear` checks,
+    /// so this is the only way a coin costume gets onto the kin. The key matches the
+    /// one the laptop's shop uses for the same look, so nothing pays twice.
+    @discardableResult
+    mutating func buyCostume(_ costume: Costume, now: Date = Date()) -> Bool {
+        guard Costume.ids.contains(costume.id), !ownedLooks.contains(costume.id) else { return false }
+        guard ledger.post(CoinEntry(key: "look:\(costume.id)", amount: -costume.price,
+                                    reason: .upgrade, day: effectiveDay, at: now)) else { return false }
+        ownedLooks.insert(costume.id)
+        return true
     }
 
     /// What the active kin is wearing, as a friend's screen names it.
@@ -781,7 +816,10 @@ struct GameState: Codable, Equatable {
         let day = effectiveDay
         let ok = ledger.post(CoinEntry(key: "focus:\(sessionID)", amount: minutes,
                                        reason: .focus, units: minutes, day: day, at: now))
-        if ok { lifetime.focusMinutes += minutes }
+        if ok {
+            lifetime.focusMinutes += minutes
+            firsts.mark(Firsts.shift, at: now)
+        }
         return ok ? minutes : 0
     }
 
@@ -809,6 +847,7 @@ struct GameState: Codable, Equatable {
                 if ledger.post(CoinEntry(key: request.ledgerKey, amount: minutes,
                                          reason: .focus, units: minutes, day: day, at: now)) {
                     lifetime.focusMinutes += minutes
+                    firsts.mark(Firsts.shift, at: now)
                 }
             case "look":
                 guard let lookId = request.lookId, !lookId.isEmpty,
@@ -1067,6 +1106,7 @@ struct GameState: Codable, Equatable {
         guard ledger.post(CoinEntry(key: "upgrade:\(activeChibiID):\(level)", amount: -cost,
                                     reason: .upgrade, day: effectiveDay, at: now)) else { return false }
         owned[i].level += 1
+        if owned[i].level >= 3 { firsts.mark(Firsts.threeStars(activeChibiID), at: now) }
         return true
     }
 
@@ -1090,6 +1130,7 @@ struct GameState: Codable, Equatable {
                                     reason: .scene, day: effectiveDay, at: now)) else { return false }
         ownedScenes.insert(scene.id)
         sceneID = scene.id
+        firsts.mark(Firsts.scene, at: now)
         // Same as adopting a kin: release the slot it was held in and backfill the row,
         // so a bought scene does not sit in today's picks pretending to still be for sale.
         lockedPicks.remove("scene:\(scene.id)")
@@ -1097,9 +1138,11 @@ struct GameState: Codable, Equatable {
         return true
     }
 
-    mutating func equipScene(_ id: String) {
+    mutating func equipScene(_ id: String, now: Date = Date()) {
         guard ownedScenes.contains(id) else { return }
         sceneID = id
+        // The free tank is where every kin starts, so putting it back is not a first.
+        if id != Scene0.all[0].id { firsts.mark(Firsts.scene, at: now) }
     }
 
     mutating func setActive(_ speciesID: String) {
@@ -1160,6 +1203,7 @@ struct GameState: Codable, Equatable {
     /// Block look like from the other side, and there is no tombstone for either.
     mutating func applyFriends(_ rows: [Friend], now: Date = Date()) {
         friends = FriendList.merge(fetched: rows, cached: friends)
+        if !friends.isEmpty { firsts.mark(Firsts.friend, at: now) }
     }
 
     /// Puts somebody you just added by code straight into the list, already seen.
@@ -1176,6 +1220,7 @@ struct GameState: Codable, Equatable {
         } else {
             friends.append(row)
         }
+        firsts.mark(Firsts.friend, at: now)
     }
 
     /// What you call them, on this phone. Empty clears it and the word-list name

@@ -194,9 +194,10 @@ struct KinDetailSheet: View {
                 if let mine {
                     AdoptionCard(species: species, kin: mine,
                                  daysTogether: state.daysTogether(mine),
-                                 lifetime: state.game.stats(since: mine),
-                                 canvasFinished: state.game.canvasFinished(since: mine),
-                                 serial: serial)
+                                 stats: KinCardStats(since: mine, in: state.game),
+                                 serial: serial,
+                                 stage: state.game.friendshipStage(mine),
+                                 friendCode: state.friendCode)
                     ownedActions(mine)
                 } else {
                     unownedBody

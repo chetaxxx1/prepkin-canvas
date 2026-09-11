@@ -39,6 +39,11 @@ struct Costume: Identifiable, Equatable {
 
     static let ids: Set<String> = Set(catalog.map(\.id))
 
+    /// The None tile. Not in the catalogue and not a costume: wearing it writes
+    /// `classic`, which asks the page for nothing and leaves the kin in its coat's
+    /// default. Finch's closet puts NONE first for the same reason.
+    static let none = Costume(id: "classic", name: "None", price: 0)
+
     static func find(_ id: String) -> Costume? { catalog.first { $0.id == id } }
 
     /// What the page dresses a stage III kin in when nobody has chosen. Mirrors the

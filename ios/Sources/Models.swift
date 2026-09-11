@@ -6,6 +6,8 @@ import Foundation
 /// drives off these states, so real art swaps in without logic changes.
 enum ChibiAnimation: String {
     case idle, bounce, celebrate, wave, sleep, dance, peek, startle, slump
+    /// The worn costume's headline move (the ninja's Vanish). Stage III only.
+    case signature
 
     /// How long a one-shot of this animation runs before falling back to idle.
     var duration: Double {
@@ -17,6 +19,7 @@ enum ChibiAnimation: String {
         case .wave: return SlimeWave.duration
         case .startle: return SlimeStartle.duration
         case .slump: return SlimeSlump.duration
+        case .signature: return 2.8
         default: return 1.6
         }
     }
@@ -66,6 +69,12 @@ struct OwnedChibi: Codable, Equatable {
     /// The Sprout look this kin wears — `classic` or `ninja`. Per kin, not per
     /// account, so one kin in the suit does not put every kin in it.
     var skinID: String = "classic"
+    /// Pets, high fives and snacks, all time. Counts toward the friendship word
+    /// (`FriendshipStage`) and toward nothing else — no coins, no meter.
+    var careTaps: Int = 0
+    /// The highest `FriendshipStage` this kin has been shown, as its raw value. The
+    /// word can only climb, and this is what holds it up if the clock runs back.
+    var stageReached: Int = 0
 
     init(speciesID: String, level: Int, name: String? = nil, adoptedAt: Date? = nil,
          statsAtAdoption: LifetimeStats? = nil, skinID: String = "classic") {
@@ -88,7 +97,11 @@ struct OwnedChibi: Codable, Equatable {
 
     // MARK: Codable
 
-    private enum CodingKeys: String, CodingKey { case speciesID, level, name, adoptedAt, skinID }
+    // `statsAtAdoption` was missing from this list until 2026-09-11, so every relaunch
+    // forgot it and each kin's card claimed the whole account's history.
+    private enum CodingKeys: String, CodingKey {
+        case speciesID, level, name, adoptedAt, skinID, statsAtAdoption, careTaps, stageReached
+    }
 
     /// Tolerant, for the same reason `GameState`'s decoder is: a save written before
     /// `name` and `adoptedAt` existed must still load. The synthesized decoder would
@@ -101,6 +114,9 @@ struct OwnedChibi: Codable, Equatable {
         name = try c.decodeIfPresent(String.self, forKey: .name)
         adoptedAt = try c.decodeIfPresent(Date.self, forKey: .adoptedAt)
         skinID = try c.decodeIfPresent(String.self, forKey: .skinID) ?? "classic"
+        statsAtAdoption = try c.decodeIfPresent(LifetimeStats.self, forKey: .statsAtAdoption)
+        careTaps = try c.decodeIfPresent(Int.self, forKey: .careTaps) ?? 0
+        stageReached = try c.decodeIfPresent(Int.self, forKey: .stageReached) ?? 0
     }
 }
 
