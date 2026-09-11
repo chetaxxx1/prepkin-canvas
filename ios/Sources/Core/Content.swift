@@ -7,6 +7,10 @@ import Foundation
 enum CardKind: String, Decodable {
     /// Body copy under the lesson's figure, at some reveal step.
     case figure
+    /// A painting that fills the top of the card, an eyebrow, and a sentence or two.
+    /// The shape George approved on 2026-09-11 (the trolley problem); every lesson
+    /// is moving to it. `image` names an asset in the catalogue.
+    case image
     /// Body copy with no figure — for lessons that don't have one drawn yet.
     case text
     /// The one sentence worth screenshotting. No figure, set in caps.
@@ -30,6 +34,10 @@ struct LessonCard: Identifiable, Equatable {
     /// Which reveal step of the lesson's figure this card shows. `nil` on the cards
     /// that carry no figure at all.
     let step: Int?
+    /// The asset an `image` card paints, and the small uppercase line over its copy
+    /// ("THE SETUP", "THE TWIST"). Empty on every other kind.
+    let image: String
+    let eyebrow: String
     let question: String
     let choices: [String]
     let answer: Int
@@ -44,13 +52,15 @@ private struct RawCard: Decodable {
     var kind: CardKind = .text
     var body = ""
     var step: Int?
+    var image = ""
+    var eyebrow = ""
     var question = ""
     var choices: [String] = []
     var answer = 0
     var why = ""
 
     private enum CodingKeys: String, CodingKey {
-        case kind, body, step, question, choices, answer, why
+        case kind, body, step, image, eyebrow, question, choices, answer, why
     }
 
     init(kind: CardKind = .text, body: String = "", step: Int? = nil) {
@@ -64,6 +74,8 @@ private struct RawCard: Decodable {
         kind = try c.decodeIfPresent(CardKind.self, forKey: .kind) ?? .text
         body = try c.decodeIfPresent(String.self, forKey: .body) ?? ""
         step = try c.decodeIfPresent(Int.self, forKey: .step)
+        image = try c.decodeIfPresent(String.self, forKey: .image) ?? ""
+        eyebrow = try c.decodeIfPresent(String.self, forKey: .eyebrow) ?? ""
         question = try c.decodeIfPresent(String.self, forKey: .question) ?? ""
         choices = try c.decodeIfPresent([String].self, forKey: .choices) ?? []
         answer = try c.decodeIfPresent(Int.self, forKey: .answer) ?? 0
@@ -128,6 +140,7 @@ struct Lesson: Identifiable, Decodable, Equatable {
                        // Without a figure to reveal, a figure card is a text card.
                        kind: r.kind == .figure && r.step == nil ? .text : r.kind,
                        body: r.body, step: r.step,
+                       image: r.image, eyebrow: r.eyebrow,
                        question: r.question, choices: r.choices,
                        answer: r.answer, why: r.why)
         }

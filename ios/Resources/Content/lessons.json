@@ -1723,66 +1723,90 @@
     "id": "phil-6",
     "title": "The trolley problem",
     "track": "philosophy",
-    "figure": "trolley",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "A runaway trolley, five people, one lever. You'll see why almost everyone pulls it, why almost nobody pushes, and why that gap is the question behind self-driving cars and every triage rule.",
     "takeaway": "You learned that how a harm happens changes the answer, even when the count doesn't.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A trolley is running down the track. The brakes are gone. Ahead, the track forks."
+        "kind": "image",
+        "image": "lesson-phil6-01",
+        "eyebrow": "The setup",
+        "body": "A runaway trolley is coming down the track. The brakes are gone."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "On the main track, five people who can't get out of the way. If nobody does anything, the trolley hits all five."
+        "kind": "image",
+        "image": "lesson-phil6-02",
+        "eyebrow": "The setup",
+        "body": "Ahead, the track splits in two."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "On the side track, one person. You're standing at the lever. Pull it and the trolley turns. One dies instead of five."
+        "kind": "image",
+        "image": "lesson-phil6-03",
+        "eyebrow": "The setup",
+        "body": "On the main track: five people. They can’t get out of the way. If nobody does anything, the trolley hits all five."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Most people say pull. One instead of five. It feels like arithmetic. Now change one detail."
+        "kind": "image",
+        "image": "lesson-phil6-04",
+        "eyebrow": "The setup",
+        "body": "On the side track: one person. And you’re standing at the lever."
       },
       {
-        "kind": "example",
-        "body": "Same runaway trolley, same five people. This time you're on a bridge over the track, next to a large stranger. The only way to stop it is to push him off, into its path. Still one death instead of five. Almost nobody pushes."
+        "kind": "image",
+        "image": "lesson-phil6-05",
+        "eyebrow": "The choice",
+        "body": "Pull it, and the trolley turns. One person dies instead of five. Most people say: pull."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Ask people both versions and the answers split hard. Same trade, same count, wildly different verdict."
+        "kind": "image",
+        "image": "lesson-phil6-06",
+        "eyebrow": "The choice",
+        "body": "It feels like simple math. Five is more than one. Now change one detail."
       },
       {
-        "kind": "example",
-        "body": "Here's the difference. At the lever, the one person dies because of where they were standing. On the bridge, you use him as the thing that stops the trolley. In the first, the death is a side effect. In the second, it's the tool."
+        "kind": "image",
+        "image": "lesson-phil6-07",
+        "eyebrow": "The twist",
+        "body": "Same trolley. Same five people. But now you’re on a bridge over the track, next to a large stranger. The only way to stop the trolley is to push him off, into its path."
       },
       {
-        "kind": "example",
-        "body": "Philosophers have a name for that line. There's harm you cause on the way to doing good. And there's harm you use to do the good. Those get judged differently. You may not agree with the line. Nearly everyone's gut draws it anyway."
+        "kind": "image",
+        "image": "lesson-phil6-08",
+        "eyebrow": "The twist",
+        "body": "Still one death instead of five. The math hasn’t changed. But almost nobody pushes."
       },
       {
-        "kind": "example",
-        "body": "This isn't just a puzzle. A self-driving car has to be told what to do when a crash is coming. An emergency room has to decide who gets treated first. Somebody writes those rules, and this is the argument they're having."
+        "kind": "image",
+        "image": "lesson-phil6-09",
+        "eyebrow": "Why",
+        "body": "At the lever, the one person dies because of where he was standing. A side effect. On the bridge, you use the man to stop the trolley. He’s the tool."
       },
       {
         "kind": "key",
         "body": "Five versus one is the easy part. What we actually argue about is whether a person was used."
       },
       {
+        "kind": "image",
+        "image": "lesson-phil6-11",
+        "eyebrow": "Where it shows up",
+        "body": "This isn’t just a puzzle. A self-driving car has to be told what to do when a crash can’t be avoided. Someone writes that rule."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil6-12",
+        "eyebrow": "Where it shows up",
+        "body": "An emergency room decides who gets treated first. Same argument. Real people."
+      },
+      {
         "kind": "check",
-        "question": "A hospital could save five patients by taking the organs of one healthy visitor. Almost everyone says no. Which version is that like?",
+        "question": "A surgeon could save five patients using the organs of one healthy visitor. Almost everyone says no. Which case is this most like?",
         "choices": [
-          "The bridge, because the one person is the means",
-          "The lever, because it's still one for five",
-          "Neither, the numbers are different"
+          "The lever. One life is traded for five, so the math is the same.",
+          "The bridge. The visitor is used as the means to save the five.",
+          "Neither. Medicine has its own rules, so the cases don’t compare."
         ],
-        "answer": 0,
-        "why": "The count is the same trade as the lever. But the visitor isn't in the way of anything. He's the tool you'd be using, which is what the bridge case is really testing."
+        "answer": 1,
+        "why": "The numbers match the lever, but the visitor isn’t in the way of anything. He’s the tool that saves the five — which is exactly what the bridge case tests."
       }
     ]
   },

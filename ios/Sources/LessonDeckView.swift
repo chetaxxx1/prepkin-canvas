@@ -153,6 +153,7 @@ struct LessonDeckView: View {
         if let card {
             switch card.kind {
             case .figure:  figureCard(card, in: size)
+            case .image:   imageCard(card, in: size)
             case .text:    textCard(card)
             case .key:     keyCard(card)
             case .example: exampleCard(card, in: size)
@@ -182,6 +183,31 @@ struct LessonDeckView: View {
             .frame(height: min(size.width / FigureSpace.aspect, size.height * 0.62))
 
             bodyCopy(card.body)
+            Spacer(minLength: 0)
+        }
+    }
+
+    /// A painted card: the picture bleeds to both edges at 4:3, the way the figure band
+    /// does, then the eyebrow and the copy. The picture is the lesson; the words are the
+    /// caption. Every count in every picture was checked before it went in the catalogue
+    /// — see the lesson-art notes — so nothing here crops or scales it: `scaledToFill` at
+    /// the card's own 4:3 shows the whole thing.
+    private func imageCard(_ card: LessonCard, in size: CGSize) -> some View {
+        let h = min(size.width * 0.75, size.height * 0.56)
+        return VStack(alignment: .leading, spacing: 0) {
+            Image(card.image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size.width, height: h)
+                .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 30,
+                                                  bottomTrailingRadius: 30,
+                                                  style: .continuous))
+            if !card.eyebrow.isEmpty {
+                CardTypeLabel(card.eyebrow.uppercased())
+                    .padding(.leading, 24).padding(.top, 22)
+            }
+            bodyCopy(card.body)
+                .padding(.top, card.eyebrow.isEmpty ? 22 : 10)
             Spacer(minLength: 0)
         }
     }
