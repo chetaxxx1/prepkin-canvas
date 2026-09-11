@@ -88,33 +88,63 @@
     "id": "fin-2",
     "title": "Your first budget in 4 lines",
     "track": "finance",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "A budget is a plan you make before you spend, not a punishment you write after. Four lines is enough to start, and one of them does most of the work.",
     "takeaway": "You learned that the savings line should move on its own.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A budget is just a plan for money before you spend it. Four lines is enough to start."
+        "kind": "image",
+        "image": "lesson-fin2-01",
+        "eyebrow": "The idea",
+        "body": "A budget is a plan for money before you spend it, not a punishment you write after. Four lines is enough to start, and one of them does most of the work."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Half goes to needs. Rent, food, the bus. That's the 50."
+        "kind": "image",
+        "image": "lesson-fin2-02",
+        "eyebrow": "Four lines",
+        "body": "Split what comes in into four lines. Half to needs, about a third to wants, a fifth to savings. On $2,000 a month that is $1,000, $600 and $400."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Thirty percent is wants. Not a moral failing, just a planned amount."
+        "kind": "image",
+        "image": "lesson-fin2-03",
+        "eyebrow": "Needs",
+        "body": "Half goes to needs. Rent, food, the bus, the phone bill. Things that happen whether you plan them or not. That is the 50."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The last fifth is savings. That's the line that actually changes anything."
+        "kind": "image",
+        "image": "lesson-fin2-04",
+        "eyebrow": "Wants",
+        "body": "Thirty percent is wants. Eating out, the concert, the game. Not a moral failing, just a planned amount. Planned is the difference."
       },
       {
-        "kind": "example",
-        "body": "Track one month before you set the numbers. Most people are shocked by one category, and that category is your lever."
+        "kind": "image",
+        "image": "lesson-fin2-05",
+        "eyebrow": "Savings",
+        "body": "The last fifth is savings. That is the line that actually changes anything. $400 a month is $4,800 a year, and the first $500 of it is your emergency fund."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin2-06",
+        "eyebrow": "Track first",
+        "body": "Track one month before you set the numbers. Most people are shocked by one category. That category is your lever. Fix that one and leave the rest alone."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin2-07",
+        "eyebrow": "Automate",
+        "body": "Set the savings line to move on payday, by itself. If it moves first, you never have to be disciplined. What is left is what you spend, and you cannot overspend money you never see."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin2-08",
+        "eyebrow": "The wrong way",
+        "body": "Saving what is left over never works, because nothing is left over. The month always finds a use for visible money. Move it first, then live on the rest."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin2-09",
+        "eyebrow": "The whole thing",
+        "body": "That is the whole budget. Four lines on a page. Check it once a month, move one number if it was wrong, and leave it alone the rest of the time."
       },
       {
         "kind": "key",
@@ -124,43 +154,76 @@
         "kind": "check",
         "question": "Why automate savings instead of saving what's left over?",
         "choices": [
-          "Banks pay more on automatic transfers",
-          "Nothing is left over at the end of the month",
-          "It raises your credit score"
+          "Banks pay a better rate on automatic transfers.",
+          "Nothing is ever left over at the end of the month.",
+          "Automatic transfers raise your credit score."
         ],
         "answer": 1,
         "why": "Money you can see is money you spend. Moving it first makes the plan happen without willpower."
       }
-    ],
-    "figure": "budget"
+    ]
   },
   {
     "id": "fin-3",
     "title": "What an emergency fund is for",
     "track": "finance",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "The point of an emergency fund is not the interest. It's that a flat tyre stops being a crisis and starts being an errand.",
     "takeaway": "You learned what cash is for when something breaks.",
-    "figure": "fork",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "An emergency fund is cash you keep boring on purpose. Not invested, not locked up. Just there."
+        "kind": "image",
+        "image": "lesson-fin3-01",
+        "eyebrow": "The idea",
+        "body": "An emergency fund is cash you keep boring on purpose. Not invested, not locked up, not doing anything clever. Just there, for the day something breaks."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "A $400 repair with the cash there is an errand. You pay it and forget it."
+        "kind": "image",
+        "image": "lesson-fin3-02",
+        "eyebrow": "The errand",
+        "body": "A $400 repair with the cash there is an errand. You pay it, you drive home, and you have forgotten it by the weekend."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The same $400 on a card at 24% is a crisis that follows you into June."
+        "kind": "image",
+        "image": "lesson-fin3-03",
+        "eyebrow": "The crisis",
+        "body": "The same $400 on a card at 24%, paying $25 a month, takes 20 months to clear and costs about $100 in interest. The flat tyre follows you into next year."
       },
       {
-        "kind": "example",
-        "body": "Start with $500. That covers most of what actually goes wrong: a phone, a tyre, a co-pay."
+        "kind": "image",
+        "image": "lesson-fin3-04",
+        "eyebrow": "What goes wrong",
+        "body": "Start with $500. That covers most of what actually goes wrong: a phone screen, a tyre, a co-pay, a charger. Big disasters are rare. Small ones are monthly."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin3-05",
+        "eyebrow": "Where it lives",
+        "body": "Keep it in a separate savings account, not the one you spend from. Out of sight, but one transfer away. Not invested, because the market can be down on the day the car breaks."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin3-06",
+        "eyebrow": "Then grow it",
+        "body": "Once $500 is there, keep going. One month of rent and food is the next stop. Three months is the point where a lost job is a problem, not a catastrophe."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin3-07",
+        "eyebrow": "The real point",
+        "body": "The fund is not about the interest it earns. It is about the loans you never take. It buys you the right to say no to bad borrowing."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin3-08",
+        "eyebrow": "After you use it",
+        "body": "Using it is what it is for. When you do, the next paychecks refill it before anything else. Wants pause for a month. The fund comes back."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin3-09",
+        "eyebrow": "What it feels like",
+        "body": "Most of what it buys is quiet. A noise from the car is a noise, not a spiral. That calm is worth more than the 4% the bank pays on it."
       },
       {
         "kind": "key",
@@ -170,9 +233,9 @@
         "kind": "check",
         "question": "Why keep an emergency fund in plain cash instead of investing it?",
         "choices": [
-          "Cash earns more than investments",
-          "You need it on the day you need it",
-          "Investing it is against the rules"
+          "Cash in a savings account grows faster than stocks.",
+          "It has to be all there on the day you need it.",
+          "Investments cannot be sold in under a month."
         ],
         "answer": 1,
         "why": "Investments can be down exactly when your car breaks. The job of this money is to be available, not to grow."
@@ -262,45 +325,63 @@
     "id": "fin-5",
     "title": "Good debt, bad debt",
     "track": "finance",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Debt isn't good or bad by nature. It's a price you pay for time, and the question is only ever whether you're buying something worth more than the price.",
     "takeaway": "You learned to ask what the debt buys before you take it.",
-    "figure": "scale",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "All debt is renting money. The interest rate is the rent."
+        "kind": "image",
+        "image": "lesson-fin5-01",
+        "eyebrow": "The idea",
+        "body": "All debt is renting money. The interest rate is the rent. You are not buying the money, you are borrowing it for a while and paying for the time."
       },
       {
-        "kind": "example",
-        "body": "A rate is just a price. 24% a year means if you owe $1,000 for a year, $240 of that is the fee for owing it. Nothing you bought got better. That's rent."
+        "kind": "image",
+        "image": "lesson-fin5-02",
+        "eyebrow": "A rate is a price",
+        "body": "24% a year means if you owe $1,000 for a year, $240 of that is the fee for owing it. Nothing you bought got better. That is rent."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Rent is worth paying when the thing you bought is worth more later. A degree. A business."
+        "kind": "image",
+        "image": "lesson-fin5-03",
+        "eyebrow": "Worth paying",
+        "body": "Rent is worth paying when the thing you bought is worth more later. A degree you finish. A van for a business that earns. The thing grows faster than the rent does."
       },
       {
-        "kind": "example",
-        "body": "Careful with that one though. A degree is worth it if you finish it and it leads somewhere. Debt for a course you drop out of is the same debt with none of the payoff."
+        "kind": "image",
+        "image": "lesson-fin5-04",
+        "eyebrow": "Careful",
+        "body": "A degree is worth it if you finish it and it leads somewhere. Debt for a course you drop out of is the same debt with none of the payoff."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "It almost never is when the thing shrinks: a night out, a phone, a weekend."
+        "kind": "image",
+        "image": "lesson-fin5-05",
+        "eyebrow": "Not worth paying",
+        "body": "It almost never is when the thing shrinks: a night out, a phone, a weekend away. You are still paying rent on it long after it is gone."
       },
       {
-        "kind": "example",
-        "body": "Here's what that looks like. Put $1,000 on a card at 24% and pay the $25 minimum. It takes almost seven years. You pay back $2,032 in total. Half of that is rent on a night you already forgot."
+        "kind": "image",
+        "image": "lesson-fin5-06",
+        "eyebrow": "What that looks like",
+        "body": "Put $1,000 on a card at 24% and pay the $25 minimum. It takes almost seven years. You pay back about $2,050. Half of that is rent on a night you already forgot."
       },
       {
-        "kind": "example",
-        "body": "If you owe on more than one thing, write them all down with their rates. Pay the minimum on every one. Then throw every spare dollar at the highest rate. That order saves you the most money, every time."
+        "kind": "image",
+        "image": "lesson-fin5-07",
+        "eyebrow": "More than one",
+        "body": "Write them all down with their rates. Pay the minimum on every one. Then throw every spare dollar at the highest rate. That order saves the most money, every time."
       },
       {
-        "kind": "example",
-        "body": "Watch out for the deal that isn't one. Zero percent for twelve months is still debt with a deadline. Some of those charge you all the skipped interest at once if you're late or still owe anything at the end."
+        "kind": "image",
+        "image": "lesson-fin5-08",
+        "eyebrow": "The deal that isn't",
+        "body": "Zero percent for twelve months is still debt with a deadline. Some of those charge you all the skipped interest at once if you are late or still owe anything at the end."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin5-09",
+        "eyebrow": "The one question",
+        "body": "Before you borrow for anything, ask one question. Will this still be worth something when I finish paying for it? If the answer is no, pay cash or wait."
       },
       {
         "kind": "key",
@@ -310,9 +391,9 @@
         "kind": "check",
         "question": "A credit card charges 24% a year. A savings account pays 4%. What should a spare $100 do first?",
         "choices": [
-          "Go into savings",
-          "Pay down the card",
-          "Split evenly"
+          "Go into the savings account to earn 4%.",
+          "Pay down the card that is charging 24%.",
+          "Split evenly between the two accounts."
         ],
         "answer": 1,
         "why": "Paying off 24% debt is a guaranteed 24% return. No savings account can beat that."
@@ -323,45 +404,63 @@
     "id": "fin-6",
     "title": "Why index funds beat picking",
     "track": "finance",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Most professional stock pickers lose to a fund that buys everything and thinks about nothing. Here's why that keeps happening.",
     "takeaway": "You learned why the boring fund keeps winning.",
-    "figure": "index",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "An index fund buys a slice of every company on a list, then does nothing else."
+        "kind": "image",
+        "image": "lesson-fin6-01",
+        "eyebrow": "What a fund is",
+        "body": "A fund is a big bucket lots of people put money into. The bucket buys things, and you own a slice of the bucket. An index fund's rule is the simplest one there is: buy everything on the list, then leave it alone."
       },
       {
-        "kind": "example",
-        "body": "First, what a fund is. It's a big bucket lots of people put money into. The bucket buys things. You own a slice of the bucket. An index fund's rule is the simplest one there is: buy everything on the list, then leave it alone."
+        "kind": "image",
+        "image": "lesson-fin6-02",
+        "eyebrow": "The index",
+        "body": "An index fund buys a slice of every company on a list. The S&P 500 list has 500 of them. You do not have to know which one will win, because you own a bit of all of them."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Picking one company means being right about that one, twice, for twenty years."
+        "kind": "image",
+        "image": "lesson-fin6-03",
+        "eyebrow": "Picking",
+        "body": "Picking one company means being right about that one, twice, for twenty years. Right when you buy and right when you sell. Full-time professionals are paid to do exactly this."
       },
       {
-        "kind": "example",
-        "body": "Twice, because you have to buy at the right time and sell at the right time. Getting one of those right is luck. Getting both right, over and over, is what full-time professionals are paid to do. Most of them fail at it."
+        "kind": "image",
+        "image": "lesson-fin6-04",
+        "eyebrow": "The scoreboard",
+        "body": "Over twenty years, about nine in ten professional stock pickers land behind the boring fund. Fees and bad timing eat the difference. That is not a bad year. It is the usual result."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Over twenty years most professional pickers land behind the boring fund. Fees eat the difference."
+        "kind": "image",
+        "image": "lesson-fin6-05",
+        "eyebrow": "Fees",
+        "body": "Fees sound tiny and are not. Put $10,000 in for twenty years at 7% and you end up with about $38,700. Charge 1% a year in fees and it is about $32,100. That 1% quietly took $6,600."
       },
       {
-        "kind": "example",
-        "body": "Fees sound tiny and aren't. Put $10,000 in for twenty years at 7% and you end up with about $38,700. Charge 1% a year in fees and it's about $32,100. That 1% quietly took $6,600, which is 17% of everything you made."
+        "kind": "image",
+        "image": "lesson-fin6-06",
+        "eyebrow": "The number to find",
+        "body": "When you look at a fund, find the expense ratio. That is the yearly fee. Broad index funds are often under 0.1%. Anything over 1% needs to explain itself."
       },
       {
-        "kind": "example",
-        "body": "So when you look at a fund, find the number called the expense ratio. That's the yearly fee. Broad index funds are often under 0.1%. Anything over 1% needs to explain itself."
+        "kind": "image",
+        "image": "lesson-fin6-07",
+        "eyebrow": "The other mistake",
+        "body": "The other mistake is checking it. The fund will drop, sometimes a lot. Selling then is how you lock the loss in. The boring plan only works if you are boring about it."
       },
       {
-        "kind": "example",
-        "body": "The other mistake is checking it. The fund will drop, sometimes a lot. Selling then is how you lock the loss in. The boring plan only works if you're boring about it."
+        "kind": "image",
+        "image": "lesson-fin6-08",
+        "eyebrow": "Zoom out",
+        "body": "Every crash is a dent in a line that goes up. The people who lost money were the ones who sold in the dent. The line did not need them to do anything."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin6-09",
+        "eyebrow": "Do it",
+        "body": "Pick one broad index fund. Set a monthly amount to move into it on payday. Then close the app and go live your life. Checking it is the only way to mess it up."
       },
       {
         "kind": "key",
@@ -371,9 +470,9 @@
         "kind": "check",
         "question": "Why do fees matter so much over 20 years?",
         "choices": [
-          "Fees rise every year",
-          "Fees come out of the money that would have compounded",
-          "Fees are taxed twice"
+          "Fees go up a little every year you stay invested.",
+          "Fees come out of money that would have compounded.",
+          "Fees get taxed twice, once now and once later."
         ],
         "answer": 1,
         "why": "Every dollar in fees is a dollar that stops earning. Over decades a 1% fee quietly takes a large slice of the total."
