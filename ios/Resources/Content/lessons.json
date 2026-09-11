@@ -1063,46 +1063,75 @@
     "id": "psy-3",
     "title": "The sunk cost trap",
     "track": "psychology",
-    "figure": "sunk",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "You paid for the ticket, so you sit through the bad movie. That's the trap. You'll see why money already spent shouldn't vote, and how to catch yourself doing it.",
     "takeaway": "You learned that only the future gets a vote.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You paid $15 for the movie. Twenty minutes in, it's bad. Do you stay?"
+        "kind": "image",
+        "image": "lesson-psy3-01",
+        "eyebrow": "The movie",
+        "body": "You paid $15 for the movie. Twenty minutes in, it is bad. Really bad. You look at the exit, then back at the screen, and you stay. Why?"
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The $15 is gone either way. Stay or leave, you don't get it back. It shouldn't get a vote."
+        "kind": "image",
+        "image": "lesson-psy3-02",
+        "eyebrow": "Gone either way",
+        "body": "The $15 is gone either way. Stay or leave, you do not get it back. So the money should not get a vote. It is not on the ballot anymore."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The next 90 minutes are still yours. That's the only thing the decision is about."
+        "kind": "image",
+        "image": "lesson-psy3-03",
+        "eyebrow": "What is left",
+        "body": "The next 90 minutes are still yours. That is the only thing the decision is about. Would you pay 90 minutes of your evening to watch the rest of this? If not, leave."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Sunk cost is when the past votes anyway. 'I've already put so much into this' is the sound it makes."
+        "kind": "image",
+        "image": "lesson-psy3-04",
+        "eyebrow": "The trap",
+        "body": "Sunk cost is when the past votes anyway. 'I have already waited forty minutes' is the sound it makes. The more you have put in, the louder it gets."
       },
       {
-        "kind": "example",
-        "body": "Three semesters into a major you hate. The credits are spent. The question is only whether the next three are worth it."
+        "kind": "image",
+        "image": "lesson-psy3-05",
+        "eyebrow": "Bigger version",
+        "body": "Three semesters into a major you hate. The credits are spent. Switching does not give them back, and staying does not either. The only question is whether the next three are worth it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy3-06",
+        "eyebrow": "The famous one",
+        "body": "Britain and France kept paying for the Concorde jet for years after it was clear it would never make its money back. Economists named the trap after it: the Concorde fallacy."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy3-07",
+        "eyebrow": "The trick",
+        "body": "Draw a line. Everything above it is spent: money, time, effort. Everything below it is still yours. Decide using only what is below the line."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy3-08",
+        "eyebrow": "Walking out",
+        "body": "Leaving a bad movie feels like wasting $15. It is the opposite. The $15 is gone whatever you do. Walking out is the only way to save the evening."
       },
       {
         "kind": "key",
         "body": "Money and time already spent are gone in every version of the future. Only what's ahead gets a vote."
       },
       {
+        "kind": "image",
+        "image": "lesson-psy3-10",
+        "eyebrow": "Catch it",
+        "body": "You will hear it in your own head: 'I paid for it', 'I have come this far', 'I can't stop now'. Each one is the past asking to vote. Let it speak, then decide on the future."
+      },
+      {
         "kind": "check",
         "question": "What's the right question when you're 20 minutes into a bad movie?",
         "choices": [
-          "Was the ticket worth it?",
-          "Is the next 90 minutes worth it?",
-          "How much did I pay?"
+          "Was the ticket worth the $15 I paid for it?",
+          "Is the next 90 minutes of my evening worth it?",
+          "How much did the ticket cost compared to usual?"
         ],
         "answer": 1,
         "why": "The ticket is spent whatever you do. The only thing you still control is the time ahead."
@@ -1542,35 +1571,63 @@
     "id": "ppl-5",
     "title": "A real apology has three parts",
     "track": "people",
-    "figure": "apology",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "'Sorry you feel that way' isn't an apology, and everyone can tell. You'll see the three parts a real one needs, and the two words that quietly cancel it.",
     "takeaway": "You learned what makes 'sorry' land.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A real apology has three parts. Most people do one and wonder why it didn't work."
+        "kind": "image",
+        "image": "lesson-ppl5-01",
+        "eyebrow": "The idea",
+        "body": "A real apology has three parts. Most people do one part, usually the word 'sorry', and then wonder why it did not work. Here is what the other two are."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Part one: name what you did. 'I told people what you said in private.' Specific. No 'if I did anything'."
+        "kind": "image",
+        "image": "lesson-ppl5-02",
+        "eyebrow": "Three parts",
+        "body": "What I did. What it cost you. What changes. Say all three, in that order, and the apology lands. Skip one and it wobbles."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Part two: name what it cost them. 'That made it hard to trust me.' This is the part people skip, and the part that matters."
+        "kind": "image",
+        "image": "lesson-ppl5-03",
+        "eyebrow": "Part one",
+        "body": "Name what you did. 'I told people what you said in private.' Specific. Say the actual thing. No 'if I did anything' and no 'mistakes were made'."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Part three: what changes. 'I'm not going to repeat things you tell me.' An apology without this is just a description."
+        "kind": "image",
+        "image": "lesson-ppl5-04",
+        "eyebrow": "Part two",
+        "body": "Name what it cost them. 'That made it hard to trust me.' This is the part people skip, and the part that matters most. It shows you understand."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "The two words that cancel all of it: 'but' and 'if'. 'I'm sorry, but' means 'I'm not sorry'. 'Sorry if' means 'this is your problem'."
+        "kind": "image",
+        "image": "lesson-ppl5-05",
+        "eyebrow": "Part three",
+        "body": "Say what changes. 'I'm not going to repeat things you tell me.' An apology with no change in it is just a description of what happened."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl5-06",
+        "eyebrow": "Two words",
+        "body": "Two words cancel all of it: 'but' and 'if'. 'I'm sorry, but' means 'I'm not sorry'. 'Sorry if you were hurt' means 'this is your problem'."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl5-07",
+        "eyebrow": "In full",
+        "body": "Here is one in full, by text. Three parts, no but, no if, no excuses. It is short. A good apology usually is."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl5-08",
+        "eyebrow": "The fake one",
+        "body": "'Sorry you feel that way' is not an apology. It names their feeling instead of your action. Everyone can tell, even if they cannot say why."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl5-09",
+        "eyebrow": "After",
+        "body": "Then stop talking. Do not ask to be forgiven right away, and do not explain why you did it. The other person gets to decide what happens next."
       },
       {
         "kind": "key",
@@ -1580,9 +1637,9 @@
         "kind": "check",
         "question": "What does 'I'm sorry if you were hurt' actually say?",
         "choices": [
-          "A full apology",
-          "That the hurt is their problem, not yours",
-          "That you'll change"
+          "That you own what you did and plan to change it.",
+          "That the hurt is their problem, not your action.",
+          "That you are sorry but unsure of what happened."
         ],
         "answer": 1,
         "why": "'If' puts the feeling in doubt. It sounds like an apology, but it doesn't own anything."
@@ -1936,34 +1993,63 @@
     "id": "phil-8",
     "title": "Plato's cave",
     "track": "philosophy",
-    "figure": "cave",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Prisoners chained to a wall, watching shadows, sure the shadows are the world. You'll see the oldest thought experiment about what's real, and why walking out hurts.",
     "takeaway": "You learned why leaving the cave hurts before it helps.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Picture people chained in a cave since birth, facing the back wall. They can't turn around."
+        "kind": "image",
+        "image": "lesson-phil8-01",
+        "eyebrow": "The cave",
+        "body": "Picture people chained in a cave since birth, facing the back wall. They cannot turn their heads. All they have ever seen is that wall."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "On the wall, shadows move. To the prisoners, the shadows are the world. They name them, predict them, argue about them."
+        "kind": "image",
+        "image": "lesson-phil8-02",
+        "eyebrow": "The shadows",
+        "body": "On the wall, shadows move. To the prisoners, the shadows are the world. They name them, predict which comes next, and argue about who is right."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Behind them, a fire, and people carrying objects past it. The shadows are just those objects. The prisoners have never seen the real things."
+        "kind": "image",
+        "image": "lesson-phil8-03",
+        "eyebrow": "Behind them",
+        "body": "Behind them, a fire. Between the fire and the prisoners, people walk past carrying objects. The shadows are just those objects. The prisoners have never seen a real one."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "One prisoner gets loose and climbs out. The sunlight hurts. Everything looks wrong at first. When he comes back to explain, the others think he's gone mad."
+        "kind": "image",
+        "image": "lesson-phil8-04",
+        "eyebrow": "One gets loose",
+        "body": "One prisoner gets loose. He turns around and sees the fire, and the objects that made the shadows. It hurts to look. His first instinct is to turn back to the wall."
       },
       {
-        "kind": "example",
-        "body": "A feed shows you a version of people: highlights, arguments, the worst clip of someone's day. It's easy to forget those are shadows of people, not the people."
+        "kind": "image",
+        "image": "lesson-phil8-05",
+        "eyebrow": "Out",
+        "body": "He climbs the passage out. The sunlight is blinding. Everything looks wrong at first. It takes time before he can look at real things, and longer to look at the sun."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil8-06",
+        "eyebrow": "Back",
+        "body": "When he comes back to explain, his eyes cannot see in the dark anymore. He stumbles. The others decide the trip ruined him. Nobody else wants to leave."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil8-07",
+        "eyebrow": "Today",
+        "body": "A feed shows you a version of people: highlights, arguments, the worst clip of someone's day. It is easy to forget those are shadows of people, not the people."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil8-08",
+        "eyebrow": "The point",
+        "body": "Plato's point is about knowing. Shadows are what you are shown. Objects are what is really there. The sun is why. Most of us live one step up from the wall, at best."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil8-09",
+        "eyebrow": "Why it hurts",
+        "body": "Leaving the cave always hurts first. The new thing looks wrong, the old thing looks safe, and the people still inside think you have changed. That is the price of looking."
       },
       {
         "kind": "key",
@@ -1973,9 +2059,9 @@
         "kind": "check",
         "question": "Why do the prisoners think the freed one has gone mad?",
         "choices": [
-          "He's lying to them",
-          "The shadows are all they've ever known",
-          "He can't describe the sun"
+          "He is lying to them about what he saw outside.",
+          "The shadows are all they have ever known as real.",
+          "He cannot describe the sun in words they know."
         ],
         "answer": 1,
         "why": "The shadows are their whole world. Anyone claiming there's something more real must be broken."
@@ -2642,52 +2728,76 @@
     "id": "fin-11",
     "title": "Why the minimum payment is a trap",
     "track": "finance",
-    "figure": "minimum",
     "minutes": 3,
     "triggers": [],
     "blurb": "The minimum on a $1,000 card takes almost 6 years to clear and costs $766 in interest. You'll see where each payment goes, and the small change that cuts both numbers by about two thirds.",
     "takeaway": "You learned that most of your first payment is interest.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You buy a $1,000 laptop on a credit card. The card charges 22% a year. You pay the minimum every month and nothing more."
+        "kind": "image",
+        "image": "lesson-fin11-01",
+        "eyebrow": "The laptop",
+        "body": "You buy a $1,000 laptop on a credit card. The card charges 22% a year. You pay the minimum every month and nothing more, which is what a lot of people do."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "This card's minimum is 1% of what you owe plus that month's interest, never under $25. Month one that is $28. Interest takes $18. That is rent for still owing the money. Only $10 comes off the $1,000."
+        "kind": "image",
+        "image": "lesson-fin11-02",
+        "eyebrow": "Month one",
+        "body": "This card's minimum is 1% of what you owe plus that month's interest, never under $25. Month one that is $28. Interest takes $18. Only $10 comes off the $1,000."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Next month the minimum drops, because you owe less. After a year it hits the $25 floor and stays there. It takes 70 payments to clear the card. That is 5 years and 10 months of paying for a laptop you already own."
+        "kind": "image",
+        "image": "lesson-fin11-03",
+        "eyebrow": "The slow slide",
+        "body": "Next month the minimum drops, because you owe a little less. After a year it hits the $25 floor and stays there. It takes 70 payments to clear the card. That is 5 years and 10 months."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Add up every payment and you handed over $1,766. The extra $766 is interest. You paid 77% more than the price tag."
+        "kind": "image",
+        "image": "lesson-fin11-04",
+        "eyebrow": "The bill",
+        "body": "Add up every payment and you handed over $1,766. The extra $766 is interest. You paid 77% more than the price tag, for a laptop that is old by the time it is paid off."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Now pay $50 a month instead of $28. Same card, same rate. You are done in 2 years 2 months and you keep about $500."
+        "kind": "image",
+        "image": "lesson-fin11-05",
+        "eyebrow": "Five years later",
+        "body": "Five years and ten months is longer than most laptops last. You could still be paying for this one after you have replaced it. That is the trap in one picture."
       },
       {
-        "kind": "example",
-        "body": "Your card statement has to print a box like this. It shows how many years the minimum will take. It also shows the bigger payment that would clear the card in 3 years. A 2009 law made card companies add it, after surveys found almost nobody guesses the real number."
+        "kind": "image",
+        "image": "lesson-fin11-06",
+        "eyebrow": "One change",
+        "body": "Now pay $50 a month instead of $28. Same card, same rate. You are done in 2 years and 2 months, and you keep about $500 that would have gone to interest."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin11-07",
+        "eyebrow": "On your statement",
+        "body": "Your card statement has to print a box like this. It shows how long the minimum takes and what a 3-year payment looks like. A 2009 law made card companies add it, because almost nobody guessed the real number."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-fin11-08",
+        "eyebrow": "Why it's built this way",
+        "body": "The minimum is not there to help you. It is set as low as the card can make it, because a balance that never clears pays interest every single month. Slow is the product."
       },
       {
         "kind": "key",
         "body": "The minimum is the slowest way the card lets you pay. Slow is exactly what makes it expensive."
       },
       {
+        "kind": "image",
+        "image": "lesson-fin11-10",
+        "eyebrow": "Do it",
+        "body": "Set the autopay to a fixed amount you choose, not 'minimum due'. Even $50 on a $1,000 balance cuts the interest by about two thirds. Round up whenever you can."
+      },
+      {
         "kind": "check",
         "question": "You owe $1,000 at 22%. Where does your $28 minimum payment go?",
         "choices": [
-          "All $28 comes off the balance",
-          "$18 to interest, $10 off the balance",
-          "$10 to interest, $18 off the balance"
+          "All $28 comes off what you owe, nothing to interest.",
+          "$18 goes to interest, and $10 comes off what you owe.",
+          "$10 goes to interest, and $18 comes off what you owe."
         ],
         "answer": 1,
         "why": "Interest gets paid first. One month at 22% a year on $1,000 costs about $18. Only the $10 left over shrinks what you owe."
