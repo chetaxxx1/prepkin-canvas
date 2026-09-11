@@ -23,6 +23,16 @@ struct ReadingRequest: Identifiable, Equatable {
 struct LearnView: View {
     @EnvironmentObject var state: AppState
 
+    /// Which half of the tab is showing. Remembered, so a student who comes for
+    /// the lessons lands on the lessons — the one scroll this replaced put 600pt
+    /// of puzzles between them and today's card every single time.
+    @AppStorage("play.half") private var halfRaw = Half.puzzles.rawValue
+    private var half: Half { Half(rawValue: halfRaw) ?? .puzzles }
+    enum Half: String, CaseIterable {
+        case puzzles, lessons
+        var label: String { self == .puzzles ? "Puzzles" : "Lessons" }
+    }
+
     @State private var previewing: Lesson?
     /// Set by the preview sheet's Start, read once the sheet has finished dismissing.
     /// Presenting a cover while a sheet is still on screen drops the cover.
@@ -35,16 +45,20 @@ struct LearnView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     header
 
-                    // First since 2026-09-10, when the tab became Play. The six
-                    // puzzles used to sit fifth, in a rail that hid four of them, under
-                    // a header that said Play inside a tab that said Learn. The
-                    // retention evidence is theirs (GAMES-PLAN.md §2), so they lead;
-                    // the lessons follow in the order they always had (PLAY-TAB.md).
+                    halfSwitch
+
+                    // Two halves behind one switch (2026-09-11). They were one scroll,
+                    // puzzles first — the retention evidence is theirs (GAMES-PLAN.md
+                    // §2) — but a lesson-minded student then scrolled past every puzzle
+                    // to reach today's card. Each half owns the screen now, and the
+                    // switch's dot says when the other half's daily thing is still open.
+                    if half == .puzzles {
                     VStack(alignment: .leading, spacing: 12) {
                         puzzlesTitle
                         puzzleHero
                         puzzleList
                     }
+                    } else {
 
                     if let cont = state.continueLesson {
                         VStack(alignment: .leading, spacing: 12) {
@@ -78,8 +92,10 @@ struct LearnView: View {
                     }
 
                     savedRow
+                    }
                 }
                 .padding(.top, 4)
+                .animation(.easeInOut(duration: 0.18), value: halfRaw)
                 .padding(.bottom, Theme.tabClearance)
             }
             .background(Theme.paper)
@@ -191,6 +207,50 @@ struct LearnView: View {
             }
         }
         .padding(.horizontal, 24)
+    }
+
+    // MARK: - Switch
+
+    /// The Calendar's Week / Month switch, one size up: a sunk track, the chosen
+    /// half lifted onto card white. A coral dot on the *other* half means its daily
+    /// thing is still open — the card unread, or nothing banked yet — so neither
+    /// ritual disappears behind the switch.
+    private var halfSwitch: some View {
+        HStack(spacing: 0) {
+            ForEach(Half.allCases, id: \.self) { h in segment(h) }
+        }
+        .padding(3)
+        .background(Capsule().fill(Theme.paperSunk))
+        .padding(.horizontal, 24)
+    }
+
+    private func segment(_ h: Half) -> some View {
+        let on = h == half
+        let open = h == .puzzles ? !state.playClaimedToday : !state.lessonDoneToday
+        return HStack(spacing: 6) {
+            Text(h.label)
+                .font(Theme.font(14, .black))
+                .foregroundStyle(on ? Theme.ink : Theme.muted)
+            if open && !on {
+                Circle().fill(Theme.coral).frame(width: 7, height: 7)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 34)
+        .background(
+            Capsule()
+                .fill(on ? Theme.card : .clear)
+                .shadow(color: on ? Theme.hex(0x2E2622).opacity(0.10) : .clear, radius: 3, y: 1)
+        )
+        .contentShape(Capsule())
+        .onTapGesture {
+            guard !on else { return }
+            UISelectionFeedbackGenerator().selectionChanged()
+            halfRaw = h.rawValue
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(open && !on ? "\(h.label), something still open today" : h.label)
+        .accessibilityAddTraits(on ? [.isSelected, .isButton] : .isButton)
     }
 
     // MARK: - Continue
@@ -610,7 +670,10 @@ struct LearnView: View {
     private var todaysCard: Lesson? {
         let open = Catalog.lessons.filter { !state.completedLessons.contains($0.id) }
         guard !open.isEmpty else { return nil }
-        let seed = abs(state.game.effectiveDay.raw.hashValue)
+        // Not `hashValue`: Swift seeds String hashing per process, so today's card
+        // was a different card on every launch. Summing the scalars is the same
+        // number all day, which is the whole meaning of "today's".
+        let seed = state.game.effectiveDay.raw.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0xFFFFFF }
         let pick = open[seed % open.count]
         // Don't offer the same thing twice on one screen.
         if pick.id == state.continueLesson?.lesson.id

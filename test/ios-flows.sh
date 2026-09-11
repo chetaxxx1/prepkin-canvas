@@ -18,6 +18,12 @@ tap()    { idb ui tap "$1" "$2" --udid "$U"; sleep "${3:-1.2}"; }
 shot()   { xcrun simctl io "$U" screenshot "$OUT/$1.png" >/dev/null 2>&1; }
 # assert <flow> <step> <label substring>
 assert() { if labels | grep -q -- "$3"; then echo "  ok   $2"; PASS=$((PASS+1)); else echo "  FAIL $2: no '$3' on screen"; shot "FAIL-$1-$2"; FAIL=$((FAIL+1)); fi; }
+# assert_soon <flow> <step> <label substring>: like assert, but polls for up to ~3s.
+# For things that are on screen briefly — a toast lives 2.4s and one describe-all
+# takes about a second under load, so "poll, then assert" read it once and lost it.
+assert_soon() { for _ in 1 2 3 4 5 6 7 8; do
+                  if labels | grep -q -- "$3"; then echo "  ok   $2"; PASS=$((PASS+1)); return; fi; sleep 0.25; done
+                echo "  FAIL $2: no '$3' on screen"; shot "FAIL-$1-$2"; FAIL=$((FAIL+1)); }
 # refute <flow> <step> <label substring>: passes when the label is NOT on screen
 refute() { if labels | grep -q -- "$3"; then echo "  FAIL $2: '$3' still on screen"; shot "FAIL-$1-$2"; FAIL=$((FAIL+1)); else echo "  ok   $2"; PASS=$((PASS+1)); fi; }
 # tapl <label substring>: tap the centre of the first element with that label
@@ -54,6 +60,9 @@ flow_focus() {
 }
 flow_lesson() {
   echo "lesson"; tap $TAB_PLAY 805
+  # Play has a Puzzles / Lessons switch since 2026-09-11 and remembers the last
+  # choice, so land on the lessons half explicitly before asserting on it.
+  labels | grep -q "^Lessons" && tapl "Lessons" 1.2
   assert lesson learn-root "Saved cards"
   # Today's card (a lesson, opens a preview with Start) or, after a half-read
   # lesson, the resume hero, which opens the deck directly. Both are fine. Found by
@@ -127,14 +136,24 @@ flow_shopshort() {
   #
   # Every card's label ends "You can afford it." when it is within reach, so the
   # ones without it are exactly the ones this flow wants.
-  xy=$(tree | python3 -c "
+  # A kin first: it opens a sheet, which stays put. A scene answers with a 2.4s
+  # toast, and one describe-all takes about a second under load, so a scene is the
+  # fallback rather than the pick.
+  find_short() { tree | python3 -c "
 import json,sys
-for n in json.load(sys.stdin):
-    l = n.get('AXLabel') or ''
-    if 'coins, down from' in l and 'You can afford it' not in l:
-        f = n['frame']; print(int(f['x']+f['width']/2), int(f['y']+f['height']/2)); break")
+short = [n for n in json.load(sys.stdin)
+         if 'coins, down from' in (n.get('AXLabel') or '') and 'You can afford it' not in n['AXLabel']]
+short.sort(key=lambda n: 0 if ' kin' in n['AXLabel'].split('.')[0] else 1)
+for n in short[:1]:
+    f = n['frame']; print(int(f['x']+f['width']/2), int(f['y']+f['height']/2))"; }
+  # Read the frame twice: the shop is a sheet, and a frame read while it is still
+  # sliding in put the tap on whatever ended up under a mid-animation y.
+  xy=$(find_short); sleep 0.6; xy2=$(find_short)
+  [ "$xy" = "$xy2" ] || { sleep 0.8; xy=$(find_short); }
   [ -n "$xy" ] || { echo "  skip: every pick is affordable on this save"; tapl "Close"; return; }
-  tap $xy 1.2;                  assert shopshort answer "to go"
+  # A scene answers with a 2.4s toast, and `tap` already sleeps 1.2 of that; under
+  # load (another session's xcodebuild) one tree read after that missed it. Poll.
+  tap $xy 0.3;                  assert_soon shopshort answer "to go"
   sleep 1.5
   # A kin opened a sheet over the shop and a scene only toasted, so tear down what
   # is actually there. Swiping blind closed the shop itself on the scene path.

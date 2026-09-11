@@ -874,6 +874,12 @@ struct GameState: Codable, Equatable {
 
     var playClaimedToday: Bool { playBanked(on: effectiveDay) != nil }
 
+    /// A lesson finished today. The Play tab's switch marks whichever half still
+    /// has its daily thing open, and this is the lesson half's answer.
+    var lessonDoneToday: Bool {
+        ledger.entries.contains { $0.reason == .lesson && $0.day == effectiveDay }
+    }
+
     /// Posts one game's line for `day`, paid only while the pool is open. Returns
     /// what it paid. A key already posted pays nothing and changes nothing.
     private mutating func postPlay(_ reason: CoinReason, key: String, day: DayKey, now: Date) -> Int {

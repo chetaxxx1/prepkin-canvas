@@ -772,10 +772,17 @@ private struct PickCard: View {
 
     /// The solid-versus-outline badge is the only thing on the card that says whether
     /// you can buy it, and a fill is not a thing VoiceOver reads. It says so here.
+    /// The kind is read too — the KIN / SCENE tag is the one thing that separates two
+    /// pictures of a kin in a tank, and it was sighted-only.
     private var axLabel: String {
+        let kind: String
+        switch pick.kind {
+        case .kin: kind = "kin"
+        case .scene: kind = "scene"
+        }
         let money = "\(pick.price) coins, down from \(pick.fullPrice)"
         let can = affordable ? "You can afford it." : ""
-        return [held ? "\(pick.name), held." : "\(pick.name).", "\(money).", can]
+        return [held ? "\(pick.name), \(kind), held." : "\(pick.name), \(kind).", "\(money).", can]
             .filter { !$0.isEmpty }.joined(separator: " ")
     }
 

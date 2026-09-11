@@ -78,3 +78,24 @@ opposites; that is a clean story to tell.
 Coins (one daily pool, first finish banks 30; a card pays 20 on its own), the games
 themselves, the lessons, routes, the reader. `LearnRoute`, `LearnView`, and the
 `learn-root` flow step keep their names; renaming internals buys nothing.
+
+## 2026-09-11: dressed, then split
+
+**Dressed (861efef).** George: "make this look a lot nicer — copy Imprint for the
+lessons and another app from Mobbin for the games." The games took the NYT Games hub's
+shape (one featured with its board, a tagline and a Play button; the rest as list cards
+with a badge, a name and a tagline). The lessons took Imprint's grammar (the cover is
+the tile, words beneath in plain type; the track rail shows the next lesson's cover).
+
+**Split.** George: "do we not have a part for them to select whether play or learn?"
+There was not — it was one scroll, and a lesson-minded student passed 600pt of puzzles
+to reach today's card every time. Now a **Puzzles / Lessons** switch sits under the
+header (the Calendar's Week / Month control, one size up). It remembers the last choice
+(`@AppStorage("play.half")`), defaulting to Puzzles for a new student. A coral dot on
+the *other* half means its daily thing is still open — nothing banked, or the card
+unread — so neither ritual vanishes behind the switch. The segments are the nouns for
+the content, not "Play / Learn": the tab already says Play.
+
+Found on the way: `todaysCard` seeded on `String.hashValue`, which Swift randomises per
+process, so "today's card" was a different card on every launch. It sums the day's
+scalars now and holds all day.
