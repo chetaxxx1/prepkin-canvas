@@ -3,12 +3,25 @@
 build looks for: the hero before/after at 1120x520 and the card at 520x260,
 both at 2x. Run from anywhere:  python3 design/site-shots/compose.py
 """
+import json
 from pathlib import Path
 from PIL import Image, ImageDraw
 
 HERE = Path(__file__).resolve().parent
-SITE = HERE.parent.parent / "site" / "img"
+ROOT = HERE.parent.parent
+SITE = ROOT / "site" / "img"
 SCALE = 2
+# The mascot still the site shows. Another session may replace it with a new
+# rig at a new size, so the crop below reads the fish's bounds off the file
+# instead of trusting numbers from an older one.
+SPROUT = ROOT / "ios/Resources/Assets.xcassets/sprout-mint-2.imageset/sprout-mint-2@3x.png"
+
+# Which frames the site shows. shoot.js writes one per image theme, light and
+# dark (theme-<id>.png, theme-<id>-dark.png, kept here as .webp), plus before / after / after-dark
+# for the plain skin. The label under the hero comes from here too, through
+# site/img/shots.json, so the words and the picture cannot drift apart.
+HERO_AFTER = ("theme-deepsea", "After · Prepkin, Deep Sea theme")
+CARD = ("theme-deepsea-dark", "Deep Sea theme, dark")
 
 # The site's hairline token, for the one-pixel rule round each frame.
 HAIRLINE = (232, 224, 210)
@@ -62,17 +75,43 @@ def card(after: Image.Image) -> Image.Image:
     return crop_top(after, W / H).resize((W, H), Image.LANCZOS)
 
 
+def sprout() -> None:
+    """The fish, trimmed to its own alpha bounds with a little air at the sides
+    and top. The still is drawn to bleed off the bottom, so no air there."""
+    im = Image.open(SPROUT).convert("RGBA")
+    left, top, right, bottom = im.split()[-1].getbbox()
+    air = 6 * SCALE
+    out = im.crop((max(0, left - air), max(0, top - air), min(im.width, right + air), bottom))
+    out.save(SITE / "sprout.png", optimize=True)
+    print(f"sprout.png: {out.size}, from {SPROUT.relative_to(ROOT)}")
+
+
+def ingest() -> None:
+    """shoot.js writes PNG (Playwright cannot write WebP). Keep the frames as
+    WebP instead: a 2560 x 1720 PNG of a wallpaper theme is 2 to 3 MB each."""
+    for png in sorted(HERE.glob("*.png")):
+        if png.name == "themes-sheet.png":
+            continue
+        Image.open(png).convert("RGB").save(png.with_suffix(".webp"), quality=92, method=6)
+        png.unlink()
+        print(f"{png.name} -> .webp")
+
+
 def main() -> None:
-    before = Image.open(HERE / "before.png").convert("RGB")
-    # The dark paper is the frame that reads at hero size; the light skin is
-    # deliberately quiet and looks like "nothing changed" at 550 px wide.
-    after = Image.open(HERE / "after-dark.png").convert("RGB")
+    ingest()
+    sprout()
+    before = Image.open(HERE / "before.webp").convert("RGB")
+    after = Image.open(HERE / f"{HERO_AFTER[0]}.webp").convert("RGB")
+    card_src = Image.open(HERE / f"{CARD[0]}.webp").convert("RGB")
     SITE.mkdir(parents=True, exist_ok=True)
-    hero(before, after).save(SITE / "canvas-before-after.png", optimize=True)
-    card(after).save(SITE / "canvas-card.png", optimize=True)
-    for name in ["canvas-before-after.png", "canvas-card.png"]:
+    # WebP: the wallpaper art makes a PNG of these over a megabyte.
+    hero(before, after).save(SITE / "canvas-before-after.webp", quality=84, method=6)
+    card(card_src).save(SITE / "canvas-card.webp", quality=84, method=6)
+    (SITE / "shots.json").write_text(json.dumps({"hero": HERO_AFTER[1], "card": CARD[1]}, indent=1) + "\n")
+    for name in ["canvas-before-after.webp", "canvas-card.webp"]:
         p = SITE / name
         print(f"{name}: {Image.open(p).size}, {p.stat().st_size // 1024} KB")
+    print(f"labels: {HERO_AFTER[1]} / {CARD[1]}")
 
 
 if __name__ == "__main__":

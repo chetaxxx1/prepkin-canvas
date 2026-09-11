@@ -11,6 +11,7 @@ Design: design/handoff-site/ (turn-2 artboards 2a, 2b, 2c, 2d).
 Run from anywhere:  python3 site/build.py
 """
 import html
+import json
 import re
 from pathlib import Path
 
@@ -29,8 +30,9 @@ CHANNELS = ["tiktok", "reels", "shorts", "reddit", "bio", "paper", "creator"]
 
 # The before/after Canvas shot. Dropped from the page until the file exists, so
 # the site never ships a placeholder. Shoot it, drop it in, rebuild.
-SHOT_WIDE = OUT / "img/canvas-before-after.png"
-SHOT_CARD = OUT / "img/canvas-card.png"
+SHOT_WIDE = OUT / "img/canvas-before-after.webp"
+SHOT_CARD = OUT / "img/canvas-card.webp"
+SHOT_LABELS = OUT / "img/shots.json"   # written by design/site-shots/compose.py
 
 FACES = (OUT / "fonts/faces.css").read_text(encoding="utf-8")
 
@@ -632,17 +634,20 @@ def write(rel: str, text: str) -> None:
 # --- pages -----------------------------------------------------------------
 
 def home() -> None:
+    labels = json.loads(SHOT_LABELS.read_text()) if SHOT_LABELS.exists() else {}
     wide = ""
     if SHOT_WIDE.exists():
+        after = html.escape(labels.get("hero", "After, with Prepkin"))
         wide = ('<figure class="shotwide"><figcaption><span>Before</span>'
-                '<span>After · Prepkin, dark paper</span></figcaption>'
-                '<img src="/img/canvas-before-after.png" '
-                'alt="The same Canvas dashboard: plain on the left, on Prepkin\'s dark paper on the right." '
+                f'<span>{after}</span></figcaption>'
+                '<img src="/img/canvas-before-after.webp" '
+                f'alt="The same Canvas dashboard: plain on the left, with Prepkin on the right ({after})." '
                 'width="1120" height="480"></figure>')
     card = ""
     if SHOT_CARD.exists():
-        card = ('<div class="frame shot"><img src="/img/canvas-card.png" '
-                'alt="A Canvas dashboard with the Prepkin skin on." '
+        what = html.escape(labels.get("card", "the Prepkin skin"))
+        card = ('<div class="frame shot"><img src="/img/canvas-card.webp" '
+                f'alt="A Canvas dashboard wearing Prepkin\'s {what}." '
                 'width="520" height="260"></div>')
 
     three = [
@@ -669,7 +674,7 @@ sends nothing.</p>
 <a class="btn btn-ghost" href="{APP_URL}">Get the iPhone app</a></div>
 <p class="works">Works in Chrome, Edge, Brave and Arc.</p>
 </div>
-<img class="sprout" src="/img/sprout.png" alt="" width="662" height="442">
+<img class="sprout" src="/img/sprout.png" alt="" width="535" height="334">
 </header>
 
 <main id="main"><div class="shell">
@@ -694,7 +699,7 @@ sends nothing.</p>
 <h3>A fish called Sprout.</h3>
 <p>Finish a Canvas task, earn 30 coins. Coins buy tank scenes, costumes and looks.
 Sprout does not eat, so there is nothing to keep alive.</p>
-<div class="frame tank"><img src="/img/sprout.png" alt="" width="662" height="442"></div>
+<div class="frame tank"><img src="/img/sprout.png" alt="" width="535" height="334"></div>
 </div>
 </div></section>
 
@@ -795,7 +800,7 @@ def notfound() -> None:
 <a class="btn btn-ghost" href="/privacy/">Privacy</a>
 <a class="btn btn-ghost" href="/terms/">Terms</a>
 <a class="btn btn-ghost" href="/support/">Support</a></div>
-<img class="sprout" src="/img/sprout.png" alt="" width="662" height="442">
+<img class="sprout" src="/img/sprout.png" alt="" width="535" height="334">
 </div>{FOOT}</div></main>"""
     write("404.html", page("Not found — Prepkin", "Page not found.", body))
 

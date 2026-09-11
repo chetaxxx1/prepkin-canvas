@@ -1,7 +1,8 @@
 // Shoots the two Canvas frames the website wants: the seeded student's real
 // dashboard on the sandbox, once as plain Canvas and once with the extension
 // on. Same page, same session, same scroll. compose.py turns them into the
-// hero image and the card image.
+// hero image and the card image, and turns the raw PNGs into WebP so the
+// repo does not carry 40 MB of screenshots.
 //
 //   ssh -N -L 3000:localhost:3000 canvas@<VM IP>     (in another terminal)
 //   node design/site-shots/shoot.js
@@ -58,10 +59,12 @@ const VIEW = { width: 1280, height: 860 };
   await page.waitForURL((u) => !u.pathname.startsWith('/login'), { waitUntil: 'domcontentloaded' });
 
   const settle = async () => {
-    await page.waitForSelector('.ic-DashboardCard', { timeout: 120_000 });
+    // Canvas paints skeleton cards first; wait for a real title, or the
+    // banners come out blank (Spring Day did, once).
+    await page.waitForSelector('.ic-DashboardCard__header-title', { timeout: 120_000 });
     // Cards, the side list and web fonts arrive after the DOM. Give them a beat.
     await page.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2500);
   };
 
   // Before: the extension is installed but has not been granted this Canvas,
@@ -93,6 +96,26 @@ const VIEW = { width: 1280, height: 860 };
   await settle();
   await page.screenshot({ path: path.join(OUT, 'after-dark.png') });
   console.log('after-dark.png');
+
+  // Every image theme, light and dark. Wearing one is a storage write; the
+  // banners take turns across the cards on their own.
+  const { ART_AVAILABLE } = require('../../extension/art/manifest');
+  for (const id of ART_AVAILABLE) {
+    for (const dark of [false, true]) {
+      await worker.evaluate(async ([look, isDark]) => {
+        await chrome.storage.local.set({
+          skin: { dark: isDark, cards: true, mascot: true },
+          wallet: { coins: 0, owned: ['classic', look], wearing: look },
+        });
+      }, [id, dark]);
+      await page.goto(`${SCHOOL_A}/`, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector(`html.pk-on.pk-theme-${id}${dark ? '.pk-dark' : ':not(.pk-dark)'}`, { timeout: 120_000 });
+      await settle();
+      const name = `theme-${id}${dark ? '-dark' : ''}.png`;
+      await page.screenshot({ path: path.join(OUT, name) });
+      console.log(name);
+    }
+  }
 
   await context.close();
   await server.stop();
