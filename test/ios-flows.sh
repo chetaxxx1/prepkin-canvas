@@ -58,16 +58,29 @@ flow_lesson() {
   # Today's card (a lesson, opens a preview with Start) or, after a half-read
   # lesson, the resume hero, which opens the deck directly. Both are fine. Found by
   # its label, since the puzzles grid sits above it now and its y moves with them.
-  xy=$(tree | python3 -c "
+  # The resume hero ('Resume …, card 2 of 7') or today's card ('…, 8 cards · 3 min').
+  # Buttons only: the section title 'Pick up where you left off' is a StaticText
+  # with the same words and a tap on it does nothing. Since the puzzles took the
+  # NYT hero-and-list shape (2026-09-11) the card sits below the fold, and a tap at
+  # an off-screen y lands on whatever row is last on screen — so scroll it up first.
+  find_card() { tree | python3 -c "
 import json,sys
 for n in json.load(sys.stdin):
     l = n.get('AXLabel') or ''
-    # The resume hero ('Resume …, card 2 of 7') or today's card ('…, 8 cards · 3 min').
-    # Buttons only: the section title 'Pick up where you left off' is a StaticText
-    # with the same words and a tap on it does nothing.
     if n.get('type') == 'Button' and (l.startswith('Resume ') or ' cards · ' in l):
-        f = n['frame']; print(int(f['x']+f['width']/2), int(f['y']+f['height']/2)); break")
+        f = n['frame']; print(int(f['x']+f['width']/2), int(f['y']+f['height']/2)); break"; }
+  xy=$(find_card)
   [ -n "$xy" ] || { echo "  FAIL no lesson card on screen"; FAIL=$((FAIL+1)); return; }
+  cy=${xy#* }
+  for _ in 1 2 3; do
+    [ "$cy" -le 720 ] && break
+    # Always from the same on-screen stretch: a start point computed from the
+    # card's own y landed on the tab bar and swiped nothing.
+    idb ui swipe 201 620 201 240 --duration 0.4 --udid "$U" >/dev/null 2>&1; sleep 1.2
+    xy=$(find_card); cy=${xy#* }
+    [ -n "$xy" ] || { echo "  FAIL lesson card lost while scrolling"; FAIL=$((FAIL+1)); return; }
+  done
+  [ "$cy" -le 760 ] || { echo "  FAIL lesson card did not scroll into view"; FAIL=$((FAIL+1)); return; }
   tap $xy 1.5
   if labels | grep -q "^Start$"; then
     echo "  ok   preview"; PASS=$((PASS+1)); shot lesson-preview

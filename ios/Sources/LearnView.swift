@@ -42,7 +42,8 @@ struct LearnView: View {
                     // the lessons follow in the order they always had (PLAY-TAB.md).
                     VStack(alignment: .leading, spacing: 12) {
                         puzzlesTitle
-                        puzzleGrid
+                        puzzleHero
+                        puzzleList
                     }
 
                     if let cont = state.continueLesson {
@@ -67,7 +68,7 @@ struct LearnView: View {
                     if let today = todaysCard {
                         VStack(alignment: .leading, spacing: 12) {
                             sectionTitle("Today's card", "Two minutes, then you're done")
-                            pickRow(today).padding(.horizontal, 20)
+                            lessonHero(today).padding(.horizontal, 20)
                         }
                     }
 
@@ -176,14 +177,16 @@ struct LearnView: View {
         }
     }
 
+    /// Imprint's section grammar: a big bold title and one plain sentence under it,
+    /// then the goods. 21/13.5 rather than 19/13, so a title outweighs a card title.
     private func sectionTitle(_ title: String, _ sub: String? = nil) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 3) {
             Text(title)
-                .font(Theme.font(19, .black))
+                .font(Theme.font(21, .black))
                 .foregroundStyle(Theme.ink)
             if let sub {
                 Text(sub)
-                    .font(Theme.font(13, .bold))
+                    .font(Theme.font(13.5, .bold))
                     .foregroundStyle(Theme.muted)
             }
         }
@@ -194,37 +197,38 @@ struct LearnView: View {
 
     /// The one big thing on the screen. Resumes straight into the deck — it already
     /// says which card you're on, so a preview sheet in the way would be a second tap.
+    /// Same grammar as today's card and the track rail (Imprint's, 2026-09-11): the
+    /// cover is the tile, the words sit under it on the page. It used to be the one
+    /// boxed card between two unboxed ones. The progress bar runs the full width
+    /// under the meta line, where a bar reads as "this far through".
     private func continueHero(_ lesson: Lesson, card: Int) -> some View {
         Button { reading = ReadingRequest(lesson: lesson, startAt: card) } label: {
-            VStack(spacing: 0) {
-                LessonCover(lesson: lesson, height: 148, corner: 20)
-                    .padding(6)
+            VStack(alignment: .leading, spacing: 0) {
+                LessonCover(lesson: lesson, height: 172, corner: 20)
 
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(alignment: .top, spacing: 12) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(lesson.title)
-                                .font(Theme.font(19, .black))
-                                .foregroundStyle(Theme.ink)
-                                .multilineTextAlignment(.leading)
-                            Text("Card \(card + 1) of \(lesson.cards.count) · \(Catalog.track(lesson.trackID).name)")
-                                .font(Theme.font(12.5, .bold))
-                                .foregroundStyle(Theme.muted)
-                        }
-                        Spacer(minLength: 4)
-                        Text("Resume")
-                            .font(Theme.font(14.5, .heavy))
-                            .foregroundStyle(Theme.onDarkWarm)
-                            .padding(.horizontal, 16).padding(.vertical, 10)
-                            .background(Capsule().fill(Theme.coral))
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(lesson.title)
+                            .font(Theme.font(18, .black))
+                            .foregroundStyle(Theme.ink)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("Card \(card + 1) of \(lesson.cards.count) · \(Catalog.track(lesson.trackID).name)")
+                            .font(Theme.font(13, .bold))
+                            .foregroundStyle(Theme.muted)
                     }
-                    ProgressTrack(fraction: Double(card) / Double(max(lesson.cards.count - 1, 1)))
+                    Spacer(minLength: 4)
+                    Text("Resume")
+                        .font(Theme.font(14.5, .heavy))
+                        .foregroundStyle(Theme.onDarkWarm)
+                        .padding(.horizontal, 16).padding(.vertical, 10)
+                        .background(Capsule().fill(Theme.coral))
                 }
-                .padding(.horizontal, 14).padding(.top, 12).padding(.bottom, 15)
+                .padding(.top, 12).padding(.horizontal, 4)
+
+                ProgressTrack(fraction: Double(card) / Double(max(lesson.cards.count - 1, 1)))
+                    .padding(.top, 10).padding(.horizontal, 4)
             }
-            .background(RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .fill(Theme.card)
-                .shadow(color: Theme.hex(0x2E2622).opacity(0.06), radius: 14, y: 4))
             .padding(.horizontal, 20)
         }
         .buttonStyle(PressStyle())
@@ -275,33 +279,38 @@ struct LearnView: View {
         .buttonStyle(PressStyle())
     }
 
-    private func pickRow(_ lesson: Lesson) -> some View {
+    /// Today's lesson the way Imprint shows a title: the cover is the whole tile,
+    /// and the name, the size and the coin sit under it in plain type on the page —
+    /// not in a second box, not over the art. It was a 60pt thumbnail in a row.
+    private func lessonHero(_ lesson: Lesson) -> some View {
         Button { previewing = lesson } label: {
-            HStack(spacing: 13) {
-                LessonThumb(lesson: lesson, size: 60)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(lesson.title)
-                        .font(Theme.font(16.5, .heavy))
-                        .foregroundStyle(Theme.ink)
-                        .multilineTextAlignment(.leading)
+            VStack(alignment: .leading, spacing: 0) {
+                LessonCover(lesson: lesson, height: 172, corner: 20)
+                Text(lesson.title)
+                    .font(Theme.font(18, .black))
+                    .foregroundStyle(Theme.ink)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 12).padding(.horizontal, 4)
+                HStack(alignment: .firstTextBaseline) {
                     Text("\(lesson.cards.count) cards · \(lesson.minutes) min")
-                        .font(Theme.font(12.5, .bold))
+                        .font(Theme.font(13, .bold))
                         .foregroundStyle(Theme.muted)
+                    Spacer()
+                    HStack(spacing: 5) {
+                        CoinDisc(size: 13)
+                        Text("+\(lesson.reward)")
+                            .font(Theme.font(12.5, .heavy))
+                            .foregroundStyle(Theme.coinDark)
+                    }
+                    .padding(.horizontal, 9).padding(.vertical, 5)
+                    .background(Capsule().fill(Theme.coinSoft))
                 }
-                Spacer(minLength: 4)
-                HStack(spacing: 5) {
-                    CoinDisc(size: 14)
-                    Text("+\(lesson.reward)")
-                        .font(Theme.font(13, .heavy))
-                        .foregroundStyle(Theme.coinDark)
-                }
-                .padding(.horizontal, 10).padding(.vertical, 7)
-                .background(Capsule().fill(Theme.coinSoft))
+                .padding(.top, 5).padding(.horizontal, 4)
             }
-            .padding(13)
-            .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Theme.card))
         }
         .buttonStyle(PressStyle())
+        .accessibilityLabel("\(lesson.title), \(lesson.cards.count) cards · \(lesson.minutes) min, +\(lesson.reward)")
     }
 
     // MARK: - Tracks
@@ -321,43 +330,54 @@ struct LearnView: View {
         .scrollClipDisabled()
     }
 
+    /// Imprint's rail: a square of art, the name and the count in plain type under
+    /// it, nothing boxed. The square is the cover of the next lesson you would read
+    /// in that track — real content that changes as you go — instead of the track's
+    /// icon on a swatch inside a white card, which was the weakest thing on the page.
     private func trackCard(_ track: Track) -> some View {
         let run = Catalog.lessons(in: track.id)
         let done = run.filter { state.completedLessons.contains($0.id) }.count
+        let next = run.first { !state.completedLessons.contains($0.id) } ?? run.first
         return VStack(alignment: .leading, spacing: 0) {
-            TrackCover(trackID: track.id, height: 92)
+            Group {
+                if let next {
+                    LessonCover(lesson: next, height: 148, corner: 18)
+                } else {
+                    TrackCover(trackID: track.id, height: 148)
+                }
+            }
+            .frame(width: 148, height: 148)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
             Text(track.name)
-                .font(Theme.font(15.5, .heavy))
+                .font(Theme.font(15, .black))
                 .foregroundStyle(Theme.ink)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 11)
+                .lineLimit(1)
+                .padding(.top, 10).padding(.horizontal, 2)
 
-            Spacer(minLength: 6)
-
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 ProgressRing(fraction: Double(done) / Double(max(run.count, 1)),
-                             size: 22, tint: TrackTint.accent(track.id))
+                             size: 14, tint: TrackTint.accent(track.id))
                 Text("\(done) of \(run.count)")
-                    .font(Theme.font(12.5, .heavy))
+                    .font(Theme.font(12.5, .bold))
                     .foregroundStyle(Theme.muted)
             }
+            .padding(.top, 3).padding(.horizontal, 2)
         }
-        .padding(10)
-        .frame(width: 168, height: 188, alignment: .topLeading)
-        .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Theme.card))
+        .frame(width: 148, alignment: .topLeading)
     }
 
     // MARK: - Play
 
-    /// The Play rail: Daily Word and Number Line moved here from the Games tab on
-    /// 2026-09-06 so the tab bar could drop to five (design/hicks-law-plan.md), and
-    /// the four games of 2026-09-08 joined them (design/GAMES-PLAN.md). Six tiles
-    /// is past the five-equal-choices rule, so it is a catalog: a rail that sorts
-    /// today's unplayed games first and never cuts one. No hero: the one big thing
-    /// on this screen stays the lesson.
+    /// The six puzzles, in the shape of the NYT Games hub (Mobbin, 2026-09-11): one
+    /// puzzle featured big with its board, its name, a tagline and a Play button,
+    /// and the rest as calm list rows — a badge on a pale panel, a name, a tagline.
+    /// Before this they were six saturated blocks in a grid, which read as a kids'
+    /// app; the mascot research already had the palette reading young.
+    ///
+    /// Daily Word and Number Line moved here from the Games tab on 2026-09-06 so
+    /// the bar could drop to five (design/hicks-law-plan.md); the four games of
+    /// 2026-09-08 joined them (design/GAMES-PLAN.md).
     /// "Today's puzzles", not "Play": the tab already says Play, four points below,
     /// and the Game Boy that used to sit here is now the tab's own icon.
     private var puzzlesTitle: some View {
@@ -402,31 +422,103 @@ struct LearnView: View {
             ? ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"][n - 1] : "\(n)"
     }
 
-    /// All six at once. A rail showed two and a sliver, and a puzzle you cannot see
-    /// is a puzzle you do not play; NYT and Apple News both lay the day's set out in
-    /// full. Six same-shaped tiles is well inside what a glance can hold. Done ones
-    /// still sort to the end, so what is left to play is always top-left.
-    private var puzzleGrid: some View {
-        let tiles = playTiles
+    /// The one to play next: the first still unplayed, in the fixed order. Once all
+    /// six are done there is no hero — the list carries the day's results.
+    private var featured: PlayTile? { playTiles.first { !$0.played } }
+
+    @ViewBuilder
+    private var puzzleHero: some View {
+        if let tile = featured {
+            NavigationLink(value: tile.route) {
+                VStack(spacing: 0) {
+                    VStack(spacing: 8) {
+                        MiniBoard(glyph: tile.glyph, ink: tile.ink, size: 84)
+                        Text(tile.name)
+                            .font(Theme.font(21, .black))
+                            .foregroundStyle(Theme.ink)
+                            .padding(.top, 6)
+                        Text("\(tile.tagline) · \(tile.line)")
+                            .font(Theme.font(13, .bold))
+                            .foregroundStyle(Theme.muted)
+                            .lineLimit(1).minimumScaleFactor(0.8)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 22).padding(.bottom, 18)
+                    .background(tile.fill.opacity(0.32))
+
+                    Text("Play")
+                        .font(Theme.font(15, .black))
+                        .foregroundStyle(.white)
+                        .frame(width: 150)
+                        .padding(.vertical, 13)
+                        .background(Capsule().fill(Theme.coral)
+                            .shadow(color: Theme.coral.opacity(0.28), radius: 12, y: 5))
+                        .padding(.vertical, 18)
+                }
+                .background(RoundedRectangle(cornerRadius: 24, style: .continuous).fill(Theme.card))
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .shadow(color: .black.opacity(0.05), radius: 12, y: 4)
+            }
+            .buttonStyle(PressStyle(scale: 0.98))
+            .padding(.horizontal, 20)
+            .accessibilityLabel("\(tile.name), \(tile.tagline), \(tile.line). Play.")
+        }
+    }
+
+    /// Everything but the featured one, unplayed first. Every row is on screen at
+    /// once — a rail used to show two and a sliver, and a puzzle you cannot see is a
+    /// puzzle you do not play.
+    private var puzzleList: some View {
+        let tiles = playTiles.filter { $0.id != featured?.id }
         let ordered = tiles.filter { !$0.played } + tiles.filter { $0.played }
-        let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
-        return LazyVGrid(columns: columns, spacing: 12) {
+        return VStack(spacing: 8) {
             ForEach(ordered) { tile in
                 NavigationLink(value: tile.route) {
-                    playTile(tile)
+                    puzzleRow(tile)
                 }
-                .buttonStyle(PressStyle(scale: 0.97))
-                .accessibilityLabel("\(tile.name), \(tile.line)")
+                .buttonStyle(PressStyle(scale: 0.98))
+                .accessibilityLabel("\(tile.name), \(tile.played ? tile.line : tile.tagline)")
             }
         }
         .padding(.horizontal, 20)
         .animation(.spring(response: 0.34, dampingFraction: 0.74), value: ordered.map(\.id))
     }
 
+    /// NYT's list card: the badge carries the game's colour, the panel is a pale
+    /// wash of it, and the words are ink on that. Played rows swap the tagline for
+    /// the result, which is the line worth reading twice.
+    private func puzzleRow(_ tile: PlayTile) -> some View {
+        HStack(spacing: 13) {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(tile.fill)
+                .frame(width: 46, height: 46)
+                .overlay { MiniBoard(glyph: tile.glyph, ink: tile.ink, size: 30) }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(tile.name)
+                    .font(Theme.font(16.5, .black))
+                    .foregroundStyle(Theme.ink)
+                Text(tile.played ? tile.line : tile.tagline)
+                    .font(Theme.font(12.5, .bold))
+                    .foregroundStyle(Theme.muted)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 6)
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(Theme.dim)
+        }
+        .padding(.horizontal, 12).padding(.vertical, 11)
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(tile.fill.opacity(0.22)))
+    }
+
     /// One tile per game. `played` is whether today's is done; it sorts to the end.
     private struct PlayTile: Identifiable {
         let route: LearnRoute
         let name: String
+        /// What the puzzle is, in four or five words, the way NYT captions each of
+        /// its games ("Crack Clues", "Solve in Seconds"). Dry, no exclamation mark.
+        let tagline: String
         let line: String
         let played: Bool
         let fill: Color
@@ -450,60 +542,30 @@ struct LearnView: View {
         let sortDone = state.game.sortPlay.lastDay == today
             || SortGame.isOver(state.playProgress(\.sortPlay, for: today) ?? [])
         return [
-            PlayTile(route: .dailyWord, name: "Daily Word", line: dailyWordLine,
+            PlayTile(route: .dailyWord, name: "Daily Word", tagline: "Five letters, six tries", line: dailyWordLine,
                      played: state.wordleClaimedToday,
                      fill: Theme.hex(0xFFC94D), ink: Theme.hex(0x3A2A05), glyph: .letter("A", Theme.hex(0x7A5C1E))),
-            PlayTile(route: .trace, name: "Trace",
+            PlayTile(route: .trace, name: "Trace", tagline: "One line, every square",
                      line: traceDone ? "Solved" : "Board \(number)",
                      played: traceDone,
                      fill: Theme.hex(0x9B7BEA), ink: Theme.hex(0x2A1A57), glyph: .trace),
-            PlayTile(route: .pearls, name: "Pearls",
+            PlayTile(route: .pearls, name: "Pearls", tagline: "One pearl per reef",
                      line: pearlsDone ? "Solved" : "\(PlayDeal.isSunday() ? "8×8" : "7×7") · reef \(number)",
                      played: pearlsDone,
                      fill: Theme.hex(0x4CA8E8), ink: Theme.hex(0x0B3652), glyph: .pearl),
-            PlayTile(route: .balance, name: "Balance",
+            PlayTile(route: .balance, name: "Balance", tagline: "Suns and moons, three each",
                      line: balanceDone ? "Solved" : "Grid \(number)",
                      played: balanceDone,
                      fill: Theme.hex(0xA5CE6B), ink: Theme.hex(0x2F4712), glyph: .dots),
-            PlayTile(route: .sort, name: "Sort",
+            PlayTile(route: .sort, name: "Sort", tagline: "Four groups of four",
                      line: sortDone ? (state.game.sortPlay.lastDay == today ? "Solved" : "See the groups") : "Board \(number)",
                      played: sortDone,
                      fill: Theme.hex(0xF5A15C), ink: Theme.hex(0x5A2A0E), glyph: .sort),
-            PlayTile(route: .weave, name: "Weave",
+            PlayTile(route: .weave, name: "Weave", tagline: "Find the thread",
                      line: weaveDone ? "Solved" : "Board \(number)",
                      played: weaveDone,
                      fill: Theme.hex(0x5CC8C0), ink: Theme.hex(0x0E4744), glyph: .weave),
         ]
-    }
-
-    /// One puzzle, half the screen wide.
-    private func playTile(_ tile: PlayTile) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            MiniBoard(glyph: tile.glyph, ink: tile.ink, size: 54)
-            Spacer(minLength: 12)
-            Text(tile.name)
-                .font(Theme.font(17, .black))
-                .tracking(-0.3)
-                .foregroundStyle(tile.ink)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-            Text(tile.line)
-                .font(Theme.font(10.5, .black))
-                .foregroundStyle(tile.ink)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
-                .padding(.top, 5)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, minHeight: 134, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous).fill(tile.fill)
-                .overlay(alignment: .topTrailing) {
-                    Circle().fill(.white.opacity(0.18)).frame(width: 70, height: 70)
-                        .offset(x: 16, y: -16)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        )
     }
 
     private var dailyWordLine: String {
