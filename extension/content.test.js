@@ -159,6 +159,21 @@ test('searchRank: every word must match, what starts with the query comes first,
   assert.equal(searchRank(items, '').length, 8);
 });
 
+test('searchGroups: before typing, classes, then what is due soonest and not handed in, then Canvas pages', () => {
+  const { searchItems, searchGroups } = require('./content.js');
+  const d = { courses: [{ id: 1, name: 'Physics' }, { id: 2, name: 'English' }], tasks: [
+    { id: 'a', title: 'Late one', courseId: 1, courseName: 'Physics', url: 'https://school.edu/courses/1/assignments/1', dueAt: '2026-09-01T00:00:00Z' },
+    { id: 'b', title: 'Handed in', courseId: 1, courseName: 'Physics', url: 'https://school.edu/courses/1/assignments/2', dueAt: '2026-09-02T00:00:00Z', submittedAt: '2026-09-01T00:00:00Z' },
+    { id: 'c', title: 'Soon', courseId: 2, courseName: 'English', url: 'https://school.edu/courses/2/assignments/3', dueAt: '2026-09-03T00:00:00Z' },
+    { id: 'd', title: 'Undated', courseId: 2, courseName: 'English', url: 'https://school.edu/courses/2/assignments/4', dueAt: null },
+  ] };
+  const groups = searchGroups(searchItems(d));
+  assert.deepEqual(groups.map((g) => g[0]), ['Classes', 'Due soon', 'Canvas']);
+  assert.deepEqual(groups[0][1].map((i) => i.label), ['Physics', 'English']);
+  assert.deepEqual(groups[1][1].map((i) => i.label), ['Late one', 'Soon'], 'handed-in and undated work stay out');
+  assert.equal(groups[2][1].length, 4, 'four Canvas pages, not the settings one');
+});
+
 test('the league on the laptop spells tiers and strangers the way the phone does', () => {
   const { TIERS, tierOf } = require('./content.js');
   const { podName, POD_NAMES } = require('./podnames.js');

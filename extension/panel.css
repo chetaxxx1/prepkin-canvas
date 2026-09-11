@@ -468,6 +468,12 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-results li a b { font-size: 14px; font-weight: 700; }
 .pk-results li a small { font-size: 12px; color: var(--pk-text-2); }
 .pk-results li.on a, .pk-results li a:hover { background: var(--pk-inset); }
+/* The groups before a word is typed, and the key hints under the list. */
+.pk-results li.pk-group { font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-text-2); padding: 10px 10px 4px; }
+.pk-results li.pk-group:first-child { padding-top: 2px; }
+.pk-keys { display: flex; gap: 14px; padding: 10px 10px 0; font-size: 11px; font-weight: 700; color: var(--pk-text-3); }
+.pk-keys span { display: inline-flex; align-items: center; gap: 4px; }
+.pk-keys kbd { font: inherit; font-size: 10px; font-weight: 800; padding: 0 4px; border-radius: 4px; border: 1px solid var(--pk-line); color: var(--pk-text-2); }
 .pk-results li.empty { padding: 12px 10px; color: var(--pk-text-2); font-size: 13px; }
 
 /* The league: the phone's ladder, the same cloth and the same words. */

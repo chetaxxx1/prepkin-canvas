@@ -138,21 +138,33 @@ function composeData(payload, own = [], nick = {}) {
 const COURSE_TABS = [['Assignments', 'assignments'], ['Modules', 'modules'], ['Grades', 'grades'], ['Announcements', 'announcements'], ['Discussions', 'discussion_topics'], ['Files', 'files'], ['People', 'users'], ['Syllabus', 'assignments/syllabus']];
 function searchItems(d = data) {
   const items = [
-    { label: 'Dashboard', sub: 'Canvas', url: '/' }, { label: 'Calendar', sub: 'Canvas', url: '/calendar' },
-    { label: 'Inbox', sub: 'Canvas', url: '/conversations' }, { label: 'All courses', sub: 'Canvas', url: '/courses' },
-    { label: 'Account settings', sub: 'Canvas', url: '/profile/settings' },
+    { kind: 'page', label: 'Dashboard', sub: 'Canvas', url: '/' }, { kind: 'page', label: 'Calendar', sub: 'Canvas', url: '/calendar' },
+    { kind: 'page', label: 'Inbox', sub: 'Canvas', url: '/conversations' }, { kind: 'page', label: 'All courses', sub: 'Canvas', url: '/courses' },
+    { kind: 'page', label: 'Account settings', sub: 'Canvas', url: '/profile/settings' },
   ];
   for (const c of d.courses ?? []) {
     if (!c.name) continue;
-    items.push({ label: c.name, sub: c.fullName && c.fullName !== c.name ? c.fullName : 'Course', url: `/courses/${c.id}` });
-    for (const [tab, path] of COURSE_TABS) items.push({ label: `${c.name} ${tab}`, sub: tab, url: `/courses/${c.id}/${path}` });
+    items.push({ kind: 'course', label: c.name, sub: c.fullName && c.fullName !== c.name ? c.fullName : 'Course', url: `/courses/${c.id}` });
+    for (const [tab, path] of COURSE_TABS) items.push({ kind: 'tab', label: `${c.name} ${tab}`, sub: tab, url: `/courses/${c.id}/${path}` });
   }
   for (const t of d.tasks ?? []) {
     if (!t.title) continue;
     const url = safeURL(t.url) ?? (t.courseId && t.courseId !== 'own' ? `/courses/${t.courseId}/assignments` : null);
-    if (url) items.push({ label: t.title, sub: `${t.courseName}${t.dueAt ? ' · ' + dueLabel(t, new Date()) : ''}`, url });
+    if (url) items.push({ kind: 'task', label: t.title, sub: `${t.courseName}${t.dueAt ? ' · ' + dueLabel(t, new Date()) : ''}`, url, dueAt: t.dueAt ?? null, done: !!t.submittedAt });
   }
   return items;
+}
+/// Before a word is typed, the palette is grouped the way Linear's and Causal's
+/// are: your classes, what is due soonest, then Canvas's own pages. Typing
+/// turns it into one ranked list.
+function searchGroups(items) {
+  const soon = items.filter((i) => i.kind === 'task' && !i.done && i.dueAt)
+    .sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt)).slice(0, 3);
+  return [
+    ['Classes', items.filter((i) => i.kind === 'course').slice(0, 6)],
+    ['Due soon', soon],
+    ['Canvas', items.filter((i) => i.kind === 'page').slice(0, 4)],
+  ].filter(([, list]) => list.length);
 }
 function searchRank(items, query, limit = 8) {
   const q = String(query ?? '').trim().toLowerCase();
@@ -866,12 +878,20 @@ function searchView() {
       <h2>Search</h2><kbd class="pk-kbd">⌘K</kbd>
     </div>
     <input id="pk-q" class="pk-search" type="text" placeholder="Classes, pages, assignments" value="${escapeHTML(ui.query ?? '')}" autocomplete="off" aria-label="Search">
-    <ul class="pk-results">${resultsHTML(ui.query)}</ul>`;
+    <ul class="pk-results">${resultsHTML(ui.query)}</ul>
+    <div class="pk-keys"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>`;
 }
 function resultsHTML(query) {
-  const hits = searchRank(searchItems(), query);
+  const row = (h, on) => `<li${on ? ' class="on"' : ''}><a href="${escapeHTML(h.url)}" data-result><b>${escapeHTML(h.label)}</b><small>${escapeHTML(h.sub)}</small></a></li>`;
+  const items = searchItems();
+  if (!String(query ?? '').trim()) {
+    let first = true;
+    return searchGroups(items).map(([name, list]) =>
+      `<li class="pk-group">${name}</li>` + list.map((h) => { const html = row(h, first); first = false; return html; }).join('')).join('');
+  }
+  const hits = searchRank(items, query);
   if (!hits.length) return '<li class="empty">Nothing matches.</li>';
-  return hits.map((h, i) => `<li${i === 0 ? ' class="on"' : ''}><a href="${escapeHTML(h.url)}" data-result><b>${escapeHTML(h.label)}</b><small>${escapeHTML(h.sub)}</small></a></li>`).join('');
+  return hits.map((h, i) => row(h, i === 0)).join('');
 }
 
 function weekView(b, now) {
@@ -2132,7 +2152,7 @@ function wire(root) {
   if (q) {
     q.addEventListener('input', () => { ui.query = q.value; root.querySelector('.pk-results').innerHTML = resultsHTML(ui.query); });
     q.addEventListener('keydown', (e) => {
-      const items = [...root.querySelectorAll('.pk-results li:not(.empty)')];
+      const items = [...root.querySelectorAll('.pk-results li:not(.empty):not(.pk-group)')];
       const at = items.findIndex((li) => li.classList.contains('on'));
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         e.preventDefault();
@@ -2421,9 +2441,9 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
-                     panelView, looksView, weekView, whatIfView, courseView, addTaskView, focusCard, gradesCard, leagueCard,
-                     _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _ui: ui, _setLevels: (l) => { levels = l; } };
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
+                     panelView, looksView, weekView, whatIfView, courseView, addTaskView, searchView, focusCard, gradesCard, leagueCard,
+                     _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
   chrome.storage.onChanged.addListener((changes) => {
