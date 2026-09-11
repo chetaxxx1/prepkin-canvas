@@ -156,6 +156,84 @@ const VIEW = { width: 1280, height: 860 };
     }
   }
 
+  // PROBE=<path>: print the tag, id, classes and computed colour of every text
+  // node on a page, for finding stable hooks before writing a skin rule.
+  if (process.env.PROBE) {
+    await worker.evaluate(async () => { await chrome.storage.local.set({ skin: { dark: true, cards: true, mascot: true } }); });
+    await page.goto(`${SCHOOL_A}${process.env.PROBE}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForTimeout(1800);
+    const rows = await page.evaluate(() => {
+      const out = [];
+      const walker = document.createTreeWalker(document.getElementById('content') ?? document.body, NodeFilter.SHOW_TEXT);
+      let n;
+      while ((n = walker.nextNode())) {
+        const t = n.textContent.trim(); if (!t || t.length < 3) continue;
+        const el = n.parentElement; const cs = getComputedStyle(el);
+        const chain = []; let e = el;
+        for (let i = 0; i < 4 && e && e.id !== 'content'; i++, e = e.parentElement) chain.push(`${e.tagName.toLowerCase()}${e.id ? '#' + e.id : ''}${e.className && typeof e.className === 'string' ? '.' + e.className.trim().split(/\s+/).slice(0, 3).join('.') : ''}${[...e.attributes].filter((a) => a.name.startsWith('data-testid')).map((a) => `[${a.name}=${a.value}]`).join('')}`);
+        out.push(`${cs.color} | ${t.slice(0, 40)} | ${chain.join(' < ')}`);
+      }
+      return out;
+    });
+    console.log(rows.join('\n'));
+    // Why a light word can still read dark: opacity or a light ancestor.
+    const why = await page.evaluate(() => {
+      const out = [];
+      for (const needle of ['Ordered by Recent Activity', 'There are no discussions', 'Closed for Comments']) {
+        const el = [...document.querySelectorAll('#content *')].find((e) => e.childNodes.length && [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.includes(needle)));
+        if (!el) continue;
+        let e = el; const chain = [];
+        for (let i = 0; i < 8 && e; i++, e = e.parentElement) {
+          const cs = getComputedStyle(e);
+          chain.push(`${e.tagName.toLowerCase()}${e.className && typeof e.className === 'string' ? '.' + e.className.trim().split(/\s+/)[0] : ''} op=${cs.opacity} bg=${cs.backgroundColor} color=${cs.color} filter=${cs.filter}`);
+        }
+        out.push(needle + '\n  ' + chain.join('\n  '));
+      }
+      return out.join('\n');
+    });
+    console.log(why);
+    await context.close(); await server.stop(); return;
+  }
+
+  // PAGES=1: every common Canvas page a student meets, classic paper, light
+  // and dark, for a quality sweep. Course ids come from the dashboard cards.
+  if (process.env.PAGES) {
+    // The student's own course, not the one Alex assists in.
+    const course = await page.evaluate(() => {
+      const cards = [...document.querySelectorAll('.ic-DashboardCard')];
+      const pick = cards.find((c) => /Physics/.test(c.textContent)) ?? cards[0];
+      return pick?.querySelector('.ic-DashboardCard__link')?.getAttribute('href') ?? '/courses/2';
+    });
+    const pages = [['home', '/'], ['course', course], ['assignments', `${course}/assignments`], ['modules', `${course}/modules`], ['grades', `${course}/grades`], ['calendar', '/calendar'], ['inbox', '/conversations'], ['discussions', `${course}/discussion_topics`]];
+    for (const dark of [false, true]) {
+      await worker.evaluate(async ([isDark]) => {
+        await chrome.storage.local.set({ skin: { dark: isDark, cards: true, mascot: true }, wallet: { coins: 0, owned: ['classic'], wearing: 'classic' } });
+      }, [dark]);
+      for (const [name, url] of pages) {
+        await page.goto(`${SCHOOL_A}${url}`, { waitUntil: 'domcontentloaded' });
+        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForTimeout(1800);
+        await page.screenshot({ path: path.join(OUT, `page-${name}${dark ? '-dark' : ''}.png`) });
+        console.log(`page-${name}${dark ? '-dark' : ''}.png`);
+      }
+    }
+    // One assignment page, from the first link on the assignments index.
+    await page.goto(`${SCHOOL_A}${course}/assignments`, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle').catch(() => {});
+    const one = await page.evaluate(() => [...document.querySelectorAll('a[href*="/assignments/"]')].map((a) => a.getAttribute('href')).find((h) => /\/assignments\/\d+$/.test(h)) ?? null);
+    if (one) {
+      for (const dark of [false, true]) {
+        await worker.evaluate(async ([isDark]) => { await chrome.storage.local.set({ skin: { dark: isDark, cards: true, mascot: true } }); }, [dark]);
+        await page.goto(`${SCHOOL_A}${one}`, { waitUntil: 'domcontentloaded' });
+        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForTimeout(1800);
+        await page.screenshot({ path: path.join(OUT, `page-assignment${dark ? '-dark' : ''}.png`) });
+        console.log(`page-assignment${dark ? '-dark' : ''}.png`);
+      }
+    }
+  }
+
   // PLACES=rail,tank,perch,corner: where Sprout sits, one shot each, on Deep Sea.
   for (const mode of (process.env.PLACES || '').split(',').filter(Boolean)) {
     await worker.evaluate(async ([m]) => {

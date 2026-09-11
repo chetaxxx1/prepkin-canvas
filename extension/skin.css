@@ -547,6 +547,12 @@ html.pk-on:not(.pk-back-paper) #syllabus,
 html.pk-on:not(.pk-back-paper) .syllabus,
 html.pk-on:not(.pk-back-paper) .discussion-topic,
 html.pk-on:not(.pk-back-paper) .entry-content,
+/* The discussions index: each section (pinned, open, closed) and its empty
+ * state sit on a white block of their own, which dark text rules left as
+ * light words on white. */
+html.pk-on:not(.pk-back-paper) [class*="-discussions-v2__wrapper"],
+html.pk-on:not(.pk-back-paper) .discussions-v2__container-image,
+html.pk-on:not(.pk-back-paper) .ic-discussion-row-container,
 html.pk-on:not(.pk-back-paper) [class*="checkboxFacade__facade"],
 html.pk-on:not(.pk-back-paper) [class*="radioInput__facade"],
 html.pk-on:not(.pk-back-paper) [class*="-view--inlineBlock-avatar"],
