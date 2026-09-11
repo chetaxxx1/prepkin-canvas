@@ -562,45 +562,63 @@
     "id": "phil-2",
     "title": "The Socratic method",
     "track": "philosophy",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Socrates never told anyone the answer. He asked until they noticed they didn't have one. It turns out that is the fastest way to find out what you actually know.",
     "takeaway": "You learned that asking why beats reading again.",
-    "figure": "why",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Socrates taught by asking questions, not giving answers. Start with something you believe."
+        "kind": "image",
+        "image": "lesson-phil2-01",
+        "eyebrow": "The idea",
+        "body": "Socrates taught by asking questions, not giving answers. He wrote nothing down. His method was to keep asking people to explain what they had just said, until it held up or it didn't."
       },
       {
-        "kind": "example",
-        "body": "Socrates was a teacher in Athens about 2,400 years ago. He wrote nothing down. His method was to keep asking people to explain what they'd just said. Either it held up, or it didn't."
+        "kind": "image",
+        "image": "lesson-phil2-02",
+        "eyebrow": "Ask why",
+        "body": "Start with something you believe. Ask why once and you get a reason. That part is usually easy. Ask why again, and again, and most beliefs run out of floor."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Ask why once and you get a reason. That part is usually easy."
+        "kind": "image",
+        "image": "lesson-phil2-03",
+        "eyebrow": "Try it small",
+        "body": "'I should use flashcards.' Why? 'Because they help me remember.' Why do they? 'Because I test myself.' Why does testing work? Three questions in, you either know or you have found the hole."
       },
       {
-        "kind": "example",
-        "body": "Try it on something small. 'I should use flashcards.' Why? 'Because they help me remember.' Why do they? 'Because I test myself.' Why does testing work? Three questions in, you either know or you've found the hole."
+        "kind": "image",
+        "image": "lesson-phil2-04",
+        "eyebrow": "The hole",
+        "body": "Running out of floor is not a failure. That is the method working. The spot where you cannot answer is the exact spot worth studying."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Ask why twice and most beliefs run out of floor. That is not a failure. That's the method working."
+        "kind": "image",
+        "image": "lesson-phil2-05",
+        "eyebrow": "It feels bad",
+        "body": "It feels bad, and it is supposed to. Finding out you cannot explain something you were sure about is uncomfortable. That discomfort is the only reliable sign you found something worth learning."
       },
       {
-        "kind": "example",
-        "body": "It feels bad, and it's supposed to. Finding out you can't explain something you were sure about is uncomfortable. That discomfort is the only reliable sign you've found something worth studying."
+        "kind": "image",
+        "image": "lesson-phil2-06",
+        "eyebrow": "Your notes",
+        "body": "Cover the page and ask why the answer is the answer. If you can only say what the answer is, you memorised a shape and not an idea."
       },
       {
-        "kind": "example",
-        "body": "Use it on your own notes. Cover the page and ask why the answer is the answer. If you can only say what the answer is, you've memorised a shape and not an idea."
+        "kind": "image",
+        "image": "lesson-phil2-07",
+        "eyebrow": "One warning",
+        "body": "This is a tool for checking your own thinking, not for winning arguments. Asking someone why five times in a row does not make you Socrates. It makes you annoying."
       },
       {
-        "kind": "example",
-        "body": "One warning. This is a tool for checking your own thinking, not for winning arguments. Asking someone why five times in a row doesn't make you Socrates. It makes you annoying."
+        "kind": "image",
+        "image": "lesson-phil2-08",
+        "eyebrow": "Where it went",
+        "body": "Athens put Socrates on trial in 399 BC for corrupting the young with questions. He kept asking them at the trial. His students wrote the questions down, and we are still asking them."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil2-09",
+        "eyebrow": "What a test asks",
+        "body": "A test never asks you to recognise the answer. It asks you to produce it, with the reason attached. Asking why is practising exactly that."
       },
       {
         "kind": "key",
@@ -610,9 +628,9 @@
         "kind": "check",
         "question": "Why does asking 'why' beat rereading your notes?",
         "choices": [
-          "It takes less time",
-          "It forces you to produce the reason instead of recognise it",
-          "Notes are usually wrong"
+          "It takes far less time than reading them all again.",
+          "It makes you produce the reason instead of see it.",
+          "Notes are usually wrong somewhere in the first place."
         ],
         "answer": 1,
         "why": "Recognising something feels like knowing it. Producing the reason from memory is the thing a test actually asks for."
@@ -702,29 +720,63 @@
     "id": "phil-4",
     "title": "The veil of ignorance",
     "track": "philosophy",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "John Rawls' test for whether a rule is fair: design it before you know who you'll be under it.",
     "takeaway": "You learned a test for whether a rule is actually fair.",
-    "figure": "veil",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "John Rawls asked: what rules would you write if you didn't know who you'd be under them?"
+        "kind": "image",
+        "image": "lesson-phil4-01",
+        "eyebrow": "The idea",
+        "body": "John Rawls asked: what rules would you write for a society if you did not know who you would be in it? Rich or poor, healthy or sick, born here or far away."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "You keep everything you know about how the world works. You lose only who you are in it."
+        "kind": "image",
+        "image": "lesson-phil4-02",
+        "eyebrow": "What the veil hides",
+        "body": "You keep everything you know about how the world works. You lose only who you are in it. Your money, your health, your talents, your family. All behind the veil."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Then you get handed a life at random and have to live under the rule you just wrote."
+        "kind": "image",
+        "image": "lesson-phil4-03",
+        "eyebrow": "The draw",
+        "body": "Then you get handed a life at random and have to live under the rules you just wrote. If you wrote them for the lucky, you might be the unlucky. So you write them for everyone."
       },
       {
-        "kind": "example",
-        "body": "Would you set the late-work policy the same way if you didn't know whether you'd be the student with a job after school?"
+        "kind": "image",
+        "image": "lesson-phil4-04",
+        "eyebrow": "The test",
+        "body": "A fair rule is one you would still write if you did not know which side of it you would land on. That is the whole test, and it works on rules of any size."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil4-05",
+        "eyebrow": "A small rule",
+        "body": "Would you set the late-work policy the same way if you did not know whether you would be the student with a job after school? Probably not. Now you know what to change."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil4-06",
+        "eyebrow": "Two versions",
+        "body": "'No late work, ever' is a great rule if you know you will never need it. 'One late pass a term' is the one you write when you might. The veil picks the second."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil4-07",
+        "eyebrow": "Who",
+        "body": "Rawls was a Harvard philosopher. His 1971 book A Theory of Justice made the veil famous. He argued fair rules are the ones people would agree to before they knew their luck."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil4-08",
+        "eyebrow": "Cut and choose",
+        "body": "It is the grown-up version of a rule every kid knows: one cuts the cake, the other picks the slice. The cutter cuts fairly because they do not know which piece they will get."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil4-09",
+        "eyebrow": "Use it",
+        "body": "Next time you make a rule for a group, ask who ends up worst off under it. Then ask if you would take that seat. If not, the rule is not finished."
       },
       {
         "kind": "key",
@@ -734,9 +786,9 @@
         "kind": "check",
         "question": "What is the veil hiding from you?",
         "choices": [
-          "The consequences of the rule",
-          "Which position in society you'll occupy",
-          "Who else is voting"
+          "The consequences the rule will have on others.",
+          "Which position in society you will end up in.",
+          "Who else is voting on the same rule as you."
         ],
         "answer": 1,
         "why": "You keep full knowledge of how the world works. You lose only the knowledge of who you'll be in it."
@@ -747,29 +799,63 @@
     "id": "phil-5",
     "title": "The map is not the territory",
     "track": "philosophy",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Every model leaves things out on purpose. Trouble starts when you forget which things.",
     "takeaway": "You learned to ask what a model left out.",
-    "figure": "map",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A map is useful because it leaves things out. A map with everything on it would be the size of the world."
+        "kind": "image",
+        "image": "lesson-phil5-01",
+        "eyebrow": "The idea",
+        "body": "A map is useful because it leaves things out. A map with everything on it would be the size of the world, and no use to anyone trying to get home."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Every model does this: a formula, a stereotype, a study guide. Something got cut to make it usable."
+        "kind": "image",
+        "image": "lesson-phil5-02",
+        "eyebrow": "What got cut",
+        "body": "The map keeps the road and drops the potholes. That is the deal. Every useful picture of the world is a smaller, simpler thing that stands in for it."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The skill is knowing what was cut, and whether you needed it."
+        "kind": "image",
+        "image": "lesson-phil5-03",
+        "eyebrow": "Every model",
+        "body": "Every model does this: a formula, a stereotype, a study guide. Something got cut to make it usable. The formula drops friction. The stereotype drops the person."
       },
       {
-        "kind": "example",
-        "body": "A practice test predicts your real score well. It still can't tell you that you always slow down on the last section."
+        "kind": "image",
+        "image": "lesson-phil5-04",
+        "eyebrow": "The subway map",
+        "body": "A subway map is famously wrong about distances. Stations look evenly spaced when they are not. It is wrong on purpose, because the thing you need is the order of the stops."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil5-05",
+        "eyebrow": "A practice test",
+        "body": "A practice test predicts your real score well. It still cannot tell you that you always slow down on the last section. That detail got cut, and it is the one you needed."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil5-06",
+        "eyebrow": "When the map is wrong",
+        "body": "People drive into lakes following a GPS. The map said road. The territory said water. Trusting the map over your own eyes is how it happens."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil5-07",
+        "eyebrow": "The skill",
+        "body": "The skill is not distrusting maps. It is knowing what was cut, and whether you needed it. Two questions, asked before you trust what a model says."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil5-08",
+        "eyebrow": "The map of a person",
+        "body": "A stereotype is a map of a person drawn before you met them. It can be handy for a stranger in a hurry. It is useless for a friend, because everything you like about them is what it cut."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil5-09",
+        "eyebrow": "Who said it",
+        "body": "Alfred Korzybski, a Polish-American thinker, said it in 1931: the map is not the territory. His point was that words and models are tools for the world, not the world itself."
       },
       {
         "kind": "key",
@@ -779,9 +865,9 @@
         "kind": "check",
         "question": "What makes a map useful?",
         "choices": [
-          "It shows everything",
-          "It leaves the right things out",
-          "It never changes"
+          "It shows everything that is really out there.",
+          "It leaves out the right things for the job.",
+          "It never has to change once it is drawn."
         ],
         "answer": 1,
         "why": "Detail is what makes a map unusable. The skill is knowing which detail was dropped and whether you needed it."
@@ -2345,34 +2431,63 @@
     "id": "phil-7",
     "title": "The ship of Theseus",
     "track": "philosophy",
-    "figure": "ship",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Replace every plank on a ship, one at a time. Is it the same ship? You'll see the puzzle, the twist that makes it worse, and why your phone and your body are in it too.",
     "takeaway": "You learned that 'same' is a choice, not a fact.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "The Greeks kept the hero Theseus's ship in the harbour for centuries. Wood rots. So they replaced the planks as they went."
+        "kind": "image",
+        "image": "lesson-phil7-01",
+        "eyebrow": "The setup",
+        "body": "The Greeks kept the hero Theseus's ship in the harbour at Athens for centuries as a monument. Wood rots. So they replaced the planks as they went."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "One plank at a time. After a while, a third of the ship is new wood. Still his ship? Sure, feels like it."
+        "kind": "image",
+        "image": "lesson-phil7-02",
+        "eyebrow": "One plank",
+        "body": "One plank at a time. After a while, a third of the ship is new wood. Still his ship? Sure, it feels like it. Nobody would argue."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Eventually every plank has been swapped. Not one piece of the original is left. Same ship?"
+        "kind": "image",
+        "image": "lesson-phil7-03",
+        "eyebrow": "Then all of them",
+        "body": "Eventually every plank has been swapped. Not one piece of the original is left. Same ship? Same name, same harbour, same shape. But nothing he touched."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "The twist: someone saved all the old planks and rebuilt them into a second ship. Now there are two. Which one is Theseus's?"
+        "kind": "image",
+        "image": "lesson-phil7-04",
+        "eyebrow": "The twist",
+        "body": "Someone saved all the old planks and rebuilt them into a second ship. Now there are two. One has the history. One has the material. Which one is Theseus's?"
       },
       {
-        "kind": "example",
-        "body": "Your phone with a new screen, a new battery, and a new back. Same phone? Most of the cells in your body get replaced over the years. Same you?"
+        "kind": "image",
+        "image": "lesson-phil7-05",
+        "eyebrow": "Two claims",
+        "body": "Each ship has a real claim. The first never stopped being the ship. The second is made of the ship. 'Same' cannot mean both at once, and that is the puzzle."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil7-06",
+        "eyebrow": "Your phone",
+        "body": "Your phone with a new screen, a new battery, and a new back. Same phone? You would say yes. It has your photos and your cracked case. The parts were never the point."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil7-07",
+        "eyebrow": "You",
+        "body": "Most of the cells in your body get replaced over the years. The you in the childhood photo shares almost no material with the you holding it. Same you? Obviously. And also, a puzzle."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil7-08",
+        "eyebrow": "The answer",
+        "body": "'Same' is not a fact about the thing. It is a rule we choose. Same by history, or same by material. Pick the rule, and the puzzle answers itself. The ship was never confused."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil7-09",
+        "eyebrow": "Where it shows up",
+        "body": "A band with no original members. A company with a new logo, staff and product. A team that moved cities. Every argument about whether it is 'really' the same is this ship."
       },
       {
         "kind": "key",
@@ -2382,9 +2497,9 @@
         "kind": "check",
         "question": "Why is the rebuilt ship of old planks such a problem?",
         "choices": [
-          "Old wood is weaker",
-          "Now two ships can each claim to be the original",
-          "It's not seaworthy"
+          "Old wood is weaker and it will not float.",
+          "Two ships can each claim to be the original.",
+          "Nobody remembers which plank came first."
         ],
         "answer": 1,
         "why": "One ship has the history. The other has the material. Each has a real claim, and 'same' can't mean both."
@@ -3290,35 +3405,64 @@
     "id": "phil-9",
     "title": "Chesterton's fence",
     "track": "philosophy",
-    "figure": "fence",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "A fence sits in a field for no reason you can see, so pulling it out looks obvious. You'll see why the missing reason is the problem, and the one question that earns you a say.",
     "takeaway": "You learned to find the reason before you remove the rule.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A fence stands across an empty field. No sign on it. Nobody remembers who put it there. It looks like it does nothing."
+        "kind": "image",
+        "image": "lesson-phil9-01",
+        "eyebrow": "The setup",
+        "body": "A fence stands across an empty field. No sign on it. Nobody remembers who put it there. It looks like it does nothing at all."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "So tear it out. It's in the way and nothing is using it. Chesterton said no. Not yet."
+        "kind": "image",
+        "image": "lesson-phil9-02",
+        "eyebrow": "The urge",
+        "body": "So tear it out. It is in the way and nothing is using it. Chesterton said no. Not yet. First go and find out why it is there."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Fences don't grow on their own. Someone put this one here for a reason, and you can't see it from your side. Walk around it. There's an open well back there."
+        "kind": "image",
+        "image": "lesson-phil9-03",
+        "eyebrow": "The reason",
+        "body": "Fences do not grow on their own. Someone put this one here for a reason, and you cannot see it from your side. Walk around it. There is an open well back there."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "That's the whole test. Ask one question: why is this here? When you can answer it out loud, you've earned a say in whether it stays."
+        "kind": "image",
+        "image": "lesson-phil9-04",
+        "eyebrow": "The test",
+        "body": "Ask one question: why is this here? When you can answer it out loud, you have earned a say in whether it stays. Until then, you have not."
       },
       {
-        "kind": "example",
-        "body": "Your school makes everyone drop phones in a box before a test. It feels like they don't trust you. Then you hear a test got leaked last year and the grade had to retake it. That's the well."
+        "kind": "image",
+        "image": "lesson-phil9-05",
+        "eyebrow": "The phone box",
+        "body": "Your school makes everyone drop phones in a box before a test. It feels like they do not trust you. Then you hear a test got leaked last year and the whole grade had to retake it. That is the well."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil9-06",
+        "eyebrow": "Who",
+        "body": "G. K. Chesterton was an English writer in the 1920s. He put the fence in a book about reform, aimed at people who wanted to tear down old rules fast without asking what they held up."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil9-07",
+        "eyebrow": "Not 'never'",
+        "body": "The idea is not 'never change anything'. It is 'know the reason first'. Once you know it, you can keep the rule, fix it, or drop it on purpose. All three are allowed."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil9-08",
+        "eyebrow": "In code",
+        "body": "Every programmer meets this fence. A strange line that seems to do nothing. Delete it and something far away breaks. The line was the fence. The bug was the well."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil9-09",
+        "eyebrow": "Do it",
+        "body": "Three questions before you remove anything old: who put it here, what were they worried about, and is that still true? If the last answer is no, take it down with a clear conscience."
       },
       {
         "kind": "key",
@@ -3328,9 +3472,9 @@
         "kind": "check",
         "question": "You find a rule that looks pointless. What does Chesterton's fence tell you to do first?",
         "choices": [
-          "Remove it and see what breaks",
-          "Find out why it was put there",
-          "Leave every old rule alone"
+          "Remove it and watch to see what breaks.",
+          "Find out why it was put there to begin with.",
+          "Leave every old rule exactly where it is."
         ],
         "answer": 1,
         "why": "The idea isn't 'never change anything'. It's 'know the reason first'. Once you know it, you can keep the rule, fix it, or drop it on purpose."
@@ -3341,35 +3485,64 @@
     "id": "phil-10",
     "title": "Steelmanning",
     "track": "philosophy",
-    "figure": "steel",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "Beating the weakest version of someone's point proves nothing. You'll see how to build their side at its strongest first, and why that's the only version worth arguing with.",
     "takeaway": "You learned to argue with their best version.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Any side of an argument has two versions. A flimsy one you could knock over in a second. And the one they actually hold."
+        "kind": "image",
+        "image": "lesson-phil10-01",
+        "eyebrow": "Two versions",
+        "body": "Any side of an argument has two versions. A flimsy one you could knock over in a second, made of straw. And the one they actually hold, which is a lot harder to move."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "A strawman is aiming at the flimsy one. You win, and nothing happens. You beat a version you made up, not the one they hold."
+        "kind": "image",
+        "image": "lesson-phil10-02",
+        "eyebrow": "The strawman",
+        "body": "A strawman is aiming at the flimsy one. You win, and nothing happens. You beat a version you made up, not the one they hold. Their real point is still standing."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Steelmanning is the other move. Before you argue, build their side up. Say it back so well they'd tell you 'yes, that's exactly it.'"
+        "kind": "image",
+        "image": "lesson-phil10-03",
+        "eyebrow": "Steelmanning",
+        "body": "Steelmanning is the other move. Before you argue, build their side up. Say it back so well they would tell you 'yes, that is exactly it.' Only then do you get to argue."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Now aim at that one. If it falls, you beat the real thing. If it holds, you learned something instead of winning."
+        "kind": "image",
+        "image": "lesson-phil10-04",
+        "eyebrow": "The test",
+        "body": "You have steelmanned when they nod. If they say 'that is not what I meant', you built straw. Keep going until the version you are about to attack is one they would sign."
       },
       {
-        "kind": "example",
-        "body": "Your friend says phones should be banned in class. The weak version: 'you just hate fun.' Easy to beat, worth nothing. The strong version: 'a phone in your bag still splits your attention, and it costs the struggling kids the most.' Now you have to actually think."
+        "kind": "image",
+        "image": "lesson-phil10-05",
+        "eyebrow": "The example",
+        "body": "Your friend says phones should be banned in class. The weak version: 'you just hate fun.' Easy to beat, worth nothing. The strong version: 'a phone in your bag still splits your attention, and it costs the struggling kids the most.'"
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil10-06",
+        "eyebrow": "Either way",
+        "body": "Now aim at that one. If it falls, you beat the real thing. If it holds, you learned something instead of winning. Both are better than beating straw."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil10-07",
+        "eyebrow": "Where it comes from",
+        "body": "Good debaters are made to argue the side they disagree with. Not to change their mind, but because you cannot beat an argument you cannot state. Steelmanning is that, done alone."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil10-08",
+        "eyebrow": "Do it",
+        "body": "Three steps. Listen for the best version of their point, not the worst. Say it back until they nod. Then, and only then, disagree with that one."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-phil10-09",
+        "eyebrow": "The surprising part",
+        "body": "Sometimes the steel version holds and you change your mind. That is not losing. That is the only way anyone ever gets to be right about something they were wrong about."
       },
       {
         "kind": "key",
@@ -3379,9 +3552,9 @@
         "kind": "check",
         "question": "What makes a strawman useless even when you win?",
         "choices": [
-          "It's rude to the other person",
-          "You beat a version they never argued for",
-          "They can do the same thing back to you"
+          "It comes across as rude to the other person.",
+          "You beat a version they never actually argued.",
+          "They can do exactly the same thing back to you."
         ],
         "answer": 1,
         "why": "You knocked down something you built yourself. Their real point never got touched, so it's still standing."
