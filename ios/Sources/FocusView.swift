@@ -671,6 +671,7 @@ struct FocusView: View {
                               life: ctx.date.timeIntervalSinceReferenceDate,
                               speciesID: state.activeChibiID,
                               level: state.activeChibi.level,
+                              skin: state.activeChibi.skinID,
                               animation: state.animation,
                               paused: shift.phase == .paused,
                               size: 250 * k)

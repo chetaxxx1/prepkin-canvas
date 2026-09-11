@@ -16,6 +16,9 @@ struct SwimSceneView: View {
     var life: Double
     var speciesID: String
     var level: Int
+    /// What he is wearing. Without this the shift drew the coat's default costume no
+    /// matter what the student had chosen — he changed clothes the moment a shift began.
+    var skin: String = "classic"
     var animation: ChibiAnimation
     var paused: Bool
     var size: CGFloat = 250
@@ -66,7 +69,7 @@ struct SwimSceneView: View {
         let drift = (paused || reduceMotion) ? 0.0 : sin(time * 2 * .pi / 6) * 8
         let lift = (paused || reduceMotion) ? 0.0 : sin(time * 2 * .pi / 3) * 1.5
         let bottom = paused ? sleepBottom : swimBottom
-        return SproutImage(speciesID: speciesID, level: level, animation: animation, size: kinSize)
+        return SproutImage(speciesID: speciesID, level: level, skin: skin, animation: animation, size: kinSize)
             .offset(x: (Self.base - kinSize) / 2 + drift, y: bottom - artH + lift)
             .animation(.easeInOut(duration: 0.7), value: paused)
     }
