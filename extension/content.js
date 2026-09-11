@@ -38,6 +38,7 @@ function teardown() {
     for (const name of [...el.classList]) if (name.startsWith('pk-')) el.classList.remove(name);
   });
   document.getElementById(ROOT_ID)?.remove();
+  unmountSprite();
   shadow = null;
   styleEl = null;
 }
@@ -243,7 +244,7 @@ function applySkin(s) {
   killed = detectKill();
   facts = detectFacts();
   const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
-  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, look, putBack, detect: facts }));
+  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, mascot: !!s.mascot, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
     if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-todo-open' && !next.has(c)) root.classList.remove(c);
   }
@@ -1699,7 +1700,7 @@ function watchPage() {
   const schedule = () => { if (tornDown) return; clearTimeout(pageTimer); pageTimer = setTimeout(refreshPage, 200); };
   // Our own nodes — the buddy's host and the card lines — must not count as
   // the page changing, or every pass would schedule the next one forever.
-  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === WEEK_ID || n.id === FOLD_ID || n.id === SEARCH_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${WEEK_ID}, #${FOLD_ID}, #${SEARCH_ID}, .${CARD_DUE_CLASS}`));
+  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === SPRITE_ID || n.id === WEEK_ID || n.id === FOLD_ID || n.id === SEARCH_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${SPRITE_ID}, #${WEEK_ID}, #${FOLD_ID}, #${SEARCH_ID}, .${CARD_DUE_CLASS}`));
   pageObserver = new MutationObserver((records) => {
     const current = document.documentElement.dataset.pkInstance;
     if (shouldStepAside({ mine: instanceId, current, alive: alive() })) { teardown(); return; }
@@ -1711,6 +1712,92 @@ function watchPage() {
   document.addEventListener('canvasReadyStateChange', schedule);
   window.addEventListener('popstate', schedule);
   window.addEventListener('hashchange', schedule);
+}
+
+
+// MARK: - Sprout, on the page
+//
+// The same character the phone draws: the app's Sprout web build, shipped in
+// extension/sprout/ and run in a frame of the extension's own origin. No
+// bubble, no card — he sits on the bottom edge of the page the way a desktop
+// pet sits on a dock, with the panel's launcher laid over him for the click.
+// The frame lives in its own host because the panel redraws with innerHTML,
+// and a frame that is moved or rebuilt reloads.
+
+const SPRITE_ID = 'prepkin-sprout';
+/// Frame size and his size. The page anchors his feet to the frame's bottom
+/// and keeps headroom above for the jumping emotes (happy lifts 112 px), so the
+/// frame is taller than he is. `radius` is his stage-three body radius in px.
+const SPRITE_W = 176, SPRITE_H = 268, SPRITE_RADIUS = 44;
+let sprite = null;   // { host, frame, ready, queue }
+
+/// Old species ids from the first app builds, onto the six coats Sprout has.
+const COAT_OF = { ember: 'coral', mochi: 'coral', droplet: 'sky', puff: 'sky', wisp: 'lilac', comet: 'butter', sprout: 'peach' };
+/// What the phone said its kin is, or the league's word for it, or the default.
+function kinLook() {
+  const k = wallet.kin;
+  const raw = String(k?.species ?? ownSpecies());
+  const coat = COAT_OF[raw] ?? (KIN_SPECIES.includes(raw) ? raw : 'mint');
+  const evo = Math.min(3, Math.max(1, Number(k?.level) || 2));
+  const skin = /^[a-z-]+$/.test(String(k?.skin ?? '')) ? String(k.skin) : 'classic';
+  // Only stage three wears a costume; a younger kin always asks for the default.
+  const costume = evo >= 3 && skin !== 'classic' ? skin : '';
+  return { coat, evo, skin, costume };
+}
+
+function spriteURL() {
+  const look = kinLook();
+  const q = new URLSearchParams({ embed: '1', type: 'sprout', coat: look.coat, evo: String(look.evo), skin: look.skin, radius: String(SPRITE_RADIUS) });
+  if (look.costume) q.set('costume', look.costume);
+  if (!alive()) return null;
+  return `${chrome.runtime.getURL('sprout/index.html')}?${q}`;
+}
+
+/// Asks the frame for something. Before the page has said "ready", the ask
+/// waits; after, it goes straight through.
+function spriteSend(msg) {
+  if (!sprite) return;
+  if (!sprite.ready) { sprite.queue.push(msg); return; }
+  sprite.frame.contentWindow?.postMessage({ prepkin: 'sprout', ...msg }, '*');
+}
+
+function mountSprite() {
+  const url = spriteURL();
+  if (!url) return;
+  if (sprite && sprite.url === url && document.getElementById(SPRITE_ID)) return;
+  unmountSprite();
+  const host = document.createElement('div');
+  host.id = SPRITE_ID;
+  const root = host.attachShadow({ mode: 'closed' });
+  const style = document.createElement('style');
+  style.textContent = `:host{position:fixed;right:12px;bottom:0;width:${SPRITE_W}px;height:${SPRITE_H}px;z-index:2147482999;pointer-events:none;}
+iframe{display:block;width:100%;height:100%;border:0;background:transparent;color-scheme:normal;}`;
+  const frame = document.createElement('iframe');
+  frame.src = url;
+  frame.title = 'Sprout';
+  frame.setAttribute('aria-hidden', 'true');
+  frame.tabIndex = -1;
+  frame.allowTransparency = true;
+  root.append(style, frame);
+  document.body.append(host);
+  sprite = { host, frame, url, ready: false, queue: [] };
+  if (!spriteListening) {
+    spriteListening = true;
+    window.addEventListener('message', (e) => {
+      if (!sprite || e.source !== sprite.frame.contentWindow || e.data?.prepkin !== 'sprout' || e.data.event !== 'ready') return;
+      sprite.ready = true;
+      spriteSend({ do: 'reduceMotion', value: matchMedia('(prefers-reduced-motion: reduce)').matches });
+      spriteSend({ do: 'paused', value: document.visibilityState === 'hidden' });
+      for (const m of sprite.queue.splice(0)) spriteSend(m);
+    });
+    document.addEventListener('visibilitychange', () => spriteSend({ do: 'paused', value: document.visibilityState === 'hidden' }));
+  }
+}
+let spriteListening = false;
+
+function unmountSprite() {
+  document.getElementById(SPRITE_ID)?.remove();
+  sprite = null;
 }
 
 // MARK: - Render
@@ -1747,14 +1834,12 @@ function render() {
   root.innerHTML = `
     ${focus.state !== 'idle' ? focusCard() : ''}
     <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
-      ${kinFace(ownSpecies(), 44, 'pk-buddy')}
       ${urgent ? `<span class="pk-count" aria-hidden="true">${urgent}</span>` : ''}
     </button>
     <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Prepkin" tabindex="-1" ${ui.open ? '' : 'hidden'}>
       ${showHeader ? `
       <div class="pk-head${said.worried ? ' worried' : ''}">
         <div class="pk-hero">
-          ${kinFace(ownSpecies(), 64, 'pk-buddy')}
           <div class="pk-bubble">
             <strong>${said.headline}</strong>
             <span>${said.subline}</span>
@@ -1820,11 +1905,15 @@ async function setPlan(id, key) {
 }
 
 function wire(root) {
-  root.querySelector('.pk-tab')?.addEventListener('click', () => {
+  const tab = root.querySelector('.pk-tab');
+  tab?.addEventListener('click', () => {
     ui.open = !ui.open;
     if (!ui.open) { ui.view = 'panel'; ui.sheet = null; }
+    // He waves when you open him up, and looks over when you come close.
+    spriteSend({ do: 'play', emote: ui.open ? 'wave' : 'curious' });
     render();
   });
+  tab?.addEventListener('mouseenter', () => { if (!ui.open) spriteSend({ do: 'play', emote: 'curious' }); });
   // Escape closes the panel wherever you are inside it, and hands focus back to
   // the buddy rather than dropping it on the page behind.
   root.querySelector('.pk-panel')?.addEventListener('keydown', (e) => {
@@ -2137,7 +2226,8 @@ async function mount() {
   document.getElementById(ROOT_ID)?.remove();
   shadow = null;
   // The sign-in page is the school's alone: no paper, no buddy.
-  if (!skin.mascot || remoteKilled || isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
+  if (!skin.mascot || remoteKilled || isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) { unmountSprite(); return; }
+  mountSprite();
 
   const host = document.createElement('div');
   host.id = ROOT_ID;

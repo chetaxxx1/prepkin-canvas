@@ -160,10 +160,12 @@ const WORD_INKS = ['#000000', '#000', 'black', 'rgb(0,0,0)', 'rgb(0, 0, 0)', 'wi
 
 /// The <html> classes for one page state. boot.js runs this before first
 /// paint; content.js runs it again with what the DOM turned out to hold.
-function skinClasses({ on, dark, look, dense = false, hidePast = false, putBack = {}, detect = {} }) {
+function skinClasses({ on, dark, look, dense = false, hidePast = false, mascot = false, putBack = {}, detect = {} }) {
   if (!on) return [];
   const classes = ['pk-on', `pk-paper-${stockFor(look, !!dark)}`];
   if (dark) classes.push('pk-dark');
+  // Sprout sits on the page's bottom edge; this gives the page room to scroll clear of him.
+  if (mascot) classes.push('pk-buddy');
   if (dense) classes.push('pk-dense');
   if (hidePast) classes.push('pk-hide-past');
   if (look?.id) classes.push(`pk-theme-${look.id}`);

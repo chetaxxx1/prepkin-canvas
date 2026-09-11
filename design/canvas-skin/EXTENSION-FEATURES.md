@@ -86,6 +86,21 @@ the pull BetterCampus's have, and for a summary on the first page. Built:
   Tasks for Canvas's (Coursicle) sidebar, which students run next to
   BetterCampus; the rings are theirs, the one-thing-first is ours.
 - **The timer stays on screen while it runs**, panel open or not.
+- **Sprout, on the page** (2026-09-11): the app's own Sprout web build, copied
+  into `extension/sprout/` by `sync.sh` from `ios/SproutWeb`, runs in a frame
+  of the extension's origin (`#prepkin-sprout`, its own closed host, because
+  the panel redraws with innerHTML and a moved frame reloads). No bubble: he
+  sits on the page's bottom edge the way a Codex pet sits on the dock, with the
+  panel's launcher laid over him and the count badge above his head. He idles
+  on his own, turns to look when the pointer comes near, waves when clicked;
+  pauses in a hidden tab; honours reduced motion. Which kin: the phone now
+  publishes `kin: {species, level, skin}` in `push_state` (`BridgeKin`), the
+  laptop keeps it on `wallet.kin`; without a phone he is stage-two mint. The
+  frame is driven by `sprout/bridge.js`, a message listener that only knows
+  play / wake / paused / reduceMotion / signature. `html.pk-buddy` pads the
+  content wrapper 176px so a long sidebar can scroll clear of him. The six
+  stills in `art/kin/` (board rows, the track rider) are cut from the current
+  rig's stage-two stills.
 
 Not built, on purpose: the on-page dashed strip and the proofreader words
 (spec §12.1), the dashcard badge fix, hiding any tab, `--ic-brand-*` writes.

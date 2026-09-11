@@ -115,6 +115,15 @@ struct BridgeState: Codable, Equatable {
     /// Where the student stands this week, so the laptop can draw the same league
     /// the phone does. Numbers and word-list indexes only, never a typed name.
     var league: BridgeLeague?
+    /// The kin on the phone's Home, so the Canvas page shows the same one: a
+    /// species id, a star level and a look id. Nothing the student typed.
+    var kin: BridgeKin?
+}
+
+struct BridgeKin: Codable, Equatable {
+    var species: String
+    var level: Int
+    var skin: String
 }
 
 /// The league as the laptop sees it. Mirrors `LeagueState` + the last pod board,
@@ -199,6 +208,9 @@ struct SupabaseCanvasClient: CanvasSyncClient {
 
     func pushState(_ state: BridgeState) async throws {
         var payload: [String: Any] = ["coins": state.coins, "owned": state.owned]
+        if let kin = state.kin {
+            payload["kin"] = ["species": kin.species, "level": kin.level, "skin": kin.skin]
+        }
         if let at = state.requestsAppliedAt {
             payload["requestsAppliedAt"] = Self.stamp(at)
         }

@@ -83,9 +83,25 @@ const VIEW = { width: 1280, height: 860 };
   await page.goto(`${SCHOOL_A}/`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('html.pk-on', { timeout: 120_000 });
   await page.waitForSelector('#prepkin-buddy', { state: 'attached', timeout: 120_000 });
+  // The rail waits for the first sync, which the service worker runs on its own clock.
+  await page.waitForSelector('#pk-week', { timeout: 60_000 }).catch(() => {});
   await settle();
   await page.screenshot({ path: path.join(OUT, 'after.png') });
   console.log('after.png');
+
+  // POKE=1: hover Sprout, click him, and keep frames for a GIF of the reaction.
+  if (process.env.POKE) {
+    const x = VIEW.width - 12 - 88, y = VIEW.height - 70;
+    const corner = { x: VIEW.width - 420, y: VIEW.height - 330, width: 420, height: 330 };
+    await page.mouse.move(x, y);
+    for (let i = 0; i < 10; i++) { await page.screenshot({ path: path.join(OUT, `poke-hover-${String(i).padStart(2, '0')}.png`), clip: corner }); await page.waitForTimeout(90); }
+    await page.mouse.click(x, y);
+    for (let i = 0; i < 16; i++) { await page.screenshot({ path: path.join(OUT, `poke-click-${String(i).padStart(2, '0')}.png`), clip: corner }); await page.waitForTimeout(90); }
+    await page.screenshot({ path: path.join(OUT, 'poke-open.png') });
+    console.log('poke frames');
+    await page.mouse.click(x, y);
+    await page.waitForTimeout(600);
+  }
 
   // And the dark paper, which is the one toggle in the popup the site's
   // "look at it at 11pm" line is about.

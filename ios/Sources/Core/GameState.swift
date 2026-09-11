@@ -871,7 +871,9 @@ struct GameState: Codable, Equatable {
     /// What the extension is told after a sync.
     var bridgeState: BridgeState {
         BridgeState(coins: ledger.balance, owned: Array(ownedLooks).sorted(),
-                    requestsAppliedAt: requestsAppliedAt, league: bridgeLeague)
+                    requestsAppliedAt: requestsAppliedAt, league: bridgeLeague,
+                    kin: BridgeKin(species: activeChibi.speciesID, level: activeChibi.level,
+                                   skin: activeChibi.skinID))
     }
 
     /// The league flattened for the laptop. The board rides along only when the pod

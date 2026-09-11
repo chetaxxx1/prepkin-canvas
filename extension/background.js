@@ -550,6 +550,10 @@ async function pullWallet() {
         owned: Array.isArray(state.owned) ? state.owned : (wallet.owned ?? ['classic']),
         // The phone's league, or null: the panel says "link your phone" then.
         league: state.league && typeof state.league.tier === 'number' ? state.league : null,
+        // The kin on the phone's Home, so the page draws the same one.
+        kin: state.kin && typeof state.kin.species === 'string'
+          ? { species: String(state.kin.species), level: Number(state.kin.level) || 1, skin: String(state.kin.skin || 'classic') }
+          : (wallet.kin ?? null),
       },
     });
     // Everything the phone has paid for can stop being re-sent. Anything newer
