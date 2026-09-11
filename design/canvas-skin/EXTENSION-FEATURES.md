@@ -89,15 +89,18 @@ the pull BetterCampus's have, and for a summary on the first page. Built:
 - **Sprout, on the page** (2026-09-11): the app's own Sprout web build, copied
   into `extension/sprout/` by `sync.sh` from `ios/SproutWeb`, runs in a frame
   of the extension's origin (`#prepkin-sprout`, its own closed host, because
-  the panel redraws with innerHTML and a moved frame reloads). No bubble. He
-  lives at the foot of Canvas's global nav — the fixed, full-height rail that
-  is empty below its menu on every page and already wears our theme — above
-  the collapse toggle, so nothing ever scrolls under him (Duolingo keeps Duo
-  in a reserved gutter; Toggl and Slack keep the bottom of the rail for the
-  person). The panel's launcher is laid over him and the panel opens to his
-  right, bottom-aligned, like something he holds up. Radius 26 fills the 84px
-  rail fin to fin, 17 the collapsed 54; with no rail on the page he falls back
-  to the bottom right at 36. He idles
+  the panel redraws with innerHTML and a moved frame reloads). No bubble. On
+  the dashboard he lives in a tank: a band of water at the top of the This
+  week card (`.pk-w-tank`, 108px), the week and the work flowing under him —
+  Finch's home stack, ClassDojo's monster card. The frame is absolute in the
+  document over the band, so he scrolls with the card and nothing is ever
+  under him; the launcher covers the band with the count badge in its corner,
+  and the panel opens to his left, top-aligned. Four placements were built
+  and shot on the sandbox before picking (`design/canvas-skin/rail-mock/
+  sprout-places.png`): rail foot, tank, perched on the card, small corner.
+  `skin.buddyPlace` still switches between them; on a page with no week card
+  he takes the foot of the global nav rail (radius 26, 17 collapsed), and
+  with no rail at all the bottom right. He idles
   on his own, turns to look when the pointer comes near, waves when clicked;
   pauses in a hidden tab; honours reduced motion. Which kin: the phone now
   publishes `kin: {species, level, skin}` in `push_state` (`BridgeKin`), the

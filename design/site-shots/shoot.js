@@ -111,9 +111,10 @@ const VIEW = { width: 1280, height: 860 };
 
   // POKE=1: hover Sprout, click him, and keep frames for a GIF of the reaction.
   if (process.env.POKE) {
-    // He lives at the foot of the global nav now: centre of the 84px rail, above the toggle.
-    const x = 42, y = VIEW.height - 50 - 50;
-    const corner = { x: 0, y: VIEW.height - 330, width: 520, height: 330 };
+    // He lives in the tank at the top of the week card: find it and aim at his body.
+    const spot = await page.evaluate(() => { const b = document.querySelector('#pk-week .pk-w-tank')?.getBoundingClientRect(); return b ? { x: b.left + b.width / 2, y: b.bottom - 40, top: b.top } : null; });
+    const x = spot?.x ?? VIEW.width - 100, y = spot?.y ?? VIEW.height - 60;
+    const corner = { x: VIEW.width - 720, y: 0, width: 720, height: 420 };
     await page.mouse.move(x, y);
     for (let i = 0; i < 10; i++) { await page.screenshot({ path: path.join(OUT, `poke-hover-${String(i).padStart(2, '0')}.png`), clip: corner }); await page.waitForTimeout(90); }
     await page.mouse.click(x, y);
@@ -153,6 +154,21 @@ const VIEW = { width: 1280, height: 860 };
       await page.screenshot({ path: path.join(OUT, name) });
       console.log(name);
     }
+  }
+
+  // PLACES=rail,tank,perch,corner: where Sprout sits, one shot each, on Deep Sea.
+  for (const mode of (process.env.PLACES || '').split(',').filter(Boolean)) {
+    await worker.evaluate(async ([m]) => {
+      await chrome.storage.local.set({
+        skin: { dark: false, cards: true, mascot: true, buddyPlace: m },
+        wallet: { coins: 0, owned: ['classic', 'deepsea'], wearing: 'deepsea' },
+      });
+    }, [mode]);
+    await page.goto(`${SCHOOL_A}/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#pk-week', { timeout: 60_000 }).catch(() => {});
+    await settle();
+    await page.screenshot({ path: path.join(OUT, `place-${mode}.png`) });
+    console.log(`place-${mode}.png`);
   }
 
   await context.close();

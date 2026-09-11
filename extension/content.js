@@ -1502,6 +1502,7 @@ function renderWeek() {
     ? `${mon(w.start)} ${w.start.getDate()} – ${last.getDate()}`
     : `${mon(w.start)} ${w.start.getDate()} – ${mon(last)} ${last.getDate()}`;
   const title = weekOffset === 0 ? 'This week' : weekOffset === -1 ? 'Last week' : weekOffset === 1 ? 'Next week' : `Week of ${mon(w.start)} ${w.start.getDate()}`;
+  if (buddyMode() === 'tank') box.append(el('div', 'pk-w-tank', null));
   box.append(el('div', 'pk-w-head', title));
   const step = el('div', 'pk-w-step');
   const arrow = (dir, label) => {
@@ -1657,6 +1658,7 @@ function renderWeek() {
   box.append(foot);
   if (existing) existing.replaceWith(box); else side.prepend(box);
   renderFold();
+  if (sprite) placeSprite();
 }
 
 /// Canvas's own To Do, folded to one line right under our rail: how many it
@@ -1735,18 +1737,39 @@ let spriteListening = false;
 /// there, the way Toggl or Slack keep the bottom of the rail for the person.
 /// On a page with no rail (a phone-width window, an LTI tool) he falls back
 /// to the bottom right, smaller.
+/// Where he lives: in the tank above the week card by default. `rail`,
+/// `perch` and `corner` are the other candidates from the placement round.
+function buddyMode() { return ['tank', 'perch', 'rail', 'corner'].includes(skin.buddyPlace) ? skin.buddyPlace : 'tank'; }
+
 function spritePlace() {
+  const mode = buddyMode();
   const header = document.getElementById('header');
   const rail = header ? header.getBoundingClientRect() : null;
-  if (rail && rail.width >= 48 && rail.height >= 400 && rail.left === 0) {
-    const toggle = document.getElementById('primaryNavToggle')?.getBoundingClientRect();
-    const bottom = Math.round(toggle?.height || 44) + 6;
-    // His stage-three body radius: fins reach about 1.6 radii each side, so
-    // 26 fills the 84 px rail edge to edge and 17 the collapsed 54.
-    const radius = rail.width >= 80 ? 26 : 17;
-    return { side: 'left', navW: Math.round(rail.width), bottom, radius, w: Math.round(rail.width) + 24, h: 190 };
+  const hasRail = !!(rail && rail.width >= 48 && rail.height >= 400 && rail.left === 0);
+  // Above the week card, Finch-style: a water band at the top of our own rail
+  // card, the to-do list flowing under him. Only where the card is.
+  const week = (mode === 'tank' || mode === 'perch') ? document.getElementById(WEEK_ID) : null;
+  if (week) {
+    const band = week.querySelector('.pk-w-tank') ?? week;
+    const r = band.getBoundingClientRect();
+    // The frame is the band's width, so the launcher and its badge sit on the
+    // band's own corners; 30 is the biggest radius the band's height allows.
+    const radius = mode === 'tank' ? 30 : 26, w = Math.round(r.width), h = 200;
+    const cx = r.left + scrollX + r.width / 2;
+    // Feet on the band's floor (tank) or on the card's top edge (perch).
+    const feet = mode === 'tank' ? r.bottom + scrollY - 8 : r.top + scrollY + 6;
+    return { side: 'tank', mode, navW: w, bottom: 0, radius, w, h, abs: { left: Math.round(cx - w / 2), top: Math.round(feet - h) } };
   }
-  return { side: 'right', navW: 0, bottom: 0, radius: 36, w: 150, h: 240 };
+  if (mode === 'corner' || !hasRail) {
+    const small = mode === 'corner';
+    return { side: 'right', mode, navW: 0, bottom: 0, radius: small ? 22 : 36, w: small ? 110 : 150, h: small ? 170 : 240 };
+  }
+  const toggle = document.getElementById('primaryNavToggle')?.getBoundingClientRect();
+  const bottom = Math.round(toggle?.height || 44) + 6;
+  // His stage-three body radius: fins reach about 1.6 radii each side, so
+  // 26 fills the 84 px rail edge to edge and 17 the collapsed 54.
+  const radius = rail.width >= 80 ? 26 : 17;
+  return { side: 'left', mode, navW: Math.round(rail.width), bottom, radius, w: Math.round(rail.width) + 24, h: 190 };
 }
 
 /// Old species ids from the first app builds, onto the six coats Sprout has.
@@ -1784,19 +1807,27 @@ function spriteSend(msg) {
 function placeSprite(place = spritePlace()) {
   if (!sprite) return;
   const st = sprite.host.style;
-  if (place.side === 'left') {
-    st.left = '-12px'; st.right = 'auto'; st.bottom = `${place.bottom}px`;
+  if (place.side === 'tank') {
+    st.position = 'absolute'; st.left = `${place.abs.left}px`; st.top = `${place.abs.top}px`; st.right = 'auto'; st.bottom = 'auto';
+  } else if (place.side === 'left') {
+    st.position = 'fixed'; st.top = 'auto'; st.left = '-12px'; st.right = 'auto'; st.bottom = `${place.bottom}px`;
   } else {
-    st.left = 'auto'; st.right = '12px'; st.bottom = '0px';
+    st.position = 'fixed'; st.top = 'auto'; st.left = 'auto'; st.right = '12px'; st.bottom = '0px';
   }
   st.width = `${place.w}px`; st.height = `${place.h}px`;
   sprite.place = place;
   if (shadow) {
     const h = shadow.host;
     h.dataset.side = place.side;
-    h.style.setProperty('--pk-nav-w', `${place.navW || 150}px`);
-    h.style.setProperty('--pk-tab-h', `${place.side === 'left' ? 120 : 150}px`);
+    h.style.setProperty('--pk-nav-w', `${place.side === 'tank' ? place.w : (place.navW || place.w)}px`);
+    h.style.setProperty('--pk-tab-h', `${place.side === 'left' ? 120 : place.side === 'tank' ? 108 : Math.round(place.h * 0.62)}px`);
     h.style.setProperty('--pk-tab-bottom', `${place.side === 'left' ? place.bottom : 0}px`);
+    if (place.side === 'tank') {
+      // The panel takes the column to his left (360 + 12), so the launcher lands on the band.
+      h.style.position = 'absolute'; h.style.left = `${place.abs.left - 372}px`; h.style.top = `${place.abs.top + place.h - 108}px`; h.style.right = 'auto'; h.style.bottom = 'auto';
+    } else {
+      h.style.position = ''; h.style.left = ''; h.style.top = ''; h.style.right = ''; h.style.bottom = '';
+    }
   }
 }
 
