@@ -1574,12 +1574,46 @@ const FOLD_ID = 'pk-todo-fold';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 /// Which week the rings show, in weeks from this one. The arrows move it; a
 /// sync brings it home.
-let weekOffset = 0;
 
 /// "AP Physics C: Mechanics" is the course; a narrow line has room for the course.
 function shortCourse(name) {
   const n = String(name ?? '');
   return n.length > 20 && n.includes(':') ? n.split(':')[0].trim() : n;
+}
+
+/// Seven days from Monday, each with a dot per piece of work due that day:
+/// its course colour, and whether it is in, still open, or slipped.
+function weekDays(tasks, w, now = new Date()) {
+  const today0 = startOfDay(now);
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(w.start.getTime() + i * DAY_MS);
+    const next = new Date(date.getTime() + DAY_MS);
+    const due = tasks.filter((t) => { const d = t.dueAt ? new Date(t.dueAt) : null; return d && !isNaN(d) && d >= date && d < next; })
+      .sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
+    const past = date < today0;
+    const dots = due.slice(0, 4).map((t) => ({
+      color: safeColor(t.colorHex), state: t.submittedAt ? 'done' : (Date.parse(t.dueAt) < now.getTime() ? 'late' : 'open'),
+    }));
+    const n = due.length, done = due.filter((t) => t.submittedAt).length;
+    return {
+      date, past, today: sameLocalDay(date, now),
+      letter: date.toLocaleDateString([], { weekday: 'narrow' }),
+      dots,
+      title: n ? `${date.toLocaleDateString([], { weekday: 'long' })}: ${done} of ${n} in` : date.toLocaleDateString([], { weekday: 'long' }),
+    };
+  });
+}
+
+/// Once per week, when the last thing goes in, the buddy dances. The week is
+/// remembered so a reload does not make him do it again.
+let celebrated = null;
+function celebrateWeek(allIn, start) {
+  if (!allIn) return;
+  const week = start.toISOString().slice(0, 10);
+  if (celebrated === week) return;
+  celebrated = week;
+  spriteSend({ do: 'play', emote: 'dance' });
+  if (alive()) chrome.storage.local.set({ celebrated: week }).catch(() => {});
 }
 
 /// The day alone, for a row with room for one word: Today, Tomorrow, Mon, or
@@ -1611,15 +1645,16 @@ function renderWeek() {
     return;
   }
   const now = new Date();
-  const shown = new Date(now.getTime() + weekOffset * 7 * DAY_MS);
-  const w = weekStats(data.tasks, shown);
+  const w = weekStats(data.tasks, now);
   const b = buckets(data.tasks, now, plannedOn);
   // The oldest slipped task is the one to start; after it, what is coming
   // before what has already gone by, so the list is not a wall of amber.
   const first = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
   const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 3);
   const running = focus.state === 'running';
-  const key = JSON.stringify([weekOffset, w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]),
+  const said = voice(b);
+  const days = weekDays(data.tasks, w, now);
+  const key = JSON.stringify([w.start.getTime(), w.total, w.done, days.map((d) => d.dots.map((x) => x.state + (x.color ?? ''))), said.headline,
     first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId(),
     running && focus.endsAt, running && focus.title]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
@@ -1628,38 +1663,41 @@ function renderWeek() {
   box.dataset.key = key;
   box.setAttribute('aria-label', 'Prepkin: this week');
 
-  // Head: the week in words, then a stepper on its own line (the way Life
-  // Reset and Garmin do it), so the title row never has to share.
-  const last = new Date(w.end - 1);
-  const mon = (d) => d.toLocaleDateString([], { month: 'short' });
-  const range = w.start.getMonth() === last.getMonth()
-    ? `${mon(w.start)} ${w.start.getDate()} – ${last.getDate()}`
-    : `${mon(w.start)} ${w.start.getDate()} – ${mon(last)} ${last.getDate()}`;
-  const title = weekOffset === 0 ? 'This week' : weekOffset === -1 ? 'Last week' : weekOffset === 1 ? 'Next week' : `Week of ${mon(w.start)} ${w.start.getDate()}`;
+  // The buddy's line, the same words his panel opens with. Finch's bird
+  // speaks above its goals; this is that, without a bubble.
   if (buddyMode() === 'tank') {
-    // The band is the tank from the phone's Home, cut to the card's shape:
-    // the same water, the same floor, so the buddy is at home here too.
     const tank = el('div', 'pk-w-tank', null);
     if (alive()) tank.style.setProperty('--pk-tank', `url("${chrome.runtime.getURL(`art/tanks/${tankId()}.webp`)}")`);
     box.append(tank);
   }
-  box.append(el('div', 'pk-w-head', title));
-  const step = el('div', 'pk-w-step');
-  const arrow = (dir, label) => {
-    const a = el('i', dir < 0 ? 'prev' : 'next', null);
-    a.setAttribute('role', 'button'); a.tabIndex = 0; a.setAttribute('aria-label', label);
-    const go = () => { weekOffset += dir; renderWeek(); };
-    a.addEventListener('click', go);
-    a.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
-    return a;
-  };
-  step.append(arrow(-1, 'Previous week'), el('span', '', range), arrow(1, 'Next week'));
-  box.append(step);
+  const say = el('div', 'pk-w-say');
+  say.append(el('b', '', said.headline), el('small', '', said.short ?? said.subline));
+  box.append(say);
+
+  // The week as a planner strip (Structured, Tiimo): seven days, today
+  // filled, and under each day a dot per piece of work in its course's
+  // colour — solid once it is in, hollow while it waits, amber if it slipped.
+  const strip = el('div', 'pk-w-days');
+  strip.setAttribute('aria-label', 'This week');
+  for (const d of days) {
+    const day = el('div', `day${d.today ? ' today' : d.past ? ' past' : ''}`);
+    day.append(el('small', '', d.letter), el('b', '', String(d.date.getDate())));
+    const dots = el('i', 'dots');
+    for (const x of d.dots) {
+      const dot = el('span', `dot ${x.state}`);
+      if (x.color) dot.style.setProperty('--c', x.color);
+      dots.append(dot);
+    }
+    day.append(dots);
+    day.title = d.title;
+    strip.append(day);
+  }
+  box.append(strip);
 
   // The rings: one per course, in the course's own colour, filled by how much
   // of that course's week is handed in. The biggest week sits outermost.
   const ring = el('div', 'pk-w-ring');
-  const size = 128, stroke = 9, gapStep = 12;
+  const size = 120, stroke = 9, gapStep = 12;
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`); svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('aria-hidden', 'true');
   const g = document.createElementNS(SVG_NS, 'g');
@@ -1683,25 +1721,16 @@ function renderWeek() {
   if (!rings.length) g.append(circle(outer, 'var(--pk-ink-2)', null, '0.15'));
   svg.append(g);
   const centre = el('div', 'pk-w-centre');
-  if (w.total) centre.append(el('b', '', `${w.done}/${w.total}`), el('small', '', 'done'));
+  const allIn = w.total > 0 && w.done === w.total;
+  if (allIn) centre.append(el('b', '', `${w.done}/${w.total}`), el('small', '', 'all in'));
+  else if (w.total) centre.append(el('b', '', `${w.done}/${w.total}`), el('small', '', 'done'));
   else centre.append(el('b', '', '0'), el('small', '', 'due'));
   ring.append(svg, centre);
+  ring.title = w.byCourse.map((c) => `${c.name}: ${c.done} of ${c.total}`).join('\n');
   box.append(ring);
-
-  if (w.total) {
-    const legend = el('ul', 'pk-w-legend');
-    for (const course of w.byCourse) {
-      const li = el('li');
-      const dot = el('i');
-      const color = safeColor(course.colorHex); if (color) dot.style.background = color;
-      li.append(dot, el('span', '', shortCourse(course.name)), el('b', '', `${course.done}/${course.total}`));
-      li.title = course.name;
-      legend.append(li);
-    }
-    box.append(legend);
-  } else {
-    box.append(el('p', 'pk-w-empty', weekOffset === 0 ? 'Nothing due this week. Good week for a head start.' : 'Nothing due that week.'));
-  }
+  if (!w.total) box.append(el('p', 'pk-w-empty', 'Nothing due this week. Good week for a head start.'));
+  // The week closes: he dances once for it. Confetti, without the confetti.
+  celebrateWeek(allIn, w.start);
 
   // One list, the way BetterCampus keeps one: the thing to start at the top
   // with its two ways to start it, the next few under it. Always today's,
@@ -2080,6 +2109,9 @@ function saveRecapPicture(now) {
 function render() {
   if (shadow) { shadow.host.toggleAttribute('data-open', ui.open); shadow.host.dataset.view = ui.view; shadow.host.dataset.league = wallet.league ? tierOf(wallet.league).id : ''; }
   if (shadow && sprite) placeSprite(sprite.place);
+  // His line is on the rail and at the top of the panel; while the panel is
+  // open beside the rail, the rail's copy steps back.
+  document.getElementById(WEEK_ID)?.classList.toggle('pk-w-quiet', !!ui.open);
   if (!shadow) return;
   const root = shadow;
   const now = new Date();
@@ -2475,12 +2507,11 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', HANDED_IN_KEY]);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', HANDED_IN_KEY]);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
   data = composeData(stored.lastPayload ?? null, ownTasks, nicknames);
-  weekOffset = 0;
   levels = stored.levels ?? {};
   plans = stored.plans ?? {};
   targets = stored.targets ?? {};
@@ -2491,6 +2522,7 @@ async function mount() {
   wallet = { ...wallet, ...(stored.wallet ?? {}) };
   if (!LOOKS_BY_ID[wallet.wearing]) wallet.wearing = 'classic'; // a look that no longer exists
   focus = stored.focus ?? { state: 'idle' };
+  celebrated = typeof stored.celebrated === 'string' ? stored.celebrated : null;
 
   applySkin(skin);
   decorateCards();
@@ -2526,7 +2558,7 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, tankId, TANKS, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, weekDays, tankId, TANKS, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
                      panelView, looksView, weekView, whatIfView, courseView, addTaskView, searchView, focusCard, gradesCard, leagueCard,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {

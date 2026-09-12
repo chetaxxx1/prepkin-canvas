@@ -85,6 +85,7 @@ function submittedLabel(t) {
 
 /// What the buddy says. Calm on purpose: no alarms, no shame. Overdue work is
 /// "still counts", never a red wall.
+/// `short` is the subline for a place one line wide, like the rail.
 function voice({ overdue, today, doneToday }) {
   const o = overdue.length, t = today.length, d = doneToday.length;
   const count = (n) => ['Zero', 'One', 'Two', 'Three', 'Four', 'Five'][n] ?? String(n);
@@ -93,17 +94,19 @@ function voice({ overdue, today, doneToday }) {
       face: 'faceDeadpan', worried: true,
       headline: 'Late work still counts',
       subline: 'Pick one to start. Ten minutes is enough.',
+      short: 'Pick one to start.',
     };
   }
   if (!t) {
     return d
-      ? { face: 'faceDelight', headline: 'All done for today', subline: 'Rest counts too.' }
-      : { face: 'faceDelight', headline: 'Nothing due today', subline: 'Enjoy the space.' };
+      ? { face: 'faceDelight', headline: 'All done for today', subline: 'Rest counts too.', short: 'Rest counts too.' }
+      : { face: 'faceDelight', headline: 'Nothing due today', subline: 'Enjoy the space.', short: 'Enjoy the space.' };
   }
   return {
     face: 'faceIdle',
     headline: d ? 'Good pace today' : 'Ready when you are',
     subline: d ? `${d} done, ${t} to go. No rush.` : `${t === 1 ? 'One thing' : count(t) + ' things'} due today. Start small.`,
+    short: d ? `${d} done, ${t} to go.` : `${t === 1 ? 'One thing' : count(t) + ' things'} today.`,
   };
 }
 

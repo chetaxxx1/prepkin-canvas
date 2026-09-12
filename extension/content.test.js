@@ -330,3 +330,34 @@ test('tankId: the band paints the tank the phone named, and Lagoon until it name
   _setWallet({ coins: 0, owned: ['classic'], wearing: 'classic', kin: { species: 'sky', level: 2, skin: '', scene: '../x' } });
   assert.equal(tankId(), 'lagoon', 'an unknown name is the default, never a path');
 });
+
+test('weekDays: seven days from Monday, a dot per piece of work in its state, today marked', () => {
+  const { weekDays } = require('./content.js');
+  const { weekStats } = require('./day.js');
+  const now = new Date(2026, 8, 11, 14); // Friday Sep 11
+  const at = (d, h = 9) => new Date(2026, 8, d, h).toISOString();
+  const tasks = [
+    { id: 'a', dueAt: at(7), colorHex: '#9B3FA0', submittedAt: at(6) },   // Monday, in
+    { id: 'b', dueAt: at(9), colorHex: '#D91A00', submittedAt: null },    // Wednesday, slipped
+    { id: 'c', dueAt: at(11, 23), colorHex: '#2F6BAA', submittedAt: null }, // Friday night, open
+    { id: 'd', dueAt: at(13), colorHex: 'bad', submittedAt: null },       // Sunday, open, no colour
+    { id: 'e', dueAt: at(20), colorHex: '#000', submittedAt: null },      // next week: not here
+  ];
+  const days = weekDays(tasks, weekStats(tasks, now), now);
+  assert.equal(days.length, 7);
+  assert.deepEqual(days.map((d) => d.letter), ['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+  assert.deepEqual(days.map((d) => d.dots.map((x) => x.state)), [['done'], [], ['late'], [], ['open'], [], ['open']]);
+  assert.equal(days[0].dots[0].color, '#9B3FA0');
+  assert.equal(days[6].dots[0].color, null, 'a bad colour is no colour');
+  assert.deepEqual(days.map((d) => d.today), [false, false, false, false, true, false, false]);
+  assert.deepEqual(days.map((d) => d.past), [true, true, true, true, false, false, false]);
+  assert.equal(days[0].title, 'Monday: 1 of 1 in');
+});
+
+test('voice: a short line for the rail, one line wide', () => {
+  const { voice } = require('./day.js');
+  assert.equal(voice({ overdue: [1], today: [], doneToday: [] }).short, 'Pick one to start.');
+  assert.equal(voice({ overdue: [], today: [1, 2], doneToday: [1] }).short, '1 done, 2 to go.');
+  assert.equal(voice({ overdue: [], today: [1], doneToday: [] }).short, 'One thing today.');
+  assert.equal(voice({ overdue: [], today: [], doneToday: [] }).short, 'Enjoy the space.');
+});
