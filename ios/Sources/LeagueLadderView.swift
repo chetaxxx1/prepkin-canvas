@@ -270,49 +270,57 @@ struct LeagueLadderView: View {
 
     // MARK: - The rail
     //
-    // Dolphin calls this League Progression and you cannot touch it. Here it is the
-    // navigation: every water is tappable from week one, including the five above you.
-    // Nothing is greyed, padlocked or hidden behind a "?" — an unearned pennant is
-    // hollow, which is exactly how an unowned kin is drawn in the shop.
+    // Duolingo's league rail (Mobbin aea875c3): every league's trophy in one row,
+    // the one you are looking at big and in the middle, the ones you have earned in
+    // colour, the ones ahead of you drawn but not lit. Theirs are padlocked and you
+    // cannot touch them; ours are hollow, which is how an unowned kin is drawn in the
+    // shop, and every one is the navigation — tap a water and the card above shows
+    // it, so a student can look at Deep in week one and see what it is.
 
     private var rail: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(LeagueTier.allCases) { tile($0) }
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .bottom, spacing: 18) {
+                    ForEach(LeagueTier.allCases) { tile($0).id($0) }
+                }
+                .padding(.horizontal, Theme.gutter + 4)
+                .padding(.vertical, 6)
             }
-            .padding(.horizontal, 3)
-            .padding(.vertical, 3)
+            .scrollClipDisabled()
+            .padding(.horizontal, -Theme.gutter)
+            .onAppear { proxy.scrollTo(selected, anchor: .center) }
+            .onChange(of: selected) { _, now in
+                withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo(now, anchor: .center) }
+            }
         }
-        .scrollClipDisabled()
     }
 
     private func tile(_ t: LeagueTier) -> some View {
-        Button {
+        let big = t == selected
+        return Button {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             withAnimation(.easeOut(duration: 0.2)) { showing = t }
         } label: {
-            VStack(spacing: 7) {
-                TierPennant(tier: t, earned: earned(t), height: 34)
+            VStack(spacing: 8) {
+                TierPennant(tier: t, earned: earned(t) || t == yours, height: big ? 72 : 44)
+                    .padding(big ? 14 : 8)
+                    .background(Circle().fill(big ? t.color.opacity(0.16) : .clear))
+                    .overlay(alignment: .topTrailing) {
+                        if t == yours {
+                            Circle().fill(Theme.coral)
+                                .frame(width: 8, height: 8)
+                                .overlay(Circle().strokeBorder(.white, lineWidth: 1.5))
+                                .offset(x: big ? -8 : -2, y: big ? 8 : 2)
+                        }
+                    }
                 Text(t.name)
-                    .font(Theme.font(11, .heavy))
-                    .foregroundStyle(t == selected ? Theme.ink : Theme.muted)
+                    .font(Theme.font(big ? 12.5 : 11, .heavy))
+                    .foregroundStyle(big ? Theme.ink : Theme.muted)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.75)
-                    .padding(.horizontal, 4)
+                    .fixedSize()
             }
-            .frame(width: 78, height: 94)
-            .background(RoundedRectangle(cornerRadius: Theme.Radius.tile(78), style: .continuous)
-                .fill(t == selected ? t.color.opacity(0.18) : Theme.card))
-            .overlay(RoundedRectangle(cornerRadius: Theme.Radius.tile(78), style: .continuous)
-                .strokeBorder(t == selected ? t.edge : Theme.hairline,
-                              lineWidth: t == selected ? 1.6 : 1))
-            .overlay(alignment: .topTrailing) {
-                if t == yours {
-                    Circle().fill(Theme.coral)
-                        .frame(width: 7, height: 7)
-                        .padding(9)
-                }
-            }
+            .frame(minWidth: 64)
+            .animation(.easeOut(duration: 0.2), value: big)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(accessibilityLabel(t))

@@ -36,6 +36,26 @@ wire. Nothing new crosses the bridge — the board is built on the phone from th
 `daily_stats` rows `fetch_today` already sends, now over a fortnight so Monday can score
 last week.
 
+## The look, each piece copied from a real screen (2026-09-12, second pass)
+
+George: "make it better for design too, find direct references to copy as much as you can."
+
+| Piece | Copied from | What was taken |
+|---|---|---|
+| The scene | Finch Tree Town (`design/reference/finch/01-tree-town.png`) | The tab *is* the scene: full bleed under the status bar, the pets stand in it, empty places are marked, "＋ Add a friend" is a white pill floating in the scene. |
+| The water | Our own Reef Route (`SwimSceneView`) | The same traced kelp, corals, far mounds, sand and light rays the Focus shift swims through. `FriendsWater.reef`. |
+| The stands | Transit "Top contributors" (Mobbin d1aa00b6) | Three on stands, winner in the middle and tallest, a 1st / 2nd / 3rd rosette on the metal under each face. `PlaceRosette`. |
+| The rows | Duolingo league list (Mobbin aea875c3) | Coloured numeral, avatar, name, number on the right, your row tinted. |
+| The quest | Duolingo Friends Quest (Mobbin db515e34) | Eyebrow + time on the right, picture band with the people in it, goal in bold, bar with the fraction inside, a dotted row per person, an outlined Nudge button. |
+| Monday | Duolingo's result screen (Mobbin 99e7f2d1, 790f98ad) | The trophy big in the middle with sparks, "You finished 2nd last week", "You moved up to Shallows", Continue. A sheet, not a takeover. `MondaySheet`. |
+| The ladder rail | Duolingo's league rail (same screen) | Every water's pennant in one row, the one you are looking at big and tinted, earned ones in colour, the rest hollow (no padlocks). |
+
+Left out on purpose: Duolingo's exclamation marks and padlocks, Transit's shouting caps,
+Finch's night sky (the water is the tier's colour).
+
+`-fakeMonday` (DEBUG) seeds a second-of-six, bar-cleared last week so the sheet can be
+looked at.
+
 ## Why the score is not coins
 
 Coins are what the pod ranks on and they are unverifiable check-offs. The four counts are

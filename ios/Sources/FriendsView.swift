@@ -41,6 +41,9 @@ struct FriendsView: View {
     @State private var showPrivacy = false
     @State private var showAdd = false
     @State private var showLadder = false
+    /// The settled week whose sheet is up. Set on appear from `state.mondayCard`,
+    /// so the sheet opens once per settled week and never over another sheet.
+    @State private var monday: LeagueWeekResult?
     /// Ticks once a minute so "12 min left" counts down while the tab is open.
     @State private var clock = Date()
     // The code field is UIKit's, so focus is a flag it reports back rather than
@@ -59,33 +62,26 @@ struct FriendsView: View {
 
     var body: some View {
         NavigationStack {
+            GeometryReader { geo in
             ScrollView {
+                // The page opens on the scene, Finch's way: the water runs under the
+                // status bar and everything else sits below it in the gutter. Read
+                // the board once per body — it walks the ledger.
+                let board = state.weekBoard
+                FriendsWater(tier: state.league.tier, rows: board.rows,
+                             topInset: geo.safeAreaInsets.top,
+                             onEmptyTap: { showAdd = true },
+                             onTap: { row in
+                                 if let f = friends.first(where: { $0.id == row.id }) { showing = f }
+                             })
                 VStack(alignment: .leading, spacing: 0) {
-                    title
-                    // Somebody typed your code. It sits above everything because it
-                    // is the only thing on this tab that is news, and it is gone the
-                    // moment you have looked at it.
+                    // Somebody typed your code. It sits first under the water because
+                    // it is the only thing on this tab that is news, and it is gone
+                    // the moment you have looked at it.
                     if !addedYou.isEmpty { addedYouCard.padding(.top, 14) }
                     // Somebody said hello. Same shape as the card above it, and it
                     // ends the same way: by being looked at.
                     if !waved.isEmpty { wavedCard.padding(.top, 14) }
-                    // Last week, once. Sits above the water because it is the one
-                    // thing on this tab that is news, and it goes when it is read.
-                    if let last = state.mondayCard { mondayCard(last).padding(.top, 14) }
-
-                    // The page opens on a picture, not a paragraph: the board, in
-                    // your water. Read once per body — it walks the ledger.
-                    let board = state.weekBoard
-                    FriendsWater(tier: state.league.tier, rows: board.rows,
-                                 onEmptyTap: { showAdd = true },
-                                 onTap: { row in
-                                     if let f = friends.first(where: { $0.id == row.id }) { showing = f }
-                                 })
-                        .padding(.top, 16)
-
-                    // One primary action, and it is the honest one: a code works on
-                    // this phone today.
-                    if friends.isEmpty { addButton.padding(.top, 14) }
 
                     // Friends cannot see you on their board until you share your
                     // week. Asked here, where the reason is on screen, and only
@@ -118,6 +114,8 @@ struct FriendsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, Theme.gutter)
                 .padding(.bottom, Theme.tabClearance)
+            }
+            .ignoresSafeArea(edges: .top)
             }
             .background(Theme.paper)
             .scrollDismissesKeyboard(.interactively)
@@ -172,6 +170,11 @@ struct FriendsView: View {
             .environmentObject(state)
         }
         .sheet(isPresented: $showPrivacy) { PrivacySheet().environmentObject(state) }
+        // Last week, once. Duolingo's Monday screen: the trophy, the line, Continue.
+        .sheet(item: $monday, onDismiss: { state.dismissMondayCard() }) { last in
+            MondaySheet(last: last) { monday = nil }
+        }
+        .onAppear { monday = state.mondayCard }
         .task {
             await state.refreshFriends()
             // Both are silent on failure and both are cheap. They run after the
@@ -221,68 +224,6 @@ struct FriendsView: View {
         .background(cardBackground(Theme.Radius.card))
     }
 
-    // MARK: - Monday
-
-    /// Where last week left you and what you keep. One card, gone when looked at.
-    /// A place is only said against people: a board of one settles in silence, and
-    /// the card then only appears for a week that cleared the bar.
-    private func mondayCard(_ last: LeagueWeekResult) -> some View {
-        let p = last.placement
-        let placed = (p?.of ?? 0) >= 2
-        return Button {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            withAnimation(.easeOut(duration: 0.22)) { state.dismissMondayCard() }
-        } label: {
-            HStack(spacing: 14) {
-                if let medal = p?.medal {
-                    MedalPennant(medal: medal, height: 52)
-                } else {
-                    TierPennant(tier: last.promoted ? (last.tier.next ?? last.tier) : last.tier,
-                                earned: true, height: 52)
-                }
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(mondayTitle(p))
-                        .font(Theme.font(16, .black))
-                        .foregroundStyle(Theme.ink)
-                    Text(mondayLine(last))
-                        .font(Theme.font(13, .bold))
-                        .foregroundStyle(Theme.muted)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if last.promoted, let up = last.tier.next {
-                        Text("\(up.name) now")
-                            .font(Theme.font(11, .black))
-                            .foregroundStyle(Theme.mintDark)
-                            .padding(.horizontal, 9)
-                            .padding(.vertical, 3)
-                            .background(Capsule().fill(Theme.mintSoft))
-                            .padding(.top, 4)
-                    }
-                }
-                Spacer(minLength: 0)
-            }
-            .padding(16)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .background(cardBackground(Theme.Radius.card))
-        .accessibilityHint("Tap to put it away")
-    }
-
-    private func mondayTitle(_ p: BoardPlacement?) -> String {
-        guard let p, p.of >= 2 else { return "Last week cleared the bar" }
-        return "Last week: \(FriendsWater.ordinal(p.place)) of \(p.of)"
-    }
-
-    private func mondayLine(_ last: LeagueWeekResult) -> String {
-        switch last.placement?.medal {
-        case 1: return "You won the week. A gold pennant, kept."
-        case 2: return "Silver, kept."
-        case 3: return "Bronze, kept."
-        default: return last.promoted ? "\(last.coinsEarned.formatted()) coins in the week."
-                                      : "Everybody starts over today."
-        }
-    }
-
     // MARK: - Share my week
 
     /// Apple's "Share activity", asked where the board makes the reason obvious.
@@ -320,9 +261,10 @@ struct FriendsView: View {
 
     // MARK: - The rows
 
-    /// Fourth place down. The podium holds three; these are everybody else, with
-    /// the numeral the podium implies. Tapping a row opens the person; the clap is
-    /// the same one-a-day wave the card sends, one tap closer.
+    /// Fourth place down, Duolingo's league list (Mobbin aea875c3): a coloured
+    /// numeral, the avatar, the name, the number on the right, your own row tinted.
+    /// The podium holds three; these are everybody else. Tapping a row opens the
+    /// person; the clap is the same one-a-day wave the card sends, one tap closer.
     private func boardRows(_ rows: [BoardRow]) -> some View {
         VStack(spacing: 0) {
             ForEach(rows) { row in
@@ -338,9 +280,9 @@ struct FriendsView: View {
         let m = row.member
         return HStack(spacing: 12) {
             Text("\(row.place)")
-                .font(Theme.font(14, .black))
-                .foregroundStyle(Theme.muted)
-                .frame(width: 20)
+                .font(Theme.font(15, .black))
+                .foregroundStyle(state.league.tier.edge)
+                .frame(width: 22)
             SproutImage(speciesID: m.speciesID, level: m.level, skin: m.lookID, size: 40)
                 .frame(width: 40, height: 40, alignment: .bottom)
                 .overlay(alignment: .bottomTrailing) {
@@ -387,6 +329,7 @@ struct FriendsView: View {
         }
         .padding(.horizontal, 14)
         .frame(minHeight: 60)
+        .background(m.isYou ? state.league.tier.color.opacity(0.14) : .clear)
         .contentShape(Rectangle())
         .onTapGesture { if let friend { showing = friend } }
         .contextMenu { if let friend { menuItems(friend) } }
@@ -413,51 +356,108 @@ struct FriendsView: View {
 
     // MARK: - The quest
 
-    /// Duolingo's Friends Quest, for the whole board. One goal, one bar, everybody's
-    /// share under it, and a nudge that is the wave with a name on it.
+    /// Duolingo's Friends Quest card (Mobbin db515e34), line for line: an eyebrow
+    /// with the time on the right, a picture band with the people in it, the goal
+    /// in bold, a bar with the fraction inside it, a row per person with a coloured
+    /// dot and their share, and a button row. Ours is for the whole board, the
+    /// picture is the kin, the time is "Settles Monday", and Gift is not a thing.
     private func questCard(_ q: GroupQuest.Status, members: [BoardMember]) -> some View {
         let nudge = GroupQuest.nudge(q, members: members)
         let nudgeFriend = nudge.flatMap { n in friends.first { $0.id == n.id } }
-        return VStack(alignment: .leading, spacing: 8) {
+        let ranked = members.sorted { q.kind.count(in: $0.counts) > q.kind.count(in: $1.counts) }
+        let tint = q.cleared ? Theme.mint : state.league.tier.color
+        return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
-                Text("This week, together")
-                    .font(Theme.font(15, .black))
-                    .foregroundStyle(Theme.ink)
+                Text("THIS WEEK, TOGETHER")
+                    .font(Theme.font(12, .black))
+                    .kerning(1.2)
+                    .foregroundStyle(Theme.muted)
                 Spacer(minLength: 8)
                 Text(q.cleared ? "CLEARED" : "SETTLES MONDAY")
-                    .font(Theme.font(10.5, .black))
+                    .font(Theme.font(11, .black))
                     .kerning(0.6)
                     .foregroundStyle(q.cleared ? Theme.mintDark : Theme.dim)
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
+
+            // The picture band: everybody on the board, in a row, on a wash of the
+            // tier's water. Duolingo's is a scene; ours is the people themselves.
+            HStack(spacing: -6) {
+                ForEach(ranked.prefix(6)) { m in
+                    SproutImage(speciesID: m.speciesID, level: m.level, skin: m.lookID, size: 54)
+                        .frame(width: 54, height: 54, alignment: .bottom)
+                }
+                if ranked.count > 6 {
+                    Text("+\(ranked.count - 6)")
+                        .font(Theme.font(13, .black))
+                        .foregroundStyle(state.league.tier.edge)
+                        .padding(.leading, 12)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(state.league.tier.color.opacity(0.16)))
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .accessibilityHidden(true)
+
             Text(GroupQuest.line(q))
-                .font(Theme.font(13, .bold))
-                .foregroundStyle(Theme.muted)
+                .font(Theme.font(17, .black))
+                .foregroundStyle(Theme.ink)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 16)
+                .padding(.top, 14)
+
+            // The bar, with the fraction inside it, Duolingo's way.
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(Theme.hairline)
-                    Capsule().fill(q.cleared ? Theme.mint : state.league.tier.color)
-                        .frame(width: geo.size.width * min(1, Double(q.progress) / Double(max(1, q.goal))))
+                    Capsule().fill(tint)
+                        .frame(width: max(0, geo.size.width * min(1, Double(q.progress) / Double(max(1, q.goal)))))
+                    Text(GroupQuest.progressLine(q))
+                        .font(Theme.font(11.5, .black))
+                        .foregroundStyle(Theme.ink)
+                        .frame(maxWidth: .infinity)
                 }
             }
-            .frame(height: 10)
-            .padding(.top, 2)
-            Text(GroupQuest.progressLine(q))
-                .font(Theme.font(11.5, .black))
-                .foregroundStyle(Theme.ink)
-            HStack(spacing: 10) {
-                ForEach(members.sorted { q.kind.count(in: $0.counts) > q.kind.count(in: $1.counts) }) { m in
-                    HStack(spacing: 5) {
-                        SproutFace(speciesID: m.speciesID, size: 24)
-                        Text("\(q.kind.count(in: m.counts))")
-                            .font(Theme.font(12, .black))
+            .frame(height: 20)
+            .padding(.horizontal, 16)
+            .padding(.top, 10)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(GroupQuest.progressLine(q))
+
+            // One row per person, most first. A dot in the water's colour for you,
+            // Duolingo's dark one for everybody else.
+            VStack(spacing: 6) {
+                ForEach(ranked.prefix(4)) { m in
+                    HStack(spacing: 10) {
+                        Circle()
+                            .fill(m.isYou ? state.league.tier.color : Theme.ink.opacity(0.55))
+                            .frame(width: 9, height: 9)
+                        Text(m.isYou ? "You" : m.name)
+                            .font(Theme.font(14.5, .bold))
                             .foregroundStyle(Theme.ink)
+                            .lineLimit(1)
+                        Spacer(minLength: 8)
+                        Text(questShare(q.kind, m))
+                            .font(Theme.font(14, .bold))
+                            .foregroundStyle(Theme.muted)
                     }
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(m.isYou ? "You" : m.name): \(q.kind.count(in: m.counts))")
+                }
+                if ranked.count > 4 {
+                    Text("\(ranked.count - 4) more on the board")
+                        .font(Theme.font(12.5, .bold))
+                        .foregroundStyle(Theme.dim)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 19)
                 }
             }
-            .padding(.top, 4)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+
             if let nudgeFriend {
                 let sent = state.hasWaved(at: nudgeFriend)
                 Button {
@@ -465,25 +465,44 @@ struct FriendsView: View {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     withAnimation(.easeInOut(duration: 0.2)) { state.wave(at: nudgeFriend) }
                 } label: {
-                    Text(sent ? "Nudged \(nudgeFriend.displayName)" : "Nudge \(nudgeFriend.displayName)")
-                        .font(Theme.font(13.5, .black))
-                        .foregroundStyle(sent ? Theme.mintDark : Theme.coralShade)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(Capsule().fill(sent ? Theme.mintSoft : Theme.coralSoft))
+                    HStack(spacing: 8) {
+                        ClapGlyph(size: 17, tint: sent ? Theme.mintDark : Theme.coral)
+                        Text(sent ? "Nudged \(nudgeFriend.displayName)" : "Nudge \(nudgeFriend.displayName)")
+                            .font(Theme.font(13.5, .black))
+                    }
+                    .foregroundStyle(sent ? Theme.mintDark : Theme.coral)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 11)
+                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(sent ? Theme.mint : Theme.coral.opacity(0.5), lineWidth: 1.6))
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 4)
+                .padding(.horizontal, 16)
+                .padding(.top, 14)
             }
+
             Text(q.cleared ? "A quest pennant for the \(q.headcount) of you, kept on the ladder."
                            : "Clears by Sunday night, a quest pennant for everybody on the board.")
                 .font(Theme.font(11.5, .heavy))
                 .foregroundStyle(Theme.dim)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 14)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
         .background(cardBackground(Theme.Radius.card))
+    }
+
+    /// "9 tasks", "1h 20m", "2 lessons", "5 games".
+    private func questShare(_ kind: GroupQuest.Kind, _ m: BoardMember) -> String {
+        let n = kind.count(in: m.counts)
+        switch kind {
+        case .tasks: return "\(n) \(n == 1 ? "task" : "tasks")"
+        case .focus: return n == 0 ? "0 min" : TodayLines.clock(n)
+        case .lessons: return "\(n) \(n == 1 ? "lesson" : "lessons")"
+        case .games: return "\(n) \(n == 1 ? "game" : "games")"
+        }
     }
 
     // MARK: - Not on the board
@@ -544,21 +563,6 @@ struct FriendsView: View {
     }
 
     // MARK: - The one action, and the two rows
-
-    private var addButton: some View {
-        Button { showAdd = true } label: {
-            Text("Add a friend")
-                .font(Theme.font(17, .black))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(RoundedRectangle(cornerRadius: Theme.Radius.sheet,
-                                             style: .continuous)
-                    .fill(Theme.coral))
-                .shadow(color: Theme.coral.opacity(0.3), radius: 10, y: 8)
-        }
-        .buttonStyle(.plain)
-    }
 
     /// The pod and the ladder, as two rows. Both open `LeagueLadderView`; the pod row
     /// is the one that used to be ninety words and a coral button at the top of this
@@ -659,28 +663,6 @@ struct FriendsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-    }
-
-    // MARK: - Title
-
-    /// No title. It used to say "Friends" at 34pt, four points above a tab bar already
-    /// saying it, over the one screen whose whole point is the water underneath. What is
-    /// left is the button, and on an empty board not even that.
-    private var title: some View {
-        HStack(alignment: .bottom) {
-            Spacer(minLength: 0)
-            if !friends.isEmpty {
-                Button { showAdd = true } label: {
-                    AddFriendGlyph(size: 24)
-                        .frame(width: 42, height: 42)
-                        .background(Circle().fill(Theme.card)
-                            .shadow(color: .black.opacity(0.06), radius: 6, y: 2))
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Add a friend")
-            }
-        }
-        .frame(height: friends.isEmpty ? 0 : 40, alignment: .bottom)
     }
 
     // MARK: - Add a friend

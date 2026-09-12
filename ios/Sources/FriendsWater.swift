@@ -1,46 +1,55 @@
 import SwiftUI
 
-/// The Friends tab's hero: this week's board, in your league's water.
+/// The Friends tab's hero: this week's board, in your league's water, full bleed.
 ///
-/// The top three stand on sand mounds — Transit's "Top contributors" podium, the
-/// winner in the middle and tallest — and everybody else is a row underneath. An
-/// empty mound is a dashed ring where a friend's kin would stand, which does the
-/// job three paragraphs used to do: there is room here. Nothing on this card is
-/// invented. An empty mound is empty because nobody is on it, and when a friend
-/// shares their week their kin lands on it and nothing else changes.
+/// Three screens are copied here, on purpose and as closely as the art allows:
 ///
-/// The water is the tier's own colour, so climbing the ladder is visible on the tab
-/// that shows it rather than only inside the ladder screen.
+/// - **Finch, Tree Town** (`design/reference/finch/01-tree-town.png`): the tab *is* the
+///   scene. It runs under the status bar, the pets stand in it, the empty places are
+///   marked, and "Add friend" is a pill floating in the scene rather than a button
+///   under it.
+/// - **Transit, Top contributors** (Mobbin d1aa00b6): three on stands, the winner in
+///   the middle and tallest, a 1st / 2nd / 3rd rosette under each face, everybody
+///   else as a plain numbered list below.
+/// - **Our own Reef Route** (`SwimSceneView`): the water, the sand, the kelp and the
+///   corals are the same traced sprites the Focus shift swims through, so the tab
+///   looks like the rest of the app's sea and not like a gradient with capsules in it.
+///
+/// Nothing on this card is invented. An empty stand is a dashed ring because nobody
+/// is on it, and when a friend shares their week their kin lands there.
 struct FriendsWater: View {
     let tier: LeagueTier
     /// The board, best first. Never empty: you are always on your own board.
     let rows: [BoardRow]
-    /// Tapping an empty mound is the same as tapping Add a friend.
+    /// The status bar's height, so the chips clear it while the water runs under it.
+    var topInset: CGFloat = 0
+    /// Tapping an empty stand, or the pill, is the same as tapping Add a friend.
     var onEmptyTap: () -> Void = {}
     /// Tapping a kin opens that person.
     var onTap: (BoardRow) -> Void = { _ in }
 
     private static let ringSize: CGFloat = 64
-
-    /// Where every mound's foot lands: far enough into the sand to stand on it
-    /// rather than hover over it.
-    private static let floor: CGFloat = 24
-    private static let height: CGFloat = 318
-    /// How much sand shows. The ellipse is far wider than the card so its crown reads
-    /// as a gentle rise rather than a dome.
-    private static let sandShown: CGFloat = 56
+    /// The scene below the status bar. The sand takes the bottom fifth.
+    private static let sceneHeight: CGFloat = 340
+    private static let sandShown: CGFloat = 64
+    /// Where every stand's foot lands: into the sand, not hovering over it.
+    private static let floor: CGFloat = 22
 
     var body: some View {
         ZStack(alignment: .bottom) {
             water
+            reef
             sand
-            weeds
+            sandLife
             podium
             chips
+            addPill
         }
-        .frame(height: Self.height)
+        .frame(height: Self.sceneHeight + topInset)
         .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sheet, style: .continuous))
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: Theme.Radius.sheet,
+                                          bottomTrailingRadius: Theme.Radius.sheet, topTrailingRadius: 0,
+                                          style: .continuous))
         .accessibilityElement(children: .contain)
     }
 
@@ -48,31 +57,54 @@ struct FriendsWater: View {
 
     private var water: some View {
         ZStack {
-            LinearGradient(colors: [tier.color.opacity(0.52),
-                                    tier.color.opacity(0.80),
+            LinearGradient(colors: [tier.color.opacity(0.42),
+                                    tier.color.opacity(0.78),
                                     tier.color,
                                     tier.color],
                            startPoint: .top, endPoint: .bottom)
-            // The light coming in, always from the same corner as every other
-            // highlight in the app.
-            RadialGradient(colors: [.white.opacity(0.62), .white.opacity(0)],
+            // Light from the same corner as every other highlight in the app, and
+            // two of the Reef Route's rays coming down through it.
+            RadialGradient(colors: [.white.opacity(0.55), .white.opacity(0)],
                            center: UnitPoint(x: 0.22, y: -0.1),
-                           startRadius: 0, endRadius: 250)
+                           startRadius: 0, endRadius: 260)
+            rays
             bubbles
         }
         .background(Theme.card)
+    }
+
+    private var rays: some View {
+        GeometryReader { geo in
+            ray(at: 0.22, width: 30, alpha: 0.26, in: geo.size)
+            ray(at: 0.62, width: 20, alpha: 0.16, in: geo.size)
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func ray(at x: CGFloat, width w: CGFloat, alpha a: Double, in size: CGSize) -> some View {
+        Path { p in
+            let x0 = size.width * x
+            p.move(to: CGPoint(x: x0, y: -20))
+            p.addLine(to: CGPoint(x: x0 + w, y: -20))
+            p.addLine(to: CGPoint(x: x0 - 70 + w * 0.5, y: size.height))
+            p.addLine(to: CGPoint(x: x0 - 70 - w * 0.5, y: size.height))
+            p.closeSubpath()
+        }
+        .fill(LinearGradient(colors: [.white.opacity(a), .white.opacity(0)],
+                             startPoint: .top, endPoint: .bottom))
     }
 
     private var bubbles: some View {
         // Fixed positions rather than random: a card that redraws must not shuffle
         // its own background while somebody is reading it.
         ZStack {
-            bubble(10, x: 0.27, y: 0.30)
-            bubble(6, x: 0.33, y: 0.19)
-            bubble(13, x: 0.76, y: 0.38)
-            bubble(7, x: 0.83, y: 0.26)
-            bubble(8, x: 0.50, y: 0.14)
+            bubble(10, x: 0.27, y: 0.34)
+            bubble(6, x: 0.33, y: 0.25)
+            bubble(13, x: 0.76, y: 0.40)
+            bubble(7, x: 0.83, y: 0.30)
+            bubble(8, x: 0.50, y: 0.22)
         }
+        .allowsHitTesting(false)
     }
 
     private func bubble(_ d: CGFloat, x: Double, y: Double) -> some View {
@@ -85,59 +117,86 @@ struct FriendsWater: View {
         }
     }
 
+    // MARK: - The reef
+
+    /// The far mounds and the kelp, from the Reef Route's own sprite sheet, planted
+    /// where the swim scene plants them: far strip faint and low, tall kelp at the
+    /// edges behind the stands, corals in front of the kelp and behind the sand line.
+    private var reef: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let sandLine = geo.size.height - Self.sandShown
+            let farH: CGFloat = 44
+            Image("reef-far")
+                .resizable()
+                .frame(width: ReefSprites.width("far", height: farH), height: farH)
+                .opacity(0.28)
+                .position(x: w * 0.5, y: sandLine - farH / 2 + 6)
+            sprite("plant-4", height: 118, x: 22, sandLine: sandLine)
+            sprite("plant-1", height: 84, x: 48, sandLine: sandLine)
+            sprite("coral-1", height: 40, x: 64, sandLine: sandLine)
+            sprite("plant-4", height: 104, x: w - 20, sandLine: sandLine)
+            sprite("plant-2", height: 72, x: w - 48, sandLine: sandLine)
+            sprite("coral-3", height: 42, x: w - 66, sandLine: sandLine)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    private func sprite(_ name: String, height: CGFloat, x: CGFloat, sandLine: CGFloat) -> some View {
+        let w = ReefSprites.width(name, height: height)
+        // Rooted six points into the sand, exactly as `SwimSceneView.drawTile` roots them.
+        return Image("reef-" + name)
+            .resizable()
+            .frame(width: w, height: height)
+            .position(x: x, y: sandLine + 6 - height / 2)
+    }
+
     /// The sea floor. A wide, shallow ellipse mostly below the card, so only its
-    /// gentle crown shows and the slots have a line to stand on.
+    /// gentle crown shows and the stands have a line to sit on. The Reef Route's
+    /// sand, with its lighter crest.
     private var sand: some View {
         GeometryReader { geo in
             let w = geo.size.width * 2.2
             let h: CGFloat = 150
-            Ellipse()
-                .fill(Theme.hex(0xF3E4C9))
-                .overlay(
-                    Ellipse().strokeBorder(Theme.hex(0xE3CBA2), lineWidth: 3.5)
-                )
-                .frame(width: w, height: h)
-                // Only `sandShown` of the ellipse clears the card's bottom edge.
-                .position(x: geo.size.width / 2,
-                          y: geo.size.height - Self.sandShown + h / 2)
-        }
-        .allowsHitTesting(false)
-    }
-
-    /// Weed rooted in the sand. Three clumps, always in the same places, drawn behind
-    /// whoever is standing there — a card with nothing but water and a beige strip
-    /// reads as a placeholder rather than a place.
-    private var weeds: some View {
-        HStack(alignment: .bottom, spacing: 0) {
-            clump([26, 42, 18])
-            Spacer(minLength: 0)
-            clump([18, 32, 24])
-        }
-        .padding(.horizontal, 8)
-        .padding(.bottom, Self.sandShown - 8)
-        .allowsHitTesting(false)
-    }
-
-    private func clump(_ heights: [CGFloat]) -> some View {
-        HStack(alignment: .bottom, spacing: 5) {
-            ForEach(Array(heights.enumerated()), id: \.offset) { _, h in
-                Capsule()
-                    .fill(tier.edge.opacity(0.34))
-                    .frame(width: 7, height: h)
+            ZStack {
+                Ellipse()
+                    .fill(Reef.sand)
+                    .overlay(Ellipse().strokeBorder(Reef.dune, lineWidth: 3.5))
+                    .frame(width: w, height: h)
+                Ellipse()
+                    .fill(Reef.sandLight)
+                    .frame(width: w - 8, height: h - 8)
+                    .mask(Rectangle().frame(height: 12).offset(y: -h / 2 + 8))
             }
+            .position(x: geo.size.width / 2,
+                      y: geo.size.height - Self.sandShown + h / 2)
         }
+        .allowsHitTesting(false)
     }
 
-    // MARK: - The podium
+    /// A starfish on the sand, off to one side. One, because the shift's floor has
+    /// one per tile and the tab is one tile wide.
+    private var sandLife: some View {
+        GeometryReader { geo in
+            let h: CGFloat = 15
+            Image("reef-star")
+                .resizable()
+                .frame(width: ReefSprites.width("star", height: h), height: h)
+                .position(x: geo.size.width - 40, y: geo.size.height - 18)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
 
-    /// Three mounds: second on the left, first in the middle and tallest, third on
-    /// the right. A place with nobody on it is a dashed ring, drawn the way an
-    /// unowned kin is drawn everywhere else — full-strength colour, hollow.
+    // MARK: - The stands
+
+    /// Second on the left, first in the middle and tallest, third on the right.
     private var podium: some View {
         HStack(alignment: .bottom, spacing: 10) {
-            mound(place: 2, row: row(at: 1), kin: 92, hill: 26)
-            mound(place: 1, row: row(at: 0), kin: 116, hill: 40)
-            mound(place: 3, row: row(at: 2), kin: 84, hill: 16)
+            stand(place: 2, row: row(at: 1), kin: 92, hill: 26)
+            stand(place: 1, row: row(at: 0), kin: 116, hill: 40)
+            stand(place: 3, row: row(at: 2), kin: 84, hill: 16)
         }
         .padding(.bottom, Self.floor)
     }
@@ -148,7 +207,7 @@ struct FriendsWater: View {
     /// fish in the middle and no crown over it, which is the truth.
     private var crowned: Bool { rows.count >= 2 }
 
-    @ViewBuilder private func mound(place: Int, row: BoardRow?, kin: CGFloat, hill: CGFloat) -> some View {
+    @ViewBuilder private func stand(place: Int, row: BoardRow?, kin: CGFloat, hill: CGFloat) -> some View {
         VStack(spacing: 0) {
             if let row {
                 Button { onTap(row) } label: {
@@ -183,13 +242,20 @@ struct FriendsWater: View {
             // A low dome, wider than tall, so it reads as sand pushed up rather
             // than a plinth. The kin's feet sink a little into it.
             Ellipse()
-                .fill(Theme.hex(0xEFD9B6))
-                .overlay(Ellipse().strokeBorder(Theme.hex(0xE3CBA2), lineWidth: 3))
+                .fill(Reef.sandLight)
+                .overlay(Ellipse().strokeBorder(Reef.dune, lineWidth: 3))
                 .frame(width: 104, height: (hill + 10) * 2)
                 .frame(height: hill + 10, alignment: .top)
                 .clipped()
                 .zIndex(1)
-            VStack(spacing: 0) {
+            // Transit's rosette: the place, on the metal, under the face. Only with
+            // somebody to have placed against — a board of one gets a name alone.
+            VStack(spacing: 3) {
+                if row != nil, crowned {
+                    PlaceRosette(place: place)
+                        .offset(y: -8)
+                        .padding(.bottom, -8)
+                }
                 Text(row?.member.name ?? " ")
                     .font(Theme.font(12, .heavy))
                     .lineLimit(1)
@@ -219,7 +285,7 @@ struct FriendsWater: View {
         }
     }
 
-    // MARK: - The two chips
+    // MARK: - The chips and the pill
 
     /// The water on the left, the day it settles on the right. Not a countdown:
     /// `PRODUCT.md` bans those, and "Monday" is the whole of what a student needs.
@@ -235,6 +301,7 @@ struct FriendsWater: View {
                     Text("Settles Monday").font(Theme.font(13, .black))
                 }
             }
+            .padding(.top, topInset)
             Spacer(minLength: 0)
         }
         .padding(14)
@@ -247,9 +314,75 @@ struct FriendsWater: View {
             .padding(.vertical, 6)
             .background(Capsule().fill(.white.opacity(0.88)))
     }
+
+    /// Finch's "＋ Add friend" pill, floating in the scene at the bottom. The one
+    /// action on the tab, always in the same place whether the board is empty or full.
+    private var addPill: some View {
+        HStack {
+            Spacer(minLength: 0)
+            Button(action: onEmptyTap) {
+                HStack(spacing: 6) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 15, weight: .bold))
+                    Text("Add a friend")
+                        .font(Theme.font(13.5, .black))
+                }
+                .foregroundStyle(Theme.coral)
+                .padding(.horizontal, 13)
+                .padding(.vertical, 9)
+                .background(Capsule().fill(.white)
+                    .shadow(color: Theme.hex(0x281923).opacity(0.14), radius: 8, y: 3))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Add a friend")
+        }
+        .padding(.horizontal, 14)
+        .padding(.bottom, 12)
+    }
 }
 
-/// A small gold crown for the winner's mound. Five points on a 26x20 grid.
+/// Transit's 1st / 2nd / 3rd rosette: a small disc of the metal with the place on
+/// it and two short ribbon tails. Gold, silver, bronze — the same cloth the
+/// shelf's pennants use.
+struct PlaceRosette: View {
+    let place: Int
+
+    var body: some View {
+        let (fill, edge) = MedalPennant.cloth(place)
+        ZStack {
+            // The tails, behind the disc.
+            HStack(spacing: 6) {
+                RibbonTail().fill(edge).frame(width: 9, height: 12)
+                RibbonTail().fill(edge).frame(width: 9, height: 12)
+            }
+            .offset(y: 8)
+            Circle()
+                .fill(fill)
+                .overlay(Circle().strokeBorder(edge, lineWidth: 1.6))
+                .frame(width: 24, height: 24)
+            Text(FriendsWater.ordinal(place))
+                .font(Theme.fixedFont(8.5, .black))
+                .foregroundStyle(place == 2 ? Theme.hex(0x3E434A) : .white)
+        }
+        .frame(width: 30, height: 30)
+        .accessibilityHidden(true)
+    }
+
+    private struct RibbonTail: Shape {
+        func path(in r: CGRect) -> Path {
+            var p = Path()
+            p.move(to: CGPoint(x: r.minX, y: r.minY))
+            p.addLine(to: CGPoint(x: r.maxX, y: r.minY))
+            p.addLine(to: CGPoint(x: r.maxX, y: r.maxY))
+            p.addLine(to: CGPoint(x: r.midX, y: r.maxY - r.height * 0.3))
+            p.addLine(to: CGPoint(x: r.minX, y: r.maxY))
+            p.closeSubpath()
+            return p
+        }
+    }
+}
+
+/// A small gold crown for the winner's stand. Five points on a 26x20 grid.
 struct CrownGlyph: View {
     var size: CGFloat = 26
 

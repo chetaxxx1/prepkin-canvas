@@ -178,6 +178,18 @@ final class AppState: ObservableObject {
         if DebugUnlock.isOn {
             game.unlockEverythingForTesting()
         }
+        // Launch with `-fakeMonday` to see the Monday sheet: last week is written
+        // into the receipts as a second place on a board of six that cleared the
+        // bar. Same two guards as `-unlockAll`, and it is a sim's save, not a
+        // student's.
+        if ProcessInfo.processInfo.arguments.contains("-fakeMonday") {
+            let week = WeekKey(DayKey(Date().addingTimeInterval(-7 * 86_400)))
+            game.league.history.removeAll { $0.week == week }
+            game.league.history.insert(
+                LeagueWeekResult(week: week, tier: game.league.tier, coinsEarned: 320, promoted: true,
+                                 placement: BoardPlacement(place: 2, of: 6)), at: 0)
+            game.league.boardSeen = nil
+        }
         #endif
         game.refreshPicksIfNeeded()
         store.save(game)
