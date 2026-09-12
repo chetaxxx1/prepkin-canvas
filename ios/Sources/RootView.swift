@@ -95,6 +95,9 @@ struct RootView: View {
             withAnimation(switchAnimation) { tab = .friends }
             Task { @MainActor in state.openFriendsRequest = false }
         }
+        // "Have a friend code?" on the welcome: the add-friend screen is the first
+        // thing after setup, as promised there. Home is one tap away.
+        .onAppear { if state.openAddFriendRequest { tab = .friends } }
         // Sitting down with a friend from their card. The tab switch is Root's; the
         // shift is Focus's, which clears the request once it has started one.
         .onChange(of: state.joinShiftRequest) { _, new in

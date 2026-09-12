@@ -129,6 +129,10 @@ struct FriendsView: View {
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(isPresented: $showAdd) { addScreen }
             .navigationDestination(isPresented: $showLadder) { LeagueLadderView() }
+            // "Have a friend code?" on the first run's welcome, or the Day 2 card:
+            // the add-friend screen opens itself the first time this tab shows.
+            .onAppear { openAddIfAsked() }
+            .onChange(of: state.openAddFriendRequest) { _, _ in openAddIfAsked() }
         }
         // The only system-coloured things on this tab are the quiet menu and the
         // two confirms below. Coral is the app's action colour, and it is what
@@ -849,6 +853,12 @@ struct FriendsView: View {
         // The first time this screen opens is the first time a student has asked
         // for anything social, so it is where this phone gets an id at all.
         .task { await state.loadMyCode() }
+    }
+
+    private func openAddIfAsked() {
+        guard state.openAddFriendRequest else { return }
+        state.openAddFriendRequest = false
+        showAdd = true
     }
 
     private var addFriendCard: some View {
