@@ -585,9 +585,12 @@ function panelView(b, said, now) {
     <ul class="pk-list">${b.missed.map((t) => taskRow(t, { now, state: 'overdue' })).join('') || '<li class="empty">Nothing here. Enjoy it.</li>'}</ul>`;
   }
 
-  const g = weekGroups(b, now, { skip: nextUp });
+  // On the dashboard the rail beside the panel already holds the Next up
+  // card with its two buttons, so the panel lists that task with the rest.
+  const railHasIt = typeof document !== 'undefined' && !!document.getElementById?.(WEEK_ID);
+  const g = weekGroups(b, now, { skip: railHasIt ? null : nextUp });
   return `
-    ${nextUp ? nextUpCard(nextUp, now) : ''}
+    ${nextUp && !railHasIt ? nextUpCard(nextUp, now) : ''}
     ${g.blocks || (nextUp ? '' : '<ul class="pk-list"><li class="empty">Nothing this week. Enjoy it.</li></ul>')}
     ${g.undatedBlock}
     <div class="pk-listfoot"><button class="pk-add" data-view="addtask">+ Add a task</button><button class="pk-add" data-view="search">Search <kbd>⌘K</kbd></button></div>
