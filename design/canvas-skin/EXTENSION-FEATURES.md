@@ -227,6 +227,31 @@ stubs `chrome`, feeds `content.js` sample data and writes one HTML file per view
 `H=`, `OUT=`). The live popup, side panel and panel-on-page shots come from
 `design/site-shots/shoot.js` with `SURFACES=1`.
 
+## H. 2026-09-12: the planner pass
+
+George: "content wise, UI/UX all could use significant improvement… explore
+what others have done using mobbin, pinterest, etc." What the research said,
+and what it changed.
+
+**What students call a good Canvas** (Lemon8/TikTok/Reddit posts on
+BetterCanvas + Tasks for Canvas setups): "like decorating your digital
+planner", "satisfying" (rings, confetti at 100%), "clean reset" (hide
+completed), short class names, one palette, cute + functional. **What the best
+planners do** (Mobbin): Finch's bird speaks a line above its goals; Structured
+and Tiimo run a 7-day strip with today filled and colour dots per task; Liven
+and Me+ strike done rows with a checkmark and count "3 of 4"; Todoist groups
+Upcoming by day; Duolingo makes the payoff moment loud.
+
+| Surface | Before | After | Commit |
+|---|---|---|---|
+| Rail | "This week" + a date stepper + ring + legend + list | **His line** (the panel's headline, one-line `short` subline), **the week strip** (M–S, today filled, a dot per piece of work in its course colour: solid in, hollow open, amber slipped), the ring (all in → he dances once a week), the list. Legend gone: the cards on the same page pair colour with course. | `5c60b0f` |
+| Panel home | Three chips over one flat list; the week one tap away | **The planner**: Past due / Today / Tomorrow / each day, Plan on hover, drag to a day, titles open the work; the Next up card only where no rail carries it; school-flagged missing work behind one amber row | `ba5ed36`, later |
+| Mascot band | Flat mint gradient | The phone's own tank plate | `84a6b10` |
+| Hand-in | Waited for the 30-min sync | One sync, cheer, +30 float | `1e41327` |
+
+Left on the table, on purpose: streaks (removed app-wide), a notes box
+(bloat), hover previews (extra fetches), Firefox/Edge.
+
 ## E. Testing plan for whatever is chosen
 
 Every feature gets: unit rows where it has logic, an e2e row on the fake page,
