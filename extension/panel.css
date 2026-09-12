@@ -482,6 +482,10 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-results li a b { font-size: 14px; font-weight: 700; }
 .pk-results li a small { font-size: 12px; color: var(--pk-text-2); }
 .pk-results li.on a, .pk-results li a:hover { background: var(--pk-inset); }
+/* A planner row's title opens the work; it reads as text until the mouse is on it. */
+.pk-list li b a { color: inherit; text-decoration: none; }
+.pk-list li b a:hover { text-decoration: underline; text-decoration-color: var(--pk-mint-border, currentColor); }
+.pk-recaprow.amber b { color: var(--pk-amber-text, #8A5A12); }
 /* The groups before a word is typed, and the key hints under the list. */
 .pk-results li.pk-group { font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-text-2); padding: 10px 10px 4px; }
 .pk-results li.pk-group:first-child { padding-top: 2px; }

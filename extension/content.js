@@ -536,7 +536,7 @@ function plannerRow(t, now) {
     <li class="${t.submittedAt ? 'done' : ''}${moved ? ' moved' : ''}"${t.submittedAt ? '' : ` draggable="true" data-drag="${escapeHTML(t.id)}"`}>
       <span class="pk-bar" style="background:${escapeHTML(color)}"></span>
       ${t.submittedAt ? `<span class="pk-tick">${checkSVG(16)}</span>` : ''}
-      <div><b>${escapeHTML(t.title)}</b>
+      <div><b>${safeURL(t.url) ? `<a href="${escapeHTML(safeURL(t.url))}">${escapeHTML(t.title)}</a>` : escapeHTML(t.title)}</b>
            <small>${t.submittedAt ? `${escapeHTML(shortCourse(t.courseName))} · submitted` : sub}</small></div>
       ${t.submittedAt ? (t.pointsPossible ? `<span class="pk-pts">${t.pointsPossible} pts</span>` : '')
         : `<button class="pk-planbtn${plans[t.id] ? ' on' : ''}" data-plan-open="${escapeHTML(t.id)}"
@@ -568,36 +568,30 @@ function planPicker(t, now) {
 
 // MARK: - Views
 
+/// The home is the planner: the one thing to start, then the week by day.
+/// The chips that used to filter one flat list are gone; the day groups say
+/// what they are. Work the school marked missing long ago sits behind one row.
 function panelView(b, said, now) {
-  const totalToday = b.today.length + b.doneToday.length;
-  const pct = totalToday ? Math.round((b.doneToday.length / totalToday) * 100) : 100;
-  const filter = ui.filter ?? (b.overdue.length ? 'overdue' : 'today');
   const nextUp = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
 
-  const rows =
-    filter === 'missed' ? b.missed.map((t) => taskRow(t, { now, state: 'overdue' }))
-    : filter === 'overdue' ? b.overdue.filter((t) => t !== nextUp).map((t) => taskRow(t, { now, state: 'overdue' }))
-    : [
-        ...b.today.filter((t) => t !== nextUp).map((t) => taskRow(t, { now, state: 'todo' })),
-        ...b.doneToday.map((t) => taskRow(t, { now, state: 'done' })),
-      ];
-
-  const filterBtn = (key, label, count, amber) => `
-    <button data-filter="${key}" aria-pressed="${filter === key}" class="${filter === key ? `on${amber ? ' amber' : ''}` : ''}">
-      ${label}${count ? `<em>${count}</em>` : ''}
-    </button>`;
-
-  return `
-    <div class="pk-filters">
-      ${filterBtn('today', 'Today', totalToday, false)}
-      ${filterBtn('week', 'This week', b.week.length, false)}
-      ${filterBtn('overdue', 'Overdue', b.overdue.length, true)}
-      ${b.missed.length ? filterBtn('missed', 'Missing', b.missed.length, true) : ''}
+  if (ui.filter === 'missed') {
+    return `
+    <div class="pk-group">
+      <span class="pk-label amber">Marked missing</span>
+      <button class="pk-lenchange" data-filter="today">Back</button>
     </div>
-    ${filter === 'missed' ? `<div class="pk-foot">Your school marked these missing. Late work still counts. Teachers take it more often than students ask.</div>${missingCostLines(b.missed)}` : ''}
-    ${filter === 'missed' ? '' : nextUp ? nextUpCard(nextUp, now) : ''}
-    <ul class="pk-list">${rows.join('') || (nextUp ? '' : '<li class="empty">Nothing here. Enjoy it.</li>')}</ul>
+    <div class="pk-foot">Your school marked these missing. Late work still counts. Teachers take it more often than students ask.</div>
+    ${missingCostLines(b.missed)}
+    <ul class="pk-list">${b.missed.map((t) => taskRow(t, { now, state: 'overdue' })).join('') || '<li class="empty">Nothing here. Enjoy it.</li>'}</ul>`;
+  }
+
+  const g = weekGroups(b, now, { skip: nextUp });
+  return `
+    ${nextUp ? nextUpCard(nextUp, now) : ''}
+    ${g.blocks || (nextUp ? '' : '<ul class="pk-list"><li class="empty">Nothing this week. Enjoy it.</li></ul>')}
+    ${g.undatedBlock}
     <div class="pk-listfoot"><button class="pk-add" data-view="addtask">+ Add a task</button><button class="pk-add" data-view="search">Search <kbd>⌘K</kbd></button></div>
+    ${b.missed.length ? `<button class="pk-recaprow amber" data-filter="missed"><b>${b.missed.length} marked missing</b><span>Older work your school flagged. Still counts.</span></button>` : ''}
     ${recapDue(data.courses, data.tasks, now) ? '<button class="pk-recaprow" data-view="recap"><b>Your term, in numbers</b><span>The whole term, from your own laptop</span></button>' : ''}
     ${gradesCard()}
     ${leagueCard()}
@@ -895,10 +889,13 @@ function resultsHTML(query) {
   return hits.map((h, i) => row(h, i === 0)).join('');
 }
 
-function weekView(b, now) {
+/// The week as a planner: one group for what slipped, then one per day from
+/// today on, the way Todoist's Upcoming reads. The home and the week view
+/// both draw from it; `skip` is the task the Next up card already shows.
+function weekGroups(b, now, { skip = null } = {}) {
   // Not b.missed: a month-old zero under a heading that says "Friday" reads as
   // this Friday. Old missing work has its own list on the panel.
-  const all = [...b.overdue, ...b.today, ...b.week, ...b.doneToday];
+  const all = [...b.overdue, ...b.today, ...b.week, ...b.doneToday].filter((t) => t !== skip);
   // Grouped by the day the work sits on, which is the day it was planned for
   // when the student moved it, and the day it is due when they did not.
   const placed = all.map((t) => ({ t, day: planDay(t) })).filter((x) => x.day);
@@ -941,7 +938,7 @@ function weekView(b, now) {
   }).join('');
 
   const done = all.filter((t) => t.submittedAt).length;
-  const groupBlocks = [...groups.values()].map((g) => {
+  const blocks = [...groups.values()].map((g) => {
     const owed = g.items.filter((t) => !isMoved(t)).length;
     const moved = g.items.length - owed;
     const count = [owed ? `${owed} due` : '', moved ? `${moved} planned` : ''].filter(Boolean).join(' · ');
@@ -952,21 +949,26 @@ function weekView(b, now) {
     </div>
     <ul class="pk-list"${g.date ? ` data-drop="${dayKey(g.date)}"` : ''}>${g.items.map((t) => plannerRow(t, now)).join('')}</ul>`;
   }).join('');
-
-  return `
-    <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
-      <h2>This week</h2>
-      <span class="pk-meta">${all.length} tasks · ${done} done</span>
-    </div>
-    <div class="pk-week">${strip}</div>
-    ${groupBlocks || '<ul class="pk-list"><li class="empty">Nothing scheduled. Enjoy it.</li></ul>'}
-    ${undated.length ? `
+  const undatedBlock = undated.length ? `
       <div class="pk-group">
         <span class="pk-label">No due date</span>
         <span class="pk-count-txt">${undated.length}</span>
       </div>
-      <ul class="pk-list">${undated.map((t) => plannerRow(t, now)).join('')}</ul>` : ''}`;
+      <ul class="pk-list">${undated.map((t) => plannerRow(t, now)).join('')}</ul>` : '';
+  return { strip, blocks, undatedBlock, count: all.length, done };
+}
+
+function weekView(b, now) {
+  const g = weekGroups(b, now);
+  return `
+    <div class="pk-viewhead">
+      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
+      <h2>This week</h2>
+      <span class="pk-meta">${g.count} tasks · ${g.done} done</span>
+    </div>
+    <div class="pk-week">${g.strip}</div>
+    ${g.blocks || '<ul class="pk-list"><li class="empty">Nothing scheduled. Enjoy it.</li></ul>'}
+    ${g.undatedBlock}`;
 }
 
 function whatIfView() {
@@ -1796,7 +1798,7 @@ function renderWeek() {
   foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
   const more = el('span', 'more', 'See the week');
   more.setAttribute('role', 'button'); more.tabIndex = 0;
-  const openWeek = () => { ui.open = true; ui.view = 'week'; ui.sheet = null; render(); };
+  const openWeek = () => { ui.open = true; ui.view = 'panel'; ui.filter = null; ui.sheet = null; render(); };
   more.addEventListener('click', openWeek);
   more.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWeek(); } });
   foot.append(more);
@@ -2559,7 +2561,7 @@ if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
                      targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, weekDays, tankId, TANKS, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
-                     panelView, looksView, weekView, whatIfView, courseView, addTaskView, searchView, focusCard, gradesCard, leagueCard,
+                     panelView, looksView, weekView, weekGroups, whatIfView, courseView, addTaskView, searchView, focusCard, gradesCard, leagueCard,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.
