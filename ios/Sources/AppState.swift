@@ -352,6 +352,11 @@ final class AppState: ObservableObject {
 
     func flush() { store.flush() }
 
+    /// Redraws the widget without a save. Focus calls it when a shift starts,
+    /// pauses or resumes: the shift lives in UserDefaults, not the save, so
+    /// nothing else would notice.
+    func refreshWidget() { store.writeWidgetSnapshot(game) }
+
     // MARK: - Canvas
 
     func syncCanvas() async {

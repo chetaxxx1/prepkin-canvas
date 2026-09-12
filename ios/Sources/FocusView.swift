@@ -982,6 +982,8 @@ struct FocusView: View {
                                        return nil
                                    }(),
                                    workingOnCleared: workingOn == .nothing))
+        // The widget's "On shift" line reads the same record.
+        state.refreshWidget()
     }
 
     /// Picks the tab back up where it was.

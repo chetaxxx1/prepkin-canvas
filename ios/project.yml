@@ -71,6 +71,11 @@ targets:
       # The same tokens the app draws with, so the paper and the coin gold on the
       # lock screen cannot drift from the paper and the coin gold in the tab.
       - path: Sources/Theme.swift
+    entitlements:
+      path: Activity/PrepkinActivity.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.prepkin.canvas
     # A real plist, not GENERATE_INFOPLIST_FILE. `NSExtensionPointIdentifier` is a
     # nested key, and the generated plist dropped it silently — which builds a
     # perfectly good extension that iOS never loads.

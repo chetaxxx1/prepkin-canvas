@@ -1,4 +1,5 @@
 import Foundation
+import WidgetKit
 
 /// Reads and writes the save file.
 ///
@@ -27,6 +28,8 @@ final class Store {
     private let directory: URL
     private let fileURL: URL
     private let backupURL: URL
+    /// Where `widget.json` goes: the app group, so the widget can read it.
+    private let widgetDirectory: URL
     private let defaults: UserDefaults
     private let io = DispatchQueue(label: "com.prepkin.canvas.store", qos: .utility)
     private let lock = NSLock()
@@ -34,13 +37,17 @@ final class Store {
     /// How long to wait for the taps to stop before writing.
     private let debounce: TimeInterval
 
-    init(directory: URL? = nil, defaults: UserDefaults = .standard, debounce: TimeInterval = 0.6) {
+    init(directory: URL? = nil, defaults: UserDefaults = .standard, debounce: TimeInterval = 0.6,
+         widgetDirectory: URL? = nil) {
         let base = directory ?? FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("PrepkinCanvas", isDirectory: true)
         self.directory = base
         fileURL = base.appendingPathComponent("state.json")
         backupURL = base.appendingPathComponent("state.backup.json")
+        // A store given its own folder (the tests) keeps the widget file there too,
+        // so a test run never rewrites the phone's real widget.
+        self.widgetDirectory = widgetDirectory ?? (directory == nil ? AppGroup.container : base)
         self.defaults = defaults
         self.debounce = debounce
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
@@ -175,6 +182,18 @@ final class Store {
         } catch {
             NSLog("Prepkin: save failed — \(error.localizedDescription)")
         }
+        writeWidgetSnapshot(state)
+    }
+
+    // MARK: - The widget's copy
+
+    /// Writes `widget.json` beside the save and asks WidgetKit to redraw. Also
+    /// called on its own when a shift starts or pauses, which changes nothing in
+    /// the save but does change the widget's line.
+    func writeWidgetSnapshot(_ state: GameState, now: Date = Date()) {
+        let snapshot = WidgetSnapshot.make(from: state, shift: ShiftStore.load(defaults), now: now)
+        snapshot.write(to: widgetDirectory)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - v1: the old UserDefaults blob
