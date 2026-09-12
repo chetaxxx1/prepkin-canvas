@@ -708,35 +708,43 @@ struct FriendsView: View {
 
     // MARK: - The one action, and the two rows
 
-    /// The pod and the ladder, as two rows. Both open `LeagueLadderView`; the pod row
-    /// is the one that used to be ninety words and a coral button at the top of this
-    /// tab. A student who wants the rules taps once and gets all of them.
+    /// The ladder and the privacy row. Duolingo's league tab has one entry that is
+    /// the league itself (Mobbin 3ca570fe-9e97-4e65-85eb-3e544a7eacab); ours had
+    /// two rows that both opened `LeagueLadderView`, the pod and the ladder. The
+    /// pod is a Join button inside the ladder screen (`PodSection`), where the
+    /// rules are, so its row here went on 2026-09-12.
     private var linkRows: some View {
         VStack(spacing: 0) {
-            if !state.podOptIn {
-                linkRow(title: "Swim with a pod",
-                        note: "Twenty students, nobody knows anybody",
-                        tint: IconTint.of("pod").soft) {
-                    BadgeMark(icon: "pod", height: 24)
+            ForEach(Self.links, id: \.self) { link in
+                switch link {
+                case .ladder:
+                    linkRow(title: "The whole ladder",
+                            note: ladderNote,
+                            tint: D.mintTint) {
+                        TierPennant(tier: state.league.tier, earned: true, height: 20)
+                    }
+                    hairline
+                case .privacy:
+                    // Sharing today's work starts off, so this row is also the only
+                    // way it ever gets turned on. It sits here rather than behind a
+                    // gear on the title row because a setting nobody can find is
+                    // not a choice.
+                    Button { showPrivacy = true } label: {
+                        privacyRowLabel
+                    }
+                    .buttonStyle(.plain)
                 }
-                hairline
             }
-            linkRow(title: "The whole ladder",
-                    note: ladderNote,
-                    tint: D.mintTint) {
-                TierPennant(tier: state.league.tier, earned: true, height: 20)
-            }
-            hairline
-            // Sharing today's work starts off, so this row is also the only way it
-            // ever gets turned on. It sits here rather than behind a gear on the
-            // title row because a setting nobody can find is not a choice.
-            Button { showPrivacy = true } label: {
-                privacyRowLabel
-            }
-            .buttonStyle(.plain)
         }
         .background(cardBackground(Theme.Radius.card))
     }
+
+    /// The rows under the board, in order. One of them opens the league.
+    enum Link: Hashable, CaseIterable {
+        case ladder, privacy
+        var opensLeague: Bool { self == .ladder }
+    }
+    static let links: [Link] = [.ladder, .privacy]
 
     private var privacyRowLabel: some View {
         HStack(spacing: 12) {
@@ -1186,6 +1194,10 @@ struct FriendsView: View {
 
     private var canAdd: Bool { typedLetters.count == 8 && badChars.isEmpty }
 
+    /// What a typed I, O, 0 or 1 gets. It used to guess a swap ("Try L, Q"), which
+    /// was a second fact on a line that only has room for one.
+    static let badCharLine = "Codes skip I, O, 0 and 1."
+
     /// Muted, never red. A wrong character is a typo, not a failure.
     private var codeLine: String {
         if let line = state.friendStatus { return line }
@@ -1194,10 +1206,7 @@ struct FriendsView: View {
         // a stranger use this screen to find out whether a code is live.
         if addFailed { return "That code didn't open anything. Check it with them." }
         if adding { return "Looking." }
-        if !badChars.isEmpty {
-            let swaps = badChars.map { ($0 == "I" || $0 == "1") ? "L" : "Q" }
-            return "Codes skip I, O, 0 and 1. Try \(swaps.joined(separator: ", "))."
-        }
+        if !badChars.isEmpty { return Self.badCharLine }
         if canAdd { return "Looks right." }
         if typedLetters.isEmpty { return "Eight letters and numbers, from their Friends tab." }
         return "\(8 - typedLetters.count) more to go."

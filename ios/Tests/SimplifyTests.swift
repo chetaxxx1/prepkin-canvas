@@ -47,4 +47,21 @@ final class SimplifyTests: XCTestCase {
             XCTAssertEqual(parts[1].count, 3, "three stars, filled or not")
         }
     }
+
+    // MARK: - Friends (Duolingo's league tab: one entry that is the league)
+
+    /// One row opens the league. The pod row that also opened it is gone; Join
+    /// lives inside the ladder screen.
+    func testFriendsHasOneLeagueRow() {
+        XCTAssertEqual(FriendsView.links.filter(\.opensLeague).count, 1)
+        XCTAssertEqual(FriendsView.links, [.ladder, .privacy])
+    }
+
+    /// The code hint says which characters are missing from the alphabet and
+    /// stops there. It used to guess a swap on the same line.
+    func testCodeHintSaysOneThing() {
+        XCTAssertEqual(FriendsView.badCharLine, "Codes skip I, O, 0 and 1.")
+        XCTAssertFalse(FriendsView.badCharLine.contains("Try"))
+        for c in "IO01" { XCTAssertFalse(PairingCode.alphabet.contains(c), "\(c) is in the alphabet after all") }
+    }
 }

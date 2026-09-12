@@ -347,6 +347,9 @@ struct FriendsWater: View {
                 .padding(.vertical, 9)
                 .background(Capsule().fill(.white)
                     .shadow(color: Theme.hex(0x281923).opacity(0.14), radius: 8, y: 3))
+                // The pill draws at 36; the hit area is 44.
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Add a friend")
