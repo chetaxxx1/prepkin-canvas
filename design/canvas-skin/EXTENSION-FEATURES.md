@@ -249,6 +249,37 @@ Upcoming by day; Duolingo makes the payoff moment loud.
 | Mascot band | Flat mint gradient | The phone's own tank plate | `84a6b10` |
 | Hand-in | Waited for the 30-min sync | One sync, cheer, +30 float | `1e41327` |
 
+**Then the pop-out went (2ae70d2, 0a16b79).** George: "the collapsible 7 thing
+I don't like… text heavy, dense, and weird to access." The panel that opened
+from the badge on the fish is gone. Its content has a real place: **Courses ·
+Planner · Looks**, three tabs in the dashboard's own title row.
+
+- **Planner**: the main column becomes the week. Seven columns, a card per
+  piece of work with the app's icon for its kind (ruler, flask, book, pencil,
+  cards — `plIconFor` reads the title) and its course colour down the edge,
+  today outlined in mint, what slipped in an amber band above, drag a card to
+  another day to plan it, arrows and Today, + Add a task. Under the week three
+  cards with the app's icons: Grades (bars, GPA), League (the tier's shield,
+  days left, the bar, the pod place), Focus (start, open, stop, length).
+- **Looks**: the shop, four tiles across, the worn one ticked, Locked with
+  prices, a locked pick asks once at the top; course pictures under it.
+- The choice is remembered (`dashTab`); `#planner` / `#looks` in the address
+  open a tab; the popup's button opens the planner; Put back on the planner
+  receipt row removes the tabs. Canvas's To Do and Coming Up are replaced
+  outright now (Put back on their row keeps them); no fold line.
+- A click on the buddy is a hello. Command-K keeps its palette. The floating
+  timer card shows beside him on every page but the dashboard while running,
+  and everywhere when done.
+- `planner.js` runs before `content.js`, which sits inside one block: only its
+  plain function declarations reach the world (Annex B), not its let/const or
+  async functions. State crosses through `plannerState()`, actions through
+  `plannerPlan`, `plannerBuy`, `plannerPicture…`. R27 covers the tabs.
+- The old panel views (`panelView`, `weekView`, `looksView`, `whatIfView`,
+  `courseView`, `addTaskView`, `recapView`, `gradesCard`, `leagueCard`) are
+  still in `content.js` and still unit-tested, but nothing on the page reaches
+  them except the search palette. What-if, the course view and the term recap
+  have no home yet; a later pass moves them into the Planner or deletes them.
+
 Left on the table, on purpose: streaks (removed app-wide), a notes box
 (bloat), hover previews (extra fetches), Firefox/Edge.
 
