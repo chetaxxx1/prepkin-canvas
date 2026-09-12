@@ -123,4 +123,14 @@ final class SimplifyTests: XCTestCase {
         XCTAssertEqual(LearnView.ratingExplainer,
                        "Goes up when you solve a hard one, down when you miss an easy one. Chess.com's puzzle rating, for puzzles.")
     }
+
+    // MARK: - Your day (Finch's goals header: a count and nothing else)
+
+    /// The card's one count is a line of words. The mint bar that drew the same
+    /// ratio under it is gone.
+    func testDayEditorCountIsWordsNotABar() {
+        XCTAssertEqual(DayEditorView.pickedLine(picked: 4, of: 17), "4 of 17 picked")
+        XCTAssertEqual(DayEditorView.pickedLine(picked: 0, of: 17), "Nothing picked yet")
+        XCTAssertFalse(DayEditorView.pickedLine(picked: 4, of: 17).contains("%"))
+    }
 }

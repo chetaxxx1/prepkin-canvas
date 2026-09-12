@@ -7,6 +7,7 @@ import SwiftUI
 /// card at the top is the only running total — no streak, no warning.
 struct DayEditorView: View {
     @EnvironmentObject var state: AppState
+    @Environment(\.openURL) private var openURL
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
 
@@ -251,29 +252,22 @@ struct DayEditorView: View {
                     .foregroundStyle(Theme.muted)
                     .lineSpacing(2)
                     .padding(.top, 4)
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(Theme.hairline)
-                        Capsule().fill(Theme.mint)
-                            .frame(width: geo.size.width * progress)
-                    }
-                }
-                .frame(height: 10)
-                .padding(.top, 12)
-                .animation(.easeInOut(duration: 0.3), value: progress)
+                // No bar. Finch's goals header is a count and nothing else — "7
+                // goals left for today" (Mobbin 18d270f7-7eb4-448f-a928-174b4a7a7aa3)
+                // — and the mint bar that ran here drew the same ratio the label
+                // already says. House rule: no meters.
             }
         }
         .padding(18)
         .background(cardBackground(28))
     }
 
-    private var pickedLabel: String {
-        picked.isEmpty ? "Nothing picked yet" : "\(picked.count) of \(choices.count) picked"
-    }
+    private var pickedLabel: String { Self.pickedLine(picked: picked.count, of: choices.count) }
 
-    private var progress: CGFloat {
-        guard !choices.isEmpty else { return 0 }
-        return CGFloat(picked.count) / CGFloat(choices.count)
+    /// The card's one count, as words. "4 of 17 picked" is the whole fact; nothing
+    /// else on the card repeats it.
+    static func pickedLine(picked: Int, of total: Int) -> String {
+        picked == 0 ? "Nothing picked yet" : "\(picked) of \(total) picked"
     }
 
     // MARK: - Canvas
@@ -330,11 +324,16 @@ struct DayEditorView: View {
                     .font(Theme.font(15, .semibold))
                     .foregroundStyle(Theme.muted)
                     .lineSpacing(2)
-                Link("Get the Chrome extension",
-                     destination: URL(string: "https://prepkin.com/chrome")!)
-                    .font(Theme.font(15, .semibold))
-                    .foregroundStyle(Theme.muted)
-                    .padding(.top, 6)
+                Button { openURL(URL(string: "https://prepkin.com/chrome")!) } label: {
+                    Text("Get the Chrome extension")
+                        .font(Theme.font(15, .semibold))
+                        .foregroundStyle(Theme.muted)
+                        // Drawn as one line of text; the hit area is 44.
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .padding(.vertical, -7)
             } else {
                 Text("This build is not connected to Canvas, so the tasks here are sample data.")
                     .font(Theme.font(15, .semibold))
