@@ -1925,8 +1925,7 @@
     "id": "ppl-1",
     "title": "Ask for an extension the right way",
     "track": "people",
-    "figure": "email",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "writing",
       "labs",
@@ -1936,29 +1935,58 @@
     "takeaway": "You learned the four lines that get a yes.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "An extension email has four lines. Send it before the deadline, not after. That one detail changes the answer more than anything else."
+        "kind": "image",
+        "image": "lesson-ppl1-01",
+        "eyebrow": "Thursday night",
+        "body": "It is Thursday night and the bio lab report is due Friday. Two sections are done and two are not. You could pull an all-nighter and hand in something rough, or you could send one short email right now."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Line one: what and when. 'The bio lab report is due Friday.' No story yet."
+        "kind": "image",
+        "image": "lesson-ppl1-02",
+        "eyebrow": "Timing",
+        "body": "An extension email has four lines. But before the lines, the timing. Send it before the deadline, not after. That one detail changes the answer more than anything else you write."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Line two: the ask, with a date. 'Could I turn it in Monday at 8am?' A specific date is easy to say yes to. 'A few more days' is not."
+        "kind": "image",
+        "image": "lesson-ppl1-03",
+        "eyebrow": "Line one",
+        "body": "Line one: what and when. 'The bio lab report is due Friday.' No story yet. The teacher has a hundred students and needs to know which piece of work this is before anything else."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Line three: proof you've started. 'I've attached my draft with the first two sections done.' This is what separates you from the ones who haven't begun."
+        "kind": "image",
+        "image": "lesson-ppl1-04",
+        "eyebrow": "Line two",
+        "body": "Line two: the ask, with a date and a time. 'Could I turn it in Monday at 8am?' A specific date is easy to say yes to. 'A few more days' is not, because it makes them do the deciding."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Line four: thanks, and stop. No paragraph about why. If they want the reason, they'll ask."
+        "kind": "image",
+        "image": "lesson-ppl1-05",
+        "eyebrow": "Line three",
+        "body": "Line three: proof you have started. 'I have attached my draft with the first two sections done.' This is the line that separates you from the ones who have not begun, and teachers can tell the difference in a second."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl1-06",
+        "eyebrow": "Line four",
+        "body": "Line four: thanks, and stop. No paragraph about why. If they want the reason, they will ask. Every extra sentence about your week makes the email longer to read and easier to say no to."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl1-07",
+        "eyebrow": "Their side",
+        "body": "Picture it from their desk. Sixty emails, half of them long. Yours is four lines, names the work, names a date, and shows a draft. It is the easiest yes of their morning."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl1-08",
+        "eyebrow": "The whole thing",
+        "body": "Four lines, sent the night before. That is the whole email. It takes three minutes to write, and it works far more often than the long version with the excuse."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl1-09",
+        "eyebrow": "The weekend",
+        "body": "Then use the time. An extension that ends in another rushed night was not worth asking for. Finish the two sections on Saturday and hand in something you are not embarrassed by."
       },
       {
         "kind": "key",
@@ -1968,9 +1996,9 @@
         "kind": "check",
         "question": "Which detail matters most in an extension request?",
         "choices": [
-          "A detailed reason",
+          "A long and detailed reason",
           "Sending it before the due date",
-          "Apologising a lot"
+          "Apologising more than once"
         ],
         "answer": 1,
         "why": "Before the deadline it's a request. After, it's an excuse. Teachers treat the two very differently."
@@ -2060,30 +2088,63 @@
     "id": "ppl-3",
     "title": "Listen so people feel heard",
     "track": "people",
-    "figure": "echo",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "When a friend is upset, the instinct is to fix it or cheer them up. Both make it worse. You'll learn the one move that works: say back what you heard, then ask.",
     "takeaway": "You learned to reflect before you fix.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A friend says: 'I completely bombed that test.' What you say next decides whether they keep talking."
+        "kind": "image",
+        "image": "lesson-ppl3-01",
+        "eyebrow": "The moment",
+        "body": "A friend sits down next to you and says: 'I completely bombed that test.' What you say next decides whether they keep talking or go quiet. Most of us get this wrong on reflex."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "'You'll be fine' feels kind. It isn't. It tells them the feeling was wrong, and the conversation ends."
+        "kind": "image",
+        "image": "lesson-ppl3-02",
+        "eyebrow": "The reflex",
+        "body": "'You'll be fine' feels kind. It is not. It tells them the feeling was wrong and the subject is closed. They nod, say 'yeah', and the conversation ends right there."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Try saying back what you heard: 'Sounds like it really got to you.' Nothing fixed. Nothing judged. They feel heard, and they keep going."
+        "kind": "image",
+        "image": "lesson-ppl3-03",
+        "eyebrow": "Say it back",
+        "body": "Try saying back what you heard: 'Sounds like it really got to you.' Nothing fixed. Nothing judged. Nothing about you. They feel heard, and they keep going."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Then ask, don't advise. 'What part went wrong?' Advice comes later, if they want it. Most of the time they don't."
+        "kind": "image",
+        "image": "lesson-ppl3-04",
+        "eyebrow": "Why it works",
+        "body": "Being heard is the thing people actually want. Not a fix, not a pep talk. When the feeling is named out loud by someone else, it gets smaller, and the person holding it can finally put it down."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl3-05",
+        "eyebrow": "Two kinds",
+        "body": "Comfort closes it. Advice closes it. Even blaming the test closes it. What opens it is a reply that hands the conversation back to them."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl3-06",
+        "eyebrow": "Then ask",
+        "body": "Then ask, do not advise. 'What part went wrong?' Now they are thinking instead of defending. Advice comes later, if they want it. Most of the time they do not."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl3-07",
+        "eyebrow": "It travels",
+        "body": "This works on the phone, in the group chat, and with a parent at the kitchen table. Say back the feeling. Ask about the detail. The words change, the shape does not."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl3-08",
+        "eyebrow": "The shape",
+        "body": "Say back what you heard. Ask about one detail. Offer advice only if they ask for it. Three moves, in that order, every time."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl3-09",
+        "eyebrow": "After",
+        "body": "Ten minutes later they are laughing about something else. The test is still bombed. But they walked away feeling lighter, and they will come to you next time too."
       },
       {
         "kind": "key",
@@ -2106,34 +2167,63 @@
     "id": "ppl-4",
     "title": "Small talk without the panic",
     "track": "people",
-    "figure": "ladder",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "You don't need good stories. You need follow-up questions. You'll see the ladder that turns 'where are you from' into a real conversation, and the study on why askers get liked.",
     "takeaway": "You learned that follow-ups do the work.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Small talk feels hard because you think you need something interesting to say. You don't. You need the next question."
+        "kind": "image",
+        "image": "lesson-ppl4-01",
+        "eyebrow": "The panic",
+        "body": "Small talk feels hard because you think you need something interesting to say. You do not. You need the next question. That is the whole trick, and it takes the pressure off you completely."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Start anywhere. 'Where are you from?' Boring is fine. It's the bottom rung, not the whole ladder."
+        "kind": "image",
+        "image": "lesson-ppl4-02",
+        "eyebrow": "Rung one",
+        "body": "Start anywhere. 'Where are you from?' Boring is fine. It is the bottom rung, not the whole ladder. Nobody remembers the first question. They remember whether you listened to the answer."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Then climb: ask about their answer. 'What do you like about it?' Now they're talking about something they care about."
+        "kind": "image",
+        "image": "lesson-ppl4-03",
+        "eyebrow": "Rung two",
+        "body": "Then climb: ask about their answer. 'What do you like about it?' Now they are talking about something they care about, and you are the person who asked."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Climb again. 'How did you get into that?' Three rungs in, it's a real conversation, and you've said almost nothing."
+        "kind": "image",
+        "image": "lesson-ppl4-04",
+        "eyebrow": "Rung three",
+        "body": "Climb again. 'How did you get into that?' Three rungs in, it is a real conversation, and you have said almost nothing. They will walk away thinking you were great to talk to."
       },
       {
-        "kind": "example",
-        "body": "Researchers watched hundreds of first conversations. The people who asked more follow-up questions were consistently rated more likeable."
+        "kind": "image",
+        "image": "lesson-ppl4-05",
+        "eyebrow": "Their story",
+        "body": "People love talking about their own thing, and almost nobody gets asked. Give them the chance and the conversation runs itself. Your job is to keep opening the next door."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl4-06",
+        "eyebrow": "The study",
+        "body": "In 2017 Harvard researchers studied hundreds of first conversations, including speed dates. The people who asked more follow-up questions were rated more likeable, and they got more second dates."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl4-07",
+        "eyebrow": "Follow-ups win",
+        "body": "A follow-up question shows you listened to the last answer. Switching to your own story shows you were waiting for your turn. The first one is what people remember."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl4-08",
+        "eyebrow": "The exit",
+        "body": "Ending it is a skill too. 'It was really nice talking to you, I am going to grab a drink.' Say it with a smile and go. Nobody is offended by a clean exit."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl4-09",
+        "eyebrow": "The ladder",
+        "body": "Bottom rung, climb, climb, exit. You never need a story of your own. You need the next question about theirs, and you already know what it is."
       },
       {
         "kind": "key",
@@ -2143,9 +2233,9 @@
         "kind": "check",
         "question": "What made people more likeable in first conversations?",
         "choices": [
-          "Telling better stories",
+          "Telling funnier stories",
           "Asking follow-up questions",
-          "Talking about shared interests"
+          "Sharing more about themselves"
         ],
         "answer": 1,
         "why": "Follow-up questions show you listened to the last answer. That's what people remember, not your stories."
@@ -3451,40 +3541,64 @@
     "id": "ppl-6",
     "title": "How to disagree without a fight",
     "track": "people",
-    "figure": "sliver",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "Start with the part you think is wrong, and a disagreement turns into a fight. You'll learn two moves that keep it a conversation: say their point back, then name one thing.",
     "takeaway": "You learned to say it back before you push back.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Your friend says practice should move to mornings because afternoons are too hot. You think mornings are worse. Most people lead with that, and now it's a fight."
+        "kind": "image",
+        "image": "lesson-ppl6-01",
+        "eyebrow": "The heat",
+        "body": "Your friend says practice should move to mornings because afternoons are too hot. You think mornings are worse. Most people lead with that, and thirty seconds later it is a fight about who is right."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Look at what they said again. Most of it you agree with. The heat is real. Find that part first."
+        "kind": "image",
+        "image": "lesson-ppl6-02",
+        "eyebrow": "Look again",
+        "body": "Look at what they said again. Most of it you agree with. The heat is real, and people are wiped out by three. Find that part first, because it is most of their point."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Now find the one piece you actually disagree with. Not all of it. Just the piece: mornings."
+        "kind": "image",
+        "image": "lesson-ppl6-03",
+        "eyebrow": "The one piece",
+        "body": "Now find the one piece you actually disagree with. Not all of it. Just the piece: mornings. That is the only thing worth arguing about, and it is a lot smaller than the whole speech."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Say the agreeing part back, in your own words. 'You're right, afternoons are brutal.' Now they know you listened instead of waiting to talk."
+        "kind": "image",
+        "image": "lesson-ppl6-04",
+        "eyebrow": "Say it back",
+        "body": "Say the agreeing part back, in your own words. 'You are right, afternoons are brutal.' Now they know you listened instead of waiting to talk, and they have nothing to defend."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Then name the one piece. 'The part I'd change is mornings. Half of us can't get there by seven.' That's an edit, not a takedown."
+        "kind": "image",
+        "image": "lesson-ppl6-05",
+        "eyebrow": "Then push",
+        "body": "Then name the one piece. 'The part I would change is mornings. Half of us cannot get there by seven.' That is an edit, not a takedown. You are fixing their plan, not throwing it out."
       },
       {
-        "kind": "example",
-        "body": "Your friend says the group chat is dead because nobody plans anything. You think it's dead because the group got too big. Try: 'You're right, nobody's planning. I think the real problem is that there are forty of us in there now.' Same disagreement. No fight."
+        "kind": "image",
+        "image": "lesson-ppl6-06",
+        "eyebrow": "The group chat",
+        "body": "Your friend says the group chat is dead because nobody plans anything. You think it is dead because the group got too big. Same move: 'You are right, nobody is planning. I think the real problem is there are forty of us in there now.'"
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl6-07",
+        "eyebrow": "Two ways",
+        "body": "Lead with the no and both of you dig in. Agree first and edit one thing, and the plan actually gets better. Same disagreement, no fight."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl6-08",
+        "eyebrow": "One thing",
+        "body": "And push on one thing, not five. Five edits sound like you hate the plan. One edit sounds like you want it to work. Save the other four. Most of them will not matter by Friday."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl6-09",
+        "eyebrow": "After",
+        "body": "You might still lose the argument. Practice moves to mornings and you are yawning at seven. But you lost it as a friend who listened, and next time your edit gets taken seriously."
       },
       {
         "kind": "key",
@@ -3494,9 +3608,9 @@
         "kind": "check",
         "question": "Why say their point back before you disagree?",
         "choices": [
-          "It proves you listened",
+          "It proves that you listened",
           "It makes them forget their point",
-          "It buys you time to argue"
+          "It buys you time to argue back"
         ],
         "answer": 0,
         "why": "When people hear their own idea said back, they have less to defend. Your one disagreement then lands as an edit, not an attack."
@@ -3507,40 +3621,64 @@
     "id": "ppl-7",
     "title": "Group projects that actually get done",
     "track": "people",
-    "figure": "roster",
     "minutes": 3,
     "triggers": [],
     "blurb": "Group work stalls when nobody knows exactly what to hand in. You'll see the three-column page that turns a vague pile into parts with a name and a day on each one.",
     "takeaway": "You learned that every part needs a what, a who, and a when.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Make one page before anyone starts working. One row for each piece of work. Three empty columns: what, who, when."
+        "kind": "image",
+        "image": "lesson-ppl7-01",
+        "eyebrow": "Day one",
+        "body": "Four people, one project, three weeks. Everyone leaves the first meeting feeling good. Nobody leaves knowing exactly what they are making, and that is where group projects go to die."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Fill the 'what' column with things someone can hand over. Not 'research'. '10 slides on the causes.' An area can't be finished. A file can."
+        "kind": "image",
+        "image": "lesson-ppl7-02",
+        "eyebrow": "One page",
+        "body": "Make one page before anyone starts working. One row for each piece of work. Three empty columns: what, who, when. It takes ten minutes, and it is the only meeting agenda you will need."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "One name per row. Not two. When two names share a part, each one waits for the other. The part sits still."
+        "kind": "image",
+        "image": "lesson-ppl7-03",
+        "eyebrow": "What",
+        "body": "Fill the 'what' column with things someone can hand over. Not 'research'. '10 slides on the causes.' An area cannot be finished. A file can, and everyone can see whether it exists yet."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Every row gets a day. Spread them out so the parts arrive one at a time. A part with no day gets started the night before it's needed."
+        "kind": "image",
+        "image": "lesson-ppl7-04",
+        "eyebrow": "Who",
+        "body": "One name per row. Not two. When two names share a part, each one waits for the other, and the part sits still. One name means one person who knows it is theirs."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "All three columns live in one file. Everyone opens the same link. With three copies in three inboxes, the same work gets done twice."
+        "kind": "image",
+        "image": "lesson-ppl7-05",
+        "eyebrow": "When",
+        "body": "Every row gets a day. Spread them out so the parts arrive one at a time and can be checked. A part with no day gets started the night before it is needed, every single time."
       },
       {
-        "kind": "example",
-        "body": "In the 1880s a French engineer measured people pulling a rope. Alone, each pulled about 63 kg. In a group of eight, each pulled about 31 kg. Some of that is bad timing. Some is easing off when nobody can see your pull."
+        "kind": "image",
+        "image": "lesson-ppl7-06",
+        "eyebrow": "Ringelmann",
+        "body": "In the 1880s a French engineer, Max Ringelmann, measured people pulling a rope. Alone, each person pulled about 63 kg. In a group of eight, each pulled about 31 kg. Half the effort, just from being in a crowd."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl7-07",
+        "eyebrow": "Half the pull",
+        "body": "Some of that is bad timing, people pulling at different moments. Some is easing off when nobody can see your pull. A page with names on it puts everyone's pull back where it can be seen."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl7-08",
+        "eyebrow": "One file",
+        "body": "All three columns live in one file. Everyone opens the same link. With three copies in three inboxes, the same work gets done twice and the gaps get done by nobody."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl7-09",
+        "eyebrow": "Three weeks later",
+        "body": "Three weeks later the parts arrived one at a time, got checked, and fit together. Nobody pulled an all-nighter. The page did the nagging so no one had to."
       },
       {
         "kind": "key",
@@ -3550,12 +3688,12 @@
         "kind": "check",
         "question": "Which one belongs in the 'what' column?",
         "choices": [
-          "Sources",
+          "Research on the background",
           "The timeline, drawn and labelled",
-          "Look into the background"
+          "Looking into the sources"
         ],
         "answer": 1,
-        "why": "'Sources' and 'look into' are areas. Nobody can tell when they are done. 'The timeline, drawn and labelled' is a thing someone can hand over."
+        "why": "'Research' and 'looking into' are areas. Nobody can tell when they are done. 'The timeline, drawn and labelled' is a thing someone can hand over."
       }
     ]
   },
@@ -3563,35 +3701,64 @@
     "id": "ppl-8",
     "title": "How to ask for help",
     "track": "people",
-    "figure": "trail",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "\"I don't get it\" gives the other person nothing to work with. You'll build the three-part ask instead: what you tried, where exactly you stopped, and what you want back.",
     "takeaway": "You learned the three parts of an ask people can answer.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A good ask shows your path. Where you started, where you got stuck, and what you need to get moving. \"I don't get it\" shows none of that, so the other person has no idea where to start."
+        "kind": "image",
+        "image": "lesson-ppl8-01",
+        "eyebrow": "Stuck",
+        "body": "It is 9pm and problem 3 is not working. You have redone it twice. You open a chat to a friend, type 'I don't get it', and stop. That message will get you nothing, and here is why."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Part one: what you tried. \"I watched the video and redid problem 3 twice.\" Now they know where to pick up, and they can see you put in the work."
+        "kind": "image",
+        "image": "lesson-ppl8-02",
+        "eyebrow": "The path",
+        "body": "A good ask shows your path. Where you started, where you got stuck, and what you need to get moving. 'I don't get it' shows none of that, so the other person has no idea where to start."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Part two: the exact spot you stopped. Not \"I don't get quadratics.\" Say \"I get lost right where you take the square root.\" One spot can be answered in a minute. A whole topic can't."
+        "kind": "image",
+        "image": "lesson-ppl8-03",
+        "eyebrow": "What you tried",
+        "body": "Part one: what you tried. 'I watched the video and redid problem 3 twice.' Now they know where to pick up, and they can see you put in the work before asking."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Part three: what you're asking for. A hint, a check of your work, ten minutes at lunch. One small thing, not the whole unit. If you don't name it, they have to guess, and guessing is work."
+        "kind": "image",
+        "image": "lesson-ppl8-04",
+        "eyebrow": "The exact spot",
+        "body": "Part two: the exact spot you stopped. Not 'I don't get quadratics'. Say 'I get lost right where you take the square root.' One spot can be answered in a minute. A whole topic cannot."
       },
       {
-        "kind": "example",
-        "body": "Vague: \"hey can you help me with the essay?\" Nothing back for two hours. Specific: \"I have the intro and two body paragraphs. My conclusion just repeats the intro. Can you read that last paragraph and tell me what's missing?\" Answered in five minutes."
+        "kind": "image",
+        "image": "lesson-ppl8-05",
+        "eyebrow": "The ask",
+        "body": "Part three: what you are asking for. A hint, a check of your work, ten minutes at lunch. One small thing, not the whole unit. If you do not name it, they have to guess, and guessing is work."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl8-06",
+        "eyebrow": "Two messages",
+        "body": "Vague: 'hey can you help me with the essay?' Nothing back for two hours. Specific: 'My conclusion just repeats the intro. Can you read that last paragraph and tell me what is missing?' Answered in five minutes."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl8-07",
+        "eyebrow": "Their side",
+        "body": "Think about the other end. A vague ask means they have to interview you first: what did you try, which part, what do you want. A specific ask lets them answer in one message. People help fast when helping is easy."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl8-08",
+        "eyebrow": "Three parts",
+        "body": "What I tried. Where I am stuck. What I am asking for. Leave one out and they have to guess. Put all three in and the reply almost writes itself."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl8-09",
+        "eyebrow": "Ten minutes",
+        "body": "It also works with teachers, at office hours, and in the group chat. Ten minutes at lunch, one spot, one thing to check. You will get more help, and people will be glad you asked."
       },
       {
         "kind": "key",
@@ -3601,9 +3768,9 @@
         "kind": "check",
         "question": "Which message is easiest for someone to answer?",
         "choices": [
-          "\"I don't get the homework\"",
-          "\"Sorry to bother you, this is probably a dumb question\"",
-          "\"I'm stuck on question 4, step two. Can you check my setup?\""
+          "\"I don't get the homework at all\"",
+          "\"Sorry, this is a dumb question\"",
+          "\"I'm stuck on question 4, step two\""
         ],
         "answer": 2,
         "why": "It names one spot and one thing to do. They can help in a minute without asking you three questions first."
@@ -3614,40 +3781,64 @@
     "id": "ppl-9",
     "title": "Why your texts sound cold",
     "track": "people",
-    "figure": "tone",
     "minutes": 3,
     "triggers": [],
     "blurb": "A text carries your words and nothing else, so the reader fills the tone in with their own mood. You'll see why 'fine.' lands colder than you meant, and how to type the tone in so it doesn't.",
     "takeaway": "You learned that tone has to be typed, not assumed.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "A text is words with nothing on them. The same 'fine.' can land warm or cold. The words alone don't say which."
+        "kind": "image",
+        "image": "lesson-ppl9-01",
+        "eyebrow": "Words only",
+        "body": "A text is words with nothing on them. The same 'fine.' can land warm or cold. The words alone do not say which, and the reader has to decide in about a second."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "As you type, you hear your own voice in your head. You already know you meant it kindly. So it feels obvious."
+        "kind": "image",
+        "image": "lesson-ppl9-02",
+        "eyebrow": "Two readings",
+        "body": "'fine.' from a happy friend means fine. 'fine.' from an annoyed one means anything but. The letters are identical. Everything that told them apart was in the voice, and the voice did not travel."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The reader hears nothing. They fill the tone in with the mood they're already in. Tired or stressed, and your text turns cold."
+        "kind": "image",
+        "image": "lesson-ppl9-03",
+        "eyebrow": "Your head",
+        "body": "As you type, you hear your own voice in your head. You already know you meant it kindly. So it feels obvious, and you hit send without adding anything."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "So there's a gap. You think your tone comes through about eight times in ten. Readers get it right about half the time."
+        "kind": "image",
+        "image": "lesson-ppl9-04",
+        "eyebrow": "Their mood",
+        "body": "The reader hears nothing. They fill the tone in with the mood they are already in. Tired or stressed, and your friendly text turns cold on the way in."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "So type the tone in. Say the good feeling out loud. Swap the cold period for something warmer. 'all good!' does the job your voice would have."
+        "kind": "image",
+        "image": "lesson-ppl9-05",
+        "eyebrow": "The gap",
+        "body": "In one study, people sending emails thought their tone would come through about 78 percent of the time. Readers got it right about 56 percent of the time, barely better than a coin flip."
       },
       {
-        "kind": "example",
-        "body": "Students rated the exact same reply as less sincere when it ended in a period. 'Yeah' read like they meant it. 'Yeah.' read like they didn't. One dot did that."
+        "kind": "image",
+        "image": "lesson-ppl9-06",
+        "eyebrow": "One dot",
+        "body": "Students rated the exact same reply as less sincere when it ended in a period. 'Yeah' read like they meant it. 'Yeah.' read like they did not. One dot did that."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl9-07",
+        "eyebrow": "Type it in",
+        "body": "So type the tone in. Say the good feeling out loud. Swap the cold period for something warmer. 'all good!' does the job your voice would have done in person."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl9-08",
+        "eyebrow": "In person",
+        "body": "Anything that matters gets said in person or on a call. Sorry, a hard no, a real thank-you. Those need a voice. A text is for the small stuff, and even the small stuff needs a little warmth typed in."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl9-09",
+        "eyebrow": "Before you send",
+        "body": "Reread it as a stranger in a bad mood. Add the feeling in words if it is missing. And say the big things out loud. Three seconds per text, and a lot fewer 'are you mad at me' replies."
       },
       {
         "kind": "key",
@@ -3657,9 +3848,9 @@
         "kind": "check",
         "question": "You text a friend 'ok.' and they think you're mad. Why?",
         "choices": [
-          "Your words were unclear",
+          "Your words were not clear enough",
           "They filled the tone in themselves",
-          "They read it too fast"
+          "They read it much too quickly"
         ],
         "answer": 1,
         "why": "The words were clear. The tone wasn't in them, so the reader supplied one from their own mood."
@@ -4229,50 +4420,63 @@
     "id": "work-2",
     "title": "What to say when they ask your number",
     "track": "work",
-    "figure": "salaryask",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "On the first call a recruiter asks what you're looking for. They already know what the job pays and you don't. Here's what that costs, and the one line that hands the question back.",
     "takeaway": "You learned to hand the number back instead of guessing one.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "It's your first call about the job. Usually a recruiter, before you've met anyone on the team. Near the end, they ask what you're looking for."
+        "kind": "image",
+        "image": "lesson-work2-01",
+        "eyebrow": "The call",
+        "body": "It is your first call about the job. Usually a recruiter, before you have met anyone on the team. It is friendly and easy, and near the end they ask what you are looking for. That question is the whole call."
       },
       {
-        "kind": "example",
-        "body": "A recruiter is not your future boss. Their job is to fill the role, on budget. They're friendly because that's the work. It doesn't mean the conversation isn't a negotiation."
+        "kind": "image",
+        "image": "lesson-work2-02",
+        "eyebrow": "Who they are",
+        "body": "A recruiter is not your future boss. Their job is to fill the role, on budget. They are friendly because that is the work. It does not mean the conversation is not a negotiation."
       },
       {
-        "kind": "example",
-        "body": "Here's what you can't see. Before that job was posted, someone approved a budget for it. A floor and a ceiling. The recruiter knows both. You know neither."
+        "kind": "image",
+        "image": "lesson-work2-03",
+        "eyebrow": "The range",
+        "body": "Here is what you cannot see. Before that job was posted, someone approved a budget for it. A floor and a ceiling. The recruiter knows both. You know neither."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "So you say $60,000. If their floor was $65,000, you didn't just aim low. You landed under the bottom of a range you never saw."
+        "kind": "image",
+        "image": "lesson-work2-04",
+        "eyebrow": "Under the floor",
+        "body": "So you say $60,000. If their floor was $65,000, you did not just aim low. You landed under the bottom of a range you never saw, and they will happily let you."
       },
       {
-        "kind": "example",
+        "kind": "image",
+        "image": "lesson-work2-05",
+        "eyebrow": "Sticky",
         "body": "And the first number said is sticky. Everything after it gets measured against it. Say $60,000 and the rest of the call is about whether you get a little more than $60,000. Their $80,000 ceiling never comes up."
       },
       {
-        "kind": "figure",
-        "step": 3,
+        "kind": "image",
+        "image": "lesson-work2-06",
+        "eyebrow": "It follows you",
         "body": "It also follows you. Raises are a percentage of where you started, so the gap widens every year. Ten years on, that one sentence cost about $57,000."
       },
       {
-        "kind": "example",
+        "kind": "image",
+        "image": "lesson-work2-07",
+        "eyebrow": "Ten minutes",
         "body": "Ten minutes before the call fixes this. Check the job post first. A lot of states now make companies print the range. Then look up the title and city on levels.fyi. Then ask one person a year ahead of you what they got."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "When they ask, ask back first. “What range is budgeted for this role?” It costs nothing, and plenty of recruiters will just tell you."
+        "kind": "image",
+        "image": "lesson-work2-08",
+        "eyebrow": "Ask back",
+        "body": "When they ask, ask back first. 'What range is budgeted for this role?' It costs nothing, and plenty of recruiters will just tell you. Then you are negotiating inside their numbers, not guessing at them."
       },
       {
-        "kind": "example",
-        "body": "If they insist you go first, the research earns its keep. Say a range, and put the number you want at the bottom. Want $70,000? Say $70,000 to $80,000."
+        "kind": "image",
+        "image": "lesson-work2-09",
+        "eyebrow": "Your range",
+        "body": "If they insist you go first, the research earns its keep. Say a range, and put the number you want at the bottom. Want $70,000? Say $70,000 to $80,000. The lowest number you say is the one they work from."
       },
       {
         "kind": "key",
@@ -4284,7 +4488,7 @@
         "choices": [
           "$70,000 to $80,000",
           "$60,000 to $70,000",
-          "I'm flexible, make me an offer"
+          "I'm flexible, you decide"
         ],
         "answer": 0,
         "why": "The lowest number you say is the one they'll work from. Put what you actually want at the bottom, so even the worst case is a yes. Saying $60,000 to $70,000 hands them $60,000."
@@ -4295,49 +4499,63 @@
     "id": "work-3",
     "title": "Why asking at your review is too late",
     "track": "work",
-    "figure": "raiseask",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Raise money gets decided months before anyone tells you. Here's when that actually happens, what to bring, and the sentence that does the work.",
     "takeaway": "You learned to ask before the money is spoken for, with evidence instead of need.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You've had a good year. So you wait for your review and ask there. That's the mistake almost everyone makes."
+        "kind": "image",
+        "image": "lesson-work3-01",
+        "eyebrow": "The review",
+        "body": "You have had a good year. So you wait for your review and ask there. That is the mistake almost everyone makes, and it is why so many good years end with a small raise."
       },
       {
-        "kind": "example",
-        "body": "A review is the once-a-year meeting where your manager tells you how you did. It feels like the money meeting. It isn't. It's the meeting where you're told what was already decided."
+        "kind": "image",
+        "image": "lesson-work3-02",
+        "eyebrow": "What it is",
+        "body": "A review is the once-a-year meeting where your manager tells you how you did. It feels like the money meeting. It is not. It is the meeting where you are told what was already decided."
       },
       {
-        "kind": "example",
-        "body": "Here's what you can't see. Months earlier your manager was handed a pot of money for the whole team and asked to split it. By your review, that split is done and signed off."
+        "kind": "image",
+        "image": "lesson-work3-03",
+        "eyebrow": "Months earlier",
+        "body": "Here is what you cannot see. Months earlier your manager was handed a pot of money for the whole team and asked to split it. By your review, that split is done and signed off."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "So the room where it's decided comes months before the room where you hear about it. Ask while there's still money to point at."
+        "kind": "image",
+        "image": "lesson-work3-04",
+        "eyebrow": "Two rooms",
+        "body": "So the room where it is decided comes months before the room where you hear about it. Ask while there is still money to point at, not after it has all been handed out."
       },
       {
-        "kind": "example",
+        "kind": "image",
+        "image": "lesson-work3-05",
+        "eyebrow": "Mid-year",
         "body": "In practice that means the middle of the year. Not by email. Bring it up in a one to one, out loud, and say the word raise. Your manager needs to know before they walk into that planning meeting."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Bring evidence, not need. Rent going up isn't an argument. What you shipped is. What it saved is. What you now do that isn't in your job description is."
+        "kind": "image",
+        "image": "lesson-work3-06",
+        "eyebrow": "Evidence",
+        "body": "Bring evidence, not need. Rent going up is not an argument. What you shipped is. What it saved is. What you now do that is not in your job description is."
       },
       {
-        "kind": "example",
-        "body": "Keep a running list all year. One line every time something lands. You won't remember in October what you fixed in March. And a list written as it happened reads as fact, not as a pitch."
+        "kind": "image",
+        "image": "lesson-work3-07",
+        "eyebrow": "The list",
+        "body": "Keep a running list all year. One line every time something lands. You will not remember in October what you fixed in March. And a list written as it happened reads as fact, not as a pitch."
       },
       {
-        "kind": "example",
-        "body": "Then ask for a number, not a feeling. “I'd like to be at $78,000” beats “I was hoping for a bit more.” Say it, then stop talking. Let them answer."
+        "kind": "image",
+        "image": "lesson-work3-08",
+        "eyebrow": "A number",
+        "body": "Then ask for a number, not a feeling. 'I would like to be at $78,000' beats 'I was hoping for a bit more.' Say it, then stop talking. Let them answer, even if the silence is long."
       },
       {
-        "kind": "example",
-        "body": "If they say no, don't argue. Ask one question instead. “What would I need to be doing to get there?” Now you have a list. And a reason to come back with it."
+        "kind": "image",
+        "image": "lesson-work3-09",
+        "eyebrow": "If it's no",
+        "body": "If they say no, do not argue. Ask one question instead. 'What would I need to be doing to get there?' Now you have a list. And a reason to come back with it in six months."
       },
       {
         "kind": "key",
@@ -4347,7 +4565,7 @@
         "kind": "check",
         "question": "Your review is in December. When should you raise the money conversation?",
         "choices": [
-          "Around the middle of the year, before budgets are set",
+          "Around the middle of the year",
           "At the review, so it's on the record",
           "Right after the review, for next year"
         ],
