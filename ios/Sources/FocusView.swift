@@ -17,7 +17,10 @@ import SwiftUI
 struct FocusView: View {
     @EnvironmentObject var state: AppState
 
+    /// Opens on the length the first run's school answer set (25, or 45 for
+    /// grad school); the student's own chip taps override it from then on.
     @State private var minutes = 25
+    @State private var lengthSet = false
     /// The custom length field. Separate from `minutes` so typing a 6 on the way to
     /// 60 does not start a six-minute shift.
     @State private var customMinutes = 60
@@ -80,6 +83,7 @@ struct FocusView: View {
             // On appearing, not on a timer: a table of three friends is not worth a
             // poll, and a row is filtered again on read so a stale one cannot show.
             .task {
+                if !lengthSet { minutes = state.school.focusMinutes; lengthSet = true }
                 restoreShiftIfAny()
                 // Leaving the tab puts the bar back; coming back to a shift that is
                 // still running has to take it away again, and no phase changed in

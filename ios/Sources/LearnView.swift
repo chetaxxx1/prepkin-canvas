@@ -368,7 +368,8 @@ struct LearnView: View {
     private var trackShelf: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
-                ForEach(Catalog.tracks) { track in
+                // The first run's school answer picks which track leads.
+                ForEach(state.leadTracks) { track in
                     NavigationLink(value: LearnRoute.track(track.id)) {
                         trackCard(track)
                     }
@@ -695,6 +696,9 @@ struct LearnView: View {
     /// One lesson for today, stable within the day and unfinished. Rolls over at
     /// midnight with the rest of the app rather than on a timer of its own.
     private var todaysCard: Lesson? {
+        // Until the first lesson is finished, the card is the one the first run's
+        // plate answer chose (`FirstRun.firstLessonID`), not the day's draw.
+        if let first = state.firstLesson { return first }
         let open = Catalog.lessons.filter { !state.completedLessons.contains($0.id) }
         guard !open.isEmpty else { return nil }
         // Not `hashValue`: Swift seeds String hashing per process, so today's card

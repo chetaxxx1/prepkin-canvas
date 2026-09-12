@@ -54,6 +54,16 @@ extension TaskTemplate {
         TaskTemplate(id: "s-2", title: "Review today's notes", kind: .study, isActive: false, isPreset: true),
         TaskTemplate(id: "s-3", title: "Read 10 pages", kind: .study, isActive: false, isPreset: true),
         TaskTemplate(id: "s-4", title: "Redo one question you got wrong", kind: .study, isActive: false, isPreset: true),
+        // High school and grad school, per `SchoolLevel.presetIDs`. Every level
+        // shares this one catalogue; the level only picks and orders from it, so
+        // switching levels never loses a preset the student switched on.
+        TaskTemplate(id: "hs-1", title: "Read the chapter", kind: .study, isActive: false, isPreset: true),
+        TaskTemplate(id: "hs-2", title: "Study for the quiz", kind: .study, isActive: false, isPreset: true),
+        TaskTemplate(id: "hs-3", title: "Ask the teacher", kind: .study, isActive: false, isPreset: true),
+        TaskTemplate(id: "gr-1", title: "Write for 25 minutes", kind: .study, isActive: false, isPreset: true),
+        TaskTemplate(id: "gr-2", title: "Meet my advisor", kind: .study, isActive: false, isPreset: true),
+        TaskTemplate(id: "gr-3", title: "Lab notebook", kind: .study, isActive: false, isPreset: true),
+        TaskTemplate(id: "gr-4", title: "TA hours", kind: .study, isActive: false, isPreset: true),
         // Life
         TaskTemplate(id: "l-9", title: "Laundry", kind: .life, isActive: false, isPreset: true),
         TaskTemplate(id: "l-1", title: "Drink a glass of water", kind: .life, isActive: true, isPreset: true),
@@ -67,6 +77,15 @@ extension TaskTemplate {
     ]
 
     static func starterSet() -> [TaskTemplate] { presets }
+
+    /// The presets one kind of school sees, in that level's order. A preset the
+    /// level does not list stays only if the student already switched it on.
+    static func menu(_ templates: [TaskTemplate], for level: SchoolLevel) -> [TaskTemplate] {
+        let rank = Dictionary(uniqueKeysWithValues: level.presetIDs.enumerated().map { ($1, $0) })
+        return templates
+            .filter { $0.isPreset && (rank[$0.id] != nil || $0.isActive) }
+            .sorted { (rank[$0.id] ?? Int.max) < (rank[$1.id] ?? Int.max) }
+    }
 
     /// Saved templates plus any preset the catalogue has gained since that save was
     /// written, switched off.

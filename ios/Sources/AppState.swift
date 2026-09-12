@@ -23,6 +23,7 @@ final class AppState: ObservableObject {
             // immediately unless the thing it publishes actually changed.
             pushTankIfNeeded()
             pushTodayIfNeeded()
+            SproutView.starterCoat = game.pickedCoat
         }
     }
 
@@ -92,6 +93,9 @@ final class AppState: ObservableObject {
     /// The Tomorrow line on Home was tapped. Root switches to the Calendar tab and
     /// Calendar opens on this day. Cleared by Calendar once it lands; never persisted.
     @Published var openCalendarOn: DayKey?
+    /// "Have a friend code?" on the welcome. The add-friend field opens once the
+    /// first run is over, and Friends clears this when it has. Never persisted.
+    @Published var openAddFriendRequest = false
 
     private var toastTask: Task<Void, Never>?
     /// The last (costume, scene) the bridge was told about, and the call waiting to
@@ -113,12 +117,12 @@ final class AppState: ObservableObject {
     /// with no bridge configured at all, so a demo is never an empty page — but a
     /// real install that unpairs gets nothing, not fake homework that pays coins.
     nonisolated static func defaultClient(for state: GameState, config: BridgeConfig = .shared) -> CanvasSyncClient? {
-        guard config.isConfigured else { return MockCanvasClient() }
+        guard config.isConfigured else { return MockCanvasClient(school: state.school) }
         #if DEBUG
         // `-sampleCanvas` shows the sample feed on a simulator that has no
         // laptop to pair with. DEBUG only, and a separate switch from
         // `-unlockAll` so the pairing tests keep seeing the real client.
-        if ProcessInfo.processInfo.arguments.contains("-sampleCanvas") { return MockCanvasClient() }
+        if ProcessInfo.processInfo.arguments.contains("-sampleCanvas") { return MockCanvasClient(school: state.school) }
         #endif
         guard let code = state.pairingCode, let token = state.pairingToken else { return nil }
         return SupabaseCanvasClient(code: code, token: token)
@@ -198,6 +202,7 @@ final class AppState: ObservableObject {
         #endif
         game.refreshPicksIfNeeded()
         store.save(game)
+        SproutView.starterCoat = game.pickedCoat
     }
 
     // MARK: - Read-through for the views
@@ -553,7 +558,7 @@ final class AppState: ObservableObject {
             let week = WeekKey(game.effectiveDay)
 
             if !game.league.isPodCurrent(for: week) {
-                let placement = try await client.joinPod(identity: identity, species: kin.speciesID,
+                let placement = try await client.joinPod(identity: identity, species: game.publicSpecies,
                                                          look: kin.skinID, level: kin.level)
                 guard game.league.identity == identity else { return }
                 game.league.podID = placement.podID
@@ -563,7 +568,7 @@ final class AppState: ObservableObject {
             }
 
             let board = try await client.pushPoints(identity: identity, points: game.leaguePoints,
-                                                    species: kin.speciesID, look: kin.skinID,
+                                                    species: game.publicSpecies, look: kin.skinID,
                                                     level: kin.level)
             guard game.league.identity == identity else { return }
             game.league.podID = board.podID
@@ -819,7 +824,7 @@ final class AppState: ObservableObject {
         let mine = TodayCounts.byDay(ledger: game.ledger, days: Set(days))
         let ordered = days.compactMap { mine[$0] }
         return BoardMember(id: BoardMember.youID, name: "You",
-                           speciesID: activeChibiID, lookID: activeChibi.skinID,
+                           speciesID: game.publicSpecies, lookID: activeChibi.skinID,
                            level: activeChibi.level,
                            points: WeekPoints.week(ordered),
                            counts: ordered.reduce(TodayCounts(), +),
@@ -1264,14 +1269,76 @@ final class AppState: ObservableObject {
 
     // MARK: - First run
 
-    /// The end of the two-screen first run: every preset is switched to match the
-    /// three picks, and Root moves on to Home.
-    func finishFirstRun(picked: Set<String>) {
+    var firstRunStep: FirstRunStep { game.firstRunStep }
+    var schoolLevel: SchoolLevel? { game.schoolLevel }
+    /// The level the app runs as: the answer, or college when it was skipped.
+    var school: SchoolLevel { game.school }
+    var plate: [PlateItem] { game.plate }
+    var pickedCoat: String? { game.pickedCoat }
+    /// The presets this student sees, in their level's order.
+    func presetMenu(_ kind: TaskKind? = nil) -> [TaskTemplate] { game.presetMenu(kind) }
+
+    /// Where the flow is, saved as it moves so a killed app resumes there.
+    func setFirstRunStep(_ step: FirstRunStep) { game.firstRunStep = step }
+
+    /// `nil` is a skip, and the app runs as college from then on.
+    func answerSchool(_ level: SchoolLevel?) { game.schoolLevel = level }
+
+    /// Empty is a skip.
+    func answerPlate(_ items: [PlateItem]) { game.plate = items }
+
+    func pickCoat(_ coat: StarterCoat) { game.starterCoat = coat.rawValue }
+
+    /// The Learn track shelf with this student's lead track first.
+    var leadTracks: [Track] { FirstRun.trackOrder(school: school) }
+
+    /// The lesson Learn leads with until the student has finished one.
+    var firstLesson: Lesson? {
+        guard completedLessons.isEmpty,
+              let id = FirstRun.firstLessonID(school: school, plate: plate) else { return nil }
+        return Catalog.lesson(id)
+    }
+
+    /// Which Day 1 card comes first after the first coin.
+    var firstOffer: DayOneOffer { FirstRun.firstOffer(plate: plate) }
+
+    var heardFromDone: Bool { game.heardFromDone }
+    func answerHeardFrom(_ source: HeardFrom?) {
+        game.heardFrom = source
+        game.heardFromDone = true
+    }
+
+    var friendOfferDone: Bool { game.friendOfferDone }
+    func markFriendOfferDone() { game.friendOfferDone = true }
+
+    /// Day `n` of this install, counting the install day as 1: the Day 3 card
+    /// waits for a phone that installed two calendar days ago or more. A save
+    /// with no install date is old, and old enough.
+    func isDayOrLater(_ n: Int, now: Date = Date(), calendar: Calendar = .current) -> Bool {
+        guard let installed = game.installedAt else { return true }
+        let start = calendar.startOfDay(for: now)
+        guard let cutoff = calendar.date(byAdding: .day, value: -(n - 2), to: start) else { return true }
+        return installed < cutoff
+    }
+
+    /// "Continue" on pick three: every preset is switched to match the picks,
+    /// so the result screen (and a resume from it) reads them off the save.
+    func applyPicks(_ picked: Set<String>) {
         for t in game.templates where t.isPreset {
             game.setTemplate(t.id, active: picked.contains(t.id))
         }
-        game.firstRunDone = true
         rescheduleReminders()
+    }
+
+    /// The end of the first run: Root moves on to Home.
+    func finishFirstRun() {
+        game.firstRunDone = true
+        game.firstRunStep = .result
+    }
+
+    func finishFirstRun(picked: Set<String>) {
+        applyPicks(picked)
+        finishFirstRun()
     }
 
     func markFirstRunOffersDone() { game.firstRunOffersDone = true }

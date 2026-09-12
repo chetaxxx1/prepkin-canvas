@@ -355,9 +355,14 @@ struct SupabaseCanvasClient: CanvasSyncClient {
 }
 
 /// Sample data, used until a pairing code exists so the app is never a blank page.
+/// The course names follow the first run's school answer, so a demo feed reads
+/// like the student's own timetable rather than somebody else's.
 struct MockCanvasClient: CanvasSyncClient {
+    var school: SchoolLevel = .college
+
     func fetchTodo() async throws -> CanvasSnapshot {
         let cal = Calendar.current
+        let c = school.sampleCourses
         // 23:59 is Canvas's own end-of-day default and the app reads it as "all
         // day". Every other hour is on the hour, or the screen reads "due 8:59".
         func due(_ days: Int, hour: Int) -> Date {
@@ -366,19 +371,19 @@ struct MockCanvasClient: CanvasSyncClient {
         }
         return CanvasSnapshot(
             tasks: [
-                CanvasItem(id: "c-101", title: "Ch. 5 Problem Set", courseName: "Physics 13", dueAt: due(0, hour: 23)),
-                CanvasItem(id: "c-102", title: "Essay outline", courseName: "Writing 5", dueAt: due(1, hour: 8)),
-                CanvasItem(id: "c-103", title: "Week 3 quiz", courseName: "Intro Psych", dueAt: due(2, hour: 15)),
+                CanvasItem(id: "c-101", title: "Ch. 5 Problem Set", courseName: c[0].name, dueAt: due(0, hour: 23)),
+                CanvasItem(id: "c-102", title: "Essay outline", courseName: c[1].name, dueAt: due(1, hour: 8)),
+                CanvasItem(id: "c-103", title: "Week 3 quiz", courseName: c[2].name, dueAt: due(2, hour: 15)),
             ],
             courses: [
-                CanvasCourse(id: "1", name: "Physics 13", code: "PHYS 13", score: 88.5, grade: "B+", colorHex: "#FF6F61"),
-                CanvasCourse(id: "2", name: "Writing 5", code: "WRIT 5", score: 92.0, grade: "A-", colorHex: "#57C79B"),
-                CanvasCourse(id: "3", name: "Intro Psych", code: "PSYC 1", score: nil, grade: nil, colorHex: "#9BC8F2"),
+                CanvasCourse(id: "1", name: c[0].name, code: c[0].code, score: 88.5, grade: "B+", colorHex: "#FF6F61"),
+                CanvasCourse(id: "2", name: c[1].name, code: c[1].code, score: 92.0, grade: "A-", colorHex: "#57C79B"),
+                CanvasCourse(id: "3", name: c[2].name, code: c[2].code, score: nil, grade: nil, colorHex: "#9BC8F2"),
             ],
             events: [
-                CanvasEvent(id: "e-201", title: "Midterm 1", courseName: "Physics 13", colorHex: "#FF6F61",
+                CanvasEvent(id: "e-201", title: "Midterm 1", courseName: c[0].name, colorHex: "#FF6F61",
                             startAt: due(4, hour: 9), endAt: due(4, hour: 11)),
-                CanvasEvent(id: "e-202", title: "Office hours", courseName: "Intro Psych", colorHex: "#9BC8F2",
+                CanvasEvent(id: "e-202", title: "Office hours", courseName: c[2].name, colorHex: "#9BC8F2",
                             startAt: due(1, hour: 14), endAt: due(1, hour: 15), location: "Moore 202"),
             ])
     }

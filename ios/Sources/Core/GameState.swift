@@ -244,6 +244,26 @@ struct GameState: Codable, Equatable {
     /// An older save has never seen it, so it decodes false.
     var widgetOfferDone = false
 
+    // MARK: First-run answers (`FirstRun.swift`)
+
+    /// How far the first run got. Persisted so a first run interrupted at the
+    /// coat comes back to the coat, not to the welcome.
+    var firstRunStep: FirstRunStep = .welcome
+    /// High school, college or grad school. `nil` when the question was skipped.
+    var schoolLevel: SchoolLevel?
+    /// What is on their plate, in the order they ticked it. Empty when skipped.
+    var plate: [PlateItem] = []
+    /// The coat the starter fish was picked in. `nil` on a save from before the
+    /// coat screen existed, which draws the species default (mint).
+    var starterCoat: String?
+    /// Where they heard about Prepkin. Set once by the Day 3 card.
+    var heardFrom: HeardFrom?
+    /// The Day 3 card has been answered or dismissed. Shown once, ever.
+    var heardFromDone = false
+    /// The Day 2 friend-code card (only when "Studying with friends" was on the
+    /// plate) has been answered or dismissed.
+    var friendOfferDone = false
+
     var templates: [TaskTemplate] = TaskTemplate.starterSet()
     var canvasItems: [CanvasItem] = []
     var canvasCourses: [CanvasCourse] = []
@@ -408,6 +428,7 @@ struct GameState: Codable, Equatable {
         case shareToday, shareBoard
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
         case widgetOfferDone
+        case firstRunStep, schoolLevel, plate, starterCoat, heardFrom, heardFromDone, friendOfferDone
         case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick, lockedPicks, firsts, decor
         case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
@@ -477,6 +498,14 @@ struct GameState: Codable, Equatable {
         firstRunDone = try c.decodeIfPresent(Bool.self, forKey: .firstRunDone) ?? true
         firstRunOffersDone = try c.decodeIfPresent(Bool.self, forKey: .firstRunOffersDone) ?? true
         widgetOfferDone = try c.decodeIfPresent(Bool.self, forKey: .widgetOfferDone) ?? false
+        firstRunStep = try c.decodeIfPresent(FirstRunStep.self, forKey: .firstRunStep) ?? blank.firstRunStep
+        schoolLevel = try c.decodeIfPresent(SchoolLevel.self, forKey: .schoolLevel)
+        plate = try c.decodeIfPresent([PlateItem].self, forKey: .plate) ?? blank.plate
+        starterCoat = try c.decodeIfPresent(String.self, forKey: .starterCoat)
+        heardFrom = try c.decodeIfPresent(HeardFrom.self, forKey: .heardFrom)
+        // An older save never met the card; the Day 3 rule still applies to it.
+        heardFromDone = try c.decodeIfPresent(Bool.self, forKey: .heardFromDone) ?? false
+        friendOfferDone = try c.decodeIfPresent(Bool.self, forKey: .friendOfferDone) ?? false
         lifetime = try c.decodeIfPresent(LifetimeStats.self, forKey: .lifetime) ?? blank.lifetime
         shopPicks = try c.decodeIfPresent([String].self, forKey: .shopPicks) ?? blank.shopPicks
         shopPickDay = try c.decodeIfPresent(DayKey.self, forKey: .shopPickDay) ?? blank.shopPickDay
@@ -624,7 +653,9 @@ struct GameState: Codable, Equatable {
             .filter { $0.day == day || ($0.day < day && $0.day >= day.adding(days: -7) && !isDatedDone($0.id)) }
             .sorted { ($0.day, $0.minute ?? 1439) < ($1.day, $1.minute ?? 1439) }
             .map { datedRow($0) }
-        let mine = templates
+        // Presets in the level's order (`SchoolLevel.presetIDs`), so the row the
+        // first run led with leads Home too; the student's own tasks follow.
+        let mine = (presetMenu() + templates.filter { !$0.isPreset })
             .filter { $0.isActive && $0.retiredOn == nil }
             .map { t in
                 DailyTask(id: t.id, title: t.title, kind: t.kind,
@@ -899,7 +930,7 @@ struct GameState: Codable, Equatable {
     var bridgeState: BridgeState {
         BridgeState(coins: ledger.balance, owned: Array(ownedLooks).sorted(),
                     requestsAppliedAt: requestsAppliedAt, league: bridgeLeague,
-                    kin: BridgeKin(species: activeChibi.speciesID, level: activeChibi.level,
+                    kin: BridgeKin(species: publicSpecies, level: activeChibi.level,
                                    skin: activeChibi.skinID, scene: Scene0.find(sceneID).id))
     }
 

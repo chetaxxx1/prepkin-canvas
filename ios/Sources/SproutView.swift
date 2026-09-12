@@ -357,7 +357,17 @@ struct SproutView: UIViewRepresentable {
 
     /// Prepkin's species palette onto Sprout's six coats. `slime` and anything
     /// unrecognised stay mint, which is Sprout's default.
+    /// The coat the starter fish was picked in at first run, mirrored from the
+    /// save by `AppState` so every still and the live tank read it without each
+    /// call site carrying it. `nil` draws the species default.
+    static var starterCoat: String?
+
     static func coat(_ speciesID: String) -> String {
+        if speciesID == "slime", let picked = starterCoat { return picked }
+        // A friend's or pod-mate's starter arrives as its coat name
+        // (`GameState.publicSpecies`), never as "slime", so their pick draws
+        // on this phone and this phone's pick never paints their fish.
+        if coats.contains(speciesID) { return speciesID }
         switch speciesID {
         case "ember", "mochi": return "coral"
         case "droplet", "puff": return "sky"
@@ -367,6 +377,8 @@ struct SproutView: UIViewRepresentable {
         default: return "mint"
         }
     }
+
+    static let coats: Set<String> = ["mint", "coral", "butter", "lilac", "peach", "sky"]
 
     /// Which Sprout-repo type draws the kin. Sprout only since 2026-09-10; the
     /// orca and axolotl rigs still exist in the web bundle but nothing asks for them.

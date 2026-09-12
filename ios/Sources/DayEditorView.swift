@@ -45,8 +45,10 @@ struct DayEditorView: View {
         state.templates.filter { !$0.isPreset && $0.retiredOn == nil }
     }
 
+    /// The level's menu (`SchoolLevel.presetIDs`): a high-schooler sees the
+    /// teacher and the quiz, a grad student the advisor and the lab notebook.
     private func presets(_ kind: TaskKind) -> [TaskTemplate] {
-        state.templates.filter { $0.isPreset && $0.kind == kind }
+        state.presetMenu(kind)
     }
 
     /// Everything the student could pick, and everything they have.
@@ -320,7 +322,7 @@ struct DayEditorView: View {
             }
             hairline.padding(.vertical, 18)
             if state.isBridgeConfigured {
-                Text("Type this into the Prepkin extension in Chrome.")
+                Text("Type this into Prepkin in Chrome, on \(state.school.canvasOwner).")
                     .font(Theme.font(15, .semibold))
                     .foregroundStyle(Theme.muted)
                     .lineSpacing(2)
