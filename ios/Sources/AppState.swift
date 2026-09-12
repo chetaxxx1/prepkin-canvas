@@ -892,15 +892,24 @@ final class AppState: ObservableObject {
 
     /// Waves. Settles on the phone straight away, because the button showing its
     /// settled state is the whole feedback — there is no toast and nothing to undo.
-    func wave(at friend: Friend) {
+    func wave(at friend: Friend) { send(Vibes.wave, to: friend) }
+
+    /// Sends one card. One per friend per day, whichever card: the second tap of
+    /// the day settles as already sent rather than sending a different one.
+    func send(_ card: VibeCard, to friend: Friend) {
         let day = game.effectiveDay
         guard !game.hasWaved(at: friend.id, on: day) else { return }
         game.markWaved(at: friend.id, on: day)
         guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
         Task {
             _ = try? await client.sendVibe(identity: identity, friendID: friend.id,
-                                           kind: Vibes.wave.kind, day: day)
+                                           kind: card.kind, day: day)
         }
+    }
+
+    /// Which card a friend sent today.
+    func vibeReceived(from friend: Friend) -> VibeCard {
+        game.vibeReceived(from: friend.id, on: game.effectiveDay)
     }
 
     func markWaveSeen(_ id: String) { game.markWaveSeen(id, on: game.effectiveDay) }
@@ -912,7 +921,7 @@ final class AppState: ObservableObject {
         let day = game.effectiveDay
         if let visits = try? await client.fetchVisits(identity: identity, day: day) {
             guard game.league.identity == identity else { return }
-            game.applyWavesReceived(visits.map(\.sender.id), on: day)
+            game.applyWavesReceived(Vibes.newest(visits), on: day)
         }
         if let sent = try? await client.fetchSent(identity: identity, day: day) {
             guard game.league.identity == identity else { return }

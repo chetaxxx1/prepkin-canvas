@@ -37,7 +37,47 @@ enum NotificationPlanner {
         if state.settings.comeBackRemindersEnabled {
             out += comeBack(for: state, name: name, now: now, calendar: calendar)
         }
+        out += board(for: state, now: now, calendar: calendar)
         return out.sorted { $0.fireAt < $1.fireAt }
+    }
+
+    // MARK: - The board's two
+
+    /// Duolingo's two league notes, minus the countdown: one on Sunday evening
+    /// saying the board settles tonight, one on Monday morning saying it has.
+    /// Only with a friend to be on a board with, and never a place or a number —
+    /// the planner reads the save file, and the board is not in it. Sunday's is
+    /// dropped once it is already evening.
+    static let settleHour = 18
+    static let settledHour = 9
+
+    private static func board(for state: GameState, now: Date, calendar: Calendar) -> [PlannedNotification] {
+        guard !state.friends.isEmpty else { return [] }
+        var out: [PlannedNotification] = []
+        let week = WeekKey(DayKey(now, calendar: calendar))
+        let days = week.days()
+        guard days.count == 7 else { return out }
+        func date(_ key: DayKey, hour: Int) -> Date? {
+            let parts = key.raw.split(separator: "-").compactMap { Int($0) }
+            guard parts.count == 3 else { return nil }
+            return calendar.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2], hour: hour))
+        }
+        if let sunday = date(days[6], hour: settleHour), sunday > now {
+            out.append(PlannedNotification(
+                id: "board:settles:\(week.raw)",
+                title: "The board settles tonight",
+                body: "Anything you finish today still counts. Everyone starts over tomorrow.",
+                fireAt: sunday))
+        }
+        if let nextMonday = calendar.date(byAdding: .day, value: 1, to: date(days[6], hour: settledHour) ?? now),
+           nextMonday > now {
+            out.append(PlannedNotification(
+                id: "board:settled:\(week.raw)",
+                title: "Last week's board is in",
+                body: "See where you finished, and who is on the sand this morning.",
+                fireAt: nextMonday))
+        }
+        return out
     }
 
     // MARK: - Pieces

@@ -18,8 +18,9 @@ final class VibeTests: XCTestCase {
 
     // MARK: - The cards that exist
 
-    func testOneCardShipsAndTheRestOfTheRangeIsReserved() {
-        XCTAssertEqual(Vibes.all.count, 1, "the six faces are not drawn yet")
+    func testSixCardsShipAndTheRestOfTheRangeIsReserved() {
+        XCTAssertEqual(Vibes.all.count, 6)
+        XCTAssertEqual(Vibes.all.map(\.kind), [0, 1, 2, 3, 4, 5], "an index is fixed forever")
         XCTAssertEqual(Vibes.all.first?.kind, 0)
         // The bridge takes 0...15. Reserving the range now means the other five
         // land as data later, with no change to the wire and no migration.
@@ -31,7 +32,8 @@ final class VibeTests: XCTestCase {
     /// heard of. It draws the one it has rather than a hole.
     func testAnUnknownCardFallsBackRatherThanBlank() {
         XCTAssertEqual(Vibes.card(kind: 0).kind, 0)
-        XCTAssertEqual(Vibes.card(kind: 4).kind, 0, "reserved but not drawn yet")
+        XCTAssertEqual(Vibes.card(kind: 4).kind, 4)
+        XCTAssertEqual(Vibes.card(kind: 9).kind, 0, "reserved but not drawn yet")
         XCTAssertEqual(Vibes.card(kind: 99).kind, 0)
         XCTAssertEqual(Vibes.card(kind: -1).kind, 0)
         XCTAssertFalse(Vibes.card(kind: 99).label.isEmpty)
@@ -41,7 +43,27 @@ final class VibeTests: XCTestCase {
         for card in Vibes.all {
             XCTAssertFalse(card.label.contains("!"))
             XCTAssertFalse(card.label.isEmpty)
+            XCTAssertFalse(card.sent.contains("!"))
         }
+    }
+
+    /// PLUS-SPEC signature 8: three free, six with Plus, on the day the cards ship.
+    func testThreeCardsAreFreeAndSixComeWithPlus() {
+        let free = Vibes.all.filter { Vibes.canSend($0, isPlus: false) }
+        XCTAssertEqual(free.map(\.kind), [0, 1, 2])
+        XCTAssertEqual(Vibes.all.filter { Vibes.canSend($0, isPlus: true) }.count, 6)
+    }
+
+    /// A Plus card sent to a free phone still draws as itself: the gate is on
+    /// sending, never on seeing what a friend chose.
+    func testAReceivedPlusCardDrawsOnAFreePhone() {
+        var state = GameState()
+        state.addFriend(friend("a"))
+        state.applyWavesReceived([VibeVisit(sender: friend("a"), kind: 5)], on: today)
+        XCTAssertEqual(state.vibeReceived(from: "a", on: today).kind, 5)
+        XCTAssertEqual(state.vibeReceived(from: "b", on: today).kind, 0, "nothing in is the wave")
+        XCTAssertEqual(state.vibeReceived(from: "a", on: DayKey(raw: "2026-09-11")).kind, 0,
+                       "a card is one day long")
     }
 
     // MARK: - Once a day

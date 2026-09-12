@@ -378,6 +378,8 @@ struct GameState: Codable, Equatable {
     var wavesSent: Set<String> = []
     /// Friends who have waved at you today.
     var wavesIn: Set<String> = []
+    /// Which card each of them sent, by sender. Absent means the wave.
+    var wavesInKind: [String: Int] = [:]
     /// The ones you have already been shown. What is in `wavesIn` and not in here
     /// is what the card at the top of the tab is about.
     var wavesSeen: Set<String> = []
@@ -398,7 +400,7 @@ struct GameState: Codable, Equatable {
         case canvasEvents, datedTasks
         case settings, lastOpenedAt, pairingCode, lastCanvasSyncAt, bestShift, friendCode, rating
         case pairingToken, ownedLooks, requestsAppliedAt
-        case friends, wavesDay, wavesSent, wavesIn, wavesSeen
+        case friends, wavesDay, wavesSent, wavesIn, wavesInKind, wavesSeen
         case shareToday, shareBoard
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
         case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick, lockedPicks, firsts, decor
@@ -459,6 +461,7 @@ struct GameState: Codable, Equatable {
         shareBoard = try c.decodeIfPresent(Bool.self, forKey: .shareBoard) ?? blank.shareBoard
         wavesDay = try c.decodeIfPresent(DayKey.self, forKey: .wavesDay) ?? blank.wavesDay
         wavesSent = try c.decodeIfPresent(Set<String>.self, forKey: .wavesSent) ?? blank.wavesSent
+        wavesInKind = try c.decodeIfPresent([String: Int].self, forKey: .wavesInKind) ?? blank.wavesInKind
         wavesIn = try c.decodeIfPresent(Set<String>.self, forKey: .wavesIn) ?? blank.wavesIn
         wavesSeen = try c.decodeIfPresent(Set<String>.self, forKey: .wavesSeen) ?? blank.wavesSeen
         bestShift = try c.decodeIfPresent(Int.self, forKey: .bestShift) ?? blank.bestShift
@@ -1245,6 +1248,7 @@ struct GameState: Codable, Equatable {
         wavesSent.remove(id)
         wavesSeen.remove(id)
         wavesIn.remove(id)
+        wavesInKind[id] = nil
     }
 
     // MARK: - Waves
@@ -1259,6 +1263,7 @@ struct GameState: Codable, Equatable {
         wavesSent = []
         wavesSeen = []
         wavesIn = []
+        wavesInKind = [:]
     }
 
     /// You have waved at them today. Nothing about it is undoable, and nothing says
@@ -1283,6 +1288,22 @@ struct GameState: Codable, Equatable {
     mutating func applyWavesReceived(_ ids: [String], on day: DayKey = .today()) {
         rollWaves(to: day)
         wavesIn.formUnion(ids)
+    }
+
+    /// The same, with which card each sender chose. The newest per sender wins,
+    /// which `Vibes.newest` has already decided.
+    mutating func applyWavesReceived(_ visits: [VibeVisit], on day: DayKey = .today()) {
+        rollWaves(to: day)
+        for v in visits {
+            wavesIn.insert(v.sender.id)
+            wavesInKind[v.sender.id] = v.kind
+        }
+    }
+
+    /// The card a friend sent today. The wave when nothing says otherwise.
+    func vibeReceived(from id: String, on day: DayKey = .today()) -> VibeCard {
+        guard wavesDay == day, let kind = wavesInKind[id] else { return Vibes.wave }
+        return Vibes.card(kind: kind)
     }
 
     /// Waves you have not looked at yet. The same shape as the "added you" card and

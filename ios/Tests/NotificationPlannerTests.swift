@@ -89,10 +89,41 @@ final class NotificationPlannerTests: XCTestCase {
         XCTAssertEqual(plan.first { $0.id == "comeback" }?.fireAt, at(1 + 31, 17))
     }
 
+    // MARK: - The board
+
+    private func friend(_ id: String) -> Friend {
+        Friend(id: id, adjective: 1, noun: 2, speciesID: "ember", lookID: "classic",
+               costumeID: "none", sceneID: "reef", level: 2, tier: .reef,
+               friendsSince: Date(timeIntervalSince1970: 1_757_000_000), onShiftUntil: nil)
+    }
+
+    /// 2026-08-29 is a Saturday: the week settles on Sunday the 30th at six and is
+    /// announced Monday the 31st at nine.
+    func testTheBoardSpeaksTwiceAWeekOnlyWithAFriend() {
+        let now = at(29, 10)
+        var s = state(now: now)
+        XCTAssertFalse(NotificationPlanner.plan(for: s, now: now, calendar: calendar)
+            .contains { $0.id.hasPrefix("board:") }, "no friend, no board, nothing to say")
+        s.addFriend(friend("a"), now: now)
+        let plan = NotificationPlanner.plan(for: s, now: now, calendar: calendar)
+        XCTAssertEqual(plan.first { $0.id == "board:settles:2026-W35" }?.fireAt, at(30, 18))
+        XCTAssertEqual(plan.first { $0.id == "board:settled:2026-W35" }?.fireAt, at(31, 9))
+    }
+
+    func testSundaysNoteIsDroppedOnceItIsSundayEvening() {
+        let now = at(30, 20)
+        var s = state(now: now)
+        s.addFriend(friend("a"), now: now)
+        let plan = NotificationPlanner.plan(for: s, now: now, calendar: calendar)
+        XCTAssertFalse(plan.contains { $0.id == "board:settles:2026-W35" })
+        XCTAssertTrue(plan.contains { $0.id == "board:settled:2026-W35" })
+    }
+
     func testNoRemindersSayAnythingAboutLosingAStreak() {
         let now = at(29, 10)
         var s = state(now: now)
         s.applyCanvas(CanvasSnapshot(tasks: [CanvasItem(id: "c-1", title: "Essay", courseName: "English", dueAt: at(31, 23))]))
+        s.addFriend(friend("a"), now: now)
         let words = ["streak", "lost", "lose", "don't break", "failed", "behind"]
         for item in NotificationPlanner.plan(for: s, now: now, calendar: calendar) {
             let text = (item.title + " " + item.body).lowercased()

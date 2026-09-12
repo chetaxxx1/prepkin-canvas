@@ -365,7 +365,7 @@ back ticked — including 5, 9 and 11, which were on the "do not sign" list.
 | 5 | Yes | **No, and held.** Signing it contradicts the build brief's own "do not add… any AI feature that needs an account", and it is the first account Prepkin would ever ask for. Apple Calendar and an `.ics` file shipped instead, which is what the recommendation said. Needs a plain second yes before any Google code is written. |
 | 6 | Yes | Already true. There is no `introductoryOffer` in `PrepkinCanvas.storekit`, and `testTheStoreKitConfigHasNoIntroductoryOffer` keeps it that way. |
 | 7 | Yes | Already true. `displayPrice` is `69.99`, and a test fails the build on `79.99`. |
-| 8 | Yes | Gate in place at 3/6, unused — Friends phase 2 vibe cards are not built, so there is nothing to split yet. |
+| 8 | Yes | Yes, 2026-09-12. `Vibes.all` is six cards (the app's own icons, Finch's picker), `Vibes.canSend` reads `PlusGate.vibeCards`: Hello, High five, Nice one free; Drink water, Stretch, Sleep well with Plus. A Plus card received on a free phone still draws. |
 | 9 | Yes | **No, and held.** A daily coin reward is selling coins, it breaks R2 head-on, and the build brief separately says "do not add… a coin boost". `testThePlusTrackNeverPaysCoins` currently fails the build on any attempt to add one. Needs a plain second yes. |
 | 10 | Yes | Gate in place, unused, same reason as 8. |
 | 11 | Yes | **No, and held.** Capping free Learn breaks R1 and R4 and is the loudest complaint on a competitor's board. Section 2a is the argument. Needs a plain second yes. |

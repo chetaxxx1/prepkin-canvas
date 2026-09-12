@@ -80,6 +80,21 @@ Deleted: `PennantShape`, `PennantFoldShape`, `PlaceRosette`, `CrownGlyph`, `Clap
 `AddFriendGlyph`. `TierLadder` in `LeagueView.swift` was already dead before this and is
 left alone.
 
+## Good vibes and the two notes (2026-09-12, fourth pass)
+
+- **Finch's Good Vibes picker** (`design/reference/finch/11`, `13`): `VibePickerSheet` —
+  your kin with a bubble naming the card, a 3×2 grid of round cards from the app's own
+  icons, the chosen one ringed, one button that says what it sends. Six cards: Hello,
+  High five, Nice one free; Drink water, Stretch, Sleep well with Plus (PLUS-SPEC
+  signature 8, which George signed). One per friend per day, any card. The received
+  card on the tab and the friend card say which one came ("Maya sent you a high five").
+- **Finch's friend-profile tiles** (`09`): the friend card's actions are square tiles,
+  Good vibes and Sit down (while they are at a desk). Plus a line for their place on your
+  board this week.
+- **Duolingo's two league notes**, without the countdown: Sunday 18:00 "The board settles
+  tonight", Monday 09:00 "Last week's board is in". Only with a friend; behind the
+  reminders switch like everything else the app says unprompted.
+
 ## Why the score is not coins
 
 Coins are what the pod ranks on and they are unverifiable check-offs. The four counts are

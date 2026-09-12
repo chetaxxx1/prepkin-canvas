@@ -205,13 +205,13 @@ struct FriendsView: View {
                         SproutImage(speciesID: f.speciesID, level: f.level,
                                     skin: f.lookID, size: 40)
                             .frame(width: 40, height: 40, alignment: .bottom)
-                        Text("\(f.displayName) waved")
+                        Text("\(f.displayName) \(state.vibeReceived(from: f).sent)")
                             .font(Theme.font(15.5, .heavy))
                             .foregroundStyle(Theme.ink)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                         Spacer(minLength: 8)
-                        BadgeMark(icon: "wave", height: 22)
+                        IconTile(icon: state.vibeReceived(from: f).icon, size: 36)
                     }
                     .padding(.horizontal, 16)
                     .frame(minHeight: 62)

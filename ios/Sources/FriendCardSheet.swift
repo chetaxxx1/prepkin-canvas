@@ -14,6 +14,12 @@ import SwiftUI
 /// was made, what they did today if they share it, and whether they are at a desk
 /// right now. No coins (`design/SOCIAL-PLAN.md` F5), nothing they did not do
 /// (`design/FRIENDS-BUILD-PLAN.md` section 7), and no free text anywhere.
+///
+/// The actions are Finch's friend-profile tiles
+/// (`design/reference/finch/09-friend-profile-actions.png`): a row of square white
+/// tiles under the pet, each an icon over two words. Ours are "Good vibes" (the
+/// picker) and "Sit down" (a shift beside them, only while they are at a desk).
+/// Finch's third tile is a paid gift, which this app does not have.
 struct FriendCardSheet: View {
     @EnvironmentObject var state: AppState
     let friend: Friend
@@ -23,6 +29,7 @@ struct FriendCardSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var blocking = false
     @State private var reporting = false
+    @State private var picking = false
     /// Ticks once a minute so the shift clock counts down while the sheet is open.
     @State private var clock = Date()
 
@@ -45,11 +52,28 @@ struct FriendCardSheet: View {
                         .padding(.top, 5)
                 }
                 since.padding(.top, 3)
+                if let place = boardLine {
+                    Text(place)
+                        .font(Theme.font(14, .bold))
+                        .foregroundStyle(Theme.muted)
+                        .padding(.top, 3)
+                }
+                // What they sent today, Finch's "FROM" line, in the card's own words.
+                if state.game.wavesIn.contains(friend.id), state.game.wavesDay == state.game.effectiveDay {
+                    let card = state.vibeReceived(from: friend)
+                    HStack(spacing: 8) {
+                        Image("icon-" + card.icon)
+                            .resizable().scaledToFit().frame(width: 22, height: 22)
+                        Text("\(friend.displayName) \(card.sent) today")
+                            .font(Theme.font(14, .heavy))
+                            .foregroundStyle(Theme.mintDark)
+                    }
+                    .padding(.top, 8)
+                }
 
-                if let today { todayCard(today).padding(.top, 18) }
+                tiles.padding(.top, 18)
 
-                waveRow.padding(.top, 14)
-                if let joinLength { joinRow(joinLength).padding(.top, 10) }
+                if let today { todayCard(today).padding(.top, 14) }
 
                 quietRow.padding(.top, 18)
             }
@@ -62,6 +86,7 @@ struct FriendCardSheet: View {
         .presentationDragIndicator(.visible)
         .tint(Theme.coral)
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { clock = $0 }
+        .sheet(isPresented: $picking) { VibePickerSheet(friend: friend).environmentObject(state) }
         .confirmationDialog("Block \(friend.displayName)", isPresented: $blocking,
                             titleVisibility: .visible) {
             Button("Block") {
@@ -150,69 +175,69 @@ struct FriendCardSheet: View {
         .background(card)
     }
 
-    // MARK: - The two things you can do
+    // MARK: - The tiles
 
-    /// One card, not a picker. The six faces are not drawn yet, so this is a button
-    /// that says what it does; when the rest arrive it becomes a row of them and
-    /// nothing else here changes.
-    private var waveRow: some View {
-        let sent = state.hasWaved(at: friend)
-        return Button {
-            guard !sent else { return }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            withAnimation(.easeInOut(duration: 0.2)) { state.wave(at: friend) }
-        } label: {
-            HStack(spacing: 10) {
-                BadgeMark(icon: "wave", height: 26)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(sent ? "Waved" : Vibes.wave.label)
-                        .font(Theme.font(16, .heavy))
-                        .foregroundStyle(sent ? .white : Theme.coral)
-                    Text(sent ? "They see it next time they open Prepkin."
-                              : "One a day, and they see it when they next open Prepkin.")
-                        .font(Theme.font(12.5, .semibold))
-                        .foregroundStyle(sent ? .white.opacity(0.9) : Theme.muted)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 64)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
-                .fill(sent ? Theme.mint : Theme.coralSoft))
-        }
-        .buttonStyle(.plain)
-        // Not `.disabled`: that dims the whole label, and the settled state is the
-        // one a student actually reads. The guard above is what stops a second send.
-        .accessibilityLabel(sent ? "You waved at \(friend.displayName) today"
-                                 : "Wave at \(friend.displayName)")
+    /// "3rd on your board this week · 610". Only against somebody: a board of two
+    /// is you and them, which is still a place.
+    private var boardLine: String? {
+        let rows = state.weekBoard.rows
+        guard rows.count >= 2, let mine = rows.first(where: { $0.id == friend.id }) else { return nil }
+        return "\(FriendsWater.ordinal(mine.place)) on your board this week · \(mine.member.points)"
     }
 
-    /// Two independent clocks, never one shared room. Joining links nothing: quitting
-    /// early costs you nothing extra and they are never told.
-    private func joinRow(_ length: Int) -> some View {
+    private var tiles: some View {
+        let sent = state.hasWaved(at: friend)
+        return HStack(spacing: 12) {
+            tile(icon: sent ? "highFive" : "wave",
+                 title: sent ? "Sent today" : "Good vibes",
+                 note: sent ? "One a day" : "Six cards, one a day",
+                 tint: sent ? Theme.mintSoft : Theme.coralSoft) {
+                guard !sent else { return }
+                picking = true
+            }
+            if let joinLength {
+                tile(icon: "tabFocus", title: "Sit down",
+                     note: "Your own \(joinLength) min", tint: Theme.hex(0xFCEFD3)) {
+                    onJoin?(joinLength)
+                    dismiss()
+                }
+            }
+        }
+    }
+
+    /// Finch's tile: white, square-ish, the icon over two short lines. The whole
+    /// tile is the button.
+    private func tile(icon: String, title: String, note: String, tint: Color,
+                      action: @escaping () -> Void) -> some View {
         Button {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            onJoin?(length)
-            dismiss()
+            action()
         } label: {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Sit down with them")
-                    .font(Theme.font(16, .heavy))
-                    .foregroundStyle(.white)
-                Text("Starts your own \(length) minutes. Yours is yours.")
-                    .font(Theme.font(12.5, .semibold))
-                    .foregroundStyle(.white.opacity(0.9))
+            VStack(spacing: 8) {
+                IconTile(icon: icon, size: 44)
+                VStack(spacing: 2) {
+                    Text(title)
+                        .font(Theme.font(14.5, .black))
+                        .foregroundStyle(Theme.ink)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    Text(note)
+                        .font(Theme.font(11.5, .bold))
+                        .foregroundStyle(Theme.muted)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
             }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 64)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
             .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
-                .fill(Theme.coral))
+                .fill(Theme.card)
+                .shadow(color: Theme.hex(0x2E2622).opacity(0.06), radius: 11, y: 8))
+            .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+                .strokeBorder(tint, lineWidth: 1.5))
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(title), \(note)")
     }
 
     // MARK: - The quiet three
