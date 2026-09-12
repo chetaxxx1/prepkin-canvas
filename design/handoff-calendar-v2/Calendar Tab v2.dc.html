@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E7E2D9;font-family:Nunito,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#C4523F;text-decoration:none}a:hover{color:#FF6F61}
+::-webkit-scrollbar{width:0;height:0;display:none}
+*{scrollbar-width:none}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(46,38,34,.09)}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#2E2622;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:900 13px/1.2 Nunito;color:#2E2622}
+.dv-lede{max-width:780px;margin:0 0 26px;font:700 12.5px/1.7 Nunito;color:#7B6C63}
+.dv-opts{display:flex;flex-wrap:wrap;gap:44px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(46,38,34,.09);color:#2E2622;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:800 11.5px/1.3 Nunito;color:#7B6C63}
+.dv-opt:target .dv-oid{background:#C4523F;color:#fff}
+.dv-note{max-width:402px;margin:2px 0 0;font:700 11px/1.55 Nunito;color:#8A7D74}
+.dv-spec{font:500 9.5px/1.5 ui-monospace,Menlo,monospace;color:#9A8E85;max-width:402px}
+.dv-next{margin:22px 0 0;font:700 12px/1.6 Nunito;color:#8A7D74}
+.ph{width:402px;height:874px;background:#F8F8F8;border-radius:42px;position:relative;overflow:hidden;border:1px solid #E2DCD3;box-shadow:0 10px 34px rgba(46,38,34,.13)}
+@keyframes nowPulse{0%,100%{opacity:1}50%{opacity:.42}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Resolved — this is the one to port</span></div>
+<p class="dv-lede"><a class="dv-oid" href="#2a">2a</a>'s structure (object load, month as a sheet, no drag handle, today as a raised card) with <a class="dv-oid" href="#2b">2b</a>'s block anatomy (duration inside the block, hour labels in a 30pt column). The axis is a true clock at 48pt/hour, but any free run over two hours collapses to a labelled gap row — so 9 AM still feels like the morning without an empty afternoon costing a screen of scroll. Three fixes made in this pass: every informational caption moved from <code>dim</code> to <code>muted</code> so nothing reads under 4.5:1 on white; every tap target is 44 including the day headers and the folded strip; and the month sheet's selected day scrolls inside the sheet rather than behind it.</p>
+
+<div class="dv-opts">
+<div class="dv-opt" id="3a">
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Artboard 1 · Upcoming</div>
+
+<div class="ph" data-screen-label="3a-1 Upcoming">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+      <svg width="15" height="15" viewBox="0 0 24 24" style="margin-bottom:3px"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#96877F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="17" height="17" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 15px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:107px;height:84px;display:flex;gap:3px;align-items:flex-start">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.45"><span style="font:900 10px Nunito;color:#96877F">SUN</span><span style="font:900 17px Nunito;color:#96877F">6</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.45"><span style="font:900 10px Nunito;color:#96877F">MON</span><span style="font:900 17px Nunito;color:#96877F">7</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.45"><span style="font:900 10px Nunito;color:#96877F">TUE</span><span style="font:900 17px Nunito;color:#96877F">8</span><div style="height:14px"></div></div>
+    <div style="flex:1;background:#fff;border:1px solid #ECEAE6;border-radius:14px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 9px">
+      <span style="font:900 10px Nunito;color:#C4523F">WED</span><span style="font:900 17px Nunito;color:#2E2622">9</span>
+      <div style="height:14px;display:flex;gap:2px">
+        <div style="width:12px;height:12px;border-radius:4px;background:#FF6F61;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#96877F">THU</span><span style="font:900 17px Nunito;color:#2E2622">10</span>
+      <div style="height:14px;display:flex;gap:2px">
+        <div style="width:12px;height:12px;border-radius:4px;background:#57C79B;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+        <div style="width:12px;height:12px;border-radius:6px;background:#9BC8F2"></div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#96877F">FRI</span><span style="font:900 17px Nunito;color:#2E2622">11</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#96877F">SAT</span><span style="font:900 17px Nunito;color:#2E2622">12</span>
+      <div style="height:14px;display:flex;gap:2px">
+        <div style="width:12px;height:12px;border-radius:4px;background:#9BC8F2;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+        <div style="width:12px;height:12px;border-radius:4px;background:#B4A996;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:197px;bottom:0;overflow-y:auto;padding:0 18px 200px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:9px;height:44px;border-bottom:1px solid #F0E9DC">
+      <svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 9.5 12 15.5l6-6" stroke="#96877F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font:800 12.5px Nunito;color:#96877F">Sun – Tue · free</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;height:44px;margin-top:6px">
+      <span style="font:900 15px Nunito;color:#C4523F">Today,</span><span style="font:900 15px Nunito;color:#2E2622">Sep 9</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#96877F">no classes</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;opacity: {{ opA1 }}">
+      <div style="width:44px;height:44px;border-radius:14px;background:#FFE9E5;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2.4" fill="#FF8A7E"></rect><rect x="8" y="7.5" width="8" height="1.8" rx=".9" fill="#fff"></rect><rect x="8" y="11.3" width="8" height="1.8" rx=".9" fill="#fff"></rect><rect x="8" y="15.1" width="5" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Physics 13 · all day · 30</div>
+      </div>
+      <div onClick="{{ tog.a1 }}" style="width:44px;height:44px;margin:-5px -5px -5px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+        <sc-if value="{{ done.a1 }}" hint-placeholder-val="{{ false }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ undone.a1 }}" hint-placeholder-val="{{ true }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;height:44px">
+      <span style="font:900 15px Nunito;color:#2E2622">Tomorrow,</span><span style="font:900 15px Nunito;color:#96877F">Sep 10</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#96877F">1 class · 2h 30m</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;margin-bottom:8px;opacity: {{ opA2 }}">
+      <div style="width:44px;height:44px;border-radius:14px;background:#DFF3E9;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#57C79B"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Essay outline</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Writing 5 · 9:00 AM · 30</div>
+      </div>
+      <div onClick="{{ tog.a2 }}" style="width:44px;height:44px;margin:-5px -5px -5px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+        <sc-if value="{{ done.a2 }}" hint-placeholder-val="{{ false }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ undone.a2 }}" hint-placeholder-val="{{ true }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;background:#EEF5FC;border-radius:14px">
+      <div style="width:26px;height:26px;border-radius:13px;background:#9BC8F2;flex:none"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 14px/17px Nunito;color:#2E2622">Office hours</div>
+        <div style="font:800 12px Nunito;color:#7B6C63">Intro Psych · Moore 202</div>
+      </div>
+      <div style="text-align:right;flex:none">
+        <div style="font:900 12.5px Nunito;color:#5C8FBD">2:00 PM</div>
+        <div style="font:800 11px Nunito;color:#7B6C63">1h</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;height:44px">
+      <span style="font:900 15px Nunito;color:#2E2622">Saturday,</span><span style="font:900 15px Nunito;color:#96877F">Sep 12</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#96877F">2 due</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;margin-bottom:8px;opacity: {{ opA3 }}">
+      <div style="width:44px;height:44px;border-radius:14px;background:#EEF5FC;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#9BC8F2"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Week 3 quiz</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Intro Psych · 4:00 PM · 30</div>
+      </div>
+      <div onClick="{{ tog.a3 }}" style="width:44px;height:44px;margin:-5px -5px -5px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+        <sc-if value="{{ done.a3 }}" hint-placeholder-val="{{ false }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ undone.a3 }}" hint-placeholder-val="{{ true }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px">
+      <div style="width:44px;height:44px;border-radius:14px;background:#F4F0EB;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#B4A996"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Bio quiz, ch. 3–4</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Study · 4:00 PM · 20</div>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+
+    <sc-if value="{{ kinOn }}" hint-placeholder-val="{{ true }}">
+      <div style="height:78px;margin:24px auto 0;width:120px;border:1.5px dashed #C9BEAC;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 10px Nunito;color:#96877F;letter-spacing:.6px">KIN · mint · ★</div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#96877F;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">day header rows are 44 tall (was 37) · every caption is `muted` #96877F or darker · the event row's location and duration moved to #7B6C63 for 4.5:1 on #EEF5FC</p>
+
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Artboard 2 · the month sheet</div>
+<div class="ph" data-screen-label="3a-2 Month sheet">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;opacity:.45">
+    <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;top:107px;height:84px;opacity:.45;display:flex;gap:3px;align-items:flex-start">
+    <div style="flex:1;padding-top:8px;text-align:center;font:900 17px Nunito;color:#96877F">6</div>
+    <div style="flex:1;padding-top:8px;text-align:center;font:900 17px Nunito;color:#96877F">7</div>
+    <div style="flex:1;padding-top:8px;text-align:center;font:900 17px Nunito;color:#96877F">8</div>
+    <div style="flex:1;padding-top:8px;text-align:center;font:900 17px Nunito;color:#2E2622">9</div>
+    <div style="flex:1;padding-top:8px;text-align:center;font:900 17px Nunito;color:#2E2622">10</div>
+    <div style="flex:1;padding-top:8px;text-align:center;font:900 17px Nunito;color:#2E2622">11</div>
+    <div style="flex:1;padding-top:8px;text-align:center;font:900 17px Nunito;color:#2E2622">12</div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:99px;bottom:0;background:rgba(46,38,34,.16)"></div>
+
+  <div style="position:absolute;left:0;right:0;top:150px;bottom:0;background:#fff;border-top-left-radius:28px;border-top-right-radius:28px;box-shadow:0 -6px 30px rgba(46,38,34,.14);box-sizing:border-box;padding:16px 14px 0;overflow-y:auto">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 4px 14px">
+      <div style="font:900 22px/24px Nunito;color:#2E2622">September</div>
+      <span style="font:900 22px/24px Nunito;color:#96877F">2026</span>
+      <div style="flex:1"></div>
+      <div style="height:44px;display:flex;align-items:center;padding:0 13px;background:#F3ECE0;border-radius:100px;font:900 12px Nunito;color:#2E2622">Today</div>
+      <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center">
+        <div style="width:32px;height:32px;border-radius:16px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+          <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#5F534A" stroke-width="3" fill="none" stroke-linecap="round"></path></svg>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:2px;padding:0 0 6px">
+      <span style="flex:1;text-align:center;font:900 10px Nunito;color:#96877F">SUN</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#96877F">MON</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#96877F">TUE</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#96877F">WED</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#96877F">THU</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#96877F">FRI</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#96877F">SAT</span>
+    </div>
+    <sc-for list="{{ gridRows }}" as="row" hint-placeholder-count="6">
+      <div style="display:flex;gap:2px">
+        <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+          <div style="flex:1;height:60px;border-radius:10px;display:flex;flex-direction:column;align-items:center;padding-top:7px;gap:5px;box-sizing:border-box;background: {{ c.bg }}">
+            <span style="font:900 15px Nunito;color: {{ c.ink }}">{{ c.n }}</span>
+            <div style="display:flex;gap:2px;flex-wrap:wrap;justify-content:center">
+              <sc-for list="{{ c.load }}" as="m" hint-placeholder-count="0">
+                <div style="width:11px;height:11px;border-radius:3.5px;background: {{ m.c }}"></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <div style="padding:14px 4px 0;border-top:1px solid #F0E9DC;margin-top:10px;display:flex;align-items:center;height:44px;gap:8px">
+      <span style="font:900 14px Nunito;color:#2E2622">Thursday,</span><span style="font:900 14px Nunito;color:#96877F">Sep 10</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#96877F">2 things</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;padding:4px 4px 12px">
+      <div style="width:3px;height:30px;border-radius:2px;background:#57C79B;flex:none"></div>
+      <div style="flex:1"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Essay outline</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Writing 5 · 9:00 AM · 30</div></div>
+      <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;padding:0 4px 24px">
+      <div style="width:3px;height:30px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+      <div style="flex:1"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Office hours</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · 2:00 PM · 1h</div></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#96877F;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">sheet detent .large-ish: top at y=150, r28, scrolls internally so the selected day's items are reachable with the grid still visible. Today is a 44-tall pill; the X is a 32 disc in a 44 target.</p>
+
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Artboard 4 · the day timeline</div>
+<div class="ph" data-screen-label="3a-3 Day timeline">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;gap:12px">
+    <div style="width:44px;height:44px;margin-left:-6px;display:flex;align-items:center;justify-content:center">
+      <div style="width:36px;height:36px;border-radius:14px;background:#fff;border:1px solid #ECEAE6;display:flex;align-items:center;justify-content:center">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M14.5 5.5 8.5 12l6 6.5" stroke="#2E2622" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+    </div>
+    <div>
+      <div style="font:900 21px/23px Nunito;color:#2E2622">Tomorrow</div>
+      <div style="font:800 12.5px Nunito;color:#96877F">Thursday, Sep 10 · 2h 30m booked</div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:18px;right:18px;top:113px;bottom:0;overflow-y:auto;padding-bottom:170px">
+    <div style="display:flex;align-items:center;gap:11px;padding:10px 0 12px;border-bottom:1px solid #F0E9DC">
+      <div style="width:3px;height:26px;border-radius:2px;background:#FF6F61;flex:none"></div>
+      <div style="flex:1;min-width:0"><div style="font:900 14px/16px Nunito;color:#2E2622">Ch. 5 Problem Set</div><div style="font:800 11.5px Nunito;color:#96877F">Physics 13 · all day · 30</div></div>
+      <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+
+    <div style="position:relative;height:470px;margin-top:10px">
+      <div style="position:absolute;left:0;top:-4px;font:800 10.5px Nunito;color:#96877F">9 AM</div>
+      <div style="position:absolute;left:0;top:92px;font:800 10.5px Nunito;color:#96877F">11</div>
+
+      <div style="position:absolute;left:30px;right:0;top:0;height:40px;display:flex;align-items:center;gap:10px">
+        <div style="width:11px;height:11px;border-radius:6px;background:#57C79B;flex:none;margin-left:-5.5px"></div>
+        <div style="flex:1;min-width:0"><div style="font:900 14.5px/16px Nunito;color:#2E2622">Essay outline due</div><div style="font:800 11.5px Nunito;color:#96877F">Writing 5 · pays 30</div></div>
+        <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+      </div>
+
+      <div style="position:absolute;left:30px;right:0;top:50px;height:1.5px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+      <div style="position:absolute;left:24px;top:46px;width:9px;height:9px;border-radius:4.5px;background:#FF6F61"></div>
+      <div style="position:absolute;left:0;top:42px;font:900 11px Nunito;color:#C4523F">now</div>
+
+      <div style="position:absolute;left:30px;right:0;top:100px;height:44px;display:flex;align-items:center;gap:10px">
+        <div style="width:2px;height:34px;border-left:2px dotted #C9BEAC;flex:none"></div>
+        <span style="font:800 12.5px Nunito;color:#96877F">3h 50m free until 2:00</span>
+        <div style="flex:1"></div>
+        <div style="height:44px;display:flex;align-items:center;gap:5px;padding:0 11px;border-radius:100px;background:#F3ECE0">
+          <svg width="11" height="11" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#5F534A"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#5F534A"></rect></svg>
+          <span style="font:900 11.5px Nunito;color:#5F534A">Add task</span>
+        </div>
+      </div>
+
+      <div style="position:absolute;left:0;top:152px;font:800 10.5px Nunito;color:#96877F">2 PM</div>
+      <div style="position:absolute;left:30px;right:0;top:148px;height:48px;background:#EEF5FC;border-radius:12px;box-sizing:border-box;padding:9px 12px;display:flex;align-items:center;gap:8px">
+        <div style="flex:1;min-width:0"><div style="font:900 14px/16px Nunito;color:#2E2622">Office hours</div><div style="font:800 11.5px Nunito;color:#7B6C63">Intro Psych · Moore 202</div></div>
+        <span style="font:800 11.5px Nunito;color:#7B6C63;flex:none">1h</span>
+      </div>
+
+      <div style="position:absolute;left:30px;right:0;top:200px;height:22px;display:flex;align-items:center;gap:10px">
+        <div style="width:2px;height:18px;border-left:2px dotted #C9BEAC;flex:none"></div>
+        <span style="font:800 12px Nunito;color:#96877F">30m</span>
+      </div>
+
+      <div style="position:absolute;left:0;top:230px;font:800 10.5px Nunito;color:#96877F">3:30</div>
+      <div style="position:absolute;left:30px;right:0;top:226px;height:72px;background:#F4F0EB;border-radius:12px;box-sizing:border-box;padding:9px 12px;display:flex;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0"><div style="font:900 14px/16px Nunito;color:#2E2622">Chem lab</div><div style="font:800 11.5px Nunito;color:#7B6C63">Chem 21 · Bard 110</div></div>
+        <span style="font:800 11.5px Nunito;color:#7B6C63;flex:none">1h 30m</span>
+      </div>
+
+      <div style="position:absolute;left:0;top:306px;font:800 10.5px Nunito;color:#96877F">5 PM</div>
+      <div style="position:absolute;left:30px;right:0;top:302px;height:44px;display:flex;align-items:center;gap:10px">
+        <div style="width:2px;height:34px;border-left:2px dotted #C9BEAC;flex:none"></div>
+        <span style="font:800 12.5px Nunito;color:#96877F">Free the rest of the day</span>
+        <div style="flex:1"></div>
+        <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center">
+          <div style="width:28px;height:28px;border-radius:14px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+            <svg width="12" height="12" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#5F534A"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#5F534A"></rect></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#96877F;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">48pt/hour, but a free run over 2h collapses to one 44pt gap row that names the wait ("3h 50m free until 2:00") — so 9 AM to 2 PM costs 44pt instead of 240. A 15-minute block keeps a 34 minimum. All-day work is the one line above the axis. The now-line carries the word `now` in the hour column, not a time, so it never collides with an hour label.</p>
+
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Artboards 3 + 7 · overdue above an empty today</div>
+<div class="ph" data-screen-label="3a-4 Still counts and an empty today">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+      <svg width="15" height="15" viewBox="0 0 24 24" style="margin-bottom:3px"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#96877F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="17" height="17" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 15px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:107px;height:84px;display:flex;gap:3px;align-items:flex-start">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.45"><span style="font:900 10px Nunito;color:#96877F">SUN</span><span style="font:900 17px Nunito;color:#96877F">6</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.45"><span style="font:900 10px Nunito;color:#96877F">MON</span><span style="font:900 17px Nunito;color:#96877F">7</span>
+      <div style="height:14px;display:flex;gap:2px"><div style="width:12px;height:12px;border-radius:4px;background:#FF6F61"></div></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.45"><span style="font:900 10px Nunito;color:#96877F">TUE</span><span style="font:900 17px Nunito;color:#96877F">8</span>
+      <div style="height:14px;display:flex;gap:2px"><div style="width:12px;height:12px;border-radius:4px;background:#FF6F61"></div><div style="width:12px;height:12px;border-radius:4px;background:#9BC8F2"></div></div>
+    </div>
+    <div style="flex:1;background:#fff;border:1px solid #ECEAE6;border-radius:14px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 9px">
+      <span style="font:900 10px Nunito;color:#C4523F">WED</span><span style="font:900 17px Nunito;color:#2E2622">9</span><div style="height:14px"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#96877F">THU</span><span style="font:900 17px Nunito;color:#2E2622">10</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#96877F">FRI</span><span style="font:900 17px Nunito;color:#2E2622">11</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#96877F">SAT</span><span style="font:900 17px Nunito;color:#2E2622">12</span><div style="height:14px"></div></div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:197px;bottom:0;overflow-y:auto;padding:0 18px 200px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:10px;height:44px;margin-top:2px">
+      <span style="font:900 14px Nunito;color:#8A5F14">Still counts</span>
+      <div style="flex:1;height:1px;background:#E8CFA0"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-left:4px solid #FF6F61;border-radius:20px;box-sizing:border-box;min-height:62px;margin-bottom:8px">
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15px/1.2 Nunito;color:#2E2622">Unit 4 concept check</div>
+        <div style="font:800 12.5px Nunito;color:#8A5F14;margin-top:2px">Physics 13 · was due Mon · 30</div>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-left:4px solid #9BC8F2;border-radius:20px;box-sizing:border-box;min-height:62px;margin-bottom:8px">
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15px/1.2 Nunito;color:#2E2622">Reading response: ch. 9</div>
+        <div style="font:800 12.5px Nunito;color:#8A5F14;margin-top:2px">Intro Psych · was due Tue · 30</div>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+    <div style="position:relative;background:#fff;border:1px solid #ECEAE6;border-left:4px solid #B4A996;border-radius:20px;box-sizing:border-box;min-height:62px;overflow:hidden;display:flex;align-items:stretch">
+      <div style="flex:1;display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px">
+        <div style="flex:1;min-width:0">
+          <div style="font:900 15px/1.2 Nunito;color:#2E2622">Bio quiz, ch. 3–4</div>
+          <div style="font:800 12.5px Nunito;color:#8A5F14;margin-top:2px">Study · was due Tue · 20</div>
+        </div>
+      </div>
+      <div style="width:96px;flex:none;background:#F3ECE0;display:flex;align-items:center;justify-content:center;gap:6px">
+        <svg width="15" height="15" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" fill="none" stroke="#5F534A" stroke-width="2.2"></rect><rect x="4" y="5" width="16" height="4.5" rx="2" fill="#5F534A"></rect></svg>
+        <span style="font:900 12px Nunito;color:#5F534A">Move</span>
+      </div>
+    </div>
+    <p style="margin:8px 2px 0;font:800 11.5px/1.5 Nunito;color:#96877F">A typed task can move; the swipe is not offered on a Canvas row, because a Canvas date is not ours to change.</p>
+
+    <div style="display:flex;align-items:center;gap:8px;height:44px;margin-top:14px">
+      <span style="font:900 15px Nunito;color:#C4523F">Today,</span><span style="font:900 15px Nunito;color:#2E2622">Sep 9</span>
+      <div style="flex:1"></div>
+      <span style="font:800 12.5px Nunito;color:#96877F">Nothing due.</span>
+      <span style="font:900 12.5px Nunito;color:#C4523F">Tap to add.</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:9px;height:44px;border-top:1px solid #F0E9DC">
+      <svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 9.5 12 15.5l6-6" stroke="#96877F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font:800 12.5px Nunito;color:#96877F">Thu – Sun · free</span>
+    </div>
+
+    <div style="margin-top:14px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;padding:16px">
+      <div style="font:900 16px/20px Nunito;color:#2E2622">Got your class schedule?</div>
+      <div style="font:800 12.5px/1.5 Nunito;color:#96877F;margin-top:4px">Open Prepkin on your laptop and your classes land here.</div>
+      <div style="height:44px;display:inline-flex;align-items:center;margin-top:8px;font:900 13px Nunito;color:#C4523F">Show me how</div>
+    </div>
+
+    <sc-if value="{{ kinOn }}" hint-placeholder-val="{{ true }}">
+      <div style="height:78px;margin:20px auto 0;width:120px;border:1.5px dashed #C9BEAC;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 10px Nunito;color:#96877F;letter-spacing:.6px">KIN · mint · ★</div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#96877F;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">`Still counts` moved to #8A5F14 (`coinDark` one step darker) for 4.5:1 on white — the amber at #A8761D failed. Overdue load marks appear on past ticker days, which is the only reason a past day is not simply dimmed away. The swipe reveals `Move` on typed rows only, 96 wide.</p>
+<p class="dv-note">Ported as the tab: artboard 1 · the month sheet · the day timeline · the overdue group and empty today with the not-paired card under it. Quick add and the When sheet are untouched and already built.</p>
+</div>
+</div>
+<p class="dv-next">Try next: "build the handoff" (done — see the download) · "swap the axis back to proportional" · "show a four-class day on this axis"</p>
+</section>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Three looks after a proper Mobbin pass</span></div>
+<p class="dv-lede">Four things came back from Mobbin that turn 1 did not have. <strong>Structured</strong> draws the day's load under each date as the <em>objects themselves</em>, not abstract marks — which is the right answer for an app whose icon set is already full-colour objects — and it opens the month as a <em>sheet over the agenda</em> with Today and a close X in its own header, so no drag handle is needed at all. <strong>Amie</strong> puts the duration right-aligned <em>inside</em> the block and keeps the hour column tiny, which removes a caption line from every class. <strong>Saturn</strong> lifts today onto a raised white card instead of a filled disc, so it still reads when the past days are at 40%. Each look below applies those differently; all three drop something turn 1 was spending room on.</p>
+
+<div class="dv-opts">
+
+<!-- ======== 2a : OBJECT LOAD ======== -->
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Object load · month as a sheet · no handle</div>
+
+<div class="ph" data-screen-label="2a-1 Upcoming, objects as load">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+      <svg width="15" height="15" viewBox="0 0 24 24" style="margin-bottom:3px"><path d="M9.5 5.5 15.5 12l-6 6.5" stroke="#B4A996" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="17" height="17" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 15px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:107px;height:84px;display:flex;gap:3px;align-items:flex-start">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.4"><span style="font:900 10px Nunito;color:#C9BEAC">SUN</span><span style="font:900 17px Nunito;color:#B4A996">6</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.4"><span style="font:900 10px Nunito;color:#C9BEAC">MON</span><span style="font:900 17px Nunito;color:#B4A996">7</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px;opacity:.4"><span style="font:900 10px Nunito;color:#C9BEAC">TUE</span><span style="font:900 17px Nunito;color:#B4A996">8</span><div style="height:14px"></div></div>
+    <div style="flex:1;background:#fff;border:1px solid #ECEAE6;border-radius:14px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 9px">
+      <span style="font:900 10px Nunito;color:#C4523F">WED</span><span style="font:900 17px Nunito;color:#2E2622">9</span>
+      <div style="height:14px;display:flex;gap:2px">
+        <div style="width:12px;height:12px;border-radius:4px;background:#FF6F61;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#C9BEAC">THU</span><span style="font:900 17px Nunito;color:#2E2622">10</span>
+      <div style="height:14px;display:flex;gap:2px">
+        <div style="width:12px;height:12px;border-radius:4px;background:#57C79B;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+        <div style="width:12px;height:12px;border-radius:6px;background:#9BC8F2"></div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#C9BEAC">FRI</span><span style="font:900 17px Nunito;color:#2E2622">11</span><div style="height:14px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px"><span style="font:900 10px Nunito;color:#C9BEAC">SAT</span><span style="font:900 17px Nunito;color:#2E2622">12</span>
+      <div style="height:14px;display:flex;gap:2px">
+        <div style="width:12px;height:12px;border-radius:4px;background:#9BC8F2;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+        <div style="width:12px;height:12px;border-radius:4px;background:#B4A996;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:1.6px;background:#fff;border-radius:1px"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:197px;bottom:0;overflow-y:auto;padding:0 18px 200px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:9px;padding:8px 0 12px;border-bottom:1px solid #F0E9DC">
+      <svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 9.5 12 15.5l6-6" stroke="#B4A996" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font:800 12.5px Nunito;color:#96877F">Sun – Tue · free</span>
+    </div>
+
+    <div style="display:flex;align-items:baseline;gap:8px;padding:18px 0 9px">
+      <span style="font:900 15px Nunito;color:#C4523F">Today,</span><span style="font:900 15px Nunito;color:#2E2622">Sep 9</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#B4A996">no classes</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px">
+      <div style="width:44px;height:44px;border-radius:14px;background:#FFE9E5;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2.4" fill="#FF8A7E"></rect><rect x="8" y="7.5" width="8" height="1.8" rx=".9" fill="#fff"></rect><rect x="8" y="11.3" width="8" height="1.8" rx=".9" fill="#fff"></rect><rect x="8" y="15.1" width="5" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Physics 13 · all day · 30</div>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+
+    <div style="display:flex;align-items:baseline;gap:8px;padding:18px 0 9px">
+      <span style="font:900 15px Nunito;color:#2E2622">Tomorrow,</span><span style="font:900 15px Nunito;color:#96877F">Sep 10</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#B4A996">1 class · 2h 30m</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;margin-bottom:8px">
+      <div style="width:44px;height:44px;border-radius:14px;background:#DFF3E9;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#57C79B"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Essay outline</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Writing 5 · 9:00 AM · 30</div>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;background:#EEF5FC;border-radius:14px">
+      <div style="width:26px;height:26px;border-radius:13px;background:#9BC8F2;flex:none"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 14px/17px Nunito;color:#2E2622">Office hours</div>
+        <div style="font:800 12px Nunito;color:#96877F">Intro Psych · Moore 202</div>
+      </div>
+      <div style="text-align:right;flex:none">
+        <div style="font:900 12.5px Nunito;color:#5C8FBD">2:00 PM</div>
+        <div style="font:800 11px Nunito;color:#96877F">1h</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:baseline;gap:8px;padding:18px 0 9px">
+      <span style="font:900 15px Nunito;color:#2E2622">Saturday,</span><span style="font:900 15px Nunito;color:#96877F">Sep 12</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#B4A996">2 due</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;margin-bottom:8px">
+      <div style="width:44px;height:44px;border-radius:14px;background:#EEF5FC;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#9BC8F2"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Week 3 quiz</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Intro Psych · 4:00 PM · 30</div>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px">
+      <div style="width:44px;height:44px;border-radius:14px;background:#F4F0EB;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#B4A996"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Bio quiz, ch. 3–4</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Study · 4:00 PM · 20</div>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+
+    <sc-if value="{{ kinOn }}" hint-placeholder-val="{{ true }}">
+      <div style="height:78px;margin:24px auto 0;width:120px;border:1.5px dashed #C9BEAC;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 10px Nunito;color:#B4A996;letter-spacing:.6px">KIN · mint · ★</div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">load = the object, in the course colour: 12pt glyph chips r4, max 3 then the third is a +n chip. today is a raised white card (r14) instead of a coral disc, so 40% past days still read. no handle: the month opens from the title chevron. list starts y=197 — 40pt earlier than <a class="dv-oid" href="#1a">1a</a>.</p>
+
+<div class="ph" data-screen-label="2a-2 Month as a sheet">
+  <div style="position:absolute;left:0;right:0;top:0;bottom:0;background:#F8F8F8"></div>
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between;opacity:.5">
+    <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:99px;bottom:0;background:rgba(46,38,34,.16)"></div>
+
+  <div style="position:absolute;left:0;right:0;top:150px;bottom:0;background:#fff;border-top-left-radius:28px;border-top-right-radius:28px;box-shadow:0 -6px 30px rgba(46,38,34,.14);box-sizing:border-box;padding:16px 14px 0">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 4px 14px">
+      <div style="font:900 22px/24px Nunito;color:#2E2622">September</div>
+      <span style="font:900 22px/24px Nunito;color:#C9BEAC">2026</span>
+      <div style="flex:1"></div>
+      <div style="padding:7px 13px;background:#F3ECE0;border-radius:100px;font:900 12px Nunito;color:#2E2622">Today</div>
+      <div style="width:32px;height:32px;border-radius:16px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+        <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#7B6C63" stroke-width="3" fill="none" stroke-linecap="round"></path></svg>
+      </div>
+    </div>
+    <div style="display:flex;gap:2px;padding:0 0 6px">
+      <span style="flex:1;text-align:center;font:900 10px Nunito;color:#C9BEAC">SUN</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#C9BEAC">MON</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#C9BEAC">TUE</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#C9BEAC">WED</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#C9BEAC">THU</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#C9BEAC">FRI</span><span style="flex:1;text-align:center;font:900 10px Nunito;color:#C9BEAC">SAT</span>
+    </div>
+    <sc-for list="{{ gridRows }}" as="row" hint-placeholder-count="6">
+      <div style="display:flex;gap:2px">
+        <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+          <div style="flex:1;height:64px;border-radius:10px;display:flex;flex-direction:column;align-items:center;padding-top:7px;gap:5px;box-sizing:border-box;background: {{ c.bg }}">
+            <span style="font:900 15px Nunito;color: {{ c.ink }}">{{ c.n }}</span>
+            <div style="display:flex;gap:2px;flex-wrap:wrap;justify-content:center">
+              <sc-for list="{{ c.load }}" as="m" hint-placeholder-count="0">
+                <div style="width:11px;height:11px;border-radius:3.5px;background: {{ m.c }}"></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <div style="padding:14px 4px 0;border-top:1px solid #F0E9DC;margin-top:10px;display:flex;align-items:baseline;gap:8px">
+      <span style="font:900 14px Nunito;color:#2E2622">Thursday,</span><span style="font:900 14px Nunito;color:#96877F">Sep 10</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#B4A996">2 things</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;padding:12px 4px 0">
+      <div style="width:3px;height:30px;border-radius:2px;background:#57C79B;flex:none"></div>
+      <div style="flex:1"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Essay outline</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Writing 5 · 9:00 AM · 30</div></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">the grid is a detent sheet (r28, top at y=150), not an inline swap: it carries its own header with Today and a close X, dims the agenda behind at 16%, and the selected day's items sit inside the sheet under a rule. Cost: the ticker and the grid no longer share one gesture.</p>
+<p class="dv-note">The smallest change from <a class="dv-oid" href="#1a">1a</a> with the biggest gain: 40pt of vertical room back, the drag handle deleted, and load that names the course instead of counting it. Recommended if this ships this sprint.</p>
+</div>
+
+<!-- ======== 2b : AMIE AXIS ======== -->
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>The clock is the tab · quiet chrome</div>
+
+<div class="ph" data-screen-label="2b-1 Today on a true axis">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:46px;display:flex;align-items:flex-start;justify-content:space-between">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <div>
+        <div style="font:900 12px/13px Nunito;color:#C9BEAC">2026</div>
+        <div style="font:900 21px/23px Nunito;color:#2E2622">Sep</div>
+      </div>
+      <div style="font:900 21px/23px Nunito;color:#2E2622;padding-left:4px">Wed 9</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="15" height="15" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 14px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;top:109px;height:46px;display:flex;gap:2px;align-items:center">
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">sun</div><div style="font:900 16px Nunito;color:#B4A996">6</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">mon</div><div style="font:900 16px Nunito;color:#B4A996">7</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">tue</div><div style="font:900 16px Nunito;color:#B4A996">8</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#C4523F">wed</div><div style="width:26px;height:26px;margin:0 auto;border-radius:13px;background:#FF6F61;display:flex;align-items:center;justify-content:center;font:900 16px Nunito;color:#fff">9</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">thu</div><div style="font:900 16px Nunito;color:#2E2622">10</div><div style="width:4px;height:4px;border-radius:2px;background:#9BC8F2;margin:2px auto 0"></div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">fri</div><div style="font:900 16px Nunito;color:#2E2622">11</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">sat</div><div style="font:900 16px Nunito;color:#2E2622">12</div><div style="width:4px;height:4px;border-radius:2px;background:#B4A996;margin:2px auto 0"></div></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:161px;height:1px;background:#ECEAE6"></div>
+
+  <div style="position:absolute;left:0;right:0;top:162px;bottom:0;overflow-y:auto;padding:0 14px 190px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 4px 10px">
+      <div style="width:3px;height:26px;border-radius:2px;background:#FF6F61;flex:none"></div>
+      <div style="flex:1;min-width:0"><div style="font:900 14px/16px Nunito;color:#2E2622">Ch. 5 Problem Set</div><div style="font:800 11.5px Nunito;color:#96877F">Physics 13 · all day · 30</div></div>
+      <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+
+    <div style="position:relative;height:560px;margin-top:2px;border-top:1px solid #F0E9DC;padding-top:8px">
+      <div style="position:absolute;left:0;top:12px;font:800 10.5px Nunito;color:#C9BEAC">9 AM</div>
+      <div style="position:absolute;left:0;top:60px;font:800 10.5px Nunito;color:#C9BEAC">10</div>
+      <div style="position:absolute;left:0;top:108px;font:800 10.5px Nunito;color:#C9BEAC">11</div>
+      <div style="position:absolute;left:0;top:156px;font:800 10.5px Nunito;color:#C9BEAC">12 PM</div>
+      <div style="position:absolute;left:0;top:204px;font:800 10.5px Nunito;color:#C9BEAC">1</div>
+      <div style="position:absolute;left:0;top:252px;font:800 10.5px Nunito;color:#C9BEAC">2</div>
+      <div style="position:absolute;left:0;top:300px;font:800 10.5px Nunito;color:#C9BEAC">3</div>
+      <div style="position:absolute;left:0;top:348px;font:800 10.5px Nunito;color:#C9BEAC">4</div>
+      <div style="position:absolute;left:0;top:396px;font:800 10.5px Nunito;color:#C9BEAC">5</div>
+      <div style="position:absolute;left:0;top:444px;font:800 10.5px Nunito;color:#C9BEAC">6</div>
+      <div style="position:absolute;left:0;top:492px;font:800 10.5px Nunito;color:#C9BEAC">7 PM</div>
+
+      <div style="position:absolute;left:34px;right:0;top:66px;height:1.5px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+      <div style="position:absolute;left:30px;top:62px;width:9px;height:9px;border-radius:4.5px;background:#FF6F61"></div>
+
+      <div style="position:absolute;left:34px;right:0;top:252px;height:44px;background:#EEF5FC;border-radius:12px;box-sizing:border-box;padding:8px 12px;display:flex;align-items:center;gap:8px">
+        <div style="flex:1;min-width:0"><div style="font:900 13.5px/15px Nunito;color:#2E2622">Office hours</div><div style="font:800 11px Nunito;color:#7BA3C9">Moore 202</div></div>
+        <span style="font:800 11px Nunito;color:#7BA3C9;flex:none">1h</span>
+      </div>
+
+      <div style="position:absolute;left:34px;right:0;top:324px;height:68px;background:#F4F0EB;border-radius:12px;box-sizing:border-box;padding:8px 12px;display:flex;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0"><div style="font:900 13.5px/15px Nunito;color:#2E2622">Chem lab</div><div style="font:800 11px Nunito;color:#96877F">Bard 110</div></div>
+        <span style="font:800 11px Nunito;color:#96877F;flex:none">1h 30m</span>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:baseline;gap:8px;padding:6px 4px 8px;border-top:1px solid #F0E9DC">
+      <span style="font:900 14px Nunito;color:#2E2622">Tomorrow</span><span style="font:800 12.5px Nunito;color:#96877F">Sep 10</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#B4A996">2 things</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 4px">
+      <div style="width:3px;height:26px;border-radius:2px;background:#57C79B;flex:none"></div>
+      <div style="flex:1"><div style="font:900 14px/16px Nunito;color:#2E2622">Essay outline</div><div style="font:800 11.5px Nunito;color:#96877F">Writing 5 · 9:00 AM · 30</div></div>
+      <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 4px">
+      <div style="width:3px;height:26px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+      <div style="flex:1"><div style="font:900 14px/16px Nunito;color:#2E2622">Office hours</div><div style="font:800 11.5px Nunito;color:#96877F">Intro Psych · 2:00 PM</div></div>
+    </div>
+
+    <sc-if value="{{ kinOn }}" hint-placeholder-val="{{ true }}">
+      <div style="height:78px;margin:22px auto 0;width:120px;border:1.5px dashed #C9BEAC;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 10px Nunito;color:#B4A996;letter-spacing:.6px">KIN · mint · ★</div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">48pt/hour. hour labels are 10.5 in a 30pt column — no rules across the page. duration sits inside the block, right-aligned, so a block is two lines not three. all-day work is one line above the axis. the title drops to 21 with the year at 12 above it, which buys the whole axis its room.</p>
+
+<div class="ph" data-screen-label="2b-2 A quiet day, and a free evening">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:46px;display:flex;align-items:flex-start;justify-content:space-between">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <div><div style="font:900 12px/13px Nunito;color:#C9BEAC">2026</div><div style="font:900 21px/23px Nunito;color:#2E2622">Sep</div></div>
+      <div style="font:900 21px/23px Nunito;color:#2E2622;padding-left:4px">Fri 11</div>
+    </div>
+    <div style="padding:6px 12px;background:#F3ECE0;border-radius:100px;font:900 12px Nunito;color:#2E2622">Today</div>
+  </div>
+  <div style="position:absolute;left:14px;right:14px;top:109px;height:46px;display:flex;gap:2px;align-items:center">
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">sun</div><div style="font:900 16px Nunito;color:#B4A996">6</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">mon</div><div style="font:900 16px Nunito;color:#B4A996">7</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">tue</div><div style="font:900 16px Nunito;color:#B4A996">8</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#C4523F">wed</div><div style="width:26px;height:26px;margin:0 auto;border-radius:13px;border:2px solid #FF6F61;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:900 15px Nunito;color:#C4523F">9</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">thu</div><div style="font:900 16px Nunito;color:#2E2622">10</div><div style="width:4px;height:4px;border-radius:2px;background:#9BC8F2;margin:2px auto 0"></div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">fri</div><div style="width:26px;height:26px;margin:0 auto;border-radius:13px;background:#2E2622;display:flex;align-items:center;justify-content:center;font:900 16px Nunito;color:#fff">11</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">sat</div><div style="font:900 16px Nunito;color:#2E2622">12</div><div style="width:4px;height:4px;border-radius:2px;background:#B4A996;margin:2px auto 0"></div></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:161px;height:1px;background:#ECEAE6"></div>
+
+  <div style="position:absolute;left:14px;right:14px;top:178px">
+    <div style="display:flex;align-items:center;gap:8px;padding:2px 4px 16px">
+      <span style="font:800 13px Nunito;color:#96877F">Nothing due.</span>
+      <span style="font:900 13px Nunito;color:#C4523F">Tap to add.</span>
+    </div>
+    <div style="position:relative;height:300px;border-top:1px solid #F0E9DC;padding-top:8px">
+      <div style="position:absolute;left:0;top:12px;font:800 10.5px Nunito;color:#C9BEAC">9 AM</div>
+      <div style="position:absolute;left:0;top:60px;font:800 10.5px Nunito;color:#C9BEAC">10</div>
+      <div style="position:absolute;left:0;top:108px;font:800 10.5px Nunito;color:#C9BEAC">11</div>
+      <div style="position:absolute;left:0;top:156px;font:800 10.5px Nunito;color:#C9BEAC">12 PM</div>
+      <div style="position:absolute;left:0;top:204px;font:800 10.5px Nunito;color:#C9BEAC">1</div>
+      <div style="position:absolute;left:0;top:252px;font:800 10.5px Nunito;color:#C9BEAC">2</div>
+      <div style="position:absolute;left:34px;right:0;top:90px;height:1.5px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+      <div style="position:absolute;left:30px;top:86px;width:9px;height:9px;border-radius:4.5px;background:#FF6F61"></div>
+      <div style="position:absolute;left:34px;right:0;top:110px;display:flex;align-items:center;gap:10px">
+        <span style="font:800 12px Nunito;color:#B4A996">Free the rest of the day</span>
+        <div style="flex:1;height:1px;background:#F0E9DC"></div>
+        <div style="width:28px;height:28px;border-radius:14px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+          <svg width="12" height="12" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:8px;padding:8px 4px 10px;border-top:1px solid #F0E9DC">
+      <span style="font:900 14px Nunito;color:#2E2622">Saturday</span><span style="font:800 12.5px Nunito;color:#96877F">Sep 12</span>
+      <div style="flex:1"></div><span style="font:800 12px Nunito;color:#B4A996">2 due</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 4px">
+      <div style="width:3px;height:26px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+      <div style="flex:1"><div style="font:900 14px/16px Nunito;color:#2E2622">Week 3 quiz</div><div style="font:800 11.5px Nunito;color:#96877F">Intro Psych · 4:00 PM · 30</div></div>
+      <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 4px">
+      <div style="width:3px;height:26px;border-radius:2px;background:#B4A996;flex:none"></div>
+      <div style="flex:1"><div style="font:900 14px/16px Nunito;color:#2E2622">Bio quiz, ch. 3–4</div><div style="font:800 11.5px Nunito;color:#96877F">Study · 4:00 PM · 20</div></div>
+      <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">a selected day that is not today gets an ink disc; today keeps a coral ring while it is off screen — the one place the tab uses two selection states. an empty day is the built inline line, then the axis collapses to the now-line and one "Free the rest of the day" row.</p>
+<p class="dv-note">Turn 1's <a class="dv-oid" href="#1c">1c</a> asked whether the clock could lead; this answers it without inventing a day bar. It is also the only look that reads like a calendar app rather than a task list, and the only one where the 34pt page title goes — worth saying out loud, since every other tab keeps it.</p>
+</div>
+
+<!-- ======== 2c : WEEK LANES ======== -->
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>The whole week against one clock</div>
+
+<div class="ph" data-screen-label="2c-1 Week lanes">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <div style="font:900 28px/30px Nunito;color:#2E2622">September</div>
+      <span style="font:900 13px Nunito;color:#C9BEAC">week 3</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="17" height="17" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 15px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;top:105px;display:flex;gap:2px;padding-left:30px">
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">S</div><div style="font:900 15px Nunito;color:#B4A996">6</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">M</div><div style="font:900 15px Nunito;color:#B4A996">7</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">T</div><div style="font:900 15px Nunito;color:#B4A996">8</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#C4523F">W</div><div style="width:24px;height:24px;margin:0 auto;border-radius:12px;background:#FF6F61;display:flex;align-items:center;justify-content:center;font:900 14px Nunito;color:#fff">9</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">T</div><div style="font:900 15px Nunito;color:#2E2622">10</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">F</div><div style="font:900 15px Nunito;color:#2E2622">11</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">S</div><div style="font:900 15px Nunito;color:#2E2622">12</div></div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;top:152px;display:flex;gap:2px;padding-left:30px;align-items:flex-start">
+    <div style="flex:1"></div><div style="flex:1"></div><div style="flex:1"></div>
+    <div style="flex:1;padding:0 1px"><div style="height:18px;border-radius:6px;background:#FF6F61;display:flex;align-items:center;justify-content:center"><div style="width:10px;height:2px;background:#fff;border-radius:1px"></div></div></div>
+    <div style="flex:1;padding:0 1px"><div style="height:18px;border-radius:6px;background:#57C79B;display:flex;align-items:center;justify-content:center"><div style="width:10px;height:2px;background:#fff;border-radius:1px"></div></div></div>
+    <div style="flex:1"></div>
+    <div style="flex:1;padding:0 1px"><div style="height:18px;border-radius:6px;background:#9BC8F2;display:flex;align-items:center;justify-content:center"><div style="width:10px;height:2px;background:#fff;border-radius:1px"></div></div></div>
+  </div>
+  <div style="position:absolute;left:14px;top:154px;font:800 9px Nunito;color:#C9BEAC;width:28px;text-align:right">due</div>
+
+  <div style="position:absolute;left:14px;right:14px;top:182px;bottom:150px;overflow-y:auto">
+    <div style="position:relative;height:520px;padding-left:30px">
+      <div style="position:absolute;left:0;top:-5px;font:800 10px Nunito;color:#C9BEAC">8 AM</div>
+      <div style="position:absolute;left:0;top:75px;font:800 10px Nunito;color:#C9BEAC">10</div>
+      <div style="position:absolute;left:0;top:155px;font:800 10px Nunito;color:#C9BEAC">12 PM</div>
+      <div style="position:absolute;left:0;top:235px;font:800 10px Nunito;color:#C9BEAC">2</div>
+      <div style="position:absolute;left:0;top:315px;font:800 10px Nunito;color:#C9BEAC">4</div>
+      <div style="position:absolute;left:0;top:395px;font:800 10px Nunito;color:#C9BEAC">6</div>
+      <div style="position:absolute;left:0;top:475px;font:800 10px Nunito;color:#C9BEAC">8 PM</div>
+
+      <div style="position:absolute;left:30px;right:0;top:0;bottom:0;display:flex;gap:2px">
+        <div style="flex:1;border-left:1px solid #F4F0EB"></div>
+        <div style="flex:1;border-left:1px solid #F4F0EB"></div>
+        <div style="flex:1;border-left:1px solid #F4F0EB"></div>
+        <div style="flex:1;border-left:1px solid #F4F0EB;background:#FFFAF9"></div>
+        <div style="flex:1;border-left:1px solid #F4F0EB"></div>
+        <div style="flex:1;border-left:1px solid #F4F0EB"></div>
+        <div style="flex:1;border-left:1px solid #F4F0EB;border-right:1px solid #F4F0EB"></div>
+      </div>
+
+      <div style="position:absolute;left:26px;right:0;top:88px;height:1.5px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+      <div style="position:absolute;left:22px;top:84px;width:8px;height:8px;border-radius:4px;background:#FF6F61"></div>
+
+      <div style="position:absolute;left:calc(30px + 4 * ((100% - 30px) / 7) + 2px);width:calc((100% - 30px) / 7 - 6px);top:240px;height:40px;background:#EEF5FC;border-left:2.5px solid #9BC8F2;border-radius:8px;box-sizing:border-box;padding:5px 4px">
+        <div style="font:900 9.5px/11px Nunito;color:#2E2622">Office</div>
+        <div style="font:800 8.5px Nunito;color:#7BA3C9">2–3</div>
+      </div>
+      <div style="position:absolute;left:calc(30px + 4 * ((100% - 30px) / 7) + 2px);width:calc((100% - 30px) / 7 - 6px);top:300px;height:60px;background:#F4F0EB;border-left:2.5px solid #B4A996;border-radius:8px;box-sizing:border-box;padding:5px 4px">
+        <div style="font:900 9.5px/11px Nunito;color:#2E2622">Chem</div>
+        <div style="font:800 8.5px Nunito;color:#96877F">lab</div>
+      </div>
+      <div style="position:absolute;left:calc(30px + 6 * ((100% - 30px) / 7) + 2px);width:calc((100% - 30px) / 7 - 6px);top:320px;height:22px;background:#EEF5FC;border-left:2.5px solid #9BC8F2;border-radius:8px;box-sizing:border-box;padding:4px;font:900 9.5px Nunito;color:#2E2622">Quiz</div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;bottom:74px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;padding:12px 14px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-bottom:9px">
+      <span style="font:900 14px Nunito;color:#C4523F">Today</span>
+      <span style="font:800 12px Nunito;color:#96877F">1 due, no classes</span>
+      <div style="flex:1"></div>
+      <span style="font:900 11.5px Nunito;color:#B4A996">10:12</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;padding-top:9px;border-top:1px solid #F0E9DC">
+      <div style="width:3px;height:30px;border-radius:2px;background:#FF6F61;flex:none"></div>
+      <div style="flex:1;min-width:0"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Physics 13 · all day · 30</div></div>
+      <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">seven lanes at 40pt/hour, 8 AM – 8 PM, lane width (374−30)/7 ≈ 49. today's lane is tinted #FFFAF9. all-day work sits in a "due" rail above the clock, one chip per day. the now-line crosses every lane. blocks carry an abbreviated title and the hours only — the pinned card at the bottom carries the reading version for the selected day.</p>
+
+<div class="ph" data-screen-label="2c-2 A lane tapped">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <div style="font:900 28px/30px Nunito;color:#2E2622">September</div>
+      <span style="font:900 13px Nunito;color:#C9BEAC">week 3</span>
+    </div>
+    <div style="padding:7px 14px;background:#F3ECE0;border-radius:100px;font:900 12.5px Nunito;color:#2E2622">Today</div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;top:105px;display:flex;gap:2px;padding-left:30px">
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">S</div><div style="font:900 15px Nunito;color:#B4A996">6</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">M</div><div style="font:900 15px Nunito;color:#B4A996">7</div></div>
+    <div style="flex:1;text-align:center;opacity:.4"><div style="font:900 9.5px Nunito;color:#C9BEAC">T</div><div style="font:900 15px Nunito;color:#B4A996">8</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#C4523F">W</div><div style="width:24px;height:24px;margin:0 auto;border-radius:12px;border:2px solid #FF6F61;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:900 13px Nunito;color:#C4523F">9</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#2E2622">T</div><div style="width:24px;height:24px;margin:0 auto;border-radius:12px;background:#2E2622;display:flex;align-items:center;justify-content:center;font:900 14px Nunito;color:#fff">10</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">F</div><div style="font:900 15px Nunito;color:#2E2622">11</div></div>
+    <div style="flex:1;text-align:center"><div style="font:900 9.5px Nunito;color:#96877F">S</div><div style="font:900 15px Nunito;color:#2E2622">12</div></div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;top:148px;bottom:64px;background:#fff;border:1px solid #ECEAE6;border-radius:28px;box-sizing:border-box;padding:16px 16px 0;overflow-y:auto">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-bottom:12px;border-bottom:1px solid #F0E9DC">
+      <span style="font:900 17px Nunito;color:#2E2622">Thursday 10</span>
+      <div style="flex:1"></div>
+      <span style="font:800 12px Nunito;color:#96877F">2h 30m booked · 1 due</span>
+    </div>
+
+    <div style="display:flex;gap:12px;padding-top:14px">
+      <div style="width:46px;flex:none;text-align:right"><div style="font:900 14px/16px Nunito;color:#2E2622">9:00</div><div style="font:800 10px Nunito;color:#B4A996">AM</div></div>
+      <div style="flex:1;display:flex;gap:11px">
+        <div style="width:12px;flex:none;display:flex;flex-direction:column;align-items:center"><div style="width:11px;height:11px;border-radius:6px;background:#57C79B"></div><div style="flex:1;border-left:2px dotted #E2D8C6"></div></div>
+        <div style="flex:1;padding-bottom:16px">
+          <div style="font:900 14.5px/17px Nunito;color:#2E2622">Essay outline due</div>
+          <div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Writing 5 · pays 30</div>
+        </div>
+        <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="width:46px;flex:none;text-align:right;font:800 11px Nunito;color:#B4A996;padding-top:2px">4h 50m</div>
+      <div style="flex:1;display:flex;gap:11px;align-items:center;padding-bottom:14px">
+        <div style="width:12px;flex:none;display:flex;justify-content:center"><div style="height:34px;border-left:2px dotted #E2D8C6"></div></div>
+        <span style="font:800 12px Nunito;color:#B4A996;flex:1">free</span>
+        <div style="width:28px;height:28px;border-radius:14px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+          <svg width="12" height="12" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="width:46px;flex:none;text-align:right"><div style="font:900 14px/16px Nunito;color:#2E2622">2:00</div><div style="font:800 10px Nunito;color:#B4A996">1h</div></div>
+      <div style="flex:1;background:#EEF5FC;border-left:3px solid #9BC8F2;border-radius:14px;padding:11px 13px;margin-bottom:10px">
+        <div style="font:900 14.5px/17px Nunito;color:#2E2622">Office hours</div>
+        <div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="width:46px;flex:none;text-align:right"><div style="font:900 14px/16px Nunito;color:#2E2622">3:30</div><div style="font:800 10px Nunito;color:#B4A996">1h 30m</div></div>
+      <div style="flex:1;background:#F4F0EB;border-left:3px solid #B4A996;border-radius:14px;padding:11px 13px;margin-bottom:10px;min-height:84px;box-sizing:border-box">
+        <div style="font:900 14.5px/17px Nunito;color:#2E2622">Chem lab</div>
+        <div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Chem 21 · Bard 110</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;padding-bottom:20px">
+      <div style="width:46px;flex:none"></div>
+      <span style="font:800 12px Nunito;color:#B4A996">Nothing after 5:00</span>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">tapping a lane keeps the week strip and swaps the lanes for that day's card (r28) — no push, so the way back is another tap on the strip. the selected day takes an ink disc; today keeps a coral ring.</p>
+<p class="dv-note">The only look that answers "what is my week" in one glance, which is the actual question a student asks on a Sunday night. Cost: lane blocks can only hold an abbreviated title, and a week with four classes a day will get tight — worth testing against a real timetable before committing.</p>
+</div>
+
+</div>
+<p class="dv-next">Try next: "<a class="dv-oid" href="#2a">2a</a>'s object load into <a class="dv-oid" href="#2b">2b</a>" · "draw <a class="dv-oid" href="#2c">2c</a> with a four-class day" · "<a class="dv-oid" href="#2a">2a</a> plus artboards 3 and 7"</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Calendar tab — artboards 1, 2 and 4, three directions</span></div>
+<p class="dv-lede">The brief says artboards 1, 2 and 4 are the parts nobody should freehand, so each direction below is a full column: the upcoming spine, the month grid the ticker opens into, and the day timeline. Everything else in the tab (quick add, the When sheet, Still counts, the empty-today line, the one add button) is already built and is drawn only where a direction changes it. Tokens are read off today's <em>Theme.swift</em> — near-white paper #F8F8F8, white cards with a #ECEAE6 hairline and no shadow, radii 10 · 14 · 20 · 28, gutter 18. Sample data is <em>MockCanvasClient</em>. The kin is a dashed box; class blocks and due pins are real fields only.</p>
+
+<div class="dv-opts">
+
+<!-- ================= 1a : BY THE BOOK ================= -->
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Ticker + spine, as the brief specifies</div>
+
+<div class="ph" data-screen-label="1a-1 Upcoming">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="17" height="17" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 15px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:113px;height:96px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;padding:9px 6px 0;display:flex;gap:2px">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;opacity:.4">
+      <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">S</span>
+      <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#B4A996">6</span>
+      <div style="height:18px"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;opacity:.4">
+      <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">M</span>
+      <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#B4A996">7</span>
+      <div style="height:18px"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;opacity:.4">
+      <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">T</span>
+      <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#B4A996">8</span>
+      <div style="height:18px"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+      <span style="font:900 10.5px Nunito;color:#C4523F;letter-spacing:.4px">W</span>
+      <span style="width:26px;height:26px;border-radius:13px;background:#FF6F61;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#fff">9</span>
+      <div style="height:18px;display:flex;flex-direction:column-reverse;gap:2.5px"><div style="width:20px;height:3px;border-radius:1.5px;background:#FF6F61"></div></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+      <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">T</span>
+      <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#2E2622">10</span>
+      <div style="height:18px;display:flex;flex-direction:column-reverse;gap:2.5px"><div style="width:20px;height:3px;border-radius:1.5px;background:#57C79B"></div><div style="width:20px;height:3px;border-radius:1.5px;background:#9BC8F2"></div></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+      <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">F</span>
+      <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#2E2622">11</span>
+      <div style="height:18px"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+      <span style="font:900 10.5px Nunito;color:#C9BEAC;letter-spacing:.4px">S</span>
+      <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:900 17px Nunito;color:#2E2622">12</span>
+      <div style="height:18px;display:flex;flex-direction:column-reverse;gap:2.5px"><div style="width:20px;height:3px;border-radius:1.5px;background:#9BC8F2"></div><div style="width:20px;height:3px;border-radius:1.5px;background:#B4A996"></div></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:209px;height:28px;display:flex;align-items:center;justify-content:center">
+    <div style="width:38px;height:4.5px;border-radius:2.25px;background:#E2D8C6"></div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:237px;bottom:0;overflow-y:auto;padding:0 18px 200px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:9px;padding:10px 12px;margin-top:6px;background:#F3ECE0;border-radius:14px">
+      <svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 9.5 12 15.5l6-6" stroke="#B4A996" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font:800 12.5px Nunito;color:#96877F">Sun – Tue · free</span>
+    </div>
+
+    <sc-if value="{{ overdueOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;padding:22px 0 8px">
+        <span style="font:900 13.5px Nunito;color:#A8761D">Still counts</span>
+        <div style="flex:1;height:1px;background:#E8CFA0"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:#fff;border:1px solid #ECEAE6;border-left:4px solid #FF6F61;border-radius:20px;margin-bottom:8px;box-sizing:border-box">
+        <div style="flex:1;min-width:0">
+          <div style="font:900 15px/1.2 Nunito;color:#2E2622">Unit 4 concept check</div>
+          <div style="font:800 12.5px Nunito;color:#A8761D;margin-top:2px">Physics 13 · was due Tue</div>
+        </div>
+        <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+      </div>
+    </sc-if>
+
+    <div style="display:flex;align-items:center;gap:10px;padding:20px 0 8px">
+      <span style="width:34px;text-align:center;font:900 26px/28px Nunito;color:#C4523F">9</span>
+      <span style="font:900 14px Nunito;color:#C4523F">Today</span>
+      <div style="flex:1;height:1px;background:#F0E9DC"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;opacity: {{ opA1 }}">
+      <div style="width:44px;height:44px;border-radius:14px;background:#FFE9E5;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2.4" fill="#FF8A7E"></rect><rect x="8" y="7.5" width="8" height="1.8" rx=".9" fill="#fff"></rect><rect x="8" y="11.3" width="8" height="1.8" rx=".9" fill="#fff"></rect><rect x="8" y="15.1" width="5" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Physics 13 · all day</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex:none">
+        <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+        <span style="font:900 13px Nunito;color:#A8761D">30</span>
+      </div>
+      <div onClick="{{ tog.a1 }}" style="width:44px;height:44px;margin:-5px -5px -5px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+        <sc-if value="{{ done.a1 }}" hint-placeholder-val="{{ false }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ undone.a1 }}" hint-placeholder-val="{{ true }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;padding:20px 0 8px">
+      <span style="width:34px;text-align:center;font:900 26px/28px Nunito;color:#2E2622">10</span>
+      <span style="font:900 14px Nunito;color:#2E2622">Tomorrow</span>
+      <div style="flex:1;height:1px;background:#F0E9DC"></div>
+    </div>
+    <div style="display:flex;gap:10px;padding:9px 12px;background:#EEF5FC;border-radius:14px;margin-bottom:8px">
+      <span style="font:900 12.5px/16px Nunito;color:#5C8FBD;flex:none;width:56px">2:00 PM</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 13.5px/16px Nunito;color:#2E2622">Office hours</div>
+        <div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202 · to 3:00</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;opacity: {{ opA2 }}">
+      <div style="width:44px;height:44px;border-radius:14px;background:#DFF3E9;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#57C79B"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Essay outline</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Writing 5 · due 9:00 AM</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex:none">
+        <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+        <span style="font:900 13px Nunito;color:#A8761D">30</span>
+      </div>
+      <div onClick="{{ tog.a2 }}" style="width:44px;height:44px;margin:-5px -5px -5px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+        <sc-if value="{{ done.a2 }}" hint-placeholder-val="{{ false }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ undone.a2 }}" hint-placeholder-val="{{ true }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;padding:20px 0 8px">
+      <span style="width:34px;text-align:center;font:900 26px/28px Nunito;color:#2E2622">12</span>
+      <span style="font:900 14px Nunito;color:#2E2622">Saturday</span>
+      <div style="flex:1;height:1px;background:#F0E9DC"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px;margin-bottom:8px;opacity: {{ opA3 }}">
+      <div style="width:44px;height:44px;border-radius:14px;background:#EEF5FC;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#9BC8F2"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Week 3 quiz</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Intro Psych · due 4:00 PM</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex:none">
+        <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+        <span style="font:900 13px Nunito;color:#A8761D">30</span>
+      </div>
+      <div onClick="{{ tog.a3 }}" style="width:44px;height:44px;margin:-5px -5px -5px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+        <sc-if value="{{ done.a3 }}" hint-placeholder-val="{{ false }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ undone.a3 }}" hint-placeholder-val="{{ true }}">
+          <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px">
+      <div style="width:44px;height:44px;border-radius:14px;background:#F4F0EB;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#B4A996"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Bio quiz, ch. 3–4</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Study · 4:00 PM</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex:none">
+        <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+        <span style="font:900 13px Nunito;color:#A8761D">20</span>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;padding:20px 0 8px">
+      <span style="width:34px;text-align:center;font:900 26px/28px Nunito;color:#2E2622">13</span>
+      <span style="font:900 14px Nunito;color:#2E2622">Sunday</span>
+      <div style="flex:1;height:1px;background:#F0E9DC"></div>
+    </div>
+    <div style="display:flex;gap:10px;padding:9px 12px;background:#FFEFEC;border-radius:14px">
+      <span style="font:900 12.5px/16px Nunito;color:#C4523F;flex:none;width:56px">9:00 AM</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:900 13.5px/16px Nunito;color:#2E2622">Midterm 1</div>
+        <div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Physics 13 · to 11:00</div>
+      </div>
+    </div>
+
+    <sc-if value="{{ kinOn }}" hint-placeholder-val="{{ true }}">
+      <div style="height:78px;margin:26px auto 0;width:120px;border:1.5px dashed #C9BEAC;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 10px Nunito;color:#B4A996;letter-spacing:.6px">KIN · mint · ★</div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">day header · 26/28 number in a 34 box · weekday 14 · gap 10 · rule 1px #F0E9DC<br>ticker card 378×96 r20 · handle 38×4.5 in a 402×44 grab row · list starts y=237</p>
+
+<div class="ph" data-screen-label="1a-2 Month grid">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+    <div style="padding:7px 14px;background:#F3ECE0;border-radius:100px;font:900 12.5px Nunito;color:#2E2622">Today</div>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;top:113px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;padding:10px 6px 0">
+    <div style="display:flex;gap:2px;padding:0 0 4px">
+      <span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">S</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">M</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">T</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">W</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">T</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">F</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">S</span>
+    </div>
+    <sc-for list="{{ gridRows }}" as="row" hint-placeholder-count="6">
+      <div style="display:flex;gap:2px">
+        <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+          <div style="flex:1;height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background: {{ c.bg }}">
+            <span style="font:900 15px Nunito;color: {{ c.ink }}">{{ c.n }}</span>
+            <div style="height:9px;display:flex;flex-direction:column;gap:2px;align-items:center">
+              <sc-for list="{{ c.load }}" as="m" hint-placeholder-count="0">
+                <div style="width:11px;height:3px;border-radius:1.5px;background: {{ m.c }}"></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <div style="height:28px;display:flex;align-items:center;justify-content:center">
+      <div style="width:38px;height:4.5px;border-radius:2.25px;background:#E2D8C6"></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:18px;right:18px;top:500px;bottom:0;overflow-y:auto;padding-bottom:180px">
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0 8px">
+      <span style="width:34px;text-align:center;font:900 26px/28px Nunito;color:#2E2622">10</span>
+      <span style="font:900 14px Nunito;color:#2E2622">Tomorrow</span>
+      <div style="flex:1;height:1px;background:#F0E9DC"></div>
+    </div>
+    <div style="display:flex;gap:10px;padding:9px 12px;background:#EEF5FC;border-radius:14px;margin-bottom:8px">
+      <span style="font:900 12.5px/16px Nunito;color:#5C8FBD;flex:none;width:56px">2:00 PM</span>
+      <div style="flex:1"><div style="font:900 13.5px/16px Nunito;color:#2E2622">Office hours</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202 · to 3:00</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;min-height:62px">
+      <div style="width:44px;height:44px;border-radius:14px;background:#DFF3E9;display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="24" height="24" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.4" fill="#57C79B"></rect><rect x="7.5" y="8.5" width="9" height="1.8" rx=".9" fill="#fff"></rect><rect x="7.5" y="12.3" width="6" height="1.8" rx=".9" fill="#fff"></rect></svg>
+      </div>
+      <div style="flex:1;min-width:0"><div style="font:900 15.5px/1.2 Nunito;color:#2E2622">Essay outline</div><div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Writing 5 · due 9:00 AM</div></div>
+      <div style="display:flex;align-items:center;gap:4px;flex:none">
+        <svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+        <span style="font:900 13px Nunito;color:#A8761D">30</span>
+      </div>
+      <div style="width:33px;height:33px;border-radius:11px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+    </div>
+  </div>
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">grid 6×7 fixed · cell 52 r10 · load 11×3 · other-month #C9BEAC · selected #FFE9E5 · handle stays under the card</p>
+
+<div class="ph" data-screen-label="1a-3 Day timeline">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;gap:12px">
+    <div style="width:36px;height:36px;border-radius:14px;background:#fff;border:1px solid #ECEAE6;display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path d="M14.5 5.5 8.5 12l6 6.5" stroke="#2E2622" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div>
+      <div style="font:900 21px/23px Nunito;color:#2E2622">Tomorrow</div>
+      <div style="font:800 12.5px Nunito;color:#96877F">Thursday, Sep 10</div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:18px;right:18px;top:115px;bottom:0;overflow-y:auto;padding-bottom:180px">
+    <div style="position:relative;padding-left:58px">
+      <div style="position:absolute;left:56px;top:8px;bottom:0;width:1px;background:#F0E9DC"></div>
+
+      <div style="position:relative;height:44px">
+        <span style="position:absolute;left:-58px;top:0;width:50px;text-align:right;font:900 12px Nunito;color:#96877F">9 AM</span>
+        <div style="position:absolute;left:-8px;top:2px;width:12px;height:12px;border-radius:6px;background:#57C79B;border:2.5px solid #F8F8F8;box-sizing:border-box"></div>
+        <div style="margin-left:14px"><div style="font:900 14.5px/17px Nunito;color:#2E2622">Essay outline due</div><div style="font:800 12px Nunito;color:#96877F">Writing 5 · pays 30</div></div>
+      </div>
+
+      <div style="position:relative;height:46px;display:flex;align-items:center;gap:10px;border-left:2px dotted #E2D8C6;margin-left:-2px;padding-left:16px">
+        <span style="font:800 12.5px Nunito;color:#B4A996">4h 50m · free</span>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:5px;padding:7px 11px;border-radius:100px;background:#F3ECE0">
+          <svg width="11" height="11" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+          <span style="font:900 11.5px Nunito;color:#7B6C63">Add task</span>
+        </div>
+      </div>
+
+      <div style="position:relative;height:44px;margin-top:2px">
+        <span style="position:absolute;left:-58px;top:-7px;width:50px;text-align:right;font:900 13px Nunito;color:#C4523F">10:12</span>
+        <div style="position:absolute;left:-6px;top:-3px;right:-18px;height:2px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+        <div style="position:absolute;left:-10px;top:-7px;width:10px;height:10px;border-radius:5px;background:#FF6F61"></div>
+      </div>
+
+      <div style="margin-top:6px;background:#EEF5FC;border-left:3px solid #9BC8F2;border-radius:14px;padding:12px 14px;position:relative">
+        <span style="position:absolute;left:-58px;top:12px;width:50px;text-align:right;font:900 12px Nunito;color:#96877F">2 PM</span>
+        <div style="font:900 15px/18px Nunito;color:#2E2622">Office hours</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Intro Psych · Moore 202</div>
+        <div style="font:800 12px Nunito;color:#5C8FBD;margin-top:4px">2:00 – 3:00 PM · 1h</div>
+      </div>
+
+      <div style="position:relative;height:34px;display:flex;align-items:center;gap:10px;border-left:2px dotted #E2D8C6;margin-left:-2px;padding-left:16px;margin-top:6px">
+        <span style="font:800 12.5px Nunito;color:#B4A996">30m · free</span>
+        <div style="flex:1"></div>
+        <div style="width:26px;height:26px;border-radius:13px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+          <svg width="11" height="11" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+
+      <div style="margin-top:4px;background:#F4F0EB;border-left:3px solid #B4A996;border-radius:14px;padding:12px 14px;position:relative;min-height:80px;box-sizing:border-box">
+        <span style="position:absolute;left:-58px;top:12px;width:50px;text-align:right;font:900 12px Nunito;color:#96877F">3:30</span>
+        <div style="font:900 15px/18px Nunito;color:#2E2622">Chem lab</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Chem 21 · Bard 110</div>
+        <div style="font:800 12px Nunito;color:#8A7D74;margin-top:4px">3:30 – 5:00 PM · 1h 30m</div>
+      </div>
+
+      <div style="position:relative;height:40px;display:flex;align-items:center;border-left:2px dotted #E2D8C6;margin-left:-2px;padding-left:16px;margin-top:6px">
+        <span style="font:800 12.5px Nunito;color:#B4A996">Nothing after 5:00</span>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">axis is proportional, not pt-per-hour: a block is 44 for the first hour, +20/hour, capped 140 — the same rule EventRow already uses. Gaps are labelled, not scaled. now-line drawn as it appears when the day shown is today.</p>
+<p class="dv-note">Safest read. Nothing here is new to the codebase: the ticker is <em>DayLoadStack</em> in a card, the grid is <em>MonthLoadBars</em>, the timeline reuses the event rail rule. The cost is that the day number column and the ticker both spend vertical room on the same job.</p>
+</div>
+
+<!-- ================= 1b : WEIGHT ================= -->
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>No cards: load as weight, day number as the rail</div>
+
+<div class="ph" data-screen-label="1b-1 Upcoming, ruled">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="17" height="17" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 15px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:107px;height:78px;display:flex;gap:3px;align-items:flex-end">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.4"><div style="width:100%;height:34px;border-radius:8px;background:#F1EDE7"></div><span style="font:900 13px Nunito;color:#B4A996">6</span><span style="font:900 9.5px Nunito;color:#C9BEAC">S</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.4"><div style="width:100%;height:34px;border-radius:8px;background:#F1EDE7"></div><span style="font:900 13px Nunito;color:#B4A996">7</span><span style="font:900 9.5px Nunito;color:#C9BEAC">M</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.4"><div style="width:100%;height:34px;border-radius:8px;background:#F1EDE7"></div><span style="font:900 13px Nunito;color:#B4A996">8</span><span style="font:900 9.5px Nunito;color:#C9BEAC">T</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+      <div style="width:100%;height:34px;border-radius:8px;background:#F1EDE7;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden"><div style="height:11px;background:#FF6F61"></div></div>
+      <span style="width:22px;height:22px;border-radius:11px;background:#FF6F61;display:flex;align-items:center;justify-content:center;font:900 13px Nunito;color:#fff">9</span>
+      <span style="font:900 9.5px Nunito;color:#C4523F">W</span>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+      <div style="width:100%;height:34px;border-radius:8px;background:#F1EDE7;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden"><div style="height:11px;background:#9BC8F2"></div><div style="height:11px;background:#57C79B"></div></div>
+      <span style="font:900 13px Nunito;color:#2E2622">10</span><span style="font:900 9.5px Nunito;color:#C9BEAC">T</span>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:100%;height:34px;border-radius:8px;background:#F1EDE7"></div><span style="font:900 13px Nunito;color:#2E2622">11</span><span style="font:900 9.5px Nunito;color:#C9BEAC">F</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+      <div style="width:100%;height:34px;border-radius:8px;background:#F1EDE7;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden"><div style="height:11px;background:#B4A996"></div><div style="height:11px;background:#9BC8F2"></div></div>
+      <span style="font:900 13px Nunito;color:#2E2622">12</span><span style="font:900 9.5px Nunito;color:#C9BEAC">S</span>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:191px;height:1px;background:#ECEAE6"></div>
+  <div style="position:absolute;left:0;right:0;top:192px;height:26px;display:flex;align-items:center;justify-content:center">
+    <div style="width:38px;height:4.5px;border-radius:2.25px;background:#E2D8C6"></div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:222px;bottom:0;overflow-y:auto;padding:0 18px 200px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:9px;padding:9px 0 11px;border-bottom:1px solid #F0E9DC">
+      <svg width="12" height="12" viewBox="0 0 24 24"><path d="M6 9.5 12 15.5l6-6" stroke="#B4A996" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span style="font:800 12.5px Nunito;color:#96877F">Sun – Tue · free</span>
+    </div>
+
+    <div style="display:flex;gap:14px;padding:16px 0 4px">
+      <div style="width:44px;flex:none;text-align:right">
+        <div style="font:900 30px/30px Nunito;color:#C4523F">9</div>
+        <div style="font:900 11px Nunito;color:#C4523F;letter-spacing:.3px">TODAY</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:11px;padding:2px 0 12px;opacity: {{ opB1 }}">
+          <div style="width:3px;height:34px;border-radius:2px;background:#FF6F61;flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 15.5px/1.25 Nunito;color:#2E2622">Ch. 5 Problem Set</div>
+            <div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Physics 13 · all day · 30</div>
+          </div>
+          <div onClick="{{ tog.b1 }}" style="width:44px;height:44px;margin-right:-6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ done.b1 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="17" height="17" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ undone.b1 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:14px;padding:14px 0 4px;border-top:1px solid #F0E9DC">
+      <div style="width:44px;flex:none;text-align:right">
+        <div style="font:900 30px/30px Nunito;color:#2E2622">10</div>
+        <div style="font:900 11px Nunito;color:#B4A996;letter-spacing:.3px">TOMORROW</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:flex-start;gap:11px;padding:2px 0 10px">
+          <div style="width:3px;height:40px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 14.5px/1.25 Nunito;color:#2E2622">Office hours</div>
+            <div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202</div>
+          </div>
+          <span style="font:900 12.5px Nunito;color:#5C8FBD;flex:none;padding-top:2px">2 PM</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:2px 0 12px;opacity: {{ opB2 }}">
+          <div style="width:3px;height:34px;border-radius:2px;background:#57C79B;flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 15.5px/1.25 Nunito;color:#2E2622">Essay outline</div>
+            <div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Writing 5 · 9:00 AM · 30</div>
+          </div>
+          <div onClick="{{ tog.b2 }}" style="width:44px;height:44px;margin-right:-6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ done.b2 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="17" height="17" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ undone.b2 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:14px;padding:14px 0 4px;border-top:1px solid #F0E9DC">
+      <div style="width:44px;flex:none;text-align:right">
+        <div style="font:900 30px/30px Nunito;color:#2E2622">12</div>
+        <div style="font:900 11px Nunito;color:#B4A996;letter-spacing:.3px">SAT</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:11px;padding:2px 0 12px;opacity: {{ opB3 }}">
+          <div style="width:3px;height:34px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 15.5px/1.25 Nunito;color:#2E2622">Week 3 quiz</div>
+            <div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Intro Psych · 4:00 PM · 30</div>
+          </div>
+          <div onClick="{{ tog.b3 }}" style="width:44px;height:44px;margin-right:-6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ done.b3 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="17" height="17" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ undone.b3 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:2px 0 12px">
+          <div style="width:3px;height:34px;border-radius:2px;background:#B4A996;flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 15.5px/1.25 Nunito;color:#2E2622">Bio quiz, ch. 3–4</div>
+            <div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Study · 4:00 PM · 20</div>
+          </div>
+          <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none;margin-right:-6px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:14px;padding:14px 0 4px;border-top:1px solid #F0E9DC">
+      <div style="width:44px;flex:none;text-align:right">
+        <div style="font:900 30px/30px Nunito;color:#2E2622">13</div>
+        <div style="font:900 11px Nunito;color:#B4A996;letter-spacing:.3px">SUN</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:flex-start;gap:11px;padding:2px 0 12px">
+          <div style="width:3px;height:52px;border-radius:2px;background:#FF6F61;flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font:900 14.5px/1.25 Nunito;color:#2E2622">Midterm 1</div>
+            <div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Physics 13 · 2h</div>
+          </div>
+          <span style="font:900 12.5px Nunito;color:#C4523F;flex:none;padding-top:2px">9 AM</span>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ kinOn }}" hint-placeholder-val="{{ true }}">
+      <div style="height:78px;margin:22px auto 0;width:120px;border:1.5px dashed #C9BEAC;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 10px Nunito;color:#B4A996;letter-spacing:.6px">KIN · mint · ★</div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">ticker has no card: 7 columns of a 34pt well, filled from the bottom in course colour, 11pt per item. list starts y=222 (15pt earlier than 1a). day rail 44 right-aligned · number 30/30 · label 11 caps.</p>
+
+<div class="ph" data-screen-label="1b-2 Month grid, full bleed">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+    <div style="padding:7px 14px;background:#F3ECE0;border-radius:100px;font:900 12.5px Nunito;color:#2E2622">Today</div>
+  </div>
+  <div style="position:absolute;left:8px;right:8px;top:107px">
+    <div style="display:flex;gap:2px;padding:0 0 6px">
+      <span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">S</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">M</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">T</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">W</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">T</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">F</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">S</span>
+    </div>
+    <sc-for list="{{ gridRows }}" as="row" hint-placeholder-count="6">
+      <div style="display:flex;gap:2px;border-bottom:1px solid #F0E9DC">
+        <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+          <div style="flex:1;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:7px;gap:4px;box-sizing:border-box;background: {{ c.bg }}">
+            <span style="font:900 15px Nunito;color: {{ c.ink }}">{{ c.n }}</span>
+            <div style="display:flex;gap:3px">
+              <sc-for list="{{ c.load }}" as="m" hint-placeholder-count="0">
+                <div style="width:5px;height:5px;border-radius:3px;background: {{ m.c }}"></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:510px;height:26px;display:flex;align-items:center;justify-content:center">
+    <div style="width:38px;height:4.5px;border-radius:2.25px;background:#E2D8C6"></div>
+  </div>
+  <div style="position:absolute;left:18px;right:18px;top:540px;bottom:0;overflow-y:auto;padding-bottom:170px">
+    <div style="display:flex;gap:14px;padding:4px 0">
+      <div style="width:44px;flex:none;text-align:right">
+        <div style="font:900 30px/30px Nunito;color:#2E2622">10</div>
+        <div style="font:900 11px Nunito;color:#B4A996;letter-spacing:.3px">TOMORROW</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:flex-start;gap:11px;padding:2px 0 10px">
+          <div style="width:3px;height:40px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+          <div style="flex:1;min-width:0"><div style="font:900 14.5px/1.25 Nunito;color:#2E2622">Office hours</div><div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202</div></div>
+          <span style="font:900 12.5px Nunito;color:#5C8FBD;flex:none;padding-top:2px">2 PM</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:2px 0 12px">
+          <div style="width:3px;height:34px;border-radius:2px;background:#57C79B;flex:none"></div>
+          <div style="flex:1;min-width:0"><div style="font:900 15.5px/1.25 Nunito;color:#2E2622">Essay outline</div><div style="font:800 12.5px Nunito;color:#96877F;margin-top:1px">Writing 5 · 9:00 AM · 30</div></div>
+          <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none;margin-right:-6px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">no grid card: the month is the page. cell 58, ruled rows, load as 5pt dots. the selected day is a full-width #FFE9E5 cell, today a coral disc.</p>
+
+<div class="ph" data-screen-label="1b-3 Day timeline, scaled">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;gap:12px">
+    <div style="width:36px;height:36px;border-radius:14px;background:#fff;border:1px solid #ECEAE6;display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path d="M14.5 5.5 8.5 12l6 6.5" stroke="#2E2622" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="font:900 21px/23px Nunito;color:#2E2622">Thu 10</div>
+    <div style="flex:1"></div>
+    <div style="font:800 12.5px Nunito;color:#96877F">3 things · 2h 30m booked</div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:110px;bottom:0;overflow-y:auto;padding:0 18px 170px;box-sizing:border-box">
+    <div style="position:relative;height:800px;margin-top:8px">
+      <div style="position:absolute;left:46px;top:0;bottom:0;width:1px;background:#F0E9DC"></div>
+
+      <div style="position:absolute;left:0;top:0;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">8 AM</div>
+      <div style="position:absolute;left:0;top:64px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">9</div>
+      <div style="position:absolute;left:0;top:192px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">11</div>
+      <div style="position:absolute;left:0;top:256px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">12 PM</div>
+      <div style="position:absolute;left:0;top:320px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">1</div>
+      <div style="position:absolute;left:0;top:384px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">2</div>
+      <div style="position:absolute;left:0;top:448px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">3</div>
+      <div style="position:absolute;left:0;top:512px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">4</div>
+      <div style="position:absolute;left:0;top:576px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">5</div>
+      <div style="position:absolute;left:0;top:640px;width:40px;text-align:right;font:900 11.5px Nunito;color:#C9BEAC">6</div>
+
+      <div style="position:absolute;left:40px;top:64px;width:14px;height:2px;background:#57C79B"></div>
+      <div style="position:absolute;left:58px;top:54px;display:flex;align-items:center;gap:8px">
+        <div style="width:10px;height:10px;border-radius:5px;background:#57C79B"></div>
+        <div><div style="font:900 14px/16px Nunito;color:#2E2622">Essay outline due</div><div style="font:800 11.5px Nunito;color:#96877F">Writing 5 · 9:00 AM · pays 30</div></div>
+      </div>
+
+      <div style="position:absolute;left:58px;right:0;top:100px;height:24px;display:flex;align-items:center;gap:8px">
+        <div style="width:0;height:22px;border-left:2px dotted #E2D8C6"></div>
+        <span style="font:800 12px Nunito;color:#B4A996">4h 50m · free</span>
+        <div style="flex:1"></div>
+        <div style="width:26px;height:26px;border-radius:13px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+          <svg width="11" height="11" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+
+      <div style="position:absolute;left:26px;right:0;top:141px;height:2px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+      <div style="position:absolute;left:0;top:132px;width:40px;text-align:right;font:900 12px Nunito;color:#C4523F">10:12</div>
+      <div style="position:absolute;left:42px;top:137px;width:10px;height:10px;border-radius:5px;background:#FF6F61"></div>
+
+      <div style="position:absolute;left:58px;right:0;top:384px;height:64px;background:#EEF5FC;border-left:3px solid #9BC8F2;border-radius:14px;box-sizing:border-box;padding:9px 12px">
+        <div style="font:900 14.5px/17px Nunito;color:#2E2622">Office hours</div>
+        <div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202</div>
+        <div style="font:800 11.5px Nunito;color:#5C8FBD;margin-top:2px">2:00 – 3:00 PM</div>
+      </div>
+
+      <div style="position:absolute;left:58px;right:0;top:452px;height:28px;display:flex;align-items:center;gap:8px">
+        <div style="width:0;height:24px;border-left:2px dotted #E2D8C6"></div>
+        <span style="font:800 12px Nunito;color:#B4A996">30m · free</span>
+      </div>
+
+      <div style="position:absolute;left:58px;right:0;top:480px;height:96px;background:#F4F0EB;border-left:3px solid #B4A996;border-radius:14px;box-sizing:border-box;padding:9px 12px">
+        <div style="font:900 14.5px/17px Nunito;color:#2E2622">Chem lab</div>
+        <div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Chem 21 · Bard 110</div>
+        <div style="font:800 11.5px Nunito;color:#8A7D74;margin-top:2px">3:30 – 5:00 PM</div>
+      </div>
+
+      <div style="position:absolute;left:58px;right:0;top:584px;height:28px;display:flex;align-items:center;gap:8px">
+        <div style="width:0;height:24px;border-left:2px dotted #E2D8C6"></div>
+        <span style="font:800 12px Nunito;color:#B4A996">Nothing after 5:00</span>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">true clock: 64pt per hour. a 15-minute block keeps a 34pt minimum and takes its true top. an all-day event is a pinned line above 8 AM. axis opens at the first item minus one hour.</p>
+<p class="dv-note">The densest of the three, and the only one where the axis is to scale — a student can see a two-hour midterm is twice an hour of office hours without reading a caption. Cost: 64pt/hour makes an empty afternoon a long scroll, which is why the gap rows carry the labels.</p>
+</div>
+
+<!-- ================= 1c : CLOCK FIRST ================= -->
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Clock first: today as a bar you pull open</div>
+
+<div class="ph" data-screen-label="1c-1 Day bar over the spine">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 13px;background:#fff;border:1px solid #ECEAE6;border-radius:100px">
+      <svg width="17" height="17" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.7" fill="#FFC24B" stroke="#E8A62E" stroke-width="2.5"></circle></svg>
+      <span style="font:900 15px Nunito;color:#2E2622">120</span>
+    </div>
+  </div>
+
+  <div onClick="{{ toggleRail }}" style="position:absolute;left:12px;right:12px;top:107px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;padding:12px 14px 10px;cursor:pointer">
+    <div style="display:flex;align-items:baseline;gap:8px">
+      <span style="font:900 14px Nunito;color:#C4523F">Today</span>
+      <span style="font:800 12.5px Nunito;color:#96877F">Wed Sep 9 · 1 due, no classes</span>
+      <div style="flex:1"></div>
+      <span style="font:900 11.5px Nunito;color:#B4A996">10:12</span>
+    </div>
+    <div style="position:relative;height:26px;margin-top:10px;background:#F3ECE0;border-radius:8px">
+      <div style="position:absolute;left:14%;top:0;bottom:0;width:2px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+      <div style="position:absolute;left:calc(14% - 4px);top:-4px;width:10px;height:10px;border-radius:5px;background:#FF6F61"></div>
+      <div style="position:absolute;left:56%;top:4px;bottom:4px;width:3px;border-radius:2px;background:#FF6F61"></div>
+      <div style="position:absolute;left:0;right:0;bottom:-16px;display:flex;justify-content:space-between;font:800 9.5px Nunito;color:#C9BEAC"><span>8 AM</span><span>2 PM</span><span>10 PM</span></div>
+    </div>
+    <div style="height:18px"></div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding-top:6px;border-top:1px solid #F0E9DC">
+      <span style="font:900 11.5px Nunito;color:#96877F">Open the day</span>
+      <svg width="12" height="12" viewBox="0 0 24 24"><path d="M5.5 9 12 15l6.5-6" stroke="#96877F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+  </div>
+
+  <sc-if value="{{ railOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:12px;right:12px;top:245px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;padding:12px 14px">
+      <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+        <span style="width:44px;font:900 12px Nunito;color:#C4523F;text-align:right">10:12</span>
+        <div style="flex:1;height:2px;background:#FF6F61"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+        <span style="width:44px;font:800 12px Nunito;color:#B4A996;text-align:right">rest</span>
+        <span style="font:800 12.5px Nunito;color:#B4A996">11h 48m · free</span>
+        <div style="flex:1"></div>
+        <div style="width:26px;height:26px;border-radius:13px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+          <svg width="11" height="11" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #F0E9DC">
+        <span style="width:44px;font:900 12px Nunito;color:#96877F;text-align:right">all day</span>
+        <div style="width:3px;height:26px;border-radius:2px;background:#FF6F61"></div>
+        <div style="flex:1;min-width:0"><div style="font:900 14px/16px Nunito;color:#2E2622">Ch. 5 Problem Set</div><div style="font:800 11.5px Nunito;color:#96877F">Physics 13 · 30</div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="position:absolute;left:0;right:0;top:265px;bottom:0;overflow-y:auto;padding:0 18px 190px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0 10px">
+      <span style="font:900 13px Nunito;color:#2E2622">Coming up</span>
+      <div style="flex:1;height:1px;background:#F0E9DC"></div>
+      <span style="font:800 12px Nunito;color:#B4A996">Sun – Tue · free</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;margin-bottom:8px">
+      <div style="width:40px;flex:none;text-align:center">
+        <div style="font:900 19px/19px Nunito;color:#2E2622">10</div>
+        <div style="font:900 9.5px Nunito;color:#B4A996;letter-spacing:.3px">THU</div>
+      </div>
+      <div style="width:1px;align-self:stretch;background:#F0E9DC"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;opacity: {{ opC1 }}">
+          <div style="width:3px;height:30px;border-radius:2px;background:#57C79B;flex:none"></div>
+          <div style="flex:1;min-width:0"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Essay outline</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Writing 5 · 9:00 AM · 30</div></div>
+          <div onClick="{{ tog.c1 }}" style="width:44px;height:44px;margin:-7px -8px -7px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ done.c1 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="17" height="17" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ undone.c1 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #F0E9DC">
+          <div style="width:3px;height:30px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+          <div style="flex:1;min-width:0"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Office hours</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202</div></div>
+          <span style="font:900 12px Nunito;color:#5C8FBD;flex:none">2 PM</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box;margin-bottom:8px">
+      <div style="width:40px;flex:none;text-align:center">
+        <div style="font:900 19px/19px Nunito;color:#2E2622">12</div>
+        <div style="font:900 9.5px Nunito;color:#B4A996;letter-spacing:.3px">SAT</div>
+      </div>
+      <div style="width:1px;align-self:stretch;background:#F0E9DC"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;opacity: {{ opC2 }}">
+          <div style="width:3px;height:30px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+          <div style="flex:1;min-width:0"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Week 3 quiz</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · 4:00 PM · 30</div></div>
+          <div onClick="{{ tog.c2 }}" style="width:44px;height:44px;margin:-7px -8px -7px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <sc-if value="{{ done.c2 }}" hint-placeholder-val="{{ false }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#6FC79E;display:flex;align-items:center;justify-content:center">
+                <svg width="17" height="17" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ undone.c2 }}" hint-placeholder-val="{{ true }}">
+              <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box"></div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #F0E9DC">
+          <div style="width:3px;height:30px;border-radius:2px;background:#B4A996;flex:none"></div>
+          <div style="flex:1;min-width:0"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Bio quiz, ch. 3–4</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Study · 4:00 PM · 20</div></div>
+          <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none;margin-right:-8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box">
+      <div style="width:40px;flex:none;text-align:center">
+        <div style="font:900 19px/19px Nunito;color:#2E2622">13</div>
+        <div style="font:900 9.5px Nunito;color:#B4A996;letter-spacing:.3px">SUN</div>
+      </div>
+      <div style="width:1px;align-self:stretch;background:#F0E9DC"></div>
+      <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
+        <div style="width:3px;height:34px;border-radius:2px;background:#FF6F61;flex:none"></div>
+        <div style="flex:1;min-width:0"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Midterm 1</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Physics 13 · 9:00 – 11:00 AM</div></div>
+      </div>
+    </div>
+
+    <sc-if value="{{ kinOn }}" hint-placeholder-val="{{ true }}">
+      <div style="height:78px;margin:24px auto 0;width:120px;border:1.5px dashed #C9BEAC;border-radius:14px;display:flex;align-items:center;justify-content:center;font:800 10px Nunito;color:#B4A996;letter-spacing:.6px">KIN · mint · ★</div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">tap the day bar (live in this prototype) to open today in place. no ticker: weeks come from a horizontal swipe on the bar, the grid from the month name.</p>
+
+<div class="ph" data-screen-label="1c-2 Month, load lanes">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="font:900 34px/38px Nunito;color:#2E2622">September</div>
+      <svg width="16" height="16" viewBox="0 0 24 24" style="margin-top:6px"><path d="M5.5 9 12 15l6.5-6" stroke="#2E2622" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="padding:7px 14px;background:#F3ECE0;border-radius:100px;font:900 12.5px Nunito;color:#2E2622">Today</div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:107px">
+    <div style="display:flex;gap:2px;padding:0 0 6px 34px">
+      <span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">S</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">M</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">T</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">W</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">T</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">F</span><span style="flex:1;text-align:center;font:900 10.5px Nunito;color:#C9BEAC">S</span>
+    </div>
+    <sc-for list="{{ gridRows }}" as="row" hint-placeholder-count="6">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <div style="width:28px;flex:none;text-align:right;font:900 10px Nunito;color:#C9BEAC">{{ row.label }}</div>
+        <div style="flex:1;background:#fff;border:1px solid #ECEAE6;border-radius:14px;box-sizing:border-box;padding:5px 4px">
+          <div style="display:flex;gap:2px">
+            <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+              <div style="flex:1;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;background: {{ c.bg }}">
+                <span style="font:900 14px Nunito;color: {{ c.ink }}">{{ c.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:2px;margin-top:3px">
+            <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+              <div style="flex:1;height:4px;border-radius:2px;background: {{ c.lane }}"></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="position:absolute;left:18px;right:18px;top:490px;bottom:0;overflow-y:auto;padding-bottom:170px">
+    <div style="display:flex;align-items:center;gap:10px;padding:4px 0 10px">
+      <span style="font:900 13px Nunito;color:#2E2622">Thu 10</span>
+      <div style="flex:1;height:1px;background:#F0E9DC"></div>
+      <span style="font:800 12px Nunito;color:#B4A996">2 things</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid #ECEAE6;border-radius:20px;box-sizing:border-box">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:3px;height:30px;border-radius:2px;background:#57C79B;flex:none"></div>
+          <div style="flex:1"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Essay outline</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Writing 5 · 9:00 AM · 30</div></div>
+          <div style="width:30px;height:30px;border-radius:10px;background:#F4F0EB;border:2.5px solid #E6DFD7;box-sizing:border-box;flex:none"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #F0E9DC">
+          <div style="width:3px;height:30px;border-radius:2px;background:#9BC8F2;flex:none"></div>
+          <div style="flex:1"><div style="font:900 14.5px/1.2 Nunito;color:#2E2622">Office hours</div><div style="font:800 12px Nunito;color:#96877F;margin-top:1px">Intro Psych · Moore 202</div></div>
+          <span style="font:900 12px Nunito;color:#5C8FBD;flex:none">2 PM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;right:18px;bottom:78px;width:60px;height:60px;border-radius:30px;background:#FF6F61;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(196,82,63,.34)">
+    <svg width="26" height="26" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#fff"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#fff"></rect></svg>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">weeks are cards, not a mesh: each row carries one 4pt load lane per day under the numbers, so the month reads as five weeks of weight before it reads as 30 days.</p>
+
+<div class="ph" data-screen-label="1c-3 Day opened, not pushed">
+  <div style="position:absolute;left:18px;right:18px;top:59px;height:40px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font:900 22px/24px Nunito;color:#2E2622">Thursday 10</div>
+    <div style="width:36px;height:36px;border-radius:18px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+      <svg width="15" height="15" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#7B6C63" stroke-width="3" fill="none" stroke-linecap="round"></path></svg>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:107px;bottom:64px;background:#fff;border:1px solid #ECEAE6;border-radius:28px;box-sizing:border-box;padding:16px 16px 0;overflow-y:auto">
+    <div style="display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid #F0E9DC">
+      <span style="font:800 12.5px Nunito;color:#96877F">2h 30m booked · 1 due</span>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:100px;background:#F3ECE0">
+        <svg width="11" height="11" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        <span style="font:900 11.5px Nunito;color:#7B6C63">Add task</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;padding:14px 0 0">
+      <div style="width:52px;flex:none;text-align:right;padding-top:2px">
+        <div style="font:900 15px/16px Nunito;color:#2E2622">9:00</div>
+        <div style="font:800 10.5px Nunito;color:#B4A996">AM</div>
+      </div>
+      <div style="flex:1;display:flex;gap:12px">
+        <div style="width:12px;flex:none;display:flex;flex-direction:column;align-items:center">
+          <div style="width:12px;height:12px;border-radius:6px;background:#57C79B"></div>
+          <div style="flex:1;width:2px;border-left:2px dotted #E2D8C6"></div>
+        </div>
+        <div style="flex:1;padding-bottom:18px">
+          <div style="font:900 15px/18px Nunito;color:#2E2622">Essay outline due</div>
+          <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Writing 5 · pays 30</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="width:52px;flex:none;text-align:right;font:800 11.5px Nunito;color:#B4A996;padding-top:2px">4h 50m</div>
+      <div style="flex:1;display:flex;gap:12px;align-items:center;padding-bottom:16px">
+        <div style="width:12px;flex:none;display:flex;justify-content:center"><div style="width:2px;height:40px;border-left:2px dotted #E2D8C6"></div></div>
+        <span style="font:800 12.5px Nunito;color:#B4A996;flex:1">free</span>
+        <div style="width:28px;height:28px;border-radius:14px;background:#F3ECE0;display:flex;align-items:center;justify-content:center">
+          <svg width="12" height="12" viewBox="0 0 24 24"><rect x="10.6" y="4" width="2.8" height="16" rx="1.4" fill="#96877F"></rect><rect x="4" y="10.6" width="16" height="2.8" rx="1.4" fill="#96877F"></rect></svg>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;padding-bottom:16px">
+      <div style="width:52px;flex:none;text-align:right;font:900 12.5px Nunito;color:#C4523F">10:12</div>
+      <div style="flex:1;height:2px;background:#FF6F61;animation:nowPulse 2.4s ease-in-out infinite"></div>
+      <div style="width:8px;height:8px;border-radius:4px;background:#FF6F61;flex:none"></div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="width:52px;flex:none;text-align:right;padding-top:2px">
+        <div style="font:900 15px/16px Nunito;color:#2E2622">2:00</div>
+        <div style="font:800 10.5px Nunito;color:#B4A996">1h</div>
+      </div>
+      <div style="flex:1;background:#EEF5FC;border-left:3px solid #9BC8F2;border-radius:14px;padding:11px 13px;margin-bottom:10px">
+        <div style="font:900 15px/18px Nunito;color:#2E2622">Office hours</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Intro Psych · Moore 202</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="width:52px;flex:none;text-align:right;font:800 11.5px Nunito;color:#B4A996;padding-top:2px">30m</div>
+      <div style="flex:1;display:flex;align-items:center;gap:10px;padding-bottom:10px">
+        <div style="width:2px;height:26px;border-left:2px dotted #E2D8C6"></div>
+        <span style="font:800 12.5px Nunito;color:#B4A996">free</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="width:52px;flex:none;text-align:right;padding-top:2px">
+        <div style="font:900 15px/16px Nunito;color:#2E2622">3:30</div>
+        <div style="font:800 10.5px Nunito;color:#B4A996">1h 30m</div>
+      </div>
+      <div style="flex:1;background:#F4F0EB;border-left:3px solid #B4A996;border-radius:14px;padding:11px 13px;margin-bottom:10px;min-height:88px;box-sizing:border-box">
+        <div style="font:900 15px/18px Nunito;color:#2E2622">Chem lab</div>
+        <div style="font:800 12.5px Nunito;color:#96877F;margin-top:2px">Chem 21 · Bard 110</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;padding-bottom:24px">
+      <div style="width:52px;flex:none"></div>
+      <span style="font:800 12.5px Nunito;color:#B4A996">Nothing after 5:00</span>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#FFFDF8;border-top:1.5px dashed #DCD5CB;display:flex;align-items:center;justify-content:center;font:800 9.5px Nunito;color:#B4A996;letter-spacing:.7px">RootView.tabBar — not redrawn</div>
+</div>
+<p class="dv-spec">the day is a sheet (r28), not a push: the tab bar stays, the close is an X, and the time column carries the duration under the start so no block needs a range caption.</p>
+<p class="dv-note">The only direction where the tab's first answer is a clock. It also drops the ticker entirely, which is the biggest departure from the brief — worth arguing about before it gets ported.</p>
+</div>
+
+</div>
+<p class="dv-next">Try next: "take <a class="dv-oid" href="#1b">1b</a>'s load wells into <a class="dv-oid" href="#1a">1a</a>" · "draw <a class="dv-oid" href="#1c">1c</a>'s day bar with two class blocks on it" · "artboard 3 and 7 in the winning direction"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showKinPeek&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Calendar&quot;},&quot;showStillCounts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Calendar&quot;}}">
+class Component extends DCLogic {
+  state = { done: {}, railOpen: false };
+
+  keys() { return ['a1','a2','a3','b1','b2','b3','c1','c2']; }
+
+  renderVals() {
+    const d = this.state.done, done = {}, undone = {}, tog = {}, op = {};
+    this.keys().forEach(k => {
+      done[k] = !!d[k];
+      undone[k] = !d[k];
+      op['op' + k.toUpperCase()] = d[k] ? 0.45 : 1;
+      tog[k] = () => this.setState(s => ({ done: { ...s.done, [k]: !s.done[k] } }));
+    });
+
+    // September 2026: Sep 1 is a Tuesday. Six rows of seven, Sun-first.
+    const load = {
+      9:  [{ c: '#FF6F61' }],
+      10: [{ c: '#9BC8F2' }, { c: '#57C79B' }],
+      12: [{ c: '#9BC8F2' }, { c: '#B4A996' }],
+      13: [{ c: '#FF6F61' }],
+      17: [{ c: '#9BC8F2' }],
+      22: [{ c: '#FF6F61' }, { c: '#57C79B' }],
+      24: [{ c: '#57C79B' }],
+      29: [{ c: '#9BC8F2' }]
+    };
+    const laneFor = n => {
+      const items = load[n];
+      if (!items) return 'transparent';
+      return items.length > 1 ? '#FF6F61' : '#E2D8C6';
+    };
+    const rows = [], labels = ['W1','W2','W3','W4','W5','W6'];
+    let day = 1 - 2; // Sep 1 falls on column index 2 (Tuesday)
+    for (let r = 0; r < 6; r++) {
+      const cells = [];
+      for (let c = 0; c < 7; c++, day++) {
+        const inMonth = day >= 1 && day <= 30;
+        const n = inMonth ? day : (day < 1 ? 31 + day : day - 30);
+        const isToday = inMonth && day === 9;
+        const isSel = inMonth && day === 10;
+        cells.push({
+          n: String(n),
+          bg: isToday ? '#FF6F61' : (isSel ? '#FFE9E5' : 'transparent'),
+          ink: isToday ? '#FFFFFF' : (inMonth ? '#2E2622' : '#C9BEAC'),
+          load: inMonth ? (load[day] || []) : [],
+          lane: inMonth ? laneFor(day) : 'transparent'
+        });
+      }
+      rows.push({ label: labels[r], cells });
+    }
+
+    return {
+      done, undone, tog, ...op,
+      gridRows: rows,
+      railOpen: this.state.railOpen,
+      toggleRail: () => this.setState(s => ({ railOpen: !s.railOpen })),
+      kinOn: this.props.showKinPeek ?? true,
+      overdueOn: this.props.showStillCounts ?? false
+    };
+  }
+}
+</script>
+</body>
+</html>

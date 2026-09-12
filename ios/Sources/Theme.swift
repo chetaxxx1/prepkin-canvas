@@ -19,6 +19,11 @@ enum Theme {
     /// One step under the page: the segmented track, the ‹ Today › pill and the
     /// folded-past strip on Calendar. Sunk, not raised — nothing on it floats.
     static let paperSunk = hex(0xF3ECE0)
+    /// One step darker than `muted`, for a caption sitting on a tinted block
+    /// (a class in the calendar), where `muted` drops under 4.5:1.
+    static let mutedDeep = hex(0x7B6C63)
+    /// The glyph and label inside a `paperSunk` pill.
+    static let mutedInk = hex(0x5F534A)
 
     /// Task-row tile: one constant near-white circle for every category, so six
     /// objects give the variety without six competing backgrounds.
@@ -43,6 +48,10 @@ enum Theme {
     static let coinBorder = hex(0xE8A62E)
     static let coinSoft = hex(0xFFF3D6)
     static let coinDark = hex(0xA8761D)
+    /// The amber that reads on white. `coinDark` is 3.2:1 there and fails, so
+    /// the calendar's "Still counts" header and captions use this instead.
+    static let coinInk = hex(0x8A5F14)
+    static let coinHairline = hex(0xE8CFA0)
 
     // Tab bar. Every icon is a full-colour object, so a tab is found by silhouette
     // and colour — which is the only reason six of them fit.

@@ -10,6 +10,9 @@ import SwiftUI
 struct QuickAddSheet: View {
     /// The day the `+` was pressed on. Typing a date beats it.
     let day: DayKey
+    /// A time to start from — the top of a free run on the day timeline. Nil
+    /// from the floating `+`.
+    var minute: Int? = nil
     /// Opens the full editor with whatever has been typed so far.
     var onMore: (DatedTask) -> Void = { _ in }
     /// Opens the syllabus reader. Only reachable once it is deployed.
@@ -59,7 +62,10 @@ struct QuickAddSheet: View {
             WhenSheet(day: Binding(get: { landsOn }, set: setDay),
                       minute: Binding(get: { landsAt }, set: { pickedMinute = $0 }))
         }
-        .onAppear { typing = true }
+        .onAppear {
+            typing = true
+            if pickedMinute == nil { pickedMinute = minute }
+        }
     }
 
     // MARK: - The field
