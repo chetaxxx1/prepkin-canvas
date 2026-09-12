@@ -1608,34 +1608,63 @@
     "id": "psy-4",
     "title": "Confirmation bias",
     "track": "psychology",
-    "figure": "filter",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "Your brain lets in what agrees with you and waves off what doesn't. You'll see the filter at work, and the one question that gets around it.",
     "takeaway": "You learned to look for what would prove you wrong.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Facts come at you all day. Some fit what you already think. Some don't."
+        "kind": "image",
+        "image": "lesson-psy4-01",
+        "eyebrow": "All day",
+        "body": "Facts come at you all day, in class, on your feed, in what your friends say. Some fit what you already think. Some do not. Your brain does not treat those two piles the same."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The ones that fit sail through. They feel obviously true, so you remember them."
+        "kind": "image",
+        "image": "lesson-psy4-02",
+        "eyebrow": "The filter",
+        "body": "The ones that fit sail through. They feel obviously true, so you remember them. The ones that do not fit get a harder look, a shrug, or no look at all. You forget them by dinner."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The ones that don't fit get a harder look, a shrug, or no look at all. You forget them by dinner."
+        "kind": "image",
+        "image": "lesson-psy4-03",
+        "eyebrow": "The friend",
+        "body": "You think your friend is mad at you. So you notice the one short reply and miss the two normal ones. Nothing about your friend changed. Your filter did."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "So you end up more sure, not more right. The only way around it is to go looking for the fact that would prove you wrong."
+        "kind": "image",
+        "image": "lesson-psy4-04",
+        "eyebrow": "The result",
+        "body": "Weeks go by and you feel more and more certain. Nothing you have seen has actually tested the belief. Feeling sure and being right have quietly come apart."
       },
       {
-        "kind": "example",
-        "body": "You think your friend is mad at you. You'll notice the short text and miss the two normal ones. Ask instead: what would I see if they weren't?"
+        "kind": "image",
+        "image": "lesson-psy4-05",
+        "eyebrow": "The mirror",
+        "body": "Searching for support is easy. Type the belief into a search bar and the internet hands you a hundred pages that agree. That is not a test. It is a mirror."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy4-06",
+        "eyebrow": "The flip",
+        "body": "So flip the question. Not 'what shows I am right' but 'what would I see if I were wrong'. For the friend: what would their texts look like if they were not mad? Probably exactly like this."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy4-07",
+        "eyebrow": "The test",
+        "body": "In 1960 the psychologist Peter Wason gave people the numbers 2, 4, 6 and asked them to work out his rule. They guessed 'counting up by two' and offered 8, 10, 12. Yes, he said. They offered 20, 22, 24. Yes again. They were sure."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy4-08",
+        "eyebrow": "The rule",
+        "body": "The rule was just 'any rising numbers'. Almost nobody found it, because almost nobody offered a sequence that would break their guess. Every yes felt like proof and taught them nothing."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy4-09",
+        "eyebrow": "The habit",
+        "body": "State the belief. Name what would prove it wrong. Then go and look for exactly that. A belief that survives a real attempt to break it has earned something. One that has only ever been agreed with has not."
       },
       {
         "kind": "key",
@@ -1647,7 +1676,7 @@
         "choices": [
           "Collect examples that support it",
           "Look for what would disprove it",
-          "Ask people who agree with you"
+          "Ask people who already agree"
         ],
         "answer": 1,
         "why": "Support is easy to find for almost anything. A belief that survives a real attempt to break it has earned something."
@@ -1658,30 +1687,63 @@
     "id": "psy-5",
     "title": "Nobody is watching you that closely",
     "track": "psychology",
-    "figure": "spotlight",
-    "minutes": 2,
+    "minutes": 3,
     "blurb": "The spotlight effect: you feel like everyone noticed, and they didn't. You'll see the study where people overestimated by half, and why it happens.",
     "takeaway": "You learned that everyone is in their own spotlight.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You walk in wearing something embarrassing. It feels like a spotlight is on you and the whole room is looking."
+        "kind": "image",
+        "image": "lesson-psy5-01",
+        "eyebrow": "The spotlight",
+        "body": "You walk in wearing something embarrassing. It feels like a spotlight has swung onto you and the whole room has turned to look. Your face gets hot before anyone has said a word."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "But everyone else is standing in their own spotlight. They're busy with how they look."
+        "kind": "image",
+        "image": "lesson-psy5-02",
+        "eyebrow": "Everyone else",
+        "body": "But look at the room. Every person in it is standing in their own spotlight. They are busy with how they look, what they just said, and whether anyone noticed their thing."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "In a famous study, students wore an embarrassing shirt into a room. They guessed half the room noticed. About a quarter actually did."
+        "kind": "image",
+        "image": "lesson-psy5-03",
+        "eyebrow": "The study",
+        "body": "In 2000, students at Cornell were sent into a room wearing a t-shirt with a big embarrassing face printed on it. They guessed that about half the room had noticed the shirt. About a quarter actually had."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "You overestimate by about double. The stumble, the wrong answer, the bad haircut. Half the people you think saw it didn't."
+        "kind": "image",
+        "image": "lesson-psy5-04",
+        "eyebrow": "Double",
+        "body": "You overrate it by about double, and not only with shirts. The stumble on the stairs, the wrong answer in class, the bad haircut. Half the people you think saw it did not see it at all."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy5-05",
+        "eyebrow": "The stumble",
+        "body": "You catch your foot on the stairs and feel the whole staircase watching. Most of them are looking at their phones. The two who saw it have forgotten by the next landing."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy5-06",
+        "eyebrow": "The replay",
+        "body": "That night you replay it anyway. Here is the thing about the replay: you are the only one running it. Nobody else has a copy. It happened once for them and a hundred times for you."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy5-07",
+        "eyebrow": "The flip",
+        "body": "Try it from the other side. What was the person next to you wearing last Tuesday? What did they say wrong in class last week? That blank is exactly how much they remember about you."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy5-08",
+        "eyebrow": "The freedom",
+        "body": "This is good news. It means you can wear the thing, ask the question, and sing the song. The audience you are afraid of is mostly looking the other way, at their own spotlight."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy5-09",
+        "eyebrow": "The rule",
+        "body": "Whatever you think they noticed, halve it. However long you think they will remember, halve that too. What is left is about the truth, and it is not much."
       },
       {
         "kind": "key",
@@ -1691,7 +1753,7 @@
         "kind": "check",
         "question": "How many people noticed the embarrassing shirt, compared to the guess?",
         "choices": [
-          "About the same",
+          "About the same number",
           "About half as many",
           "About twice as many"
         ],
@@ -1781,8 +1843,7 @@
     "id": "psy-7",
     "title": "Say 'I'm excited', not 'calm down'",
     "track": "psychology",
-    "figure": "arousal",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [
       "study"
     ],
@@ -1790,28 +1851,58 @@
     "takeaway": "You learned to relabel nerves instead of fighting them.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Racing heart. Sweaty hands. Fast breathing. Your body does exactly this before a test, a speech, or a first date."
+        "kind": "image",
+        "image": "lesson-psy7-01",
+        "eyebrow": "Before",
+        "body": "Racing heart. Sweaty hands. Fast breathing. Your body does exactly this before a test, a speech, or a first date. It is the same alarm every time, and it does not tell you what to call it."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "Call it anxiety and your brain reads it as a threat. Now you're nervous about being nervous."
+        "kind": "image",
+        "image": "lesson-psy7-02",
+        "eyebrow": "Same body",
+        "body": "Call it anxiety and your brain reads it as a threat. Now you are nervous about being nervous. Call it excitement and nothing in the body changes. Same heart rate, same hands. Only the label moved."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Call it excitement and nothing in the body changes. Same heart rate, same hands. Only the label moved."
+        "kind": "image",
+        "image": "lesson-psy7-03",
+        "eyebrow": "The ask",
+        "body": "'Calm down' asks your body to do something impossible: drop from high alert to still in thirty seconds. 'I'm excited' asks it to do nothing at all. That is why one works and the other does not."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "'Calm down' asks your body to do the impossible. 'I'm excited' asks it to do nothing. That's why it works."
+        "kind": "image",
+        "image": "lesson-psy7-04",
+        "eyebrow": "The study",
+        "body": "In 2014 Alison Wood Brooks at Harvard had people sing karaoke in front of a stranger, scored by the machine. Before they sang, each one said one thing out loud: I'm anxious, I'm calm, or I'm excited."
       },
       {
-        "kind": "example",
-        "body": "In one study, people said either 'I'm calm' or 'I'm excited' before singing karaoke. The excited group scored about 80%. The calm group scored about 53%."
+        "kind": "image",
+        "image": "lesson-psy7-05",
+        "eyebrow": "The scores",
+        "body": "The excited group scored about 80 percent on pitch and timing. The calm group scored about 53. Same song, same nerves, same machine. The only thing that changed was the sentence they said first."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy7-06",
+        "eyebrow": "Why it works",
+        "body": "Excited turns a threat into a challenge. A threat makes you brace and shrink. A challenge makes you lean in. The heart still pounds either way. Now it is pounding toward something."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy7-07",
+        "eyebrow": "Two modes",
+        "body": "Threat mode braces, narrows, and tries to get through it. Challenge mode leans in, opens up, and tries to go and get it. Your body is ready for either. The label picks which one you run."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy7-08",
+        "eyebrow": "Try it",
+        "body": "Try it in the last ten seconds before the thing. Notice the heart. Then say the words, out loud if you can. It feels silly the first time. It also works the first time."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy7-09",
+        "eyebrow": "The script",
+        "body": "Two lines. Notice the racing heart. Say 'I'm excited'. That is the whole technique, and it takes ten seconds at the door."
       },
       {
         "kind": "key",
@@ -1821,9 +1912,9 @@
         "kind": "check",
         "question": "Why does 'I'm excited' beat 'calm down'?",
         "choices": [
-          "It slows your heart",
-          "It changes the label, not the body",
-          "It distracts you"
+          "It slows your racing heart",
+          "It relabels the same racing heart",
+          "It distracts you from the nerves"
         ],
         "answer": 1,
         "why": "The racing heart stays. Calling it excitement stops you fighting it and points the energy somewhere useful."
@@ -3040,40 +3131,64 @@
     "id": "psy-8",
     "title": "Why $900 feels cheap",
     "track": "psychology",
-    "figure": "anchor",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "The first price you see quietly sets what every price after it feels like. It's called anchoring, and you'll watch it move the same jacket by $450.",
     "takeaway": "You learned that the first number drags every number after it.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Two stores. Same jacket. The only difference is which price you happen to see first."
+        "kind": "image",
+        "image": "lesson-psy8-01",
+        "eyebrow": "Two stores",
+        "body": "Two stores. Same jacket. The only difference is which price tag you happen to see first. That one difference is about to move your answer by hundreds of dollars."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "At Store A the first tag you see says $1,200. You haven't looked at the jacket yet. That number is already in your head."
+        "kind": "image",
+        "image": "lesson-psy8-02",
+        "eyebrow": "Store A",
+        "body": "At Store A the first tag you see says $1,200. You have not even looked at the jacket yet. That number is already in your head, and it sets the scale everything after it gets measured on. Ask yourself what you would pay and you land near $900."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "Ask what you'd pay for the jacket and you land near $900. Not cheap. Just cheaper than the number already in your head."
+        "kind": "image",
+        "image": "lesson-psy8-03",
+        "eyebrow": "Store B",
+        "body": "Store B has the same jacket. The first tag here is $300. Now $450 feels like plenty to pay. Same jacket, two answers, $450 apart. Nothing changed but the number you saw first."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Store B has the same jacket. The first tag here is $300. Now $450 feels like plenty to pay."
+        "kind": "image",
+        "image": "lesson-psy8-04",
+        "eyebrow": "The wheel",
+        "body": "In 1974 Amos Tversky and Daniel Kahneman spun a wheel of fortune in front of people. It was rigged to stop on 10 or 65. Then they asked a question the wheel had nothing to do with: what share of the countries in the UN are in Africa?"
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "Same jacket, two answers, $450 apart. Nothing changed but the number you saw first."
+        "kind": "image",
+        "image": "lesson-psy8-05",
+        "eyebrow": "The pull",
+        "body": "People who saw 65 guessed about 45 percent. People who saw 10 guessed about 25 percent. Everyone knew the wheel was random. The number still pulled their answer toward it."
       },
       {
-        "kind": "example",
-        "body": "Researchers spun a wheel, then asked people about the countries in the UN. Is the share of them in Africa higher or lower than the wheel's number? Then they had to name the real share. People who saw 65 guessed about 45%. People who saw 10 guessed about 25%."
+        "kind": "image",
+        "image": "lesson-psy8-06",
+        "eyebrow": "Was",
+        "body": "Stores know this. The crossed-out 'was' price on the tag is not history. It is an anchor put there for you. The sale price only looks small next to the number they chose to show you first."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy8-07",
+        "eyebrow": "Your number",
+        "body": "It works on pay too. You are asking about a summer job. Whoever says a number first sets the spot everyone argues around. Say $14 and the talk is about $14. Say $18 and the talk is about $18."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy8-08",
+        "eyebrow": "Bring your own",
+        "body": "So bring your own number before you hear theirs. Decide what the jacket, the job, or the used bike is worth to you before you see a tag. The anchor still lands. It just lands on a number you already own."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy8-09",
+        "eyebrow": "Three moves",
+        "body": "Decide what it is worth to you before you look. Then look at the price. And ignore the crossed-out number, because it was put there to do exactly this to you."
       },
       {
         "kind": "key",
@@ -3084,8 +3199,8 @@
         "question": "You're asking for pay at a summer job. Who ends up setting the range?",
         "choices": [
           "Whoever says a number first",
-          "Whoever talks longer",
-          "Whoever needs it more"
+          "Whoever talks for the longest",
+          "Whoever needs the job more"
         ],
         "answer": 0,
         "why": "The first number said out loud becomes the spot everyone argues around. So have your own number ready before you hear theirs."
@@ -3096,40 +3211,64 @@
     "id": "psy-9",
     "title": "Why they're a jerk and you're just busy",
     "track": "psychology",
-    "figure": "blame",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "Their mistake means they're careless, but your mistake means it was a bad week. You'll see why the same act lands in two different boxes, and the one question that evens it out.",
     "takeaway": "You learned that you judge them by what they did, and yourself by what you meant.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "Something goes wrong. Your brain has two boxes to put the cause in. The person, or the situation. Every explanation lands in one of them."
+        "kind": "image",
+        "image": "lesson-psy9-01",
+        "eyebrow": "Two boxes",
+        "body": "Something goes wrong. Your brain has two boxes to put the cause in: the person, or the situation. Every explanation you ever give lands in one of them, and you reach for them in a very predictable order."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "A classmate snaps at you in the hall. You file it under person. They're rude. That's the box you reach for first."
+        "kind": "image",
+        "image": "lesson-psy9-02",
+        "eyebrow": "Them",
+        "body": "A classmate snaps at you in the hall. You file it under person. They are rude, that is who they are. It takes half a second, and it feels like an observation, not a guess."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The next day you snap at someone. You file it under situation. You barely slept and you were already late. Same act, other box."
+        "kind": "image",
+        "image": "lesson-psy9-03",
+        "eyebrow": "You",
+        "body": "The next day you snap at someone. You file it under situation. You barely slept, you were already late, and the bus was pulling away. Same act, the other box."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Here's why the boxes split. You see your whole day. You saw one moment of theirs. The bad news they got at lunch never reached you."
+        "kind": "image",
+        "image": "lesson-psy9-04",
+        "eyebrow": "The split",
+        "body": "Here is why the boxes split. You see your whole day, start to finish. You saw one moment of theirs. The bad news they got at lunch never reached you, so their moment looks like a personality."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "The fix is one question. What's their situation? You're not excusing them. You're checking the box you skipped."
+        "kind": "image",
+        "image": "lesson-psy9-05",
+        "eyebrow": "The study",
+        "body": "In 1967 Edward Jones and Victor Harris had students read an essay praising Fidel Castro. Some were told the writer had been assigned that side and had no choice at all. The readers still leaned toward thinking the writer truly meant it."
       },
       {
-        "kind": "example",
-        "body": "In a 1967 study, students read an essay praising Fidel Castro. They were told the writer had been handed that side and had no choice. They still leaned toward thinking the writer meant it. Psychologists call this the fundamental attribution error."
+        "kind": "image",
+        "image": "lesson-psy9-06",
+        "eyebrow": "The fix",
+        "body": "The fix is one question: what is their situation? You are not excusing them. You are checking the box you skipped, the one you always check for yourself."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy9-07",
+        "eyebrow": "The name",
+        "body": "Psychologists call this the fundamental attribution error. Fundamental because everyone does it. Attribution because it is about where you put the cause. Error because the box is usually wrong."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy9-08",
+        "eyebrow": "The look",
+        "body": "Next time someone is short with you, look for the day behind the moment. A missed bus, a bad grade, a phone call. You will not always find it. But you will stop being so sure it is not there."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy9-09",
+        "eyebrow": "The flip",
+        "body": "You judge them by what they did. You judge yourself by what you meant. Flip it once a day: give them the whole day, and give yourself just the moment. See how different both of you look."
       },
       {
         "kind": "key",
@@ -3140,8 +3279,8 @@
         "question": "A classmate bombs a test. You bomb the same test. How does the error usually go?",
         "choices": [
           "They didn't study, and you had a bad week",
-          "Neither of you studied",
-          "You both had a bad week"
+          "Neither of you studied hard enough",
+          "Both of you just had a bad week"
         ],
         "answer": 0,
         "why": "The bias leans one way. Their score becomes who they are. Yours becomes what was going on."
@@ -3152,35 +3291,64 @@
     "id": "psy-10",
     "title": "Losing $20 hurts twice as much",
     "track": "psychology",
-    "figure": "sting",
-    "minutes": 2,
+    "minutes": 3,
     "triggers": [],
     "blurb": "Losing $20 hurts more than finding $20 feels good. You'll see why an even bet feels unfair, and how that quietly bends your choices.",
     "takeaway": "You learned that losing hurts about twice as much as winning.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "This meter shows how money feels. The middle line is even. The same twenty dollars can push you up or down."
+        "kind": "image",
+        "image": "lesson-psy10-01",
+        "eyebrow": "Found",
+        "body": "You find $20 on the sidewalk. That is a real lift. You pocket it, you feel lucky, you tell someone. By the afternoon you have mostly forgotten it happened."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "You find $20 on the sidewalk. That's a real lift. The meter goes up, but not all the way."
+        "kind": "image",
+        "image": "lesson-psy10-02",
+        "eyebrow": "Lost",
+        "body": "You lose $20 out of your pocket. Same amount, about twice the sting. You check every pocket twice, retrace your steps, and it is still bugging you at dinner."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "You lose $20 out of your pocket. Same amount, about twice the sting. It sinks the meter all the way down."
+        "kind": "image",
+        "image": "lesson-psy10-03",
+        "eyebrow": "The meter",
+        "body": "Put both on one meter. The middle line is even. Finding $20 lifts you about this far. Losing $20 sinks you about twice as far. Same number, very different weight."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "So an even $20 coin flip feels like a bad deal. Most people want about $40 on the win side before they take it. Twice the size, just to feel fair."
+        "kind": "image",
+        "image": "lesson-psy10-04",
+        "eyebrow": "The coin",
+        "body": "So an even $20 coin flip feels like a bad deal, even though the odds are fair. Most people want about $40 on the win side before they will take it. Twice the size, just to feel fair."
       },
       {
-        "kind": "example",
-        "body": "Credit card companies fought over the wording. They wanted stores to post a 'cash discount', never a 'card surcharge'. Skipping a discount feels like a smaller gain. A surcharge feels like money taken from you."
+        "kind": "image",
+        "image": "lesson-psy10-05",
+        "eyebrow": "The name",
+        "body": "Daniel Kahneman and Amos Tversky measured this in the 1970s and called it loss aversion. Across their studies, a loss weighed roughly twice as much as a gain of the same size. Kahneman later won a Nobel Prize for the work."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy10-06",
+        "eyebrow": "The card",
+        "body": "Credit card companies fought over the wording of one sign. They wanted stores to post a 'cash discount', never a 'card surcharge'. It is the same two dollars either way. One is a gain you skip. The other is a loss you take."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy10-07",
+        "eyebrow": "Same $2",
+        "body": "Skipping a discount feels like a shrug. Paying a surcharge feels like theft. The register total is identical. Only the sign changed, and the feeling followed the sign."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy10-08",
+        "eyebrow": "Use it",
+        "body": "You can point this at yourself. Tell a friend you will hand them $5 for every workout you skip. A gain you might earn is easy to ignore. A loss you will feel gets you out of bed."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy10-09",
+        "eyebrow": "The bet",
+        "body": "'I gain $5 if I go' works a little. 'I lose $5 if I skip' works about twice as hard. Same five dollars. Put the sign on the side that hurts."
       },
       {
         "kind": "key",
@@ -3190,9 +3358,9 @@
         "kind": "check",
         "question": "A friend offers a coin flip: heads you win $20, tails you lose $20. Why do most people say no?",
         "choices": [
-          "The odds are against them",
-          "The $20 going out feels about twice as big",
-          "They don't have $20 on them"
+          "The odds are stacked against them",
+          "The $20 going out feels twice as big",
+          "They do not have $20 in their pocket"
         ],
         "answer": 1,
         "why": "The odds are even and the money is even. The feeling isn't. Twenty dollars leaving lands about twice as hard as twenty arriving. That makes a fair bet feel like a bad one."
@@ -3203,40 +3371,64 @@
     "id": "psy-11",
     "title": "Why rare things feel common",
     "track": "psychology",
-    "figure": "search",
     "minutes": 3,
     "triggers": [],
     "blurb": "Your brain guesses how likely something is by how fast an example shows up. You'll see why the loud, rare stuff feels common, and the one question that fixes it.",
     "takeaway": "You learned that easy to remember is not the same as common.",
     "cards": [
       {
-        "kind": "figure",
-        "step": 1,
-        "body": "You're standing at the ocean. You ask how likely a shark attack is. Your brain doesn't count anything. It runs a search."
+        "kind": "image",
+        "image": "lesson-psy11-01",
+        "eyebrow": "At the ocean",
+        "body": "You are standing at the ocean, about to go in. You ask yourself how likely a shark attack is. Your brain does not count anything. It runs a search, and the search returns whatever is loudest."
       },
       {
-        "kind": "figure",
-        "step": 2,
-        "body": "The first result is whatever was loudest. A video, a headline, a story someone told you. Shark attack comes back instantly."
+        "kind": "image",
+        "image": "lesson-psy11-02",
+        "eyebrow": "The results",
+        "body": "The first result is whatever was loudest. A video, a headline, a story someone told you. Shark attack comes back instantly. The ordinary risks are in the list too, but they almost never make the news, so they load slowly and sit near the bottom."
       },
       {
-        "kind": "figure",
-        "step": 3,
-        "body": "The ordinary risks are in the list too. Drowning. A rip current. They almost never make the news, so they load slowly and sit near the bottom."
+        "kind": "image",
+        "image": "lesson-psy11-03",
+        "eyebrow": "The count",
+        "body": "Here is what actually happens in the US. Sharks kill about one person a year. About 4,000 people drown. The thing that came to mind first is the rare one, by a factor of thousands."
       },
       {
-        "kind": "figure",
-        "step": 4,
-        "body": "Here's what actually happens in the US. Sharks kill about one person a year. About 4,000 people drown."
+        "kind": "image",
+        "image": "lesson-psy11-04",
+        "eyebrow": "The shark",
+        "body": "Why does the shark win the search? Because it is a picture. A fin, a movie, a headline with a photo. Drowning is quiet, common, and almost never filmed. Your memory files things by how vivid they are, not by how often they happen."
       },
       {
-        "kind": "figure",
-        "step": 5,
-        "body": "So don't ask what comes to mind. Ask out of how many. A count beats a memory every time."
+        "kind": "image",
+        "image": "lesson-psy11-05",
+        "eyebrow": "Letter R",
+        "body": "Think of English words with the letter R. Is R more often the first letter or the third? Most people say first. It is third. First-letter words just arrive faster, so they feel more common."
       },
       {
-        "kind": "example",
-        "body": "Think of English words with the letter R. Is R more often the first letter, or the third? Most people say first. It's third. First-letter words just arrive faster."
+        "kind": "image",
+        "image": "lesson-psy11-06",
+        "eyebrow": "The news",
+        "body": "You see two news stories about food poisoning at a chain. The chain suddenly feels risky. Two stories handed you an instant example, and your brain reads 'came to mind fast' as 'happens a lot'."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy11-07",
+        "eyebrow": "The question",
+        "body": "So do not ask what comes to mind. Ask out of how many. Two cases out of millions of meals barely moves the real number. A count beats a memory every time."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy11-08",
+        "eyebrow": "The plane",
+        "body": "It runs the other way too. Plane crashes make the news and car crashes do not, so flying feels scarier than the drive to the airport. Mile for mile, the drive is the dangerous part."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-psy11-09",
+        "eyebrow": "Two questions",
+        "body": "When something feels likely, ask two things. What made me think of it? If the answer is a story, the feeling is not data. Then: out of how many? That number is the real answer."
       },
       {
         "kind": "key",
@@ -3246,9 +3438,9 @@
         "kind": "check",
         "question": "You see two news stories about food poisoning at a chain. Why does the chain suddenly feel risky?",
         "choices": [
-          "Two cases are strong evidence",
-          "You now have an example ready, so it feels common",
-          "You never liked the chain anyway"
+          "Two cases are strong evidence of a problem",
+          "You have an example ready, so it feels common",
+          "You never liked that chain in the first place"
         ],
         "answer": 1,
         "why": "Two stories hand you an instant example. Your brain reads 'came to mind fast' as 'happens a lot'. Two cases out of millions of meals barely move the real number."
