@@ -552,7 +552,7 @@ async function pullWallet() {
         league: state.league && typeof state.league.tier === 'number' ? state.league : null,
         // The kin on the phone's Home, so the page draws the same one.
         kin: state.kin && typeof state.kin.species === 'string'
-          ? { species: String(state.kin.species), level: Number(state.kin.level) || 1, skin: String(state.kin.skin || 'classic') }
+          ? { species: String(state.kin.species), level: Number(state.kin.level) || 1, skin: String(state.kin.skin || 'classic'), scene: String(state.kin.scene || '') }
           : (wallet.kin ?? null),
       },
     });

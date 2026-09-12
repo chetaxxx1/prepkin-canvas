@@ -124,6 +124,9 @@ struct BridgeKin: Codable, Equatable {
     var species: String
     var level: Int
     var skin: String
+    /// The tank on Home (`Scene0.id`), so the laptop paints the same water.
+    /// Optional on the wire: an older extension ignores it, an older phone omits it.
+    var scene: String?
 }
 
 /// The league as the laptop sees it. Mirrors `LeagueState` + the last pod board,

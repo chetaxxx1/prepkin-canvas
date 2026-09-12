@@ -873,7 +873,7 @@ struct GameState: Codable, Equatable {
         BridgeState(coins: ledger.balance, owned: Array(ownedLooks).sorted(),
                     requestsAppliedAt: requestsAppliedAt, league: bridgeLeague,
                     kin: BridgeKin(species: activeChibi.speciesID, level: activeChibi.level,
-                                   skin: activeChibi.skinID))
+                                   skin: activeChibi.skinID, scene: Scene0.find(sceneID).id))
     }
 
     /// The league flattened for the laptop. The board rides along only when the pod

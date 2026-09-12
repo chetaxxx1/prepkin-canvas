@@ -319,3 +319,14 @@ test('dayShort: the rail row gets one word for the day', () => {
   assert.equal(dayShort(at(1), now), 'Sep 1', 'past a week, the date');
   assert.equal(dayShort({ dueAt: 'nope' }, now), '');
 });
+
+test('tankId: the band paints the tank the phone named, and Lagoon until it names one', () => {
+  const { tankId, TANKS, _setWallet } = require('./content.js');
+  assert.deepEqual(TANKS, ['lagoon', 'reef', 'kelp', 'dusk', 'deep']);
+  _setWallet({ coins: null, owned: ['classic'], wearing: 'classic' });
+  assert.equal(tankId(), 'lagoon');
+  _setWallet({ coins: 0, owned: ['classic'], wearing: 'classic', kin: { species: 'sky', level: 2, skin: '', scene: 'deep' } });
+  assert.equal(tankId(), 'deep');
+  _setWallet({ coins: 0, owned: ['classic'], wearing: 'classic', kin: { species: 'sky', level: 2, skin: '', scene: '../x' } });
+  assert.equal(tankId(), 'lagoon', 'an unknown name is the default, never a path');
+});

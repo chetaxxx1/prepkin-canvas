@@ -1541,7 +1541,7 @@ function renderWeek() {
   const first = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
   const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 3);
   const key = JSON.stringify([weekOffset, w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]),
-    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes]);
+    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId()]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1556,7 +1556,13 @@ function renderWeek() {
     ? `${mon(w.start)} ${w.start.getDate()} – ${last.getDate()}`
     : `${mon(w.start)} ${w.start.getDate()} – ${mon(last)} ${last.getDate()}`;
   const title = weekOffset === 0 ? 'This week' : weekOffset === -1 ? 'Last week' : weekOffset === 1 ? 'Next week' : `Week of ${mon(w.start)} ${w.start.getDate()}`;
-  if (buddyMode() === 'tank') box.append(el('div', 'pk-w-tank', null));
+  if (buddyMode() === 'tank') {
+    // The band is the tank from the phone's Home, cut to the card's shape:
+    // the same water, the same floor, so the buddy is at home here too.
+    const tank = el('div', 'pk-w-tank', null);
+    if (alive()) tank.style.setProperty('--pk-tank', `url("${chrome.runtime.getURL(`art/tanks/${tankId()}.webp`)}")`);
+    box.append(tank);
+  }
   box.append(el('div', 'pk-w-head', title));
   const step = el('div', 'pk-w-step');
   const arrow = (dir, label) => {
@@ -1786,6 +1792,14 @@ function spritePlace() {
   // 26 fills the 84 px rail edge to edge and 17 the collapsed 54.
   const radius = rail.width >= 80 ? 26 : 17;
   return { side: 'left', mode, navW: Math.round(rail.width), bottom, radius, w: Math.round(rail.width) + 24, h: 190 };
+}
+
+/// The five tanks the phone's Home can show; the band paints the one the phone
+/// named, or the first one until a phone is linked.
+const TANKS = ['lagoon', 'reef', 'kelp', 'dusk', 'deep'];
+function tankId() {
+  const id = String(wallet.kin?.scene ?? '');
+  return TANKS.includes(id) ? id : 'lagoon';
 }
 
 /// Old species ids from the first app builds, onto the six coats Sprout has.
@@ -2414,7 +2428,7 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, tankId, TANKS, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
                      panelView, looksView, weekView, whatIfView, courseView, addTaskView, searchView, focusCard, gradesCard, leagueCard,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {

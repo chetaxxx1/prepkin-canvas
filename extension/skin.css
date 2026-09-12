@@ -588,11 +588,15 @@ html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--
   font-variant-numeric: tabular-nums; container-type: inline-size;
 }
 #pk-week .pk-w-head { font-size: 15px; line-height: 20px; font-weight: 800; letter-spacing: -.01em; }
-/* His tank, when he lives above the week: a band of water across the top of
- * the card. He is drawn over it from his own frame (content.js). */
+/* His tank, when he lives above the week: the phone's own tank plate, cut to
+ * the card's shape (content.js sets --pk-tank), over a water gradient for the
+ * moment before the picture lands. He is drawn over it from his own frame.
+ * The picture is the phone's, so it stays lit in dark, like a tank in a dark
+ * room; the hairline under it is the card's own rule. */
 #pk-week .pk-w-tank { height: 108px; margin: -14px -14px 14px; border-radius: 15px 15px 0 0;
-  background: linear-gradient(180deg, #DDF3EC 0%, #C6E9DE 100%); }
-html.pk-dark #pk-week .pk-w-tank { background: linear-gradient(180deg, #1B3A32 0%, #14302A 100%); }
+  background: var(--pk-tank, none) center / cover no-repeat, linear-gradient(180deg, #DDF3EC 0%, #C6E9DE 100%);
+  border-bottom: 1px solid var(--pk-rule); }
+html.pk-dark #pk-week .pk-w-tank { background-image: var(--pk-tank, none), linear-gradient(180deg, #1B3A32 0%, #14302A 100%); }
 #pk-week .pk-w-step { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 2px 0 8px; }
 #pk-week .pk-w-step span { font-size: 12px; line-height: 16px; font-weight: 700; color: var(--pk-ink-2); white-space: nowrap; }
 #pk-week .pk-w-step i { position: relative; width: 22px; height: 22px; border-radius: 999px; cursor: pointer; user-select: none; flex: none; }

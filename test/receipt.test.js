@@ -442,7 +442,8 @@ test('R22 the league the phone publishes reaches the buddy, not the rail, names 
   const phone = new FakePhone(BRIDGE);
   await h.sw((c) => bindWriter(c), await phone.claim());
   await h.sw((o) => syncNow(o), SCHOOL_A);
-  await phone.pushState({ coins: 120, owned: ['classic'], league: { tier: 1, points: 120, bar: 300, week: '2026-W37', pennants: [0],
+  await phone.pushState({ coins: 120, owned: ['classic'], kin: { species: 'sky', level: 2, skin: 'classic', scene: 'deep' },
+    league: { tier: 1, points: 120, bar: 300, week: '2026-W37', pennants: [0],
     board: [{ you: false, adjective: 3, noun: 4, points: 200, level: 2, species: 'coral', look: 'base' }, { you: true, adjective: 1, noun: 2, points: 120, level: 1, species: 'sky', look: 'base' }] } });
   await h.sw(() => pullWallet());
   const page = await open('/');
@@ -452,6 +453,8 @@ test('R22 the league the phone publishes reaches the buddy, not the rail, names 
   assert.equal(await page.$('#pk-week .pk-w-league'), null, 'no league card on the rail');
   assert.equal(await page.$eval('#pk-week', (e) => /Shallows|to go for|in your pod/.test(e.textContent)), false);
   await page.waitForFunction(() => document.getElementById('prepkin-buddy')?.dataset.league === 'shallows', null, { timeout: 5000 });
+  // The band is the tank the phone named, cut from the same plate Home shows.
+  assert.match(await page.$eval('#pk-week .pk-w-tank', (e) => e.style.getPropertyValue('--pk-tank')), /art\/tanks\/deep\.webp/, 'the phone\'s tank, on the band');
   assert.equal(await page.$eval('#prepkin-buddy', (e) => e.dataset.league), 'shallows');
   assert.ok(!(await page.evaluate(() => document.body.textContent)).includes('Otter'), 'no stranger\'s name lands in the page itself');
   await page.close();
