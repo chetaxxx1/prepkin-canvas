@@ -16,6 +16,7 @@ extension WidgetSnapshot {
             name: kin.displayName,
             kinAsset: SproutImage.asset(speciesID: kin.speciesID, level: kin.level, skin: kin.skinID),
             plainAsset: SproutImage.asset(speciesID: kin.speciesID, level: kin.level, skin: "classic"),
+            sceneID: state.sceneID,
             coins: state.ledger.balance,
             tasks: tasks,
             allDone: state.allDone,

@@ -69,7 +69,7 @@ extension WidgetSnapshot {
     /// What the gallery shows before the app has written anything.
     static let sample = WidgetSnapshot(
         speciesID: "slime", stage: 2, costumeID: "none", name: "Moss",
-        kinAsset: "sprout-mint-2", plainAsset: "sprout-mint-2", coins: 240,
+        kinAsset: "sprout-mint-2", plainAsset: "sprout-mint-2", sceneID: "lagoon", coins: 240,
         tasks: [
             Task(id: "a", title: "Bio quiz", dueAt: nil, done: false, isDaily: false),
             Task(id: "b", title: "Essay outline", dueAt: nil, done: false, isDaily: true),
@@ -109,20 +109,21 @@ struct SmallWidget: View {
     var body: some View {
         let snap = entry.snapshot ?? .sample
         let tile = entry.snapshot.map { WidgetLine.tile(for: $0, now: entry.date) } ?? (head: "Hi", sub: "Open Prepkin once.")
+        let scene = TankScene.scene(for: snap)
         ZStack(alignment: .bottomTrailing) {
-            TankBand()
+            TankScene(scene: scene)
             KinStill(snapshot: snap, size: Self.kinSize)
                 .padding(.trailing, 8)
-                .padding(.bottom, 8)
+                .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 1) {
                 Text(tile.head)
                     .font(.system(size: 26, weight: .black, design: .rounded))
-                    .foregroundStyle(Theme.ink)
+                    .foregroundStyle(scene.isDark ? Theme.onDarkWarm : Theme.ink)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                 Text(tile.sub)
                     .font(.system(size: 12.5, weight: .bold, design: .rounded))
-                    .foregroundStyle(Theme.tabInk)
+                    .foregroundStyle(scene.isDark ? Theme.onDarkWarm.opacity(0.85) : Theme.tabInk)
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
                     .fixedSize(horizontal: false, vertical: true)
@@ -136,21 +137,32 @@ struct SmallWidget: View {
     }
 }
 
-/// The lagoon plate, faded into the paper: the same world as Home, at a whisper.
-struct TankBand: View {
+/// The student's own tank, full bleed, the floor at the bottom so the fish
+/// stands on the sand. Finch's widget is the bird in its own room, with the
+/// student's decor; this is the same promise with the tank they bought. A soft
+/// wash over the top keeps the head legible on the sky.
+struct TankScene: View {
+    let scene: Scene0
+
     var body: some View {
         GeometryReader { geo in
-            Image("scene-lagoon")
-                .resizable()
-                .scaledToFill()
-                .frame(width: geo.size.width, height: geo.size.height * 0.62)
-                .clipped()
-                .opacity(0.42)
-                .mask(LinearGradient(colors: [.clear, .black, .black],
-                                     startPoint: .top, endPoint: .bottom))
-                .frame(maxHeight: .infinity, alignment: .bottom)
+            ZStack(alignment: .top) {
+                Image(scene.asset)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
+                    .clipped()
+                LinearGradient(colors: [(scene.isDark ? Color.black : Color.white).opacity(scene.isDark ? 0.34 : 0.62),
+                                        .clear],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: geo.size.height * 0.55)
+            }
         }
         .accessibilityHidden(true)
+    }
+
+    static func scene(for snapshot: WidgetSnapshot) -> Scene0 {
+        Scene0.find(snapshot.sceneID ?? "lagoon")
     }
 }
 
@@ -247,34 +259,42 @@ struct MediumWidget: View {
         let tile = entry.snapshot.map { WidgetLine.tile(for: $0, now: entry.date) } ?? (head: "Hi", sub: "Open Prepkin once.")
         let rows = WidgetLine.rows(for: snap, now: entry.date)
         let open = WidgetLine.today(snap, now: entry.date).filter { !$0.done }.count
+        let scene = TankScene.scene(for: snap)
         ZStack(alignment: .bottomTrailing) {
-            TankBand()
+            TankScene(scene: scene)
             KinStill(snapshot: snap, size: 118)
                 .padding(.trailing, 12)
-                .padding(.bottom, 8)
+                .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 0) {
                 // The head alone: the rows under it say what is left, so the
                 // sentence the small tile needs would only repeat them.
                 HStack(alignment: .top, spacing: 8) {
                     Text(rows.isEmpty ? "\(tile.head). \(tile.sub)" : tile.head)
                         .font(.system(size: 17, weight: .black, design: .rounded))
-                        .foregroundStyle(Theme.ink)
+                        .foregroundStyle(scene.isDark ? Theme.onDarkWarm : Theme.ink)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     Spacer(minLength: 0)
                     CoinPill(coins: snap.coins)
                 }
-                VStack(alignment: .leading, spacing: 5) {
-                    ForEach(rows) { task in
-                        TaskBoxRow(task: task)
+                // The rows sit on a card so they read over any tank.
+                if !rows.isEmpty {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(rows) { task in
+                            TaskBoxRow(task: task)
+                        }
                     }
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 7)
+                    .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(Color.white.opacity(0.78)))
+                    .padding(.top, 7)
+                    .padding(.trailing, 118)
                 }
-                .padding(.top, 8)
-                .padding(.trailing, 132)
                 Spacer(minLength: 2)
                 Text(open > 0 ? "Tap a box to finish it" : WidgetLine.stamp(snap.name, entry.date))
                     .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundStyle(Theme.muted)
+                    .foregroundStyle(scene.isDark ? Theme.onDarkWarm.opacity(0.8) : Theme.tabInk)
                     .lineLimit(1)
                     .padding(.trailing, 132)
             }

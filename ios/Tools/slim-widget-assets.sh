@@ -71,7 +71,10 @@ JSON
   count=$((count + 1))
 done
 
-# The one plate. 1440px wide in the app; 720 is plenty for a band 170pt wide.
-emit "scene-lagoon" "$SRC/scene-lagoon.imageset/scene-lagoon.png" 720
+# The five tanks, full bleed behind the fish. 1440px wide in the app; 720 is
+# plenty for a tile 360pt wide.
+for scene in lagoon reef kelp dusk deep; do
+  emit "scene-$scene" "$SRC/scene-$scene.imageset/scene-$scene.png" 720
+done
 
-echo "$count kin stills + 1 plate -> $OUT ($(du -sh "$OUT" | cut -f1))"
+echo "$count kin stills + 5 plates -> $OUT ($(du -sh "$OUT" | cut -f1))"

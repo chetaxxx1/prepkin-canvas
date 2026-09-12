@@ -11,6 +11,7 @@ notification was delivered with `xcrun simctl push`.
 |---|---|---|
 | Small widget: the kin, one line, tap opens the app | Finch's home screen widget (the bird and a line); Apple's Weather and Reminders for the size grammar, small is one thing | [d11b11e0](https://mobbin.com/screens/d11b11e0-3abc-4c9a-8cc7-31e98c571367) (the "Lee widget" card shows the widget itself) |
 | The small tile's words: a big head ("2 left") and a short line under it, nothing else | Duolingo "845 / Last chance!", Me+ "7 / Awesome!", Mimo "1 / Well done!", Alan "0 / Let's get rolling!", Finch's one-word adventure state. A number or two words, a few more words, the mascot. No sentences, no name stamp. | same five screens as the row below |
+| The tile is the student's own tank, full bleed, the fish on the sand | Finch's widget is the bird in its own room with the student's decor and environment ("your choices in clothing, accessories, room decor and even environment are present in the widget", Deconstructor of Fun, 2026-03). Ours draws the tank they bought; Deep flips the text to cream. | [d11b11e0](https://mobbin.com/screens/d11b11e0-3abc-4c9a-8cc7-31e98c571367) |
 | The kin's size on the small tile: 126pt of 170, three quarters | Measured off five pet widgets: Finch ~88% wide, Duolingo ~75%, Mimo ~75%, Me+ ~60%, Alan 100%. The middle of that, and still clear of a three-line title. | [c78046b1](https://mobbin.com/screens/c78046b1-5d17-4225-ad76-2d66a72ac8bd) Duolingo, [f5333bf0](https://mobbin.com/screens/f5333bf0-bc83-4ccc-aa63-615816678920) Mimo, [64d3a0fd](https://mobbin.com/screens/64d3a0fd-6639-4638-a576-ebb7cf2c3d93) Me+, [59d37b2f](https://mobbin.com/screens/59d37b2f-8b61-4da5-8e95-e917a1b7f622) Alan |
 | Medium widget: a list with boxes | Apple's Reminders widget: medium is a list | — |
 | Install card "Want Moss on your home screen?" | Finch's "Lee widget" card: the pet in a widget on a drawn phone, Add / No thanks | [d11b11e0](https://mobbin.com/screens/d11b11e0-3abc-4c9a-8cc7-31e98c571367) |
@@ -28,6 +29,7 @@ Widget states (small and medium together, page 1 of the home screen):
 - `widget-all-done.png` — "All done" over "Moss noticed."
 - `widget-nothing-on-the-list.png` — every template off: a day-bank line split in two, "Moss says hi" over "That's all."
 - `widget-on-shift.png` — a shift running in Focus: "On shift" over "until 1:21 PM"
+- `widget-deep-tank.png` — the Deep tank: cream text on the dark water, the rows on their card
 - `widget-medium-box-tapped.png` — a box tapped on the medium: the row ticks and the line counts it; coins stay at 20 because the app has not paid yet
 - `widget-box-paid-on-open.png` — the app opened: 40 coins, the row done, the mark file cleared
 

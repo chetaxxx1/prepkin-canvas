@@ -27,6 +27,10 @@ struct WidgetSnapshot: Codable, Equatable {
     var kinAsset: String
     /// The bare coat at the same stage, for a costume the widget has no still of.
     var plainAsset: String
+    /// The student's own tank, drawn full bleed behind the fish the way Finch's
+    /// widget draws the bird's own room. Optional so an older file still reads;
+    /// the widget falls back to the lagoon.
+    var sceneID: String?
     var coins: Int
     var tasks: [Task]
     var allDone: Bool
