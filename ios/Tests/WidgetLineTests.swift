@@ -137,6 +137,7 @@ final class WidgetLineTests: XCTestCase {
                 lines.append(WidgetLine.line(for: s, now: now, calendar: calendar))
                 lines.append(WidgetLine.count(for: s, now: now, calendar: calendar))
                 lines.append(WidgetLine.stamp(s.name, now))
+                lines.append("Tap a box to finish it · 12 left")
             }
         }
         let banned = ["streak", "missed", "lose", "!", "day count", "days"]
@@ -146,6 +147,29 @@ final class WidgetLineTests: XCTestCase {
                 XCTAssertFalse(line.lowercased().contains(bad), "\(line) says \(bad)")
             }
         }
+    }
+
+    // MARK: - The medium's boxes
+
+    /// A tapped box leaves a mark; the widget draws that row done and counts it
+    /// before the app has paid anything. The coins do not move until it does.
+    func testATappedBoxTicksTheRowAndTheLineBeforeTheAppPays() {
+        let s = snap(tasks: [task("q", "Bio quiz", daily: false), task("e", "Essay outline"), task("w", "10 minute walk")])
+        let ticked = s.applying([DoneMark(taskID: "q", at: at(9, 10))])
+        XCTAssertEqual(ticked.tasks.map(\.done), [true, false, false])
+        XCTAssertEqual(ticked.coins, s.coins)
+        XCTAssertEqual(WidgetLine.line(for: ticked, now: at(9, 15), calendar: calendar), "2 left. Essay outline, then done.")
+        XCTAssertEqual(s.applying([]), s)
+        let all = s.applying(["q", "e", "w"].map { DoneMark(taskID: $0, at: at(9, 10)) })
+        XCTAssertTrue(all.allDone)
+    }
+
+    func testTheRowsKeepListOrderAndPreferOpenWork() {
+        let three = snap(tasks: [task("a", "A", done: true), task("b", "B"), task("c", "C")])
+        XCTAssertEqual(WidgetLine.rows(for: three, now: at(9, 9), calendar: calendar).map(\.id), ["a", "b", "c"])
+        let five = snap(tasks: [task("a", "A", done: true), task("b", "B", done: true), task("c", "C"),
+                                task("d", "D"), task("e", "E")])
+        XCTAssertEqual(WidgetLine.rows(for: five, now: at(9, 9), calendar: calendar).map(\.id), ["c", "d", "e"])
     }
 
     func testTheTimelineHasTheFiveMoments() {

@@ -40,6 +40,18 @@ struct WidgetSnapshot: Codable, Equatable {
     var day: String
     var writtenAt: Date
 
+    /// The snapshot with the boxes already tapped drawn as done. The app has not
+    /// paid them yet — the coin count stays as it was — but the row is ticked and
+    /// the line counts it, so a tap is answered on the spot.
+    func applying(_ marks: [DoneMark]) -> WidgetSnapshot {
+        let ids = Set(marks.map(\.taskID))
+        guard !ids.isEmpty else { return self }
+        var out = self
+        for i in out.tasks.indices where ids.contains(out.tasks[i].id) { out.tasks[i].done = true }
+        out.allDone = !out.tasks.isEmpty && out.tasks.allSatisfy(\.done)
+        return out
+    }
+
     // MARK: - The file
 
     static func url(in directory: URL = AppGroup.container) -> URL {

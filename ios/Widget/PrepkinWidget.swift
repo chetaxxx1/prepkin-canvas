@@ -48,15 +48,20 @@ struct SnapshotProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SnapshotEntry) -> Void) {
-        completion(SnapshotEntry(date: Date(), snapshot: context.isPreview ? .sample : WidgetSnapshot.load()))
+        completion(SnapshotEntry(date: Date(), snapshot: context.isPreview ? .sample : Self.current()))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<SnapshotEntry>) -> Void) {
         let now = Date()
-        let snapshot = WidgetSnapshot.load()
+        let snapshot = Self.current()
         let entries = WidgetLine.timelineDates(for: snapshot, now: now)
             .map { SnapshotEntry(date: $0, snapshot: snapshot) }
         completion(Timeline(entries: entries, policy: .atEnd))
+    }
+
+    /// The app's snapshot, with any box tapped since it was written drawn done.
+    static func current() -> WidgetSnapshot? {
+        WidgetSnapshot.load()?.applying(DoneMarks.load())
     }
 }
 
@@ -219,12 +224,100 @@ struct RectangularLine: View {
 
 // MARK: - Medium
 
-/// Eight spots. Built in the last step; until then the medium is the small,
-/// wider, so a student who picks it is never shown a blank.
+/// Eight spots: the line, up to three rows with boxes, a footer, the coin count
+/// and the kin. A box is `MarkDoneIntent` — it leaves a done-mark and the row
+/// ticks; the app pays on its next open.
 struct MediumWidget: View {
     let entry: SnapshotEntry
 
     var body: some View {
-        SmallWidget(entry: entry)
+        let snap = entry.snapshot ?? .sample
+        let line = entry.snapshot.map { WidgetLine.line(for: $0, now: entry.date) } ?? "Open Prepkin once."
+        let rows = WidgetLine.rows(for: snap, now: entry.date)
+        let open = WidgetLine.today(snap, now: entry.date).filter { !$0.done }.count
+        ZStack(alignment: .bottomTrailing) {
+            TankBand()
+            KinStill(snapshot: snap, size: 96)
+                .padding(.trailing, 10)
+                .padding(.bottom, 2)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top, spacing: 8) {
+                    Text(line)
+                        .font(.system(size: 15, weight: .black, design: .rounded))
+                        .foregroundStyle(Theme.ink)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
+                    Spacer(minLength: 0)
+                    CoinPill(coins: snap.coins)
+                }
+                VStack(alignment: .leading, spacing: 5) {
+                    ForEach(rows) { task in
+                        TaskBoxRow(task: task)
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.trailing, 120)
+                Spacer(minLength: 2)
+                Text(open > 0 ? "Tap a box to finish it · \(open) left" : WidgetLine.stamp(snap.name, entry.date))
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(Theme.muted)
+                    .lineLimit(1)
+                    .padding(.trailing, 120)
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 12)
+            .padding(.bottom, 10)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
+    }
+
+}
+
+private struct TaskBoxRow: View {
+    let task: WidgetSnapshot.Task
+
+    var body: some View {
+        Button(intent: MarkDoneIntent(taskID: task.id)) {
+            HStack(spacing: 7) {
+                RoundedRectangle(cornerRadius: 5, style: .continuous)
+                    .fill(task.done ? Theme.mint : Theme.paperSunk)
+                    .overlay(RoundedRectangle(cornerRadius: 5, style: .continuous)
+                        .stroke(task.done ? Theme.mint : Theme.cardEdge, lineWidth: 1.5))
+                    .overlay {
+                        if task.done {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 9, weight: .black))
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .frame(width: 16, height: 16)
+                Text(task.title)
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(Theme.ink)
+                    .lineLimit(1)
+                    .strikethrough(task.done, color: Theme.muted)
+                Spacer(minLength: 0)
+            }
+            .opacity(task.done ? 0.55 : 1)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(task.done)
+        .accessibilityLabel(task.done ? "\(task.title), done" : "Finish \(task.title)")
+    }
+}
+
+private struct CoinPill: View {
+    let coins: Int
+
+    var body: some View {
+        Text(coins.formatted())
+            .font(.system(size: 11.5, weight: .black, design: .rounded))
+            .monospacedDigit()
+            .foregroundStyle(Theme.coinDark)
+            .padding(.horizontal, 8)
+            .frame(height: 20)
+            .background(Capsule().fill(Theme.coinSoft))
+            .accessibilityLabel("\(coins) coins")
     }
 }

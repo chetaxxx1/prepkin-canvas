@@ -56,6 +56,17 @@ enum WidgetLine {
         }
     }
 
+    /// The medium widget's rows: up to three, in list order. Open ones win a
+    /// place when there are more than three, so a tap always has a box to land on.
+    static func rows(for snap: WidgetSnapshot, now: Date, limit: Int = 3,
+                     calendar: Calendar = .current) -> [WidgetSnapshot.Task] {
+        let list = today(snap, now: now, calendar: calendar)
+        guard list.count > limit else { return list }
+        let open = list.filter { !$0.done }
+        let done = list.filter(\.done)
+        return Array((open + done).prefix(limit))
+    }
+
     /// The next open task with a due time, for the lock screen's second line.
     static func nextDue(for snap: WidgetSnapshot, now: Date, calendar: Calendar = .current) -> WidgetSnapshot.Task? {
         today(snap, now: now, calendar: calendar)
