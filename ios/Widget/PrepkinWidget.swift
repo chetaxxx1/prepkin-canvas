@@ -95,37 +95,40 @@ struct WidgetRoot: View {
     }
 }
 
-/// Four icon spots: the line top left, the kin bottom right, "Moss · Wed" bottom left.
+/// Four icon spots: the line top left, the kin bottom right, "Moss · Wed" under the line.
 struct SmallWidget: View {
     let entry: SnapshotEntry
+    /// Three quarters of a 170pt tile. Measured off five pet widgets on Mobbin
+    /// (Finch 88%, Duolingo 75%, Mimo 75%, Me+ 60%, Alan 100%); the middle of
+    /// that, and still clear of a three-line title.
+    static let kinSize: CGFloat = 126
 
     var body: some View {
         let snap = entry.snapshot ?? .sample
         let line = entry.snapshot.map { WidgetLine.line(for: $0, now: entry.date) } ?? "Open Prepkin once."
-        // The line takes the whole width: the kin sits in the bottom right, under
-        // it, so only the stamp has to make room.
+        // The kin is three quarters of the tile wide, the way Finch's bird,
+        // Duolingo's owl and Mimo's robot are on theirs: the text sits on top,
+        // the mascot owns the bottom. The stamp moves up under the line so the
+        // fish has the whole lower right.
         ZStack(alignment: .bottomTrailing) {
             TankBand()
-            KinStill(snapshot: snap, size: 84)
-                .padding(.trailing, 4)
-                .padding(.bottom, 2)
-            VStack(alignment: .leading, spacing: 0) {
+            KinStill(snapshot: snap, size: Self.kinSize)
+                .padding(.trailing, 8)
+                .padding(.bottom, 8)
+            VStack(alignment: .leading, spacing: 3) {
                 Text(line)
                     .font(.system(size: 15, weight: .black, design: .rounded))
                     .foregroundStyle(Theme.ink)
                     .lineLimit(3)
                     .minimumScaleFactor(0.85)
                     .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 4)
                 Text(WidgetLine.stamp(snap.name, entry.date))
                     .font(.system(size: 11.5, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.muted)
                     .lineLimit(1)
-                    .padding(.trailing, 70)
             }
             .padding(.horizontal, 14)
             .padding(.top, 14)
-            .padding(.bottom, 12)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .accessibilityElement(children: .ignore)
@@ -153,6 +156,10 @@ struct TankBand: View {
 
 /// The kin from this target's own catalogue, or the plain coat when the costume
 /// has no still here. Never a blank frame.
+///
+/// `size` is the fish's width: this catalogue's stills are cropped to the art
+/// (`Tools/slim-widget-assets.sh`), so there is no transparent box to centre in
+/// and the fish sits exactly where it is put.
 struct KinStill: View {
     let snapshot: WidgetSnapshot
     let size: CGFloat
@@ -162,7 +169,7 @@ struct KinStill: View {
             .resizable()
             .interpolation(.high)
             .scaledToFit()
-            .frame(width: size, height: size)
+            .frame(width: size)
             .accessibilityHidden(true)
     }
 
@@ -182,8 +189,7 @@ struct CircularFace: View {
         let snap = entry.snapshot ?? .sample
         ZStack {
             AccessoryWidgetBackground()
-            KinStill(snapshot: snap, size: 44)
-                .offset(y: 3)
+            KinStill(snapshot: snap, size: 40)
         }
         .accessibilityLabel("\(snap.name)")
     }
@@ -243,9 +249,9 @@ struct MediumWidget: View {
         let open = WidgetLine.today(snap, now: entry.date).filter { !$0.done }.count
         ZStack(alignment: .bottomTrailing) {
             TankBand()
-            KinStill(snapshot: snap, size: 96)
-                .padding(.trailing, 10)
-                .padding(.bottom, 2)
+            KinStill(snapshot: snap, size: 118)
+                .padding(.trailing, 12)
+                .padding(.bottom, 8)
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 8) {
                     Text(line)
@@ -262,13 +268,13 @@ struct MediumWidget: View {
                     }
                 }
                 .padding(.top, 8)
-                .padding(.trailing, 120)
+                .padding(.trailing, 132)
                 Spacer(minLength: 2)
                 Text(open > 0 ? "Tap a box to finish it · \(open) left" : WidgetLine.stamp(snap.name, entry.date))
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.muted)
                     .lineLimit(1)
-                    .padding(.trailing, 120)
+                    .padding(.trailing, 132)
             }
             .padding(.horizontal, 14)
             .padding(.top, 12)

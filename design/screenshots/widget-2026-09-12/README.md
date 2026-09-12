@@ -10,6 +10,7 @@ notification was delivered with `xcrun simctl push`.
 | Piece | Copies | Mobbin |
 |---|---|---|
 | Small widget: the kin, one line, tap opens the app | Finch's home screen widget (the bird and a line); Apple's Weather and Reminders for the size grammar, small is one thing | [d11b11e0](https://mobbin.com/screens/d11b11e0-3abc-4c9a-8cc7-31e98c571367) (the "Lee widget" card shows the widget itself) |
+| The kin's size on the small tile: 126pt of 170, three quarters | Measured off five pet widgets: Finch ~88% wide, Duolingo ~75%, Mimo ~75%, Me+ ~60%, Alan 100%. The middle of that, and still clear of a three-line title. | [c78046b1](https://mobbin.com/screens/c78046b1-5d17-4225-ad76-2d66a72ac8bd) Duolingo, [f5333bf0](https://mobbin.com/screens/f5333bf0-bc83-4ccc-aa63-615816678920) Mimo, [64d3a0fd](https://mobbin.com/screens/64d3a0fd-6639-4638-a576-ebb7cf2c3d93) Me+, [59d37b2f](https://mobbin.com/screens/59d37b2f-8b61-4da5-8e95-e917a1b7f622) Alan |
 | Medium widget: a list with boxes | Apple's Reminders widget: medium is a list | — |
 | Install card "Want Moss on your home screen?" | Finch's "Lee widget" card: the pet in a widget on a drawn phone, Add / No thanks | [d11b11e0](https://mobbin.com/screens/d11b11e0-3abc-4c9a-8cc7-31e98c571367) |
 | Three-step how-to sheet | Finch's add-widget walk: one step a page, progress bar, Next / Back / Done | [336081a1](https://mobbin.com/screens/336081a1-706e-4e7d-8def-140d5294b0f6) (hold the home screen), [ae5b66f2](https://mobbin.com/screens/ae5b66f2-28bc-41af-9cfb-c2ddf6f2a891) (search, then Add Widget) |
@@ -21,7 +22,7 @@ notification was delivered with `xcrun simctl push`.
 
 Widget states (small and medium together, page 1 of the home screen):
 
-- `widget-3-things-today.png` — morning, nothing done: "3 things today. Read for one… first."
+- `widget-3-things-today.png` — morning, nothing done: "3 things today. Read for one… first." (this one is at the final kin size; the other four states were shot before the fish grew)
 - `widget-2-left.png` — one done: "2 left. Start the thing…, then done."
 - `widget-all-done.png` — "All done. Moss noticed."
 - `widget-nothing-on-the-list.png` — every template off: a day-bank line, "Moss says hi. That's all."
