@@ -213,10 +213,16 @@ struct RectangularLine: View {
         }
     }
 
+    /// The next due title and time; otherwise the small widget's line, except
+    /// when the first line already said "All done", where the kin gets the word.
     private func second(_ snap: WidgetSnapshot) -> String {
         if let next = WidgetLine.nextDue(for: snap, now: entry.date), let due = next.dueAt {
             let time = due.formatted(.dateTime.hour().minute())
             return "\(WidgetLine.fit(next.title, leaving: time.count + 3)) · \(time)"
+        }
+        let today = WidgetLine.today(snap, now: entry.date)
+        if !today.isEmpty, today.allSatisfy(\.done), snap.shiftEndsAt.map({ $0 <= entry.date }) ?? true {
+            return "\(snap.name) noticed."
         }
         return WidgetLine.line(for: snap, now: entry.date)
     }

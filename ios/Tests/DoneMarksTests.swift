@@ -1,4 +1,5 @@
 import XCTest
+import UserNotifications
 @testable import PrepkinCanvas
 
 /// The Done button's promise: a tap outside the app pays once, on the next open,
@@ -75,5 +76,20 @@ final class DoneMarksTests: XCTestCase {
         for t in s.tasks.dropFirst() { s.complete(taskID: t.id, reward: t.reward, now: now) }
         plan = NotificationPlanner.plan(for: s, now: now, calendar: calendar)
         XCTAssertEqual(plan.first { $0.id == "nudge:2026-08-29" }?.taskID, s.tasks[0].id)
+    }
+}
+
+/// The Done button exists on the phone: the category is registered with iOS and
+/// carries exactly one action. (The lock-screen long-press itself cannot be
+/// driven from idb, so this is the one place the registration is checked.)
+final class NotificationActionsTests: XCTestCase {
+    func testTheTaskCategoryIsRegisteredWithOneDoneAction() async {
+        let center = UNUserNotificationCenter.current()
+        NotificationActions.register(with: center)
+        let categories = await center.notificationCategories()
+        let task = categories.first { $0.identifier == NotificationActions.taskCategory }
+        XCTAssertNotNil(task)
+        XCTAssertEqual(task?.actions.map(\.identifier), [NotificationActions.doneAction])
+        XCTAssertEqual(task?.actions.first?.title, "Done")
     }
 }

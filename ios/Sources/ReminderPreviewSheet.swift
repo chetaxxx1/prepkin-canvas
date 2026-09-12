@@ -123,17 +123,17 @@ struct ReminderPreviewSheet: View {
         .accessibilityLabel("A preview. \(copy.title). \(copy.body)")
     }
 
+    /// The app icon is the kin on mint, drawn here rather than loaded: iOS does
+    /// not hand an app its own icon by name.
     private var appIcon: some View {
-        Group {
-            if let icon = UIImage(named: "AppIcon") {
-                Image(uiImage: icon).resizable()
-            } else {
-                RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Theme.coral)
-            }
-        }
-        .frame(width: 40, height: 40)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .accessibilityHidden(true)
+        RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .fill(DayEditorView.D.mintTint)
+            .frame(width: 40, height: 40)
+            .overlay(SproutImage(speciesID: state.activeChibiID,
+                                 level: state.activeChibi.level,
+                                 skin: state.activeChibi.skinID, size: 30)
+                .padding(.bottom, 2))
+            .accessibilityHidden(true)
     }
 
     // MARK: - The hour
