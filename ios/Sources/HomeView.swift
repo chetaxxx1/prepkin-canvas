@@ -17,6 +17,8 @@ struct HomeView: View {
     @State private var bubble: String?
     @State private var coinGain: Int?
     @State private var showDayEditor = false
+    /// The Day 1 card's "Yes please" opens this before iOS asks anything.
+    @State private var showReminderPreview = false
     @State private var showShop = false
     /// The web page has drawn the tank. Until then a flat floor with a still of the
     /// kin stands in, so a cold launch is never a white block.
@@ -96,7 +98,6 @@ struct HomeView: View {
                     VStack(spacing: 0) {
                         taskList
                         tomorrowLine
-                        footerLinks
                     }
                     .padding(.bottom, 88)
                 }
@@ -125,6 +126,10 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showDayEditor) {
                 DayEditorView().environmentObject(state)
+            }
+            // The offer moves on when the sheet closes, whichever button closed it.
+            .sheet(isPresented: $showReminderPreview, onDismiss: { advanceOffer(from: .notify) }) {
+                ReminderPreviewSheet().environmentObject(state)
             }
             .sheet(isPresented: $showShop) {
                 // The coin chip reaches the same shop the Kin tab pushes to, so there
@@ -246,12 +251,25 @@ struct HomeView: View {
     /// Sleep is deliberately not here. It is a toggle on the web side, and
     /// `AppState.play` drops back to `.idle` after the animation's duration —
     /// which sends the wake script and undoes it a second and a half later.
-    private static let wheel: [(anim: ChibiAnimation, icon: String, name: String, angle: Double)] = [
+    private typealias WheelSlot = (anim: ChibiAnimation, icon: String, name: String, angle: Double)
+    private static let baseWheel: [WheelSlot] = [
         (.wave, "hand.wave.fill", "Wave", 154),
         (.celebrate, "sparkles", "Cheer", 116),
         (.dance, "music.note", "Dance", 64),
         (.peek, "questionmark", "Curious", 26),
     ]
+    /// Stage III wears a costume, and a costume has a signature move, so the wheel
+    /// grows a fifth slot in the middle and the four spread out to make room.
+    private static let dressedWheel: [WheelSlot] = [
+        (.wave, "hand.wave.fill", "Wave", 154),
+        (.celebrate, "sparkles", "Cheer", 122),
+        (.signature, "bolt.fill", "Move", 90),
+        (.dance, "music.note", "Dance", 58),
+        (.peek, "questionmark", "Curious", 26),
+    ]
+    private var wheel: [WheelSlot] {
+        state.activeChibi.level >= 3 ? Self.dressedWheel : Self.baseWheel
+    }
     private static let wheelRadius: CGFloat = 84
     /// Half a chip at its picked size, plus the ring it sits in. The wheel's
     /// centre has to stay this far from every edge of the tank or a slot is cut
@@ -266,17 +284,17 @@ struct HomeView: View {
     private static let holdDelay = Duration.milliseconds(260)
 
     /// Slot centres, fanned across the top so the thumb never covers them.
-    private static func wheelOffset(_ i: Int) -> CGSize {
+    private func wheelOffset(_ i: Int) -> CGSize {
         let radians = wheel[i].angle * .pi / 180
-        return CGSize(width: cos(radians) * wheelRadius, height: -sin(radians) * wheelRadius)
+        return CGSize(width: cos(radians) * Self.wheelRadius, height: -sin(radians) * Self.wheelRadius)
     }
 
     /// Which slot a flick points at, or `nil` inside the dead zone.
-    private static func wheelSlot(for t: CGSize) -> Int? {
-        guard hypot(t.width, t.height) >= wheelDeadZone else { return nil }
+    private func wheelSlot(for t: CGSize) -> Int? {
+        guard hypot(t.width, t.height) >= Self.wheelDeadZone else { return nil }
         let degrees = atan2(-t.height, t.width) * 180 / .pi
-        return wheel.indices.min { abs(angleGap(wheel[$0].angle, degrees))
-                                 < abs(angleGap(wheel[$1].angle, degrees)) }
+        return wheel.indices.min { abs(Self.angleGap(wheel[$0].angle, degrees))
+                                 < abs(Self.angleGap(wheel[$1].angle, degrees)) }
     }
 
     private static func angleGap(_ a: Double, _ b: Double) -> Double {
@@ -298,7 +316,7 @@ struct HomeView: View {
             .onChanged { value in
                 // Wheel is open: the rest of the drag only aims it.
                 if wheelAt != nil {
-                    wheelPick = Self.wheelSlot(for: value.translation)
+                    wheelPick = wheelSlot(for: value.translation)
                     return
                 }
                 let moved = hypot(value.translation.width, value.translation.height)
@@ -338,7 +356,7 @@ struct HomeView: View {
                     // way out of the wheel without picking.
                     if let pick {
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        state.play(Self.wheel[pick].anim)
+                        state.play(wheel[pick].anim)
                     }
                     return
                 }
@@ -352,7 +370,7 @@ struct HomeView: View {
     private func emoteWheel(at origin: CGPoint) -> some View {
         ZStack {
             Color.black.opacity(0.08).ignoresSafeArea()
-            ForEach(Array(Self.wheel.enumerated()), id: \.offset) { i, slot in
+            ForEach(Array(wheel.enumerated()), id: \.offset) { i, slot in
                 let picked = wheelPick == i
                 VStack(spacing: 3) {
                     Image(systemName: slot.icon)
@@ -368,8 +386,8 @@ struct HomeView: View {
                         .shadow(color: .black.opacity(picked ? 0.22 : 0.12),
                                 radius: picked ? 10 : 5, y: picked ? 5 : 2)
                 )
-                .position(x: origin.x + Self.wheelOffset(i).width,
-                          y: origin.y + Self.wheelOffset(i).height)
+                .position(x: origin.x + wheelOffset(i).width,
+                          y: origin.y + wheelOffset(i).height)
             }
         }
         .frame(width: screenWidth, height: sceneHeight)
@@ -700,8 +718,7 @@ struct HomeView: View {
                     .fill(Theme.paper))
             } primary: {
                 offerButton("Yes please", primary: true) {
-                    Task { await state.setRemindersEnabled(true) }
-                    advanceOffer(from: .notify)
+                    showReminderPreview = true
                 }
             } secondary: {
                 offerButton("Not now", primary: false) { advanceOffer(from: .notify) }
@@ -822,30 +839,6 @@ struct HomeView: View {
     // widget extension. A card that opens instructions for a widget that cannot be
     // installed is the one thing Home must never do — promise something that is not
     // there. Build the target first, then this card.
-
-    private var footerLinks: some View {
-        NavigationLink { GradeCalcView() } label: {
-            HStack(spacing: 12) {
-                IconTile(icon: "calculator", size: 44)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Grade calculator")
-                        .font(Theme.font(15.5, .black)).foregroundStyle(Theme.ink)
-                    Text("What do I need on the final?")
-                        .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
-                }
-                Spacer(minLength: 4)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.dim)
-            }
-            .padding(.horizontal, 13).padding(.vertical, 10)
-            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Theme.card)
-                .shadow(color: Theme.hex(0x281412).opacity(0.07), radius: 3, y: 2))
-        }
-        .buttonStyle(.plain)
-        .padding(.horizontal, 14)
-        .padding(.top, 14)
-    }
 
     // MARK: - Behavior
 
