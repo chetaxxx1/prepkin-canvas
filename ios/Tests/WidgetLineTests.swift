@@ -83,6 +83,52 @@ final class WidgetLineTests: XCTestCase {
                        "1 thing today. Essay outline first.", "a shift that ended is not a shift")
     }
 
+    // MARK: - The small tile: a head and a line, no sentences
+
+    private func tiles(_ s: WidgetSnapshot, day: Int = 9) -> [(head: String, sub: String)] {
+        hours.map { WidgetLine.tile(for: s, now: at(day, $0), calendar: calendar) }
+    }
+
+    func testTheTileSaysANumberThenTheFirstTask() {
+        let s = snap(tasks: [task("q", "Bio quiz", daily: false), task("e", "Essay outline"), task("w", "10 minute walk")])
+        for t in tiles(s) { XCTAssertEqual(t.head, "3 to do"); XCTAssertEqual(t.sub, "Bio quiz") }
+        let some = snap(tasks: [task("q", "Bio quiz", done: true, daily: false), task("e", "Essay outline"), task("w", "10 minute walk")])
+        for t in tiles(some) { XCTAssertEqual(t.head, "2 left"); XCTAssertEqual(t.sub, "Essay outline") }
+        let all = snap(tasks: [task("q", "Bio quiz", done: true), task("e", "Essay outline", done: true)])
+        for t in tiles(all) { XCTAssertEqual(t.head, "All done"); XCTAssertEqual(t.sub, "Moss noticed.") }
+    }
+
+    func testTheTileLeadsWithTheTimeWhenSomethingIsDueSoon() {
+        let s = snap(tasks: [task("q", "Bio quiz", due: at(9, 20), daily: false), task("e", "Essay outline")])
+        let t = WidgetLine.tile(for: s, now: at(9, 17, 30), calendar: calendar)
+        XCTAssertEqual(t.head, at(9, 20).formatted(.dateTime.hour().minute()))
+        XCTAssertEqual(t.sub, "Bio quiz due")
+    }
+
+    func testTheTileOnShiftAndAway() {
+        let shift = snap(tasks: [task("e", "Essay outline")], shiftEndsAt: at(9, 23))
+        let t = WidgetLine.tile(for: shift, now: at(9, 22), calendar: calendar)
+        XCTAssertEqual(t.head, "On shift")
+        XCTAssertEqual(t.sub, "until \(at(9, 23).formatted(.dateTime.hour().minute()))")
+        let away = snap(tasks: [task("e", "Essay outline")], on: 6, lastOpened: at(6, 8))
+        for t in tiles(away) { XCTAssertEqual(t.head, "Moss"); XCTAssertEqual(t.sub, "is still here.") }
+    }
+
+    func testTheTileSplitsABankLineIntoHeadAndSub() {
+        XCTAssertEqual(WidgetLine.splitBank("Nothing due. Enjoy it.").head, "Nothing due")
+        XCTAssertEqual(WidgetLine.splitBank("Nothing due. Enjoy it.").sub, "Enjoy it.")
+        XCTAssertEqual(WidgetLine.splitBank("Free day. Moss approves.").head, "Free day")
+        XCTAssertEqual(WidgetLine.splitBank("Quiet tank today.").head, "Nothing due")
+        XCTAssertEqual(WidgetLine.splitBank("Quiet tank today.").sub, "Quiet tank today.")
+        XCTAssertEqual(WidgetLine.splitBank("Moss is watching the bubbles.").head, "Nothing due")
+        // Every bank line yields a head the big type can hold on one line.
+        for line in DayBank.lines {
+            XCTAssertLessThanOrEqual(WidgetLine.splitBank(line).head.count, WidgetLine.headLength, line)
+        }
+        let empty = snap(tasks: [])
+        for t in tiles(empty) { XCTAssertFalse(t.head.isEmpty); XCTAssertFalse(t.sub.isEmpty) }
+    }
+
     // MARK: - The day after
 
     func testYesterdaysSnapshotBringsTheDailiesBackAndDropsTheRest() {
@@ -137,7 +183,11 @@ final class WidgetLineTests: XCTestCase {
                 lines.append(WidgetLine.line(for: s, now: now, calendar: calendar))
                 lines.append(WidgetLine.count(for: s, now: now, calendar: calendar))
                 lines.append(WidgetLine.stamp(s.name, now))
-                lines.append("Tap a box to finish it · 12 left")
+                lines.append("Tap a box to finish it")
+                let tile = WidgetLine.tile(for: s, now: now, calendar: calendar)
+                lines.append(tile.head)
+                lines.append(tile.sub)
+                XCTAssertLessThanOrEqual(tile.head.count, 14, tile.head)
             }
         }
         let banned = ["streak", "missed", "lose", "!", "day count", "days"]

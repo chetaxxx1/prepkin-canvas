@@ -95,44 +95,44 @@ struct WidgetRoot: View {
     }
 }
 
-/// Four icon spots: the line top left, the kin bottom right, "Moss · Wed" under the line.
+/// Four icon spots: a big head top left ("2 left"), a small line under it, the
+/// kin three quarters of the tile wide in the bottom right. Duolingo's tile,
+/// Me+'s, Mimo's and Finch's are all this: a number or two words, a few more
+/// words, the mascot. No sentences and no name stamp — the fish is the name.
 struct SmallWidget: View {
     let entry: SnapshotEntry
     /// Three quarters of a 170pt tile. Measured off five pet widgets on Mobbin
     /// (Finch 88%, Duolingo 75%, Mimo 75%, Me+ 60%, Alan 100%); the middle of
-    /// that, and still clear of a three-line title.
+    /// that, and still clear of the two lines of text.
     static let kinSize: CGFloat = 126
 
     var body: some View {
         let snap = entry.snapshot ?? .sample
-        let line = entry.snapshot.map { WidgetLine.line(for: $0, now: entry.date) } ?? "Open Prepkin once."
-        // The kin is three quarters of the tile wide, the way Finch's bird,
-        // Duolingo's owl and Mimo's robot are on theirs: the text sits on top,
-        // the mascot owns the bottom. The stamp moves up under the line so the
-        // fish has the whole lower right.
+        let tile = entry.snapshot.map { WidgetLine.tile(for: $0, now: entry.date) } ?? (head: "Hi", sub: "Open Prepkin once.")
         ZStack(alignment: .bottomTrailing) {
             TankBand()
             KinStill(snapshot: snap, size: Self.kinSize)
                 .padding(.trailing, 8)
                 .padding(.bottom, 8)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(line)
-                    .font(.system(size: 15, weight: .black, design: .rounded))
+            VStack(alignment: .leading, spacing: 1) {
+                Text(tile.head)
+                    .font(.system(size: 26, weight: .black, design: .rounded))
                     .foregroundStyle(Theme.ink)
-                    .lineLimit(3)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                Text(tile.sub)
+                    .font(.system(size: 12.5, weight: .bold, design: .rounded))
+                    .foregroundStyle(Theme.tabInk)
+                    .lineLimit(2)
                     .minimumScaleFactor(0.85)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(WidgetLine.stamp(snap.name, entry.date))
-                    .font(.system(size: 11.5, weight: .bold, design: .rounded))
-                    .foregroundStyle(Theme.muted)
-                    .lineLimit(1)
             }
             .padding(.horizontal, 14)
-            .padding(.top, 14)
+            .padding(.top, 13)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(line) \(snap.name).")
+        .accessibilityLabel("\(tile.head). \(tile.sub) \(snap.name).")
     }
 }
 
@@ -244,7 +244,7 @@ struct MediumWidget: View {
 
     var body: some View {
         let snap = entry.snapshot ?? .sample
-        let line = entry.snapshot.map { WidgetLine.line(for: $0, now: entry.date) } ?? "Open Prepkin once."
+        let tile = entry.snapshot.map { WidgetLine.tile(for: $0, now: entry.date) } ?? (head: "Hi", sub: "Open Prepkin once.")
         let rows = WidgetLine.rows(for: snap, now: entry.date)
         let open = WidgetLine.today(snap, now: entry.date).filter { !$0.done }.count
         ZStack(alignment: .bottomTrailing) {
@@ -253,12 +253,14 @@ struct MediumWidget: View {
                 .padding(.trailing, 12)
                 .padding(.bottom, 8)
             VStack(alignment: .leading, spacing: 0) {
+                // The head alone: the rows under it say what is left, so the
+                // sentence the small tile needs would only repeat them.
                 HStack(alignment: .top, spacing: 8) {
-                    Text(line)
-                        .font(.system(size: 15, weight: .black, design: .rounded))
+                    Text(rows.isEmpty ? "\(tile.head). \(tile.sub)" : tile.head)
+                        .font(.system(size: 17, weight: .black, design: .rounded))
                         .foregroundStyle(Theme.ink)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.85)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     Spacer(minLength: 0)
                     CoinPill(coins: snap.coins)
                 }
@@ -270,7 +272,7 @@ struct MediumWidget: View {
                 .padding(.top, 8)
                 .padding(.trailing, 132)
                 Spacer(minLength: 2)
-                Text(open > 0 ? "Tap a box to finish it · \(open) left" : WidgetLine.stamp(snap.name, entry.date))
+                Text(open > 0 ? "Tap a box to finish it" : WidgetLine.stamp(snap.name, entry.date))
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.muted)
                     .lineLimit(1)

@@ -44,6 +44,53 @@ enum WidgetLine {
         return lead + fit(open[0].title, leaving: lead.count + " first.".count) + " first."
     }
 
+    /// What the small tile says: a short head in big type and a smaller line
+    /// under it. The grammar of every pet widget on Mobbin — Duolingo's
+    /// "845 / Last chance!", Me+'s "7 / Awesome!", Mimo's "1 / Well done!",
+    /// Finch's one-word adventure state — a number or two words, then a few
+    /// more, then the mascot. Same rules and order as `line`, fewer words.
+    static func tile(for snap: WidgetSnapshot, now: Date, calendar: Calendar = .current) -> (head: String, sub: String) {
+        let name = snap.name
+        if let end = snap.shiftEndsAt, end > now {
+            return ("On shift", "until \(end.formatted(.dateTime.hour().minute()))")
+        }
+        if let away = calendar.dateComponents([.day], from: snap.lastOpenedAt, to: now).day,
+           away >= awayAfterDays {
+            return (name, "is still here.")
+        }
+        let tasks = today(snap, now: now, calendar: calendar)
+        let open = tasks.filter { !$0.done }
+        if let soon = open.filter({ $0.dueAt.map { $0 > now && $0 <= now + dueWindow } ?? false })
+            .min(by: { $0.dueAt! < $1.dueAt! }) {
+            return (soon.dueAt!.formatted(.dateTime.hour().minute()), fit(soon.title, leaving: 20) + " due")
+        }
+        if tasks.isEmpty {
+            return splitBank(DayBank.line(name: name, on: now, seed: snap.dayBankSeed, calendar: calendar))
+        }
+        if open.isEmpty {
+            return ("All done", "\(name) noticed.")
+        }
+        let done = tasks.count - open.count
+        if done > 0 {
+            return ("\(open.count) left", fit(open[0].title, leaving: 20))
+        }
+        return ("\(open.count) to do", fit(open[0].title, leaving: 20))
+    }
+
+    /// The longest head the big type takes on one line of the small tile.
+    static let headLength = 12
+
+    /// "Nothing due. Enjoy it." → "Nothing due" / "Enjoy it." A bank line with
+    /// no break, or a head too long for the big type, goes under "Nothing due".
+    static func splitBank(_ line: String) -> (head: String, sub: String) {
+        if let range = line.range(of: ". ") {
+            let head = String(line[..<range.lowerBound])
+            let sub = String(line[range.upperBound...])
+            if head.count <= headLength { return (head, sub) }
+        }
+        return ("Nothing due", line)
+    }
+
     /// The list as it stands now. The snapshot is only rewritten when the app
     /// runs, so on a later day the dailies are open again, open Canvas work is
     /// still open, and the rest of that day's list is unknowable and left off.
