@@ -8,6 +8,7 @@
 //
 //   node test/fake-friend.js
 //   node test/fake-friend.js --minutes 45 --species ember --costume ninja --scene reef
+//   node test/fake-friend.js --as /tmp/maya.json   # keeps the same player across runs
 //
 // It reads ios/Resources/bridge-config.json for the address and the key, which is
 // the same file the app reads, so there is nothing to configure twice.
@@ -15,7 +16,7 @@
 // It calls only the functions the app calls: create_player, join_pod (the only
 // anon-callable way to set a kin — see set_kin in bridge/schema.sql, which is
 // revoked from public), set_tank, my_code, start_focus, push_today, push_result,
-// fetch_friends and send_vibe. Every one of them is in bridge/schema.sql,
+// fetch_friends, set_sharing and send_vibe. Every one of them is in bridge/schema.sql,
 // schema-social.sql or schema-friends.sql, and all three have to have been run in
 // the Supabase SQL editor first.
 
@@ -90,6 +91,10 @@ class FakeFriend {
   /// Who has typed this player's code. Empty until the phone does.
   async friends() { return this.rpc('fetch_friends', this.who()); }
 
+  /// Both privacy flags on. Sharing defaults off on the bridge (schema-friends.sql),
+  /// so without this the counts below are pushed and never shown to anybody.
+  async share() { return this.rpc('set_sharing', { ...this.who(), p_today: true, p_board: true }); }
+
   /// Four small counts for today, the same four the phone pushes.
   async pushToday({ day, tasks, focus, lessons, games }) {
     return this.rpc('push_today', {
@@ -143,8 +148,19 @@ function today(now = new Date()) {
   // range, so this stays valid whatever the six turn out to look like.
   const vibeKind = Number(arg('vibe', 0));
 
-  const row = await friend.mint();
-  console.log(`minted ${row.id}`);
+  // `--as file` keeps one identity across runs, so a second run is the same
+  // friend on the phone (a new shift, not a new person) and a script can drive
+  // that friend's side of a block or a vibe by reading the file.
+  const asFile = arg('as', null);
+  if (asFile && fs.existsSync(asFile)) {
+    const saved = JSON.parse(fs.readFileSync(asFile, 'utf8'));
+    friend.id = saved.id; friend.token = saved.token;
+    console.log(`resumed ${friend.id}`);
+  } else {
+    const row = await friend.mint();
+    console.log(`minted ${row.id}`);
+    if (asFile) fs.writeFileSync(asFile, JSON.stringify({ id: row.id, token: row.token }));
+  }
 
   await friend.setKin({ species, look, level });
   await friend.setTank({ costume, scene });
@@ -163,8 +179,9 @@ function today(now = new Date()) {
   // Today's four counts, pushed straight away so the phone has something to draw
   // the moment the friendship is made. Numbers a person could plausibly have done
   // in a day; the bridge caps them anyway.
+  await friend.share();
   await friend.pushToday({ day: today(), tasks: 4, focus: 75, lessons: 2, games: 3 });
-  console.log('today: 4 tasks, 75 min focus, 2 lessons, 3 games');
+  console.log('today: 4 tasks, 75 min focus, 2 lessons, 3 games (sharing on)');
 
   // One solved board on today's puzzle. `word` is in every version of the
   // play_results check constraint, so it is the safe one to seed with.

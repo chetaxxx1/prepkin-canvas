@@ -1,0 +1,70 @@
+{
+  "host": "canvas.tamu.edu",
+  "final": "canvas.tamu.edu",
+  "fetchedAt": "2026-09-12T16:06:39.193Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster337",
+  "region": "us-west-2b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/a205c9092557feb98e1ea7180c81d2a2/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3765
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_159240000000000001/attachments/97641420/IMAGE_FREEZE_CSS.css",
+      "bytes": 5634928
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_159240000000000001/attachments/97666639/TAMU_Theme_Ally-1.3.js",
+      "bytes": 12601
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#4C0000",
+    "ic-brand-primary-darkened-10": "#480000",
+    "ic-brand-primary-darkened-15": "#440000",
+    "ic-brand-primary-lightened-5": "#580C0C",
+    "ic-brand-primary-lightened-10": "#611919",
+    "ic-brand-primary-lightened-15": "#6A2626",
+    "ic-brand-button--primary-bgd-darkened-5": "#4C0000",
+    "ic-brand-button--primary-bgd-darkened-15": "#440000",
+    "ic-brand-button--secondary-bgd-darkened-5": "#4C0000",
+    "ic-brand-button--secondary-bgd-darkened-15": "#440000",
+    "ic-brand-font-color-dark-lightened-15": "#272727",
+    "ic-brand-font-color-dark-lightened-28": "#484848",
+    "ic-link-color-darkened-10": "#480000",
+    "ic-link-color-lightened-10": "#611919",
+    "ic-brand-primary": "#500000",
+    "ic-brand-font-color-dark": "#020202",
+    "ic-link-color": "#500000",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#500000",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#500000",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#500000",
+    "ic-brand-header-image": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_159240000000000001/attachments/1315494/TAM-Logo-whitebkgrd.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_159240000000000001/attachments/270/tamu-logo600x600.png')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_159240000000000001/attachments/2/TAM-PrimaryMarkB.png')"
+  },
+  "deps": {
+    "https://h5p.com/canvas-resizer.js": {
+      "file": "deps/0.js",
+      "bytes": 2342
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.tamu.edu texasam.instructure.com texasam.beta.instructure.com texasam.test.instructure.com;"
+}

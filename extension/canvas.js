@@ -50,6 +50,11 @@ function mapCourses(raw, colors = {}, { now = Date.now() } = {}) {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((course) => {
     if (!course || course.id == null || !course.name) return [];
+    // Many schools lock a course once its dates pass. Canvas still lists it as
+    // an active enrolment, but as a stub — id, name, and this flag — that
+    // answers 401 to everything else. Not coursework; not a request worth
+    // spending on every sync.
+    if (course.access_restricted_by_date === true) return [];
     if (!isCurrentTerm(course, now)) return [];
     // total_scores puts the score on the student's own enrollment row. A course
     // you are only in as a TA, teacher or observer is not your coursework: its
@@ -282,16 +287,23 @@ function requiredScore({ current, target, weight }) {
 /// The `next` link out of Canvas's `Link` header, or null when there isn't one.
 ///
 /// The header is data from the server and these fetches carry the student's
-/// cookies, so a next-page link pointing off `origin` is refused. That is either
-/// a misconfigured Canvas or somebody steering a credentialed read; neither is
-/// worth following.
+/// cookies, so the next page is only ever asked of `origin`. Canvas builds the
+/// link from the domain it was configured with, and a school reached through
+/// an alias (`school.instructure.com` for one set up as `canvas.school.edu`,
+/// or the other way round) answers with the other name. That link is the same
+/// page on the same Canvas, so it is moved onto `origin` rather than dropped —
+/// dropping it kept page one and silently lost the work due this week. Only
+/// an API path is moved; anything else is not a page of anything.
 function nextLink(header, origin) {
   if (!header) return null;
   for (const part of header.split(',')) {
     const m = part.match(/<([^>]+)>\s*;\s*rel="next"/);
     if (!m) continue;
     try {
-      return new URL(m[1]).origin === origin ? m[1] : null;
+      const url = new URL(m[1]);
+      if (url.origin === origin) return m[1];
+      if (!url.pathname.startsWith('/api/v1/')) return null;
+      return `${origin}${url.pathname}${url.search}`;
     } catch {
       return null;
     }

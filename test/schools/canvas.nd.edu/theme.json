@@ -1,0 +1,70 @@
+{
+  "host": "canvas.nd.edu",
+  "final": "canvas.nd.edu",
+  "fetchedAt": "2026-09-12T16:09:31.131Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster99",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/d039c7cb662353f9a040380b9f1828a4/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3646
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/3428284/dp.css",
+      "bytes": 5628680
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/6727592/Canvas%20Prime%20Javascript%202026-09-02.js",
+      "bytes": 26666
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#0A223C",
+    "ic-brand-primary-darkened-10": "#092039",
+    "ic-brand-primary-darkened-15": "#091E36",
+    "ic-brand-primary-lightened-5": "#162E48",
+    "ic-brand-primary-lightened-10": "#223952",
+    "ic-brand-primary-lightened-15": "#2E445B",
+    "ic-brand-button--primary-bgd-darkened-5": "#0A223C",
+    "ic-brand-button--primary-bgd-darkened-15": "#091E36",
+    "ic-brand-button--secondary-bgd-darkened-5": "#D6DDE6",
+    "ic-brand-button--secondary-bgd-darkened-15": "#C0C6CE",
+    "ic-brand-font-color-dark-lightened-15": "#515151",
+    "ic-brand-font-color-dark-lightened-28": "#6C6C6C",
+    "ic-link-color-darkened-10": "#004793",
+    "ic-link-color-lightened-10": "#195FAC",
+    "ic-brand-primary": "#0A233F",
+    "ic-brand-font-color-dark": "#333333",
+    "ic-link-color": "#004EA3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#E1E8F2",
+    "ic-brand-button--secondary-text": "#333333",
+    "ic-brand-global-nav-bgd": "#0A233F",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#0A233F",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/560/NotreDame_Nav%20Logo.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/556/favicons.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/561/NotreDame_mobile%20Homescreen%20Icon.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/562/NotreDame_Windows%20Tile%20Square.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/563/NotreDame_Windows%20Tile%20Wide.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_140720000000000001/attachments/559/1_university_mark.jpg')"
+  },
+  "deps": {
+    "https://nd.bluera.com/ndBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/0.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.nd.edu notredame.instructure.com notredame.beta.instructure.com notredame.test.instructure.com;"
+}

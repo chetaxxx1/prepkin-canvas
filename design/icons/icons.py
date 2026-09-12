@@ -16,7 +16,9 @@ GRIDS = {"grid-a": (3, 2), "grid-b": (3, 2), "grid-c": (4, 2), "grid-d": (2, 1),
          # picks one and `SET` points at it; grid-j medals, chest, pod, crown.
          "grid-h": (3, 2), "grid-i": (3, 2), "grid-j": (3, 2),
          # Friends-tab marks: eye, wave, race flags, life ring, paper plane, telescope.
-         "grid-k": (3, 2)}
+         "grid-k": (3, 2),
+         # Calendar (2026-09-12): laptop, clock, lectern, backpack, date page, campus.
+         "grid-l": (3, 2)}
 
 TINT = {"sky": "#E3EEFB", "gold": "#FCEFD3", "mint": "#DFF3E9",
         "coral": "#FFE9E5", "lilac": "#EDE7FB", "indigo": "#E7E7F6"}
@@ -79,6 +81,14 @@ SET = [
     ("eye",           "What friends see", "Friends", "mint",  "grid-k", 0),
     ("wave",          "Wave",             "Friends", "coral", "grid-k", 1),
     ("raceFlags",     "Race",             "Friends", "coral", "grid-k", 2),
+    # Calendar tab. The clock is every class and office hour on a row (Canvas says
+    # nothing about what kind of event it is); the laptop is the not-paired card.
+    ("laptop",        "Laptop",           "Calendar", "mint",  "grid-l", 0),
+    ("classTime",     "Class",            "Calendar", "sky",   "grid-l", 1),
+    ("lecture",       "Lecture",          "Calendar", "lilac", "grid-l", 2),
+    ("backpack",      "Backpack",         "Calendar", "coral", "grid-l", 3),
+    ("datePage",      "Date",             "Calendar", "gold",  "grid-l", 4),
+    ("campus",        "Campus",           "Calendar", "sky",   "grid-l", 5),
 ]
 
 # Drawn big: the Monday sheet shows a badge at 132pt and the ladder card at 72.

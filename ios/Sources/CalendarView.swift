@@ -722,6 +722,31 @@ enum CalendarEntry: Identifiable {
 struct LoadMark: Hashable {
     let color: Color
     let isEvent: Bool
+    /// The SF mark drawn in white on the chip — the object, small enough to
+    /// read under a 17pt number (Structured draws its load the same way).
+    let glyph: String
+}
+
+extension TaskCategory {
+    /// The object, as a mark that survives 8pt. The illustrated icon is for a
+    /// tile; under a ticker day there is no room for a tile.
+    var mark: String {
+        switch self {
+        case .reading: return "book.fill"
+        case .writing: return "pencil"
+        case .problemSet: return "ruler.fill"
+        case .labs: return "flask.fill"
+        case .study: return "rectangle.stack.fill"
+        case .walk: return "figure.walk"
+        case .sleep: return "moon.fill"
+        case .meal: return "fork.knife"
+        case .stretch: return "figure.flexibility"
+        case .outdoors: return "sun.max.fill"
+        case .connect: return "bubble.left.fill"
+        case .tidy: return "sparkles"
+        case .lifeCare: return "heart.fill"
+        }
+    }
 }
 
 /// The one way every screen on this tab reads a day, so the ticker, the month
@@ -761,8 +786,8 @@ struct CalendarFeed {
     func load(on day: DayKey) -> [LoadMark] {
         entries(on: day).compactMap { e in
             switch e {
-            case .task(let t): return t.done ? nil : LoadMark(color: tint(t), isEvent: false)
-            case .event(let ev): return LoadMark(color: tint(ev), isEvent: true)
+            case .task(let t): return t.done ? nil : LoadMark(color: tint(t), isEvent: false, glyph: t.category.mark)
+            case .event(let ev): return LoadMark(color: tint(ev), isEvent: true, glyph: "clock.fill")
             }
         }
     }
@@ -811,12 +836,14 @@ struct CalendarFeed {
 
 // MARK: - Load
 
-/// A day's load as the objects themselves: one 12pt chip per thing to hand in,
-/// one disc per class, in course colour, chronological. Three at most; a fourth
-/// becomes a count, because four marks under a 17pt number stop being countable.
+/// A day's load as the objects themselves: one chip per thing to hand in with
+/// its object in white, one disc per class with a clock, in course colour,
+/// chronological. Three at most; a fourth becomes a count, because four marks
+/// under a 17pt number stop being countable. Under 12pt the mark is dropped
+/// and the shape alone says work or class (the month cell).
 struct DayLoadGlyphs: View {
     let marks: [LoadMark]
-    var size: CGFloat = 12
+    var size: CGFloat = 13
 
     private var shown: [LoadMark] { marks.count > 3 ? Array(marks.prefix(2)) : marks }
     private var overflow: Int { marks.count > 3 ? marks.count - 2 : 0 }
@@ -824,14 +851,14 @@ struct DayLoadGlyphs: View {
     var body: some View {
         HStack(spacing: 2) {
             ForEach(Array(shown.enumerated()), id: \.offset) { _, m in
-                RoundedRectangle(cornerRadius: m.isEvent ? size / 2 : size / 3, style: .continuous)
+                RoundedRectangle(cornerRadius: m.isEvent ? size / 2 : size * 0.3, style: .continuous)
                     .fill(m.color)
                     .frame(width: size, height: size)
                     .overlay {
-                        // The line on a chip is the paper in the object; a disc is
-                        // a class and carries nothing.
-                        if !m.isEvent && size >= 12 {
-                            Capsule().fill(.white).frame(width: 6, height: 1.6)
+                        if size >= 12 {
+                            Image(systemName: m.glyph)
+                                .font(.system(size: size * 0.56, weight: .black))
+                                .foregroundStyle(.white)
                         }
                     }
             }
@@ -929,26 +956,26 @@ struct CalendarTaskRow: View {
     let task: DailyTask
     let tint: Color
     var note: String?
-    /// In the Still counts group: no tile, a rail in the course colour down the
-    /// left edge, and the caption in amber.
+    /// In the Still counts group: a rail in the course colour down the left
+    /// edge and the caption in amber. The tile stays — the drawing dropped it,
+    /// but a list where some rows have an object and some do not reads as two
+    /// kinds of row, and overdue is not a kind, it is a date.
     var overdue = false
     let onCheck: () -> Void
     let onOpen: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
-            if !overdue {
-                RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
-                    .fill(Theme.soft(tint))
-                    .frame(width: 44, height: 44)
-                    .overlay(
-                        Image("icon-" + task.category.rawValue)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 32, height: 32)
-                    )
-                    .accessibilityHidden(true)
-            }
+            RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
+                .fill(Theme.soft(tint))
+                .frame(width: 44, height: 44)
+                .overlay(
+                    Image("icon-" + task.category.rawValue)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 32, height: 32)
+                )
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(task.title)
@@ -985,7 +1012,7 @@ struct CalendarTaskRow: View {
                                            value: [task.id: geo.frame(in: .named("calendar"))])
                 })
         }
-        .padding(.leading, 12).padding(.trailing, 14).padding(.vertical, 9)
+        .padding(.leading, overdue ? 14 : 12).padding(.trailing, 14).padding(.vertical, 9)
         .frame(minHeight: 62)
         .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
             .fill(Theme.card))
@@ -1034,10 +1061,21 @@ struct EventRow: View {
 
     var body: some View {
         HStack(spacing: 11) {
-            Circle().fill(tint).frame(width: 26, height: 26)
+            // The clock, on a white tile so the object stays illustrated on any
+            // course tint — the same anatomy as a task row, minus the box.
+            RoundedRectangle(cornerRadius: Theme.Radius.chip, style: .continuous)
+                .fill(Theme.card)
+                .frame(width: 38, height: 38)
+                .overlay(
+                    Image("icon-classTime")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 28, height: 28)
+                )
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
                 Text(event.title)
-                    .font(Theme.font(14, .black))
+                    .font(Theme.font(14.5, .black))
                     .foregroundStyle(Theme.ink)
                     .lineLimit(1)
                 if !place.isEmpty {
@@ -1059,9 +1097,16 @@ struct EventRow: View {
                 }
             }
         }
-        .padding(.horizontal, 14).padding(.vertical, 11)
+        .padding(.leading, 12).padding(.trailing, 14).padding(.vertical, 10)
+        .frame(minHeight: 58)
         .background(RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
             .fill(Theme.soft(tint)))
+        // The course colour as a rail down the left edge, so a pale tint still
+        // says which course from across the room.
+        .overlay(alignment: .leading) {
+            Rectangle().fill(tint).frame(width: 4)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous))
         .accessibilityElement(children: .combine)
     }
 
@@ -1206,26 +1251,28 @@ struct NotPairedCard: View {
     let onShow: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Got your class schedule?")
-                .font(Theme.font(16, .black))
-                .foregroundStyle(Theme.ink)
-            Text("Open Prepkin on your laptop and your classes land here.")
-                .font(Theme.font(12.5, .heavy))
-                .foregroundStyle(Theme.muted)
-                .lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
-            Button(action: onShow) {
-                Text("Show me how")
-                    .font(Theme.font(13, .black))
-                    .foregroundStyle(Theme.coralShade)
-                    .frame(height: 44)
-                    .contentShape(Rectangle())
+        HStack(alignment: .top, spacing: 14) {
+            IconTile(icon: "laptop", size: 52)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Got your class schedule?")
+                    .font(Theme.font(16, .black))
+                    .foregroundStyle(Theme.ink)
+                Text("Open Prepkin on your laptop and your classes land here.")
+                    .font(Theme.font(12.5, .heavy))
+                    .foregroundStyle(Theme.muted)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button(action: onShow) {
+                    Text("Show me how")
+                        .font(Theme.font(13, .black))
+                        .foregroundStyle(Theme.coralShade)
+                        .frame(height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
-            .padding(.top, 4)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .card()
     }
 }
@@ -1353,7 +1400,9 @@ struct MonthSheet: View {
         .scrollIndicators(.hidden)
         .background(Theme.card)
         .presentationBackground(Theme.card)
-        .presentationDetents([.fraction(0.83)])
+        // The drawing's sheet top is y = 150. A fraction is of the height under
+        // the status bar, so 0.83 landed at 214; this lands at ~160.
+        .presentationDetents([.fraction(0.89)])
         .presentationCornerRadius(Theme.Radius.sheet)
         .presentationDragIndicator(.hidden)
     }
@@ -1781,7 +1830,7 @@ struct DayTimelineView: View {
         case .task(let t):
             TimelinePin(label: DayTimeline.hourLabel(item.span.start),
                         title: t.title, caption: pinCaption(t), tint: feed.tint(t),
-                        done: t.done, locked: t.isLocked,
+                        icon: t.category.rawValue, done: t.done, locked: t.isLocked,
                         onCheck: { toggle(t) }, onOpen: { openEditor(t) })
         case .event(let e):
             TimelineBlock(label: DayTimeline.hourLabel(item.span.start),
@@ -1901,6 +1950,8 @@ struct TimelinePin: View {
     let title: String
     let caption: String
     let tint: Color
+    /// The task's object, for the tile beside the dot.
+    var icon: String? = nil
     var done = false
     var locked = false
     let onCheck: () -> Void
@@ -1911,6 +1962,14 @@ struct TimelinePin: View {
             HStack(spacing: 10) {
                 Circle().fill(tint).frame(width: 11, height: 11)
                     .padding(.leading, -5.5)
+                if let icon {
+                    RoundedRectangle(cornerRadius: Theme.Radius.chip, style: .continuous)
+                        .fill(Theme.soft(tint))
+                        .frame(width: 34, height: 34)
+                        .overlay(Image("icon-" + icon).resizable().scaledToFit()
+                            .frame(width: 25, height: 25))
+                        .accessibilityHidden(true)
+                }
                 VStack(alignment: .leading, spacing: 1) {
                     Text(title)
                         .font(Theme.font(14.5, .black))
@@ -1974,11 +2033,15 @@ struct TimelineBlock: View {
                     .font(Theme.font(11.5, .heavy))
                     .foregroundStyle(Theme.mutedDeep)
             }
-            .padding(.horizontal, 12)
+            .padding(.leading, 14).padding(.trailing, 12)
             .padding(.vertical, short ? 7 : 9)
             .frame(height: height, alignment: .top)
             .background(RoundedRectangle(cornerRadius: Theme.Radius.chip, style: .continuous)
                 .fill(Theme.soft(tint)))
+            // The course as a rail down the block's left edge (Amie's blocks
+            // carry one), so a pale tint still names its course.
+            .overlay(alignment: .leading) { Rectangle().fill(tint).frame(width: 4) }
+            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.chip, style: .continuous))
         }
         .overlay(alignment: .topLeading) {
             if let nowAt {

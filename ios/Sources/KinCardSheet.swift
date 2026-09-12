@@ -30,7 +30,8 @@ struct KinCardSheet: View {
                              serial: serial,
                              stage: state.friendshipStage,
                              friendCode: state.friendCode,
-                             firsts: state.game.firsts.rows(for: kin.speciesID))
+                             firsts: state.game.firsts.rows(for: kin.speciesID),
+                             finds: state.finds(for: kin.speciesID))
 
                 Button {
                     let image = StoryCard.render(kin: kin, scene: scene,

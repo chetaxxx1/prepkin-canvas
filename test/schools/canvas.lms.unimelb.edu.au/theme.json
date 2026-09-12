@@ -1,0 +1,86 @@
+{
+  "host": "canvas.lms.unimelb.edu.au",
+  "final": "canvas.lms.unimelb.edu.au",
+  "fetchedAt": "2026-09-12T16:19:31.212Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster228",
+  "region": "ap-southeast-2a",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/66a76563fae1435aa67e6e64bd26d9c9/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3903
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/28318575/uom-prod-theme.css",
+      "bytes": 91497
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/28318574/uom-prod.js",
+      "bytes": 159763
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#000F43",
+    "ic-brand-primary-darkened-10": "#000E3F",
+    "ic-brand-primary-darkened-15": "#000D3C",
+    "ic-brand-primary-lightened-5": "#0C1B4F",
+    "ic-brand-primary-lightened-10": "#192758",
+    "ic-brand-primary-lightened-15": "#263361",
+    "ic-brand-button--primary-bgd-darkened-5": "#000F43",
+    "ic-brand-button--primary-bgd-darkened-15": "#000D3C",
+    "ic-brand-button--secondary-bgd-darkened-5": "#43BEE4",
+    "ic-brand-button--secondary-bgd-darkened-15": "#3CAACC",
+    "ic-brand-font-color-dark-lightened-15": "#4C4C4C",
+    "ic-brand-font-color-dark-lightened-28": "#676767",
+    "ic-link-color-darkened-10": "#083468",
+    "ic-link-color-lightened-10": "#204C81",
+    "ic-brand-primary": "#000f46",
+    "ic-brand-font-color-dark": "#2d2d2d",
+    "ic-link-color": "#083973",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#46c8f0",
+    "ic-brand-button--secondary-text": "#000f46",
+    "ic-brand-global-nav-bgd": "#000f46",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#000f46",
+    "ic-brand-header-image": "url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/16414705/uom-nav-logo-2023.svg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/16414712/uom-responsive-global-nav-logo-2023.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/16414706/uom-favicon-2023.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/16414707/uom-mobile-homescreen-icon-2023.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/16414708/uom-windows-tile-square-2023.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/16414709/uom-windows-tile-wide-2023.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_142270000000000001/attachments/16414710/uom-right-sidebar-logo-2023.svg')"
+  },
+  "deps": {
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js": {
+      "file": "deps/0.js",
+      "bytes": 86659
+    },
+    "https://cdn.walkme.com/users/82fdc2971f204542b025ca212b1e7522/walkme_82fdc2971f204542b025ca212b1e7522_https.js": {
+      "file": "deps/1.js",
+      "bytes": 30684
+    },
+    "https://tags.tiqcdn.com/utag/unimelb/main/prod/utag.js": {
+      "file": "deps/2.js",
+      "bytes": 384009
+    },
+    "https://h5p.com/canvas-resizer.js": {
+      "file": "deps/3.js",
+      "bytes": 2342
+    },
+    "https://resources.stackle.app/js/lms/canvas/stackleCanvas.js": {
+      "file": "deps/4.js",
+      "bytes": 23788
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.lms.unimelb.edu.au unimelb-prod.instructure.com unimelb-prod.beta.instructure.com unimelb-prod.test.instr"
+}

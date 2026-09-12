@@ -1,0 +1,65 @@
+{
+  "host": "canvas.emory.edu",
+  "final": "canvas.emory.edu",
+  "fetchedAt": "2026-09-12T16:07:52.830Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster63",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/4b6c5693dbed3b6d2cd659848b395f74/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4826
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/14489068/emory_global.css",
+      "bytes": 5806511
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/14400610/emory_global.js",
+      "bytes": 26727
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#002D67",
+    "ic-brand-primary-darkened-10": "#002B62",
+    "ic-brand-primary-darkened-15": "#00285C",
+    "ic-brand-primary-lightened-5": "#0C3973",
+    "ic-brand-primary-lightened-10": "#19437A",
+    "ic-brand-primary-lightened-15": "#264E82",
+    "ic-brand-button--primary-bgd-darkened-5": "#002D67",
+    "ic-brand-button--primary-bgd-darkened-15": "#00285C",
+    "ic-brand-button--secondary-bgd-darkened-5": "#28323F",
+    "ic-brand-button--secondary-bgd-darkened-15": "#242D39",
+    "ic-brand-font-color-dark-lightened-15": "#262626",
+    "ic-brand-font-color-dark-lightened-28": "#474747",
+    "ic-link-color-darkened-10": "#002B62",
+    "ic-link-color-lightened-10": "#19437A",
+    "ic-brand-primary": "#002F6C",
+    "ic-brand-font-color-dark": "#000000",
+    "ic-link-color": "#002F6C",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#F6F6F6",
+    "ic-brand-button--secondary-bgd": "#2A3442",
+    "ic-brand-button--secondary-text": "#F6F6F6",
+    "ic-brand-global-nav-bgd": "#002F6C",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#F6F6F6",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#F6F6F6",
+    "ic-brand-global-nav-logo-bgd": "#002F6C",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/6781/Emory%20Logo%20modified-01.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924692910&Signature=lk%2BeBp%2FVkYuEq%2BCB936sbWXvOl4%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/14489034/EU_shield_1L_294.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/6782/favicon.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924692910&Signature=Qc0zU0luL9i9Vur%2FfdM0%2FJNxs9E%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/6783/Eshield_280.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924692911&Signature=lqY%2FfbtXSt8H965lCNmFcsnWfTc%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/6784/Eshield_rv.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924692911&Signature=ey9Qx6RGzzlnHfE8lPb%2B6sq6bxk%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/6785/Emory_hz_rev.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924692911&Signature=RAWGzgXTr4ZVfHQxlntXo9JUzbE%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_65920000000000001/attachments/6786/Emory_vt_280.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924692911&Signature=NQipPWc95R48itrAzJAVC56OjjA%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')"
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' canvas.emory.edu emory.instructure.com emory.beta.instructure.com emory.test.instructure.com canvas-beta.emory.e"
+}

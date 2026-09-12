@@ -57,7 +57,32 @@ function blankWorld() {
     fail: {},
     // added to every Canvas answer, to stand in for a slow school
     delayMs: 0,
+    // Canvas's leaky bucket (app/middleware/request_throttle.rb), when set:
+    // { hwm: 600, upFront: 50, outflow: 10, cost: 8 }. Every request in
+    // flight reserves `upFront`; at `hwm` the answer is Canvas's own 403.
+    bucket: null,
   };
+}
+
+/// One school's bucket: what is banked, what is in flight, and what was seen.
+function bucketState(world) {
+  return (world._bucket ??= { level: 0, at: Date.now(), inFlight: 0, peakInFlight: 0, throttled: 0, served: 0 });
+}
+
+function bucketAdmit(world) {
+  const b = bucketState(world); const cfg = world.bucket;
+  const now = Date.now();
+  b.level = Math.max(0, b.level - ((now - b.at) / 1000) * cfg.outflow);
+  b.at = now;
+  b.inFlight += 1;
+  b.peakInFlight = Math.max(b.peakInFlight, b.inFlight);
+  if (b.level + b.inFlight * cfg.upFront >= cfg.hwm) { b.inFlight -= 1; b.throttled += 1; return false; }
+  return true;
+}
+
+function bucketRelease(world) {
+  const b = bucketState(world);
+  b.inFlight -= 1; b.served += 1; b.level += world.bucket.cost;
 }
 
 function paged(req, url, rows, world) {
@@ -319,6 +344,10 @@ class FakeServer {
     this.log = [];
     this.upstream = upstream;
     this.record = record;
+    // A school's Theme Editor files (a folder from test/schools/), put into
+    // every proxied page where Canvas itself puts them: the stylesheets at the
+    // end of <head>, the script deferred at the end of <body>.
+    this.theme = null;
     if (record) fs.mkdirSync(record, { recursive: true });
   }
 
@@ -346,6 +375,7 @@ class FakeServer {
     req.on('end', () => {
       let body = {};
       if (raw) { try { body = JSON.parse(raw); } catch { body = {}; } } // a posted form is not JSON
+      if (url.pathname.startsWith('/__theme/')) return this.themeFile(url, res);
       if (url.pathname.startsWith('/__')) return this.control(url, body, res);
       if (url.pathname.startsWith('/rest/v1/rpc/')) {
         if (this.bridge.down) return req.socket.destroy();
@@ -356,10 +386,20 @@ class FakeServer {
       this.log.push({ host, path: url.pathname + url.search });
       if (this.upstream) return this.proxy(req, url, raw, res);
       const w = this.world(host);
+      const metered = w.bucket && url.pathname.startsWith('/api/v1/');
+      if (metered && !bucketAdmit(w)) {
+        // Word for word what Canvas answers (request_throttle.rb#rate_limit_exceeded).
+        res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8', 'X-Rate-Limit-Remaining': '0.0' });
+        return res.end('403 Forbidden (Rate Limit Exceeded)\n');
+      }
       const out = canvasRoute(req, url, w);
       if (out.destroy) return req.socket.destroy();
       if (out.hang) return; // never answer: a school behind a dead SSO hop
-      setTimeout(() => { res.writeHead(out.status, out.headers); res.end(out.body); }, w.delayMs || 0);
+      if (this.theme && /html/.test(String(out.headers?.['Content-Type'] ?? ''))) out.body = this.dress(out.body);
+      setTimeout(() => {
+        if (metered) bucketRelease(w);
+        res.writeHead(out.status, out.headers); res.end(out.body);
+      }, w.delayMs || 0);
     });
   }
 
@@ -387,6 +427,7 @@ class FakeServer {
         if (/json|html|javascript|text/.test(type)) {
           let text = body.toString('utf8');
           for (const t of theirs) text = text.split(t).join(mine);
+          if (this.theme && /html/.test(type)) text = this.dress(text);
           body = Buffer.from(text, 'utf8');
         }
         if (this.record && url.pathname.startsWith('/api/v1/')) {
@@ -405,6 +446,27 @@ class FakeServer {
     up.end();
   }
 
+  /// The school's files into a real Canvas page, where the Theme Editor puts
+  /// them (app/views/layouts/_head.html.erb, _foot.html.erb).
+  dress(html) {
+    const has = (f) => fs.existsSync(path.join(this.theme, f));
+    const head = [
+      has('variables.css') ? '<link rel="stylesheet" href="/__theme/variables.css">' : '',
+      has('custom.css') ? '<link rel="stylesheet" href="/__theme/custom.css">' : '',
+    ].join('');
+    const foot = has('custom.js') ? '<script defer src="/__theme/custom.js"></script>' : '';
+    return html.replace(/<\/head>/i, `${head}</head>`).replace(/<\/body>/i, `${foot}</body>`);
+  }
+
+  themeFile(url, res) {
+    const name = url.pathname.slice('/__theme/'.length);
+    const file = this.theme && /^[\w.-]+(\/[\w.-]+)?$/.test(name) ? path.join(this.theme, name) : null;
+    if (!file || !fs.existsSync(file)) { res.writeHead(404); return res.end(); }
+    const type = name.endsWith('.css') ? 'text/css' : 'application/javascript';
+    res.writeHead(200, { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'no-store' });
+    res.end(fs.readFileSync(file));
+  }
+
   control(url, body, res) {
     const send = (v) => { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(v ?? null)); };
     switch (url.pathname) {
@@ -418,6 +480,11 @@ class FakeServer {
         return send(this.log);
       case '/__log/clear':
         this.log = [];
+        return send(true);
+      case '/__bucket':
+        return send(bucketState(this.world(body.host)));
+      case '/__theme':
+        this.theme = body.dir ?? null;
         return send(true);
       case '/__bridge':
         Object.assign(this.bridge, body);

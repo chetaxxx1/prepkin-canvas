@@ -1,0 +1,70 @@
+{
+  "host": "utexas.instructure.com",
+  "final": "utexas.instructure.com",
+  "fetchedAt": "2026-09-12T16:13:29.397Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster34",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/c8bb839eea979696e394c5f6e9710a1a/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4102
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_10170000000097771/attachments/62905042/utexasmain.css",
+      "bytes": 32
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_10170000000097771/attachments/85698760/UT_Theme_08192025_w-Ally-Well-Being.js",
+      "bytes": 23566
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#2974B3",
+    "ic-brand-primary-darkened-10": "#276EAA",
+    "ic-brand-primary-darkened-15": "#2568A0",
+    "ic-brand-primary-lightened-5": "#3580BF",
+    "ic-brand-primary-lightened-10": "#4087C2",
+    "ic-brand-primary-lightened-15": "#4A8DC6",
+    "ic-brand-button--primary-bgd-darkened-5": "#2974B3",
+    "ic-brand-button--primary-bgd-darkened-15": "#2568A0",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#2B7ABC",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#bf5700",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#005f86",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#bf5700",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_10170000000097771/attachments/39459636/canvas_logo.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1938163743&Signature=YzZ%2FGakuLkPx9%2B36L8Bc1EDE2sM%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_10170000000097771/attachments/39466428/utexas.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1938362224&Signature=cF9RsEP5ifirsHKUNGQz84GLBmg%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_10170000000097771/attachments/39430283/RGB_university_primary.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1937293966&Signature=%2F%2B2VLP4zVGr7KUUA%2FopA7wujdLg%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')"
+  },
+  "deps": {
+    "https://utexas.bluera.com/utexasBlueConnector/Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/0.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' utexas.instructure.com utexas.beta.instructure.com utexas.test.instructure.com utexascie.instructure.com utexasc"
+}

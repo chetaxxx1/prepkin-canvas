@@ -1,0 +1,65 @@
+{
+  "host": "canvas.ubc.ca",
+  "final": "canvas.ubc.ca",
+  "fetchedAt": "2026-09-12T16:34:31.884Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster222",
+  "region": "ca-central-1a",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/bdfac335673415e4344bf7a75998ca21/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3829
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_112240000000000001/attachments/46238304/ubc.css",
+      "bytes": 1960
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_112240000000000001/attachments/46238303/ubc.js",
+      "bytes": 931
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#001F41",
+    "ic-brand-primary-darkened-10": "#001D3E",
+    "ic-brand-primary-darkened-15": "#001C3A",
+    "ic-brand-primary-lightened-5": "#0C2B4D",
+    "ic-brand-primary-lightened-10": "#193656",
+    "ic-brand-primary-lightened-15": "#264160",
+    "ic-brand-button--primary-bgd-darkened-5": "#0051AE",
+    "ic-brand-button--primary-bgd-darkened-15": "#00499C",
+    "ic-brand-button--secondary-bgd-darkened-5": "#009FD6",
+    "ic-brand-button--secondary-bgd-darkened-15": "#008EC0",
+    "ic-brand-font-color-dark-lightened-15": "#4C5860",
+    "ic-brand-font-color-dark-lightened-28": "#677179",
+    "ic-link-color-darkened-10": "#004DA5",
+    "ic-link-color-lightened-10": "#1966BE",
+    "ic-brand-primary": "#002044",
+    "ic-brand-font-color-dark": "#2d3b45",
+    "ic-link-color": "#0055b7",
+    "ic-brand-button--primary-bgd": "#0055b7",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#00a7e1",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#002145",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#002145",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_112240000000000001/attachments/21/ubc_logo.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_112240000000000001/attachments/15/ubc_2017_social_media_avatars_canvas_180x180_mobile_joe_0il_icon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_112240000000000001/attachments/16/UBC_2017_Social_Media_Avatars_Canvas_180x180_Mobile-joe.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_112240000000000001/attachments/17/UBC_2017_Social_Media_Avatars_Canvas_558x558_WindowsTile-joe.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_112240000000000001/attachments/11/UBC_2017_Social_Media_Avatars_Canvas_558x270_WindowsWideTile.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_112240000000000001/attachments/18/2_2016_UBCNarrow_Signature_BlueRGB72.png')"
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' canvas.ubc.ca ubc.instructure.com ubc.beta.instructure.com ubc.test.instructure.com;"
+}

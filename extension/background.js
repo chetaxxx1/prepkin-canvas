@@ -409,15 +409,11 @@ async function connectedOrigins() {
 /// from the hostname — plenty of schools do not have "canvas" in their domain.
 async function isCanvas(origin) {
   try {
-    const res = await fetch(`${origin}/api/v1/users/self`, withTimeout({
-      credentials: 'include',
-      headers: { Accept: 'application/json' },
-    }));
+    const { res, body: me } = await canvasGet(`${origin}/api/v1/users/self`);
     if (res.status === 401 || res.status === 403) {
       return { ok: false, error: 'That is Canvas, but you are logged out.' };
     }
     if (!res.ok) return { ok: false, error: 'That page does not look like Canvas.' };
-    const me = await res.json().catch(() => null);
     // Any site can serve `{"id":1}`. Canvas's own user object always carries the
     // name trio, and its course list is always an array — two signals a site
     // pretending to be Canvas has to fake on purpose, not by accident.
@@ -635,7 +631,7 @@ async function readSchool(origin) {
   const graded = {};
   const weights = {};
   const examined = new Set();
-  const perCourse = await Promise.all(courses.map(async (course) => {
+  const perCourse = await inTurns(courses, async (course) => {
     const raw = await getPaged(
       origin,
       `/api/v1/courses/${course.id}/assignments?include[]=submission&include[]=score_statistics&order_by=due_at&per_page=100`
@@ -655,7 +651,7 @@ async function readSchool(origin) {
     const rawGroups = await getPaged(origin, `/api/v1/courses/${course.id}/assignment_groups?per_page=50`);
     weights[course.id] = mapWeights(rawGroups, { weighted: course.weighted !== false });
     return mapAssignments(raw, { host, course });
-  }));
+  });
 
   const rawTodo = await getPaged(origin, '/api/v1/users/self/todo?per_page=100&include[]=ungraded_quizzes');
   // The sweep sees every enrolment, so hold it to the same courses the term
@@ -664,7 +660,7 @@ async function readSchool(origin) {
 
   // The course calendars, for the phone's Calendar tab. A chunk that fails
   // keeps its last good events, the same as a course whose list failed.
-  const rawEvents = await Promise.all(eventQueries(courses).map((q) => getPaged(origin, q)));
+  const rawEvents = await inTurns(eventQueries(courses), (q) => getPaged(origin, q));
   const events = rawEvents.every((r) => r === null) && previous?.events
     ? previous.events
     : mapEvents(rawEvents.flatMap((r) => r ?? []), { host, courses });
@@ -678,16 +674,58 @@ async function readSchool(origin) {
   };
 }
 
+/// Canvas rations requests with a leaky bucket per session: every request in
+/// flight reserves 50 units up front and the bucket refuses at 600
+/// (canvas-lms app/middleware/request_throttle.rb; Instructure's cloud runs it
+/// at 700). Twelve requests fired together already lose the twelfth, so a
+/// student in a dozen courses lost a course on every first sync. Six at a time
+/// stays well clear and still reads a semester in a few seconds.
+const IN_FLIGHT = 6;
+
+async function inTurns(items, fn) {
+  const out = new Array(items.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(IN_FLIGHT, items.length) }, async () => {
+    while (next < items.length) {
+      const i = next++;
+      out[i] = await fn(items[i], i);
+    }
+  }));
+  return out;
+}
+
+/// The bucket's own refusal — 403, or 429 where a school turned that on, with
+/// its words in the body — as opposed to a real 403, which is "not yours" and
+/// never worth asking again. The bucket drains ten units a second, so a short
+/// wait is enough; three tries, then the endpoint is given up like any other.
+const THROTTLE_WAITS_MS = [3000, 6000, 9000];
+const isThrottled = (res, text) => (res.status === 403 || res.status === 429) && /Rate Limit Exceeded/i.test(text);
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+
 /// One GET with the session cookie already in the browser. No password is ever
-/// asked for, stored, or sent anywhere. Returns null rather than throwing, so a
-/// single bad endpoint cannot take the whole sync down.
+/// asked for, stored, or sent anywhere. Answers `{ res, body }` — `body` is the
+/// parsed JSON, or null when the answer was not JSON — and throws only when the
+/// network did.
+async function canvasGet(url) {
+  for (let attempt = 0; ; attempt += 1) {
+    const res = await fetch(url, withTimeout({ credentials: 'include', headers: { Accept: 'application/json' } }));
+    const text = await res.text().catch(() => '');
+    if (isThrottled(res, text) && attempt < THROTTLE_WAITS_MS.length) {
+      await pause(THROTTLE_WAITS_MS[attempt]);
+      continue;
+    }
+    let body = null;
+    try { body = JSON.parse(text.replace(/^while\(1\);/, '')); } catch {}
+    return { res, body };
+  }
+}
+
+/// Returns null rather than throwing, so a single bad endpoint cannot take the
+/// whole sync down.
 async function getJSON(url) {
   try {
-    const res = await fetch(url, withTimeout({
-      credentials: 'include',
-      headers: { Accept: 'application/json' },
-    }));
-    return res.ok ? await res.json() : null;
+    const { res, body } = await canvasGet(url);
+    return res.ok ? body : null;
   } catch {
     return null;
   }
@@ -704,12 +742,11 @@ async function getPaged(origin, path) {
   let url = `${origin}${path}`;
   let out = null;
   for (let page = 0; page < MAX_PAGES && url; page += 1) {
-    let res;
+    let res; let body;
     try {
-      res = await fetch(url, withTimeout({ credentials: 'include', headers: { Accept: 'application/json' } }));
+      ({ res, body } = await canvasGet(url));
     } catch { return out; }
     if (!res.ok) return out;
-    const body = await res.json().catch(() => null);
     if (!Array.isArray(body)) return out ?? body;
     out = (out ?? []).concat(body);
     url = nextLink(res.headers.get('Link'), origin);

@@ -1,0 +1,65 @@
+{
+  "host": "canvas.duke.edu",
+  "final": "canvas.duke.edu",
+  "fetchedAt": "2026-09-12T16:05:00.607Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster336",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/3804f21a28363699cd6088c2f07a93c6/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3408
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_230140000000000001/attachments/549674/canvas.css",
+      "bytes": 297
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_230140000000000001/attachments/3956777/canvas.js",
+      "bytes": 8339
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#004F94",
+    "ic-brand-primary-darkened-10": "#004B8C",
+    "ic-brand-primary-darkened-15": "#004784",
+    "ic-brand-primary-lightened-5": "#0C5BA0",
+    "ic-brand-primary-lightened-10": "#1964A5",
+    "ic-brand-primary-lightened-15": "#266CAA",
+    "ic-brand-button--primary-bgd-darkened-5": "#004F94",
+    "ic-brand-button--primary-bgd-darkened-15": "#004784",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#464646",
+    "ic-brand-font-color-dark-lightened-28": "#626262",
+    "ic-link-color-darkened-10": "#004B8C",
+    "ic-link-color-lightened-10": "#1964A5",
+    "ic-brand-primary": "#00539B",
+    "ic-brand-font-color-dark": "#262626",
+    "ic-link-color": "#00539b",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#00539b",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#00539b",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_230140000000000001/attachments/8187/logo-duke-main%25402x.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_230140000000000001/attachments/8188/logo-duke-main%25402x.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' canvas.duke.edu duke.instructure.com duke.beta.instructure.com duke.test.instructure.com;"
+}

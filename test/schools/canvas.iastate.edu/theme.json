@@ -1,0 +1,70 @@
+{
+  "host": "canvas.iastate.edu",
+  "final": "canvas.iastate.edu",
+  "fetchedAt": "2026-09-12T16:29:33.734Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster39",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/ffa8cc010d793f3e7895a9c1103766ed/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3662
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_108350000000000001/attachments/33782689/Theme%203%20NEW.css",
+      "error": "The operation was aborted due to timeout"
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_108350000000000001/attachments/35095641/non-mobile.js",
+      "bytes": 3950
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#BE102C",
+    "ic-brand-primary-darkened-10": "#B40F2A",
+    "ic-brand-primary-darkened-15": "#AA0E28",
+    "ic-brand-primary-lightened-5": "#CA1B38",
+    "ic-brand-primary-lightened-10": "#CD2742",
+    "ic-brand-primary-lightened-15": "#D0334D",
+    "ic-brand-button--primary-bgd-darkened-5": "#BE102C",
+    "ic-brand-button--primary-bgd-darkened-15": "#AA0E28",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#006196",
+    "ic-link-color-lightened-10": "#1979AE",
+    "ic-brand-primary": "#c8102e",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#006ba6",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#c8102e",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#f1be48",
+    "ic-brand-global-nav-logo-bgd": "#c8102e",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_108350000000000001/attachments/8547/ISU-Logo-stacked-solid-gold-update3.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_108350000000000001/attachments/8531/iPhone.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_108350000000000001/attachments/8518/IowaState_Stacke_3.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_108350000000000001/attachments/8539/IowaState_Stacke_3nointerlace.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://iastate.bluera.com/iastateBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/0.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.iastate.edu iowastate.instructure.com iowastate.beta.instructure.com iowastate.test.instructure.com;"
+}

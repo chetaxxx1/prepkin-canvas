@@ -1,0 +1,65 @@
+{
+  "host": "canvas.mit.edu",
+  "final": "canvas.mit.edu",
+  "fetchedAt": "2026-09-12T16:02:47.395Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster335",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/1b207eba5bf2b5994aa05dc1db76a923/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3460
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_78670000000000001/attachments/6534193/Canvas-custom.css",
+      "bytes": 258
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_78670000000000001/attachments/6534195/canvas-custom-js.js",
+      "bytes": 361
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#0D75BD",
+    "ic-brand-primary-darkened-10": "#0C6FB3",
+    "ic-brand-primary-darkened-15": "#0C69A9",
+    "ic-brand-primary-lightened-5": "#1981C8",
+    "ic-brand-primary-lightened-10": "#2588CB",
+    "ic-brand-primary-lightened-15": "#318ECE",
+    "ic-brand-button--primary-bgd-darkened-5": "#0D75BD",
+    "ic-brand-button--primary-bgd-darkened-15": "#0C69A9",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0C6FB3",
+    "ic-link-color-lightened-10": "#2588CB",
+    "ic-brand-primary": "#0D7BC6",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0D7BC6",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#334451",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#334451",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_78670000000000001/attachments/428023/MIT-logo-ltgray-white-700x400.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_78670000000000001/attachments/428024/favicon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' canvas.mit.edu mitgsl.instructure.com mitgsl.beta.instructure.com mitgsl.test.instructure.com mit.instructure.co"
+}

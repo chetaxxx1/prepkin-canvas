@@ -35,6 +35,11 @@ struct Costume: Identifiable, Equatable {
         Costume(id: "sorcerer", name: "Sorcerer", price: 1200),
         Costume(id: "grad", name: "Grad", price: 1200),
         Costume(id: "hex", name: "Hex", price: 1200),
+        Costume(id: "champ", name: "Champ", price: 1200),
+        Costume(id: "headliner", name: "Headliner", price: 1200),
+        Costume(id: "netrunner", name: "Netrunner", price: 1200),
+        Costume(id: "count", name: "Count", price: 1200),
+        Costume(id: "abyss", name: "Abyss", price: 1200),
     ]
 
     static let ids: Set<String> = Set(catalog.map(\.id))

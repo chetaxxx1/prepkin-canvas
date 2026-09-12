@@ -1,0 +1,65 @@
+{
+  "host": "canvas.ku.edu",
+  "final": "canvas.ku.edu",
+  "fetchedAt": "2026-09-12T16:27:47.863Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster292",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/f1f9ff59f3ec8da9adb2cb5d84f09751/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3824
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/17122892/UniversityofKansasCanvasCustomCSSFebruary2026.css",
+      "bytes": 32
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/18292485/UniversityofKansasCanvasCustomJSMay182026ReadSpeaker.js",
+      "bytes": 1159
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#004DB1",
+    "ic-brand-primary-darkened-10": "#0049A8",
+    "ic-brand-primary-darkened-15": "#00459F",
+    "ic-brand-primary-lightened-5": "#0C59BD",
+    "ic-brand-primary-lightened-10": "#1962C0",
+    "ic-brand-primary-lightened-15": "#266BC4",
+    "ic-brand-button--primary-bgd-darkened-5": "#004DB1",
+    "ic-brand-button--primary-bgd-darkened-15": "#00459F",
+    "ic-brand-button--secondary-bgd-darkened-5": "#585858",
+    "ic-brand-button--secondary-bgd-darkened-15": "#4F4F4F",
+    "ic-brand-font-color-dark-lightened-15": "#515151",
+    "ic-brand-font-color-dark-lightened-28": "#6C6C6C",
+    "ic-link-color-darkened-10": "#0049A8",
+    "ic-link-color-lightened-10": "#1962C0",
+    "ic-brand-primary": "#0051ba",
+    "ic-brand-font-color-dark": "#333333",
+    "ic-link-color": "#0051ba",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#5c5c5c",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#003459",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#003459",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/23353/KUlogo-nav.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/23354/KU-Favicon.png')",
+    "ic-brand-watermark": "url('https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/23360/Artboard-2.png')",
+    "ic-brand-watermark-opacity": "0.8",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/931/Screen%20Shot%202020-11-12%20at%2010.49.48%20AM.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/23355/KUlogo-mobile-icon.png')",
+    "ic-brand-msapplication-tile-color": "#003459",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/23357/KUlogo-windows-tile.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_191320000000000001/attachments/23358/KUlogoWindows-Tile-Wide.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' canvas.ku.edu ku.instructure.com ku.beta.instructure.com ku.test.instructure.com;"
+}

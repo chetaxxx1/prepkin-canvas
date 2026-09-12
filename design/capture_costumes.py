@@ -34,7 +34,8 @@ COAT_DEFAULT = {"mint": "scholar", "coral": "ninja", "sky": "hoodie",
 # The whole rack from costumes.ts, in the order the rail shows it.
 COSTUMES = ["hoodie", "flannel", "barista", "scholar", "varsity", "pajamas", "keynote",
             "happi", "idol", "racer", "ballet", "hanbok", "biker", "astronaut", "monster",
-            "ninja", "sorcerer", "grad", "hex"]
+            "ninja", "sorcerer", "grad", "hex",
+            "champ", "headliner", "netrunner", "count", "abyss"]
 # Recapture a few: `python3 design/capture_costumes.py astronaut sorcerer`.
 # `--plain` instead captures the undressed families — six coats, three stages, the coat's
 # own default costume at stage III — into the same box, which is what capture_sprout.py

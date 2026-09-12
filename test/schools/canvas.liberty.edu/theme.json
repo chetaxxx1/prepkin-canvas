@@ -1,0 +1,74 @@
+{
+  "host": "canvas.liberty.edu",
+  "final": "canvas.liberty.edu",
+  "fetchedAt": "2026-09-12T16:30:19.689Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster96",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/85006a1ed6cfcd9801cf40ca7d459559/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3505
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_143770000000000001/attachments/124912353/entryPoint-prod.css",
+      "bytes": 139
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_143770000000000001/attachments/124912352/entryPoint.ff35c384b39bbb3b3e9f.js",
+      "bytes": 1007
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#2974B3",
+    "ic-brand-primary-darkened-10": "#276EAA",
+    "ic-brand-primary-darkened-15": "#2568A0",
+    "ic-brand-primary-lightened-5": "#3580BF",
+    "ic-brand-primary-lightened-10": "#4087C2",
+    "ic-brand-primary-lightened-15": "#4A8DC6",
+    "ic-brand-button--primary-bgd-darkened-5": "#0055B7",
+    "ic-brand-button--primary-bgd-darkened-15": "#004CA4",
+    "ic-brand-button--secondary-bgd-darkened-5": "#E3E3E3",
+    "ic-brand-button--secondary-bgd-darkened-15": "#CBCBCB",
+    "ic-brand-font-color-dark-lightened-15": "#434343",
+    "ic-brand-font-color-dark-lightened-28": "#5F5F5F",
+    "ic-link-color-darkened-10": "#2468B7",
+    "ic-link-color-lightened-10": "#3C81D0",
+    "ic-brand-primary": "#2B7ABC",
+    "ic-brand-font-color-dark": "#222222",
+    "ic-link-color": "#2773cb",
+    "ic-brand-button--primary-bgd": "#0059C0",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#eeeeee",
+    "ic-brand-button--secondary-text": "#2773cb",
+    "ic-brand-global-nav-bgd": "#02274c",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#02274c",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#FFFFFF",
+    "ic-brand-global-nav-avatar-border": "#FFF",
+    "ic-brand-global-nav-logo-bgd": "#02274c",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_143770000000000001/attachments/89566062/LU_Canvas_Logo.svg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_143770000000000001/attachments/89566063/Logo-%20dark.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_143770000000000001/attachments/6438/favicon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://lu-canvas-theme.liberty.edu/src/dist/core.js": {
+      "status": 403,
+      "bytes": 146
+    },
+    "https://lms-liberty-university-canvas-theme-${e}.apps.lyn-cre01.liberty.edu/src/dist/core.js": {
+      "status": 503,
+      "bytes": 2503
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.liberty.edu libertyuniversity.instructure.com libertyuniversity.beta.instructure.com libertyuniversity.te"
+}

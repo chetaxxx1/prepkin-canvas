@@ -1,0 +1,74 @@
+{
+  "host": "osu.instructure.com",
+  "final": "osu.instructure.com",
+  "fetchedAt": "2026-09-12T16:14:24.123Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster68",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/ef49f1b8496098c5f5380d332b06c5cb/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3816
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_85970000000000001/attachments/77851660/CarmenCanvas_2025-05-06.css",
+      "bytes": 259126
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_85970000000000001/attachments/82522394/Bux_ally.js",
+      "bytes": 35838
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#B10C2D",
+    "ic-brand-primary-darkened-10": "#A80B2B",
+    "ic-brand-primary-darkened-15": "#9F0B28",
+    "ic-brand-primary-lightened-5": "#BD1839",
+    "ic-brand-primary-lightened-10": "#C02443",
+    "ic-brand-primary-lightened-15": "#C4304E",
+    "ic-brand-button--primary-bgd-darkened-5": "#B10C2D",
+    "ic-brand-button--primary-bgd-darkened-15": "#9F0B28",
+    "ic-brand-button--secondary-bgd-darkened-5": "#F3F3F3",
+    "ic-brand-button--secondary-bgd-darkened-15": "#D9D9D9",
+    "ic-brand-font-color-dark-lightened-15": "#424445",
+    "ic-brand-font-color-dark-lightened-28": "#5F6062",
+    "ic-link-color-darkened-10": "#A80B2B",
+    "ic-link-color-lightened-10": "#C02443",
+    "ic-brand-primary": "#ba0c2f",
+    "ic-brand-font-color-dark": "#212325",
+    "ic-link-color": "#ba0c2f",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#ffffff",
+    "ic-brand-button--secondary-text": "#ba0c2f",
+    "ic-brand-global-nav-bgd": "#f6f7f8",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#212325",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#212325",
+    "ic-brand-global-nav-avatar-border": "#dfe3e5",
+    "ic-brand-global-nav-logo-bgd": "#f6f7f8",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_85970000000000001/attachments/77506804/CarmenCanvas_nav_logo.svg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_85970000000000001/attachments/77505302/OhioState-logo-horizontal.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_85970000000000001/attachments/4/osu-favicon.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1934532599&Signature=R4zpTLEMT1r2PprAzsGAqQehLkU%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "#ffffff",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_85970000000000001/attachments/77506400/OhioState-logo-horizontal%20%25281%2529.svg')"
+  },
+  "deps": {
+    "https://assets.bux.osu.edu/v1.1.1/js/bux.min.js": {
+      "file": "deps/0.js",
+      "bytes": 48190
+    },
+    "https://osu.bluera.com/osuBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/1.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' osu.instructure.com osu.beta.instructure.com osu.test.instructure.com;"
+}

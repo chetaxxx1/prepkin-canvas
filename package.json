@@ -8,6 +8,9 @@
     "package": "bridge/package.sh",
     "test:e2e": "node --test test/e2e.test.js",
     "test:stress": "node --test test/stress.test.js",
-    "test:receipt": "node --test test/receipt.test.js"
+    "test:receipt": "node --test test/receipt.test.js",
+    "test:schools": "node --test test/schools.test.js",
+    "test:variants": "node --test test/variants.test.js",
+    "harvest": "node test/schools/harvest.js"
   }
 }

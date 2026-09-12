@@ -1,0 +1,64 @@
+{
+  "host": "yale.instructure.com",
+  "final": "yale.instructure.com",
+  "fetchedAt": "2026-09-12T16:30:39.952Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster204",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/d19eb43afbc65a7ca57d6b346de614b2/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3954
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_58210000000000001/attachments/814561/custom_css_06-26-17.css",
+      "bytes": 194
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_58210000000000001/attachments/12941579/yale_custom.js",
+      "error": "The operation was aborted due to timeout"
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#003366",
+    "ic-brand-primary-darkened-10": "#003061",
+    "ic-brand-primary-darkened-15": "#002E5B",
+    "ic-brand-primary-lightened-5": "#0C3F72",
+    "ic-brand-primary-lightened-10": "#194979",
+    "ic-brand-primary-lightened-15": "#265381",
+    "ic-brand-button--primary-bgd-darkened-5": "#003366",
+    "ic-brand-button--primary-bgd-darkened-15": "#002E5B",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#2463AD",
+    "ic-link-color-lightened-10": "#3D7BC6",
+    "ic-brand-primary": "#00356b",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#286dc0",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#00356b",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#286dc0",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#00356b",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_58210000000000001/attachments/156381/yale-white%25402x50.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1937381362&Signature=LULDu%2B1z6MO0Hxxx2NAWJhZ8rJE%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.us-east-1.amazonaws.com/account_58210000000000001/attachments/3643048/yale-blue%25402x.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_58210000000000001/attachments/205742/favicon.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1944724833&Signature=odiT28Ma%2FU03Puo5xUW65APG%2BbM%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_58210000000000001/attachments/4834326/YaleMobileCanvasIcon_updated.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_58210000000000001/attachments/4834327/YaleWindowsTile_updated.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.us-east-1.amazonaws.com/account_58210000000000001/attachments/3643051/YaleWindowsTileWide.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.us-east-1.amazonaws.com/account_58210000000000001/attachments/3643052/yaleuniv-blue%25402x.png')"
+  },
+  "csp": "frame-ancestors 'self' yale.instructure.com yale.beta.instructure.com yale.test.instructure.com yale2.instructure.com yale2.beta.instru"
+}

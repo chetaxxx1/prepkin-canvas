@@ -1,0 +1,74 @@
+{
+  "host": "byu.instructure.com",
+  "final": "byu.instructure.com",
+  "fetchedAt": "2026-09-12T16:14:32.554Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster206",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/9c0bcb409f495180772cbda80330adcf/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 5141
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/10758880/BYU%20Canvas%20Theme%20Existing%20Backup%202025-06-16.css",
+      "bytes": 5806161
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/13330238/updated%20javascript.js",
+      "bytes": 12920
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#002C59",
+    "ic-brand-primary-darkened-10": "#002A54",
+    "ic-brand-primary-darkened-15": "#002850",
+    "ic-brand-primary-lightened-5": "#0C3865",
+    "ic-brand-primary-lightened-10": "#19426D",
+    "ic-brand-primary-lightened-15": "#264D75",
+    "ic-brand-button--primary-bgd-darkened-5": "#002C59",
+    "ic-brand-button--primary-bgd-darkened-15": "#002850",
+    "ic-brand-button--secondary-bgd-darkened-5": "#003A9D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#00348D",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0E3D6D",
+    "ic-link-color-lightened-10": "#275586",
+    "ic-brand-primary": "#002e5d",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0f4379",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#003da5",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#ededed",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#002e5d",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#689fd8",
+    "ic-brand-global-nav-avatar-border": "#002e5d",
+    "ic-brand-global-nav-logo-bgd": "#ededed",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/31507/BYU_IM26a_all.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1956917643&Signature=7nAOFG7osp0uuC6IdC4PH7gVj1I%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/26677/BYU_Y.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1956918044&Signature=PprmqyrDnz%2BrwnrMa%2BZJ1Gd1hYM%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/17545/BYU_IM54d_white.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1956918044&Signature=VdoDc664EmRADX2TdsOq5IXifi4%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/31557/BYU_monogram_558.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1956918044&Signature=1yoG8eGOjaDW38c2Xm4V7rp856E%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/31558/BYU_monogram_270.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1956918044&Signature=LLStc69SnlhGSgpQR2p%2BOiN3HPI%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_74070000000000001/attachments/29667/rtnavfiller.jpg?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1956918044&Signature=1ByV6Q6El1Klv%2BsFYbEuqqWru78%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')"
+  },
+  "deps": {
+    "https://canvas-cdn.pope.tech/loader.min.js": {
+      "file": "deps/0.js",
+      "bytes": 3265
+    },
+    "https://canvas-cdn.pope.tech/accessibility-column.min.js?key=${a}": {
+      "file": "deps/1.js",
+      "bytes": 6686
+    }
+  },
+  "csp": "frame-ancestors 'self' byu.instructure.com byu.beta.instructure.com byu.test.instructure.com;"
+}

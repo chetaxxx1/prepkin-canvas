@@ -36,6 +36,12 @@ struct SproutImage: View {
     static let heightRatio: CGFloat = 0.700
 
     @State private var trigger = 0
+    /// Reduce Motion: the still stays a still. The bounce, celebrate, startle and
+    /// slump below are small transforms, but they are still motion the student
+    /// asked not to see, and the web tank already goes quiet for the same switch
+    /// (`SproutView.reduceMotion`). Nothing else changes: the state that would
+    /// have played is drawn at rest.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Costumes that have their own six stills in the catalogue — the whole rack, one
     /// per coat, captured by `design/capture_costumes.py`. Anything not here draws the
@@ -69,10 +75,10 @@ struct SproutImage: View {
                 KeyframeTrack(\.tilt) { tilts(for: animation) }
             }
             .onChange(of: animation) { _, new in
-                if new != .idle { trigger += 1 }
+                if new != .idle, !reduceMotion { trigger += 1 }
             }
             .onChange(of: replay) { _, _ in
-                if animation != .idle { trigger += 1 }
+                if animation != .idle, !reduceMotion { trigger += 1 }
             }
             .accessibilityHidden(true)
     }

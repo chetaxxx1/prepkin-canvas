@@ -15,15 +15,23 @@ mkdir -p "$OUT"
 shot() { sleep 1.5; xcrun simctl io "$U" screenshot "$OUT/$1.png" >/dev/null 2>&1
          idb ui describe-all --udid "$U" > "$OUT/$1.json" 2>/dev/null || true; echo "  $1"; }
 tap()  { idb ui tap "$1" "$2" --udid "$U"; sleep 0.6; }
+# tapl <label>: tap the element whose label equals it, else the first that contains it.
+tapl() { idb ui describe-all --udid "$U" 2>/dev/null | python3 -c "
+import json,sys
+ns=[n for n in json.load(sys.stdin) if n.get('AXLabel')]
+hit=next((n for n in ns if n['AXLabel']=='$1'), None) or next((n for n in ns if '$1' in n['AXLabel']), None)
+if hit: f=hit['frame']; print(int(f['x']+f['width']/2), int(f['y']+f['height']/2))" | { read x y; [ -n "${x:-}" ] && tap "$x" "$y" || echo "  no '$1' on screen"; }; }
 tab()  { tap "$1" 805; }
 swipe_down() { idb ui swipe 201 300 201 760 --udid "$U" >/dev/null 2>&1 || true; sleep 0.8; }
 
 run() {
   local prefix="$1"
-  # Focus: the chip row with 60 and 90 on it.
+  # Focus: three chips; 60 and 90 sit behind More since 2026-09-12.
   tab 107; shot "$prefix-focus-chips"
-  # The sheet, reason .focus, from tapping the 60 chip.
-  tap 262 470; shot "$prefix-sheet-focus"
+  tapl "More lengths"; sleep 1; shot "$prefix-focus-more"
+  # The sheet, reason .focus, from the 60 chip on More. More closes first, then
+  # the Plus sheet opens, so give it a beat.
+  tapl "60 minutes, in Plus"; sleep 1.5; shot "$prefix-sheet-focus"
   swipe_down
   # Shop, from Home's coin chip.
   tab 47; tap 326 81; shot "$prefix-shop"

@@ -1,0 +1,70 @@
+{
+  "host": "canvas.vt.edu",
+  "final": "canvas.vt.edu",
+  "fetchedAt": "2026-09-12T16:26:36.186Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster8",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/416f8dfc1072696c4c3388632db71984/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3443
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_45110000000000001/attachments/36233810/instructure-canvas_global.css",
+      "bytes": 5810268
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_45110000000000001/attachments/46411178/vtJsLoad.js",
+      "bytes": 12707
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#801E3E",
+    "ic-brand-primary-darkened-10": "#791C3B",
+    "ic-brand-primary-darkened-15": "#721B38",
+    "ic-brand-primary-lightened-5": "#8C2A4A",
+    "ic-brand-primary-lightened-10": "#923554",
+    "ic-brand-primary-lightened-15": "#98405D",
+    "ic-brand-button--primary-bgd-darkened-5": "#801E3E",
+    "ic-brand-button--primary-bgd-darkened-15": "#721B38",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#434343",
+    "ic-brand-font-color-dark-lightened-28": "#5F5F5F",
+    "ic-link-color-darkened-10": "#7E1C3B",
+    "ic-link-color-lightened-10": "#963554",
+    "ic-brand-primary": "#861F41",
+    "ic-brand-font-color-dark": "#222222",
+    "ic-link-color": "#8b1f41",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#8b1f41",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#646464",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#8b1f41",
+    "ic-brand-header-image": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/canvas_logomark_only@2x-e197434829.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_45110000000000001/attachments/4984875/favicon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_45110000000000001/attachments/4984876/hokiemobileicon_180.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_45110000000000001/attachments/4984877/hokiemobileicon_512.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_45110000000000001/attachments/4984878/vt_tag_onclear425.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_45110000000000001/attachments/4984879/vt_notag_onwhite230.gif')"
+  },
+  "deps": {
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/0.js",
+      "bytes": 52310
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.vt.edu vt.instructure.com vt.beta.instructure.com vt.test.instructure.com;"
+}

@@ -1,0 +1,90 @@
+{
+  "host": "webcourses.ucf.edu",
+  "final": "webcourses.ucf.edu",
+  "fetchedAt": "2026-09-12T16:27:56.938Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster212",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/c197d93df9958baaca49be0a674603b4/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3906
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_11580000000089347/attachments/112103535/custom_css_morgan_accordion_widget_1-8-25.css",
+      "error": "fetch failed"
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_11580000000089347/attachments/125182504/customjs-wellbeing-coursedesignations.js",
+      "bytes": 69360
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#2974B3",
+    "ic-brand-primary-darkened-10": "#276EAA",
+    "ic-brand-primary-darkened-15": "#2568A0",
+    "ic-brand-primary-lightened-5": "#3580BF",
+    "ic-brand-primary-lightened-10": "#4087C2",
+    "ic-brand-primary-lightened-15": "#4A8DC6",
+    "ic-brand-button--primary-bgd-darkened-5": "#2974B3",
+    "ic-brand-button--primary-bgd-darkened-15": "#2568A0",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#2B7ABC",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#ffc904",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#000000",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#000000",
+    "ic-brand-global-nav-avatar-border": "#000000",
+    "ic-brand-global-nav-logo-bgd": "#ffc904",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_130000000089347/attachments/54261157/ucf_logo.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1936174100&Signature=JLG6jlOWFtjY7XOv2PXeHExerHM%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_130000000089347/attachments/54261179/webcourses_ffc904.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1936174225&Signature=06C1YHalu1W%2BQUXBm2DGOnSA60g%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')"
+  },
+  "deps": {
+    "https://github.com/private-face/jquery.bind-first/blob/master/dev/jquery.bind-first.js": {
+      "file": "deps/0.js",
+      "bytes": 306512
+    },
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/1.js",
+      "bytes": 52310
+    },
+    "https://canvas-lti.cdl.ucf.edu/course-designations/static/course-designations.js": {
+      "file": "deps/2.js",
+      "bytes": 12390
+    },
+    "https://ucfcdl-reach-prod.s3.us-east-1.amazonaws.com/js/legacyaccordioncontrols.js": {
+      "file": "deps/3.js",
+      "bytes": 2066
+    },
+    "https://canvas-lti.dev.cdl.ucf.edu/course-designations/static/course-designations.js": {
+      "file": "deps/4.js",
+      "bytes": 12390
+    },
+    "https://ucfcdl-reach-prod.s3.us-east-1.amazonaws.com/js/gifplayercontrols.js": {
+      "file": "deps/5.js",
+      "bytes": 10673
+    }
+  },
+  "csp": "frame-ancestors 'self' webcourses.ucf.edu webcourses2c.instructure.com webcourses2c.beta.instructure.com webcourses2c.test.instructure."
+}

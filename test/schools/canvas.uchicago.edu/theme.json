@@ -1,0 +1,86 @@
+{
+  "host": "canvas.uchicago.edu",
+  "final": "canvas.uchicago.edu",
+  "fetchedAt": "2026-09-12T16:04:50.842Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster35",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/fe2457ff8b4ca3ec1417a50bd5da8922/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4130
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_23490000000000001/attachments/731607/ek.css",
+      "bytes": 436
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_23490000000000001/attachments/11615174/PopeTech_SensusAccess_082224.js",
+      "bytes": 16760
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#7A0000",
+    "ic-brand-primary-darkened-10": "#740000",
+    "ic-brand-primary-darkened-15": "#6D0000",
+    "ic-brand-primary-lightened-5": "#860C0C",
+    "ic-brand-primary-lightened-10": "#8C1919",
+    "ic-brand-primary-lightened-15": "#932626",
+    "ic-brand-button--primary-bgd-darkened-5": "#7A0000",
+    "ic-brand-button--primary-bgd-darkened-15": "#6D0000",
+    "ic-brand-button--secondary-bgd-darkened-5": "#5F2621",
+    "ic-brand-button--secondary-bgd-darkened-15": "#55221D",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#800000",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#642822",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#767676",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#642822",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_23490000000000001/attachments/94286/shield.cmyk.reversed.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1941800704&Signature=UMFgyK223WwtXIfmSeqYTDFxDNY%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "0",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_23490000000000001/attachments/94311/wordmark.gothic.rgb.maroon.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1941807709&Signature=EKd2XZunvzZbPkDiQK7TJoRt9sw%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')"
+  },
+  "deps": {
+    "https://uchicago.bluera.com/uchicagoBlueConnector//Scripts/Canvas/BlueCanvas.min.js?": {
+      "file": "deps/0.js",
+      "bytes": 31830
+    },
+    "https://uchicago.evaluationkit.com/CanvasScripts/uchicago.js?v=1": {
+      "file": "deps/1.js",
+      "bytes": 0
+    },
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/2.js",
+      "bytes": 52310
+    },
+    "https://canvas-cdn.pope.tech/loader.min.js": {
+      "file": "deps/3.js",
+      "bytes": 3265
+    },
+    "https://canvas-cdn.pope.tech/accessibility-column.min.js?key=${a}": {
+      "file": "deps/4.js",
+      "bytes": 6686
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.uchicago.edu uchicago.instructure.com uchicago.beta.instructure.com uchicago.test.instructure.com;"
+}

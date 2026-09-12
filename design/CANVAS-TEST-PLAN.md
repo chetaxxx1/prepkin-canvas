@@ -586,6 +586,107 @@ papers and is four short.
 
 **Counts:** unit 108 · Receipt browser 28 · e2e 38 · stress 8 · live 7/7.
 
+## Round 10, 2026-09-12: every school, not one
+
+The question: it works on Dartmouth and on our own sandbox — does it work on
+any school's Canvas? Three facts settle most of it, and a fourth layer of
+tests covers the rest.
+
+**1. Instructure's cloud is one Canvas build for everyone.** `test/schools/harvest.js`
+reads a school's sign-in page (or its not-found page) without logging in and
+records the stylesheet bundle id Canvas prints there. Seventy-three schools —
+Ivies on their own domains, big publics on `instructure.com`, community
+colleges, K-12 districts, UK, Canada, Australia — all answer `common-7faef57a1a`,
+and so does canvas.dartmouth.edu with George logged in. A selector that holds
+on one cloud school holds on all of them until Instructure's next deploy,
+which lands everywhere at once. The sandbox is the open-source build from a
+few months earlier; its brand-variables file has the same hash as the cloud's.
+
+**2. What differs is the theme, and it is public.** Every one of those schools
+but three ships Theme Editor CSS and JavaScript (Berkeley's is 5.8 MB of
+DesignPLUS). The sign-in page loads the same files a student sees, so the
+harvester keeps a copy of each school's and `test/schools.test.js` dresses the
+sandbox's real pages in it, one school at a time, with the real extension on
+top. Per school it asks: are the skin classes on, did the buddy mount, does
+every hook that carries a rule still match, is the ground the paper (rendered
+pixel, light and dark), and did nothing of ours error. A school whose CSS wins
+that fight is one failing row with the school's name on it.
+
+Two more things the same everywhere: every school's Canvas sends one
+security policy, `frame-ancestors` only (73 of 73), so the stylesheet our
+content script appends and the buddy's shadow root cannot be blocked; and the
+policy lists each school's other names (`canvas.dartmouth.edu`,
+`dartmouth.instructure.com`, `.beta.`, `.test.`), all live.
+
+**3. Three things every school shares that the code was wrong about.**
+- Canvas rations requests per session with a leaky bucket
+  (`app/middleware/request_throttle.rb`): 50 units reserved per request in
+  flight, refused at 600, drains 10 a second; the cloud runs it at 700. The sync
+  fired one read per course at once, so a student in a dozen courses lost the
+  twelfth on every first sync — silently, as "keep last good" with nothing
+  good to keep. Reads now go six at a time and a refusal (403 with Canvas's own
+  words) waits and asks again. X9 and X10 below, against the fake's copy of
+  the bucket. Neither Dartmouth (four courses) nor the sandbox (throttle off in
+  a dev build) could ever have shown it.
+- A next-page `Link` pointing at another host was refused, keeping page one.
+  Canvas builds that link from the request host (no `default_url_options`
+  override, checked in source), so a plain school never hits it; a proxy that
+  rewrites hosts would. The link is now moved onto the connected origin instead
+  of dropped (C29 rewritten). Cookies still never leave the origin.
+- A course the school has locked by date comes back from
+  `enrollment_state=active` as a stub — id, name, `access_restricted_by_date`
+  — that answers 401 to everything else. It was kept (no enrolments meant
+  "no evidence"), listed on the phone with no work, and cost two refused
+  requests per sync. `mapCourses` drops it now.
+
+### Layer 4 — every school
+
+| # | Scenario | Result |
+|---|---|---|
+| X9 | 20 courses on a school with Canvas's bucket: every course arrives on the first sync, at most 6 in flight, 0 refusals | pass |
+| X10 | bucket already half full from page loads: refusals happen, the wait-and-retry recovers every course | pass |
+| C29 | next-page link under the school's other name: 150 of 150 read, no request leaves for the other host | pass |
+| S1–S73 | each harvested school's theme on the real sandbox: classes on, buddy mounted, hooks match, paper in both papers, no errors | see `design/signoff/canvas-schools/report.json` |
+| S (fake) | the same themes on the fake's skeleton pages, minutes for all | see `design/signoff/canvas-schools-fake/report.json` |
+| V1 | Spanish; Arabic (Canvas flips to right-to-left) | see `design/signoff/canvas-variants/` |
+| V2 | List View and Recent Activity dashboards | " |
+| V3 | colour overlays hidden (George's own setting): hero stays at opacity 0, course colour stays on the title | " |
+| V4 | collapsed global nav | " |
+| V5 | High Contrast on, on a real page: no class, no stylesheet of ours | " |
+
+**Dartmouth, live, in George's Chrome (read-only, 12:55).** Dashboard: rail,
+logo, two cards with heroes and action rows, Coming Up, Recent Feedback, the
+dashboard header — all matched; skin on, buddy on, a due line on each card;
+no To Do list because there is nothing to do, no sidebar logo because
+Dartmouth has none. Modules: 8 headers, 31 items, rewrite off. Grades:
+`#grades_summary` present under `responsive_student_grades_page`. Assignment
+redirects to a classic quiz: 5 `.user_content` blocks. Next-page links name
+`canvas.dartmouth.edu` itself; bucket reads 700. Dartmouth's theme script
+disables personal access tokens; the extension never needs one. His account
+hides colour overlays: Canvas writes no opacity on a plain-colour hero, so the
+V3 assertion is "whatever Canvas wrote is what shows", not "opacity 0".
+
+**One trap the run itself hit.** Stanford's theme script (356 KB) polls the
+dashboard with synchronous `$.ajax({async: false})` calls to the Canvas API.
+A Playwright tab on that page never navigates away — `page.goto` waits the
+full two minutes with no dialog — and on one shared tab that took every
+school after Stanford down with it (five "failures" in the first full run,
+one of them Sussex, which ships no script at all). The run now opens a fresh
+tab for every page, the way a student opens the next page, and Stanford
+passes. Their students are not stuck: the wedge is a driver-under-load thing,
+not a Canvas thing; but it is the kind of school script the gauntlet exists
+to meet.
+
+What this does not prove, said plainly: a school on a self-hosted or
+deliberately held-back Canvas (rare; the harvester would show a different
+build id), a school whose sub-account theme differs from its root theme (the
+sign-in page shows the root's), a school's JavaScript that loads more
+JavaScript at run time from its own servers (the harvest keeps one level of
+those; the run refuses the rest of the network), and Instructure's next
+deploy. The last is the one that matters, and the answer to it is the same as
+before: `test/live.test.js` L7 and the harvester's build id, run after each
+release.
+
 ## How to run
 
 ```bash

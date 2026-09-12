@@ -1,0 +1,74 @@
+{
+  "host": "canvas.upenn.edu",
+  "final": "canvas.upenn.edu",
+  "fetchedAt": "2026-09-12T16:03:59.822Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster20",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/3b5248ce19703920c44f8b63302f637d/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4647
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/60805130/overridesNew.css?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1948538366&Signature=j6k76qZWj8oKvB61499YRFtNyRo%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0",
+      "bytes": 165
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/163976433/penn-canvas.js",
+      "bytes": 4226
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#2974B3",
+    "ic-brand-primary-darkened-10": "#276EAA",
+    "ic-brand-primary-darkened-15": "#2568A0",
+    "ic-brand-primary-lightened-5": "#3580BF",
+    "ic-brand-primary-lightened-10": "#4087C2",
+    "ic-brand-primary-lightened-15": "#4A8DC6",
+    "ic-brand-button--primary-bgd-darkened-5": "#2974B3",
+    "ic-brand-button--primary-bgd-darkened-15": "#2568A0",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#2B7ABC",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#f2f2f2",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#011f5b",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#990000",
+    "ic-brand-global-nav-avatar-border": "#011f5b",
+    "ic-brand-global-nav-logo-bgd": "#f2f2f2",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/106000222/simplified-shield.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/58626934/favicon.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1936767967&Signature=4oOLwkP9WdWf3HTugvQMjEr%2BVn0%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/58626935/apple-touch-icon11.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1936767967&Signature=9XrObqp031TqI7XzhByir09AwxQ%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-color": "#18204f",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/58626936/windows-tile12.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1936767967&Signature=fIojZMUOVF4YzOmVWtIAc7LoyXo%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/58626938/windows-tile-wide2.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1936767968&Signature=2A9dCQut4c1Fk8Nm9I%2Br0osRo1o%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_250000000096678/attachments/58626939/shield-logotype-whitebkgd-RGB-1k.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1936767968&Signature=lyt0qMRjRLcQ5otGqneneFYCUJQ%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')"
+  },
+  "deps": {
+    "https://d2u53n8918fnto.cloudfront.net/atomic_search_widget.js?ts": {
+      "file": "deps/0.js",
+      "bytes": 17161
+    },
+    "https://www.googletagmanager.com/gtm.js?id=": {
+      "status": 400,
+      "bytes": 1551
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.upenn.edu wharton.instructure.com wharton.beta.instructure.com wharton.test.instructure.com penngse.instr"
+}

@@ -1,0 +1,65 @@
+{
+  "host": "princeton.instructure.com",
+  "final": "princeton.instructure.com",
+  "fetchedAt": "2026-09-12T16:12:36.115Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster99",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/9e7a7548ac600e9e07c33247920d67e9/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3906
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/2126502/canvas-20230317.css",
+      "bytes": 7087
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/3328177/prod-10_15_24_14_42.js",
+      "bytes": 30754
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#38404D",
+    "ic-brand-primary-darkened-10": "#353D49",
+    "ic-brand-primary-darkened-15": "#323945",
+    "ic-brand-primary-lightened-5": "#434C59",
+    "ic-brand-primary-lightened-10": "#4D5562",
+    "ic-brand-primary-lightened-15": "#575F6B",
+    "ic-brand-button--primary-bgd-darkened-5": "#38404D",
+    "ic-brand-button--primary-bgd-darkened-15": "#323945",
+    "ic-brand-button--secondary-bgd-darkened-5": "#D55528",
+    "ic-brand-button--secondary-bgd-darkened-15": "#BF4C24",
+    "ic-brand-font-color-dark-lightened-15": "#474747",
+    "ic-brand-font-color-dark-lightened-28": "#636363",
+    "ic-link-color-darkened-10": "#226999",
+    "ic-link-color-lightened-10": "#3A81B1",
+    "ic-brand-primary": "#3a4351",
+    "ic-brand-font-color-dark": "#272727",
+    "ic-link-color": "#2574A9",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#e0592a",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#3a4351",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#e0592a",
+    "ic-brand-global-nav-avatar-border": "#e77500",
+    "ic-brand-global-nav-logo-bgd": "#3a4351",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.us-east-1.amazonaws.com/account_124650000000000001/attachments/3008/PU-Canvas-shield.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/2965/pu_shield_canvas_light_border_120px.png')",
+    "ic-brand-watermark": "url('https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/1881/PUsig1-bw-bs.png')",
+    "ic-brand-watermark-opacity": "0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/2978/canvas_at.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/2979/canvas_at.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/2980/canvas_at.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/2843/canvas_at_pu_dark_blue_bg.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_124650000000000001/attachments/2841/canvas_at_pu_dark_blue_text.png')"
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' princeton.instructure.com princeton.beta.instructure.com princeton.test.instructure.com;"
+}

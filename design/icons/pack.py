@@ -9,7 +9,9 @@ Raster, not vector: the set is illustrated, not geometric, so there is no path
 data to preserve. 264pt at 3x covers every place the app draws one — the largest
 is the 64pt lesson cover.
 
-Run:  python3 design/icons/cut.py && python3 design/icons/pack.py
+Run:  python3 design/icons/cut.py && python3 design/icons/pack.py [--only grid-l]
+
+`--only` packs one sheet's icons and still regenerates the whole tint table.
 """
 import os, sys, json, glob
 from PIL import Image
@@ -77,9 +79,12 @@ struct IconTile: View {
 
 
 def main():
+    only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
     assert os.path.isdir(CAT), CAT
     fams = list(M.TINT)
-    for name, _, _, _, _, _ in M.SET:
+    for name, _, _, _, sheet, _ in M.SET:
+        if only is not None and sheet != only:
+            continue
         src = Image.open(os.path.join(PNG, name + ".png")).convert("RGBA")
         d = os.path.join(CAT, f"icon-{name}.imageset")
         os.makedirs(d, exist_ok=True)

@@ -1,0 +1,65 @@
+{
+  "host": "canvas.rice.edu",
+  "final": "canvas.rice.edu",
+  "fetchedAt": "2026-09-12T16:09:12.928Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster240",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/1797d260c0b0baaa6700b78d51fa39c9/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3921
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_24130000000000001/attachments/5724795/canvas.css",
+      "bytes": 742
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_24130000000000001/attachments/7719470/lms.js",
+      "bytes": 35286
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#002365",
+    "ic-brand-primary-darkened-10": "#002160",
+    "ic-brand-primary-darkened-15": "#001F5B",
+    "ic-brand-primary-lightened-5": "#0C2E71",
+    "ic-brand-primary-lightened-10": "#193978",
+    "ic-brand-primary-lightened-15": "#264480",
+    "ic-brand-button--primary-bgd-darkened-5": "#002365",
+    "ic-brand-button--primary-bgd-darkened-15": "#001F5B",
+    "ic-brand-button--secondary-bgd-darkened-5": "#747474",
+    "ic-brand-button--secondary-bgd-darkened-15": "#686868",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#006EAE",
+    "ic-link-color-lightened-10": "#1987C7",
+    "ic-brand-primary": "#00246a",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#007ac1",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#7a7a7a",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#00246a",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#00246a",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_24130000000000001/attachments/5376318/Rice_Owl_Canvas_4.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_24130000000000001/attachments/5380432/favicon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_24130000000000001/attachments/5376321/Rice_Owl_Canvas_Moblie_Template.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_24130000000000001/attachments/5376324/Rice_Owl_Canvas_Windows_Tile.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_24130000000000001/attachments/5376325/Rice_Owl_Canvas_Windows_Wide.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' canvas.rice.edu rice.instructure.com rice.beta.instructure.com rice.test.instructure.com;"
+}

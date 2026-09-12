@@ -1,0 +1,70 @@
+{
+  "host": "canvas.colorado.edu",
+  "final": "canvas.colorado.edu",
+  "fetchedAt": "2026-09-12T16:05:39.936Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster39",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/85100468761422ed6380b028ee9204c6/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3369
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_107720000000000001/attachments/74035874/dp.css",
+      "bytes": 5805742
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_107720000000000001/attachments/84364103/CanvasJS_6-21-26.js",
+      "bytes": 2938
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#525658",
+    "ic-brand-primary-darkened-10": "#4E5153",
+    "ic-brand-primary-darkened-15": "#4A4D4F",
+    "ic-brand-primary-lightened-5": "#5E6264",
+    "ic-brand-primary-lightened-10": "#666A6C",
+    "ic-brand-primary-lightened-15": "#6F7274",
+    "ic-brand-button--primary-bgd-darkened-5": "#006DB3",
+    "ic-brand-button--primary-bgd-darkened-15": "#0061A0",
+    "ic-brand-button--secondary-bgd-darkened-5": "#525658",
+    "ic-brand-button--secondary-bgd-darkened-15": "#4A4D4F",
+    "ic-brand-font-color-dark-lightened-15": "#606060",
+    "ic-brand-font-color-dark-lightened-28": "#787878",
+    "ic-link-color-darkened-10": "#0067AA",
+    "ic-link-color-lightened-10": "#1980C2",
+    "ic-brand-primary": "#565a5c",
+    "ic-brand-font-color-dark": "#444444",
+    "ic-link-color": "#0072bc",
+    "ic-brand-button--primary-bgd": "#0072bc",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#565a5c",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#444444",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#444444",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#444444",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_107720000000000001/attachments/507179/cu_stack.svg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_107720000000000001/attachments/3661/cu_favicon.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_107720000000000001/attachments/3662/cu_mobile.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_107720000000000001/attachments/3663/cu_tile.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_107720000000000001/attachments/3664/cu_tile_wide.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://www.googletagmanager.com/gtm.js?id=": {
+      "status": 400,
+      "bytes": 1551
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.colorado.edu cuboulder.instructure.com cuboulder.beta.instructure.com cuboulder.test.instructure.com;"
+}

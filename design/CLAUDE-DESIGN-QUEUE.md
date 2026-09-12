@@ -21,6 +21,15 @@ Done, no brief needed: Games (built from `design 38a`), Home Day 1 offer cards (
 
 Needs George before any of these ship: kill or keep the STREAK chip on Games; sign-off on
 the four kin silhouettes, the extension Look accessories, and the clap / add-friend glyphs.
-**And: how tall is Home's tank band?** Finch's pet takes about a fifth of its band, ours
+**Decided 2026-09-12 by council (Opus, GPT-5.6 via Codex, Sonnet contrarian):** the Home tank band
+stays **336pt**. The pressure to shrink it was the grade calculator below the fold, and that card
+has since left Home (it lives on the Kin Card and in Calendar's export menu). Shrinking the band
+touches the web tank's safe-area math (estimates ran 3 to 14 hours) for no goals-list gain on a
+normal day. Revisit only if a real-device shot shows the goals headline under the fold. Brief 0d
+now designs the band *between* the tank and the list, at 336. **Kin's three pills are one plate**
+already (`8ce9947`, "Moss · ★★★ · Buddies", tap = Card, long-press = rename); re-shoot
+`light-kin.png` before the next review.
+
+**Was: how tall is Home's tank band?** Finch's pet takes about a fifth of its band, ours
 takes almost all of a 336pt one. Brief `0d` asks for both heights side by side; nothing
 shrinks until George picks one.

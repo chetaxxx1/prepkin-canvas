@@ -1,0 +1,78 @@
+{
+  "host": "canvas.stanford.edu",
+  "final": "canvas.stanford.edu",
+  "fetchedAt": "2026-09-12T16:23:04.775Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster98",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/4e89dc92b5222c56e5496b6fa1a5cecc/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3395
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_35910000000000001/attachments/16920454/StanfordCanvasLive_Master_04012026.css",
+      "bytes": 4611
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_35910000000000001/attachments/17500426/Master_Canvas_Javascript_08262026.js",
+      "bytes": 356577
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#6D675F",
+    "ic-brand-primary-darkened-10": "#67625A",
+    "ic-brand-primary-darkened-15": "#615C55",
+    "ic-brand-primary-lightened-5": "#79736A",
+    "ic-brand-primary-lightened-10": "#807A72",
+    "ic-brand-primary-lightened-15": "#87827A",
+    "ic-brand-button--primary-bgd-darkened-5": "#005088",
+    "ic-brand-button--primary-bgd-darkened-15": "#00487A",
+    "ic-brand-button--secondary-bgd-darkened-5": "#4A4C4F",
+    "ic-brand-button--secondary-bgd-darkened-15": "#424447",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#004C81",
+    "ic-link-color-lightened-10": "#19659A",
+    "ic-brand-primary": "#726c63",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#00548F",
+    "ic-brand-button--primary-bgd": "#00548f",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#4d4f53",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#8c1515",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#f8f6ea",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#820000",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#8c1515",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_35910000000000001/attachments/49271/Stanford_Canvas.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1914394059&Signature=8JoCySkZIcCjqAB58ozh%2FrBKHAo%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://www.googletagmanager.com/gtm.js?id=": {
+      "status": 400,
+      "bytes": 1551
+    },
+    "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.17/jstree.min.js": {
+      "file": "deps/1.js",
+      "bytes": 141974
+    },
+    "https://canvas-cdn.pope.tech/loader.min.js": {
+      "file": "deps/2.js",
+      "bytes": 3265
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.stanford.edu stanford.instructure.com stanford.beta.instructure.com stanford.test.instructure.com stanfor"
+}

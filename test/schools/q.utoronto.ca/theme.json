@@ -1,0 +1,82 @@
+{
+  "host": "q.utoronto.ca",
+  "final": "q.utoronto.ca",
+  "fetchedAt": "2026-09-12T16:34:52.903Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster75",
+  "region": "ca-central-1b",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/0976b3638d0604c8fdc3c2118e22f3cf/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3567
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_118340000000000001/attachments/434590/uoft-new.css",
+      "bytes": 340
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_118340000000000001/attachments/24721051/UT_CustomJS_20210412-PRD-GTM.js",
+      "bytes": 5179
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#002858",
+    "ic-brand-primary-darkened-10": "#002653",
+    "ic-brand-primary-darkened-15": "#00244F",
+    "ic-brand-primary-lightened-5": "#0C3464",
+    "ic-brand-primary-lightened-10": "#193F6C",
+    "ic-brand-primary-lightened-15": "#264974",
+    "ic-brand-button--primary-bgd-darkened-5": "#002858",
+    "ic-brand-button--primary-bgd-darkened-15": "#00244F",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#002a5c",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#002a5c",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#002a5c",
+    "ic-brand-header-image": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_118340000000000001/attachments/113470/tree%20logo.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_118340000000000001/attachments/113471/tree%20logo.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_118340000000000001/attachments/113518/20171219_Quercus-01.png')"
+  },
+  "deps": {
+    "https://course-evals.utoronto.ca/BlueConnectorInstance1//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/0.js",
+      "bytes": 32069
+    },
+    "https://www.googletagmanager.com/gtm.js?id=": {
+      "status": 400,
+      "bytes": 1551
+    },
+    "https://raw.githubusercontent.com/japerks/canvas_scripts/master/updated_google_analytics_cache_minified.js": {
+      "file": "deps/2.js",
+      "bytes": 2549
+    },
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/3.js",
+      "bytes": 52310
+    }
+  },
+  "csp": "frame-ancestors 'self' q.utoronto.ca utoronto.instructure.com utoronto.beta.instructure.com utoronto.test.instructure.com;"
+}

@@ -189,13 +189,17 @@ $$;
 
 -- The app picks the list up. Returns nothing for a wrong token, which is also
 -- what a guess gets.
+-- Null until a laptop has bound: `todo` defaults to `[]`, and the phone reads an
+-- empty list as "connected, nothing due" (CanvasSync.decode), so a fresh code
+-- that nobody has pasted anywhere said "Connected · list received" on Day 1.
+-- Null is what the phone already reads as "waiting for your laptop".
 create or replace function fetch_todo(p_code text, p_token text)
 returns jsonb
 language sql
 security definer
 set search_path = public, extensions
 as $$
-  select todo from pairings
+  select case when writer_hash is null then null else todo end from pairings
    where code = p_code and owner_hash = token_hash(p_token) and expires_at > now();
 $$;
 

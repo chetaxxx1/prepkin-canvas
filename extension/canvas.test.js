@@ -90,6 +90,14 @@ test('a missing term or state is not evidence against a course', () => {
   assert.equal(mapCourses([{ id: 3, name: 'Seminar', enrollments: [] }], {}, { now: NOW }).length, 1);
 });
 
+test('a course the school has locked by date is a stub, and drops out', () => {
+  // Canvas lists it as active but hands back only id, name and the flag; every
+  // other call about it answers 401. Common at schools that close courses
+  // after term.
+  assert.deepEqual(mapCourses([{ id: 4, name: 'Chem 5 (Spring)', access_restricted_by_date: true }], {}, { now: NOW }), []);
+  assert.equal(mapCourses([{ id: 4, name: 'Chem 5', access_restricted_by_date: false, enrollments: [] }], {}, { now: NOW }).length, 1);
+});
+
 // MARK: - Which assignments show
 
 test('work due soon shows', () => {
@@ -253,7 +261,7 @@ test('the detailed pass wins, and the sweep only adds what it alone found', () =
   const sweep = mapTodo([
     { type: 'submitting', context_name: 'AP Physics', assignment: { id: 77, name: 'Lab writeup' } },
     { type: 'submitting', context_name: 'Art', assignment: { id: 99, name: 'Sketchbook', due_at: at(1) } },
-  ], HOST);
+  ], HOST, NOW);
 
   const merged = merge(detailed, sweep);
   assert.equal(merged.length, 2, 'the duplicate is dropped, not shown twice');
@@ -328,11 +336,18 @@ test('a next page on the same school is followed', () => {
     `${ORIGIN}/api/v1/courses?page=2`);
 });
 
-test('a next page pointing somewhere else is refused', () => {
-  // These fetches carry the student's Canvas cookies.
+test('a next page under another name is asked of this school, never of the other host', () => {
+  // These fetches carry the student's Canvas cookies. A school set up as
+  // canvas.school.edu but opened as school.instructure.com links its pages
+  // under the configured name; the page is the same, so the path is kept and
+  // the host is ours.
+  assert.equal(nextLink(link('https://dartmouth.instructure.com/api/v1/courses?page=2&per_page=100'), ORIGIN),
+    `${ORIGIN}/api/v1/courses?page=2&per_page=100`);
+  assert.equal(nextLink(link('http://canvas.dartmouth.edu/api/v1/courses?page=2'), ORIGIN),
+    `${ORIGIN}/api/v1/courses?page=2`, 'a downgrade to http is re-asked over https');
+  // Anything that is not an API page is not a page of anything.
   assert.equal(nextLink(link('https://evil.example/steal'), ORIGIN), null);
-  assert.equal(nextLink(link('http://canvas.dartmouth.edu/x'), ORIGIN), null, 'downgrade to http is off-origin');
-  assert.equal(nextLink(link('https://canvas.dartmouth.edu.evil.example/x'), ORIGIN), null);
+  assert.equal(nextLink(link('https://canvas.dartmouth.edu.evil.example/logout'), ORIGIN), null);
 });
 
 test('nextLink survives a missing or unparseable header', () => {

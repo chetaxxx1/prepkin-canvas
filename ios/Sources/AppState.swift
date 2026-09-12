@@ -334,7 +334,26 @@ final class AppState: ObservableObject {
         game.advance()
         game.lastOpenedAt = Date()
         applyDoneMarks()
+        collectSwim()
         rescheduleReminders()
+    }
+
+    /// The fish is back: pay the find, once, and say so. Runs on every open, so
+    /// a student who ignored the 7 PM note still gets it the next morning.
+    @discardableResult
+    func collectSwim() -> KinFind? {
+        guard let find = game.collectSwim() else { return nil }
+        play(.celebrate)
+        show("\(game.activeChibi.displayName) is back. Found \(find.find.name), \(Swim.coins) coins.")
+        rescheduleReminders()
+        return find
+    }
+
+    /// The kin's finds, newest first, as rows for its card.
+    func finds(for speciesID: String) -> [Firsts.Row] {
+        game.finds.filter { $0.kinID == speciesID }.reversed().map {
+            Firsts.Row(id: $0.id, title: "Found \($0.find.name)", done: true, date: $0.at)
+        }
     }
 
     /// Pays what was finished from a notification's Done button or a widget box
@@ -1097,6 +1116,10 @@ final class AppState: ObservableObject {
         canvasStatus = nil
         canvasLink = .notSetUp
         pairingStatus = nil
+        // The card that replaces "Connected" is the code card, and it is drawn
+        // from the same sheet that is already up, so mint the next code now
+        // rather than when the sheet is next opened.
+        ensurePairingCode()
     }
 
     // MARK: - Tasks

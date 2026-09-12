@@ -19,6 +19,9 @@ struct WidgetSnapshot: Codable, Equatable {
 
     static let fileName = "widget.json"
 
+    func swimAway(at now: Date) -> Bool { swimReturnsAt.map { now < $0 } ?? false }
+    func swimBack(at now: Date) -> Bool { swimReturnsAt.map { now >= $0 && !(swimCollected ?? true) } ?? false }
+
     var speciesID: String
     var stage: Int
     var costumeID: String
@@ -37,6 +40,11 @@ struct WidgetSnapshot: Codable, Equatable {
     var lastOpenedAt: Date
     /// When the running shift ends. `nil` when none is running or it is paused.
     var shiftEndsAt: Date?
+    /// The swim: when the fish is back, what it found, and whether the app has
+    /// paid it yet. Out until `swimReturnsAt`; "is back" from then until paid.
+    var swimReturnsAt: Date?
+    var swimFind: String?
+    var swimCollected: Bool?
     var checkInHour: Int
     /// Offsets the day-flavour bank so two phones do not read the same line.
     var dayBankSeed: Int

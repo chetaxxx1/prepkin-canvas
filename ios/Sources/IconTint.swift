@@ -24,11 +24,11 @@ enum IconTint: String {
     /// crashing, so a task category added before its art still draws a tile.
     static func of(_ icon: String) -> IconTint {
         switch icon {
-        case "problemSet", "lifeCare", "connect", "psychology", "tabLearn", "tabPlay", "tierReef", "tierOpenWater", "medalSilver", "pod": return .sky
-        case "writing", "tidy", "finance", "star", "tabFocus", "snack", "medalGold", "questChest", "crown": return .gold
-        case "labs", "walk", "outdoors", "studyTrack", "highFive", "tierTidepool", "tierShallows", "tierKelp", "eye": return .mint
-        case "reading", "meal", "people", "calculator", "heart", "tabHome", "tabFriends", "pet", "medalBronze", "wave", "raceFlags": return .coral
-        case "study", "stretch", "philosophy", "tabCalendar", "collection": return .lilac
+        case "problemSet", "lifeCare", "connect", "psychology", "tabLearn", "tabPlay", "tierReef", "tierOpenWater", "medalSilver", "pod", "classTime", "campus": return .sky
+        case "writing", "tidy", "finance", "star", "tabFocus", "snack", "medalGold", "questChest", "crown", "datePage": return .gold
+        case "labs", "walk", "outdoors", "studyTrack", "highFive", "tierTidepool", "tierShallows", "tierKelp", "eye", "laptop": return .mint
+        case "reading", "meal", "people", "calculator", "heart", "tabHome", "tabFriends", "pet", "medalBronze", "wave", "raceFlags", "backpack": return .coral
+        case "study", "stretch", "philosophy", "tabCalendar", "collection", "lecture": return .lilac
         case "sleep", "work", "tierDeep": return .indigo
         default: return .sky
         }

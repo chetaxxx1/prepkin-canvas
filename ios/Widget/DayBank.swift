@@ -59,7 +59,18 @@ enum DayBank {
     /// slip by one across a clock change the way `ordinality(of: .day)` can.
     static func dayNumber(_ date: Date, calendar: Calendar) -> Int {
         let c = calendar.dateComponents([.year, .month, .day], from: date)
-        let y = c.year ?? 2000, m = c.month ?? 1, d = c.day ?? 1
+        return dayNumber(year: c.year ?? 2000, month: c.month ?? 1, day: c.day ?? 1)
+    }
+
+    /// The same count from a `yyyy-MM-dd` string, the shape the snapshot and the
+    /// save both keep a day in.
+    static func dayNumber(raw: String) -> Int {
+        let p = raw.split(separator: "-").compactMap { Int($0) }
+        guard p.count == 3 else { return 0 }
+        return dayNumber(year: p[0], month: p[1], day: p[2])
+    }
+
+    static func dayNumber(year y: Int, month m: Int, day d: Int) -> Int {
         let a = (14 - m) / 12
         let yy = y + 4800 - a
         let mm = m + 12 * a - 3

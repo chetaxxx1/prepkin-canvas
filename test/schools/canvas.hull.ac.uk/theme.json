@@ -1,0 +1,70 @@
+{
+  "host": "canvas.hull.ac.uk",
+  "final": "canvas.hull.ac.uk",
+  "fetchedAt": "2026-09-12T16:35:21.222Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster15",
+  "region": "eu-west-1a",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/8dbbdb00faf652b8bf0af6faf0ca2355/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3426
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-eu.s3.eu-west-1.amazonaws.com/account_47380000000000001/attachments/3214225/Canvas%20Desktop%20CSS.css",
+      "bytes": 11773
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-eu.s3.eu-west-1.amazonaws.com/account_47380000000000001/attachments/5985221/Canvas.js",
+      "bytes": 5126
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#0D133D",
+    "ic-brand-primary-darkened-10": "#0C123A",
+    "ic-brand-primary-darkened-15": "#0C1137",
+    "ic-brand-primary-lightened-5": "#191F49",
+    "ic-brand-primary-lightened-10": "#252B53",
+    "ic-brand-primary-lightened-15": "#31375C",
+    "ic-brand-button--primary-bgd-darkened-5": "#0D133D",
+    "ic-brand-button--primary-bgd-darkened-15": "#0C1137",
+    "ic-brand-button--secondary-bgd-darkened-5": "#2B56DD",
+    "ic-brand-button--secondary-bgd-darkened-15": "#274DC6",
+    "ic-brand-font-color-dark-lightened-15": "#262626",
+    "ic-brand-font-color-dark-lightened-28": "#474747",
+    "ic-link-color-darkened-10": "#0C123A",
+    "ic-link-color-lightened-10": "#252B53",
+    "ic-brand-primary": "#0D1440",
+    "ic-brand-font-color-dark": "#000000",
+    "ic-link-color": "#0D1440",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#2d5ae8",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#0D1440",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#0D1440",
+    "ic-brand-header-image": "url('https://instructure-uploads-eu.s3.eu-west-1.amazonaws.com/account_47380000000000001/attachments/5257042/UoH_Primary_Brandmark_WHITE.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads-eu.s3.eu-west-1.amazonaws.com/account_47380000000000001/attachments/6968868/UoH_Brandmark_Master_Primary_InkBlue_RGB.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-eu.s3.eu-west-1.amazonaws.com/account_47380000000000001/attachments/6968869/UoH_Brandmark_Master_Primary_White_RGB.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://kit.fontawesome.com/340a1f7181.js": {
+      "status": 403,
+      "bytes": 9
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.hull.ac.uk hull.instructure.com hull.beta.instructure.com hull.test.instructure.com;"
+}

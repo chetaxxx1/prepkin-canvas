@@ -110,11 +110,15 @@ struct SmallWidget: View {
         let snap = entry.snapshot ?? .sample
         let tile = entry.snapshot.map { WidgetLine.tile(for: $0, now: entry.date) } ?? (head: "Hi", sub: "Open Prepkin once.")
         let scene = TankScene.scene(for: snap)
+        // An empty tank while the fish is out. That is the hook: Neko Atsume's
+        // empty yard, Finch's "In progress".
         ZStack(alignment: .bottomTrailing) {
             TankScene(scene: scene)
-            KinStill(snapshot: snap, size: Self.kinSize)
-                .padding(.trailing, 8)
-                .padding(.bottom, 10)
+            if !snap.swimAway(at: entry.date) {
+                KinStill(snapshot: snap, size: Self.kinSize)
+                    .padding(.trailing, 8)
+                    .padding(.bottom, 10)
+            }
             VStack(alignment: .leading, spacing: 1) {
                 Text(tile.head)
                     .font(.system(size: 26, weight: .black, design: .rounded))
@@ -234,6 +238,9 @@ struct RectangularLine: View {
     /// The next due title and time; otherwise the small widget's line, except
     /// when the first line already said "All done", where the kin gets the word.
     private func second(_ snap: WidgetSnapshot) -> String {
+        if snap.swimAway(at: entry.date) || snap.swimBack(at: entry.date) {
+            return WidgetLine.tile(for: snap, now: entry.date).sub
+        }
         if let next = WidgetLine.nextDue(for: snap, now: entry.date), let due = next.dueAt {
             let time = due.formatted(.dateTime.hour().minute())
             return "\(WidgetLine.fit(next.title, leaving: time.count + 3)) · \(time)"
@@ -262,9 +269,11 @@ struct MediumWidget: View {
         let scene = TankScene.scene(for: snap)
         ZStack(alignment: .bottomTrailing) {
             TankScene(scene: scene)
-            KinStill(snapshot: snap, size: 118)
-                .padding(.trailing, 12)
-                .padding(.bottom, 10)
+            if !snap.swimAway(at: entry.date) {
+                KinStill(snapshot: snap, size: 118)
+                    .padding(.trailing, 12)
+                    .padding(.bottom, 10)
+            }
             VStack(alignment: .leading, spacing: 0) {
                 // The head alone: the rows under it say what is left, so the
                 // sentence the small tile needs would only repeat them.
@@ -292,7 +301,7 @@ struct MediumWidget: View {
                     .padding(.trailing, 118)
                 }
                 Spacer(minLength: 2)
-                Text(open > 0 ? "Tap a box to finish it" : WidgetLine.stamp(snap.name, entry.date))
+                Text(open > 0 ? "Tap a box to finish it" : (snap.swimAway(at: entry.date) || snap.swimBack(at: entry.date) ? tile.sub : WidgetLine.stamp(snap.name, entry.date)))
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(scene.isDark ? Theme.onDarkWarm.opacity(0.8) : Theme.tabInk)
                     .lineLimit(1)

@@ -1,0 +1,74 @@
+{
+  "host": "bruinlearn.ucla.edu",
+  "final": "bruinlearn.ucla.edu",
+  "fetchedAt": "2026-09-12T16:24:23.738Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster91",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/5117375607bb7a8969ebca824d559399/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3603
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/14738289/dp.css",
+      "bytes": 5805442
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/24600423/2026-05-14-cidi-updates.js",
+      "bytes": 6325
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#266FA6",
+    "ic-brand-primary-darkened-10": "#24699D",
+    "ic-brand-primary-darkened-15": "#226394",
+    "ic-brand-primary-lightened-5": "#317AB2",
+    "ic-brand-primary-lightened-10": "#3C81B6",
+    "ic-brand-primary-lightened-15": "#4788BA",
+    "ic-brand-button--primary-bgd-darkened-5": "#005181",
+    "ic-brand-button--primary-bgd-darkened-15": "#004973",
+    "ic-brand-button--secondary-bgd-darkened-5": "#003958",
+    "ic-brand-button--secondary-bgd-darkened-15": "#00334F",
+    "ic-brand-font-color-dark-lightened-15": "#515151",
+    "ic-brand-font-color-dark-lightened-28": "#6C6C6C",
+    "ic-link-color-darkened-10": "#025F90",
+    "ic-link-color-lightened-10": "#1B78A9",
+    "ic-brand-primary": "#2774AE",
+    "ic-brand-font-color-dark": "#333",
+    "ic-link-color": "#0269A0",
+    "ic-brand-button--primary-bgd": "#005587",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#003B5C",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#2774AE",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#FFD100",
+    "ic-brand-global-nav-logo-bgd": "#2774AE",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/24897/UCLA%20Canvas%20logo.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/24898/UCLA%20Canvas%20logo%20responsive.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/24899/UCLA%20Canvas%20bookmark%20icon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/24900/UCLA%20Canvas%20mobile%20icon.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/24901/UCLA%20Canvas%20tile%20square.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_148090000000000001/attachments/24902/UCLA%20Canvas%20tile%20wide.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://js.atomicsearchwidget.com/atomic_search_widget.js": {
+      "file": "deps/0.js",
+      "bytes": 17161
+    },
+    "https://bruin-experience.teaching.ucla.edu/eipBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/1.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' bruinlearn.ucla.edu ucla.instructure.com ucla.beta.instructure.com ucla.test.instructure.com canvas.ucla.edu;"
+}

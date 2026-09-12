@@ -39,6 +39,20 @@ node test/compare-shapes.js                                 # real API shapes vs
 Seed once with `design/canvas-skin/sandbox/seed.py`. Screenshots land in
 `design/signoff/canvas-live/`. Stop the VM when done (console → Stop).
 
+## Every school (Layer 4)
+
+Real schools' themes on the real sandbox, no admin needed — only the student login.
+```bash
+node test/schools/harvest.js                  # once, or to refresh: 70+ sign-in pages, anonymous
+npm run test:schools                          # ~5 min per themed school on a quiet Mac; SCHOOLS=a,b to pick
+CANVAS_UPSTREAM=none npm run test:schools     # the same themes on the fake's pages, minutes for all
+npm run test:variants                         # Spanish, Arabic/RTL, List View, hidden overlays, High Contrast
+```
+Results: `design/signoff/canvas-schools/` (a dashboard shot per school, light and dark, and
+`report.json`), `design/signoff/canvas-variants/`. `test/schools/<host>/theme.json` is committed;
+the school's own CSS/JS is not (harvest again). A school on a build other than the others' is
+the first thing to look at: `grep build test/schools/*/theme.json | sort | uniq -c`.
+
 ## The app in the loop
 
 ```bash

@@ -1,0 +1,74 @@
+{
+  "host": "iu.instructure.com",
+  "final": "iu.instructure.com",
+  "fetchedAt": "2026-09-12T16:15:04.387Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster29",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/8c318a61f5932e626da6eb5b6cb8aa8a/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3862
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_290000000098865/attachments/208101439/IU.css",
+      "bytes": 5814338
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_290000000098865/attachments/209725536/IU.js",
+      "bytes": 564569
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#416477",
+    "ic-brand-primary-darkened-10": "#3E5F71",
+    "ic-brand-primary-darkened-15": "#3A5A6B",
+    "ic-brand-primary-lightened-5": "#4D7083",
+    "ic-brand-primary-lightened-10": "#56788A",
+    "ic-brand-primary-lightened-15": "#607F90",
+    "ic-brand-button--primary-bgd-darkened-5": "#416477",
+    "ic-brand-button--primary-bgd-darkened-15": "#3A5A6B",
+    "ic-brand-button--secondary-bgd-darkened-5": "#7C726A",
+    "ic-brand-button--secondary-bgd-darkened-15": "#6F665F",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#71100B",
+    "ic-link-color-lightened-10": "#8A2824",
+    "ic-brand-primary": "#44697d",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#7d110c",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#82786f",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#7d110c",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#7d110c",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_290000000098865/attachments/59430362/iu_trident_white_120x120.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924679130&Signature=MThlsLSJTLYFwVwFiUtoAIh8nWM%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_290000000098865/attachments/59430363/favicon.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1924679130&Signature=Y%2BNFxo2AyZgrmcejhTvGY1Spyv0%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://tst-coursequestionnaire.iu.edu/BlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "status": 404,
+      "bytes": 0
+    },
+    "https://coursequestionnaire.iu.edu/BlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/1.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' iu.instructure.com iu.beta.instructure.com iu.test.instructure.com;"
+}

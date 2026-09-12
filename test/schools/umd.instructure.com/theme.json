@@ -1,0 +1,70 @@
+{
+  "host": "umd.instructure.com",
+  "final": "umd.instructure.com",
+  "fetchedAt": "2026-09-12T16:31:49.616Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster47",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": true,
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/f9a0aba86a887d9da44e5fb62bbe920b/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4642
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_11330000000081466/attachments/87703693/Prod-dp.css",
+      "bytes": 5812418
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_11330000000081466/attachments/88006762/247button.js",
+      "bytes": 12268
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#920000",
+    "ic-brand-primary-darkened-10": "#8A0000",
+    "ic-brand-primary-darkened-15": "#830000",
+    "ic-brand-primary-lightened-5": "#9E0C0C",
+    "ic-brand-primary-lightened-10": "#A31919",
+    "ic-brand-primary-lightened-15": "#A82626",
+    "ic-brand-button--primary-bgd-darkened-5": "#920000",
+    "ic-brand-button--primary-bgd-darkened-15": "#830000",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#990000",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#990000",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#000000",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#990000",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_120000000081466/attachments/44159797/nav-logo-2.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1937381306&Signature=4XX%2BekgWwiJ5UWX2Q6gjF%2B%2BgfhY%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_120000000081466/attachments/44159818/umd.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1937381306&Signature=KhIz7VvLBsAEAINSKbfCqL%2B6hFQ%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_120000000081466/attachments/44159819/umdlogo-final-gray.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1937381306&Signature=MqO2MP0OD%2Flvb1eCu7eril5dHLI%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_120000000081466/attachments/44159819/umdlogo-final-gray.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1937381306&Signature=MqO2MP0OD%2Flvb1eCu7eril5dHLI%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_120000000081466/attachments/44159819/umdlogo-final-gray.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1937381306&Signature=MqO2MP0OD%2Flvb1eCu7eril5dHLI%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://lts.umd.edu/CanvasUI/EmailList/emaillist.js": {
+      "file": "deps/0.js",
+      "bytes": 3098
+    }
+  },
+  "csp": "frame-ancestors 'self' umd.instructure.com myelms.umd.edu umd.beta.instructure.com umd.test.instructure.com;"
+}

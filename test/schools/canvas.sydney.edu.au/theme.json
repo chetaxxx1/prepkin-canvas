@@ -1,0 +1,82 @@
+{
+  "host": "canvas.sydney.edu.au",
+  "final": "canvas.sydney.edu.au",
+  "fetchedAt": "2026-09-12T16:19:16.637Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster200",
+  "region": "ap-southeast-2b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/508cbd0d8c2a6383cedb3316a6d68102/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3638
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_31560000000000001/attachments/50256669/UsydTheme_27052026_cleaned.css",
+      "bytes": 29628
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-apse2.s3.ap-southeast-2.amazonaws.com/account_31560000000000001/attachments/49308519/UsydTheme_16042026.js",
+      "bytes": 40181
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#DB4325",
+    "ic-brand-primary-darkened-10": "#CF3F23",
+    "ic-brand-primary-darkened-15": "#C43C21",
+    "ic-brand-primary-lightened-5": "#E74F30",
+    "ic-brand-primary-lightened-10": "#E8583B",
+    "ic-brand-primary-lightened-15": "#E96146",
+    "ic-brand-button--primary-bgd-darkened-5": "#DB4325",
+    "ic-brand-button--primary-bgd-darkened-15": "#C43C21",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#054C87",
+    "ic-link-color-lightened-10": "#1E65A0",
+    "ic-brand-primary": "#e64626",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#055496",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#334451",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#ffffff",
+    "ic-brand-header-image": "url('https://instructure-uploads-apse2.s3-ap-southeast-2.amazonaws.com/account_31560000000000001/attachments/305270/usyd_logo.jpg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads-apse2.s3-ap-southeast-2.amazonaws.com/account_31560000000000001/attachments/128313/Usyd%20new%20logo%20mono.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads-apse2.s3-ap-southeast-2.amazonaws.com/account_31560000000000001/attachments/128371/mobile%20logo.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads-apse2.s3-ap-southeast-2.amazonaws.com/account_31560000000000001/attachments/128314/Usyd%20new%20logo%20mono.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-apse2.s3-ap-southeast-2.amazonaws.com/account_31560000000000001/attachments/128315/USydLogo.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js": {
+      "file": "deps/0.js",
+      "bytes": 86659
+    },
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/1.js",
+      "bytes": 52310
+    },
+    "https://js.atomicsearchwidget.com/atomic_search_widget.js": {
+      "file": "deps/2.js",
+      "bytes": 17161
+    },
+    "https://d1embgbpmfo5b.cloudfront.net/main.js": {
+      "file": "deps/3.js",
+      "bytes": 293
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.sydney.edu.au sydney.instructure.com sydney.beta.instructure.com sydney.test.instructure.com sydneyprod.i"
+}

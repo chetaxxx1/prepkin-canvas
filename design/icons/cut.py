@@ -12,7 +12,10 @@ Three things happen here, and all three matter:
 3. Everything lands on a square 512 canvas so the app never has to think about
    an icon's aspect.
 
-Run:  python3 design/icons/cut.py
+Run:  python3 design/icons/cut.py [--only grid-l]
+
+`--only` cuts one sheet and leaves every other icon's PNG alone — a cut PNG can be
+hand-tuned after the fact (tabPlay was hue-shifted), and a full re-cut would undo it.
 """
 import os, sys, math
 from collections import deque
@@ -87,15 +90,18 @@ def place(im, cover=COVER):
 
 
 def main():
+    only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
     os.makedirs(OUT, exist_ok=True)
     sheets = {k: Image.open(os.path.join(SRC, k + ".png")).convert("RGBA")
-              for k in M.GRIDS}
+              for k in M.GRIDS if only is None or k == only}
     for name, _, group, _, src, idx in M.SET:
+        if only is not None and src != only:
+            continue
         cols, rows = M.GRIDS[src]
         cover = BARE_COVER if name in M.NO_TILE else COVER
         place(cell(sheets[src], cols, rows, idx), cover).save(
             os.path.join(OUT, name + ".png"))
-    print(f"{len(M.SET)} icons -> {OUT}")
+    print(f"{len([1 for r in M.SET if only is None or r[4] == only])} icons -> {OUT}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,70 @@
+{
+  "host": "canvas.cornell.edu",
+  "final": "canvas.cornell.edu",
+  "fetchedAt": "2026-09-12T16:03:49.264Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster31",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/bf2ac3806e3d941c072aff428eac3ecc/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3632
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_97130000000000001/attachments/13847858/Canvas%20Custom%20CSS%2020251013.css",
+      "bytes": 2944
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_97130000000000001/attachments/15767774/Canvas%20Custom%20JS%2020260811.js",
+      "bytes": 12358
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#AB1A1A",
+    "ic-brand-primary-darkened-10": "#A21919",
+    "ic-brand-primary-darkened-15": "#991717",
+    "ic-brand-primary-lightened-5": "#B62626",
+    "ic-brand-primary-lightened-10": "#BA3131",
+    "ic-brand-primary-lightened-15": "#BE3D3D",
+    "ic-brand-button--primary-bgd-darkened-5": "#AB1A1A",
+    "ic-brand-button--primary-bgd-darkened-15": "#991717",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#A21919",
+    "ic-link-color-lightened-10": "#BA3131",
+    "ic-brand-primary": "#b31b1b",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#b31b1b",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#262626",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#d43c3c",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#d12e2e",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_97130000000000001/attachments/37921/bold_cornell_logo_simple_white_red.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_97130000000000001/attachments/29724/cornellfac.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://teachingevals.cornell.edu/cuBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/0.js",
+      "bytes": 31365
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.cornell.edu cornell.instructure.com cornell.beta.instructure.com cornell.test.instructure.com;"
+}

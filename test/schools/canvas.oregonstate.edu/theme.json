@@ -1,0 +1,65 @@
+{
+  "host": "canvas.oregonstate.edu",
+  "final": "canvas.oregonstate.edu",
+  "fetchedAt": "2026-09-12T16:06:11.190Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster26",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/47ff654cb409c80fe554d42854b0d464/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3492
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_10020000000097009/attachments/94832167/themeNoHistory.css",
+      "bytes": 124
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_10020000000097009/attachments/106886516/syl_ally_PROD_updated_20240906.js",
+      "bytes": 2438
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#242424",
+    "ic-brand-primary-darkened-10": "#222222",
+    "ic-brand-primary-darkened-15": "#202020",
+    "ic-brand-primary-lightened-5": "#2F2F2F",
+    "ic-brand-primary-lightened-10": "#3A3A3A",
+    "ic-brand-primary-lightened-15": "#454545",
+    "ic-brand-button--primary-bgd-darkened-5": "#242424",
+    "ic-brand-button--primary-bgd-darkened-15": "#202020",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#C23909",
+    "ic-link-color-lightened-10": "#DB5221",
+    "ic-brand-primary": "#252525",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#d73f09",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#252525",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#d73f09",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_10020000000097009/attachments/67755147/canvas-icon2.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_10020000000097009/attachments/67755149/learnatosu_canvas.png')"
+  },
+  "deps": {},
+  "csp": "frame-ancestors 'self' canvas.oregonstate.edu oregonstate.instructure.com oregonstate.beta.instructure.com oregonstate.test.instructure"
+}

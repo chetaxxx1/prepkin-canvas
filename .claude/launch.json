@@ -1,0 +1,48 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sprout-playground",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/georgeshi/Downloads/Sprout-handoff",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "lesson-pages",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8771",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "/private/tmp/claude-501/-Users-georgeshi-Desktop-app-prepkin-canvas/e3904ae7-86b2-4906-bc59-f5d114852fd9/scratchpad"
+      ],
+      "port": 8771
+    },
+    {
+      "name": "design-handoffs",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8772",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "/Users/georgeshi/Desktop/app/prepkin-canvas/design"
+      ],
+      "port": 8772
+    }
+  ]
+}

@@ -14,3 +14,8 @@ __pycache__/
 # Staging for design/capture_costumes.py. Everything it makes is installed into
 # Assets.xcassets, so a second copy here is 21MB of the same pixels.
 design/sprout-stills/out-costumes/
+
+# Generation trials: hundreds of MB of candidate PNGs/GIFs. The picked ones are
+# copied into ios/SproutWeb; the trial folders are scratch.
+design/tanks/trial/
+design/vfx/out/

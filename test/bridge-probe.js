@@ -300,7 +300,11 @@ function isoWeek(d = new Date()) {
       catch (e) { if (!String(e.message).includes('taken')) throw e; }
     }
     if (!P.phone) throw new Error('no free code in 5 tries');
-    return P.code;
+    // Before any laptop binds, the phone must read null (waiting), not `[]`
+    // (connected, nothing due) — see fetch_todo in schema.sql.
+    const early = await rpc('fetch_todo', { p_code: P.code, p_token: P.phone });
+    if (early !== null) throw new Error(`fetch_todo before bind → ${JSON.stringify(early)}; the phone would say Connected`);
+    return `${P.code}; fetch_todo before bind → null`;
   });
 
   await probe('bind_writer', async () => {

@@ -1,0 +1,70 @@
+{
+  "host": "browardschools.instructure.com",
+  "final": "browardschools.instructure.com",
+  "fetchedAt": "2026-09-12T16:17:22.090Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster73",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/21dadecca12a6b90ea7d5e2f8ed490d3/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 5049
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/256499659/dp.css",
+      "bytes": 5839225
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/256498907/dp.js",
+      "bytes": 19099
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#800D12",
+    "ic-brand-primary-darkened-10": "#790C11",
+    "ic-brand-primary-darkened-15": "#720C10",
+    "ic-brand-primary-lightened-5": "#8C191D",
+    "ic-brand-primary-lightened-10": "#922529",
+    "ic-brand-primary-lightened-15": "#983135",
+    "ic-brand-button--primary-bgd-darkened-5": "#005E93",
+    "ic-brand-button--primary-bgd-darkened-15": "#005483",
+    "ic-brand-button--secondary-bgd-darkened-5": "#0D802A",
+    "ic-brand-button--secondary-bgd-darkened-15": "#0C7226",
+    "ic-brand-font-color-dark-lightened-15": "#262626",
+    "ic-brand-font-color-dark-lightened-28": "#474747",
+    "ic-link-color-darkened-10": "#00598B",
+    "ic-link-color-lightened-10": "#1971A4",
+    "ic-brand-primary": "#860d12",
+    "ic-brand-font-color-dark": "#000000",
+    "ic-link-color": "#00629a",
+    "ic-brand-button--primary-bgd": "#00629a",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#0d862c",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#004d79",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#00629a",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#004d79",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/195476/BCPS-New-Logo.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1943679008&Signature=WhTg7uRAtQVoOS2zlfZtj4kiw24%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/59785/bcps-logo-ico.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1943266238&Signature=dMa5rp%2FfqYTeM9H%2BQjVwzSWGf88%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/59786/bcps-logo-rounded-corners-mobile.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1943266238&Signature=Icg3SPRXlTr0Zlkn1kvbA%2Fx0Wek%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-color": "#3b73b4",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/59787/bcps-logo-rounded-corners-windows.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1943266238&Signature=LtPbZbJqaOARRIbpgoRK5CZb3BM%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/59788/bcps-logo-rounded-corners-windows-wide.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1943266238&Signature=eUZCCk6Awe7qJnyK2G9mOKSqhuI%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_17730000000000001/attachments/691383/BCPS-Banner.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1945886793&Signature=Yu38RAtSFR5yWf0GQSw0q0K8M7c%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')"
+  },
+  "deps": {
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/0.js",
+      "bytes": 52310
+    }
+  },
+  "csp": "frame-ancestors 'self' browardschools.instructure.com browardschools.beta.instructure.com browardschools.test.instructure.com;"
+}

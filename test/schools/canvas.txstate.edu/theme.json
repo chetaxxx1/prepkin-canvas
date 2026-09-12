@@ -1,0 +1,70 @@
+{
+  "host": "canvas.txstate.edu",
+  "final": "canvas.txstate.edu",
+  "fetchedAt": "2026-09-12T16:11:59.363Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster3",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/ed6b23827b87bb4784cea07f9297cc72/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3288
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_30000000000410/attachments/407180375/txStateCanvasCustom.css",
+      "bytes": 5808069
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_30000000000410/attachments/407636163/txStateCanvasCustom.js",
+      "bytes": 27249
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#481510",
+    "ic-brand-primary-darkened-10": "#44140F",
+    "ic-brand-primary-darkened-15": "#40130E",
+    "ic-brand-primary-lightened-5": "#54211B",
+    "ic-brand-primary-lightened-10": "#5D2D27",
+    "ic-brand-primary-lightened-15": "#663833",
+    "ic-brand-button--primary-bgd-darkened-5": "#481510",
+    "ic-brand-button--primary-bgd-darkened-15": "#40130E",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#4b1610",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#4b1610",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#e1d9ce",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#4b1610",
+    "ic-brand-header-image": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/canvas_logomark_only@2x-e197434829.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://authorship.grammarly.com/lti/static/canvas/lti-enhancements.js": {
+      "file": "deps/0.js",
+      "bytes": 10879
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.txstate.edu txstate.instructure.com txstate.beta.instructure.com txstate.test.instructure.com;"
+}

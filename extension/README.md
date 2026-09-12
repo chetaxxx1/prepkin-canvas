@@ -183,10 +183,30 @@ JavaScript behind it, and Show me brings both back while the outline is up.
 npm test              # canvas.js mapping rules and the panel's helpers, no browser
 npm run test:e2e      # the real extension in Chromium against a fake Canvas and bridge
 npm run test:stress   # slow, dead and throttling schools; races; volume
+npm run test:schools  # the real extension on real Canvas dressed as 70+ real schools
+npm run test:variants # Spanish, Arabic (right-to-left), List View, hidden overlays, High Contrast
 ```
 
 The end-to-end suite lives in `../test/`; `design/CANVAS-TEST-PLAN.md` lists every
 scenario it covers and how to set it up on a new Mac.
+
+## Every school
+
+Instructure's cloud runs one Canvas build for every school — `test/schools/harvest.js`
+reads each school's sign-in page without logging in and records the build id, and
+seventy-odd schools from Dartmouth to Berkeley to a Nevada school district all answer
+with the same one. What differs between schools is the theme: the brand colours and
+the CSS and JavaScript a school's admin uploads in the Theme Editor. Those files are
+public (the sign-in page loads them), so the harvester keeps a copy of each, and
+`test/schools.test.js` puts every one of them onto the sandbox's real pages under the
+real extension and checks that the paper still comes through, the buddy mounts, every
+selector the receipt hangs off still matches, and nothing of ours errors. A school
+that later wins that fight shows up as one failing row with its name on it.
+
+Two things every school shares that the code now allows for: Canvas rations requests
+with a bucket that twelve simultaneous reads already fill (so a sync reads six at a
+time and waits out a refusal), and a next-page link is always asked of the connected
+host, whatever name Canvas wrote in it.
 
 ## Files
 

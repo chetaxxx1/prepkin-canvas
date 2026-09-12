@@ -306,6 +306,12 @@ struct GameState: Codable, Equatable {
     /// opens (`KinFlags.decorate`); kept here so a placed prop survives a relaunch.
     var decor = TankDecor()
 
+    /// Today's swim, if the list was finished: the fish is out until `returnsAt`,
+    /// then back with a find until the app pays it. One a day, never restarted.
+    var swim: Swim?
+    /// Everything the fish has brought back, newest last. Lines on the kin's card.
+    var finds: [KinFind] = []
+
     /// Today's shop picks, up to five, as `"kin:ember"` / `"scene:meadow"`.
     var shopPicks: [String] = []
     var shopPickDay: DayKey = DayKey(raw: "")
@@ -430,6 +436,7 @@ struct GameState: Codable, Equatable {
         case widgetOfferDone
         case firstRunStep, schoolLevel, plate, starterCoat, heardFrom, heardFromDone, friendOfferDone
         case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick, lockedPicks, firsts, decor
+        case swim, finds
         case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
         case ladderPlay, threadPlay, balancePlay, pearlsPlay, tracePlay, sortPlay, weavePlay
@@ -547,6 +554,8 @@ struct GameState: Codable, Equatable {
             firsts = Firsts.inferred(from: self)
         }
         decor = try c.decodeIfPresent(TankDecor.self, forKey: .decor) ?? blank.decor
+        swim = try c.decodeIfPresent(Swim.self, forKey: .swim)
+        finds = try c.decodeIfPresent([KinFind].self, forKey: .finds) ?? blank.finds
     }
 
     // MARK: - Day
@@ -803,8 +812,16 @@ struct GameState: Codable, Equatable {
 
     /// Pays for a finished task, once. Returns what was paid, or 0 if it was already
     /// checked off — today for a daily task, ever for a Canvas assignment.
+    ///
+    /// The one that finishes the list also sends the fish out (`startSwimIfEarned`).
     @discardableResult
     mutating func complete(taskID: String, reward: Int, now: Date = Date()) -> Int {
+        let paid = pay(taskID: taskID, reward: reward, now: now)
+        if paid > 0 { startSwimIfEarned(now: now) }
+        return paid
+    }
+
+    private mutating func pay(taskID: String, reward: Int, now: Date) -> Int {
         let day = effectiveDay
         if canvasItems.contains(where: { $0.id == taskID }) {
             guard !isCanvasPaid(taskID) else { return 0 }
@@ -848,6 +865,42 @@ struct GameState: Codable, Equatable {
             if paid > 0 { out.append((task, paid)) }
         }
         return out
+    }
+
+    // MARK: - The swim
+
+    /// The last box ticked sends the fish out, once a day. An un-tick does not
+    /// call it home and a re-tick does not send it again: the day had its swim.
+    /// A day with nothing on the list has no swim either — the list is the bar.
+    @discardableResult
+    mutating func startSwimIfEarned(now: Date = Date(), calendar: Calendar = .current) -> Swim? {
+        guard allDone, swim?.day != effectiveDay else { return nil }
+        let find = Find.draw(day: effectiveDay, seed: findSeed)
+        let out = Swim(day: effectiveDay, startedAt: now,
+                       returnsAt: Swim.returnTime(after: now, checkInHour: settings.nudgeHour, calendar: calendar),
+                       findID: find.id)
+        swim = out
+        return out
+    }
+
+    /// Pays the find, once, when the fish is back. Returns it the first time and
+    /// nil after — the ledger key is the day, so a second open pays nothing.
+    @discardableResult
+    mutating func collectSwim(now: Date = Date()) -> KinFind? {
+        guard var out = swim, out.isBack(at: now) else { return nil }
+        out.collected = true
+        swim = out
+        let posted = ledger.post(CoinEntry(key: "swim:\(out.day.raw)", amount: Swim.coins,
+                                           reason: .swim, day: out.day, at: now))
+        guard posted else { return nil }
+        let find = KinFind(findID: out.findID, kinID: activeChibiID, day: out.day, at: now)
+        finds.append(find)
+        return find
+    }
+
+    /// Offsets the find draw per phone, the way the day bank is offset.
+    var findSeed: Int {
+        abs(Int((installedAt ?? activeChibi.adoptedAt ?? Date(timeIntervalSince1970: 0)).timeIntervalSince1970)) % 1_000_003
     }
 
     mutating func addTask(title: String, kind: TaskKind, recurrence: Recurrence, id: String = UUID().uuidString) {

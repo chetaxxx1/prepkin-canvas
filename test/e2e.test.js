@@ -411,12 +411,15 @@ test('C28 the page cap drops the fifth page, and only the fifth', async () => {
   assert.equal((await phone.fetchTodo()).tasks.length, 400, 'MAX_PAGES is 4: a 500-assignment course loses 100');
 });
 
-test('C29 a next-page link to another host is not followed', async () => {
+test('C29 a next-page link under the school\'s other name is re-asked of this host, and only this host', async () => {
+  // canvas.school.edu and school.instructure.com are one Canvas; its Link
+  // header names whichever one it was set up with. All 150 must arrive, and
+  // not one request may leave for the other name.
   const many = Array.from({ length: 150 }, (_, i) => S.assignment({ id: 1000 + i, name: `Task ${i}`, due: 2 }));
-  const phone = await paired({ ...S.plainSemester(), assignments: { 1: many, 2: [] }, linkHost: 'evil.example' });
+  const phone = await paired({ ...S.plainSemester(), assignments: { 1: many, 2: [] }, linkHost: 'school.instructure.com' });
   await sync();
-  assert.equal((await phone.fetchTodo()).tasks.length, 100);
-  assert.ok((await canvasLog()).every((l) => l.host !== 'evil.example'));
+  assert.equal((await phone.fetchTodo()).tasks.length, 150);
+  assert.ok((await canvasLog()).every((l) => l.host !== 'school.instructure.com'));
 });
 
 test('C30 a payload the bridge refuses is an error, not a silent unpair', async () => {

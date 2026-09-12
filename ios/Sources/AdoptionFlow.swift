@@ -355,6 +355,8 @@ struct AdoptionCard: View {
     /// The Firsts list. Only the Card door shows it; the adoption ceremony's card
     /// has to fit above a button on a 0.9 sheet.
     var firsts: [Firsts.Row]? = nil
+    /// What the fish brought back from its swims, newest first. Card door only.
+    var finds: [Firsts.Row]? = nil
 
     private static let dateStyle: DateFormatter = {
         let f = DateFormatter()
@@ -445,6 +447,9 @@ struct AdoptionCard: View {
                 if let firsts {
                     firstsList(firsts).padding(.top, 6)
                 }
+                if let finds, !finds.isEmpty {
+                    firstsList(finds, title: "Finds").padding(.top, 6)
+                }
 
                 HStack(spacing: 6) {
                     Circle().fill(Theme.slime).frame(width: 9, height: 9)
@@ -489,9 +494,9 @@ struct AdoptionCard: View {
     /// Finch's quests without the hints and the counts. A done row has a mint dot
     /// and its date; a done row from before the list had dates has the dot alone;
     /// an undone row is the words. Never a "?", never "3/5".
-    private func firstsList(_ rows: [Firsts.Row]) -> some View {
+    private func firstsList(_ rows: [Firsts.Row], title: String = "Firsts") -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Firsts")
+            Text(title)
                 .font(Theme.font(10, .black)).tracking(2)
                 .foregroundStyle(Theme.muted)
                 .padding(.bottom, 6)

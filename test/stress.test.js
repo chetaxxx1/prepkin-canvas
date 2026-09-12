@@ -79,6 +79,38 @@ test('X3 a course the school throttles keeps its last good list instead of vanis
   assert.ok(byId(todo, 22), 'course 2 is fresh');
 });
 
+test('X9 twenty courses on a school with Canvas\'s real bucket all arrive on the first sync', { timeout: 90_000 }, async () => {
+  // Canvas reserves 50 units per request in flight and refuses at 600, so
+  // twelve at once already lose the twelfth. Twenty courses is twenty
+  // assignment reads, twenty group reads and two calendar chunks.
+  const w = { ...bigSemester(20, 10), bucket: { hwm: 600, upFront: 50, outflow: 10, cost: 8 }, delayMs: 150 };
+  const phone = await paired(w);
+  const status = await sync();
+  assert.equal(status.ok, true, JSON.stringify(status));
+  const { lastPayload } = await h.storage();
+  assert.equal(Object.keys(lastPayload.graded).length, 20, 'every course read on the first sync');
+  assert.equal((await phone.fetchTodo()).tasks.length, 200);
+  const bucket = await control('bucket', { host: HOST_A });
+  assert.ok(bucket.peakInFlight <= 6, `peak in flight was ${bucket.peakInFlight}`);
+  assert.equal(bucket.throttled, 0, 'nothing was refused');
+});
+
+test('X10 a bucket the page loads already half filled refuses a few reads; the wait-and-retry brings them home', { timeout: 120_000 }, async () => {
+  // A student who just clicked around Canvas starts the sync with the bucket
+  // near the line. Three reads at once tip it; each refused read is asked
+  // again after the bucket has drained.
+  const w = { ...bigSemester(6, 10), bucket: { hwm: 600, upFront: 50, outflow: 10, cost: 8 }, delayMs: 100 };
+  const phone = await paired(w);
+  await control('world', { host: HOST_A, world: { _bucket: { level: 480, at: Date.now(), inFlight: 0, peakInFlight: 0, throttled: 0, served: 0 } } });
+  const [status, ms] = await timed(sync);
+  assert.equal(status.ok, true, JSON.stringify(status));
+  const bucket = await control('bucket', { host: HOST_A });
+  assert.ok(bucket.throttled > 0, 'the fake really refused something');
+  const { lastPayload } = await h.storage();
+  assert.equal(Object.keys(lastPayload.graded).length, 6, `every course read, after ${ms} ms and ${bucket.throttled} refusals`);
+  assert.equal((await phone.fetchTodo()).tasks.length, 60);
+});
+
 // MARK: - Races
 
 test('X4 requests queued while a sync runs are never lost', { timeout: 90_000 }, async () => {

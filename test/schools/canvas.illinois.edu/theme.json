@@ -1,0 +1,78 @@
+{
+  "host": "canvas.illinois.edu",
+  "final": "canvas.illinois.edu",
+  "fetchedAt": "2026-09-12T16:06:55.516Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster97",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/859ba824c0b67b2905780e65c4941539/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3810
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/21760288/canvas_at_illinois.css",
+      "bytes": 5805442
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/22545902/canvas_at_illinois.js",
+      "bytes": 5986
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#132748",
+    "ic-brand-primary-darkened-10": "#122544",
+    "ic-brand-primary-darkened-15": "#112340",
+    "ic-brand-primary-lightened-5": "#1E3354",
+    "ic-brand-primary-lightened-10": "#2A3E5D",
+    "ic-brand-primary-lightened-15": "#364966",
+    "ic-brand-button--primary-bgd-darkened-5": "#132748",
+    "ic-brand-button--primary-bgd-darkened-15": "#112340",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#A54604",
+    "ic-link-color-lightened-10": "#BE5E1D",
+    "ic-brand-primary": "#13294b",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#B74D04",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#13294b",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#13294b",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/205109/block-i.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/2684990/global_nav_block-i%20%20-%2048px.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "0.1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/806/favicon-32x32.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/812/android-icon-144x144.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/813/Illinois-Logo-Reversed-Orange-RGB.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/807/Illinois-Wordmark-Horizontal-Reversed-Orange-RGB.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_145590000000000001/attachments/1755468/University-Wordmark-Full-Color-RGB%20%2528002%2529.png')"
+  },
+  "deps": {
+    "https://canvas-cdn.pope.tech/loader.min.js": {
+      "file": "deps/0.js",
+      "bytes": 3265
+    },
+    "https://canvas-cdn.pope.tech/accessibility-column.min.js?key=${a}": {
+      "file": "deps/1.js",
+      "bytes": 6686
+    },
+    "https://illinois.bluera.com/illinoisBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/2.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.illinois.edu illinoisedu.instructure.com illinoisedu.beta.instructure.com illinoisedu.test.instructure.co"
+}

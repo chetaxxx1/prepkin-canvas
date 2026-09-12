@@ -529,7 +529,7 @@ struct FocusView: View {
                             .background(Capsule().fill(Theme.ink))
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Join \(first.displayName) for \(length) minutes")
+                    .accessibilityLabel("Join \(name(of: first)) for \(length) minutes")
                 }
             }
             .padding(.horizontal, 12).padding(.vertical, 8)
@@ -542,8 +542,15 @@ struct FocusView: View {
     /// One name, or a count. Never a list of names running off the edge.
     private func tableTitle(_ table: [FocusPresence]) -> String {
         guard let first = table.first else { return "" }
-        if table.count == 1 { return first.displayName }
-        return "\(first.displayName) and \(table.count - 1) more"
+        if table.count == 1 { return name(of: first) }
+        return "\(name(of: first)) and \(table.count - 1) more"
+    }
+
+    /// What this phone calls them: the nickname typed on the Friends tab, else the
+    /// word-list name the presence row carries. The row cannot know the nickname —
+    /// it never leaves the phone — so the lookup happens here.
+    private func name(of who: FocusPresence) -> String {
+        state.friends.first { $0.id == who.playerID }?.displayName ?? who.displayName
     }
 
     // MARK: - On shift

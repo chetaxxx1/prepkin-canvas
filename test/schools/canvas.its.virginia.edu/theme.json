@@ -1,0 +1,78 @@
+{
+  "host": "canvas.its.virginia.edu",
+  "final": "canvas.its.virginia.edu",
+  "fetchedAt": "2026-09-12T16:10:07.089Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster353",
+  "region": "us-west-2c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/73ff6859fca3fb90dd7359513c1dc47f/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3711
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/15406852/dp.css",
+      "bytes": 5628471
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/18608172/global-uva-canvas-prod.js",
+      "bytes": 24096
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#0642A5",
+    "ic-brand-primary-darkened-10": "#063F9C",
+    "ic-brand-primary-darkened-15": "#063B94",
+    "ic-brand-primary-lightened-5": "#124EB1",
+    "ic-brand-primary-lightened-10": "#1E57B5",
+    "ic-brand-primary-lightened-15": "#2B60B9",
+    "ic-brand-button--primary-bgd-darkened-5": "#222B48",
+    "ic-brand-button--primary-bgd-darkened-15": "#1E2740",
+    "ic-brand-button--secondary-bgd-darkened-5": "#0642A5",
+    "ic-brand-button--secondary-bgd-darkened-15": "#063B94",
+    "ic-brand-font-color-dark-lightened-15": "#515151",
+    "ic-brand-font-color-dark-lightened-28": "#6C6C6C",
+    "ic-link-color-darkened-10": "#063F9C",
+    "ic-link-color-lightened-10": "#1E57B5",
+    "ic-brand-primary": "#0645AD",
+    "ic-brand-font-color-dark": "#333333",
+    "ic-link-color": "#0645AD",
+    "ic-brand-button--primary-bgd": "#232D4B",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#0645AD",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#232D4B",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#E57200",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#232D4B",
+    "ic-brand-header-image": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/320/Option1_Square_orange.jpg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/321/Option1_Square_orange.jpg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/322/Option1_Orange_on_White_Circle.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/323/Option1_Orange_on_White_Circle.png')",
+    "ic-brand-msapplication-tile-color": "#ffffff",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/324/Option1_Orange_on_White_Square.jpg')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_221190000000000001/attachments/325/Option1_Orange_on_White_Square.jpg')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML": {
+      "file": "deps/0.js",
+      "bytes": 63532
+    },
+    "https://virginia.bluera.com/virginiaBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/1.js",
+      "bytes": 32069
+    },
+    "https://kit.fontawesome.com/1d0dcbc0c3.js": {
+      "file": "deps/2.js",
+      "bytes": 16569
+    }
+  },
+  "csp": "frame-ancestors 'self' canvas.its.virginia.edu universityofvirginia.instructure.com universityofvirginia.beta.instructure.com universit"
+}

@@ -1,0 +1,74 @@
+{
+  "host": "ufl.instructure.com",
+  "final": "ufl.instructure.com",
+  "fetchedAt": "2026-09-12T16:13:40.089Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster30",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "bodyClass": "full-width ic-Login-Body no-headers  primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/4cc89de8f1ab8f4b77bb65a824202b66/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3392
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_10160000000002010/attachments/107305484/UF.css",
+      "bytes": 6044702
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_10160000000002010/attachments/108397025/UFjs815.js",
+      "bytes": 18027
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#D2611D",
+    "ic-brand-primary-darkened-10": "#C75C1B",
+    "ic-brand-primary-darkened-15": "#BC571A",
+    "ic-brand-primary-lightened-5": "#DE6D29",
+    "ic-brand-primary-lightened-10": "#E07534",
+    "ic-brand-primary-lightened-15": "#E27C3F",
+    "ic-brand-button--primary-bgd-darkened-5": "#08487B",
+    "ic-brand-button--primary-bgd-darkened-15": "#07406E",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#084475",
+    "ic-link-color-lightened-10": "#205D8D",
+    "ic-brand-primary": "#dd661e",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#084b81",
+    "ic-brand-button--primary-bgd": "#084b81",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#084b81",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#073d69",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_10160000000002010/attachments/26153557/Vertical_Signature_white-01.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1938075101&Signature=hypWfiXNcSnes3gUU%2FamGZ1F%2FgQ%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://ufl.bluera.com/uflBlueConnector//Scripts/Canvas/BlueCanvas.min.js?": {
+      "file": "deps/0.js",
+      "bytes": 32069
+    },
+    "https://ufl.bluera.com/uflBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/1.js",
+      "bytes": 32069
+    }
+  },
+  "csp": "frame-ancestors 'self' ufl.instructure.com ufl.beta.instructure.com ufl.test.instructure.com;"
+}

@@ -154,7 +154,24 @@ enum NotificationPlanner {
     }
 
     private static func nudges(for state: GameState, name: String, now: Date, calendar: Calendar) -> [PlannedNotification] {
-        return (0..<nudgeHorizon).compactMap { offset -> PlannedNotification? in
+        // The fish is out: tonight's check-in is its return instead. Same hour
+        // when the list was finished in time, otherwise the hour it is back,
+        // and never past the quiet hours.
+        if let swim = state.swim, swim.day == state.effectiveDay, swim.returnsAt > now,
+           calendar.component(.hour, from: swim.returnsAt) <= latestNudgeHour,
+           calendar.component(.hour, from: swim.returnsAt) >= earliestHour {
+            let back = PlannedNotification(
+                id: "nudge:\(swim.day.raw)",
+                title: "\(name) is back",
+                body: "Found \(swim.find.name). \(Swim.coins) coins are waiting.",
+                fireAt: swim.returnsAt)
+            return [back] + laterNudges(for: state, from: 1, now: now, calendar: calendar)
+        }
+        return laterNudges(for: state, from: 0, now: now, calendar: calendar)
+    }
+
+    private static func laterNudges(for state: GameState, from first: Int, now: Date, calendar: Calendar) -> [PlannedNotification] {
+        return (first..<nudgeHorizon).compactMap { offset -> PlannedNotification? in
             guard let day = calendar.date(byAdding: .day, value: offset, to: now),
                   let fire = calendar.date(bySettingHour: state.settings.nudgeHour, minute: 0, second: 0, of: day),
                   fire > now else { return nil }

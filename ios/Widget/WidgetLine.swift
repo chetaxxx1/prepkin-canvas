@@ -22,6 +22,12 @@ enum WidgetLine {
            away >= awayAfterDays {
             return "\(name) is still here."
         }
+        if let back = snap.swimReturnsAt, snap.swimAway(at: now) {
+            return "Out swimming. Back at \(back.formatted(.dateTime.hour().minute()))."
+        }
+        if snap.swimBack(at: now) {
+            return "\(backHead(name)). Found \(snap.swimFind ?? "something")."
+        }
         let tasks = today(snap, now: now, calendar: calendar)
         let open = tasks.filter { !$0.done }
         if let soon = open.filter({ $0.dueAt.map { $0 > now && $0 <= now + dueWindow } ?? false })
@@ -54,6 +60,13 @@ enum WidgetLine {
         if let end = snap.shiftEndsAt, end > now {
             return ("On shift", "until \(end.formatted(.dateTime.hour().minute()))")
         }
+        // The swim outranks the list: the list is finished, that is why it is out.
+        if let back = snap.swimReturnsAt, snap.swimAway(at: now) {
+            return ("Out swimming", "back at \(back.formatted(.dateTime.hour().minute()))")
+        }
+        if snap.swimBack(at: now) {
+            return (backHead(name), "found \(snap.swimFind ?? "something")")
+        }
         if let away = calendar.dateComponents([.day], from: snap.lastOpenedAt, to: now).day,
            away >= awayAfterDays {
             return (name, "is still here.")
@@ -79,6 +92,12 @@ enum WidgetLine {
 
     /// The longest head the big type takes on one line of the small tile.
     static let headLength = 12
+
+    /// "Moss is back", or "Back home" for a name the big type cannot hold.
+    static func backHead(_ name: String) -> String {
+        let named = "\(name) is back"
+        return named.count <= 14 ? named : "Back home"
+    }
 
     /// "Nothing due. Enjoy it." → "Nothing due" / "Enjoy it." A bank line with
     /// no break, or a head too long for the big type, goes under "Nothing due".
@@ -123,6 +142,8 @@ enum WidgetLine {
 
     /// "2 left today", or "All done" — the lock screen's first line.
     static func count(for snap: WidgetSnapshot, now: Date, calendar: Calendar = .current) -> String {
+        if snap.swimAway(at: now) { return "Out swimming" }
+        if snap.swimBack(at: now) { return backHead(snap.name) }
         let tasks = today(snap, now: now, calendar: calendar)
         let open = tasks.filter { !$0.done }.count
         if tasks.isEmpty { return "Nothing due" }
@@ -147,6 +168,7 @@ enum WidgetLine {
                 add(task.dueAt)
             }
             add(snapshot.shiftEndsAt)
+            add(snapshot.swimReturnsAt)
             add(calendar.date(bySettingHour: snapshot.checkInHour, minute: 0, second: 0, of: now))
         }
         add(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now))

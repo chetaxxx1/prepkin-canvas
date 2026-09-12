@@ -392,6 +392,8 @@ struct SproutView: UIViewRepresentable {
     /// `idle` is not an emote — Sprout idles on his own — so it only has to undo
     /// a sleep, which is a toggle on the web side rather than a one-shot.
     static func script(for animation: ChibiAnimation) -> String {
+        // Not one of the 15 emotes: the page picks the worn costume's headline move.
+        if animation == .signature { return "window.RiverSprite.signature()" }
         guard let emote = emote(for: animation) else {
             return "if (window.RiverSprite.isSleeping()) window.RiverSprite.wake()"
         }
@@ -400,7 +402,7 @@ struct SproutView: UIViewRepresentable {
 
     static func emote(for animation: ChibiAnimation) -> String? {
         switch animation {
-        case .idle: return nil
+        case .idle, .signature: return nil
         case .bounce: return "bounce"
         case .celebrate: return "cheer"
         case .wave: return "wave"
@@ -468,6 +470,9 @@ final class SproutSchemeHandler: NSObject, WKURLSchemeHandler {
         case "svg": return "image/svg+xml"
         case "png": return "image/png"
         case "json": return "application/json"
+        // dotlottie-web's renderer (src/vfx.ts in the Sprout build). WebKit will only
+        // stream-compile a module served as this type.
+        case "wasm": return "application/wasm"
         default: return "application/octet-stream"
         }
     }
