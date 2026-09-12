@@ -29,4 +29,22 @@ final class SimplifyTests: XCTestCase {
             }
         }
     }
+
+    // MARK: - Kin (Finch's home: one bubble on the bird, one plate under it)
+
+    /// The name, the stars and the friendship word are one line. They used to be
+    /// two pills under the bubble.
+    func testKinPlateIsOneLine() {
+        XCTAssertEqual(KinPlate.text(name: "Moss", level: 3, stage: .buddies), "Moss · ★★★ · Buddies")
+        XCTAssertEqual(KinPlate.text(name: "Moss", level: 1, stage: .justMet), "Moss · ★☆☆ · Just met")
+    }
+
+    /// Two separators, so the three facts read as three and never run together.
+    func testKinPlateHasExactlyThreeParts() {
+        for level in 1...3 {
+            let parts = KinPlate.text(name: "Ember", level: level, stage: .tankmates).components(separatedBy: " · ")
+            XCTAssertEqual(parts.count, 3)
+            XCTAssertEqual(parts[1].count, 3, "three stars, filled or not")
+        }
+    }
 }

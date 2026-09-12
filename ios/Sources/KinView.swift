@@ -164,8 +164,7 @@ struct KinView: View {
 
             VStack(spacing: 2) {
                 speechBubble
-                namePlate
-                stageWord
+                plate
                 KinArtView(speciesID: kin.speciesID,
                            level: kin.level,
                            skin: kin.skinID,
@@ -212,43 +211,49 @@ struct KinView: View {
         isFirstRun ? "This one is yours. It's free." : "\(kin.displayName) is around."
     }
 
-    /// One plate: the name and the stars, and a tap renames. It used to be two — a
-    /// dashed "Name your kin" pill for an unnamed kin and a plain plate for a named
-    /// one — which disagreed about what the thing was.
-    private var namePlate: some View {
-        Button {
+    /// One plate under the bubble: the name, the stars and the friendship word,
+    /// and nothing else over the fish. Finch's home puts one bubble on the bird
+    /// (Mobbin 18d270f7-7eb4-448f-a928-174b4a7a7aa3); this used to be three pills
+    /// stacked — a name plate, a stage word, a bubble. A tap opens the Card, the
+    /// way Finch's pet card does (Mobbin b2af9c62-89dd-42c0-8704-94fa5e5483ba),
+    /// and a long press renames.
+    private var plate: some View {
+        HStack(spacing: 7) {
+            Text(kin.displayName)
+                .font(Theme.font(14.5, .black))
+                .foregroundStyle(scene.isDark ? .white : Theme.ink)
+            dot
+            StarPips(level: kin.level, size: 13, spacing: 4)
+            dot
+            Text(state.friendshipStage.name)
+                .font(Theme.fixedFont(12, .black))
+                .foregroundStyle(scene.isDark ? Theme.onDarkWarm : Theme.muted)
+        }
+        .padding(.horizontal, 15).padding(.vertical, 7)
+        .frame(minHeight: 44)
+        .background(GlassPill(onDark: scene.isDark, strong: true).padding(.vertical, 6))
+        .contentShape(Rectangle())
+        // Not a Button: a tap and a hold on one control, and the hold must not
+        // also fire the tap on release.
+        .onTapGesture { showCard = true }
+        .onLongPressGesture(minimumDuration: 0.5) {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             draftName = kin.name ?? ""
             renaming = true
-        } label: {
-            HStack(spacing: 9) {
-                Text(kin.displayName)
-                    .font(Theme.font(14.5, .black))
-                    .foregroundStyle(scene.isDark ? .white : Theme.ink)
-                StarPips(level: kin.level, size: 13, spacing: 4)
-            }
-            .padding(.horizontal, 15).padding(.vertical, 7)
-            .frame(minHeight: 44)
-            .background(GlassPill(onDark: scene.isDark, strong: true).padding(.vertical, 6))
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(kin.displayName), \(kin.level) of 3 stars. Tap to rename")
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel("\(KinPlate.text(name: kin.displayName, level: kin.level, stage: state.friendshipStage)). Opens the card")
+        .accessibilityAction(named: "Rename") {
+            draftName = kin.name ?? ""
+            renaming = true
+        }
     }
 
-    /// The friendship word, under the name. Just met, Tankmates, Buddies, Besties,
-    /// Old friends — it only ever goes up, and the card explains it in one line.
-    private var stageWord: some View {
-        Button { showCard = true } label: {
-            Text(state.friendshipStage.name)
-                .font(Theme.fixedFont(11.5, .black))
-                .foregroundStyle(scene.isDark ? Theme.onDarkWarm : Theme.muted)
-                .padding(.horizontal, 11).padding(.vertical, 4)
-                .frame(minHeight: 44)
-                .background(GlassPill(onDark: scene.isDark, strong: false).padding(.vertical, 10))
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("You and \(kin.displayName) are \(state.friendshipStage.name.lowercased()). Opens the card")
+    private var dot: some View {
+        Circle()
+            .fill((scene.isDark ? Color.white : Theme.ink).opacity(0.35))
+            .frame(width: 3, height: 3)
     }
 
     // MARK: - Care
@@ -353,5 +358,15 @@ struct KinView: View {
         .buttonStyle(.plain)
         .padding(.horizontal, Theme.gutter)
         .accessibilityLabel("\(season.name), \(progress.rungsClaimed) of \(season.rungs.count) days claimed, ends \(SeasonCard.endStamp(season))")
+    }
+}
+
+/// The plate's one line, as a string, so the rule "one plate on the fish" can be
+/// tested without a view: "Moss · ★★★ · Buddies".
+enum KinPlate {
+    static func text(name: String, level: Int, stage: FriendshipStage) -> String {
+        let stars = String(repeating: "★", count: max(0, min(3, level)))
+                  + String(repeating: "☆", count: max(0, 3 - max(0, min(3, level))))
+        return "\(name) · \(stars) · \(stage.name)"
     }
 }
