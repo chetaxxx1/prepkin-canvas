@@ -57,7 +57,7 @@ const STUDENT = { login: 'alex@prepkin.test', password: 'PrepkinSandbox!2026' };
   const monday = new Date(); monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7)); monday.setHours(0, 0, 0, 0);
   await worker.evaluate(async ({ o, week }) => {
     await chrome.storage.local.set({
-      onboarded: true, origins: [o],
+      onboarded: true, origins: [o], dashTab: 'planner',
       skin: { dark: false, cards: true, mascot: true, focusMinutes: 25 },
       wallet: {
         coins: 480, owned: ['classic', 'deepsea'], wearing: 'classic',
