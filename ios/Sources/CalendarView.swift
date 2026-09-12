@@ -33,6 +33,7 @@ struct CalendarView: View {
     /// Which entry point opened the sheet. The top third of it changes with this.
     @State private var plusReason: PlusSheet.Reason = .scan
     @State private var exportFile: ExportFile?
+    @State private var showCalc = false
     /// Ticks so "happening now" stops being true when the hour is over.
     @State private var now = Date()
     @State private var todayPulse: CGFloat = 1
@@ -96,6 +97,7 @@ struct CalendarView: View {
         .sheet(item: $exportFile) { file in
             ShareLinkSheet(url: file.url)
         }
+        .sheet(isPresented: $showCalc) { GradeCalcView().environmentObject(state) }
         .onAppear {
             snapAnchor()
             land(onRequestedDay: true)
@@ -166,15 +168,23 @@ struct CalendarView: View {
     private var exportButton: some View {
         Menu {
             Button("Add to Apple Calendar") { sendToCalendar() }
+                .disabled(state.game.datedTasks.isEmpty)
             Button("Save a calendar file") { shareFile() }
+                .disabled(state.game.datedTasks.isEmpty)
+            // The grade calculator's second door (`GradeCalcView.doors`), since
+            // it came off Home. The two export rows still need dated work; this
+            // one never did, so the menu itself stays open.
+            if GradeCalcView.doors.contains(.calendarExport) {
+                Divider()
+                Button("Grade calculator") { showCalc = true }
+            }
         } label: {
             Image(systemName: "square.and.arrow.up")
                 .font(.system(size: 15, weight: .black))
                 .foregroundStyle(Theme.muted)
-                .frame(width: 34, height: 30)
+                .frame(width: 44, height: 44)
         }
-        .accessibilityLabel("Send your work to your calendar")
-        .disabled(state.game.datedTasks.isEmpty)
+        .accessibilityLabel("Send to a calendar, or the grade calculator")
     }
 
     /// Everything with a date on it. Undated work has nowhere to land in a calendar,

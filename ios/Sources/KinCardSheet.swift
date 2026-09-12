@@ -13,6 +13,7 @@ struct KinCardSheet: View {
     @EnvironmentObject var state: AppState
 
     @State private var share: ShareFile?
+    @State private var showCalc = false
 
     private var kin: OwnedChibi { state.activeChibi }
     private var scene: Scene0 { Scene0.find(state.sceneID) }
@@ -48,12 +49,41 @@ struct KinCardSheet: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Share \(kin.displayName)'s card")
+
+                // The grade calculator's door, since it came off Home's daily
+                // scroll (`GradeCalcView.doors`). A row, not a card.
+                if GradeCalcView.doors.contains(.kinCard) { calcRow }
             }
             .padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 34)
         }
         .scrollIndicators(.hidden)
         .background(Theme.hex(0xF1EADC))
         .sheet(item: $share) { ShareImageSheet(url: $0.url) }
+        .sheet(isPresented: $showCalc) { GradeCalcView().environmentObject(state) }
+    }
+
+    private var calcRow: some View {
+        Button { showCalc = true } label: {
+            HStack(spacing: 12) {
+                IconTile(icon: "calculator", size: 44)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Grade calculator")
+                        .font(Theme.font(15.5, .black)).foregroundStyle(Theme.ink)
+                    Text("What do I need on the final?")
+                        .font(Theme.font(12.5, .bold)).foregroundStyle(Theme.muted)
+                }
+                Spacer(minLength: 4)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.dim)
+            }
+            .padding(.horizontal, 13).padding(.vertical, 10)
+            .frame(minHeight: 56)
+            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Theme.card))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Grade calculator. What do I need on the final?")
     }
 }
 

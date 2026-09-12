@@ -133,4 +133,13 @@ final class SimplifyTests: XCTestCase {
         XCTAssertEqual(DayEditorView.pickedLine(picked: 0, of: 17), "Nothing picked yet")
         XCTAssertFalse(DayEditorView.pickedLine(picked: 4, of: 17).contains("%"))
     }
+
+    // MARK: - Home (Finch's home: today's goals under the bird, tools behind doors)
+
+    /// The grade calculator is reached from the Kin card and the Calendar's
+    /// export menu, and not from Home's daily scroll.
+    func testHomeHasNoGradeCalculatorCard() {
+        XCTAssertFalse(GradeCalcView.doors.contains(.home))
+        XCTAssertEqual(GradeCalcView.doors, [.kinCard, .calendarExport])
+    }
 }

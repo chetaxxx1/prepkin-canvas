@@ -11,6 +11,13 @@ struct GradeCalcView: View {
     @EnvironmentObject var state: AppState
     @Environment(\.dismiss) private var dismiss
 
+    /// Where the calculator is reached from. Finch's home keeps only today's
+    /// goals under the bird and every tool behind a door (Mobbin
+    /// 18d270f7-7eb4-448f-a928-174b4a7a7aa3); this was a card on Home's daily
+    /// scroll until 2026-09-12. Home is not a door any more.
+    enum Door: CaseIterable { case home, kinCard, calendarExport }
+    static let doors: [Door] = [.kinCard, .calendarExport]
+
     @State private var current = 88
     /// The grade this course is aiming at, as a percent. `nil` until one is picked.
     @State private var goal: Double?
