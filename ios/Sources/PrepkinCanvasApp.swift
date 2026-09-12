@@ -3,6 +3,8 @@ import Combine
 
 @main
 struct PrepkinCanvasApp: App {
+    /// Notification taps land here (`NotificationActions`); `route` is watched below.
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @StateObject private var state = AppState()
     /// One store for the whole app: the Plus sheet and the scanner both read it.
     @StateObject private var plus = PlusStore()
@@ -43,6 +45,16 @@ struct PrepkinCanvasApp: App {
                 }
                 .onReceive(dayChanged) { _ in state.refreshDay() }
                 .onReceive(timeZoneChanged) { _ in state.refreshDay() }
+                // A notification was tapped. Done pays the mark it left; the
+                // shift-end note opens Focus; everything else just opens the app.
+                .onReceive(delegate.$route.compactMap { $0 }) { route in
+                    switch route {
+                    case .doneMarked: state.applyDoneMarks()
+                    case .focusReport: state.openFocusRequest = true
+                    case .home: break
+                    }
+                    delegate.route = nil
+                }
         }
     }
 

@@ -84,6 +84,9 @@ final class AppState: ObservableObject {
     /// Focus and Focus starts the shift and clears it. Never persisted — it is only
     /// ever about the next few seconds.
     @Published var joinShiftRequest: Int?
+    /// A tap on the shift-end notification. Root switches to Focus, which is
+    /// already showing the report — the shift settled the moment the tab appeared.
+    @Published var openFocusRequest = false
     /// The Tomorrow line on Home was tapped. Root switches to the Calendar tab and
     /// Calendar opens on this day. Cleared by Calendar once it lands; never persisted.
     @Published var openCalendarOn: DayKey?
@@ -323,7 +326,28 @@ final class AppState: ObservableObject {
     func refreshDay() {
         game.advance()
         game.lastOpenedAt = Date()
+        applyDoneMarks()
         rescheduleReminders()
+    }
+
+    /// Pays what was finished from a notification's Done button or a widget box
+    /// since the app was last open, then clears the marks. The kin plays the same
+    /// check animation a tap on the row would have, and one line says what landed.
+    /// Called on every open, so a student who taps Done on the lock screen and
+    /// opens the app an hour later sees the row done and the coins there.
+    @discardableResult
+    func applyDoneMarks() -> Int {
+        let marks = DoneMarks.load()
+        guard !marks.isEmpty else { return 0 }
+        let paid = game.applyDoneMarks(marks)
+        DoneMarks.clear()
+        guard !paid.isEmpty else { return 0 }
+        play(game.allDone ? .celebrate : .bounce)
+        let coins = paid.reduce(0) { $0 + $1.paid }
+        show(paid.count == 1 ? "\(paid[0].task.title) done. \(coins) coins."
+                             : "\(paid.count) done. \(coins) coins.")
+        rescheduleReminders()
+        return paid.count
     }
 
     func flush() { store.flush() }

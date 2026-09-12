@@ -11,6 +11,10 @@ struct PlannedNotification: Equatable, Identifiable {
     var subtitle: String? = nil
     let body: String
     let fireAt: Date
+    /// The one task this note names, when it names exactly one. Those carry the
+    /// Done button (`NotificationActions`); a note naming two does not, because a
+    /// single Done would have to guess which.
+    var taskID: String? = nil
 }
 
 /// Decides what to remind about, and when.
@@ -144,7 +148,8 @@ enum NotificationPlanner {
                 title: "Due \(when) · \(item.courseName)",
                 subtitle: item.title,
                 body: "Just a heads up. \(name) is around if you want to knock it out.",
-                fireAt: fire)
+                fireAt: fire,
+                taskID: item.id)
         }
     }
 
@@ -156,7 +161,8 @@ enum NotificationPlanner {
             // Today's names are the real list. A later day's are what will be on it
             // when it comes: the dailies come back, open Canvas work stays, and
             // anything dated for that day joins. Replaced on the next open either way.
-            let titles = offset == 0 ? state.tasks.filter { !$0.done }.map(\.title)
+            let openToday = state.tasks.filter { !$0.done }
+            let titles = offset == 0 ? openToday.map(\.title)
                                      : expectedOpenTitles(for: state, on: DayKey(day, calendar: calendar))
             // A clear list earns silence.
             guard let copy = checkIn(openTitles: titles) else { return nil }
@@ -164,7 +170,8 @@ enum NotificationPlanner {
                 id: "nudge:\(DayKey(day, calendar: calendar).raw)",
                 title: copy.title,
                 body: copy.body,
-                fireAt: fire)
+                fireAt: fire,
+                taskID: offset == 0 && openToday.count == 1 ? openToday[0].id : nil)
         }
     }
 
@@ -276,6 +283,10 @@ final class NotificationScheduler {
             if let subtitle = item.subtitle { content.subtitle = subtitle }
             content.body = item.body
             content.sound = .default
+            if let taskID = item.taskID {
+                content.categoryIdentifier = NotificationActions.taskCategory
+                content.userInfo = [NotificationActions.taskIDKey: taskID]
+            }
             let parts = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: item.fireAt)
             let trigger = UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
             try? await center.add(UNNotificationRequest(identifier: item.id, content: content, trigger: trigger))

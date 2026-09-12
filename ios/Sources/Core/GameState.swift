@@ -795,6 +795,24 @@ struct GameState: Codable, Equatable {
         return posted ? reward : 0
     }
 
+    /// Pays the tasks a student finished from a notification or a widget box.
+    ///
+    /// Only marks for tasks on today's list that are still open count; the rest are
+    /// stale (a task deleted since, or a mark for yesterday) and are dropped without
+    /// a word. Returns what was paid, one row per task. Paying goes through
+    /// `complete`, so the ledger key keeps a mark that is applied twice — the app
+    /// opened twice before the file was cleared — from paying twice.
+    @discardableResult
+    mutating func applyDoneMarks(_ marks: [DoneMark], now: Date = Date()) -> [(task: DailyTask, paid: Int)] {
+        var out: [(task: DailyTask, paid: Int)] = []
+        for mark in marks {
+            guard let task = tasks.first(where: { $0.id == mark.taskID }), !task.done else { continue }
+            let paid = complete(taskID: task.id, reward: task.reward, now: now)
+            if paid > 0 { out.append((task, paid)) }
+        }
+        return out
+    }
+
     mutating func addTask(title: String, kind: TaskKind, recurrence: Recurrence, id: String = UUID().uuidString) {
         let clean = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !clean.isEmpty else { return }

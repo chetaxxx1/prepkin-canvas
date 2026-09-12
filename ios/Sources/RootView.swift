@@ -101,6 +101,13 @@ struct RootView: View {
             guard new != nil else { return }
             withAnimation(switchAnimation) { tab = .focus }
         }
+        // The shift-end notification was tapped. Focus settles the finished shift
+        // and shows the report on its own the moment it appears.
+        .onChange(of: state.openFocusRequest) { _, new in
+            guard new else { return }
+            withAnimation(switchAnimation) { tab = .focus }
+            Task { @MainActor in state.openFocusRequest = false }
+        }
         // Home's Tomorrow line. The tab switch is Root's; the day is Calendar's,
         // which clears the request once it has landed on it.
         .onChange(of: state.openCalendarOn) { _, new in

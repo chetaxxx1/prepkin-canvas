@@ -21,6 +21,13 @@ targets:
     dependencies:
       - target: PrepkinActivity
         embed: true
+    # The app group the widget and the Done button write to. `AppGroup.swift` says
+    # what lives there. The file is generated here; do not hand-edit it.
+    entitlements:
+      path: PrepkinCanvas.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.prepkin.canvas
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.prepkin.canvas
