@@ -170,6 +170,7 @@ struct HomeView: View {
                        animation: state.animation,
                        radius: mascotSize * SproutView.radiusRatio,
                        tank: tank.id,
+                       decor: state.game.decor.queryItems(tank: tank.id),
                        placeholder: UIColor(tankFloor),
                        reduceMotion: reduceMotion,
                        paused: tankPaused,
@@ -183,9 +184,7 @@ struct HomeView: View {
                 // The same plate the page will paint, shown natively at once. The
                 // page takes a second or three to boot on a phone; a flat floor
                 // colour for that long read as the background loading late.
-                Image(tank.asset)
-                    .resizable()
-                    .scaledToFill()
+                TankPlate(scene: tank, decor: state.game.decor, width: screenWidth)
                     .frame(width: screenWidth, height: sceneHeight, alignment: .bottom)
                     .clipped()
                     .background(tankFloor)

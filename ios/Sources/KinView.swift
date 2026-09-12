@@ -138,10 +138,10 @@ struct KinView: View {
                             startPoint: .top, endPoint: .bottom)
                     }
                         .overlay(alignment: .top) {
-                            Image(scene.asset)
-                                .resizable()
-                                .scaledToFit()
-                                .accessibilityLabel("The \(scene.name) tank")
+                            GeometryReader { geo in
+                                TankPlate(scene: scene, decor: state.game.decor, width: geo.size.width)
+                                    .accessibilityLabel("The \(scene.name) tank")
+                            }
                         }
                 )
                 .overlay(

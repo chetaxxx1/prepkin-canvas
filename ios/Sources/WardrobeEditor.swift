@@ -88,6 +88,7 @@ struct WardrobeEditor: View {
                        animation: state.animation,
                        radius: mascotSize * SproutView.radiusRatio,
                        tank: scene.id,
+                       decor: state.game.decor.queryItems(tank: scene.id),
                        placeholder: UIColor(scene.floor),
                        transparent: true,
                        reduceMotion: reduceMotion,

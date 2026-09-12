@@ -45,6 +45,9 @@ struct SproutView: UIViewRepresentable {
     /// the web view can stay opaque — a see-through WKWebView composites
     /// nothing at all, which leaves the character invisible.
     var tank: String
+    /// The student's pieces in the tank's slots, as the page's query items
+    /// (`TankDecor.queryItems`). Empty means the tank's own pieces.
+    var decor: [URLQueryItem] = []
     /// Painted under the page until it draws, so a cold launch is never a white
     /// block where the tank will be.
     var placeholder: UIColor = .white
@@ -226,7 +229,7 @@ struct SproutView: UIViewRepresentable {
 
     private var currentLook: Look {
         Look(type: Self.type(speciesID), coat: Self.coat(speciesID), evo: Self.evo(level),
-             skin: skin, costume: Self.costume(skin, level: level), radius: radius, tank: tank)
+             skin: skin, costume: Self.costume(skin, level: level), radius: radius, tank: tank, decor: decor)
     }
 
     /// The costume the page should put on, or empty for the coat's default. Only
@@ -244,6 +247,7 @@ struct SproutView: UIViewRepresentable {
         var costume: String
         var radius: CGFloat
         var tank: String
+        var decor: [URLQueryItem] = []
 
         var url: URL {
             var components = URLComponents()
@@ -262,6 +266,7 @@ struct SproutView: UIViewRepresentable {
             // what a transparent host wants.
             if !tank.isEmpty {
                 components.queryItems?.append(URLQueryItem(name: "tank", value: tank))
+                components.queryItems?.append(contentsOf: decor)
             }
             // Empty means the kin has never been dressed, and the page puts it in its
             // coat's default. Sending "classic" instead would be an unknown costume id,
