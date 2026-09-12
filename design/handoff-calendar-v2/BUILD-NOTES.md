@@ -135,6 +135,41 @@ prototype; nothing here was re-decided.
     is a point, so "Free the rest of the day" starts on the same minute; "3 PM" twice, two
     rows apart, was noise.
 
+## The look pass (same day, after the port)
+
+Checked against Structured, Tiimo, Amie, Things 3 and Saturn on Mobbin at ship size, then
+six icons were generated into the house set (`design/icons/src/grid-l.png`: laptop, clock,
+lectern, backpack, date page, campus — cut and packed with the new `--only grid-l` switch so
+the hand-tuned Play icon was not re-cut). What changed:
+
+- **Load marks carry the object** (Structured draws its load this way): a 13pt chip in the
+  course colour with the task's mark in white — book, pencil, ruler, flask, cards — and a
+  disc with a clock for a class. `TaskCategory.mark` maps category → SF mark. The month
+  cell keeps the plain 11pt shapes; a mark under 12pt is mud.
+- **A class row has an object**: the illustrated clock (`icon-classTime`) on a white 38pt
+  tile, on the tinted block, with a 4pt course rail down the left edge. It is now the task
+  row's anatomy minus the box, which is what makes the two read as one list.
+- **A timeline pin has a tile** (34pt, course tint, the task's object) between the dot and
+  the title; a **timeline block has the 4pt course rail** (Amie's blocks carry one).
+- **Still counts rows keep their tile** — deviation 13: the drawing drops it, but a list
+  where some rows have an object and some do not reads as two kinds of row, and overdue is
+  not a kind, it is a date.
+- **The not-paired card has the laptop** on a 52pt tile at the left (Saturn's card has its
+  app mark there).
+- **The month sheet opens at `.fraction(0.89)`** so its top lands near the drawing's y = 150
+  (0.83 is measured under the status bar and landed at 214).
+
+References looked at (Mobbin): Structured timeline
+https://mobbin.com/screens/26fae4e6-2163-4d93-8c47-5bd9839cb369 and week strip
+https://mobbin.com/screens/e4f1982d-084a-4bdb-8553-e2729644a4eb · Tiimo gap row
+https://mobbin.com/screens/2e5e28b9-c537-46b3-89fe-5d46c59fe6a3 · Amie blocks
+https://mobbin.com/screens/01485571-fc31-4229-908a-943657e6b9c0 · Things 3 Upcoming
+https://mobbin.com/screens/590f4dd6-1a6d-45a3-91c3-3508a762b041 · Saturn day
+https://mobbin.com/screens/e81e74a6-7629-431d-9f2c-d49b674f772e.
+
+Shots `12-polish-upcoming`, `12b-polish-timeline`, `13-polish-month`,
+`13b-polish-month-picked`, `14-polish-still-counts`, `15-polish-empty`.
+
 ## New components added
 
 `CalendarFeed` (the one read of a day for all three screens) · `CalendarEntry` · `LoadMark`
