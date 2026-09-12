@@ -1548,8 +1548,10 @@ final class AppState: ObservableObject {
         await NotificationScheduler.shared.reschedule(for: game)
     }
 
+    /// Clamped to the quiet-hours window: nothing but a due reminder speaks before
+    /// 8 AM or after 10 PM.
     func setNudgeHour(_ hour: Int) {
-        game.settings.nudgeHour = min(max(hour, 6), 23)
+        game.settings.nudgeHour = min(max(hour, NotificationPlanner.earliestHour), NotificationPlanner.latestNudgeHour)
         rescheduleReminders()
     }
 

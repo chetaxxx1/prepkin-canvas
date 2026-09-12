@@ -6,6 +6,9 @@ import UserNotifications
 struct PlannedNotification: Equatable, Identifiable {
     let id: String
     let title: String
+    /// The second line iOS draws under the title, in the same weight. Only a due
+    /// reminder uses it, for the assignment's own name.
+    var subtitle: String? = nil
     let body: String
     let fireAt: Date
 }
@@ -20,6 +23,9 @@ enum NotificationPlanner {
     static let dueLead: TimeInterval = 12 * 3600
     /// Never fire a reminder in the small hours.
     static let earliestHour = 8
+    /// The last hour a check-in may be set for. Quiet from 10 PM to 8 AM for
+    /// everything that is not a due date.
+    static let latestNudgeHour = 22
     /// Days of evening nudges to queue up, so a closed app still gets a couple.
     static let nudgeHorizon = 3
     /// Silence after this many days away, then one gentle note.
@@ -27,18 +33,54 @@ enum NotificationPlanner {
 
     static func plan(for state: GameState, now: Date = Date(), calendar: Calendar = .current) -> [PlannedNotification] {
         guard state.settings.remindersEnabled else { return [] }
-        let name = state.activeChibi.species.name
+        let name = state.activeChibi.displayName
         var out: [PlannedNotification] = []
 
         if state.settings.dueRemindersEnabled {
-            out += dueReminders(for: state, now: now, calendar: calendar)
+            out += dueReminders(for: state, name: name, now: now, calendar: calendar)
         }
+        // One non-due note a day, at most. The board's two are weekly and rarer, so
+        // on a Sunday or Monday they win and that evening's check-in is dropped.
+        let weekly = board(for: state, now: now, calendar: calendar)
+            + (state.settings.comeBackRemindersEnabled
+               ? comeBack(for: state, name: name, now: now, calendar: calendar) : [])
+        let taken = Set(weekly.map { DayKey($0.fireAt, calendar: calendar) })
+        out += weekly
         out += nudges(for: state, name: name, now: now, calendar: calendar)
-        if state.settings.comeBackRemindersEnabled {
-            out += comeBack(for: state, name: name, now: now, calendar: calendar)
-        }
-        out += board(for: state, now: now, calendar: calendar)
+            .filter { !taken.contains(DayKey($0.fireAt, calendar: calendar)) }
         return out.sorted { $0.fireAt < $1.fireAt }
+    }
+
+    // MARK: - The evening check-in's words
+
+    /// "2 left today" over "Essay outline, then the walk. Then you're done."
+    ///
+    /// Built from the real list, in the student's own task names. Two names at
+    /// most; a longer list says how many more rather than promising "done" after
+    /// two of five. `nil` when nothing is open — a clear list earns silence, not
+    /// a note. The second name loses its capital so the sentence reads as one,
+    /// unless it starts with an acronym like "BIO 101".
+    static func checkIn(openTitles: [String]) -> (title: String, body: String)? {
+        let titles = openTitles.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        guard !titles.isEmpty else { return nil }
+        let n = titles.count
+        let title = "\(n) left today"
+        switch n {
+        case 1:
+            return (title, "\(titles[0]). Then you're done.")
+        case 2:
+            return (title, "\(titles[0]), then \(lowerFirst(titles[1])). Then you're done.")
+        default:
+            return (title, "\(titles[0]), then \(lowerFirst(titles[1])), then \(n - 2) more.")
+        }
+    }
+
+    private static func lowerFirst(_ s: String) -> String {
+        guard let first = s.first, first.isUppercase else { return s }
+        let second = s.dropFirst().first
+        // "BIO 101 quiz" keeps its capital; "The walk" becomes "the walk".
+        guard second == nil || second!.isLowercase else { return s }
+        return first.lowercased() + s.dropFirst()
     }
 
     // MARK: - The board's two
@@ -82,7 +124,10 @@ enum NotificationPlanner {
 
     // MARK: - Pieces
 
-    private static func dueReminders(for state: GameState, now: Date, calendar: Calendar) -> [PlannedNotification] {
+    /// Due reminders are the one kind allowed past 10 PM, and even they stop here.
+    static let latestDueHour = 23
+
+    private static func dueReminders(for state: GameState, name: String, now: Date, calendar: Calendar) -> [PlannedNotification] {
         let doneIDs = Set(state.tasks.filter(\.done).map(\.id))
         return state.canvasItems.compactMap { item -> PlannedNotification? in
             guard let due = item.dueAt, due > now, !doneIDs.contains(item.id) else { return nil }
@@ -91,31 +136,43 @@ enum NotificationPlanner {
             if fire <= now { fire = due.addingTimeInterval(-2 * 3600) }
             guard fire > now else { return nil }
             fire = pushPastQuietHours(fire, calendar: calendar)
-            guard fire < due else { return nil }
+            fire = pullBeforeMidnight(fire, calendar: calendar)
+            guard fire > now, fire < due else { return nil }
+            let when = due.formatted(.dateTime.weekday().hour().minute())
             return PlannedNotification(
                 id: "due:\(item.id)",
-                title: item.title,
-                body: "Due \(due.formatted(.dateTime.weekday().hour().minute())) · \(item.courseName). Just a heads up.",
+                title: "Due \(when) · \(item.courseName)",
+                subtitle: item.title,
+                body: "Just a heads up. \(name) is around if you want to knock it out.",
                 fireAt: fire)
         }
     }
 
     private static func nudges(for state: GameState, name: String, now: Date, calendar: Calendar) -> [PlannedNotification] {
-        guard !state.templates.filter({ $0.isActive && $0.retiredOn == nil }).isEmpty else { return [] }
-        let openToday = state.tasks.contains { !$0.done }
         return (0..<nudgeHorizon).compactMap { offset -> PlannedNotification? in
             guard let day = calendar.date(byAdding: .day, value: offset, to: now),
                   let fire = calendar.date(bySettingHour: state.settings.nudgeHour, minute: 0, second: 0, of: day),
                   fire > now else { return nil }
-            // Today's nudge is dropped once the list is clear. Later days we can't
-            // know yet, so they stay queued and get replaced on the next open.
-            if offset == 0 && !openToday { return nil }
+            // Today's names are the real list. A later day's are what will be on it
+            // when it comes: the dailies come back, open Canvas work stays, and
+            // anything dated for that day joins. Replaced on the next open either way.
+            let titles = offset == 0 ? state.tasks.filter { !$0.done }.map(\.title)
+                                     : expectedOpenTitles(for: state, on: DayKey(day, calendar: calendar))
+            // A clear list earns silence.
+            guard let copy = checkIn(openTitles: titles) else { return nil }
             return PlannedNotification(
                 id: "nudge:\(DayKey(day, calendar: calendar).raw)",
-                title: "Anything left for today?",
-                body: "\(name) is around whenever you want to knock something out.",
+                title: copy.title,
+                body: copy.body,
                 fireAt: fire)
         }
+    }
+
+    private static func expectedOpenTitles(for state: GameState, on day: DayKey) -> [String] {
+        let canvas = state.tasks.filter { $0.kind == .canvas && !$0.done }.map(\.title)
+        let dated = state.datedTasks.filter { $0.day == day }.map(\.title)
+        let daily = state.templates.filter { $0.isActive && $0.retiredOn == nil }.map(\.title)
+        return canvas + dated + daily
     }
 
     private static func comeBack(for state: GameState, name: String, now: Date, calendar: Calendar) -> [PlannedNotification] {
@@ -132,6 +189,12 @@ enum NotificationPlanner {
     private static func pushPastQuietHours(_ date: Date, calendar: Calendar) -> Date {
         guard calendar.component(.hour, from: date) < earliestHour else { return date }
         return calendar.date(bySettingHour: earliestHour, minute: 0, second: 0, of: date) ?? date
+    }
+
+    /// A due reminder that would land at 11 PM or later moves back to 10 PM.
+    private static func pullBeforeMidnight(_ date: Date, calendar: Calendar) -> Date {
+        guard calendar.component(.hour, from: date) >= latestDueHour else { return date }
+        return calendar.date(bySettingHour: latestDueHour - 1, minute: 0, second: 0, of: date) ?? date
     }
 
     // MARK: - The fourth kind: the end of a shift
@@ -169,9 +232,10 @@ final class NotificationScheduler {
     static let shared = NotificationScheduler()
     private let center = UNUserNotificationCenter.current()
 
-    /// Asked for only when the user turns reminders on themselves.
+    /// Asked for only when the user turns reminders on themselves. No `.badge`: a red
+    /// number on the icon is a scold, and nothing here ever sets one.
     func requestAuthorization() async -> Bool {
-        (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+        (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
     }
 
     func isAuthorized() async -> Bool {
@@ -209,6 +273,7 @@ final class NotificationScheduler {
         for item in plan {
             let content = UNMutableNotificationContent()
             content.title = item.title
+            if let subtitle = item.subtitle { content.subtitle = subtitle }
             content.body = item.body
             content.sound = .default
             let parts = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: item.fireAt)
