@@ -43,6 +43,11 @@ struct PrepkinCanvasApp: App {
                     state.refreshDay()
                     await state.syncCanvas()
                 }
+                // `prepkin://home`, from the widget and the lock screen. Every
+                // other path opens the app where it was.
+                .onOpenURL { url in
+                    if url.scheme == "prepkin", url.host == "home" { state.openHomeRequest = true }
+                }
                 .onReceive(dayChanged) { _ in state.refreshDay() }
                 .onReceive(timeZoneChanged) { _ in state.refreshDay() }
                 // A notification was tapped. Done pays the mark it left; the

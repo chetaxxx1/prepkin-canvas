@@ -27,7 +27,10 @@ final class CopySweepTests: XCTestCase {
 
     func testNoBannedStudentCopyInSources() throws {
         let sources = sourcesDirectory()
+        // The widget and the shared folder reach a student too.
         let files = try swiftFiles(under: sources)
+            + swiftFiles(under: iosDirectory().appendingPathComponent("Widget", isDirectory: true))
+            + swiftFiles(under: iosDirectory().appendingPathComponent("Shared", isDirectory: true))
         XCTAssertFalse(files.isEmpty, "no .swift files under \(sources.path)")
 
         var failures: [String] = []
@@ -76,11 +79,14 @@ final class CopySweepTests: XCTestCase {
 
     // MARK: - Paths
 
-    private func sourcesDirectory() -> URL {
+    private func iosDirectory() -> URL {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("Sources", isDirectory: true)
+    }
+
+    private func sourcesDirectory() -> URL {
+        iosDirectory().appendingPathComponent("Sources", isDirectory: true)
     }
 
     private func swiftFiles(under root: URL) throws -> [URL] {

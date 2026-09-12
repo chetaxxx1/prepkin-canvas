@@ -108,6 +108,12 @@ struct RootView: View {
             withAnimation(switchAnimation) { tab = .focus }
             Task { @MainActor in state.openFocusRequest = false }
         }
+        // The widget was tapped.
+        .onChange(of: state.openHomeRequest) { _, new in
+            guard new else { return }
+            withAnimation(switchAnimation) { tab = .home }
+            Task { @MainActor in state.openHomeRequest = false }
+        }
         // Home's Tomorrow line. The tab switch is Root's; the day is Calendar's,
         // which clears the request once it has landed on it.
         .onChange(of: state.openCalendarOn) { _, new in

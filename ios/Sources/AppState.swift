@@ -87,6 +87,8 @@ final class AppState: ObservableObject {
     /// A tap on the shift-end notification. Root switches to Focus, which is
     /// already showing the report — the shift settled the moment the tab appeared.
     @Published var openFocusRequest = false
+    /// A tap on the widget (`prepkin://home`). Root switches to Home.
+    @Published var openHomeRequest = false
     /// The Tomorrow line on Home was tapped. Root switches to the Calendar tab and
     /// Calendar opens on this day. Cleared by Calendar once it lands; never persisted.
     @Published var openCalendarOn: DayKey?
