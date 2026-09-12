@@ -599,15 +599,20 @@ struct HomeView: View {
                 .font(Theme.font(16, .black))
                 .foregroundStyle(Theme.ink)
             Spacer(minLength: 8)
+            // A word, not a glyph. Finch's goals row puts its controls beside the
+            // count with a clear meaning each (Mobbin
+            // 18d270f7-7eb4-448f-a928-174b4a7a7aa3); a sliders icon on its own
+            // said nothing about what it opened. Drawn as a 30pt pill, 44pt to tap.
             Button { showDayEditor = true } label: {
-                Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: 14, weight: .bold))
+                Text(HomeCopy.editDay)
+                    .font(Theme.font(13, .black))
                     .foregroundStyle(Theme.ink.opacity(0.75))
-                    .frame(width: 30, height: 30)
-                    .background(Circle().fill(Theme.ink.opacity(0.08)))
-                    .padding(7)
+                    .padding(.horizontal, 12)
+                    .frame(height: 30)
+                    .background(Capsule().fill(Theme.ink.opacity(0.08)))
+                    .frame(minWidth: 44, minHeight: 44)
                     .contentShape(Rectangle())
-                    .padding(-7)
+                    .padding(.vertical, -7)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Edit your day")

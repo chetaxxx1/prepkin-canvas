@@ -159,4 +159,9 @@ final class SimplifyTests: XCTestCase {
             XCTAssertFalse(t.contains("\n"), t)
         }
     }
+
+    /// The goals row's control is a word beside the count, not a glyph.
+    func testHomeEditIsAWord() {
+        XCTAssertEqual(HomeCopy.editDay, "Edit")
+    }
 }

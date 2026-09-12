@@ -7,6 +7,9 @@ import Foundation
 /// building a view. Both are pure — a level and a balance in, a sentence out.
 enum HomeCopy {
 
+    /// The word on the goals row's one control. It was a sliders glyph.
+    static let editDay = "Edit"
+
     /// The words next to the star pips.
     ///
     /// The pips already draw the count, so these never repeat it. At the top of
