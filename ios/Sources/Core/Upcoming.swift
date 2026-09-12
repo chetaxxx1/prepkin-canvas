@@ -65,7 +65,28 @@ enum Upcoming {
             out.append(.day(d))
         }
         flush()
+        // A week with nothing on it is one line, not a line and a fold. Today's
+        // "Nothing due. Tap to add." already says what "Sat · free" would say
+        // under it (Google Calendar's schedule view: one inline line, then the
+        // next thing that exists).
+        let anything = out.contains { if case .day(let d) = $0 { return !isEmpty(d) } else { return false } }
+        if !anything, out.contains(where: { if case .day = $0 { return true } else { return false } }) {
+            return out.filter { if case .day = $0 { return true } else { return false } }
+        }
         return out
+    }
+
+    /// The first day after `day` with something on it, however far out, within
+    /// `horizon` days. Things 3's Upcoming keeps going past an empty stretch to
+    /// the next month's items; this is the day it would show.
+    static func nextDated(after day: DayKey, horizon: Int = 180,
+                          calendar: Calendar = .current, isEmpty: (DayKey) -> Bool) -> DayKey? {
+        guard horizon > 0 else { return nil }
+        for n in 1...horizon {
+            let d = day.adding(days: n, calendar: calendar)
+            if !isEmpty(d) { return d }
+        }
+        return nil
     }
 
     /// Everything from the last fortnight that is open and was due, oldest

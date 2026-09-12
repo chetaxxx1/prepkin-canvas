@@ -33,7 +33,6 @@ struct CalendarView: View {
     /// Which entry point opened the sheet. The top third of it changes with this.
     @State private var plusReason: PlusSheet.Reason = .scan
     @State private var exportFile: ExportFile?
-    @State private var peek = 0
     /// Ticks so "happening now" stops being true when the hour is over.
     @State private var now = Date()
     @State private var todayPulse: CGFloat = 1
@@ -134,6 +133,11 @@ struct CalendarView: View {
                 Text(monthName(anchor))
                     .font(Theme.font(34, .black))
                     .foregroundStyle(Theme.ink)
+                    // One line, always. At the largest type "September" wrapped to
+                    // "Septembe / r"; Outlook's header shrinks before it breaks
+                    // (Mobbin a6fd424b-68a6-40e5-ad65-e0257449ff2a).
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
                     .contentTransition(.numericText())
                 if captionVisible {
                     Text(countLine)
@@ -582,7 +586,25 @@ struct CalendarView: View {
                 }
             }
             nextWeek
-            kinPeek
+            farAhead
+        }
+    }
+
+    /// When this week and the next have nothing on them, the next dated thing,
+    /// however far out, under its own day header — the way Things 3's Upcoming
+    /// shows next month's items under a month header (Mobbin
+    /// 590f4dd6-1a6d-45a3-91c3-3508a762b041). Past a fortnight the header's lead
+    /// is already the month. Before this the end of an empty week was a fish
+    /// peeking over the edge of a void.
+    @ViewBuilder
+    private var farAhead: some View {
+        let thisWeek = weekDays(from: anchor).filter { !(weekHoldsToday && $0 < .today()) }
+        let nextStart = cal.date(byAdding: .weekOfYear, value: 1, to: startOfWeek(anchor)) ?? anchor
+        let both = thisWeek + weekDays(from: nextStart)
+        if both.allSatisfy({ agendaEntries(on: $0).isEmpty }),
+           let last = both.last,
+           let day = Upcoming.nextDated(after: last) { agendaEntries(on: $0).isEmpty } {
+            daySection(day).id(day.raw)
         }
     }
 
@@ -681,19 +703,6 @@ struct CalendarView: View {
         case .event(let e):
             EventRow(event: e, tint: eventTint(e), now: now, reduceMotion: reduceMotion)
         }
-    }
-
-    /// The kin, peeking over the bottom edge at the end of the week's scroll. It is
-    /// the only warmth on the screen and it is never in the way of the list.
-    private var kinPeek: some View {
-        SproutImage(speciesID: state.activeChibiID, level: state.activeChibi.level,
-                    skin: state.activeChibi.skinID,
-                    animation: reduceMotion ? .idle : .peek, replay: peek, size: 78)
-            .frame(width: 78, height: 44, alignment: .top)
-            .clipped()
-            .frame(maxWidth: .infinity)
-            .padding(.top, 26)
-            .onAppear { if !reduceMotion { peek += 1 } }
     }
 
     // MARK: - What is on a day

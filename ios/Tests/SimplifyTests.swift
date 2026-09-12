@@ -64,4 +64,35 @@ final class SimplifyTests: XCTestCase {
         XCTAssertFalse(FriendsView.badCharLine.contains("Try"))
         for c in "IO01" { XCTAssertFalse(PairingCode.alphabet.contains(c), "\(c) is in the alphabet after all") }
     }
+
+    // MARK: - Calendar (Google Calendar's schedule: one line, then the next thing)
+
+    private let cal = Calendar(identifier: .gregorian)
+    private func week(_ from: String) -> [DayKey] {
+        (0..<7).map { DayKey(raw: from).adding(days: $0, calendar: cal) }
+    }
+
+    /// A week with nothing on it renders one line: today's. No fold under it.
+    func testEmptyWeekIsOneLine() {
+        let today = DayKey(raw: "2026-09-10")
+        let blocks = Upcoming.blocks(week("2026-09-06"), today: today, dropPast: true) { _ in true }
+        XCTAssertEqual(blocks, [.day(today)])
+    }
+
+    /// A week with something on it still folds its empty days.
+    func testABusyWeekStillFoldsItsEmptyDays() {
+        let today = DayKey(raw: "2026-09-10")
+        let blocks = Upcoming.blocks(week("2026-09-06"), today: today, dropPast: true) { $0.raw != "2026-09-12" }
+        XCTAssertEqual(blocks.map(\.id), ["2026-09-10", "fold-2026-09-11", "2026-09-12"])
+    }
+
+    /// The next dated thing shows even three weeks out; nothing shows when nothing is.
+    func testNextDatedThingIsFoundHoweverFarOut() {
+        let last = DayKey(raw: "2026-09-19")
+        let far = DayKey(raw: "2026-10-10")
+        XCTAssertEqual(Upcoming.nextDated(after: last, calendar: cal) { $0 != far }, far)
+        XCTAssertNil(Upcoming.nextDated(after: last, calendar: cal) { _ in true })
+        XCTAssertNil(Upcoming.nextDated(after: last, horizon: 10, calendar: cal) { $0 != far },
+                     "past the horizon is nothing, not a scan to the end of time")
+    }
 }
