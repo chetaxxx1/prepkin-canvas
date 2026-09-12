@@ -584,12 +584,12 @@ test('R26 a pending row on a course card is a link that says Start on hover; han
   await page.close();
 });
 
-test('R27 the Planner tab: a week grid in the main column, the cards put away and brought back, one click off', async () => {
+test('R27 the Planner and Looks tabs: a week grid and the shop in the main column, the cards put away and brought back, one click off', async () => {
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');
   await page.waitForSelector('#pk-dashtabs [role="tab"]', { timeout: 5000 });
   const tabs = await page.$$eval('#pk-dashtabs [role="tab"]', (els) => els.map((e) => [e.textContent, e.getAttribute('aria-selected')]));
-  assert.deepEqual(tabs, [['Courses', 'true'], ['Planner', 'false']], 'Courses first, the cards showing');
+  assert.deepEqual(tabs, [['Courses', 'true'], ['Planner', 'false'], ['Looks', 'false']], 'Courses first, the cards showing');
   assert.equal(await page.$('#pk-planner'), null);
   await page.click('#pk-dashtabs [data-tab="planner"]');
   await page.waitForSelector('#pk-planner .pk-pl-grid', { timeout: 5000 });
@@ -607,6 +607,13 @@ test('R27 the Planner tab: a week grid in the main column, the cards put away an
   await page.waitForTimeout(600);
   assert.ok((await h.storage()).plans?.[id], 'planned onto a day');
   assert.ok(await page.$(`#pk-planner .pk-pl-col:last-child [data-drag="${id}"]`), 'and shown there');
+  // Looks: the shop in the page, the worn one ticked, the rest priced.
+  await page.click('#pk-dashtabs [data-tab="looks"]');
+  await page.waitForSelector('#pk-looks .pk-pl-looks', { timeout: 5000 });
+  assert.equal(await page.$('#pk-planner'), null, 'one tab at a time');
+  assert.ok(await page.$('#pk-looks .pk-pl-look.wearing .tick'), 'the worn look is ticked');
+  assert.ok((await page.$$('#pk-looks .pk-pl-look .price')).length >= 10, 'the rest carry a price');
+  assert.equal(await style(page, '#DashboardCard_Container', 'display'), 'none', 'the cards stay aside');
   // Courses brings the cards back; Put back on the planner row hides the tab itself.
   await page.click('#pk-dashtabs [data-tab="cards"]');
   await page.waitForTimeout(300);

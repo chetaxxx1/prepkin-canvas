@@ -22,8 +22,11 @@ const PLANNER_ONE_DAY = 86400000;
 /// Which week the grid shows, in weeks from this one. The arrows move it;
 /// Today brings it back.
 let plWeek = 0;
-/// Whether the planner tab is the one showing. Remembered per browser.
-let plOn = false;
+/// Which tab is showing: 'cards' (Canvas's own), 'planner' or 'looks'. Remembered.
+let plTab = 'cards';
+const LOOKS_ID = 'pk-looks';
+/// The look waiting for a yes, by id, or null.
+let plConfirm = null;
 /// The add-a-task form, open or not.
 let plAdding = false;
 
@@ -84,16 +87,16 @@ function renderPlannerTabs() {
   const existing = document.getElementById(PLANNER_TABS_ID);
   const bar = document.querySelector('#dashboard_header_container .ic-Dashboard-header__layout');
   if (!bar || !plannerShows()) { existing?.remove(); document.documentElement.classList.remove('pk-planner-on'); return; }
-  document.documentElement.classList.toggle('pk-planner-on', plOn);
+  document.documentElement.classList.toggle('pk-planner-on', plTab !== 'cards');
   if (existing && existing.parentElement === bar) { plSyncTabs(existing); return; }
   existing?.remove();
   const tabs = el('div', '', null);
   tabs.id = PLANNER_TABS_ID;
   tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', 'Dashboard');
-  for (const [key, label] of [['cards', 'Courses'], ['planner', 'Planner']]) {
+  for (const [key, label] of [['cards', 'Courses'], ['planner', 'Planner'], ['looks', 'Looks']]) {
     const tab = el('span', '', label);
     tab.setAttribute('role', 'tab'); tab.tabIndex = 0; tab.dataset.tab = key;
-    const pick = (e) => { if (!e.isTrusted) return; plSetOn(key === 'planner'); };
+    const pick = (e) => { if (!e.isTrusted) return; plSetTab(key); };
     tab.addEventListener('click', pick);
     tab.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(e); } });
     tabs.append(tab);
@@ -106,17 +109,19 @@ function renderPlannerTabs() {
 
 function plSyncTabs(tabs) {
   for (const tab of tabs.querySelectorAll('[role="tab"]')) {
-    const on = (tab.dataset.tab === 'planner') === plOn;
+    const on = tab.dataset.tab === plTab;
     tab.classList.toggle('on', on);
     tab.setAttribute('aria-selected', String(on));
   }
 }
 
-function plSetOn(on) {
-  plOn = !!on;
-  if (alive()) chrome.storage.local.set({ dashTab: plOn ? 'planner' : 'cards' }).catch(() => {});
+function plSetTab(key) {
+  plTab = ['planner', 'looks'].includes(key) ? key : 'cards';
+  plConfirm = null;
+  if (alive()) chrome.storage.local.set({ dashTab: plTab }).catch(() => {});
   renderPlannerTabs();
   renderPlanner();
+  renderLooks();
 }
 
 /// The planner itself, right under the dashboard's title row. Rebuilt only
@@ -124,7 +129,7 @@ function plSetOn(on) {
 function renderPlanner() {
   const existing = document.getElementById(PLANNER_ID);
   const head = document.getElementById('dashboard_header_container');
-  if (!plannerShows() || !plOn || !head) { existing?.remove(); return; }
+  if (!plannerShows() || plTab !== 'planner' || !head) { existing?.remove(); return; }
   const now = new Date();
   const { data, plans, wallet, focus, skin, levels } = plannerState();
   const week = plColumns(data.tasks, now);
@@ -412,6 +417,160 @@ function plAddForm(now) {
   });
   setTimeout(() => title.focus(), 0);
   return form;
+}
+
+// MARK: - Looks: the theme shop, in the page
+//
+// The same tiles the buddy's panel used to carry, with room to breathe:
+// what you own first (the worn one ticked), then the rest under Locked with
+// a price. One click wears a look you own; a locked one asks once, at the
+// top, and the phone is told what was spent. Under the tiles, the course
+// pictures: a banner from the worn theme, or a picture of your own.
+
+function renderLooks() {
+  const existing = document.getElementById(LOOKS_ID);
+  const head = document.getElementById('dashboard_header_container');
+  if (!plannerShows() || plTab !== 'looks' || !head) { existing?.remove(); return; }
+  const { wallet, skin, data } = plannerState();
+  const { LOOKS, LOOKS_BY_ID, PAPERS, ART_AVAILABLE, cardArt, banners } = plannerLooks();
+  const key = JSON.stringify([wallet.coins, wallet.owned, wallet.wearing, !!skin.dark, plConfirm, Object.keys(cardArt), banners, data.courses.map((c) => c.id)]);
+  if (existing && existing.dataset.key === key) return;
+
+  const box = el('section', '', null);
+  box.id = LOOKS_ID; box.dataset.key = key;
+  box.setAttribute('aria-label', 'Prepkin: looks');
+
+  const headRow = el('div', 'pk-pl-head');
+  const title = el('div', 'pk-pl-title');
+  title.append(plIcon('collection', 28), el('b', '', 'Looks'), el('small', '', 'Earned with coins from verified work. Dark is always free.'));
+  headRow.append(title);
+  if (wallet.coins !== null) {
+    const coins = el('div', 'pk-pl-coins');
+    coins.append(el('i', 'coin', null), el('b', '', String(wallet.coins)), el('span', '', 'coins'));
+    headRow.append(coins);
+  }
+  box.append(headRow);
+
+  // The question, when a locked look was picked.
+  const asked = plConfirm ? LOOKS_BY_ID[plConfirm] : null;
+  if (asked) {
+    const ask = el('div', 'pk-pl-ask');
+    const afford = wallet.coins !== null && wallet.coins >= asked.price;
+    ask.append(el('b', '', `Wear ${asked.name}?`));
+    ask.append(el('span', '', afford ? `${asked.price} coins. ${asked.vibe ?? ''}`.trim()
+      : wallet.coins === null ? 'Link your phone in the Prepkin popup to spend coins.'
+      : `${asked.price - wallet.coins} more coins to go. Verified work earns 30 each.`));
+    const actions = el('div', 'actions');
+    if (afford) {
+      const yes = el('span', 'start', 'Wear it');
+      yes.setAttribute('role', 'button'); yes.tabIndex = 0;
+      yes.addEventListener('click', (e) => { if (!e.isTrusted) return; plannerBuy(asked.id).then(() => { plConfirm = null; renderLooks(); }); });
+      actions.append(yes);
+    }
+    const no = el('span', 'ghost', 'Not now');
+    no.setAttribute('role', 'button'); no.tabIndex = 0;
+    no.addEventListener('click', () => { plConfirm = null; renderLooks(); });
+    actions.append(no);
+    ask.append(actions);
+    box.append(ask);
+  }
+
+  const yours = LOOKS.filter((look) => look.free || wallet.owned.includes(look.id))
+    .sort((a, b) => (b.id === wallet.wearing) - (a.id === wallet.wearing));
+  const locked = LOOKS.filter((look) => !yours.includes(look));
+  const grid = (list) => {
+    const g = el('div', 'pk-pl-looks');
+    for (const look of list) g.append(plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned: yours.includes(look) }));
+    return g;
+  };
+  box.append(el('span', 'pk-pl-label plain', 'Yours'), grid(yours));
+  if (locked.length) box.append(el('span', 'pk-pl-label plain', 'Locked'), grid(locked));
+  box.append(plPictures(LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic, { data, cardArt, banners, ART_AVAILABLE }));
+
+  if (existing) existing.replaceWith(box); else head.after(box);
+}
+
+/// A tile is the paper itself: the theme's paper with one card on it, the
+/// name, the mood, a tick when worn, a price when locked.
+function plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned }) {
+  const wearing = wallet.wearing === look.id;
+  const stock = stockFor(look, !!skin.dark);
+  const p = PAPERS[stock];
+  const accent = look.accent?.[skin.dark ? 'dark' : 'light'] ?? p.mark;
+  const tile = el('div', `pk-pl-look${wearing ? ' wearing' : ''}${p.dark ? ' on-dark' : ''}`);
+  tile.setAttribute('role', 'button'); tile.tabIndex = 0; tile.setAttribute('aria-pressed', String(wearing));
+  tile.style.background = p.paper; tile.style.color = p.ink;
+  const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)) : null;
+  if (art) {
+    const n = parseInt(p.paper.slice(1), 16);
+    tile.style.backgroundImage = `linear-gradient(rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, .62), rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, .62)), url("${art.wallpaper}")`;
+    tile.style.backgroundSize = 'cover';
+    tile.classList.add('has-art');
+  }
+  const preview = el('div', 'preview');
+  const card = el('span', '', null); card.style.background = p.paper2; card.style.borderColor = p.rule;
+  const bar = el('i', '', null); bar.style.background = accent;
+  const l1 = el('em', '', null); l1.style.background = p.ink2;
+  const l2 = el('em', '', null); l2.style.background = p.rule;
+  card.append(bar, l1, l2);
+  preview.append(card);
+  if (wearing) preview.append(el('span', 'tick', '✓'));
+  tile.append(preview, el('b', '', look.name), el('small', '', look.vibe ?? paperLine(stock)));
+  if (!owned) { const price = el('span', 'price', null); price.append(el('i', 'coin', null), el('span', '', String(look.price))); tile.append(price); }
+  const pick = (e) => {
+    if (!e.isTrusted) return;
+    if (owned) { if (!wearing) plannerBuy(look.id).then(() => renderLooks()); return; }
+    plConfirm = look.id; renderLooks();
+    document.getElementById(LOOKS_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  tile.addEventListener('click', pick);
+  tile.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(e); } });
+  return tile;
+}
+
+/// Course pictures: the worn theme's banners for each course, or a picture of
+/// your own, read here, shrunk here, kept in this browser.
+function plPictures(look, { data, cardArt, banners, ART_AVAILABLE }) {
+  const wrap = el('div', 'pk-pl-pictures');
+  const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id))).slice(0, 8);
+  if (!courses.length) return wrap;
+  const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)) : null;
+  wrap.append(el('span', 'pk-pl-label plain', 'Course pictures'));
+  for (const c of courses) {
+    const row = el('div', 'row');
+    const name = el('b', '', shortCourse(c.name)); name.title = c.name;
+    row.append(name);
+    const thumbs = el('div', 'thumbs');
+    const own = cardArt[c.id];
+    if (art) art.cards.forEach((u, i) => {
+      const b = el('span', `thumb${!own && banners[c.id] === i + 1 ? ' on' : ''}`, null);
+      b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', `Banner ${i + 1}`);
+      b.style.backgroundImage = `url("${u}")`;
+      b.addEventListener('click', (e) => { if (e.isTrusted) plannerBannerAsync(String(c.id), i + 1).then(() => renderLooks()); });
+      thumbs.append(b);
+    });
+    if (own) {
+      const mine = el('span', 'thumb own on', null);
+      mine.setAttribute('role', 'button'); mine.tabIndex = 0; mine.setAttribute('aria-label', `Remove your picture from ${c.name}`);
+      mine.style.backgroundImage = `url("${own.thumb ?? own.src}")`;
+      mine.append(el('i', '', '×'));
+      mine.addEventListener('click', (e) => { if (e.isTrusted) plannerClearPictureAsync(String(c.id)).then(() => renderLooks()); });
+      thumbs.append(mine);
+    }
+    const pick = el('label', 'pick', null);
+    const input = el('input', '', null); input.type = 'file'; input.accept = 'image/*';
+    input.addEventListener('change', () => {
+      const file = input.files?.[0]; if (!file) return;
+      pick.classList.add('busy');
+      plannerPictureAsync(String(c.id), file).catch(() => {}).then(() => renderLooks());
+    });
+    pick.append(input, el('span', '', own ? 'Change' : 'Your picture'));
+    thumbs.append(pick);
+    row.append(thumbs);
+    wrap.append(row);
+  }
+  wrap.append(el('small', '', 'A picture you choose is shrunk here and kept in this browser. It is never uploaded, and it never goes to your phone.'));
+  return wrap;
 }
 
 if (typeof module !== 'undefined') {

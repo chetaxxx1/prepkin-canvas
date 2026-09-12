@@ -319,7 +319,7 @@ const css = fs.readFileSync(path.join(__dirname, 'skin.css'), 'utf8').replace(/\
 // The lint guards Canvas's own page. Prepkin's own surfaces on it (the rail,
 // the fold row, the card line) are ours to style, so they are read separately below.
 const allRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selectors: m[1].trim(), body: m[2] }));
-const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|#pk-planner|#pk-dashtabs|\.pk-card-due|\.pk-due-row|pk-back-card-due|pk-back-week|pk-back-todo-fold|pk-back-planner/.test(sel);
+const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|#pk-planner|#pk-dashtabs|#pk-looks|\.pk-card-due|\.pk-due-row|pk-back-card-due|pk-back-week|pk-back-todo-fold|pk-back-planner/.test(sel);
 // A rule counts as Canvas's if any selector in it reaches Canvas markup.
 const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours(sel)));
 

@@ -1642,8 +1642,34 @@ function plannerState() {
 }
 function plannerSetOwnTasks(next) { ownTasks = next; }
 // This file sits in one block, so only its plain function declarations reach
-// the world (Annex B hoisting); an async function does not. Hence the wrapper.
+// the world (Annex B hoisting); an async function does not. Hence the wrappers.
 function plannerPlan(id, key) { return setPlan(id, key); }
+function plannerBuy(id) { return buy(id); }
+function plannerLooks() { return { LOOKS, LOOKS_BY_ID, PAPERS, ART_AVAILABLE, cardArt, banners }; }
+/// A picture the student picked for a course card, or a banner from the theme.
+async function plannerPicture(courseId, file) {
+  const pic = await readPicture(file);
+  if (!pic) return false;
+  cardArt = { ...cardArt, [courseId]: pic };
+  banners = { ...banners, [courseId]: undefined };
+  await chrome.storage.local.set({ cardArt, banners });
+  decorateCards();
+  return true;
+}
+function plannerPictureAsync(courseId, file) { return plannerPicture(courseId, file); }
+async function plannerClearPicture(courseId) {
+  const { [courseId]: gone, ...rest } = cardArt;
+  cardArt = rest;
+  await chrome.storage.local.set({ cardArt });
+  decorateCards();
+}
+function plannerClearPictureAsync(courseId) { return plannerClearPicture(courseId); }
+async function plannerBanner(courseId, n) {
+  banners = { ...banners, [courseId]: banners[courseId] === n ? undefined : n };
+  await chrome.storage.local.set({ banners });
+  decorateCards();
+}
+function plannerBannerAsync(courseId, n) { return plannerBanner(courseId, n); }
 
 /// Whether the rail belongs on this page: the dashboard, the skin on, nothing
 /// killed or put back, and a sync to show. Shown from the first sync on, even
@@ -1673,7 +1699,7 @@ function renderWeek() {
   const days = weekDays(data.tasks, w, now);
   const key = JSON.stringify([w.start.getTime(), w.total, w.done, days.map((d) => d.dots.map((x) => x.state + (x.color ?? ''))), said.headline,
     first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId(),
-    running && focus.endsAt, running && focus.title, plOn]);
+    running && focus.endsAt, running && focus.title, plTab]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1811,9 +1837,9 @@ function renderWeek() {
   const foot = el('div', 'pk-w-foot');
   // Finished work is worth a line; nothing finished is not worth a scold.
   foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
-  const more = el('span', 'more', plOn ? '' : 'Open the planner');
-  more.setAttribute('role', 'button'); more.tabIndex = plOn ? -1 : 0;
-  const openWeek = () => { plSetOn(true); document.getElementById(PLANNER_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  const more = el('span', 'more', plTab === 'planner' ? '' : 'Open the planner');
+  more.setAttribute('role', 'button'); more.tabIndex = plTab === 'planner' ? -1 : 0;
+  const openWeek = () => { plSetTab('planner'); document.getElementById(PLANNER_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   more.addEventListener('click', openWeek);
   more.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWeek(); } });
   foot.append(more);
@@ -1844,6 +1870,7 @@ function refreshPage() {
   renderSearchChip();
   renderPlannerTabs();
   renderPlanner();
+  renderLooks();
   if (sprite) mountSprite();
 }
 function watchPage() {
@@ -1851,7 +1878,7 @@ function watchPage() {
   const schedule = () => { if (tornDown) return; clearTimeout(pageTimer); pageTimer = setTimeout(refreshPage, 200); };
   // Our own nodes — the buddy's host and the card lines — must not count as
   // the page changing, or every pass would schedule the next one forever.
-  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === SPRITE_ID || n.id === WEEK_ID || n.id === FOLD_ID || n.id === SEARCH_ID || n.id === PLANNER_ID || n.id === PLANNER_TABS_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${SPRITE_ID}, #${WEEK_ID}, #${FOLD_ID}, #${SEARCH_ID}, #${PLANNER_ID}, #${PLANNER_TABS_ID}, .${CARD_DUE_CLASS}`));
+  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === SPRITE_ID || n.id === WEEK_ID || n.id === FOLD_ID || n.id === SEARCH_ID || n.id === PLANNER_ID || n.id === PLANNER_TABS_ID || n.id === LOOKS_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${SPRITE_ID}, #${WEEK_ID}, #${FOLD_ID}, #${SEARCH_ID}, #${PLANNER_ID}, #${PLANNER_TABS_ID}, #${LOOKS_ID}, .${CARD_DUE_CLASS}`));
   pageObserver = new MutationObserver((records) => {
     const current = document.documentElement.dataset.pkInstance;
     if (shouldStepAside({ mine: instanceId, current, alive: alive() })) { teardown(); return; }
@@ -2530,9 +2557,10 @@ async function mount() {
   renderWeek();
   renderSearchChip();
   // The planner tab: remembered, and #planner in the address opens it.
-  plOn = stored.dashTab === 'planner' || location.hash === '#planner';
+  plTab = location.hash === '#planner' ? 'planner' : location.hash === '#looks' ? 'looks' : (['planner', 'looks'].includes(stored.dashTab) ? stored.dashTab : 'cards');
   renderPlannerTabs();
   renderPlanner();
+  renderLooks();
   watchPage();
   if (!handInWatched) { handInWatched = true; watchHandIn(); syncIfJustHandedIn(stored); }
 
@@ -2590,7 +2618,7 @@ if (typeof module !== 'undefined') {
     if (msg.type === 'receipt') respond(receiptForPage());
     if (msg.type === 'show-me') { showMe(); respond({ ok: true }); }
     if (msg.type === 'open-buddy') {
-      if (plannerShows()) { plSetOn(true); respond({ ok: true }); }
+      if (plannerShows()) { plSetTab('planner'); respond({ ok: true }); }
       else { location.assign('/#planner'); respond({ ok: true }); }
     }
   });
