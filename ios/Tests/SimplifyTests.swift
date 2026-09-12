@@ -95,4 +95,32 @@ final class SimplifyTests: XCTestCase {
         XCTAssertNil(Upcoming.nextDated(after: last, horizon: 10, calendar: cal) { $0 != far },
                      "past the horizon is nothing, not a scan to the end of time")
     }
+
+    // MARK: - Play (NYT Games' home: a title and tiles, no counters above them)
+
+    /// The switch says the half's name and nothing about what is open. The dot
+    /// that used to sit on the other half spoke through this label.
+    func testPlaySwitchHasNoDot() {
+        for h in LearnView.Half.allCases {
+            XCTAssertEqual(LearnView.segmentLabel(h), h.label)
+            XCTAssertFalse(LearnView.segmentLabel(h).contains("open"))
+        }
+    }
+
+    /// Coins are paid, in the app's own word.
+    func testPlayLineSaysPaid() {
+        XCTAssertEqual(LearnView.playLine(claimed: false, total: 6, left: 6), "Six today. First finish pays 30.")
+        XCTAssertEqual(LearnView.playLine(claimed: true, total: 6, left: 2), "Paid. Two more for the result line.")
+        XCTAssertEqual(LearnView.playLine(claimed: true, total: 6, left: 0), "All done today. New ones tomorrow.")
+        for line in [LearnView.playLine(claimed: false, total: 6, left: 6),
+                     LearnView.playLine(claimed: true, total: 6, left: 2)] {
+            XCTAssertFalse(line.lowercased().contains("bank"), line)
+        }
+    }
+
+    /// The rating chip's one-line explainer, in Chess.com's terms.
+    func testRatingExplainerIsOneLine() {
+        XCTAssertEqual(LearnView.ratingExplainer,
+                       "Goes up when you solve a hard one, down when you miss an easy one. Chess.com's puzzle rating, for puzzles.")
+    }
 }

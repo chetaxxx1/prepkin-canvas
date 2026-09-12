@@ -38,6 +38,7 @@ struct LearnView: View {
     /// Presenting a cover while a sheet is still on screen drops the cover.
     @State private var pending: Lesson?
     @State private var reading: ReadingRequest?
+    @State private var explainingRating = false
 
     var body: some View {
         NavigationStack {
@@ -152,16 +153,15 @@ struct LearnView: View {
                 // line that repeats the tab is a line that earns nothing — Duolingo names
                 // the unit you are in, Chick-fil-A greets you, Apple News just starts.
                 // This names where you are: the track you are part way through.
+                // The title and the coin chip, nothing else. NYT Games' home is a
+                // title and tiles with no counters above them (Mobbin
+                // 8c796715-7244-416a-8d9d-f6211323d7d2); the month tally that sat
+                // here was a second signal over a page whose one job is today's set.
                 Text(headline)
                     .font(Theme.font(34, .black))
                     .foregroundStyle(Theme.ink)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                // The only counter on the screen, and it can only go up. No streak,
-                // no target, nothing that resets to zero overnight.
-                Text(monthLine)
-                    .font(Theme.font(13.5, .bold))
-                    .foregroundStyle(Theme.muted)
             }
             Spacer()
             CoinBadge(coins: state.coins)
@@ -177,21 +177,6 @@ struct LearnView: View {
     /// below already names its track; a page titled "Personal finance" over six
     /// puzzles named nothing.
     private var headline: String { "Start anywhere" }
-
-    /// The only counter on the screen, and it can only go up. Both rituals count
-    /// (2026-09-10): a Play tab that tallied lessons alone under six puzzles was
-    /// keeping score for the wrong half of the page.
-    private var monthLine: String {
-        let puzzles = state.puzzlesThisMonth
-        let lessons = state.lessonsThisMonth
-        func n(_ k: Int, _ word: String) -> String { "\(k) \(word)\(k == 1 ? "" : "s")" }
-        switch (puzzles, lessons) {
-        case (0, 0): return "Two minutes is enough to start"
-        case (_, 0): return "\(n(puzzles, "puzzle")) this month"
-        case (0, _): return "\(n(lessons, "lesson")) this month"
-        default:     return "\(n(puzzles, "puzzle")) and \(n(lessons, "lesson")) this month"
-        }
-    }
 
     /// Imprint's section grammar: a big bold title and one plain sentence under it,
     /// then the goods. 21/13.5 rather than 19/13, so a title outweighs a card title.
@@ -212,46 +197,51 @@ struct LearnView: View {
     // MARK: - Switch
 
     /// The Calendar's Week / Month switch, one size up: a sunk track, the chosen
-    /// half lifted onto card white. A coral dot on the *other* half means its daily
-    /// thing is still open — the card unread, or nothing banked yet — so neither
-    /// ritual disappears behind the switch.
+    /// half lifted onto card white. The coral dot that marked the other half's
+    /// open daily thing came off on 2026-09-12: Apple News' Puzzles page is a
+    /// title and "Today's Puzzles" with nothing blinking above it (Mobbin
+    /// a2319e2f-b25d-41ff-8b15-b0f9d35dc619), and the dot was a third signal in a
+    /// header that already had two.
+    ///
+    /// The track draws 40pt tall; each half's hit area is 44. The extra is
+    /// transparent and taken back from the layout, so nothing under it moves.
     private var halfSwitch: some View {
         HStack(spacing: 0) {
             ForEach(Half.allCases, id: \.self) { h in segment(h) }
         }
         .padding(3)
-        .background(Capsule().fill(Theme.paperSunk))
+        .background(Capsule().fill(Theme.paperSunk).padding(.vertical, 5))
+        .padding(.vertical, -5)
         .padding(.horizontal, 24)
     }
 
     private func segment(_ h: Half) -> some View {
         let on = h == half
-        let open = h == .puzzles ? !state.playClaimedToday : !state.lessonDoneToday
-        return HStack(spacing: 6) {
-            Text(h.label)
-                .font(Theme.font(14, .black))
-                .foregroundStyle(on ? Theme.ink : Theme.muted)
-            if open && !on {
-                Circle().fill(Theme.coral).frame(width: 7, height: 7)
+        return Text(h.label)
+            .font(Theme.font(14, .black))
+            .foregroundStyle(on ? Theme.ink : Theme.muted)
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+            .background(
+                Capsule()
+                    .fill(on ? Theme.card : .clear)
+                    .shadow(color: on ? Theme.hex(0x2E2622).opacity(0.10) : .clear, radius: 3, y: 1)
+                    .padding(.vertical, 5)
+            )
+            .contentShape(Capsule())
+            .onTapGesture {
+                guard !on else { return }
+                UISelectionFeedbackGenerator().selectionChanged()
+                halfRaw = h.rawValue
             }
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 34)
-        .background(
-            Capsule()
-                .fill(on ? Theme.card : .clear)
-                .shadow(color: on ? Theme.hex(0x2E2622).opacity(0.10) : .clear, radius: 3, y: 1)
-        )
-        .contentShape(Capsule())
-        .onTapGesture {
-            guard !on else { return }
-            UISelectionFeedbackGenerator().selectionChanged()
-            halfRaw = h.rawValue
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(open && !on ? "\(h.label), something still open today" : h.label)
-        .accessibilityAddTraits(on ? [.isSelected, .isButton] : .isButton)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Self.segmentLabel(h))
+            .accessibilityAddTraits(on ? [.isSelected, .isButton] : .isButton)
     }
+
+    /// What a half of the switch says: its name, and nothing about what is open.
+    /// It used to add ", something still open today" when the dot was showing.
+    static func segmentLabel(_ h: Half) -> String { h.label }
 
     // MARK: - Continue
 
@@ -455,26 +445,63 @@ struct LearnView: View {
             // Hidden until the first result, so a new student is not handed a score
             // they have not played for.
             if state.rating.settled > 0 {
-                VStack(spacing: 0) {
-                    Text(state.rating.display)
-                        .font(Theme.font(15, .black))
-                        .foregroundStyle(Theme.ink)
-                    Text("RATING")
-                        .font(Theme.font(8.5, .black)).tracking(1)
-                        .foregroundStyle(Theme.muted)
+                Button { explainingRating = true } label: {
+                    VStack(spacing: 0) {
+                        Text(state.rating.display)
+                            .font(Theme.font(15, .black))
+                            .foregroundStyle(Theme.ink)
+                        Text("RATING")
+                            .font(Theme.font(8.5, .black)).tracking(1)
+                            .foregroundStyle(Theme.muted)
+                    }
+                    .frame(minWidth: 44, minHeight: 44)
+                    .contentShape(Rectangle())
                 }
-                .padding(.top, 2)
+                .buttonStyle(.plain)
+                .accessibilityLabel("Rating \(state.rating.display). What it means")
             }
         }
         .padding(.horizontal, 24)
+        .sheet(isPresented: $explainingRating) { ratingSheet }
+    }
+
+    /// One line, on a tap of the chip. The chip itself says only the number.
+    static let ratingExplainer = "Goes up when you solve a hard one, down when you miss an easy one. Chess.com's puzzle rating, for puzzles."
+
+    private var ratingSheet: some View {
+        VStack(spacing: 12) {
+            Text(state.rating.display)
+                .font(Theme.font(34, .black))
+                .foregroundStyle(Theme.ink)
+                .padding(.top, 26)
+            Text(Self.ratingExplainer)
+                .font(Theme.font(15, .bold))
+                .lineSpacing(4)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 12)
+        }
+        .padding(.horizontal, 26)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Theme.paper)
+        .presentationDetents([.height(196)])
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius(26)
     }
 
     private var playLine: String {
-        let tiles = playTiles
-        let left = tiles.filter { !$0.played }.count
-        if !state.playClaimedToday { return "\(Self.countWord(tiles.count)) today. First finish banks 30." }
+        Self.playLine(claimed: state.playClaimedToday, total: playTiles.count,
+                      left: playTiles.filter { !$0.played }.count)
+    }
+
+    /// "Six today. First finish pays 30." / "Paid. Two more for the result line."
+    /// Coins are paid, in the same word the rest of the app uses; "banks" and
+    /// "Banked" were this page's own dialect.
+    static func playLine(claimed: Bool, total: Int, left: Int) -> String {
+        if !claimed { return "\(countWord(total)) today. First finish pays 30." }
         if left == 0 { return "All done today. New ones tomorrow." }
-        return "Banked. \(Self.countWord(left)) more for the result line."
+        return "Paid. \(countWord(left)) more for the result line."
     }
 
     private static func countWord(_ n: Int) -> String {
@@ -592,7 +619,7 @@ struct LearnView: View {
         // No "+30" on the tiles (removed 2026-09-10). One finish a day pays it, and
         // six tiles each promising it read as 180 coins on offer — a rail only ever
         // showed two of them, and the grid shows all six. The section line says it
-        // once, the way it actually works: "First finish banks 30."
+        // once, the way it actually works: "First finish pays 30."
         let number = PlayDeal.number()
         let pearlsDone = state.game.pearlsPlay.lastDay == today
         let balanceDone = state.game.balancePlay.lastDay == today
