@@ -118,6 +118,41 @@ struct TierPennant: View {
     }
 }
 
+/// A pennant from the friends board: gold, silver or bronze, kept forever. Same
+/// cloth as a tier pennant so the shelf reads as one set; the metal is the colour.
+struct MedalPennant: View {
+    /// 1, 2 or 3.
+    let medal: Int
+    var height: CGFloat = 34
+
+    private var width: CGFloat { height * 40 / 56 }
+    private var line: CGFloat { max(1.4, height * 0.045) }
+
+    static func cloth(_ medal: Int) -> (Color, Color) {
+        switch medal {
+        case 1: return (Theme.hex(0xE9B949), Theme.hex(0xB8861B))
+        case 2: return (Theme.hex(0xC9CDD3), Theme.hex(0x8A9099))
+        default: return (Theme.hex(0xD2915A), Theme.hex(0x9A5F2E))
+        }
+    }
+
+    static func name(_ medal: Int) -> String {
+        ["", "gold", "silver", "bronze"][min(3, max(1, medal))]
+    }
+
+    var body: some View {
+        let (fill, edge) = Self.cloth(medal)
+        ZStack {
+            PennantShape().fill(fill)
+            PennantFoldShape().fill(edge)
+            PennantShape().strokeBorder(edge, lineWidth: line)
+        }
+        .frame(width: width, height: height)
+        .accessibilityElement()
+        .accessibilityLabel("\(Self.name(medal)) pennant")
+    }
+}
+
 /// Names the current tier inline. A white pill with a coloured object in it — the same
 /// shape the coin chip is, so it sits beside it instead of competing with it.
 struct TierBadge: View {
@@ -561,11 +596,10 @@ struct PodSection: View {
 
 /// A pod member, drawn the way a kin is drawn everywhere else in the app.
 ///
-/// There is no rank numeral. The order is the ranking, and a number stamped beside
-/// somebody's face is the thing this tab has refused since it was built — see the
-/// header of `FriendsView`. There is no demotion zone either, and no marker for being
-/// low: the only mark on this row is a pennant for a bar already cleared, which is a
-/// thing that can appear and never a thing that can be taken away.
+/// The numeral is the bridge's rank, the same one the friends board shows, by
+/// George's call on 2026-09-12. There is no demotion zone and no marker for being
+/// low: the only other mark on this row is a pennant for a bar already cleared,
+/// which is a thing that can appear and never a thing that can be taken away.
 private struct PodRow: View {
     let member: PodMember
     /// The water the whole pod is in. Every member shares it, which is the only reason
@@ -582,6 +616,10 @@ private struct PodRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
+            Text("\(member.rank)")
+                .font(Theme.font(13, .black))
+                .foregroundStyle(Theme.muted)
+                .frame(width: 18)
             // `member.lookID` is not drawn: `SproutFace` takes a species and nothing
             // else. Drawing a pod member through the same component as every other
             // face in the app matters more here than the coat does — and the offer
@@ -634,6 +672,7 @@ private struct PodRow: View {
 
     private var label: String {
         var parts = [member.isYou ? "\(member.displayName), you" : member.displayName]
+        parts.append(FriendsWater.ordinal(member.rank))
         parts.append(member.level == 1 ? "1 star" : "\(member.level) stars")
         parts.append("\(member.points) coins this week")
         if clears { parts.append("this week's bar cleared") }

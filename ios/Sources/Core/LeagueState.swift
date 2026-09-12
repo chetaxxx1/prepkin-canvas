@@ -68,7 +68,8 @@ enum LeagueTier: Int, Codable, CaseIterable, Identifiable, Comparable {
 ///
 /// The pod does not change any of this. Where you finish among strangers is company,
 /// not a judgement — the bar is the same bar whether the pod holds twenty people or
-/// only you, so nobody's tier depends on how busy a week other people had.
+/// only you, so nobody's tier depends on how busy a week other people had. The
+/// friends board can only *add* a way up (`winPromotes`), never take one away.
 enum LeagueRules {
     static let bars: [LeagueTier: Int] = [
         .tidepool: 150, .shallows: 300, .reef: 500, .kelp: 750, .openWater: 1100,
@@ -88,6 +89,16 @@ enum LeagueRules {
         }
         return .promoted(next)
     }
+
+    /// The second way up: winning the week on the friends board. Duolingo's "top
+    /// N advance", cut to the one place that cannot be a tie for last. Three is
+    /// the smallest board where a win means beating more than one person, and a
+    /// board of two is a race, which has its own pennant.
+    static let boardSizeToPromote = 3
+
+    static func winPromotes(_ p: BoardPlacement) -> Bool {
+        p.place == 1 && p.of >= boardSizeToPromote
+    }
 }
 
 /// One finished week, kept as a receipt. Never a leaderboard row — the pod is a week
@@ -97,9 +108,22 @@ struct LeagueWeekResult: Codable, Equatable, Identifiable {
     /// The tier the week was *played in*, not the one it ended at.
     let tier: LeagueTier
     let coinsEarned: Int
-    let promoted: Bool
+    var promoted: Bool
+    /// Where the friends board left you, filled in by `LeagueState.award` once the
+    /// week's rows have been fetched. `nil` until then, and forever when the rows
+    /// never came (no friends, or the fortnight the bridge keeps has passed).
+    var placement: BoardPlacement?
 
     var id: String { week.raw }
+
+    init(week: WeekKey, tier: LeagueTier, coinsEarned: Int, promoted: Bool,
+         placement: BoardPlacement? = nil) {
+        self.week = week
+        self.tier = tier
+        self.coinsEarned = coinsEarned
+        self.promoted = promoted
+        self.placement = placement
+    }
 }
 
 // MARK: - The saved state
@@ -119,6 +143,66 @@ struct LeagueState: Codable, Equatable {
     static let historyKept = 12
 
     var deepestReached: LeagueTier { pennants.max() ?? .tidepool }
+
+    // MARK: The shelf
+
+    /// Pennants from the friends board, kept forever. Each only ever goes up, and
+    /// each is counted here rather than read off `history`, which is capped.
+    var weeksWon = 0
+    var weeksSecond = 0
+    var weeksThird = 0
+    /// Group quests cleared, one a week at most.
+    var questsCleared = 0
+    /// The week whose quest has already been counted, so a board redrawn twenty
+    /// times on a Sunday credits it once.
+    var questWeek: WeekKey?
+    /// The settled week whose Monday card has been looked at. The card shows for
+    /// the newest settled week until this names it.
+    var boardSeen: WeekKey?
+
+    /// Records where the friends board left you for a settled week, and moves you
+    /// up if you won it against enough people. Returns whether that happened.
+    ///
+    /// **Up only, like everything else here.** A placement fills in a receipt and
+    /// bumps a counter; the only thing it can do to a tier is raise it, and only
+    /// when the week settled as `held` — a week the bar already cleared has
+    /// nothing left to give. Called once per week: a receipt that already has a
+    /// placement keeps it, so a second fetch cannot count a medal twice.
+    @discardableResult
+    mutating func award(_ placement: BoardPlacement, for week: WeekKey) -> Bool {
+        guard let i = history.firstIndex(where: { $0.week == week }),
+              history[i].placement == nil else { return false }
+        history[i].placement = placement
+        switch placement.medal {
+        case 1: weeksWon += 1
+        case 2: weeksSecond += 1
+        case 3: weeksThird += 1
+        default: break
+        }
+        guard LeagueRules.winPromotes(placement), !history[i].promoted,
+              tier == history[i].tier, let up = tier.next else { return false }
+        tier = up
+        pennants.insert(up)
+        history[i].promoted = true
+        return true
+    }
+
+    /// Credits a cleared quest, once per week.
+    @discardableResult
+    mutating func creditQuest(_ week: WeekKey) -> Bool {
+        guard questWeek != week else { return false }
+        questWeek = week
+        questsCleared += 1
+        return true
+    }
+
+    /// The Monday card's week: the newest settled week not yet looked at. `nil`
+    /// when there is nothing to say — no placement worth a card and no promotion.
+    var unseenSettledWeek: LeagueWeekResult? {
+        guard let last = history.first, boardSeen != last.week else { return nil }
+        let placed = (last.placement?.of ?? 0) >= 2
+        return placed || last.promoted ? last : nil
+    }
 
     // MARK: The pod
 
@@ -191,6 +275,7 @@ struct LeagueState: Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case tier, weekStart, pennants, history
+        case weeksWon, weeksSecond, weeksThird, questsCleared, questWeek, boardSeen
         case podOptIn, identity, podID, podWeek, lastPod
     }
 
@@ -213,6 +298,12 @@ struct LeagueState: Codable, Equatable {
         weekStart = try c.decodeIfPresent(WeekKey.self, forKey: .weekStart) ?? blank.weekStart
         pennants = try c.decodeIfPresent(Set<LeagueTier>.self, forKey: .pennants) ?? blank.pennants
         history = try c.decodeIfPresent([LeagueWeekResult].self, forKey: .history) ?? blank.history
+        weeksWon = try c.decodeIfPresent(Int.self, forKey: .weeksWon) ?? blank.weeksWon
+        weeksSecond = try c.decodeIfPresent(Int.self, forKey: .weeksSecond) ?? blank.weeksSecond
+        weeksThird = try c.decodeIfPresent(Int.self, forKey: .weeksThird) ?? blank.weeksThird
+        questsCleared = try c.decodeIfPresent(Int.self, forKey: .questsCleared) ?? blank.questsCleared
+        questWeek = try c.decodeIfPresent(WeekKey.self, forKey: .questWeek)
+        boardSeen = try c.decodeIfPresent(WeekKey.self, forKey: .boardSeen)
         podOptIn = try c.decodeIfPresent(Bool.self, forKey: .podOptIn) ?? blank.podOptIn
         identity = try c.decodeIfPresent(LeagueIdentity.self, forKey: .identity)
         podID = try c.decodeIfPresent(String.self, forKey: .podID)

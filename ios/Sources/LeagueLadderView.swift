@@ -1,18 +1,18 @@
 import SwiftUI
 
-/// The whole ladder on its own screen, and the only place the pod lives.
+/// The whole ladder on its own screen: the shelf, the water you are in, the six
+/// waters, and the strangers pod.
 ///
 /// Shaped after Dolphin SAT's Leaderboard (`design/reference/dolphin/02-my-league-bronze.png`):
 /// a card for the water you are looking at, a stat strip under it, and a rail of
-/// league tiles you scroll through. Everything Dolphin does that this app has already
-/// refused is left out — no rank numeral, no promotion divider, no demotion zone, and
-/// no "Resets in 4d 8h" countdown, which `PRODUCT.md` bans outright. Where Dolphin's
-/// rail is a trophy case you cannot touch, ours is the navigation: tap any water and
-/// the card above shows it, so a student can look at Deep in week one and see what it
-/// is rather than a padlock.
+/// league tiles you scroll through. What Dolphin does that this app refuses is left
+/// out — no promotion divider, no demotion zone, and no "Resets in 4d 8h" countdown,
+/// which `PRODUCT.md` bans outright. Where Dolphin's rail is a trophy case you cannot
+/// touch, ours is the navigation: tap any water and the card above shows it, so a
+/// student can look at Deep in week one and see what it is rather than a padlock.
 ///
-/// This screen took the pod and the ladder off the Friends tab. That tab now opens on
-/// a picture; the rules live here, one tap away, for anyone who wants them.
+/// The Friends tab opens on the board; the rules live here, one tap away, for anyone
+/// who wants them. The pod is drawn here always and on the tab once you have joined.
 struct LeagueLadderView: View {
     @EnvironmentObject var state: AppState
     @Environment(\.dismiss) private var dismiss
@@ -48,7 +48,9 @@ struct LeagueLadderView: View {
                     .foregroundStyle(Theme.ink)
                     .frame(height: 40, alignment: .bottom)
 
-                waterCard.padding(.top, 18)
+                shelf.padding(.top, 18)
+
+                waterCard.padding(.top, 14)
 
                 Text("SIX WATERS")
                     .font(Theme.font(11.5, .black))
@@ -134,7 +136,7 @@ struct LeagueLadderView: View {
             divider
             statCell(LeagueRules.bar(for: yours)?.formatted() ?? "—", "Clears at")
             divider
-            statCell("Monday", "Settles")
+            statCell(boardPlace, "On the board")
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
@@ -142,6 +144,59 @@ struct LeagueLadderView: View {
             .fill(Theme.tile))
         .overlay(RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
             .strokeBorder(Theme.tileRing, lineWidth: 1))
+    }
+
+    /// Your place on this week's friends board. A dash with nobody else on it:
+    /// first of one is not a place.
+    private var boardPlace: String {
+        let rows = state.weekBoard.rows
+        guard rows.count >= 2, let mine = rows.first(where: { $0.member.isYou }) else { return "—" }
+        return FriendsWater.ordinal(mine.place)
+    }
+
+    // MARK: - The shelf
+    //
+    // What the board has given you, kept. Four tiles, each a count that only goes
+    // up. Drawn even at zero: a hollow pennant with a 0 under it says what a week
+    // can win, the way an unowned kin in the shop says what a coin can buy.
+
+    private var shelf: some View {
+        HStack(spacing: 10) {
+            shelfTile(league.weeksWon, "WEEKS WON") { MedalPennant(medal: 1, height: 30) }
+            shelfTile(league.weeksSecond, "SECOND") { MedalPennant(medal: 2, height: 30) }
+            shelfTile(league.weeksThird, "THIRD") { MedalPennant(medal: 3, height: 30) }
+            shelfTile(league.questsCleared, "QUESTS") {
+                ZStack {
+                    PennantShape().fill(Theme.coral)
+                    PennantFoldShape().fill(Theme.coralShade)
+                    PennantShape().strokeBorder(Theme.coralShade, lineWidth: 1.4)
+                }
+                .frame(width: 30 * 40 / 56, height: 30)
+                .accessibilityHidden(true)
+            }
+        }
+    }
+
+    private func shelfTile<V: View>(_ count: Int, _ label: String, @ViewBuilder glyph: () -> V) -> some View {
+        VStack(spacing: 4) {
+            glyph().opacity(count > 0 ? 1 : 0.35)
+            Text("\(count)")
+                .font(Theme.font(20, .black))
+                .foregroundStyle(count > 0 ? Theme.ink : Theme.dim)
+            Text(label)
+                .font(Theme.font(10, .black))
+                .kerning(0.5)
+                .foregroundStyle(Theme.muted)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .strokeBorder(Theme.hairline, lineWidth: 1))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(count) \(label.lowercased())")
     }
 
     private func statCell(_ value: String, _ label: String) -> some View {
@@ -179,9 +234,10 @@ struct LeagueLadderView: View {
                 .frame(height: 8)
                 Text(toGo == 0
                      ? "That clears it. \(next.name) on Monday."
-                     : "\(toGo) more and you're in \(next.name) on Monday.")
+                     : "\(toGo) more and you're in \(next.name) on Monday. Winning the week on the board clears it too.")
                     .font(Theme.font(12.5, .bold))
                     .foregroundStyle(Theme.muted)
+                    .fixedSize(horizontal: false, vertical: true)
             } else {
                 Text("Deep is the last one. Nothing below it, and nothing to lose.")
                     .font(Theme.font(12.5, .bold))

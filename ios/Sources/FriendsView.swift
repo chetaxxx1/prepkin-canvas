@@ -1,10 +1,15 @@
 import SwiftUI
 
-/// Friends tab, per `design/handoff-friends/README.md`.
+/// Friends tab: the weekly board, and the people on it.
 ///
-/// Modelled on Finch's Friends rather than Duolingo's leagues: you see your
-/// friends' kins, you cheer them, nobody loses. No stories row, no streaks, no
-/// rank numerals, no promotion zone. Every number on this screen only goes up.
+/// Rebuilt 2026-09-12 (artifact "The Weekly Board"). The tab opens on the board —
+/// you and your friends ranked by the week, scored like an Apple Watch competition
+/// (`Core/WeekBoard.swift`) — then the group quest, then the strangers pod for
+/// anyone who joined one. Finch is still the model for everything about a friend
+/// (their kin, a free wave, a card you visit); Duolingo's is for the week (a Monday
+/// result, a quest with a shared bar). Rank numerals are on, by George's call; a
+/// promotion zone, a demotion zone and a countdown are still out, and no number a
+/// student keeps ever goes down.
 ///
 /// Every row is a real person now. `state.friends` is what `fetch_friends` last
 /// sent, folded together with the two things only this phone knows: what you call
@@ -64,35 +69,48 @@ struct FriendsView: View {
                     // Somebody said hello. Same shape as the card above it, and it
                     // ends the same way: by being looked at.
                     if !waved.isEmpty { wavedCard.padding(.top, 14) }
-                    // The page opens on a picture, not a paragraph. Everything this
-                    // tab used to explain in three blocks of prose — the tier, the
-                    // bar, the pod, the ladder — is one tap away in `linkRows`, and
-                    // the two empty slots in the water say the rest.
-                    FriendsWater(tier: state.league.tier,
-                                 speciesID: state.activeChibiID,
-                                 level: state.activeChibi.level,
-                                 skin: state.activeChibi.skinID,
-                                 points: state.leaguePoints,
-                                 friends: friends,
-                                 onEmptyTap: { showAdd = true })
+                    // Last week, once. Sits above the water because it is the one
+                    // thing on this tab that is news, and it goes when it is read.
+                    if let last = state.mondayCard { mondayCard(last).padding(.top, 14) }
+
+                    // The page opens on a picture, not a paragraph: the board, in
+                    // your water. Read once per body — it walks the ledger.
+                    let board = state.weekBoard
+                    FriendsWater(tier: state.league.tier, rows: board.rows,
+                                 onEmptyTap: { showAdd = true },
+                                 onTap: { row in
+                                     if let f = friends.first(where: { $0.id == row.id }) { showing = f }
+                                 })
                         .padding(.top, 16)
 
                     // One primary action, and it is the honest one: a code works on
-                    // this phone today. Joining a pod needs the bridge, so it is a
-                    // row that explains itself rather than a second coral button
-                    // competing with this one.
+                    // this phone today.
                     if friends.isEmpty { addButton.padding(.top, 14) }
 
-                    linkRows.padding(.top, 14)
+                    // Friends cannot see you on their board until you share your
+                    // week. Asked here, where the reason is on screen, and only
+                    // once there is somebody to share with.
+                    if !friends.isEmpty, !state.game.shareToday { sharePrompt.padding(.top, 14) }
 
-                    weekCard.padding(.top, 14)
+                    if board.rows.count > 3 { boardRows(Array(board.rows.dropFirst(3))).padding(.top, 14) }
 
-                    if !friends.isEmpty {
-                        if let together = state.weeklyTogether {
-                            togetherCard(together).padding(.top, 14)
-                        }
-                        friendList.padding(.top, 20)
+                    if let quest = state.groupQuest {
+                        questCard(quest, members: board.rows.map(\.member)).padding(.top, 14)
                     }
+
+                    if !board.off.isEmpty { offBoard(board.off).padding(.top, 14) }
+
+                    // The strangers pod, on the tab once you are in one. Before
+                    // that it is a row: the offer is long, and it belongs where the
+                    // ladder can explain it.
+                    if state.podOptIn {
+                        PodSection()
+                            .padding(16)
+                            .background(cardBackground(Theme.Radius.card))
+                            .padding(.top, 14)
+                    }
+
+                    linkRows.padding(.top, 14)
                 }
                 // The column never reports wider than the screen. A row that wanted
                 // more made the ScrollView centre the page, so the title and every
@@ -203,19 +221,293 @@ struct FriendsView: View {
         .background(cardBackground(Theme.Radius.card))
     }
 
-    // MARK: - This week, together
+    // MARK: - Monday
 
-    /// One sentence, and it is absent rather than empty when there is nothing in it.
-    /// No coins on it, ever.
-    private func togetherCard(_ sentence: String) -> some View {
-        Text(sentence)
-            .font(Theme.font(14.5, .heavy))
-            .foregroundStyle(Theme.ink)
-            .lineSpacing(3)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity, alignment: .leading)
+    /// Where last week left you and what you keep. One card, gone when looked at.
+    /// A place is only said against people: a board of one settles in silence, and
+    /// the card then only appears for a week that cleared the bar.
+    private func mondayCard(_ last: LeagueWeekResult) -> some View {
+        let p = last.placement
+        let placed = (p?.of ?? 0) >= 2
+        return Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            withAnimation(.easeOut(duration: 0.22)) { state.dismissMondayCard() }
+        } label: {
+            HStack(spacing: 14) {
+                if let medal = p?.medal {
+                    MedalPennant(medal: medal, height: 52)
+                } else {
+                    TierPennant(tier: last.promoted ? (last.tier.next ?? last.tier) : last.tier,
+                                earned: true, height: 52)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(mondayTitle(p))
+                        .font(Theme.font(16, .black))
+                        .foregroundStyle(Theme.ink)
+                    Text(mondayLine(last))
+                        .font(Theme.font(13, .bold))
+                        .foregroundStyle(Theme.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if last.promoted, let up = last.tier.next {
+                        Text("\(up.name) now")
+                            .font(Theme.font(11, .black))
+                            .foregroundStyle(Theme.mintDark)
+                            .padding(.horizontal, 9)
+                            .padding(.vertical, 3)
+                            .background(Capsule().fill(Theme.mintSoft))
+                            .padding(.top, 4)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
             .padding(16)
-            .background(cardBackground(Theme.Radius.card))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(cardBackground(Theme.Radius.card))
+        .accessibilityHint("Tap to put it away")
+    }
+
+    private func mondayTitle(_ p: BoardPlacement?) -> String {
+        guard let p, p.of >= 2 else { return "Last week cleared the bar" }
+        return "Last week: \(FriendsWater.ordinal(p.place)) of \(p.of)"
+    }
+
+    private func mondayLine(_ last: LeagueWeekResult) -> String {
+        switch last.placement?.medal {
+        case 1: return "You won the week. A gold pennant, kept."
+        case 2: return "Silver, kept."
+        case 3: return "Bronze, kept."
+        default: return last.promoted ? "\(last.coinsEarned.formatted()) coins in the week."
+                                      : "Everybody starts over today."
+        }
+    }
+
+    // MARK: - Share my week
+
+    /// Apple's "Share activity", asked where the board makes the reason obvious.
+    /// Four counts and nothing else, said in the same words the privacy sheet uses.
+    private var sharePrompt: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Friends can't see you on their board yet")
+                .font(Theme.font(15, .black))
+                .foregroundStyle(Theme.ink)
+            Text("Sharing shows them four counts: tasks, focus minutes, lessons, games. Not what they were, not coins, not grades.")
+                .font(Theme.font(12.5, .bold))
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                withAnimation(.easeOut(duration: 0.22)) {
+                    state.setSharing(today: true, board: state.game.shareBoard)
+                }
+            } label: {
+                Text("Show my week")
+                    .font(Theme.font(15, .black))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Capsule().fill(Theme.coral)
+                        .shadow(color: Theme.coral.opacity(0.28), radius: 12, y: 5))
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 2)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(cardBackground(Theme.Radius.card))
+    }
+
+    // MARK: - The rows
+
+    /// Fourth place down. The podium holds three; these are everybody else, with
+    /// the numeral the podium implies. Tapping a row opens the person; the clap is
+    /// the same one-a-day wave the card sends, one tap closer.
+    private func boardRows(_ rows: [BoardRow]) -> some View {
+        VStack(spacing: 0) {
+            ForEach(rows) { row in
+                boardRow(row)
+                if row.id != rows.last?.id { hairline.padding(.leading, 68) }
+            }
+        }
+        .background(cardBackground(Theme.Radius.card))
+    }
+
+    private func boardRow(_ row: BoardRow) -> some View {
+        let friend = friends.first { $0.id == row.id }
+        let m = row.member
+        return HStack(spacing: 12) {
+            Text("\(row.place)")
+                .font(Theme.font(14, .black))
+                .foregroundStyle(Theme.muted)
+                .frame(width: 20)
+            SproutImage(speciesID: m.speciesID, level: m.level, skin: m.lookID, size: 40)
+                .frame(width: 40, height: 40, alignment: .bottom)
+                .overlay(alignment: .bottomTrailing) {
+                    if friend?.minutesLeftOnShift(at: clock) ?? 0 > 0 {
+                        Circle().fill(Theme.mint)
+                            .frame(width: 11, height: 11)
+                            .overlay(Circle().strokeBorder(.white, lineWidth: 2))
+                            .accessibilityHidden(true)
+                    }
+                }
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 8) {
+                    Text(m.name)
+                        .font(Theme.font(15.5, .black))
+                        .foregroundStyle(Theme.ink)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    StarPips(level: m.level, size: 10, spacing: 2.5)
+                    if m.isYou {
+                        Text("You")
+                            .font(Theme.font(9.5, .black))
+                            .foregroundStyle(Theme.coralShade)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2.5)
+                            .background(Capsule().fill(Theme.coralSoft))
+                    }
+                }
+                if let line = friend?.shiftLine(at: clock) {
+                    Text(line)
+                        .font(Theme.font(12.5, .bold))
+                        .foregroundStyle(Theme.muted)
+                        .lineLimit(1)
+                }
+            }
+            Spacer(minLength: 6)
+            Text("\(m.points)")
+                .font(Theme.font(15, .black))
+                .foregroundStyle(Theme.ink)
+            if let friend {
+                clapButton(friend)
+            } else {
+                Color.clear.frame(width: 36, height: 36)
+            }
+        }
+        .padding(.horizontal, 14)
+        .frame(minHeight: 60)
+        .contentShape(Rectangle())
+        .onTapGesture { if let friend { showing = friend } }
+        .contextMenu { if let friend { menuItems(friend) } }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(m.isYou ? "You" : m.name), \(FriendsWater.ordinal(row.place)), \(m.points) points")
+    }
+
+    /// The wave, from the row. Settles on the phone the moment it is tapped.
+    private func clapButton(_ f: Friend) -> some View {
+        let sent = state.hasWaved(at: f)
+        return Button {
+            guard !sent else { return }
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            withAnimation(.easeInOut(duration: 0.2)) { state.wave(at: f) }
+        } label: {
+            ClapGlyph(size: 18, tint: sent ? Theme.mintDark : Theme.coral)
+                .frame(width: 36, height: 36)
+                .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(sent ? Theme.mintSoft : Theme.coralSoft))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(sent ? "Waved at \(f.displayName) today" : "Wave at \(f.displayName)")
+    }
+
+    // MARK: - The quest
+
+    /// Duolingo's Friends Quest, for the whole board. One goal, one bar, everybody's
+    /// share under it, and a nudge that is the wave with a name on it.
+    private func questCard(_ q: GroupQuest.Status, members: [BoardMember]) -> some View {
+        let nudge = GroupQuest.nudge(q, members: members)
+        let nudgeFriend = nudge.flatMap { n in friends.first { $0.id == n.id } }
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("This week, together")
+                    .font(Theme.font(15, .black))
+                    .foregroundStyle(Theme.ink)
+                Spacer(minLength: 8)
+                Text(q.cleared ? "CLEARED" : "SETTLES MONDAY")
+                    .font(Theme.font(10.5, .black))
+                    .kerning(0.6)
+                    .foregroundStyle(q.cleared ? Theme.mintDark : Theme.dim)
+            }
+            Text(GroupQuest.line(q))
+                .font(Theme.font(13, .bold))
+                .foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Theme.hairline)
+                    Capsule().fill(q.cleared ? Theme.mint : state.league.tier.color)
+                        .frame(width: geo.size.width * min(1, Double(q.progress) / Double(max(1, q.goal))))
+                }
+            }
+            .frame(height: 10)
+            .padding(.top, 2)
+            Text(GroupQuest.progressLine(q))
+                .font(Theme.font(11.5, .black))
+                .foregroundStyle(Theme.ink)
+            HStack(spacing: 10) {
+                ForEach(members.sorted { q.kind.count(in: $0.counts) > q.kind.count(in: $1.counts) }) { m in
+                    HStack(spacing: 5) {
+                        SproutFace(speciesID: m.speciesID, size: 24)
+                        Text("\(q.kind.count(in: m.counts))")
+                            .font(Theme.font(12, .black))
+                            .foregroundStyle(Theme.ink)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(m.isYou ? "You" : m.name): \(q.kind.count(in: m.counts))")
+                }
+            }
+            .padding(.top, 4)
+            if let nudgeFriend {
+                let sent = state.hasWaved(at: nudgeFriend)
+                Button {
+                    guard !sent else { return }
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    withAnimation(.easeInOut(duration: 0.2)) { state.wave(at: nudgeFriend) }
+                } label: {
+                    Text(sent ? "Nudged \(nudgeFriend.displayName)" : "Nudge \(nudgeFriend.displayName)")
+                        .font(Theme.font(13.5, .black))
+                        .foregroundStyle(sent ? Theme.mintDark : Theme.coralShade)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Capsule().fill(sent ? Theme.mintSoft : Theme.coralSoft))
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
+            }
+            Text(q.cleared ? "A quest pennant for the \(q.headcount) of you, kept on the ladder."
+                           : "Clears by Sunday night, a quest pennant for everybody on the board.")
+                .font(Theme.font(11.5, .heavy))
+                .foregroundStyle(Theme.dim)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(cardBackground(Theme.Radius.card))
+    }
+
+    // MARK: - Not on the board
+
+    /// Friends with no shared day this week. Sharing off and nothing done look the
+    /// same here on purpose, and the line says the thing that is true of both.
+    private func offBoard(_ list: [Friend]) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Not on the board this week")
+                .font(Theme.font(12, .bold))
+                .kerning(1.5)
+                .foregroundStyle(Theme.muted)
+                .padding(.horizontal, 4)
+                .padding(.bottom, 8)
+            ForEach(list) { f in
+                friendRow(f)
+                if f.id != list.last?.id { hairline.padding(.leading, 52) }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 18)
+        .padding(.top, 16)
+        .padding(.bottom, 8)
+        .background(cardBackground(26))
     }
 
     // MARK: - Somebody added you
@@ -251,48 +543,6 @@ struct FriendsView: View {
         .background(cardBackground(Theme.Radius.card))
     }
 
-    // MARK: - This week
-
-    /// The bar toward the next water, and nothing else. The long version — what a
-    /// quiet week does, what settles on Monday — is on the ladder screen, where
-    /// somebody who wants it has asked for it.
-    private var weekCard: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack(spacing: 7) {
-                CoinDisc(size: 15)
-                Text("\(state.leaguePoints) earned this week")
-                    .font(Theme.font(14.5, .black))
-                    .foregroundStyle(Theme.ink)
-                Spacer(minLength: 0)
-            }
-            if let toGo = state.leaguePointsToNextTier,
-               let next = state.league.tier.next,
-               let bar = LeagueRules.bar(for: state.league.tier) {
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(Theme.hairline)
-                        Capsule().fill(state.league.tier.color)
-                            .frame(width: geo.size.width
-                                   * min(1, Double(state.leaguePoints) / Double(bar)))
-                    }
-                }
-                .frame(height: 8)
-                Text(toGo == 0
-                     ? "That clears it. \(next.name) on Monday."
-                     : "\(toGo) more and you're in \(next.name) on Monday.")
-                    .font(Theme.font(12.5, .bold))
-                    .foregroundStyle(Theme.muted)
-            } else {
-                Text("Deep is the last one. Nothing below it, and nothing to lose.")
-                    .font(Theme.font(12.5, .bold))
-                    .foregroundStyle(Theme.muted)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(cardBackground(Theme.Radius.card))
-    }
-
     // MARK: - The one action, and the two rows
 
     private var addButton: some View {
@@ -315,15 +565,16 @@ struct FriendsView: View {
     /// tab. A student who wants the rules taps once and gets all of them.
     private var linkRows: some View {
         VStack(spacing: 0) {
-            linkRow(title: state.podOptIn ? "Your pod" : "Swim with a pod",
-                    note: state.podOptIn ? "The board, and how to leave"
-                                         : "Twenty students, nobody knows anybody",
-                    tint: D.coralTint) {
-                SproutFace(speciesID: state.activeChibiID, size: 22)
+            if !state.podOptIn {
+                linkRow(title: "Swim with a pod",
+                        note: "Twenty students, nobody knows anybody",
+                        tint: D.coralTint) {
+                    SproutFace(speciesID: state.activeChibiID, size: 22)
+                }
+                hairline
             }
-            hairline
             linkRow(title: "The whole ladder",
-                    note: "\(state.league.tier.name), \(placeInLadder) of six waters",
+                    note: ladderNote,
                     tint: D.mintTint) {
                 TierPennant(tier: state.league.tier, earned: true, height: 20)
             }
@@ -351,7 +602,7 @@ struct FriendsView: View {
                 Text("What friends see")
                     .font(Theme.font(15.5, .heavy))
                     .foregroundStyle(Theme.ink)
-                Text(state.game.shareToday ? "Your fish, and what you did today"
+                Text(state.game.shareToday ? "Your fish, and your week"
                                            : "Your fish, and nothing else")
                     .font(Theme.font(12.5, .bold))
                     .foregroundStyle(Theme.muted)
@@ -370,6 +621,14 @@ struct FriendsView: View {
 
     private var placeInLadder: String {
         ["first", "second", "third", "fourth", "fifth", "sixth"][state.league.tier.rawValue]
+    }
+
+    /// "Shallows, second of six waters · 2 weeks won". The count only when there is one.
+    private var ladderNote: String {
+        var s = "\(state.league.tier.name), \(placeInLadder) of six waters"
+        let won = state.league.weeksWon
+        if won > 0 { s += " · \(won) \(won == 1 ? "week" : "weeks") won" }
+        return s
     }
 
     private func linkRow<V: View>(title: String, note: String, tint: Color,
@@ -606,25 +865,6 @@ struct FriendsView: View {
     }
 
     // MARK: - The list
-
-    private var friendList: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Friends")
-                .font(Theme.font(17, .bold))
-                .foregroundStyle(Theme.ink)
-                .padding(.horizontal, 4)
-                .padding(.bottom, 10)
-            ForEach(friends) { f in
-                friendRow(f)
-                if f.id != friends.last?.id { hairline.padding(.leading, 52) }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 18)
-        .padding(.top, 18)
-        .padding(.bottom, 8)
-        .background(cardBackground(26))
-    }
 
     /// The name you gave them, their stars, and one line only while they are at a
     /// desk. Nothing else: a friend who is not working has no second line, because

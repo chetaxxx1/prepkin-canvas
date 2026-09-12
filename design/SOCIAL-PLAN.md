@@ -109,7 +109,7 @@ how many passes, which rule was needed last — it is just thrown away.
 |---|---|---|
 | **Rating** | chess.com Puzzle rating (Glicko, player-vs-puzzle, puzzle ratings set by who solves them then locked) | Identical maths, identical shape |
 | **Friend board** | NYT Games multi-game leaderboard (Wordle + Connections + Spelling Bee + Mini in one list, friends, daily, score history) | Identical: our six games, one row per friend |
-| **League** | Duolingo leagues, minus demotion | Already shipped |
+| **League** | Friends board (Apple Watch scoring, Forest/Transit board, Duolingo Monday result) + the strangers pod | Rebuilt 2026-09-12, see `design/WEEKLY-BOARD.md` |
 | **Tank visits** | Finch friends: see their birb in its birbhouse, friendship level, send free preset Good Vibes, their bird visits yours | Identical minus paid gifts |
 | **Friend connect** | Finch / Duolingo friend code, plus a share link | Identical |
 

@@ -318,26 +318,45 @@ extension MockFriendClient {
     /// ordinary run still shows an empty tab.
     static let fakeFriendArgument = "-fakeFriend"
 
-    /// Two, on purpose: one to add by code and one that arrives already made, so
-    /// the "added you" card has something to be about.
+    /// Five: one on shift, one that arrives already made (so the "added you" card
+    /// has something to be about), and a spread of weeks so the podium, the rows
+    /// under it and the quest all have something to draw. The fifth shares no day,
+    /// so the "not on the board" list has a row too.
     static func seededForTesting(now: Date = Date()) -> MockFriendClient {
         let today = DayKey(now)
+        let week = WeekKey(today).days()
+        func day(_ i: Int) -> DayKey { i < week.count ? week[i] : today }
+        func friend(_ n: Int, _ adj: Int, _ noun: Int, _ species: String, _ scene: String,
+                    level: Int, tier: LeagueTier, since: TimeInterval, shift: TimeInterval? = nil) -> Friend {
+            Friend(id: "debug-friend-\(n)", adjective: adj, noun: noun,
+                   speciesID: species, lookID: "classic", costumeID: "none",
+                   sceneID: scene, level: level, tier: tier,
+                   friendsSince: now.addingTimeInterval(since),
+                   onShiftUntil: shift.map { now.addingTimeInterval($0) })
+        }
         return MockFriendClient(code: "TEST-CODE", seeded: [
-            Friend(id: "debug-friend-1", adjective: 12, noun: 30,
-                   speciesID: "ember", lookID: "classic", costumeID: "none",
-                   sceneID: "reef", level: 3, tier: .reef,
-                   friendsSince: now.addingTimeInterval(-3 * 86_400),
-                   onShiftUntil: now.addingTimeInterval(23 * 60)),
-            Friend(id: "debug-friend-2", adjective: 41, noun: 7,
-                   speciesID: "droplet", lookID: "classic", costumeID: "none",
-                   sceneID: "kelp", level: 2, tier: .tidepool,
-                   friendsSince: now.addingTimeInterval(-120),
-                   onShiftUntil: nil),
+            friend(1, 12, 30, "ember", "reef", level: 3, tier: .reef, since: -3 * 86_400, shift: 23 * 60),
+            friend(2, 41, 7, "droplet", "kelp", level: 2, tier: .tidepool, since: -120),
+            friend(3, 5, 19, "wisp", "lagoon", level: 2, tier: .shallows, since: -9 * 86_400),
+            friend(4, 27, 44, "comet", "dusk", level: 3, tier: .kelp, since: -30 * 86_400),
+            friend(5, 33, 2, "mochi", "deep", level: 1, tier: .tidepool, since: -2 * 86_400),
         ], days: [
             DayRow(playerID: "debug-friend-1", day: today,
                    counts: TodayCounts(tasks: 4, focusMinutes: 75, lessons: 2, games: 3)),
+            DayRow(playerID: "debug-friend-1", day: day(0),
+                   counts: TodayCounts(tasks: 3, focusMinutes: 45, lessons: 1, games: 3)),
+            DayRow(playerID: "debug-friend-1", day: day(1),
+                   counts: TodayCounts(tasks: 3, focusMinutes: 50, lessons: 1, games: 2)),
             DayRow(playerID: "debug-friend-2", day: today,
                    counts: TodayCounts(tasks: 1, focusMinutes: 20)),
+            DayRow(playerID: "debug-friend-3", day: day(0),
+                   counts: TodayCounts(tasks: 2, focusMinutes: 25, lessons: 0, games: 1)),
+            DayRow(playerID: "debug-friend-3", day: day(1),
+                   counts: TodayCounts(tasks: 3, focusMinutes: 45, lessons: 1, games: 3)),
+            DayRow(playerID: "debug-friend-3", day: day(2),
+                   counts: TodayCounts(tasks: 3, focusMinutes: 30, lessons: 1, games: 3)),
+            DayRow(playerID: "debug-friend-4", day: day(0),
+                   counts: TodayCounts(tasks: 1, focusMinutes: 0, lessons: 0, games: 2)),
         ])
     }
 }

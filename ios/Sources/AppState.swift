@@ -749,14 +749,84 @@ final class AppState: ObservableObject {
     /// twelve hours ahead is already writing tomorrow's date; asking only for days
     /// up to mine would leave their lines empty all day and then show them late.
     /// `fetch_today` clamps the span to a fortnight, so the extra day is free.
+    ///
+    /// **A fortnight, not a week, because of Monday.** The board settles last week
+    /// on the first fetch after the week turns, and by Tuesday last Monday is eight
+    /// days back. Fourteen is what the bridge keeps and what `fetch_today` clamps to,
+    /// so the widest window costs nothing extra.
     func refreshToday() async {
         guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
         let now = Date()
-        let from = DayKey(now.addingTimeInterval(-7 * 86_400))
+        let from = DayKey(now.addingTimeInterval(-13 * 86_400))
         let to = DayKey(now.addingTimeInterval(86_400))
         guard let rows = try? await client.fetchToday(identity: identity, from: from, to: to) else { return }
         guard game.league.identity == identity else { return }
         friendDays = rows
+        settleBoardIfNeeded(fetchedFrom: from)
+        creditQuestIfCleared()
+    }
+
+    // MARK: - The board
+
+    /// This phone on the board: its own week off the ledger, day by day, so the cap
+    /// applies to each day the way it does to a friend's rows.
+    private func me(for week: WeekKey) -> BoardMember {
+        let days = week.days()
+        let mine = TodayCounts.byDay(ledger: game.ledger, days: Set(days))
+        let ordered = days.compactMap { mine[$0] }
+        return BoardMember(id: BoardMember.youID, name: "You",
+                           speciesID: activeChibiID, lookID: activeChibi.skinID,
+                           level: activeChibi.level,
+                           points: WeekPoints.week(ordered),
+                           counts: ordered.reduce(TodayCounts(), +),
+                           isYou: true, onShiftUntil: nil)
+    }
+
+    /// The week being played, as the league counts it.
+    var boardWeek: WeekKey { game.league.weekStart }
+
+    /// Everybody on this week's board, ranked, and the friends who are not on it.
+    var weekBoard: (rows: [BoardRow], off: [Friend]) {
+        let week = boardWeek
+        let split = WeekBoard.members(you: me(for: week), friends: game.friends,
+                                      rows: friendDays, week: week)
+        return (WeekBoard.rank(split.on), split.off)
+    }
+
+    /// This week's quest, or nothing with nobody to quest with.
+    var groupQuest: GroupQuest.Status? {
+        GroupQuest.status(week: boardWeek, members: weekBoard.rows.map(\.member))
+    }
+
+    /// The Monday card, if there is one to show.
+    var mondayCard: LeagueWeekResult? { game.league.unseenSettledWeek }
+
+    func dismissMondayCard() {
+        guard let week = game.league.history.first?.week else { return }
+        game.league.boardSeen = week
+    }
+
+    /// Fills in last week's placement once its rows are in, and moves you up if
+    /// you won it. Once: a receipt with a placement is left alone.
+    ///
+    /// Only the newest settled week is scored. An older one whose rows are still
+    /// inside the fortnight would be scored against friends who may have added
+    /// or removed each other since, and nothing on screen is waiting for it.
+    private func settleBoardIfNeeded(fetchedFrom: DayKey) {
+        guard let last = game.league.history.first, last.placement == nil,
+              let monday = last.week.days().first, monday >= fetchedFrom else { return }
+        let split = WeekBoard.members(you: me(for: last.week), friends: game.friends,
+                                      rows: friendDays, week: last.week)
+        guard let placement = WeekBoard.placement(of: WeekBoard.rank(split.on)) else { return }
+        if game.league.award(placement, for: last.week) {
+            show("You won the week. \(game.league.tier.name) now.")
+        }
+    }
+
+    /// Counts the quest the first time the board shows it cleared.
+    private func creditQuestIfCleared() {
+        guard let quest = groupQuest, quest.cleared else { return }
+        game.league.creditQuest(quest.week)
     }
 
     /// Publishes today's counts when they change.
