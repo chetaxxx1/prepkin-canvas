@@ -227,6 +227,9 @@ chrome.tabs.onUpdated.addListener(async (_id, info, tab) => {
 const FOCUS_ALARM = 'prepkin-focus';
 
 async function focusStart({ taskId, title, url, minutes }) {
+  // A second press while one runs keeps the one running; it is not a reset.
+  const { focus: current } = await chrome.storage.local.get('focus');
+  if (current?.state === 'running') return current;
   const durationMin = [15, 25, 45].includes(minutes) ? minutes : 25;
   const focus = {
     state: 'running', taskId, title, url,
@@ -254,6 +257,17 @@ async function focusExtend() {
   await chrome.storage.local.set({ focus: next });
   chrome.alarms.create(FOCUS_ALARM, { when: next.endsAt });
   return next;
+}
+
+/// A page may ask for this once a minute per school: a submit form can be
+/// posted by a script too, and a sync is two calls per course.
+const afterSubmitAt = new Map();
+async function syncAfterSubmit(origin) {
+  if (!origin) return;
+  const last = afterSubmitAt.get(origin) ?? 0;
+  if (Date.now() - last < 60_000) return;
+  afterSubmitAt.set(origin, Date.now());
+  await syncNow(origin);
 }
 
 /// Giving up costs nothing — no coins lost, no record kept, no nagging.
@@ -298,7 +312,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   senderMayAsk(msg.type, sender)
     .then((ok) => {
       if (!ok) return sendResponse({ ok: false, error: 'Not allowed.' });
-      handleMessage(msg, sendResponse);
+      handleMessage(msg, sendResponse, sender);
     })
     .catch(async (err) => {
       await logError('worker message', err);
@@ -307,13 +321,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   return true; // keep the channel open for the async reply
 });
 
-function handleMessage(msg, sendResponse) {
+function handleMessage(msg, sendResponse, sender) {
   let response;
   if (msg.type === 'log-error') {
     response = logError('Canvas page', msg).then(() => ({ ok: true }));
   }
   if (msg.type === 'focus-start') {
     response = focusStart(msg);
+  }
+  if (msg.type === 'after-submit') {
+    // The page saw the student hand something in. One sync now, so the ring
+    // and the buddy answer in seconds rather than at the next half hour.
+    response = syncAfterSubmit(originOf(sender?.url ?? '')).then(() => ({ ok: true }));
   }
   if (msg.type === 'focus-extend') {
     response = focusExtend();

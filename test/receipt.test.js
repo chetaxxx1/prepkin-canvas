@@ -518,6 +518,73 @@ test('R10 the rail is one list: the thing to start on top, the next few, Canvas 
   await page.close();
 });
 
+test('R24 handing in pays off at once: the form posts, one sync follows, the row is struck and the ring moves', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const ps7 = (p) => p?.tasks?.find((t) => t.title === 'Problem Set 7');
+  assert.equal(ps7((await h.storage()).lastPayload)?.submittedAt ?? null, null, 'Problem Set 7 is pending');
+  await control('log/clear');
+  const page = await open('/courses/1/assignments/11');
+  await page.click('#submit_text_entry');                       // a real click: the form posts, Canvas comes back
+  await page.waitForURL(/\/courses\/1\/assignments\/11$/);
+  // The page that comes back asks for one sync a moment later.
+  const t0 = Date.now();
+  let payload;
+  while (Date.now() - t0 < 15_000) {
+    payload = (await h.storage()).lastPayload;
+    if (ps7(payload)?.submittedAt) break;
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  assert.ok(ps7(payload)?.submittedAt, 'the hand-in reached the laptop without waiting for the alarm');
+  const log = await control('log');
+  assert.ok(log.some((l) => l.path.startsWith('/api/v1/courses/1/assignments')), 'one sync ran after the post');
+  // The dashboard now shows it struck through, and the badge floated the reward.
+  const dash = await open('/');
+  assert.match(await dash.$eval('.pk-card-due', (e) => e.textContent), /Problem Set 7[\s\S]*handed in/, 'struck on the card');
+  await page.close(); await dash.close();
+});
+
+test('R25 while a session runs, the rail\'s top row is the session and Focus cannot restart it', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const lab = (await h.storage()).lastPayload.tasks.find((t) => t.title === 'Lab writeup: Momentum');
+  await h.sw((t) => focusStart({ taskId: t.id, title: t.title, url: t.url, minutes: 25 }), lab);
+  const page = await open('/');
+  await page.waitForSelector('#pk-week .pk-w-clock', { timeout: 5000 });
+  const top = await page.$eval('#pk-week .pk-w-first', (el) => el.textContent.replace(/\s+/g, ' ').trim());
+  assert.match(top, /Lab writeup: Momentum/, 'the session, not the queue');
+  assert.match(top, /\d+:\d\d left/, 'the clock');
+  assert.match(top, /Stop/);
+  assert.doesNotMatch(top, /Focus 25 min/, 'no second start');
+  assert.equal(await page.$eval('#pk-week .pk-w-label', (el) => el.textContent), 'Now');
+  const rows = await page.$$eval('#pk-week .pk-w-list li:not(.pk-w-first) b', (els) => els.map((e) => e.textContent));
+  assert.ok(!rows.includes('Lab writeup: Momentum'), 'not listed twice');
+  // The clock moves in place.
+  const a = await page.$eval('#pk-week .pk-w-clock', (el) => el.textContent);
+  await page.waitForTimeout(1600);
+  const b = await page.$eval('#pk-week .pk-w-clock', (el) => el.textContent);
+  assert.notEqual(a, b, 'ticks without a redraw');
+  // A second start keeps the first session's clock.
+  const endsAt = (await h.storage()).focus.endsAt;
+  await h.sw(() => focusStart({ taskId: 'other', title: 'Problem Set 7', url: '', minutes: 45 }));
+  assert.equal((await h.storage()).focus.endsAt, endsAt);
+  await h.sw(() => focusStop());
+  await page.close();
+});
+
+test('R26 a pending row on a course card is a link that says Start on hover; handed-in rows stay text', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/');
+  await page.waitForSelector('.pk-card-due a.pk-due-row', { timeout: 5000 });
+  const pending = await page.$('.pk-card-due a.pk-due-row:not(.done)');
+  assert.ok(pending, 'a pending row is a link');
+  assert.match(await pending.getAttribute('href'), /\/courses\/1\/assignments\/1[123]$/);
+  assert.equal(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .go', (e) => getComputedStyle(e).display), 'none', 'Start hides until hover');
+  await pending.hover();
+  assert.notEqual(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .go', (e) => getComputedStyle(e).display), 'none', 'Start on hover');
+  assert.equal(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .d', (e) => getComputedStyle(e).display), 'none', 'the date steps aside');
+  assert.equal(await page.$('.pk-card-due a.pk-due-row.done'), null, 'handed-in rows are not links');
+  await page.close();
+});
+
 // MARK: - R4: the receipt
 
 test('R4 the popup lists what this page got, Put back reverses one thing and is remembered, Show me outlines it', async () => {

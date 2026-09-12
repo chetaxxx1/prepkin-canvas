@@ -105,6 +105,14 @@ function canvasRoute(req, url, world) {
     if (how === 'html') return { status: 200, headers: { 'Content-Type': 'text/html' }, body: '<html><body>Maintenance</body></html>' };
     return { status: how.status, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(how.body ?? {}) };
   }
+  const sub = req.method === 'POST' && p.match(/^\/courses\/(\d+)\/assignments\/(\d+)\/submissions$/);
+  if (sub) {
+    // Classic Canvas: the form posts, the submission is recorded, and the
+    // browser is sent back to the assignment page.
+    const a = (world.assignments[sub[1]] ?? []).find((x) => String(x.id) === sub[2]);
+    if (a) a.submission = { workflow_state: 'submitted', submitted_at: new Date().toISOString() };
+    return { status: 302, headers: { Location: `/courses/${sub[1]}/assignments/${sub[2]}` }, body: '' };
+  }
   if (!p.startsWith('/api/v1/')) {
     return { status: 200, headers: { 'Content-Type': 'text/html' }, body: pageFor(url) };
   }
@@ -187,7 +195,8 @@ function pageFor(url) {
 <p><span style="color: windowtext;">So did this one.</span></p>
 <p><span style="background-color:#ffff00">Highlighted, not black.</span></p>
 <table><tr><td style="color: #c00000">A red cell the teacher meant</td></tr></table></div>
-<div class="submit_assignment"><button type="button" class="btn btn-primary" id="assignment_submit">Start Assignment</button></div></div>`;
+<div class="submit_assignment"><button type="button" class="btn btn-primary" id="assignment_submit">Start Assignment</button></div>
+<div id="submit_assignment"><form id="submit_online_text_entry_form" method="post" action="${p}/submissions"><textarea name="submission[body]"></textarea><button type="submit" class="btn btn-primary" id="submit_text_entry">Submit Assignment</button></form></div></div>`;
   } else if (/\/courses\/\d+\/grades/.test(p)) {
     main = `<h1>Grades for Alex Rivera</h1><div id="grade-summary-content"><table id="grades_summary"><thead><tr><th>Name</th><th>Due</th><th>Score</th></tr></thead>
 <tbody><tr class="student_assignment"><th class="title">Problem Set 6</th><td class="due">Sep 1</td><td class="assignment_score"><span class="grade">41</span><span class="possible points_possible">/ 50</span></td></tr></tbody></table>
@@ -336,8 +345,7 @@ class FakeServer {
     req.on('data', (c) => { raw += c; });
     req.on('end', () => {
       let body = {};
-      if (raw && !this.upstream) body = JSON.parse(raw);
-      else if (raw) { try { body = JSON.parse(raw); } catch { body = {}; } }
+      if (raw) { try { body = JSON.parse(raw); } catch { body = {}; } } // a posted form is not JSON
       if (url.pathname.startsWith('/__')) return this.control(url, body, res);
       if (url.pathname.startsWith('/rest/v1/rpc/')) {
         if (this.bridge.down) return req.socket.destroy();

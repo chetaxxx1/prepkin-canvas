@@ -183,6 +183,7 @@ function searchRank(items, query, limit = 8) {
 let wallet = { coins: null, owned: ['classic'], wearing: 'classic' };
 let skin = { ...DEFAULTS };
 let focus = { state: 'idle' };
+let handInWatched = false;
 let flags = null;
 
 /// Settings live in one place so the popup and the page cannot disagree.
@@ -1148,6 +1149,31 @@ function looksView() {
     ${picturesSection(LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic)}`;
 }
 
+/// "17:21" — what is left of the session.
+function clockLeft() {
+  const left = Math.max(0, focus.endsAt - Date.now());
+  return `${Math.floor(left / 60000)}:${String(Math.floor((left % 60000) / 1000)).padStart(2, '0')}`;
+}
+
+/// Once a second while a session runs: the card's clock and ring, and the
+/// rail's clock, moved in place. A full redraw each second would restart
+/// every animation and drop every hover; the state changes come through
+/// storage and redraw properly.
+function tickClocks() {
+  if (focus.state !== 'running') return;
+  const text = clockLeft();
+  const rail = document.querySelector(`#${WEEK_ID} .pk-w-clock`);
+  if (rail) rail.textContent = text;
+  if (!shadow) return;
+  const clock = shadow.querySelector('.pk-timer .pk-clock');
+  if (clock) clock.textContent = text;
+  const ring = shadow.querySelector('.pk-timer .pk-ring circle:last-child');
+  if (ring) {
+    const left = Math.max(0, focus.endsAt - Date.now());
+    ring.setAttribute('stroke-dashoffset', (2 * Math.PI * 54 * (left / (focus.durationMin * 60000))).toFixed(1));
+  }
+}
+
 /// The running / finished focus card. Replaces the panel entirely, because a
 /// timer you can lose behind a scroll is a timer you forget.
 ///
@@ -1427,14 +1453,66 @@ function decorateCards() {
     const label = document.createElement('span'); label.className = 'pk-due-label'; label.textContent = 'Due';
     el.append(label);
     for (const r of rows) {
-      const row = document.createElement('div');
+      // A pending row is a link to the work, and says Start when the mouse is
+      // on it; handed-in rows stay plain text.
+      const url = r.done ? null : safeURL(r.t.url);
+      const row = document.createElement(url ? 'a' : 'div');
       row.className = `pk-due-row${r.done ? ' done' : ''}${r.overdue ? ' overdue' : ''}`;
+      if (url) row.href = url;
       const t = document.createElement('span'); t.className = 't'; t.textContent = r.t.title; t.title = r.t.title;
       const d = document.createElement('span'); d.className = 'd'; d.textContent = r.done ? 'handed in' : r.overdue ? `was due ${r.when}` : r.when;
       row.append(t, d);
+      if (url) { const go = document.createElement('span'); go.className = 'go'; go.textContent = 'Start'; row.append(go); }
       el.append(row);
     }
   }
+}
+
+// MARK: - Handing in
+//
+// The moment a student submits, the ring and the buddy should answer, not the
+// next half-hour sync. Canvas hands work in two ways: the classic forms under
+// #submit_assignment post and reload the page, the newer Submit button stays on
+// it. Either way the page asks the worker for one sync, which it rate-limits.
+// Only trusted events count: a script can dispatch a click, not a student.
+
+const HANDED_IN_KEY = 'handedInAt';
+const HANDED_IN_FRESH_MS = 3 * 60_000;
+
+function askSyncAfterSubmit(delayMs) {
+  setTimeout(() => {
+    if (!alive()) return;
+    chrome.runtime.sendMessage({ type: 'after-submit' }).catch(() => {});
+  }, delayMs);
+}
+
+function watchHandIn() {
+  // Classic: the form posts and Canvas comes back to the assignment page.
+  // The flag survives the reload; the next load asks for the sync.
+  document.addEventListener('submit', (e) => {
+    if (!e.isTrusted || !alive()) return;
+    const form = e.target;
+    if (!(form instanceof HTMLFormElement) || !form.closest('#submit_assignment')) return;
+    chrome.storage.local.set({ [HANDED_IN_KEY]: Date.now() }).catch(() => {});
+  }, true);
+  // Assignment Enhancements: the button submits in place.
+  document.addEventListener('click', (e) => {
+    if (!e.isTrusted) return;
+    const btn = e.target instanceof Element ? e.target.closest('button[data-testid="submit-button"]') : null;
+    if (btn) askSyncAfterSubmit(4000);
+  }, true);
+}
+
+/// On a fresh load: if the last page handed something in a moment ago, Canvas
+/// recorded it before it sent the browser here, so the ask goes out at once —
+/// a student who clicks on within a second must not lose it. Then the flag
+/// is forgotten; the worker's sync does not need this tab.
+async function syncIfJustHandedIn(stored) {
+  const at = Number(stored?.[HANDED_IN_KEY]) || 0;
+  if (!at) return;
+  if (!alive()) return;
+  if (Date.now() - at < HANDED_IN_FRESH_MS) askSyncAfterSubmit(0);
+  await chrome.storage.local.remove(HANDED_IN_KEY);
 }
 
 // MARK: - A small helper the rail uses
@@ -1540,8 +1618,10 @@ function renderWeek() {
   // before what has already gone by, so the list is not a wall of amber.
   const first = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
   const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 3);
+  const running = focus.state === 'running';
   const key = JSON.stringify([weekOffset, w.start.getTime(), w.total, w.done, w.byCourse.map((c) => [c.courseId, c.total, c.done]),
-    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId()]);
+    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId(),
+    running && focus.endsAt, running && focus.title]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1626,31 +1706,47 @@ function renderWeek() {
   // One list, the way BetterCampus keeps one: the thing to start at the top
   // with its two ways to start it, the next few under it. Always today's,
   // whichever week the rings show.
-  if (first) {
-    box.append(el('p', 'pk-w-label', 'Up next'));
+  if (running || first) {
+    box.append(el('p', 'pk-w-label', running ? 'Now' : 'Up next'));
     const list = el('ul', 'pk-w-list');
-    const overdue = new Date(first.dueAt) < now;
     const top = el('li', 'pk-w-first');
     const info = el('div');
-    // Amber and "Was due" already say late; the row does not add a comment.
-    info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now).replace(' · still counts', '')}`));
     const actions = el('div', 'pk-w-actions');
-    const url = safeURL(first.url);
-    if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
-    const focusBtn = el('span', '', `Focus ${skin.focusMinutes} min`);
-    focusBtn.setAttribute('role', 'button'); focusBtn.tabIndex = 0;
-    const go = (e) => {
-      if (!e.isTrusted || !alive()) return;
-      chrome.runtime.sendMessage({ type: 'focus-start', taskId: first.id, title: first.title, url: first.url, minutes: skin.focusMinutes });
+    const press = (node, fn) => {
+      node.setAttribute('role', 'button'); node.tabIndex = 0;
+      node.addEventListener('click', fn);
+      node.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } });
     };
-    focusBtn.addEventListener('click', go);
-    focusBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
-    actions.append(focusBtn);
+    if (running) {
+      // The session, not the queue: what is being worked on, how long is
+      // left (ticked in place), the page it is on, and one way to stop.
+      const task = data.tasks.find((t) => String(t.id) === String(focus.taskId));
+      const meta = el('small', '', '');
+      meta.append(`${task ? shortCourse(task.courseName) + ' · ' : ''}`, el('span', 'pk-w-clock', clockLeft()), ' left');
+      info.append(el('b', '', focus.title ?? 'Focus'), meta);
+      const url = safeURL(focus.url);
+      if (url) { const a = el('a', 'start', 'Open'); a.href = url; actions.append(a); }
+      const stop = el('span', '', 'Stop');
+      press(stop, (e) => { if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-stop' }); });
+      actions.append(stop);
+    } else {
+      const overdue = new Date(first.dueAt) < now;
+      // Amber and "Was due" already say late; the row does not add a comment.
+      info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now).replace(' · still counts', '')}`));
+      const url = safeURL(first.url);
+      if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
+      const focusBtn = el('span', '', `Focus ${skin.focusMinutes} min`);
+      press(focusBtn, (e) => {
+        if (!e.isTrusted || !alive()) return;
+        chrome.runtime.sendMessage({ type: 'focus-start', taskId: first.id, title: first.title, url: first.url, minutes: skin.focusMinutes });
+      });
+      actions.append(focusBtn);
+    }
     top.append(info, actions);
     list.append(top);
     // The next few are one line each: the dot is the course, the day is on
     // the right. The full course and time sit in the title for a hover.
-    for (const t of then) {
+    for (const t of running ? [first, ...then].filter((t) => t && String(t.id) !== String(focus.taskId)).slice(0, 3) : then) {
       const late = new Date(t.dueAt) < now;
       const li = el('li');
       const dot = el('i', late ? 'late' : '');
@@ -2016,6 +2112,7 @@ function render() {
     ${focus.state !== 'idle' ? focusCard() : ''}
     <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
       ${urgent ? `<span class="pk-count" aria-hidden="true">${urgent}</span>` : ''}
+      ${ui.float && Date.now() - ui.float < 2500 ? `<span class="pk-float" aria-hidden="true">${COIN_SVG}+${COIN_REWARD}</span>` : ''}
     </button>
     <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Prepkin" tabindex="-1" ${ui.open ? '' : 'hidden'}>
       ${showHeader ? `
@@ -2378,7 +2475,7 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags']);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', HANDED_IN_KEY]);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
@@ -2400,9 +2497,10 @@ async function mount() {
   renderWeek();
   renderSearchChip();
   watchPage();
+  if (!handInWatched) { handInWatched = true; watchHandIn(); syncIfJustHandedIn(stored); }
 
   clearInterval(ticker);
-  ticker = setInterval(() => { if (!alive()) return; if (focus.state === 'running' && ui.open) render(); }, 1000);
+  ticker = setInterval(() => { if (!alive()) return; tickClocks(); }, 1000);
 
   document.getElementById(ROOT_ID)?.remove();
   shadow = null;
@@ -2438,7 +2536,11 @@ if (typeof module !== 'undefined') {
     // cheers before the page says so. Real work, real reaction, nothing else.
     if (changes.focus?.oldValue?.state === 'running' && changes.focus?.newValue?.state === 'done') spriteSend({ do: 'play', emote: 'cheer' });
     const handedIn = (p) => (p?.tasks ?? []).filter((t) => t.submittedAt).length;
-    if (changes.lastPayload?.oldValue && handedIn(changes.lastPayload.newValue) > handedIn(changes.lastPayload.oldValue)) spriteSend({ do: 'play', emote: 'cheer' });
+    if (changes.lastPayload?.oldValue && handedIn(changes.lastPayload.newValue) > handedIn(changes.lastPayload.oldValue)) {
+      spriteSend({ do: 'play', emote: 'cheer' });
+      // And the number: what the phone will pay for it, floating up from him.
+      ui.float = Date.now();
+    }
     if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.nicknames || changes.ownTasks || changes.flags) mount();
     // Not plans, levels or targets: the tab that set one has already redrawn,
     // and a remount here would throw the student back to the top of the panel
