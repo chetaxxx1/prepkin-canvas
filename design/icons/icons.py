@@ -11,7 +11,12 @@ to invent a seventh — the tile takes the hue family of the thing standing in i
 
 # sheet -> (columns, rows)
 GRIDS = {"grid-a": (3, 2), "grid-b": (3, 2), "grid-c": (4, 2), "grid-d": (2, 1),
-         "grid-e": (3, 1), "grid-f": (3, 2), "grid-g": (3, 2)}
+         "grid-e": (3, 1), "grid-f": (3, 2), "grid-g": (3, 2),
+         # League badges (2026-09-12): grid-h shields, grid-i medallions — George
+         # picks one and `SET` points at it; grid-j medals, chest, pod, crown.
+         "grid-h": (3, 2), "grid-i": (3, 2), "grid-j": (3, 2),
+         # Friends-tab marks: eye, wave, race flags, life ring, paper plane, telescope.
+         "grid-k": (3, 2)}
 
 TINT = {"sky": "#E3EEFB", "gold": "#FCEFD3", "mint": "#DFF3E9",
         "coral": "#FFE9E5", "lilac": "#EDE7FB", "indigo": "#E7E7F6"}
@@ -57,11 +62,33 @@ SET = [
     ("highFive",   "High five",  "Kin", "mint",  "grid-g", 1),
     ("snack",      "Snack",      "Kin", "gold",  "grid-g", 3),
     ("collection", "Collection", "Kin", "lilac", "grid-g", 4),
+    # The six waters. Drawn as league trophies (Duolingo's shield-on-a-pedestal
+    # shape) with one sea emblem each, in the tier's own colour, darker in order.
+    ("tierTidepool",  "Tidepool",   "League", "mint", "grid-h", 0),
+    ("tierShallows",  "Shallows",   "League", "mint", "grid-h", 1),
+    ("tierReef",      "Reef",       "League", "sky",  "grid-h", 2),
+    ("tierKelp",      "Kelp",       "League", "mint", "grid-h", 3),
+    ("tierOpenWater", "Open water", "League", "sky",  "grid-h", 4),
+    ("tierDeep",      "Deep",       "League", "indigo", "grid-h", 5),
+    ("medalGold",     "Gold",       "League", "gold",  "grid-j", 0),
+    ("medalSilver",   "Silver",     "League", "sky",   "grid-j", 1),
+    ("medalBronze",   "Bronze",     "League", "coral", "grid-j", 2),
+    ("questChest",    "Quest",      "League", "gold",  "grid-j", 3),
+    ("pod",           "Pod",        "League", "sky",   "grid-j", 4),
+    ("crown",         "Crown",      "League", "gold",  "grid-j", 5),
+    ("eye",           "What friends see", "Friends", "mint",  "grid-k", 0),
+    ("wave",          "Wave",             "Friends", "coral", "grid-k", 1),
+    ("raceFlags",     "Race",             "Friends", "coral", "grid-k", 2),
 ]
+
+# Drawn big: the Monday sheet shows a badge at 132pt and the ladder card at 72.
+# 264pt at 3x would be soft there, so these get the whole 512 canvas.
+LARGE = {"tierTidepool", "tierShallows", "tierReef", "tierKelp", "tierOpenWater", "tierDeep",
+         "medalGold", "medalSilver", "medalBronze", "questChest", "crown"}
 
 # Icons that render with nothing behind them. They fill more of their box than an
 # icon that sits in a tinted tile, or they read a size smaller than their neighbours.
 NO_TILE = {"tabHome", "tabFocus", "tabLearn", "tabCalendar", "tabFriends", "tabPlay",
-           "collection"}
+           "collection", "crown", "wave"} | LARGE
 
 BY_NAME = {r[0]: r for r in SET}

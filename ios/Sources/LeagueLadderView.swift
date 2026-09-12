@@ -165,21 +165,16 @@ struct LeagueLadderView: View {
             shelfTile(league.weeksWon, "WEEKS WON") { MedalPennant(medal: 1, height: 30) }
             shelfTile(league.weeksSecond, "SECOND") { MedalPennant(medal: 2, height: 30) }
             shelfTile(league.weeksThird, "THIRD") { MedalPennant(medal: 3, height: 30) }
-            shelfTile(league.questsCleared, "QUESTS") {
-                ZStack {
-                    PennantShape().fill(Theme.coral)
-                    PennantFoldShape().fill(Theme.coralShade)
-                    PennantShape().strokeBorder(Theme.coralShade, lineWidth: 1.4)
-                }
-                .frame(width: 30 * 40 / 56, height: 30)
-                .accessibilityHidden(true)
-            }
+            shelfTile(league.questsCleared, "QUESTS") { BadgeMark(icon: "questChest", height: 26) }
         }
     }
 
     private func shelfTile<V: View>(_ count: Int, _ label: String, @ViewBuilder glyph: () -> V) -> some View {
         VStack(spacing: 4) {
-            glyph().opacity(count > 0 ? 1 : 0.35)
+            glyph()
+                .frame(height: 34)
+                .saturation(count > 0 ? 1 : 0.15)
+                .opacity(count > 0 ? 1 : 0.45)
             Text("\(count)")
                 .font(Theme.font(20, .black))
                 .foregroundStyle(count > 0 ? Theme.ink : Theme.dim)

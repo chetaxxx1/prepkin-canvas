@@ -215,7 +215,7 @@ struct FriendsWater: View {
                         SproutImage(speciesID: row.member.speciesID, level: row.member.level,
                                     skin: row.member.lookID, size: kin)
                             .padding(.top, 14)
-                        if place == 1, crowned { CrownGlyph(size: 26) }
+                        if place == 1, crowned { BadgeMark(icon: "crown", height: 22) }
                     }
                 }
                 .buttonStyle(.plain)
@@ -248,13 +248,13 @@ struct FriendsWater: View {
                 .frame(height: hill + 10, alignment: .top)
                 .clipped()
                 .zIndex(1)
-            // Transit's rosette: the place, on the metal, under the face. Only with
+            // Transit's rosette, as our medal: the metal under the face. Only with
             // somebody to have placed against — a board of one gets a name alone.
             VStack(spacing: 3) {
                 if row != nil, crowned {
-                    PlaceRosette(place: place)
-                        .offset(y: -8)
-                        .padding(.bottom, -8)
+                    MedalPennant(medal: place, height: 26)
+                        .offset(y: -10)
+                        .padding(.bottom, -10)
                 }
                 Text(row?.member.name ?? " ")
                     .font(Theme.font(12, .heavy))
@@ -338,70 +338,5 @@ struct FriendsWater: View {
         }
         .padding(.horizontal, 14)
         .padding(.bottom, 12)
-    }
-}
-
-/// Transit's 1st / 2nd / 3rd rosette: a small disc of the metal with the place on
-/// it and two short ribbon tails. Gold, silver, bronze — the same cloth the
-/// shelf's pennants use.
-struct PlaceRosette: View {
-    let place: Int
-
-    var body: some View {
-        let (fill, edge) = MedalPennant.cloth(place)
-        ZStack {
-            // The tails, behind the disc.
-            HStack(spacing: 6) {
-                RibbonTail().fill(edge).frame(width: 9, height: 12)
-                RibbonTail().fill(edge).frame(width: 9, height: 12)
-            }
-            .offset(y: 8)
-            Circle()
-                .fill(fill)
-                .overlay(Circle().strokeBorder(edge, lineWidth: 1.6))
-                .frame(width: 24, height: 24)
-            Text(FriendsWater.ordinal(place))
-                .font(Theme.fixedFont(8.5, .black))
-                .foregroundStyle(place == 2 ? Theme.hex(0x3E434A) : .white)
-        }
-        .frame(width: 30, height: 30)
-        .accessibilityHidden(true)
-    }
-
-    private struct RibbonTail: Shape {
-        func path(in r: CGRect) -> Path {
-            var p = Path()
-            p.move(to: CGPoint(x: r.minX, y: r.minY))
-            p.addLine(to: CGPoint(x: r.maxX, y: r.minY))
-            p.addLine(to: CGPoint(x: r.maxX, y: r.maxY))
-            p.addLine(to: CGPoint(x: r.midX, y: r.maxY - r.height * 0.3))
-            p.addLine(to: CGPoint(x: r.minX, y: r.maxY))
-            p.closeSubpath()
-            return p
-        }
-    }
-}
-
-/// A small gold crown for the winner's stand. Five points on a 26x20 grid.
-struct CrownGlyph: View {
-    var size: CGFloat = 26
-
-    var body: some View {
-        Canvas { ctx, sz in
-            let s = sz.width / 26
-            var p = Path()
-            p.move(to: CGPoint(x: 2 * s, y: 17 * s))
-            p.addLine(to: CGPoint(x: 2 * s, y: 6 * s))
-            p.addLine(to: CGPoint(x: 8 * s, y: 11 * s))
-            p.addLine(to: CGPoint(x: 13 * s, y: 2 * s))
-            p.addLine(to: CGPoint(x: 18 * s, y: 11 * s))
-            p.addLine(to: CGPoint(x: 24 * s, y: 6 * s))
-            p.addLine(to: CGPoint(x: 24 * s, y: 17 * s))
-            p.closeSubpath()
-            ctx.fill(p, with: .color(Theme.hex(0xE9B949)))
-            ctx.stroke(p, with: .color(Theme.hex(0xB8861B)), style: StrokeStyle(lineWidth: 1.6 * s, lineJoin: .round))
-        }
-        .frame(width: size, height: size * 20 / 26)
-        .accessibilityHidden(true)
     }
 }

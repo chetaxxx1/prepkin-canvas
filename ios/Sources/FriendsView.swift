@@ -211,7 +211,7 @@ struct FriendsView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                         Spacer(minLength: 8)
-                        ClapGlyph(size: 20, tint: Theme.coral)
+                        BadgeMark(icon: "wave", height: 22)
                     }
                     .padding(.horizontal, 16)
                     .frame(minHeight: 62)
@@ -345,7 +345,8 @@ struct FriendsView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             withAnimation(.easeInOut(duration: 0.2)) { state.wave(at: f) }
         } label: {
-            ClapGlyph(size: 18, tint: sent ? Theme.mintDark : Theme.coral)
+            BadgeMark(icon: "wave", height: 20)
+                .saturation(sent ? 0.3 : 1)
                 .frame(width: 36, height: 36)
                 .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(sent ? Theme.mintSoft : Theme.coralSoft))
@@ -466,7 +467,7 @@ struct FriendsView: View {
                     withAnimation(.easeInOut(duration: 0.2)) { state.wave(at: nudgeFriend) }
                 } label: {
                     HStack(spacing: 8) {
-                        ClapGlyph(size: 17, tint: sent ? Theme.mintDark : Theme.coral)
+                        BadgeMark(icon: "wave", height: 18)
                         Text(sent ? "Nudged \(nudgeFriend.displayName)" : "Nudge \(nudgeFriend.displayName)")
                             .font(Theme.font(13.5, .black))
                     }
@@ -572,8 +573,8 @@ struct FriendsView: View {
             if !state.podOptIn {
                 linkRow(title: "Swim with a pod",
                         note: "Twenty students, nobody knows anybody",
-                        tint: D.coralTint) {
-                    SproutFace(speciesID: state.activeChibiID, size: 22)
+                        tint: IconTint.of("pod").soft) {
+                    BadgeMark(icon: "pod", height: 24)
                 }
                 hairline
             }
@@ -597,11 +598,9 @@ struct FriendsView: View {
     private var privacyRowLabel: some View {
         HStack(spacing: 12) {
             RoundedRectangle(cornerRadius: Theme.Radius.tile(38), style: .continuous)
-                .fill(D.mintTint)
+                .fill(IconTint.of("eye").soft)
                 .frame(width: 38, height: 38)
-                .overlay(Image(systemName: "eye")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(Theme.mintDark))
+                .overlay(BadgeMark(icon: "eye", height: 14))
             VStack(alignment: .leading, spacing: 2) {
                 Text("What friends see")
                     .font(Theme.font(15.5, .heavy))

@@ -22,6 +22,8 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 CAT = os.path.join(ROOT, "ios", "Resources", "Assets.xcassets")
 PNG = os.path.join(HERE, "png")
 SCALES = [("1x", 88), ("2x", 176), ("3x", 264)]
+# The league badges draw up to 132pt, so they keep the whole cut canvas.
+SCALES_LARGE = [("1x", 170), ("2x", 340), ("3x", 512)]
 
 SWIFT = '''import SwiftUI
 
@@ -84,7 +86,7 @@ def main():
         for stale in glob.glob(os.path.join(d, "*.pdf")):
             os.remove(stale)
         images = []
-        for tag, px in SCALES:
+        for tag, px in (SCALES_LARGE if name in M.LARGE else SCALES):
             f = f"icon-{name}@{tag}.png" if tag != "1x" else f"icon-{name}.png"
             src.resize((px, px), Image.LANCZOS).save(os.path.join(d, f))
             images.append({"idiom": "universal", "filename": f, "scale": tag})

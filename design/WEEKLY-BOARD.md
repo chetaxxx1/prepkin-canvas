@@ -56,6 +56,30 @@ Finch's night sky (the water is the tier's colour).
 `-fakeMonday` (DEBUG) seeds a second-of-six, bar-cleared last week so the sheet can be
 looked at.
 
+## The badges (2026-09-12, third pass)
+
+George: the hollow pennants were "ugly and shitty". They were hand-drawn `Path` shapes;
+the rest of the app's icons are a generated flat-vector family (`design/icons`, memory
+`icon-set-v1`). The badges now come from the same pipeline, a sheet at a time against
+`grid-a` as the style reference:
+
+- `grid-h` — the six waters as **Duolingo's league trophy shape** (a shield on a
+  pedestal) with one sea emblem each: scallop, starfish, coral, kelp, wave, anglerfish
+  lantern. Darker in order. George picked these over `grid-i` (award rosettes, kept for
+  the record).
+- `grid-j` — gold / silver / bronze medals on ribbons, the quest chest, the pod (a school
+  of fish), the crown.
+- `grid-k` — the eye (what friends see), the wave (was the hand-drawn clap), race flags
+  (for the next slice), and three spares.
+
+Swift: `TierPennant` and `MedalPennant` keep their names and call sites but draw the
+imagesets; `BadgeMark` draws the small marks bare. The `LARGE` set in `icons.py` packs at
+512px so the Monday sheet's 132pt badge is sharp. Not-yet-earned is the badge drained of
+colour (saturation 0.15, opacity 0.45) — Duolingo's grey trophy without its padlock.
+Deleted: `PennantShape`, `PennantFoldShape`, `PlaceRosette`, `CrownGlyph`, `ClapGlyph`,
+`AddFriendGlyph`. `TierLadder` in `LeagueView.swift` was already dead before this and is
+left alone.
+
 ## Why the score is not coins
 
 Coins are what the pod ranks on and they are unverifiable check-offs. The four counts are

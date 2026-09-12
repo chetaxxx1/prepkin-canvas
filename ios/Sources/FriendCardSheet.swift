@@ -163,7 +163,7 @@ struct FriendCardSheet: View {
             withAnimation(.easeInOut(duration: 0.2)) { state.wave(at: friend) }
         } label: {
             HStack(spacing: 10) {
-                ClapGlyph(size: 24, tint: sent ? .white : Theme.coral)
+                BadgeMark(icon: "wave", height: 26)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(sent ? "Waved" : Vibes.wave.label)
                         .font(Theme.font(16, .heavy))

@@ -42,92 +42,71 @@ extension LeagueTier {
     var ink: Color { self <= .reef ? Theme.ink : Theme.onDarkWarm }
 }
 
-// MARK: - The pennant
+// MARK: - The badges
 
-/// A swallowtail pennant on a 40x56 grid. Spelled with raw `Path` calls because the
-/// `go`/`to`/`bend` helpers are private to PrepkinIcons.swift.
-struct PennantShape: InsettableShape {
-    var inset: CGFloat = 0
-
-    func path(in r: CGRect) -> Path {
-        let b = r.insetBy(dx: inset, dy: inset)
-        let s = min(b.width / 40, b.height / 56)
-        let ox = b.minX + (b.width - 40 * s) / 2
-        let oy = b.minY + (b.height - 56 * s) / 2
-        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: ox + x * s, y: oy + y * s) }
-
-        var path = Path()
-        path.move(to: p(3, 3))
-        path.addLine(to: p(37, 3))
-        path.addQuadCurve(to: p(30.5, 52), control: p(35.5, 30))
-        path.addLine(to: p(20, 40))
-        path.addLine(to: p(9.5, 52))
-        path.addQuadCurve(to: p(3, 3), control: p(4.5, 30))
-        path.closeSubpath()
-        return path
-    }
-
-    func inset(by amount: CGFloat) -> Self { var c = self; c.inset += amount; return c }
-}
-
-/// The shaded fly half. Two flat tones make cloth read as folded — the same trick the
-/// open-book icon uses for its two covers.
-struct PennantFoldShape: Shape {
-    func path(in r: CGRect) -> Path {
-        let s = min(r.width / 40, r.height / 56)
-        let ox = r.minX + (r.width - 40 * s) / 2
-        let oy = r.minY + (r.height - 56 * s) / 2
-        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: ox + x * s, y: oy + y * s) }
-
-        var path = Path()
-        path.move(to: p(21.5, 3))
-        path.addLine(to: p(37, 3))
-        path.addQuadCurve(to: p(30.5, 52), control: p(35.5, 30))
-        path.addLine(to: p(20, 40))
-        path.closeSubpath()
-        return path
+extension LeagueTier {
+    /// The generated badge in the asset catalogue: Duolingo's shield-on-a-pedestal
+    /// with one sea emblem each, drawn by `design/icons` (grid-h) in the same
+    /// flat-vector family as every other icon in the app. George picked the shields
+    /// over the rosettes on 2026-09-12.
+    var icon: String {
+        switch self {
+        case .tidepool:  return "tierTidepool"
+        case .shallows:  return "tierShallows"
+        case .reef:      return "tierReef"
+        case .kelp:      return "tierKelp"
+        case .openWater: return "tierOpenWater"
+        case .deep:      return "tierDeep"
+        }
     }
 }
 
 /// The keepsake. One per tier reached, kept forever.
 ///
-/// Not-yet-earned is drawn the way an unowned kin is drawn: full-strength tier colour,
-/// hollow instead of filled. Nothing is greyed, blurred, padlocked or silhouetted, and
-/// the caller always shows the condition beside it.
+/// `height` is the badge's own height on screen; the cut PNG has air around it,
+/// so the frame is a little larger than the badge. Not-yet-earned is the same
+/// badge drained of most of its colour — a ghost of the thing, never a padlock,
+/// a "?" or a grey box.
 struct TierPennant: View {
     let tier: LeagueTier
     var earned: Bool
     var height: CGFloat = 56
 
-    private var width: CGFloat { height * 40 / 56 }
-    private var line: CGFloat { max(1.4, height * 0.045) }
+    /// The shield fills 0.87 of the cut canvas (design/icons/cut.py, measured).
+    private var box: CGFloat { height / 0.87 }
 
     var body: some View {
-        ZStack {
-            if earned {
-                PennantShape().fill(tier.color)
-                PennantFoldShape().fill(tier.edge)
-            } else {
-                PennantShape().fill(Theme.unowned)
-            }
-            PennantShape().strokeBorder(tier.edge, lineWidth: line)
-        }
-        .frame(width: width, height: height)
-        .accessibilityElement()
-        .accessibilityLabel(earned ? "\(tier.name) pennant, yours" : "\(tier.name) pennant, not yet")
+        Image("icon-" + tier.icon)
+            .resizable()
+            .interpolation(.high)
+            .scaledToFit()
+            .saturation(earned ? 1 : 0.15)
+            .opacity(earned ? 1 : 0.45)
+            .frame(width: box, height: box)
+            .accessibilityElement()
+            .accessibilityLabel(earned ? "\(tier.name) badge, yours" : "\(tier.name) badge, not yet")
     }
 }
 
-/// A pennant from the friends board: gold, silver or bronze, kept forever. Same
-/// cloth as a tier pennant so the shelf reads as one set; the metal is the colour.
+/// A medal from the friends board: gold, silver or bronze, kept forever. The
+/// generated medal (grid-j), a disc on a ribbon, in the same family as the shields.
 struct MedalPennant: View {
     /// 1, 2 or 3.
     let medal: Int
     var height: CGFloat = 34
 
-    private var width: CGFloat { height * 40 / 56 }
-    private var line: CGFloat { max(1.4, height * 0.045) }
+    /// The medal fills 0.89 of the cut canvas.
+    private var box: CGFloat { height / 0.89 }
 
+    static func icon(_ medal: Int) -> String {
+        ["", "medalGold", "medalSilver", "medalBronze"][min(3, max(1, medal))]
+    }
+
+    static func name(_ medal: Int) -> String {
+        ["", "gold", "silver", "bronze"][min(3, max(1, medal))]
+    }
+
+    /// The metal and its shadow, for text and sparks drawn beside a medal.
     static func cloth(_ medal: Int) -> (Color, Color) {
         switch medal {
         case 1: return (Theme.hex(0xE9B949), Theme.hex(0xB8861B))
@@ -136,20 +115,36 @@ struct MedalPennant: View {
         }
     }
 
-    static func name(_ medal: Int) -> String {
-        ["", "gold", "silver", "bronze"][min(3, max(1, medal))]
+    var body: some View {
+        Image("icon-" + Self.icon(medal))
+            .resizable()
+            .interpolation(.high)
+            .scaledToFit()
+            .frame(width: box, height: box)
+            .accessibilityElement()
+            .accessibilityLabel("\(Self.name(medal)) medal")
     }
+}
+
+/// One of the generated marks (crown, quest chest, pod, eye, wave) drawn bare at a
+/// height. Same air-around-the-ink rule as the badges, per icon.
+struct BadgeMark: View {
+    let icon: String
+    var height: CGFloat = 24
+
+    /// Ink height as a share of the cut canvas, measured in design/icons.
+    private static let fill: [String: CGFloat] = [
+        "crown": 0.73, "questChest": 0.65, "pod": 0.87, "eye": 0.50, "wave": 0.90, "raceFlags": 0.8,
+    ]
 
     var body: some View {
-        let (fill, edge) = Self.cloth(medal)
-        ZStack {
-            PennantShape().fill(fill)
-            PennantFoldShape().fill(edge)
-            PennantShape().strokeBorder(edge, lineWidth: line)
-        }
-        .frame(width: width, height: height)
-        .accessibilityElement()
-        .accessibilityLabel("\(Self.name(medal)) pennant")
+        let box = height / (Self.fill[icon] ?? 0.8)
+        Image("icon-" + icon)
+            .resizable()
+            .interpolation(.high)
+            .scaledToFit()
+            .frame(width: box, height: box)
+            .accessibilityHidden(true)
     }
 }
 
