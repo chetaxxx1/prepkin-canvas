@@ -444,15 +444,25 @@ $$;
 create table if not exists kin_species (id text primary key);
 create table if not exists kin_looks   (id text primary key);
 
--- ios/Sources/Models.swift, ChibiSpecies.catalog
+-- ios/Sources/Models.swift, ChibiSpecies.catalog — plus the four starter coats,
+-- because `GameState.publicSpecies` (Core/FirstRun.swift) sends a picked coat
+-- *as* the species so another phone draws the coat that was picked.
 insert into kin_species (id) values
   ('slime'), ('ember'), ('droplet'), ('sprout'), ('wisp'), ('comet'),
-  ('orca'), ('axolotl'), ('axolotl-coral')
+  ('orca'), ('axolotl'), ('axolotl-coral'),
+  ('mint'), ('coral'), ('butter'), ('lilac')
 on conflict (id) do nothing;
 
--- extension/looks.js, LOOKS
+-- extension/looks.js, LOOKS — plus every costume id in Core/Costumes.swift,
+-- because join_pod's `p_look` is `OwnedChibi.skinID`, which is the costume the
+-- kin is wearing ('classic' when it is bare). An id missing here is coalesced
+-- to the old value, so a friend on the board would never see a costume.
 insert into kin_looks (id) values
-  ('classic'), ('woodland'), ('beanie'), ('tidepool'), ('butterscotch'), ('nightshift')
+  ('classic'), ('woodland'), ('beanie'), ('tidepool'), ('butterscotch'), ('nightshift'),
+  ('hoodie'), ('flannel'), ('barista'), ('scholar'), ('varsity'), ('pajamas'),
+  ('keynote'), ('happi'), ('idol'), ('racer'), ('ballet'), ('hanbok'),
+  ('biker'), ('astronaut'), ('monster'), ('ninja'), ('sorcerer'), ('grad'),
+  ('hex'), ('champ'), ('headliner'), ('netrunner'), ('count'), ('abyss')
 on conflict (id) do nothing;
 
 -- ---------------------------------------------------------------------------

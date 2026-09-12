@@ -30,9 +30,15 @@
 create table if not exists kin_costumes (id text primary key);
 create table if not exists kin_scenes   (id text primary key);
 
+-- **Keep these in step with `Costume.catalog` in ios/Sources/Core/Costumes.swift.**
+-- 'none' is what `GameState.activeCostumeID` sends for a bare kin; 'baker' was
+-- retired and stays so a row already carrying it still validates.
 insert into kin_costumes (id) values
   ('none'), ('scholar'), ('ninja'), ('hoodie'), ('baker'),
-  ('astronaut'), ('racer'), ('biker'), ('pajamas')
+  ('astronaut'), ('racer'), ('biker'), ('pajamas'),
+  ('flannel'), ('barista'), ('varsity'), ('keynote'), ('happi'), ('idol'),
+  ('ballet'), ('hanbok'), ('monster'), ('sorcerer'), ('grad'), ('hex'),
+  ('champ'), ('headliner'), ('netrunner'), ('count'), ('abyss')
 on conflict do nothing;
 
 -- **Keep these in step with `Scene0.all` in ios/Sources/Theme.swift.** An id the
