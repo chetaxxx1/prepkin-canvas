@@ -27,7 +27,9 @@ struct HomeView: View {
     /// Day 1, per `design_handoff_first_run`: the offer cards the kin makes after
     /// the first check-off, in order. Nothing is asked for before that. `widget`
     /// is the one card after Day 1: once, after the second day's first coin.
-    private enum Offer { case notify, canvas, widget }
+    /// `friend` (Day 2, when "Studying with friends" was on the plate) and
+    /// `heard` (Day 3, once) follow the widget card on later days.
+    private enum Offer { case notify, canvas, widget, friend, heard }
     @State private var offer: Offer?
     @State private var offerTask: Task<Void, Never>?
     /// The widget card's "Show me how".
@@ -122,7 +124,9 @@ struct HomeView: View {
             // enough to carry white.
             .task {
                 await state.syncCanvas()
-                showBubble(greeting)
+                // Day 1's "Tap one when it's done." is the whole coach, so it
+                // stays up longer than a passing remark.
+                showBubble(greeting, seconds: isFirstSession ? 8 : 3.5)
                 // Came back with a task already done but the offers unanswered
                 // (the app was closed in between): pick up where the day left off.
                 if state.tasks.contains(where: \.done) { scheduleOffer(after: 0.6) }
@@ -687,8 +691,21 @@ struct HomeView: View {
         !isFirstSession && !state.widgetOfferDone && state.isSecondDayOrLater()
     }
 
+    /// The Day 2 friend card: they said they study with friends, the card has
+    /// not been answered, and Day 1 is over.
+    private var friendOfferDue: Bool {
+        !isFirstSession && !state.friendOfferDone && state.plate.contains(.friends) && state.isSecondDayOrLater()
+    }
+
+    /// The Day 3 card, once: where they heard about Prepkin.
+    private var heardOfferDue: Bool {
+        !isFirstSession && !state.heardFromDone && state.isDayOrLater(3)
+    }
+
+    private var laterOfferDue: Bool { widgetOfferDue || friendOfferDue || heardOfferDue }
+
     private func scheduleOffer(after seconds: Double) {
-        guard isFirstSession || widgetOfferDue, offer == nil else { return }
+        guard isFirstSession || laterOfferDue, offer == nil else { return }
         offerTask?.cancel()
         offerTask = Task {
             try? await Task.sleep(for: .seconds(seconds))
@@ -697,25 +714,45 @@ struct HomeView: View {
         }
     }
 
+    /// Day 1 runs the two cards in the order the plate answer set
+    /// (`FirstRun.firstOffer`: exams put Canvas first). Later days run widget,
+    /// then friend, then heard — each once, each only when it is due.
     private func advanceOffer(from current: Offer?) {
         let next: Offer?
         switch current {
-        case nil where !isFirstSession: next = widgetOfferDue ? .widget : nil
-        case nil: next = state.settings.remindersEnabled ? canvasOrNil : .notify
-        case .notify: next = canvasOrNil
-        case .canvas: next = nil
-        case .widget: next = nil
+        case nil where !isFirstSession: next = laterOffer(after: nil)
+        case .widget, .friend, .heard: next = laterOffer(after: current)
+        case nil: next = dayOneOffer(after: nil)
+        case .notify, .canvas: next = dayOneOffer(after: current)
         }
         offer = next
         switch current {
         case .widget: state.markWidgetOfferDone()
+        case .friend: state.markFriendOfferDone()
+        case .heard: break   // answered or dismissed on the card itself
         case nil where !isFirstSession: break
         default: if next == nil { state.markFirstRunOffersDone() }
         }
     }
 
-    /// Skipped once the laptop has actually sent a list.
-    private var canvasOrNil: Offer? { state.lastCanvasSyncAt == nil ? .canvas : nil }
+    /// The next Day 1 card still worth showing: reminders already on skip the
+    /// check-in, a laptop that has already sent a list skips Canvas.
+    private func dayOneOffer(after current: Offer?) -> Offer? {
+        let order: [Offer] = state.firstOffer == .canvas ? [.canvas, .notify] : [.notify, .canvas]
+        let due: [Offer: Bool] = [.notify: !state.settings.remindersEnabled,
+                                  .canvas: state.lastCanvasSyncAt == nil]
+        return nextOffer(in: order, after: current, due: due)
+    }
+
+    private func laterOffer(after current: Offer?) -> Offer? {
+        nextOffer(in: [.widget, .friend, .heard], after: current,
+                  due: [.widget: widgetOfferDue, .friend: friendOfferDue, .heard: heardOfferDue])
+    }
+
+    private func nextOffer(in order: [Offer], after current: Offer?, due: [Offer: Bool]) -> Offer? {
+        let start = current.flatMap { order.firstIndex(of: $0) }.map { $0 + 1 } ?? 0
+        return order.dropFirst(start).first { due[$0] == true }
+    }
 
     @ViewBuilder private func offerCard(_ which: Offer) -> some View {
         let name = state.activeChibi.displayName
@@ -747,18 +784,47 @@ struct HomeView: View {
                 offerButton("Not now", primary: false) { advanceOffer(from: .notify) }
             }
         case .canvas:
-            offerShell(title: "Want your Canvas homework here?") {
-                Text("Takes a laptop. Canvas tasks pay \(TaskKind.canvas.reward).")
-                    .font(Theme.font(12.5, .bold))
-                    .foregroundStyle(Theme.muted)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            // The main event, shaped like Finch's friend-code sheet
+            // (https://mobbin.com/screens/73949f04-5c45-45ab-b427-642c3dee5229): the
+            // code big, and a way to reach the laptop from the phone. Never
+            // "Takes a laptop".
+            offerShell(title: "Your Canvas homework can live here.") {
+                canvasOfferBody
             } primary: {
-                offerButton("Show me", primary: true) {
+                offerButton("I'm at my laptop", primary: true) {
                     advanceOffer(from: .canvas)
                     showDayEditor = true
                 }
             } secondary: {
                 offerButton("Not now", primary: false) { advanceOffer(from: .canvas) }
+            }
+        case .friend:
+            offerShell(title: "Your friend's code goes here.") {
+                Text("They see your fish, never your coins.")
+                    .font(Theme.font(12.5, .bold))
+                    .foregroundStyle(Theme.muted)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } primary: {
+                offerButton("Add a friend", primary: true) {
+                    advanceOffer(from: .friend)
+                    state.openAddFriendRequest = true
+                    state.openFriendsRequest = true
+                }
+            } secondary: {
+                offerButton("Not now", primary: false) { advanceOffer(from: .friend) }
+            }
+        case .heard:
+            // One tap, stored locally as one of five, never asked again. Ten
+            // Percent Happier's version, https://mobbin.com/screens/27e34f43-6898-4658-bae1-b3a46f419f19.
+            offerShell(title: "How did you hear about Prepkin?") {
+                heardChips
+            } primary: {
+                EmptyView()
+            } secondary: {
+                offerButton("Not now", primary: false) {
+                    state.answerHeardFrom(nil)
+                    advanceOffer(from: .heard)
+                }
             }
         case .widget:
             offerShell(title: "Want \(name) on your home screen?") {
@@ -772,6 +838,82 @@ struct HomeView: View {
                 }
             } secondary: {
                 offerButton("Not now", primary: false) { advanceOffer(from: .widget) }
+            }
+        }
+    }
+
+    /// A small laptop, the eight-character code big and monospaced, whose
+    /// Canvas it is, and the share sheet so AirDrop, Messages or Mail can carry
+    /// the link and the code to the laptop.
+    private var canvasOfferBody: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: "laptopcomputer")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(DayEditorView.D.mintIcon)
+                    .frame(width: 44, height: 44)
+                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(DayEditorView.D.mintTint))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(state.pairingCode ?? "····-····")
+                        .font(.system(size: 24, weight: .bold, design: .monospaced))
+                        .foregroundStyle(Theme.ink)
+                        .accessibilityLabel("Your code, \(state.pairingCode ?? "not ready yet")")
+                    Text("Pulls from \(state.school.canvasOwner).")
+                        .font(Theme.font(12.5, .bold))
+                        .foregroundStyle(Theme.muted)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 10).padding(.horizontal, 12)
+            .background(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Theme.paper))
+            if let code = state.pairingCode {
+                ShareLink(item: FirstRun.shareText(code: code)) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "paperplane.fill")
+                            .font(.system(size: 13, weight: .bold))
+                        Text("Send the link to my laptop")
+                            .font(Theme.font(15, .bold))
+                    }
+                    .foregroundStyle(Theme.mintDark)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(DayEditorView.D.mintTint))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .onAppear { state.ensurePairingCode() }
+    }
+
+    /// Five pills. A tap answers and closes the card.
+    private var heardChips: some View {
+        let rows: [[HeardFrom]] = [[.tiktok, .friend, .appStore], [.reddit, .elsewhere]]
+        return VStack(spacing: 8) {
+            ForEach(rows, id: \.first) { row in
+                HStack(spacing: 8) {
+                    ForEach(row) { source in
+                        Button {
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            state.answerHeardFrom(source)
+                            advanceOffer(from: .heard)
+                        } label: {
+                            Text(source.label)
+                                .font(Theme.font(14, .bold))
+                                .foregroundStyle(Theme.ink)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .background(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                    .fill(Theme.paper))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             }
         }
     }
@@ -1041,7 +1183,7 @@ private struct TaskRow: View {
 
 // MARK: - Coin flight
 
-private struct WalletFrameKey: PreferenceKey {
+struct WalletFrameKey: PreferenceKey {
     static var defaultValue: CGRect = .zero
     /// Last **non-empty** wins. A plain `value = nextValue()` lets a sibling subtree
     /// that publishes nothing fold its `.zero` default in over the chip's real frame,
@@ -1052,7 +1194,7 @@ private struct WalletFrameKey: PreferenceKey {
     }
 }
 
-private struct RewardFrameKey: PreferenceKey {
+struct RewardFrameKey: PreferenceKey {
     static var defaultValue: [String: CGRect] = [:]
     static func reduce(value: inout [String: CGRect], nextValue: () -> [String: CGRect]) {
         value.merge(nextValue()) { $1 }
@@ -1068,7 +1210,7 @@ struct CoinFlight: Identifiable {
 
 /// One disc, 0.9s on a (.3,.7,.3,1) curve, staggered 80ms by index, fading out
 /// over the last third so it lands in the wallet rather than on top of it.
-private struct FlyingCoin: View {
+struct FlyingCoin: View {
     let flight: CoinFlight
     @State private var flown = false
     @State private var faded = false
