@@ -189,6 +189,8 @@ enum Catalog {
         "study": "Study skills",
         "psychology": "Psychology",
         "people": "People skills",
+        "work": "Work",
+        "health": "Health",
     ]
 
     /// Every track the catalogue actually uses, in the order it first appears. A

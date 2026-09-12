@@ -1,0 +1,68 @@
+Read /workspace/prepkin/LESSON-ART-RULES.md first. This batch is 5 lessons. Do them
+one lesson at a time, in this order, and stop after each lesson so I can check it
+before you start the next. File names are exact. Every picture is 4:3, 1200 x 900
+or larger. Every picture: no text, no logos, count the people, then zip the folder.
+
+=======================================================================
+LESSON 1 of 5: work-10 "'Tell me about yourself' has a shape". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/work-10/   Zip it as work-10.zip when done.
+
+p01-chair.png — An interview room: a college-age candidate just sitting down in a chair, hands on knees, a polite nervous smile, across from two interviewers at a table who are smiling warmly, one with a pen ready. Bright window light, a plant. Exactly three people. No papers with words, no name plates. The card says: they smile and say tell me about yourself, and it is the interview.
+
+p05-practice.png — A college student standing in a small dorm room talking out loud to a mirror on the wardrobe door, one hand gesturing, a phone propped on the desk recording, evening lamplight, a bed and posters that are only coloured shapes. Exactly one person, plus their reflection. No words anywhere. The card says: say it to a wall ten times, then to a friend.
+
+p08-listen.png — The same interview room a few minutes in: the college-age candidate now relaxed and leaning slightly forward, mid-sentence with open hands, the two interviewers engaged, one nodding, one writing. Bright daylight. Exactly three people. No readable words anywhere. The card says: the follow-up questions come from your answer, so set the table.
+
+p09-notes.png — A college student on a train or bus by the window, earbuds in, reading a short note on their phone with a calm, ready face, a folder on their lap, city passing outside. Exactly one person. The phone shows only a soft page with grey bars, no words. The card says: build it once, keep it in your notes, change one line per role.
+
+=======================================================================
+LESSON 2 of 5: work-11 "Ask for the reference before you need it". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/work-11/   Zip it as work-11.zip when done.
+
+p01-last-day.png — The last day of an internship: a college-age intern standing at a manager's desk to say goodbye, the manager in their forties standing to shake hands with real warmth, a small potted plant and a window with late-summer light. Exactly two people. No words on screens or walls. The card says: it is the last day, your manager likes you, ask now while it is fresh.
+
+p05-office-hours.png — A professor's small book-lined office: a college student in the visitor's chair asking a question with an open notebook, the professor, older, leaning back with a pleased, engaged expression, afternoon light through a narrow window. Exactly two people. Book spines are plain colours with no titles, no words anywhere. The card says: go to office hours twice, ask one real question each time.
+
+p08-keep-warm.png — A college graduate in a new apartment at a small kitchen table, typing a short message on a laptop with a fond little smile, a photo frame and a plant on the table, morning light. Exactly one person. The screen shows only two short grey lines, no words. The card says: once a year, send two lines, no ask.
+
+p09-thanks.png — A professor at their desk reading something on a phone and breaking into a proud, delighted smile, one hand to their chest, a stack of plain-coloured books beside them, warm office light. Exactly one person. The phone shows only a soft page, no words. The card says: whatever happens, tell them the ending.
+
+=======================================================================
+LESSON 3 of 5: work-12 "What 'benefits' actually means". 3 pictures.
+Folder: /workspace/prepkin/lesson-art/work-12/   Zip it as work-12.zip when done.
+
+p01-two-offers.png — A college-age person at a kitchen table with two printed letters laid side by side, one hand on each, looking from one to the other with a puzzled frown, a calculator and a mug nearby, evening lamplight. Exactly one person. The letters show only grey squiggled lines and one bold grey bar each, no numbers or words. The card says: Job A pays more on paper, and Job B pays more in truth.
+
+p05-parents.png — A college-age person on a video call at a laptop in a bright living room, the screen showing two parents in their fifties waving and smiling (faces soft, no words), the young person laughing with a notebook open. Exactly three people, two of them on the screen. No words anywhere. The card says: under 26 you can usually stay on a parent's plan, so ask what that costs.
+
+p08-ask.png — A college-age person on the phone by a sunny window, relaxed and friendly, a single printed page in the other hand held up to the light, a plant on the sill. Exactly one person. The page shows only grey lines and a few coloured boxes, no words. The card says: ask the recruiter for the one-page benefits summary before you decide.
+
+=======================================================================
+LESSON 4 of 5: ppl-10 "A compliment that sticks is specific". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/ppl-10/   Zip it as ppl-10.zip when done.
+
+p01-great-job.png — A college seminar room just after a presentation: one student stepping away from the front with a relieved smile, a friend in the front row giving a quick thumbs up, three other students gathering bags in the background. Exactly five people. The screen behind shows only coloured shapes, no words. The card says: you say great job, they say thanks, and by lunch neither of you remembers it.
+
+p05-effect.png — Two college students walking out of an exam hall into sunlight, one turning to the other with a grateful, animated face and a hand on their shoulder, the other looking surprised and pleased, a few students streaming out behind them. Exactly two people in focus, the background figures soft. No words on signs or papers. The card says: your notes got me through that exam.
+
+p07-receive.png — A college student receiving a compliment from an older coworker at a cafe counter, the student standing straight with a simple warm smile, hand lightly on their own chest, not waving it away, the coworker nodding. Exactly two people. No menu boards, no logos, no words. The card says: say thank you and stop, do not deflect it.
+
+p09-habit.png — A sunny campus quad in the morning, a college student saying something kind to a friend on a bench, the friend's face lighting up in genuine surprise, coffee cups in hand, trees and a path behind. Exactly two people. No words anywhere. The card says: one real compliment a day for a week, and watch faces change.
+
+=======================================================================
+LESSON 5 of 5: ppl-11 "Roommate rules before the first fight". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/ppl-11/   Zip it as ppl-11.zip when done.
+
+p01-dishes.png — A small student apartment kitchen at night, a sink piled with dirty dishes, one roommate standing with arms crossed and a tight face, the other in the doorway with an annoyed shrug. Cold overhead light. Exactly two people. No words on anything. The card says: week six, the sink is full again, and it is a fight that is not about dishes.
+
+p04-talk.png — Two new roommates sitting cross-legged on the floor of a half-unpacked dorm room in the evening, sharing takeout from cartons, one talking with a relaxed grin, the other laughing, moving boxes and a bare mattress behind them. Exactly two people. No words on boxes or cartons. The card says: have the boring roommate talk in week one, over food, before anything goes wrong.
+
+p07-money.png — Two roommates at a kitchen table with a laptop and two phones, one pointing at the laptop screen which shows only a simple chart of coloured blocks, the other holding a bank card, both calm and businesslike, morning light. Exactly two people. No numbers or words on any screen. The card says: decide who pays what and by what day, and use an app that shows who owes.
+
+p09-ra.png — A dorm corridor in daytime, a college student knocking on an open office door, inside a friendly resident adviser looking up from a desk with a welcoming expression, a corkboard behind with only coloured paper squares. Exactly two people. No words on the board or door. The card says: if the talk and the reset both fail, go to the RA early.
+
+=======================================================================
+After each lesson: show every picture at full size and at 400 x 300, with the three
+lines under each (people count, anything that could read as text, which brief line).
+Then zip the lesson folder as <lesson-id>.zip, show the zip so I can download it, and
+wait for me before the next lesson.

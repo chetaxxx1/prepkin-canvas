@@ -1,0 +1,34 @@
+Read /workspace/prepkin/LESSON-ART-RULES.md first. This batch is 2 lessons. Do them
+one lesson at a time, in this order, and stop after each lesson so I can check it
+before you start the next. File names are exact. Every picture is 4:3, 1200 x 900
+or larger. Every picture: no text, no logos, count the people, then zip the folder.
+
+=======================================================================
+LESSON 1 of 2: hlth-7 "It's the scrolling, not the blue light". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/hlth-7/   Zip it as hlth-7.zip when done.
+
+p01-one-more.png — A dark dorm room, a college student lying on their side in bed, face lit warm orange by a phone held close, eyes wide and tired, blanket pulled up, the rest of the room in shadow. Exactly one person. The phone screen is only a soft glow, no words or icons. The card says: in bed at 11, one more video, and it is 12:40.
+
+p05-feed.png — Close view of a college student's thumb flicking upward on a phone in the dark, the screen a soft vertical blur of coloured rectangles streaming past like an endless ribbon, no icons or words, the face above lit and slack. Exactly one person, partial. The card says: the feed has no end, and every swipe is a small maybe.
+
+p08-book.png — A cosy dorm bed at night with one warm bedside lamp, a college student propped on pillows reading a paperback, eyelids getting heavy, a small round alarm clock with a plain blank face on the nightstand, no phone in sight. Exactly one person. No words on the book cover or clock. The card says: the last twenty minutes want something with an end.
+
+p09-week.png — Morning in a dorm room, a college student stretching awake in bed with a rested face, sunlight across the blanket, and across the room by the door a phone sitting on a small shelf plugged into its charger. Exactly one person. No words or icons on the phone. The card says: phone by the door for a week, and most people get back thirty to sixty minutes a night.
+
+=======================================================================
+LESSON 2 of 2: hlth-8 "What 'drink more water' really means". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/hlth-8/   Zip it as hlth-8.zip when done.
+
+p01-jug.png — A college lecture hall row: one student with an enormous clear plastic water jug on the desk, sipping proudly, and beside them another student cradling a paper coffee cup with a sceptical sideways glance, two other students soft in the background. Exactly two people in focus, background soft. No words or logos on the jug or cup. The card says: one carries a gallon jug, one lives on coffee, and neither knows where eight glasses came from.
+
+p05-thirst.png — A college student in running clothes, flushed and sweaty, drinking from a campus water fountain in bright sunlight, one hand on the fountain, eyes closed in relief, a path and trees behind. Exactly one person. No logos or words on clothes or fountain. The card says: thirst is a good gauge, drink when thirsty and extra after a run.
+
+p08-bottle.png — A tidy study desk by a window, a college student writing in a notebook, a plain reusable water bottle within easy reach beside the laptop, afternoon light, a plant. Exactly one person. No words or logos on the bottle, screen, or notebook. The card says: keep a bottle where you sit and sip when you notice it.
+
+p09-hot-day.png — A blazing hot summer day on a campus lawn, two college students in the shade of a tree passing a large water bottle between them, one wiping their forehead, a frisbee on the grass, heat haze in the distance. Exactly two people. No words or logos anywhere. The card says: hot days, hangovers, fever, and long runs are when drink more is real advice.
+
+=======================================================================
+After each lesson: show every picture at full size and at 400 x 300, with the three
+lines under each (people count, anything that could read as text, which brief line).
+Then zip the lesson folder as <lesson-id>.zip, show the zip so I can download it, and
+wait for me before the next lesson.

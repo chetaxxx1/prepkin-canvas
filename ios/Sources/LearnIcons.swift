@@ -14,6 +14,9 @@ struct TrackIcon: View {
     static func asset(_ trackID: String) -> String {
         switch trackID {
         case "finance", "philosophy", "psychology", "people", "work": return trackID
+        // Health borrows the heart from the task set; six tint families, so it shares
+        // coral with people until George picks otherwise.
+        case "health": return "heart"
         default: return "studyTrack"
         }
     }
@@ -46,7 +49,7 @@ enum TrackTint {
         case "finance": return Theme.coin
         case "study": return Theme.mint
         case "psychology": return Theme.hex(0x9BC8F2)
-        case "people": return Theme.coral
+        case "people", "health": return Theme.coral
         case "work": return Theme.leaf
         default: return Theme.hex(0xC3B2F0)
         }
@@ -58,7 +61,7 @@ enum TrackTint {
         case "finance": return Theme.coinDark
         case "study": return Theme.mintDark
         case "psychology": return Theme.hex(0x3D6FA8)
-        case "people": return Theme.coralDeep
+        case "people", "health": return Theme.coralDeep
         case "work": return Theme.hex(0x5A7A2E)
         default: return Theme.hex(0x6B5CA5)
         }

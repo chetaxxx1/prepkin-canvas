@@ -1,0 +1,56 @@
+Read /workspace/prepkin/LESSON-ART-RULES.md first. This batch is 4 lessons. Do them
+one lesson at a time, in this order, and stop after each lesson so I can check it
+before you start the next. File names are exact. Every picture is 4:3, 1200 x 900
+or larger. Every picture: no text, no logos, count the people, then zip the folder.
+
+=======================================================================
+LESSON 1 of 4: hlth-3 "Anxiety is a body thing first". 3 pictures.
+Folder: /workspace/prepkin/lesson-art/hlth-3/   Zip it as hlth-3.zip when done.
+
+p01-exam-hall.png — A college student sitting at a desk in a big exam hall before the start, hands pressed flat on the desk, shoulders tight, staring straight ahead, rows of other students soft and out of focus behind them, cool morning light from tall windows. Exactly one person in focus, background figures soft. No words on any paper. The card says: heart going, hands cold, and then the thoughts arrive.
+
+p07-walk.png — A college student walking fast along a campus path in cool morning air, hands out of pockets, breath visible, face set but easing, trees and a low sun behind. Exactly one person. No signs or words. The card says: the alarm wants you to run, so walk, five minutes, fast.
+
+p09-help.png — A calm, plant-filled counselling office in daylight, a college student in an armchair talking with visible relief, a counsellor in their forties listening warmly with a notebook on their knee, a box of tissues on a side table. Exactly two people. No words on the notebook, posters, or door. The card says: alarm most days for weeks is different, and campus counselling is free.
+
+=======================================================================
+LESSON 2 of 4: hlth-4 "The ten-minute walk". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/hlth-4/   Zip it as hlth-4.zip when done.
+
+p01-slump.png — A college student at a library desk in the afternoon, cheek resting on one hand, eyes glazed over an open textbook, a vending-machine snack bar and a coffee cup beside the book, warm slanting light. Exactly one person. No words on the book, wrapper, or cup. The card says: reading the same line for the fourth time, and there is a fourth option.
+
+p05-outside.png — A college student walking briskly along a tree-lined campus path in bright afternoon light, arms swinging, chin up, a light backpack, dappled shade on the ground, a building behind. Exactly one person. No signs or words. The card says: outdoors adds light and a change of scene, but a lap of the building counts.
+
+p07-phone.png — A college student walking along a river path, hands free, phone tucked in a back pocket, gazing off at the water with a loose, thinking expression, golden light, a bridge in the distance. Exactly one person. No signs or words. The card says: leave the phone in your pocket and let the mind wander.
+
+p09-back.png — The same library desk: the college student back in the chair, cheeks a little flushed from the air, sitting upright and reading the textbook with a clear, alert face, the snack bar pushed aside unopened. Exactly one person. No words on anything. The card says: come back and the line reads the first time now.
+
+=======================================================================
+LESSON 3 of 4: hlth-5 "When to actually see a doctor". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/hlth-5/   Zip it as hlth-5.zip when done.
+
+p01-day-four.png — A college student wrapped in a blanket on a dorm bed in daylight, flushed and tired, holding a phone loosely, a box of tissues, a mug and a thermometer on the nightstand, curtains half drawn. Exactly one person. No words or numbers on the phone or thermometer. The card says: day four of the fever, googled it twice, told yourself it is fine.
+
+p06-clinic.png — A bright, small campus health clinic waiting room, a college student checking in at a counter with a friendly nurse in scrubs, two chairs and a plant, a poster on the wall that is only coloured shapes. Exactly two people. No words on posters, badges, or screens. The card says: the campus clinic is already paid for, use it for the boring stuff.
+
+p08-call.png — A college student sitting on the edge of a bed, phone to ear, listening carefully and nodding, a notepad on their knee with a couple of squiggles, morning light, a water bottle nearby. Exactly one person. No words on the notepad or phone. The card says: not sure which door, call the nurse line first.
+
+p09-friend.png — A dorm room at night, one college student kneeling beside a friend who is slumped against the bed, the kneeling student on the phone with a calm, urgent face, one hand on the friend's shoulder, a lamp on. Exactly two people. The slumped friend is drawn as an ordinary lit person, not a silhouette. No words anywhere. The card says: if a friend cannot stay awake or breathe right, call 911 and do not wait for them to agree.
+
+=======================================================================
+LESSON 4 of 4: hlth-6 "Why you crash at 3pm". 4 pictures.
+Folder: /workspace/prepkin/lesson-art/hlth-6/   Zip it as hlth-6.zip when done.
+
+p01-lecture.png — A dim lecture hall in the early afternoon, a college student in a middle row with chin sinking toward their chest and eyelids heavy, pen slipping, the lecturer a soft shape at the front, other students blurred. Exactly one person in focus, background figures soft. No words on slides or notes. The card says: the two o'clock lecture, and by 2:40 your eyes are closing.
+
+p05-walk.png — A college student stepping out of a building's glass doors into bright early-afternoon sun, squinting happily, already walking at a brisk pace, a path and trees ahead, backpack on. Exactly one person. No signs or words on the doors. The card says: ten minutes of brisk walking lifts energy for about two hours.
+
+p08-plan.png — A college student at a sunny window seat in a library in the mid-afternoon, relaxed, sorting a small stack of papers into two piles with a calm, unhurried face, a laptop closed beside them. Exactly one person. The papers show only grey squiggles, no words. The card says: put the easy work at 2pm and the hard work at 10am or 4pm.
+
+p09-second-wind.png — A college student at a desk in late-afternoon golden light, sitting up straight, typing with energy and a small smile, a window behind glowing orange, a plant and a water bottle. Exactly one person. The laptop screen shows only soft coloured blocks, no words. The card says: around 5pm the wave comes back up on its own.
+
+=======================================================================
+After each lesson: show every picture at full size and at 400 x 300, with the three
+lines under each (people count, anything that could read as text, which brief line).
+Then zip the lesson folder as <lesson-id>.zip, show the zip so I can download it, and
+wait for me before the next lesson.
