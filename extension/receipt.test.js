@@ -135,7 +135,7 @@ test('a row is on the receipt only when its hook is on the page', () => {
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'week'), 'the rail is on the dashboard receipt');
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'todo-fold'), 'the fold needs a To Do list on the page');
   assert.ok(receiptRows({ present: () => true, detect: { todoFold: true } }).some((r) => r.key === 'todo-fold'), 'and lists itself when there is one');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
   assert.ok(!light.some((r) => r.key === 'word-paste' || r.key === 'seam'), 'dark-only rows stay off in light');
@@ -236,7 +236,9 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // it is still on the receipt and still comes off in one click. Raised to 17
   // the same day for `title`: one page title on every page is the largest
   // single change the skin makes, so it is the last row that should be hidden.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 17, 'seventeen keys at most, so it cannot sprawl');
+  // Raised to 18 on 2026-09-12 for `planner`: a tab that can stand in for the
+  // whole main column is a change to the page, so it is a row with a Put back.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 18, 'eighteen keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names
@@ -317,7 +319,7 @@ const css = fs.readFileSync(path.join(__dirname, 'skin.css'), 'utf8').replace(/\
 // The lint guards Canvas's own page. Prepkin's own surfaces on it (the rail,
 // the fold row, the card line) are ours to style, so they are read separately below.
 const allRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selectors: m[1].trim(), body: m[2] }));
-const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|\.pk-card-due|\.pk-due-row|pk-back-card-due|pk-back-week|pk-back-todo-fold/.test(sel);
+const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|#pk-planner|#pk-dashtabs|\.pk-card-due|\.pk-due-row|pk-back-card-due|pk-back-week|pk-back-todo-fold|pk-back-planner/.test(sel);
 // A rule counts as Canvas's if any selector in it reaches Canvas markup.
 const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours(sel)));
 

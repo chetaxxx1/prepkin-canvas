@@ -107,10 +107,10 @@ test('R3 dashboard: paper, thin hero, one To Do, every Coming Up row, one logo â
   // Canvas's own To Do and Coming Up stay open on their own; under our rail
   // they fold to one line together, and Coming Up shows every row once opened.
   if (await page.$('#pk-week')) {
-    assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'none', 'folded under the rail');
-    assert.equal(await style(page, '.events_list.coming_up', 'display'), 'none', 'Coming Up folds with it');
+    assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'none', 'replaced by the rail');
+    assert.equal(await style(page, '.events_list.coming_up', 'display'), 'none', 'Coming Up goes with it');
     assert.equal(await style(page, '#right-side h2.todo-list-header', 'display'), 'none', 'no stray heading left behind');
-    assert.ok(await page.$('#pk-week + #pk-todo-fold'), 'and the fold row says so');
+    assert.equal(await page.$('#pk-todo-fold'), null, 'no fold line to click: the receipt has the Put back');
   } else {
     assert.equal(await style(page, '.Sidebar__TodoListContainer', 'display'), 'block');
     assert.equal(await style(page, '.events_list.coming_up li.event[style*="display: none"]', 'display'), 'list-item', 'Coming Up rows');
@@ -475,7 +475,7 @@ test('R23 a search pill sits at the end of every title bar, opens the buddy on s
 
 // MARK: - R10: Today, at the top of the dashboard
 
-test('R10 the rail is one list: the thing to start on top, the next few, Canvas To Do and Coming Up folded, one click off', async () => {
+test('R10 the rail is one list: the thing to start on top, the next few, Canvas To Do and Coming Up replaced, one click off', async () => {
   const w = S.plainSemester();
   w.assignments[1].push(S.assignment({ id: 15, name: 'Overdue reading', due: -2, course: 1 }));
   await control('world', { host: 'localhost', world: w });
@@ -498,13 +498,12 @@ test('R10 the rail is one list: the thing to start on top, the next few, Canvas 
   // Rings: one track per course with work this week, a fill only where something is handed in.
   const rings = await page.$$eval('#pk-week .pk-w-ring circle', (els) => els.map((c) => c.getAttribute('stroke')));
   assert.ok(rings.length >= 1, 'at least one ring');
-  // Canvas's own To Do folds to one line, Show opens it for this view.
-  await page.waitForSelector('#pk-week + #pk-todo-fold', { timeout: 5000 });
+  // Canvas's own To Do and Coming Up are replaced; Put back on that row brings them back.
   const todo = require('../extension/selectors').SELECTORS.todoReact.sel;
-  assert.equal(await page.$eval(todo, (el) => getComputedStyle(el).display), 'none', 'folded');
-  await page.click('#pk-todo-fold');
-  assert.notEqual(await page.$eval(todo, (el) => getComputedStyle(el).display), 'none', 'Show opens it');
-  assert.match(await page.$eval('#pk-todo-fold b', (el) => el.textContent), /Hide/);
+  assert.equal(await page.$eval(todo, (el) => getComputedStyle(el).display), 'none', 'replaced');
+  await h.setStorage({ putBack: { 'todo-fold': true } }); await page.waitForTimeout(400);
+  assert.notEqual(await page.$eval(todo, (el) => getComputedStyle(el).display), 'none', 'Put back keeps them');
+  await h.setStorage({ putBack: {} }); await page.waitForTimeout(400);
   // Put back from the receipt takes the rail off, and it stays off.
   await page.bringToFront();
   const popup = await openPopup(h);
@@ -582,6 +581,40 @@ test('R26 a pending row on a course card is a link that says Start on hover; han
   assert.notEqual(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .go', (e) => getComputedStyle(e).display), 'none', 'Start on hover');
   assert.equal(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .d', (e) => getComputedStyle(e).display), 'none', 'the date steps aside');
   assert.equal(await page.$('.pk-card-due a.pk-due-row.done'), null, 'handed-in rows are not links');
+  await page.close();
+});
+
+test('R27 the Planner tab: a week grid in the main column, the cards put away and brought back, one click off', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/');
+  await page.waitForSelector('#pk-dashtabs [role="tab"]', { timeout: 5000 });
+  const tabs = await page.$$eval('#pk-dashtabs [role="tab"]', (els) => els.map((e) => [e.textContent, e.getAttribute('aria-selected')]));
+  assert.deepEqual(tabs, [['Courses', 'true'], ['Planner', 'false']], 'Courses first, the cards showing');
+  assert.equal(await page.$('#pk-planner'), null);
+  await page.click('#pk-dashtabs [data-tab="planner"]');
+  await page.waitForSelector('#pk-planner .pk-pl-grid', { timeout: 5000 });
+  assert.equal(await page.$$eval('#pk-planner .pk-pl-col', (els) => els.length), 7, 'seven days');
+  assert.equal(await page.$$eval('#pk-planner .pk-pl-col.today', (els) => els.length), 1, 'one of them today');
+  assert.equal(await style(page, '#DashboardCard_Container', 'display'), 'none', 'the cards step aside');
+  assert.ok((await page.$$('#pk-planner .pk-pl-task')).length >= 3, 'the week\'s work as cards');
+  assert.ok(await page.$('#pk-planner .pk-pl-task img.pk-pl-icon'), 'each with one of the app\'s icons');
+  assert.equal(await page.$$eval('#pk-planner .pk-pl-card', (els) => els.map((e) => e.querySelector('.head b').textContent)).then((x) => x.join(',')), 'Grades,League,Focus');
+  assert.equal(await page.$eval('#pk-planner', (e) => /\d+%|GPA about/.test(e.textContent)), true, 'grades live here now');
+  assert.equal((await h.storage()).dashTab, 'planner', 'the choice is kept');
+  // Dragging a card to another day plans it; the plan is kept in this browser only.
+  const id = await page.$eval('#pk-planner .pk-pl-col .pk-pl-task:not(.done)', (e) => e.dataset.drag);
+  await page.dragAndDrop(`#pk-planner .pk-pl-task[data-drag="${id}"]`, '#pk-planner .pk-pl-col:last-child');
+  await page.waitForTimeout(600);
+  assert.ok((await h.storage()).plans?.[id], 'planned onto a day');
+  assert.ok(await page.$(`#pk-planner .pk-pl-col:last-child [data-drag="${id}"]`), 'and shown there');
+  // Courses brings the cards back; Put back on the planner row hides the tab itself.
+  await page.click('#pk-dashtabs [data-tab="cards"]');
+  await page.waitForTimeout(300);
+  assert.notEqual(await style(page, '#DashboardCard_Container', 'display'), 'none');
+  assert.equal(await page.$('#pk-planner'), null);
+  await h.setStorage({ putBack: { planner: true } }); await page.waitForTimeout(500);
+  assert.equal(await page.$('#pk-dashtabs'), null, 'put back: the tab itself is gone');
+  await h.setStorage({ putBack: {} });
   await page.close();
 });
 
@@ -690,16 +723,16 @@ test('R2 reduced motion: nothing animates, nothing is set to none', async () => 
 
 // MARK: - R9: the popup points at the buddy
 
-test('R9 the popup is the extension; one button opens the buddy on the page, and the day list is not in the popup', async () => {
+test('R9 the popup is the extension; one button opens the planner on the page, and the day list is not in the popup', async () => {
   const page = await open('/');
   await page.bringToFront();
   const popup = await openPopup(h);
   await popup.waitFor('#open-buddy');
   assert.equal(await popup.evaluate(`document.getElementById('due-list')`), null, 'no Due next in the popup');
   assert.equal(await popup.evaluate(`document.getElementById('buddy').hidden`), false, 'a connected Canvas is in front');
-  assert.equal(await page.$('#prepkin-buddy[data-open]'), null, 'closed before');
+  assert.equal(await page.$('#pk-planner'), null, 'the cards before');
   await popup.click('#open-buddy');
-  await page.waitForSelector('#prepkin-buddy[data-open]', { timeout: 5000 });
+  await page.waitForSelector('#pk-planner .pk-pl-grid', { timeout: 5000 });
   await popup.close().catch(() => {});
   await page.close();
 });

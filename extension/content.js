@@ -237,9 +237,11 @@ function detectFacts() {
   return {
     logoDup: has('headerLogo') && has('sidebarLogo'),
     todoDup: has('todoReact') && has('todoLegacy'),
-    // Canvas's To Do folds only under our rail: with no rail there is no
-    // other list, and a page with no to-do list is not calmer.
+    // Canvas's To Do and Coming Up go only under our rail: with no rail there
+    // is no other list, and a page with no to-do list is not calmer.
     todoFold: (has('todoReact') || has('todoLegacy')) && railShows(),
+    // The Planner tab, on the dashboard with cards to stand beside.
+    planner: railShows() && !!document.getElementById('DashboardCard_Container'),
     wordPaste: WORD_INKS.some((ink) =>
       document.querySelector(`.user_content [style*="color:${ink}" i], .user_content [style*="color: ${ink}" i]`)),
   };
@@ -259,7 +261,7 @@ function applySkin(s) {
   const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
   const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
-    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-todo-open' && !next.has(c)) root.classList.remove(c);
+    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && !next.has(c)) root.classList.remove(c);
   }
   for (const c of next) root.classList.add(c);
   // The theme's variables, as a stylesheet element boot.js may already have made.
@@ -1167,8 +1169,7 @@ function clockLeft() {
 function tickClocks() {
   if (focus.state !== 'running') return;
   const text = clockLeft();
-  const rail = document.querySelector(`#${WEEK_ID} .pk-w-clock`);
-  if (rail) rail.textContent = text;
+  for (const node of document.querySelectorAll(`#${WEEK_ID} .pk-w-clock, #${PLANNER_ID} .pk-w-clock`)) node.textContent = text;
   if (!shadow) return;
   const clock = shadow.querySelector('.pk-timer .pk-clock');
   if (clock) clock.textContent = text;
@@ -1633,6 +1634,17 @@ function dayShort(t, now) {
   return due.toLocaleDateString([], { month: 'short', day: 'numeric' });
 }
 
+/// What planner.js needs of this file's state. It runs before this script,
+/// and a script cannot see the top-level let/const of one that runs after it;
+/// function declarations it can. So the state goes out through this one.
+function plannerState() {
+  return { data, plans, wallet, focus, skin, putBack, levels, ownTasks, TIERS, plannedOn };
+}
+function plannerSetOwnTasks(next) { ownTasks = next; }
+// This file sits in one block, so only its plain function declarations reach
+// the world (Annex B hoisting); an async function does not. Hence the wrapper.
+function plannerPlan(id, key) { return setPlan(id, key); }
+
 /// Whether the rail belongs on this page: the dashboard, the skin on, nothing
 /// killed or put back, and a sync to show. Shown from the first sync on, even
 /// with nothing due: the empty week is still the student's.
@@ -1661,7 +1673,7 @@ function renderWeek() {
   const days = weekDays(data.tasks, w, now);
   const key = JSON.stringify([w.start.getTime(), w.total, w.done, days.map((d) => d.dots.map((x) => x.state + (x.color ?? ''))), said.headline,
     first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId(),
-    running && focus.endsAt, running && focus.title]);
+    running && focus.endsAt, running && focus.title, plOn]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1799,9 +1811,9 @@ function renderWeek() {
   const foot = el('div', 'pk-w-foot');
   // Finished work is worth a line; nothing finished is not worth a scold.
   foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
-  const more = el('span', 'more', 'See the week');
-  more.setAttribute('role', 'button'); more.tabIndex = 0;
-  const openWeek = () => { ui.open = true; ui.view = 'panel'; ui.filter = null; ui.sheet = null; render(); };
+  const more = el('span', 'more', plOn ? '' : 'Open the planner');
+  more.setAttribute('role', 'button'); more.tabIndex = plOn ? -1 : 0;
+  const openWeek = () => { plSetOn(true); document.getElementById(PLANNER_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   more.addEventListener('click', openWeek);
   more.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWeek(); } });
   foot.append(more);
@@ -1811,29 +1823,11 @@ function renderWeek() {
   if (sprite) placeSprite();
 }
 
-/// Canvas's own To Do and Coming Up, folded to one line right under our rail:
-/// how many they hold, and Show to open them for this page view. The fold is
-/// a receipt row (`todo-fold`); Put back keeps the lists open for good.
-/// BetterCampus deletes both outright; ours stay one click away.
+/// Canvas's own To Do and Coming Up are replaced by the rail and the planner
+/// (the `todo-fold` receipt row; Put back brings them back for good). The
+/// stylesheet does the hiding; nothing is left to draw here.
 function renderFold() {
-  const existing = document.getElementById(FOLD_ID);
-  const week = document.getElementById(WEEK_ID);
-  const list = document.querySelector(SELECTORS.todoReact.sel) ?? document.querySelector(SELECTORS.todoLegacy.sel);
-  if (!week || !list || putBack['todo-fold'] || killed) { existing?.remove(); return; }
-  const coming = document.querySelector(SELECTORS.comingUp.sel);
-  const count = list.querySelectorAll('li').length + (coming ? coming.querySelectorAll('li.event').length : 0);
-  const open = document.documentElement.classList.contains('pk-todo-open');
-  const key = `${count}:${open}`;
-  if (existing && existing.dataset.key === key) return;
-  const row = el('div', '', null);
-  row.id = FOLD_ID; row.dataset.key = key;
-  row.setAttribute('role', 'button'); row.tabIndex = 0;
-  row.setAttribute('aria-expanded', String(open));
-  row.append(el('span', '', count ? `To Do & Coming Up · ${count}` : 'To Do & Coming Up'), el('b', '', open ? 'Hide' : 'Show'));
-  const toggle = () => { document.documentElement.classList.toggle('pk-todo-open'); renderFold(); };
-  row.addEventListener('click', toggle);
-  row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
-  if (existing) existing.replaceWith(row); else week.after(row);
+  document.getElementById(FOLD_ID)?.remove();
 }
 
 /// Canvas draws most of a page after it loads and redraws parts of it on its
@@ -1848,6 +1842,8 @@ function refreshPage() {
   decorateCards();
   renderWeek();
   renderSearchChip();
+  renderPlannerTabs();
+  renderPlanner();
   if (sprite) mountSprite();
 }
 function watchPage() {
@@ -1855,7 +1851,7 @@ function watchPage() {
   const schedule = () => { if (tornDown) return; clearTimeout(pageTimer); pageTimer = setTimeout(refreshPage, 200); };
   // Our own nodes — the buddy's host and the card lines — must not count as
   // the page changing, or every pass would schedule the next one forever.
-  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === SPRITE_ID || n.id === WEEK_ID || n.id === FOLD_ID || n.id === SEARCH_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${SPRITE_ID}, #${WEEK_ID}, #${FOLD_ID}, #${SEARCH_ID}, .${CARD_DUE_CLASS}`));
+  const ours = (n) => n.nodeType === 1 && (n.id === ROOT_ID || n.id === SPRITE_ID || n.id === WEEK_ID || n.id === FOLD_ID || n.id === SEARCH_ID || n.id === PLANNER_ID || n.id === PLANNER_TABS_ID || n.id === 'pk-theme-vars' || n.classList.contains(CARD_DUE_CLASS) || !!n.closest?.(`#${ROOT_ID}, #${SPRITE_ID}, #${WEEK_ID}, #${FOLD_ID}, #${SEARCH_ID}, #${PLANNER_ID}, #${PLANNER_TABS_ID}, .${CARD_DUE_CLASS}`));
   pageObserver = new MutationObserver((records) => {
     const current = document.documentElement.dataset.pkInstance;
     if (shouldStepAside({ mine: instanceId, current, alive: alive() })) { teardown(); return; }
@@ -2221,11 +2217,11 @@ async function setPlan(id, key) {
 function wire(root) {
   const tab = root.querySelector('.pk-tab');
   tab?.addEventListener('click', () => {
-    ui.open = !ui.open;
-    if (!ui.open) { ui.view = 'panel'; ui.sheet = null; }
-    // He waves when you open him up, and looks over when you come close.
-    spriteSend({ do: 'play', emote: ui.open ? 'wave' : 'curious' });
-    render();
+    // No panel behind him any more: a click is a hello, and if the palette
+    // is open it closes. The planner is a tab on the dashboard; the palette
+    // is Command-K.
+    if (ui.open) { ui.open = false; ui.view = 'panel'; ui.sheet = null; render(); return; }
+    spriteSend({ do: 'play', emote: ['wave', 'curious', 'bounce'][Math.floor(Math.random() * 3)] });
   });
   tab?.addEventListener('mouseenter', () => { if (!ui.open) spriteSend({ do: 'play', emote: 'curious' }); });
   // Escape closes the panel wherever you are inside it, and hands focus back to
@@ -2512,7 +2508,7 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', HANDED_IN_KEY]);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', HANDED_IN_KEY]);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
@@ -2533,6 +2529,10 @@ async function mount() {
   decorateCards();
   renderWeek();
   renderSearchChip();
+  // The planner tab: remembered, and #planner in the address opens it.
+  plOn = stored.dashTab === 'planner' || location.hash === '#planner';
+  renderPlannerTabs();
+  renderPlanner();
   watchPage();
   if (!handInWatched) { handInWatched = true; watchHandIn(); syncIfJustHandedIn(stored); }
 
@@ -2589,7 +2589,10 @@ if (typeof module !== 'undefined') {
     if (!msg || sender.id !== chrome.runtime.id) return;
     if (msg.type === 'receipt') respond(receiptForPage());
     if (msg.type === 'show-me') { showMe(); respond({ ok: true }); }
-    if (msg.type === 'open-buddy') { ui.open = !!shadow; ui.view = 'panel'; ui.sheet = null; render(); respond({ ok: !!shadow }); }
+    if (msg.type === 'open-buddy') {
+      if (plannerShows()) { plSetOn(true); respond({ ok: true }); }
+      else { location.assign('/#planner'); respond({ ok: true }); }
+    }
   });
   mount();
 }

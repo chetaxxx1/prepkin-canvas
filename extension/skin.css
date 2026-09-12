@@ -661,22 +661,13 @@ html.pk-dark #pk-week .pk-w-tank { background-image: var(--pk-tank, none), linea
 #pk-week .pk-w-foot .more:hover { text-decoration: underline; }
 html.pk-back-week #pk-week { display: none; }
 
-/* Canvas's own To Do, folded to one line under the rail. Show opens it for
- * this page view; Put back on the receipt keeps it open for good. */
-#pk-todo-fold {
-  display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 0 20px; padding: 10px 14px;
-  border-radius: 12px; border: 1px dashed var(--pk-rule); color: var(--pk-ink-2); cursor: pointer; user-select: none;
-  font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-size: 12px; line-height: 16px; font-weight: 700;
-  white-space: nowrap;
-}
-#pk-todo-fold span { overflow: hidden; text-overflow: ellipsis; }
-#pk-todo-fold b { font-weight: 800; color: var(--pk-link); }
-#pk-todo-fold:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
-html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) .Sidebar__TodoListContainer,
-html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) ul.right-side-list.to-do-list,
-html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) #right-side h2.todo-list-header,
-html.pk-on.pk-todo-fold:not(.pk-back-todo-fold):not(.pk-todo-open) .events_list.coming_up { display: none; }
-html.pk-back-todo-fold #pk-todo-fold { display: none; }
+/* Canvas's own To Do and Coming Up, replaced by the rail and the planner. The
+ * stray legacy heading goes with them; Put back (pk-back-todo-fold) keeps all
+ * three. Recent Feedback is never touched. */
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold) .Sidebar__TodoListContainer,
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold) ul.right-side-list.to-do-list,
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold) #right-side h2.todo-list-header,
+html.pk-on.pk-todo-fold:not(.pk-back-todo-fold) .events_list.coming_up { display: none; }
 
 
 /* MARK: - Title: one page header, on every page ---------------------------
@@ -776,4 +767,149 @@ html.pk-on.pk-show.pk-hide-past #future_enrollments_table {
   display: revert !important;
   outline: 1.5px dashed var(--pk-mark) !important;
   outline-offset: 3px;
+}
+
+/* MARK: - The Planner: the dashboard's main column as a week (planner.js).
+ * Our own elements, so the lines below are ours to draw: the tabs in Canvas's
+ * title row, the grid, the cards. Tokens only, so every paper and dark carry
+ * it; the mint is the one accent, the amber the one warning. */
+#pk-dashtabs {
+  display: inline-flex; align-items: center; margin-left: 18px; padding: 3px; border-radius: 999px;
+  background: var(--pk-paper-sunk); font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
+}
+#pk-dashtabs [role="tab"] {
+  padding: 6px 14px; border-radius: 999px; font-size: 13px; line-height: 16px; font-weight: 800;
+  color: var(--pk-ink-2); cursor: pointer; user-select: none; transition: background-color .15s ease, color .15s ease;
+}
+#pk-dashtabs [role="tab"]:hover { color: var(--pk-ink); }
+#pk-dashtabs [role="tab"].on { background: var(--pk-paper-2); color: var(--pk-ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+#pk-dashtabs [role="tab"]:focus-visible { outline: 2px solid #51CFA0; outline-offset: 1px; }
+/* The Planner tab hides the cards; Put back on the planner row keeps the cards. */
+/* Canvas sets display:block inline on the container, so this needs the weight. */
+html.pk-on.pk-planner-on:not(.pk-back-planner) #DashboardCard_Container { display: none !important; }
+html.pk-back-planner #pk-dashtabs, html.pk-back-planner #pk-planner { display: none; }
+
+#pk-planner {
+  margin: 6px 0 28px; color: var(--pk-ink);
+  font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums;
+}
+#pk-planner .pk-pl-icon { display: block; flex: none; }
+#pk-planner .pk-pl-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 4px 0 14px; }
+#pk-planner .pk-pl-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#pk-planner .pk-pl-title b { font-size: 22px; line-height: 28px; font-weight: 900; letter-spacing: -.02em; }
+#pk-planner .pk-pl-title small { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); margin-left: 4px; white-space: nowrap; }
+#pk-planner .pk-pl-nav { display: flex; align-items: center; gap: 6px; flex: none; }
+#pk-planner .pk-pl-nav [role="button"] { cursor: pointer; user-select: none; }
+#pk-planner .pk-pl-nav .prev, #pk-planner .pk-pl-nav .next { position: relative; width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--pk-rule); background: var(--pk-paper-2); }
+#pk-planner .pk-pl-nav .prev::before, #pk-planner .pk-pl-nav .next::before {
+  content: ""; position: absolute; top: 10px; left: 12px; width: 7px; height: 7px;
+  border-left: 2px solid var(--pk-ink-2); border-bottom: 2px solid var(--pk-ink-2); transform: rotate(45deg);
+}
+#pk-planner .pk-pl-nav .next::before { left: 9px; transform: rotate(-135deg); }
+#pk-planner .pk-pl-nav .prev:hover, #pk-planner .pk-pl-nav .next:hover { background: var(--pk-paper-sunk); }
+#pk-planner .pk-pl-nav .today, #pk-planner .pk-pl-nav .add {
+  height: 30px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center;
+  font-size: 13px; font-weight: 800; border: 1px solid var(--pk-rule); background: var(--pk-paper-2); color: var(--pk-ink);
+}
+#pk-planner .pk-pl-nav .today:hover { background: var(--pk-paper-sunk); }
+#pk-planner .pk-pl-nav .add { margin-left: 6px; background: #51CFA0; border-color: #51CFA0; color: #101820; box-shadow: 0 2px 0 #35A87D; }
+#pk-planner .pk-pl-nav .add:active { transform: translateY(1px); box-shadow: 0 1px 0 #35A87D; }
+#pk-planner .pk-pl-nav [role="button"]:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+
+/* The grid: seven columns, today outlined in mint, past days on plain paper. */
+#pk-planner .pk-pl-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+#pk-planner .pk-pl-col { min-width: 0; min-height: 250px; padding: 10px; border-radius: 14px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); transition: background-color .15s ease; }
+#pk-planner .pk-pl-col.past { background: var(--pk-paper); }
+#pk-planner .pk-pl-col.today { border-color: #51CFA0; box-shadow: inset 0 0 0 1px #51CFA0; }
+#pk-planner .pk-pl-col.over { background: rgba(81, 207, 160, .14); border-color: #51CFA0; }
+#pk-planner .pk-pl-day { display: flex; align-items: center; justify-content: space-between; margin: 0 0 10px; }
+#pk-planner .pk-pl-day span { font-size: 11px; line-height: 14px; letter-spacing: .06em; text-transform: uppercase; font-weight: 800; color: var(--pk-ink-2); }
+#pk-planner .pk-pl-day b { font-size: 17px; line-height: 20px; font-weight: 900; }
+#pk-planner .pk-pl-col.past .pk-pl-day b, #pk-planner .pk-pl-col.past .pk-pl-day span { color: var(--pk-ink-2); opacity: .8; }
+#pk-planner .pk-pl-col.today .pk-pl-day span { color: #0B7A55; }
+html.pk-dark #pk-planner .pk-pl-col.today .pk-pl-day span { color: #7FDDB8; }
+#pk-planner .pk-pl-col.today .pk-pl-day b { width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; font-size: 13px; background: var(--pk-ink); color: var(--pk-paper-2); }
+#pk-planner .pk-pl-empty { font-size: 12px; font-weight: 600; color: var(--pk-ink-2); opacity: .6; padding: 2px 2px; }
+
+/* A card per piece of work: the course's colour down the left edge, the
+ * app's icon for the kind of work, the title, then the course and when. */
+#pk-planner .pk-pl-task {
+  position: relative; display: flex; gap: 8px; align-items: flex-start; margin: 0 0 8px; padding: 8px 8px 8px 10px;
+  border-radius: 10px; background: var(--pk-paper); border: 1px solid var(--pk-rule); border-left: 4px solid var(--c, var(--pk-ink-2));
+  cursor: grab; transition: background-color .15s ease, border-color .15s ease;
+}
+#pk-planner .pk-pl-task:hover { background: var(--pk-paper-2); border-color: var(--pk-ink-2); border-left-color: var(--c, var(--pk-ink-2)); }
+#pk-planner .pk-pl-task .pk-pl-icon { margin-top: 1px; }
+#pk-planner .pk-pl-task .body { min-width: 0; flex: 1; }
+#pk-planner .pk-pl-task .body a, #pk-planner .pk-pl-task .body b {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: 12.5px; line-height: 16px; font-weight: 700; color: var(--pk-ink) !important; text-decoration: none !important;
+}
+#pk-planner .pk-pl-task .body a:hover { text-decoration: underline !important; text-decoration-color: #51CFA0 !important; }
+#pk-planner .pk-pl-task small { display: block; margin-top: 3px; font-size: 11px; line-height: 14px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-planner .pk-pl-task.late { background: var(--pk-amber-tint); border-color: rgba(222, 154, 34, .35); }
+#pk-planner .pk-pl-task.late small { color: var(--pk-amber-ink); }
+#pk-planner .pk-pl-task.moved { border-left-style: dashed; }
+#pk-planner .pk-pl-task.done { opacity: .62; cursor: default; }
+#pk-planner .pk-pl-task.done .body a, #pk-planner .pk-pl-task.done .body b { text-decoration: line-through !important; text-decoration-color: var(--pk-ink-2) !important; }
+#pk-planner .pk-pl-task .tick { flex: none; width: 18px; height: 18px; border-radius: 999px; background: #51CFA0; color: #101820; font-size: 11px; font-weight: 900; display: grid; place-items: center; }
+#pk-planner .pk-pl-task.dragging { opacity: .35; }
+
+/* What slipped, and what has no day: a band of cards above and below the grid. */
+#pk-planner .pk-pl-slipped { margin: 0 0 14px; }
+#pk-planner .pk-pl-slipped.undated { margin: 14px 0 0; }
+#pk-planner .pk-pl-label { display: block; margin: 0 0 8px; font-size: 11px; line-height: 14px; letter-spacing: .06em; text-transform: uppercase; font-weight: 800; color: var(--pk-amber-ink); }
+#pk-planner .undated .pk-pl-label { color: var(--pk-ink-2); }
+#pk-planner .pk-pl-slipped .row { display: flex; flex-wrap: wrap; gap: 10px; }
+#pk-planner .pk-pl-slipped .row .pk-pl-task { width: 224px; margin: 0; }
+
+/* Under the week: three cards, one icon each. */
+#pk-planner .pk-pl-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+#pk-planner .pk-pl-card { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 16px; border-radius: 16px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); }
+#pk-planner .pk-pl-card .head { display: flex; align-items: center; gap: 10px; }
+#pk-planner .pk-pl-card .head b { font-size: 15px; line-height: 20px; font-weight: 900; letter-spacing: -.01em; }
+#pk-planner .pk-pl-card .head .meta { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--pk-ink-2); white-space: nowrap; }
+#pk-planner .pk-pl-card .list { display: flex; flex-direction: column; }
+#pk-planner .pk-pl-card .grow { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; column-gap: 10px; row-gap: 5px; align-items: center; padding: 7px 0; border-top: 1px solid var(--pk-rule); font-size: 13px; line-height: 17px; font-weight: 600; }
+#pk-planner .pk-pl-card .grow:first-child { border-top: 0; padding-top: 0; }
+#pk-planner .pk-pl-card .grow i { width: 8px; height: 8px; border-radius: 999px; background: var(--pk-ink-2); }
+#pk-planner .pk-pl-card .grow span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pk-planner .pk-pl-card .grow b { font-weight: 800; white-space: nowrap; }
+#pk-planner .pk-pl-card .grow .bar { grid-column: 2 / 4; }
+#pk-planner .pk-pl-card .bar { height: 6px; border-radius: 999px; background: var(--pk-paper-sunk); overflow: hidden; }
+#pk-planner .pk-pl-card .bar i { display: block; height: 100%; border-radius: 999px; background: #51CFA0; }
+#pk-planner .pk-pl-card.league .bar { height: 8px; }
+#pk-planner .pk-pl-card .big { font-size: 15px; line-height: 20px; font-weight: 800; }
+#pk-planner .pk-pl-card .foot { font-size: 12px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-planner .pk-pl-card .quiet { font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
+#pk-planner .pk-pl-card .actions { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
+#pk-planner .start, #pk-planner .ghost {
+  display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 14px; border-radius: 10px;
+  font-size: 13px; font-weight: 800; cursor: pointer; user-select: none; white-space: nowrap; text-decoration: none !important;
+  background: var(--pk-paper-2); color: var(--pk-ink) !important; border: 1px solid var(--pk-rule);
+}
+#pk-planner .start { background: #51CFA0; border-color: #51CFA0; color: #101820 !important; box-shadow: 0 2px 0 #35A87D; }
+#pk-planner .start:active { transform: translateY(1px); box-shadow: 0 1px 0 #35A87D; }
+#pk-planner .ghost:hover { background: var(--pk-paper-sunk); }
+#pk-planner .start:focus-visible, #pk-planner .ghost:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+#pk-planner .pk-pl-card .lens { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--pk-ink-2); }
+#pk-planner .pk-pl-card .lens span { padding: 3px 9px; border-radius: 999px; border: 1px solid var(--pk-rule); cursor: pointer; user-select: none; }
+#pk-planner .pk-pl-card .lens span.on { background: rgba(81, 207, 160, .16); border-color: #51CFA0; color: #0B7A55; }
+html.pk-dark #pk-planner .pk-pl-card .lens span.on { color: #7FDDB8; }
+#pk-planner .pk-pl-card .lens .lead { border: 0; padding: 0 2px 0 0; cursor: default; }
+
+/* Add a task: one row, then it folds away. */
+#pk-planner .pk-pl-add { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; padding: 12px; border-radius: 14px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); }
+#pk-planner .pk-pl-add input, #pk-planner .pk-pl-add select {
+  height: 34px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--pk-rule); background: var(--pk-paper); color: var(--pk-ink);
+  font: inherit; font-size: 13px; font-weight: 600;
+}
+#pk-planner .pk-pl-add input[name="title"] { flex: 1 1 220px; min-width: 0; }
+#pk-planner .pk-pl-add input:focus, #pk-planner .pk-pl-add select:focus { outline: 2px solid #51CFA0; outline-offset: 0; border-color: transparent; }
+#pk-planner .pk-pl-add button.start { border: 1px solid #51CFA0; font: inherit; font-size: 13px; font-weight: 800; }
+#pk-planner .pk-pl-add small { flex-basis: 100%; font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }
+
+@media (max-width: 1100px) {
+  #pk-planner .pk-pl-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #pk-planner .pk-pl-cards { grid-template-columns: 1fr; }
 }
