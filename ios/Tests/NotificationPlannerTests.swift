@@ -32,13 +32,17 @@ final class NotificationPlannerTests: XCTestCase {
         XCTAssertTrue(plan.contains { $0.id == "nudge:2026-08-29" })
     }
 
+    /// A clear list earns no reminder. Since the swim, it earns the fish's return
+    /// at the same hour instead — one note, and not a nag.
     func testTheEveningCheckInIsDroppedOnceTheListIsClear() {
         let now = at(29, 10)
         var s = state(now: now)
         for t in s.tasks { s.complete(taskID: t.id, reward: t.reward, now: now) }
         let plan = NotificationPlanner.plan(for: s, now: now, calendar: calendar)
-        XCTAssertFalse(plan.contains { $0.id == "nudge:2026-08-29" },
-                       "finishing everything should not earn you a reminder")
+        let tonight = plan.filter { $0.id == "nudge:2026-08-29" }
+        XCTAssertEqual(tonight.count, 1)
+        XCTAssertEqual(tonight.first?.title, "Moss is back")
+        XCTAssertFalse(tonight.first?.title.contains("left") ?? true, "no check-in on a clear list")
     }
 
     func testThePastIsNeverScheduled() {
@@ -185,7 +189,7 @@ final class NotificationPlannerTests: XCTestCase {
         var s = state(now: now)
         for t in s.tasks { s.complete(taskID: t.id, reward: t.reward, now: now) }
         let plan = NotificationPlanner.plan(for: s, now: now, calendar: calendar)
-        XCTAssertNil(plan.first { $0.id == "nudge:2026-08-29" }, "tonight is clear")
+        XCTAssertEqual(plan.first { $0.id == "nudge:2026-08-29" }?.title, "Moss is back", "tonight is the return")
         let tomorrow = plan.first { $0.id == "nudge:2026-08-30" }
         XCTAssertEqual(tomorrow?.title, "\(s.tasks.count) left today")
     }
