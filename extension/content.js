@@ -1180,8 +1180,9 @@ function tickClocks() {
   }
 }
 
-/// The running / finished focus card. Replaces the panel entirely, because a
-/// timer you can lose behind a scroll is a timer you forget.
+/// The running / finished focus card, beside the buddy on every page but the
+/// dashboard, where the rail's Now row carries the running clock. The finished
+/// card shows everywhere until Done is pressed: a payoff should not be missed.
 ///
 /// The shape is Oura's and Tiimo's: the task on top, the time left inside a
 /// ring, when it ends underneath, and two quiet words at the foot. The buddy
@@ -2169,7 +2170,7 @@ function render() {
   prevView = ui.view;
 
   root.innerHTML = `
-    ${focus.state !== 'idle' ? focusCard() : ''}
+    ${focus.state === 'done' || (focus.state === 'running' && !railShows()) ? focusCard() : ''}
     <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
       ${urgent ? `<span class="pk-count" aria-hidden="true">${urgent}</span>` : ''}
       ${ui.float && Date.now() - ui.float < 2500 ? `<span class="pk-float" aria-hidden="true">${COIN_SVG}+${COIN_REWARD}</span>` : ''}

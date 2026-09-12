@@ -226,7 +226,7 @@ async function loadBuddy() {
   const el = document.getElementById('buddy');
   const tab = await activeCanvasTab();
   const { skin } = await chrome.storage.local.get('skin');
-  el.hidden = !tab || skin?.mascot === false;
+  el.hidden = !tab;
   el.dataset.tab = tab?.id ?? '';
 }
 document.getElementById('open-buddy').addEventListener('click', async () => {
