@@ -113,16 +113,19 @@ struct LeagueWeekResult: Codable, Equatable, Identifiable {
     /// week's rows have been fetched. `nil` until then, and forever when the rows
     /// never came (no friends, or the fortnight the bridge keeps has passed).
     var placement: BoardPlacement?
+    /// The race that week, if one was on, settled alongside the placement.
+    var race: RaceResult?
 
     var id: String { week.raw }
 
     init(week: WeekKey, tier: LeagueTier, coinsEarned: Int, promoted: Bool,
-         placement: BoardPlacement? = nil) {
+         placement: BoardPlacement? = nil, race: RaceResult? = nil) {
         self.week = week
         self.tier = tier
         self.coinsEarned = coinsEarned
         self.promoted = promoted
         self.placement = placement
+        self.race = race
     }
 }
 
@@ -153,6 +156,12 @@ struct LeagueState: Codable, Equatable {
     var weeksThird = 0
     /// Group quests cleared, one a week at most.
     var questsCleared = 0
+    /// Races finished ahead or level. One a week at most.
+    var racesWon = 0
+    /// The pacts the bridge last sent, this week's and last week's. Kept so the
+    /// race card draws on a train, and so Monday can settle a race whose rows
+    /// arrive before the pacts do.
+    var races: [Pact] = []
     /// The week whose quest has already been counted, so a board redrawn twenty
     /// times on a Sunday credits it once.
     var questWeek: WeekKey?
@@ -187,6 +196,17 @@ struct LeagueState: Codable, Equatable {
         return true
     }
 
+    /// Settles last week's race onto its receipt, once, and counts a win. Level
+    /// counts: nothing in a race loses anybody anything.
+    @discardableResult
+    mutating func settleRace(_ result: RaceResult, for week: WeekKey) -> Bool {
+        guard let i = history.firstIndex(where: { $0.week == week }),
+              history[i].race == nil else { return false }
+        history[i].race = result
+        if result.won { racesWon += 1 }
+        return result.won
+    }
+
     /// Credits a cleared quest, once per week.
     @discardableResult
     mutating func creditQuest(_ week: WeekKey) -> Bool {
@@ -201,7 +221,7 @@ struct LeagueState: Codable, Equatable {
     var unseenSettledWeek: LeagueWeekResult? {
         guard let last = history.first, boardSeen != last.week else { return nil }
         let placed = (last.placement?.of ?? 0) >= 2
-        return placed || last.promoted ? last : nil
+        return placed || last.promoted || last.race != nil ? last : nil
     }
 
     // MARK: The pod
@@ -276,6 +296,7 @@ struct LeagueState: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case tier, weekStart, pennants, history
         case weeksWon, weeksSecond, weeksThird, questsCleared, questWeek, boardSeen
+        case racesWon, races
         case podOptIn, identity, podID, podWeek, lastPod
     }
 
@@ -303,6 +324,8 @@ struct LeagueState: Codable, Equatable {
         weeksThird = try c.decodeIfPresent(Int.self, forKey: .weeksThird) ?? blank.weeksThird
         questsCleared = try c.decodeIfPresent(Int.self, forKey: .questsCleared) ?? blank.questsCleared
         questWeek = try c.decodeIfPresent(WeekKey.self, forKey: .questWeek)
+        racesWon = try c.decodeIfPresent(Int.self, forKey: .racesWon) ?? blank.racesWon
+        races = try c.decodeIfPresent([Pact].self, forKey: .races) ?? blank.races
         boardSeen = try c.decodeIfPresent(WeekKey.self, forKey: .boardSeen)
         podOptIn = try c.decodeIfPresent(Bool.self, forKey: .podOptIn) ?? blank.podOptIn
         identity = try c.decodeIfPresent(LeagueIdentity.self, forKey: .identity)

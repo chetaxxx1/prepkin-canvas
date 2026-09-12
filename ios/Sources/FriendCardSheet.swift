@@ -202,6 +202,27 @@ struct FriendCardSheet: View {
                     dismiss()
                 }
             }
+            raceTile
+        }
+    }
+
+    /// Apple's "Compete with…": invite this friend to race the week. Three states
+    /// and no fourth: invite, invited, racing. When a race with somebody else is
+    /// already on there is no tile — one a week, and a dead control says nothing.
+    @ViewBuilder private var raceTile: some View {
+        let racing = state.currentRace.map { $0.other.id == friend.id } ?? false
+        let invited = state.raceSent.map { $0.other.id == friend.id } ?? false
+        let invitedYou = state.raceInvites.contains { $0.other.id == friend.id }
+        if racing {
+            tile(icon: "raceFlags", title: "Racing", note: "Settles Monday", tint: Theme.mintSoft) { dismiss() }
+        } else if invited {
+            tile(icon: "raceFlags", title: "Invited", note: "Waiting on them", tint: Theme.mintSoft) {}
+        } else if invitedYou {
+            tile(icon: "raceFlags", title: "Wants to race", note: "Answer on the tab", tint: Theme.coralSoft) { dismiss() }
+        } else if state.canInviteToRace {
+            tile(icon: "raceFlags", title: "Race", note: "This week, one on one", tint: Theme.coralSoft) {
+                Task { await state.inviteToRace(friend) }
+            }
         }
     }
 

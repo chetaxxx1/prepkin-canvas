@@ -110,12 +110,27 @@ calls `LeagueState.award`, which fills the receipt, bumps the shelf, and promote
 Only the newest settled week is scored. If the fortnight passes first, the receipt stays
 unplaced — the tier is unaffected, only the medal is missed.
 
-## Next slice — a race with one friend
+## The race (2026-09-12, fifth pass) — built, dark until `bridge/schema-pacts.sql` is pasted
 
-Apple Watch's 7-day competition, one to one: invite, accept, seven days, a race pennant for
-whoever has more on Sunday night. Same scoring as the board. Needs a small `pacts` table on
-the bridge for the handshake, because `fetch_visits` only covers two days and an invite has
-to survive a week. Designed in the artifact, not built.
+Apple Watch's Activity competition, one to one: invite a friend from their card, they get a
+card on the tab ("Crisp Harbor wants to race you this week", Race / Not this week), and once
+accepted both phones draw the race card — two sides, a split bar, "You're ahead by 60".
+The window is the ISO week the invite was sent in, the same window the board scores, so the
+race needs no clock and **no score on the bridge**: the `pacts` table holds only the
+handshake (who, whom, which week, accepted or declined), and each phone works the standing
+out from the day rows it already fetches. One race a week. Ahead or level on Sunday night
+keeps a race pennant (`racesWon`, the shelf's fifth tile); the other keeps everything.
+
+- SQL: `bridge/schema-pacts.sql` — `propose_pact`, `answer_pact`, `fetch_pacts`,
+  `pact_row`, `purge_pacts`. Paste after schema-friends.sql. Unrun, unlinted (no local
+  Postgres). `test/live-pacts.js` walks it against the real bridge once pasted.
+- Swift: `Core/Race.swift` (`Pact`, `RaceStanding`, `RaceResult`, `RaceRules`),
+  `FriendClient` + three calls, `LeagueState.races` / `racesWon` / `settleRace`,
+  `AppState.inviteToRace` / `answerRace` / `refreshRaces`, the two cards in
+  `FriendsView`, the tile in `FriendCardSheet`, the line in `MondaySheet`.
+- `-fakeFriend` seeds a race that is on and an invite waiting, so both cards draw.
+- Held: a race starts counting from Monday even if accepted Thursday (both sides have the
+  whole week's rows, so it is fair either way and needs no second clock).
 
 ## Looking at it
 

@@ -82,6 +82,13 @@ struct FriendsView: View {
                     // Somebody said hello. Same shape as the card above it, and it
                     // ends the same way: by being looked at.
                     if !waved.isEmpty { wavedCard.padding(.top, 14) }
+                    // Somebody wants a race. Two answers, and it stays until one is given.
+                    ForEach(state.raceInvites) { invite in
+                        raceInviteCard(invite).padding(.top, 14)
+                    }
+                    // The race that is on. Apple's competition card: two sides, a
+                    // split bar, one line saying who is ahead.
+                    if let race = state.currentRace { raceCard(race).padding(.top, 14) }
 
                     // Friends cannot see you on their board until you share your
                     // week. Asked here, where the reason is on screen, and only
@@ -177,10 +184,11 @@ struct FriendsView: View {
         .onAppear { monday = state.mondayCard }
         .task {
             await state.refreshFriends()
-            // Both are silent on failure and both are cheap. They run after the
-            // list because neither means anything without it.
+            // All three are silent on failure and all three are cheap. They run
+            // after the list because none of them means anything without it.
             await state.refreshWaves()
             await state.refreshToday()
+            await state.refreshRaces()
         }
         // Only while the tab is on screen, and only once a minute: the one thing
         // that goes stale here is a shift clock, and it is measured in minutes.
@@ -222,6 +230,141 @@ struct FriendsView: View {
             }
         }
         .background(cardBackground(Theme.Radius.card))
+    }
+
+    // MARK: - The race
+
+    /// "Crisp Harbor wants to race you this week." Apple's competition invite,
+    /// as a card in the tab's news slot: accept, or not this week. A declined
+    /// invite tells nobody — it simply stops being drawn, on both phones.
+    private func raceInviteCard(_ invite: Pact) -> some View {
+        let who = state.friend(for: invite)
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                SproutImage(speciesID: who.speciesID, level: who.level, skin: who.lookID, size: 44)
+                    .frame(width: 44, height: 44, alignment: .bottom)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(who.displayName) wants to race you this week")
+                        .font(Theme.font(15.5, .heavy))
+                        .foregroundStyle(Theme.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("Same scoring as the board. Ahead on Sunday night keeps a pennant. Nobody loses anything.")
+                        .font(Theme.font(12.5, .bold))
+                        .foregroundStyle(Theme.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+            }
+            HStack(spacing: 8) {
+                Button {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    Task { await state.answerRace(invite, accept: true) }
+                } label: {
+                    HStack(spacing: 6) {
+                        BadgeMark(icon: "raceFlags", height: 16)
+                        Text("Race")
+                    }
+                    .font(Theme.font(14, .black))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 11)
+                    .background(Capsule().fill(Theme.coral)
+                        .shadow(color: Theme.coral.opacity(0.28), radius: 10, y: 5))
+                }
+                .buttonStyle(.plain)
+                Button {
+                    Task { await state.answerRace(invite, accept: false) }
+                } label: {
+                    Text("Not this week")
+                        .font(Theme.font(14, .heavy))
+                        .foregroundStyle(Theme.muted)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 11)
+                        .background(Capsule().fill(Theme.tile)
+                            .overlay(Capsule().strokeBorder(Theme.tileRing, lineWidth: 1)))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(16)
+        .background(cardBackground(Theme.Radius.card))
+    }
+
+    /// Apple Watch's competition card: your side, their side, a bar split by the
+    /// two scores, and the one line that says who is ahead. No countdown; the week
+    /// settles Monday like everything else.
+    private func raceCard(_ race: Pact) -> some View {
+        let who = state.friend(for: race)
+        let standing = state.raceStanding
+        return VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline) {
+                HStack(spacing: 6) {
+                    BadgeMark(icon: "raceFlags", height: 16)
+                    Text("Race with \(who.displayName)")
+                        .font(Theme.font(15, .black))
+                        .foregroundStyle(Theme.ink)
+                }
+                Spacer(minLength: 8)
+                Text("SETTLES MONDAY")
+                    .font(Theme.font(11, .black))
+                    .kerning(0.6)
+                    .foregroundStyle(Theme.dim)
+            }
+            HStack(alignment: .bottom) {
+                raceSide(speciesID: state.activeChibiID, level: state.activeChibi.level,
+                         skin: state.activeChibi.skinID, points: standing?.mine, name: "You")
+                Spacer(minLength: 0)
+                Text(standing?.line ?? "Waiting on their week")
+                    .font(Theme.font(12.5, .black))
+                    .foregroundStyle(Theme.muted)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 120)
+                    .padding(.bottom, 26)
+                Spacer(minLength: 0)
+                raceSide(speciesID: who.speciesID, level: who.level, skin: who.lookID,
+                         points: standing?.theirs, name: who.displayName)
+            }
+            .padding(.top, 12)
+            if let standing {
+                let total = max(1, standing.mine + standing.theirs)
+                GeometryReader { geo in
+                    HStack(spacing: 2) {
+                        Capsule().fill(state.league.tier.color)
+                            .frame(width: geo.size.width * CGFloat(standing.mine) / CGFloat(total))
+                        Capsule().fill(Theme.coral)
+                    }
+                }
+                .frame(height: 12)
+                .padding(.top, 12)
+                .accessibilityHidden(true)
+            }
+            Text(standing == nil
+                 ? "\(who.displayName) hasn't shared a day this week yet. The race starts counting the moment they do."
+                 : "Same scoring as the board, capped at \(WeekPoints.dayMax) a day. Ahead on Sunday night keeps a race pennant. Level is a pennant each.")
+                .font(Theme.font(11.5, .heavy))
+                .foregroundStyle(Theme.dim)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 10)
+        }
+        .padding(16)
+        .background(cardBackground(Theme.Radius.card))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Race with \(who.displayName). \(standing?.line ?? "Waiting on their week")")
+    }
+
+    private func raceSide(speciesID: String, level: Int, skin: String, points: Int?, name: String) -> some View {
+        VStack(spacing: 2) {
+            SproutImage(speciesID: speciesID, level: level, skin: skin, size: 76)
+                .frame(width: 76, height: 76, alignment: .bottom)
+            Text(points.map { "\($0)" } ?? "—")
+                .font(Theme.font(20, .black))
+                .foregroundStyle(Theme.ink)
+            Text(name)
+                .font(Theme.font(12, .bold))
+                .foregroundStyle(Theme.muted)
+                .lineLimit(1)
+        }
+        .frame(width: 104)
     }
 
     // MARK: - Share my week

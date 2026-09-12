@@ -113,6 +113,14 @@ protocol FriendClient {
     /// The two privacy flags. Neither is about the fish: a friend can always see
     /// the kin they were given a code for.
     func setSharing(identity: LeagueIdentity, today: Bool, board: Bool) async throws
+
+    /// Invites a friend to race this week. The row that already exists comes back
+    /// if one does, so inviting twice is one invite.
+    func proposeRace(identity: LeagueIdentity, friendID: String, week: WeekKey) async throws -> Pact
+    /// Accepts or declines an invite addressed to you.
+    func answerRace(identity: LeagueIdentity, pactID: String, accept: Bool) async throws -> Pact
+    /// Every pact you are in from `from` week onward, declined ones left out.
+    func fetchRaces(identity: LeagueIdentity, from: WeekKey) async throws -> [Pact]
 }
 
 struct SupabaseFriendClient: FriendClient {
@@ -260,6 +268,37 @@ struct SupabaseFriendClient: FriendClient {
         _ = try await call("set_sharing", body)
     }
 
+    func proposeRace(identity: LeagueIdentity, friendID: String, week: WeekKey) async throws -> Pact {
+        var body = who(identity)
+        body["p_other"] = friendID
+        body["p_week"] = week.raw
+        return try Self.pact(try await call("propose_pact", body))
+    }
+
+    func answerRace(identity: LeagueIdentity, pactID: String, accept: Bool) async throws -> Pact {
+        var body = who(identity)
+        body["p_id"] = pactID
+        body["p_accept"] = accept
+        return try Self.pact(try await call("answer_pact", body))
+    }
+
+    func fetchRaces(identity: LeagueIdentity, from: WeekKey) async throws -> [Pact] {
+        var body = who(identity)
+        body["p_from"] = from.raw
+        let data = try await call("fetch_pacts", body)
+        guard !Self.isNull(data) else { return [] }
+        guard let rows = try? JSONDecoder().decode([Pact].self, from: data) else {
+            throw FriendError.badResponse
+        }
+        return rows.filter { !$0.id.isEmpty && !$0.other.id.isEmpty }
+    }
+
+    private static func pact(_ data: Data) throws -> Pact {
+        guard !isNull(data), let row = try? JSONDecoder().decode(Pact.self, from: data),
+              !row.id.isEmpty else { throw FriendError.badResponse }
+        return row
+    }
+
     /// A function that answers with a bare string: Postgres sends it quoted.
     private static func text(_ data: Data) throws -> String {
         let raw = String(decoding: data, as: UTF8.self)
@@ -307,6 +346,22 @@ struct MockFriendClient: FriendClient {
     func fetchVisits(identity: LeagueIdentity, day: DayKey) async throws -> [VibeVisit] { [] }
     func fetchSent(identity: LeagueIdentity, day: DayKey) async throws -> [String] { [] }
     func setSharing(identity: LeagueIdentity, today: Bool, board: Bool) async throws {}
+
+    /// Seeded races, for looking at the cards. See `seededForTesting`.
+    var races: [Pact] = []
+
+    func proposeRace(identity: LeagueIdentity, friendID: String, week: WeekKey) async throws -> Pact {
+        let other = seeded.first { $0.id == friendID }
+            ?? Friend(id: friendID, adjective: 0, noun: 0, speciesID: "sprout", lookID: "classic",
+                      costumeID: "none", sceneID: "lagoon", level: 1, tier: .tidepool,
+                      friendsSince: Date(), onShiftUntil: nil)
+        return Pact(id: "mock-\(friendID)-\(week.raw)", week: week, mine: true, accepted: false, other: other)
+    }
+    func answerRace(identity: LeagueIdentity, pactID: String, accept: Bool) async throws -> Pact {
+        guard let p = races.first(where: { $0.id == pactID }) else { throw FriendError.badResponse }
+        return Pact(id: p.id, week: p.week, mine: p.mine, accepted: accept, declined: !accept, other: p.other)
+    }
+    func fetchRaces(identity: LeagueIdentity, from: WeekKey) async throws -> [Pact] { races }
 }
 
 #if DEBUG
@@ -357,6 +412,12 @@ extension MockFriendClient {
                    counts: TodayCounts(tasks: 3, focusMinutes: 30, lessons: 1, games: 3)),
             DayRow(playerID: "debug-friend-4", day: day(0),
                    counts: TodayCounts(tasks: 1, focusMinutes: 0, lessons: 0, games: 2)),
+        ], races: [
+            // A race that is on, and an invite waiting on you, so both cards draw.
+            Pact(id: "mock-race", week: WeekKey(today), mine: true, accepted: true,
+                 other: friend(3, 5, 19, "wisp", "lagoon", level: 2, tier: .shallows, since: -9 * 86_400)),
+            Pact(id: "mock-invite", week: WeekKey(today), mine: false, accepted: false,
+                 other: friend(1, 12, 30, "ember", "reef", level: 3, tier: .reef, since: -3 * 86_400)),
         ])
     }
 }

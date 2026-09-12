@@ -775,6 +775,7 @@ final class AppState: ObservableObject {
         guard game.league.identity == identity else { return }
         friendDays = rows
         settleBoardIfNeeded(fetchedFrom: from)
+        settleRaceIfNeeded()
         creditQuestIfCleared()
     }
 
@@ -839,6 +840,84 @@ final class AppState: ObservableObject {
     private func creditQuestIfCleared() {
         guard let quest = groupQuest, quest.cleared else { return }
         game.league.creditQuest(quest.week)
+    }
+
+    // MARK: - Races
+
+    /// This week's race, if one is on.
+    var currentRace: Pact? { RaceRules.current(game.league.races, week: boardWeek) }
+    /// Invites waiting on you this week.
+    var raceInvites: [Pact] { RaceRules.invites(game.league.races, week: boardWeek) }
+    /// The invite you sent this week, still unanswered.
+    var raceSent: Pact? { RaceRules.sent(game.league.races, week: boardWeek) }
+    var canInviteToRace: Bool { RaceRules.canInvite(game.league.races, week: boardWeek) }
+
+    /// Where this week's race stands, from the board.
+    var raceStanding: RaceStanding? {
+        guard let race = currentRace else { return nil }
+        return RaceRules.standing(race, members: weekBoard.rows.map(\.member))
+    }
+
+    /// The friend as this phone knows them — with the nickname — for a pact's other side.
+    func friend(for pact: Pact) -> Friend {
+        game.friends.first { $0.id == pact.other.id } ?? pact.other
+    }
+
+    /// This week's and last week's pacts. Silent on failure: the last list stays.
+    func refreshRaces() async {
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        let from = game.league.history.first?.week ?? boardWeek
+        guard let rows = try? await client.fetchRaces(identity: identity, from: min(from, boardWeek)) else { return }
+        guard game.league.identity == identity else { return }
+        game.league.races = rows
+        settleRaceIfNeeded()
+    }
+
+    /// Invites a friend to race this week. The pact lands in the list at once so
+    /// the tile shows "Invited" without waiting on the bridge.
+    func inviteToRace(_ friend: Friend) async {
+        guard canInviteToRace, let identity = game.league.identity,
+              let client = makeFriendClient(game) else { return }
+        if let pact = try? await client.proposeRace(identity: identity, friendID: friend.id, week: boardWeek) {
+            guard game.league.identity == identity else { return }
+            game.league.races.removeAll { $0.id == pact.id }
+            game.league.races.append(pact)
+        } else {
+            show("Could not reach anyone just now. Try again in a moment.")
+        }
+    }
+
+    func answerRace(_ pact: Pact, accept: Bool) async {
+        guard let identity = game.league.identity, let client = makeFriendClient(game) else { return }
+        // A second race in one week is refused on the phone, before the bridge
+        // is asked: the rule is one, and the card would have nowhere to draw two.
+        if accept, currentRace != nil {
+            show("One race a week. This one's already on.")
+            return
+        }
+        if let answered = try? await client.answerRace(identity: identity, pactID: pact.id, accept: accept) {
+            guard game.league.identity == identity else { return }
+            game.league.races.removeAll { $0.id == pact.id }
+            if !answered.declined { game.league.races.append(answered) }
+        } else {
+            show("Could not reach anyone just now. Try again in a moment.")
+        }
+    }
+
+    /// Settles last week's race onto its receipt once the rows and the pacts are
+    /// both in. Level counts as a win for both, and nothing loses anybody anything.
+    private func settleRaceIfNeeded() {
+        guard let last = game.league.history.first, last.race == nil,
+              let race = RaceRules.current(game.league.races, week: last.week) else { return }
+        // The other side stays scoreable after being removed as a friend: the race
+        // was agreed to, and its rows are still in the fortnight.
+        let friends = game.friends.contains { $0.id == race.other.id } ? game.friends : game.friends + [race.other]
+        let split = WeekBoard.members(you: me(for: last.week), friends: friends,
+                                      rows: friendDays, week: last.week)
+        guard let standing = RaceRules.standing(race, members: split.on) else { return }
+        let result = RaceResult(otherName: friend(for: race).displayName,
+                                mine: standing.mine, theirs: standing.theirs)
+        game.league.settleRace(result, for: last.week)
     }
 
     /// Publishes today's counts when they change.

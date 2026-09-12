@@ -161,11 +161,12 @@ struct LeagueLadderView: View {
     // can win, the way an unowned kin in the shop says what a coin can buy.
 
     private var shelf: some View {
-        HStack(spacing: 10) {
-            shelfTile(league.weeksWon, "WEEKS WON") { MedalPennant(medal: 1, height: 30) }
+        HStack(spacing: 8) {
+            shelfTile(league.weeksWon, "WON") { MedalPennant(medal: 1, height: 30) }
             shelfTile(league.weeksSecond, "SECOND") { MedalPennant(medal: 2, height: 30) }
             shelfTile(league.weeksThird, "THIRD") { MedalPennant(medal: 3, height: 30) }
             shelfTile(league.questsCleared, "QUESTS") { BadgeMark(icon: "questChest", height: 26) }
+            shelfTile(league.racesWon, "RACES") { BadgeMark(icon: "raceFlags", height: 26) }
         }
     }
 

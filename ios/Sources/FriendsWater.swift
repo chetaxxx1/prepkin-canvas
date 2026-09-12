@@ -215,6 +215,15 @@ struct FriendsWater: View {
                         SproutImage(speciesID: row.member.speciesID, level: row.member.level,
                                     skin: row.member.lookID, size: kin)
                             .padding(.top, 14)
+                            // What a body resting on sand puts under itself. Without
+                            // it every kin hovers over its mound.
+                            .background(alignment: .bottom) {
+                                Ellipse()
+                                    .fill(Theme.hex(0xC9AE7E).opacity(0.35))
+                                    .frame(width: kin * 0.62, height: kin * 0.11)
+                                    .blur(radius: 3)
+                                    .offset(y: kin * 0.03)
+                            }
                         if place == 1, crowned { BadgeMark(icon: "crown", height: 22) }
                     }
                 }
@@ -256,9 +265,15 @@ struct FriendsWater: View {
                         .offset(y: -10)
                         .padding(.bottom, -10)
                 }
-                Text(row?.member.name ?? " ")
-                    .font(Theme.font(12, .heavy))
-                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    // A live desk, the same green dot the rows carry.
+                    if let until = row?.member.onShiftUntil, until > Date() {
+                        Circle().fill(Theme.mint).frame(width: 7, height: 7)
+                    }
+                    Text(row?.member.name ?? " ")
+                        .font(Theme.font(12, .heavy))
+                        .lineLimit(1)
+                }
                 Text(row.map { "\($0.member.points)" } ?? " ")
                     .font(Theme.font(11.5, .bold))
                     .opacity(0.85)

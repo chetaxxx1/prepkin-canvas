@@ -84,6 +84,8 @@ struct MondaySheet: View {
     @ViewBuilder private var trophy: some View {
         if let medal = placement?.medal {
             MedalPennant(medal: medal, height: 132)
+        } else if let race = last.race, race.won, upTo == nil {
+            BadgeMark(icon: "raceFlags", height: 110)
         } else if let upTo {
             TierPennant(tier: upTo, earned: true, height: 132)
         } else {
@@ -102,7 +104,11 @@ struct MondaySheet: View {
         if let p = placement, placed {
             return "You finished \(FriendsWater.ordinal(p.place)) last week"
         }
-        return "Last week cleared the bar"
+        if last.promoted { return "Last week cleared the bar" }
+        if let race = last.race {
+            return race.won ? "You won the race" : "The race is settled"
+        }
+        return "Last week is in"
     }
 
     private var line: String {
@@ -119,6 +125,15 @@ struct MondaySheet: View {
         }
         if let upTo {
             parts.append("You moved up to \(upTo.name).")
+        }
+        if let race = last.race {
+            if race.mine == race.theirs {
+                parts.append("Level with \(race.otherName) in the race. A pennant each.")
+            } else if race.won {
+                parts.append("Ahead of \(race.otherName) in the race. A race pennant, kept.")
+            } else {
+                parts.append("\(race.otherName) finished ahead in the race.")
+            }
         }
         return parts.joined(separator: " ")
     }
