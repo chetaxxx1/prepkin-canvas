@@ -239,6 +239,10 @@ struct GameState: Codable, Equatable {
     /// The Day 1 offer cards on Home (notifications, then Canvas) have been
     /// answered or dismissed. Same rule for older saves.
     var firstRunOffersDone = false
+    /// The widget card ("Want Moss on your home screen?") has been answered or
+    /// dismissed. Shown once, after the second day's first coin, never again.
+    /// An older save has never seen it, so it decodes false.
+    var widgetOfferDone = false
 
     var templates: [TaskTemplate] = TaskTemplate.starterSet()
     var canvasItems: [CanvasItem] = []
@@ -403,6 +407,7 @@ struct GameState: Codable, Equatable {
         case friends, wavesDay, wavesSent, wavesIn, wavesInKind, wavesSeen
         case shareToday, shareBoard
         case deckProgress, savedCards, cardReports, hasSeenTapCoach, firstRunDone, firstRunOffersDone
+        case widgetOfferDone
         case lifetime, shopPicks, shopPickDay, rerollCount, lockedPick, lockedPicks, firsts, decor
         case wordleSolved, wordleBest, wordleLastDay, wordleGuesses, wordleGuessDay
         case numberLinePlayed, numberLineBest
@@ -471,6 +476,7 @@ struct GameState: Codable, Equatable {
         hasSeenTapCoach = try c.decodeIfPresent(Bool.self, forKey: .hasSeenTapCoach) ?? blank.hasSeenTapCoach
         firstRunDone = try c.decodeIfPresent(Bool.self, forKey: .firstRunDone) ?? true
         firstRunOffersDone = try c.decodeIfPresent(Bool.self, forKey: .firstRunOffersDone) ?? true
+        widgetOfferDone = try c.decodeIfPresent(Bool.self, forKey: .widgetOfferDone) ?? false
         lifetime = try c.decodeIfPresent(LifetimeStats.self, forKey: .lifetime) ?? blank.lifetime
         shopPicks = try c.decodeIfPresent([String].self, forKey: .shopPicks) ?? blank.shopPicks
         shopPickDay = try c.decodeIfPresent(DayKey.self, forKey: .shopPickDay) ?? blank.shopPickDay

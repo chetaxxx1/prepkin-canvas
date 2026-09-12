@@ -1276,6 +1276,16 @@ final class AppState: ObservableObject {
 
     func markFirstRunOffersDone() { game.firstRunOffersDone = true }
 
+    var widgetOfferDone: Bool { game.widgetOfferDone }
+    func markWidgetOfferDone() { game.widgetOfferDone = true }
+
+    /// The widget card waits for the second day: a phone that installed before
+    /// today. A save with no install date is an old one, and old enough.
+    func isSecondDayOrLater(now: Date = Date(), calendar: Calendar = .current) -> Bool {
+        guard let installed = game.installedAt else { return true }
+        return installed < calendar.startOfDay(for: now)
+    }
+
     /// The deck offered under Continue: the one you are furthest into. Finished decks
     /// clear their progress, so this only ever offers something genuinely unfinished.
     var continueLesson: (lesson: Lesson, card: Int)? {

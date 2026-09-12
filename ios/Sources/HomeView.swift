@@ -25,10 +25,13 @@ struct HomeView: View {
     @State private var stageReady = false
 
     /// Day 1, per `design_handoff_first_run`: the offer cards the kin makes after
-    /// the first check-off, in order. Nothing is asked for before that.
-    private enum Offer { case notify, canvas }
+    /// the first check-off, in order. Nothing is asked for before that. `widget`
+    /// is the one card after Day 1: once, after the second day's first coin.
+    private enum Offer { case notify, canvas, widget }
     @State private var offer: Offer?
     @State private var offerTask: Task<Void, Never>?
+    /// The widget card's "Show me how".
+    @State private var showWidgetHowTo = false
     /// The band the page will actually let him into, as fractions of the tank.
     /// He goes nowhere at all — the page's own wandering is off in embed and Home
     /// no longer steers him — so this is where he is.
@@ -130,6 +133,9 @@ struct HomeView: View {
             // The offer moves on when the sheet closes, whichever button closed it.
             .sheet(isPresented: $showReminderPreview, onDismiss: { advanceOffer(from: .notify) }) {
                 ReminderPreviewSheet().environmentObject(state)
+            }
+            .sheet(isPresented: $showWidgetHowTo) {
+                WidgetHowToSheet().environmentObject(state)
             }
             .sheet(isPresented: $showShop) {
                 // The coin chip reaches the same shop the Kin tab pushes to, so there
@@ -675,8 +681,14 @@ struct HomeView: View {
 
     private var isFirstSession: Bool { !state.firstRunOffersDone }
 
+    /// The widget card's turn: Day 1 is over, this phone installed before today,
+    /// and the card has never been answered. Finch asks the same way, once.
+    private var widgetOfferDue: Bool {
+        !isFirstSession && !state.widgetOfferDone && state.isSecondDayOrLater()
+    }
+
     private func scheduleOffer(after seconds: Double) {
-        guard isFirstSession, offer == nil else { return }
+        guard isFirstSession || widgetOfferDue, offer == nil else { return }
         offerTask?.cancel()
         offerTask = Task {
             try? await Task.sleep(for: .seconds(seconds))
@@ -688,12 +700,18 @@ struct HomeView: View {
     private func advanceOffer(from current: Offer?) {
         let next: Offer?
         switch current {
+        case nil where !isFirstSession: next = widgetOfferDue ? .widget : nil
         case nil: next = state.settings.remindersEnabled ? canvasOrNil : .notify
         case .notify: next = canvasOrNil
         case .canvas: next = nil
+        case .widget: next = nil
         }
         offer = next
-        if next == nil { state.markFirstRunOffersDone() }
+        switch current {
+        case .widget: state.markWidgetOfferDone()
+        case nil where !isFirstSession: break
+        default: if next == nil { state.markFirstRunOffersDone() }
+        }
     }
 
     /// Skipped once the laptop has actually sent a list.
@@ -741,6 +759,19 @@ struct HomeView: View {
                 }
             } secondary: {
                 offerButton("Not now", primary: false) { advanceOffer(from: .canvas) }
+            }
+        case .widget:
+            offerShell(title: "Want \(name) on your home screen?") {
+                WidgetHowToSheet.miniWidget(name: name, speciesID: state.activeChibiID,
+                                            level: state.activeChibi.level, skin: state.activeChibi.skinID)
+                    .frame(maxWidth: .infinity)
+            } primary: {
+                offerButton("Show me how", primary: true) {
+                    advanceOffer(from: .widget)
+                    showWidgetHowTo = true
+                }
+            } secondary: {
+                offerButton("Not now", primary: false) { advanceOffer(from: .widget) }
             }
         }
     }
@@ -834,16 +865,6 @@ struct HomeView: View {
             .accessibilityHint("Opens tomorrow in the calendar")
         }
     }
-
-    // TODO: the widget install card. Same shell as the Day 1 offers, shown once
-    // after the first coin on the second day:
-    //   title     "Want \(name) on your home screen?"
-    //   primary   "Show me how"  -> a three-step sheet with pictures
-    //   secondary "Not now"
-    // Not built: `ios/project.yml` has two targets, the app and its tests, and no
-    // widget extension. A card that opens instructions for a widget that cannot be
-    // installed is the one thing Home must never do — promise something that is not
-    // there. Build the target first, then this card.
 
     // MARK: - Behavior
 
