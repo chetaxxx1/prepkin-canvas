@@ -142,4 +142,21 @@ final class SimplifyTests: XCTestCase {
         XCTAssertFalse(GradeCalcView.doors.contains(.home))
         XCTAssertEqual(GradeCalcView.doors, [.kinCard, .calendarExport])
     }
+
+    // MARK: - Plus (Imprint's goods as pictures; Finch's four perks, one line each)
+
+    /// The free line is one sentence. It was twenty-seven words.
+    func testPlusFreeLineIsOneSentence() {
+        XCTAssertEqual(PlusSheet.freeLine, "Everything else stays free.")
+    }
+
+    /// Five goods, one line each, none over forty characters, none saying "unlock".
+    func testPlusPerksAreFiveOneLiners() {
+        XCTAssertEqual(PlusSheet.perkTitles.count, 5)
+        for t in PlusSheet.perkTitles {
+            XCTAssertLessThan(t.count, 40, t)
+            XCTAssertFalse(t.lowercased().contains("unlock"), t)
+            XCTAssertFalse(t.contains("\n"), t)
+        }
+    }
 }

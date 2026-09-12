@@ -118,14 +118,20 @@ struct PlusSheet: View {
             seeEverything
             prices
             cta
-            Button("Restore a purchase") {
+            Button {
                 Task {
                     await plus.restore()
                     state.syncPlus(paid: plus.entitlement.isActive)
                 }
+            } label: {
+                Text("Restore a purchase")
+                    .font(Theme.font(13.5, .heavy))
+                    .foregroundStyle(Theme.muted)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
             }
-            .font(Theme.font(13.5, .heavy))
-            .foregroundStyle(Theme.muted)
+            .buttonStyle(.plain)
+            .padding(.vertical, -12)
 
             hardship
             mission
@@ -159,9 +165,13 @@ struct PlusSheet: View {
         }
     }
 
-    /// First on the sheet, not last. The sentence that makes the ask honest.
+    /// First on the sheet, not last. The sentence that makes the ask honest. It
+    /// was a 27-word list of everything free; the compare table one tap down
+    /// already lists it, so this says the one thing that matters.
+    static let freeLine = "Everything else stays free."
+
     private var freeLine: some View {
-        Text("Canvas, the Receipt, coins, every kin and costume coins buy, the timer, all 57 lessons, Friends, leagues and Games are free, and stay free.")
+        Text(Self.freeLine)
             .font(Theme.font(13, .heavy))
             .foregroundStyle(Theme.muted)
             .multilineTextAlignment(.center)
@@ -169,22 +179,47 @@ struct PlusSheet: View {
             .padding(.horizontal, 4)
     }
 
-    /// Five, drawn. The other three are on the compare screen behind "See
-    /// everything", because five things a student can look at beats eight things
-    /// they scroll past.
+    /// Five pictures of the goods, one line each: Imprint's "your subscription
+    /// includes" is a label and a picture of the thing, stacked (Mobbin
+    /// 9036a4f7-80dd-4781-b9c3-695383698d5a); Finch's Plus sheet is the bird
+    /// first and four perks with one line each (Mobbin
+    /// 0525a643-772d-4665-b5fc-b0d7d10a3a3a). The tiles this replaced carried a
+    /// second sentence each; the compare table still has every word.
+    static let perkTitles = [
+        "A look and three scenes",
+        "Seven picks, three holds, 30% off",
+        "Sixty and ninety minute shifts",
+        "Photos read into your calendar",
+        "Your work in your own calendar",
+    ]
+
     private var perks: some View {
-        VStack(spacing: 12) {
-            perkTile(PlusArt.coatRow, "A look and three scenes",
-                     "Wearable on any kin, at any star. They stay yours if you stop paying.")
-            perkTile(PlusArt.slotsCompact, "Seven picks, three holds, 30% off",
-                     "Two more picks a day and six free rerolls. Every item is still on the shelf at full price.")
-            perkTile(PlusArt.chipsCompact, "Sixty and ninety minute shifts",
-                     "Or any length you type, and a week of your own hours.")
-            perkTile(PlusArt.page, "Photos read into your calendar",
-                     "A syllabus, a whiteboard, a planner page. Printed or handwritten.")
-            perkTile(PlusArt.calendar, "Your work in your own calendar",
-                     "Every dated task sent out to Apple Calendar, or saved as a file for any other.")
+        VStack(spacing: 18) {
+            perkPicture(PlusArt.coatRow, Self.perkTitles[0])
+            perkPicture(PlusArt.slots, Self.perkTitles[1])
+            perkPicture(PlusArt.chips, Self.perkTitles[2])
+            perkPicture(PlusArt.page, Self.perkTitles[3])
+            perkPicture(PlusArt.calendar, Self.perkTitles[4])
         }
+    }
+
+    /// One line, then the goods at the size the student will see them.
+    private func perkPicture<A: View>(_ art: A, _ title: String) -> some View {
+        VStack(spacing: 10) {
+            Text(title)
+                .font(Theme.font(14.5, .black))
+                .foregroundStyle(Theme.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+            art.frame(height: 72)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
+        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(Theme.card)
+            .shadow(color: D.shadow, radius: 10, y: 6))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
     }
 
     private func perkTile<A: View>(_ art: A, _ title: String, _ body: String) -> some View {
@@ -218,8 +253,11 @@ struct PlusSheet: View {
                 .font(Theme.font(13.5, .heavy))
                 .foregroundStyle(Theme.muted)
                 .underline()
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .padding(.vertical, -12)
     }
 
     // MARK: - Price
@@ -320,8 +358,11 @@ struct PlusSheet: View {
                 .font(Theme.font(13.5, .heavy))
                 .foregroundStyle(Theme.muted)
                 .underline()
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .padding(.vertical, -12)
     }
 
     /// Last on the sheet. Finch and Duolingo both say a version of this, and it is
@@ -346,12 +387,17 @@ struct PlusSheet: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 16) {
-                Button("Privacy") { openURL(D.privacy) }
-                Button("Terms of Use") { openURL(D.terms) }
+                Button { openURL(D.privacy) } label: {
+                    Text("Privacy").frame(minHeight: 44).contentShape(Rectangle())
+                }
+                Button { openURL(D.terms) } label: {
+                    Text("Terms of Use").frame(minHeight: 44).contentShape(Rectangle())
+                }
             }
             .font(Theme.font(11.5, .heavy))
             .foregroundStyle(Theme.muted)
             .buttonStyle(.plain)
+            .padding(.vertical, -14)
         }
     }
 
