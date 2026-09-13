@@ -239,6 +239,14 @@ final class KinRedesignTests: XCTestCase {
 
     // MARK: - The Wardrobe editor
 
+    func testSproutFaceUsesTheKinsStageAndCostume() {
+        let young = SproutFace.assetName(speciesID: "coral", level: 1, skin: "classic")
+        let dressed = SproutFace.assetName(speciesID: "coral", level: 3, skin: "ninja")
+
+        XCTAssertFalse(young.contains("-3"))
+        XCTAssertTrue(dressed.contains("-3"))
+    }
+
     func testTheNoneTileWritesAnEmptyCostume() {
         var s = fresh()
         s.owned[0].level = 3

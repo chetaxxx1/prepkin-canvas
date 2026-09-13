@@ -148,6 +148,8 @@ struct TabIcon: View {
 
 struct KinChip: View {
     var speciesID: String = "slime"
+    var level: Int = 1
+    var skin: String = "classic"
     var size: CGFloat = 28
     /// The disc behind the face. Dark by default, which is right on a light page
     /// but far too heavy inside the tab bar's own cream bubble — pass the species
@@ -155,9 +157,9 @@ struct KinChip: View {
     var plate: Color = Theme.kinChip
 
     var body: some View {
-        SproutFace(speciesID: speciesID, size: size, plate: plate)
+        SproutFace(speciesID: speciesID, level: level, skin: skin,
+                   size: size, plate: plate)
     }
 }
 
 // MARK: - Friends tab glyphs
-

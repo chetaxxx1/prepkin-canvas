@@ -171,8 +171,14 @@ struct SproutImage: View {
 /// lightness and the crop reads as a colour swatch.
 struct SproutFace: View {
     var speciesID: String
+    var level: Int = 1
+    var skin: String = "classic"
     var size: CGFloat = 28
     var plate: Color = Theme.kinChip
+
+    static func assetName(speciesID: String, level: Int, skin: String) -> String {
+        SproutImage.asset(speciesID: speciesID, level: level, skin: skin)
+    }
 
     /// A portrait, not a thumbnail. The three-star stills are wide and short (fins
     /// spread, 0.66 tall), so the old crop showed a plate with a face sunk at the
@@ -185,7 +191,7 @@ struct SproutFace: View {
     /// design/portraits.py), because a headband tail or a costume shifts the face
     /// off the image's centre and the tab-bar kin drifted sideways by rig.
     var body: some View {
-        let asset = SproutImage.asset(speciesID: speciesID, level: 3, skin: "classic")
+        let asset = Self.assetName(speciesID: speciesID, level: level, skin: skin)
         let face = Catalog.portraits[asset] ?? [0.5, 0.60, 2.15]
         // Third value: how many circle-widths wide the still is drawn, per still,
         // in case a rig ever needs a looser crop than the Sprout portrait.

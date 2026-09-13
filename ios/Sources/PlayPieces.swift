@@ -158,7 +158,11 @@ struct PlayKinLine: View {
 
     var body: some View {
         HStack(spacing: 9) {
-            SproutFace(speciesID: state.activeChibiID, size: 34, plate: Theme.plate(for: state.activeChibiID))
+            SproutFace(speciesID: state.activeChibiID,
+                       level: state.activeChibi.level,
+                       skin: state.activeChibi.skinID,
+                       size: 34,
+                       plate: Theme.plate(for: state.activeChibiID))
             Text(copy)
                 .font(Theme.font(13.5, .heavy))
                 .foregroundStyle(Theme.ink)

@@ -344,7 +344,12 @@ struct PodSection: View {
             // word for word: icons can say what is shared, they cannot say what
             // is impossible.
             VStack(spacing: 0) {
-                offerRow("Your kin") { SproutFace(speciesID: state.activeChibiID, size: 24) }
+                offerRow("Your kin") {
+                    SproutFace(speciesID: state.activeChibiID,
+                               level: state.activeChibi.level,
+                               skin: state.activeChibi.skinID,
+                               size: 24)
+                }
                 offerRow("Its stars") { StarPips(level: state.activeChibi.level, size: 9, spacing: 2.5) }
                 offerRow("A name this app picks") {
                     Text(exampleName).font(Theme.font(12.5, .black)).foregroundStyle(Theme.ink)
@@ -615,11 +620,10 @@ private struct PodRow: View {
                 .font(Theme.font(13, .black))
                 .foregroundStyle(Theme.muted)
                 .frame(width: 18)
-            // `member.lookID` is not drawn: `SproutFace` takes a species and nothing
-            // else. Drawing a pod member through the same component as every other
-            // face in the app matters more here than the coat does — and the offer
-            // above promises the kin and its stars, not its outfit.
-            SproutFace(speciesID: member.speciesID, size: 28)
+            SproutFace(speciesID: member.speciesID,
+                       level: member.level,
+                       skin: member.lookID,
+                       size: 28)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(member.displayName)

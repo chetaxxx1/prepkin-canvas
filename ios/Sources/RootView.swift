@@ -173,7 +173,10 @@ struct RootView: View {
         } label: {
             // Exempt from the inactive dimming — a face that dims reads as an
             // unwell pet.
-            KinChip(speciesID: state.activeChibiID, size: 42,
+            KinChip(speciesID: state.activeChibiID,
+                    level: state.activeChibi.level,
+                    skin: state.activeChibi.skinID,
+                    size: 42,
                     plate: Theme.plate(for: state.activeChibiID))
                 .frame(width: 58, height: 58)
                 .background(barSurface(Circle()))
@@ -231,9 +234,12 @@ private struct TabPressStyle: ButtonStyle {
 /// Crops the traced art to the head.
 struct SlimeAvatar: View {
     var speciesID: String = "slime"
+    var level: Int = 1
+    var skin: String = "classic"
     var size: CGFloat = 56
 
     var body: some View {
-        SproutFace(speciesID: speciesID, size: size, plate: Theme.plate(for: speciesID))
+        SproutFace(speciesID: speciesID, level: level, skin: skin,
+                   size: size, plate: Theme.plate(for: speciesID))
     }
 }

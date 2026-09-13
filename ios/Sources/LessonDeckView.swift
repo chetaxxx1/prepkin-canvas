@@ -481,7 +481,10 @@ struct LessonDeckView: View {
 
             Button { askKin = true } label: {
                 HStack(spacing: 8) {
-                    SlimeAvatar(speciesID: state.activeChibiID, size: 30)
+                    SlimeAvatar(speciesID: state.activeChibiID,
+                                level: state.activeChibi.level,
+                                skin: state.activeChibi.skinID,
+                                size: 30)
                     Text("Ask Kin")
                         .font(Theme.font(15, .heavy))
                         .foregroundStyle(Theme.ink)
