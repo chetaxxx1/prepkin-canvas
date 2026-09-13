@@ -74,7 +74,7 @@ tapl "$PLATE";          shot 03b-plate-ticked
 tapl "Continue" 1.5
 
 # 4 · Pick your coat (Finch 9a45c4b2)
-shot 04-coat;           assert coat "Pick your coat"
+shot 04-coat;           assert coat "Pick your kin"
 assert coat-lilac "Lilac coat"
 tapl "Coral coat";      shot 04b-coat-picked
 tapl "Meet" 3.2         # the reveal: swim in, wave, field rises
