@@ -554,8 +554,8 @@ struct HomeView: View {
     // MARK: - Header
 
     private var header: some View {
-        VStack(spacing: 12) {
-            levelBand
+        VStack(alignment: .leading, spacing: 5) {
+            eyebrow
             VStack(alignment: .leading, spacing: 4) {
                 goalsRow
                 underGoals
@@ -566,26 +566,22 @@ struct HomeView: View {
         .padding(.bottom, 10)
     }
 
-    /// A translucent tint of the floor, never a new hue — it has to read as a darker
-    /// patch of the same surface.
-    ///
     /// **No bar.** A capsule that fills as coins arrive is a meter, and at three
     /// stars it was a *full* meter with nothing left to do — a promise the screen
     /// could not keep (PRODUCT.md: no meters). The pips say the stage, the words
     /// say what is left, and neither of them moves. The pips also replace the tile:
     /// three stars next to the word "stars" was the same fact drawn twice.
-    private var levelBand: some View {
-        HStack(spacing: 11) {
-            StarPips(level: state.activeChibi.level, size: 17, spacing: 5)
+    /// The plate went too: a full-width plate reads as a control or a meter, and
+    /// this one was neither. Finch draws a plate only around its adventure bar,
+    /// which has a countdown inside it (`design/handoff-home-header/README.md`).
+    private var eyebrow: some View {
+        HStack(spacing: 7) {
+            StarPips(level: state.activeChibi.level, size: 13, spacing: 4)
             Text(levelLabel)
                 .font(Theme.font(12.5, .black))
-                .foregroundStyle(Theme.ink)
+                .foregroundStyle(Theme.mutedInk)
                 .fixedSize(horizontal: false, vertical: true)
-            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 14).padding(.vertical, 11)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
-            .fill(Theme.ink.opacity(0.08)))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(starsSpoken). \(levelLabel)")
     }

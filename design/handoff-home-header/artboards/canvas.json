@@ -1,0 +1,95 @@
+{
+ "artboards": [
+  {
+   "file": "Today.dc.html",
+   "x": 0,
+   "y": 0,
+   "w": 402,
+   "h": 874,
+   "title": "Today (ships now)"
+  },
+  {
+   "file": "Main.dc.html",
+   "x": 500,
+   "y": 0,
+   "w": 402,
+   "h": 874,
+   "title": "A \u00b7 Eyebrow (build this)"
+  },
+  {
+   "file": "AltChip.dc.html",
+   "x": 1000,
+   "y": 0,
+   "w": 402,
+   "h": 874,
+   "title": "B \u00b7 Chip (alternate)"
+  },
+  {
+   "file": "StateA_NoCanvas.dc.html",
+   "x": 0,
+   "y": 1020,
+   "w": 402,
+   "h": 250,
+   "title": "a \u00b7 no laptop paired"
+  },
+  {
+   "file": "StateB_Empty.dc.html",
+   "x": 500,
+   "y": 1020,
+   "w": 402,
+   "h": 250,
+   "title": "b \u00b7 empty day"
+  },
+  {
+   "file": "StateC_Evening.dc.html",
+   "x": 1000,
+   "y": 1020,
+   "w": 402,
+   "h": 250,
+   "title": "c \u00b7 normal evening"
+  },
+  {
+   "file": "StateD_AllDone.dc.html",
+   "x": 0,
+   "y": 1400,
+   "w": 402,
+   "h": 250,
+   "title": "d \u00b7 all done"
+  },
+  {
+   "file": "StateE_Day1.dc.html",
+   "x": 500,
+   "y": 1400,
+   "w": 402,
+   "h": 250,
+   "title": "e \u00b7 Day 1, one star"
+  },
+  {
+   "file": "AXXL.dc.html",
+   "x": 1000,
+   "y": 1400,
+   "w": 402,
+   "h": 300,
+   "title": "accessibility XL"
+  }
+ ],
+ "annotations": [
+  {
+   "id": "why",
+   "x": 1500,
+   "y": 0,
+   "w": 300,
+   "text": "The plate goes. It was a full-width tint carrying three pips and two words, and a plate says 'tap me' or 'meter' when it is neither. Finch, Headspace and Fabulous all put a plain headline row straight under the scene.\n\nA: pips + words become an eyebrow above the headline (Headspace's greeting-over-headline). 30pt shorter than today. Nothing shares a row, so XL only stacks.\n\nB: same, but the eyebrow keeps a plate that hugs its words. Pick if the green needs a foothold."
+  },
+  {
+   "id": "calc",
+   "x": 1500,
+   "y": 330,
+   "w": 300,
+   "text": "Grade calculator: not drawn. It left Home on 2026-09-12 (Kin Card + Calendar's export menu), so the brief's first problem is already solved and the band gets no fourth element."
+  }
+ ],
+ "launch": {
+  "view": "canvas"
+ }
+}
