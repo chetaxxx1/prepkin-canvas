@@ -53,7 +53,7 @@ targets:
         # also reaches UIKit-hosted views and the web view, which
         # .preferredColorScheme never did.
         INFOPLIST_KEY_UIUserInterfaceStyle: Light
-        INFOPLIST_KEY_CFBundleDisplayName: "Prepkin for Canvas"
+        INFOPLIST_KEY_CFBundleDisplayName: "Prepkin"
         # The lock screen and Dynamic Island for a running shift. Without this key
         # `Activity.request` throws and the shift runs with nothing outside the app.
         INFOPLIST_KEY_NSSupportsLiveActivities: YES
