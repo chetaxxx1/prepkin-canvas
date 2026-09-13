@@ -9,15 +9,18 @@ import Foundation
 /// The rule this table has to obey is `PLUS-SPEC.md` R1: **nothing in the Free
 /// column ever moves to the Plus column.** The top rows are there for exactly that
 /// reason. A compare table that only lists what you do not have is a padlock with a
-/// header on it; this one starts with eleven ticks a student already owns.
+/// header on it; this one starts with what a student already owns, ticked in both columns.
 ///
 /// The numbers are read from `PlusGate` rather than typed here, so a row cannot
 /// promise something the gate does not hand over.
 enum PlusCompare {
 
+    /// A cell is a tick or a number. There is no cross: a row that reads
+    /// "nothing / yes" is a padlock with better manners, so a good that Free has
+    /// none of is not in this table at all — it is on the offer screen as a
+    /// picture, where a student can judge it.
     enum Mark: Equatable {
         case yes
-        case no
         case text(String)
     }
 
@@ -39,28 +42,22 @@ enum PlusCompare {
         )
     }
 
+    /// Only rows with a value in both columns: three ticked in both, then numbers
+    /// against numbers. The four Plus-only goods (the look, the three scenes, the
+    /// reader, the GPA) are on the offer screen, not here.
     static let rows: [Row] = [
-        // Everything that is free, first and at length. This half of the table is
-        // the promise, and it is longer than the other half on purpose.
-        both("Canvas work and the Receipt"),
-        both("Coins, and every kin, costume and scene coins buy"),
-        both("The timer, and 15, 25 and 45 minute shifts"),
-        both("All 57 lessons"),
-        both("Friends, leagues and Games"),
-        both("Dark, contrast and reduced motion"),
+        // Everything that is free, first. This half of the table is the promise.
+        both("Canvas work, the Receipt, coins"),
+        both("All 57 lessons, Friends, leagues, Games"),
+        both("Dark, contrast, reduced motion"),
 
-        // The paid half.
-        counts("Picks in the Shop each day", .shopSlots),
+        // The paid half: the same thing, more of it.
+        counts("Picks a day", .shopSlots),
         counts("Slots you can hold", .shopHolds),
         counts("Off every pick", .shopDiscount, suffix: "%"),
         counts("Free rerolls a day", .shopRerolls),
-        Row(name: "60 and 90 minute shifts, or any length", free: .no, plus: .yes),
-        Row(name: "A week of your own hours", free: .no, plus: .yes),
-        Row(name: "Photos read into your calendar", free: .no, plus: .yes),
-        Row(name: "Work sent out to Apple Calendar", free: .no, plus: .yes),
-        Row(name: "Your GPA for the term, and a goal per course", free: .no, plus: .yes),
+        counts("Shift lengths", .focusLengths),
         counts("Cards to send a friend", .vibeCards),
         counts("Saved looks", .savedLooks),
-        Row(name: "A look and three scenes coins cannot buy", free: .no, plus: .yes),
     ]
 }

@@ -145,18 +145,23 @@ final class SimplifyTests: XCTestCase {
 
     // MARK: - Plus (Imprint's goods as pictures; Finch's four perks, one line each)
 
-    /// The free line is one sentence. It was twenty-seven words.
+    /// The free line is one sentence. The Plus handoff (2026-09-13) put the list
+    /// back — it names what stays free, which is the ask made honest — but it is
+    /// still one sentence and never a paragraph.
     func testPlusFreeLineIsOneSentence() {
-        XCTAssertEqual(PlusSheet.freeLine, "Everything else stays free.")
+        let line = PlusSheet.freeLine
+        XCTAssertFalse(line.dropLast().contains("."), "one sentence, one full stop")
+        XCTAssertTrue(line.hasSuffix("stay free."))
     }
 
-    /// Five goods, one line each, none over forty characters, none saying "unlock".
-    func testPlusPerksAreFiveOneLiners() {
-        XCTAssertEqual(PlusSheet.perkTitles.count, 5)
-        for t in PlusSheet.perkTitles {
-            XCTAssertLessThan(t.count, 40, t)
-            XCTAssertFalse(t.lowercased().contains("unlock"), t)
-            XCTAssertFalse(t.contains("\n"), t)
+    /// Three goods bands, one line each, none over forty characters, none saying
+    /// "unlock". The other perks are numbers in the compare table.
+    func testPlusGoodsAreThreeOneLiners() {
+        XCTAssertEqual(PlusSheet.goods.count, 3)
+        for g in PlusSheet.goods {
+            XCTAssertLessThan(g.title.count, 40, g.title)
+            XCTAssertFalse(g.title.lowercased().contains("unlock"), g.title)
+            XCTAssertFalse(g.title.contains("\n"), g.title)
         }
     }
 

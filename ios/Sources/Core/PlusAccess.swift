@@ -62,15 +62,16 @@ enum PlusGift {
 
     /// The three lines on the timeline screen, in order.
     ///
-    /// Headspace's and Quizlet's shape: a plain dated list, one line each. The last
-    /// line says nothing is charged, because nothing is — no card was ever taken.
+    /// Headspace's and Quizlet's shape: a plain dated list, one line each. The
+    /// middle row is the only place the end of the week is named, as a date and
+    /// never as a count of days left. The last row says where Plus lives after.
     static func timeline(start: Date, calendar: Calendar = .current) -> [Row] {
         let end = endDate(from: start, calendar: calendar)
-        let note = calendar.date(byAdding: .day, value: days - 2, to: start) ?? start
         return [
-            Row(when: "Today", what: "Plus is on. Nothing to cancel, because nothing was started."),
-            Row(when: Self.stamp(note, calendar: calendar), what: "A note, so the last two days are not a surprise."),
-            Row(when: Self.stamp(end, calendar: calendar), what: "It ends. Nothing is charged. Everything you made stays."),
+            Row(when: "Today", what: "Plus is on for a week. No card, nothing to cancel."),
+            Row(when: Self.stamp(end, calendar: calendar),
+                what: "It goes off on its own. Everything you wore, made or saved stays."),
+            Row(when: "After", what: "You will find Plus in the Shop, on Focus and on Calendar if you want it."),
         ]
     }
 

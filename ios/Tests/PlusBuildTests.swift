@@ -99,7 +99,8 @@ final class PlusBuildTests: XCTestCase {
             XCTAssertFalse(text.contains("days left"), "no countdown: \(text)")
             XCTAssertFalse(text.contains("expires"), "no countdown: \(text)")
         }
-        XCTAssertTrue(rows[2].what.contains("Nothing is charged"))
+        XCTAssertEqual(rows[1].when, "Sep 8", "the end is named as a date, once")
+        XCTAssertEqual(rows[2].when, "After")
     }
 
     /// The sheet is owed exactly once, on the day the week runs out.
@@ -333,19 +334,22 @@ final class PlusBuildTests: XCTestCase {
     // MARK: - The compare table
 
     /// A compare table that only lists what you do not have is a padlock with a
-    /// header on it. This one starts with what is free.
+    /// header on it. This one starts with what is free, and every row after that
+    /// is a number against a number — there is no cross in the table.
     func testTheCompareTableLeadsWithWhatStaysFree() {
-        let firstSix = PlusCompare.rows.prefix(6)
-        for row in firstSix {
-            XCTAssertEqual(row.free, .yes, "\(row.name) should be free in both columns")
-            XCTAssertEqual(row.plus, .yes)
+        let ticked = PlusCompare.rows.prefix { $0.free == .yes }
+        XCTAssertEqual(ticked.count, 3)
+        for row in ticked { XCTAssertEqual(row.plus, .yes, row.name) }
+        for row in PlusCompare.rows.dropFirst(ticked.count) {
+            guard case .text = row.free else { return XCTFail("\(row.name) has no free value") }
+            guard case .text = row.plus else { return XCTFail("\(row.name) has no plus value") }
         }
     }
 
     /// The table reads its numbers off `PlusGate`, so a row cannot promise
     /// something the gate does not hand over.
     func testCompareNumbersMatchTheGateTable() {
-        let slots = PlusCompare.rows.first { $0.name.contains("Picks in the Shop") }
+        let slots = PlusCompare.rows.first { $0.name.contains("Picks a day") }
         XCTAssertEqual(slots?.free, .text("5"))
         XCTAssertEqual(slots?.plus, .text("7"))
         let discount = PlusCompare.rows.first { $0.name.contains("Off every pick") }

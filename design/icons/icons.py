@@ -18,7 +18,10 @@ GRIDS = {"grid-a": (3, 2), "grid-b": (3, 2), "grid-c": (4, 2), "grid-d": (2, 1),
          # Friends-tab marks: eye, wave, race flags, life ring, paper plane, telescope.
          "grid-k": (3, 2),
          # Calendar (2026-09-12): laptop, clock, lectern, backpack, date page, campus.
-         "grid-l": (3, 2)}
+         "grid-l": (3, 2),
+         # Plus sheet (2026-09-13): camera, shopping bag, calendar page — asked for as
+         # 3x1, came back 3x2 with every object drawn twice; the top row is used.
+         "grid-m": (3, 2)}
 
 TINT = {"sky": "#E3EEFB", "gold": "#FCEFD3", "mint": "#DFF3E9",
         "coral": "#FFE9E5", "lilac": "#EDE7FB", "indigo": "#E7E7F6"}
@@ -89,6 +92,11 @@ SET = [
     ("backpack",      "Backpack",         "Calendar", "coral", "grid-l", 3),
     ("datePage",      "Date",             "Calendar", "gold",  "grid-l", 4),
     ("campus",        "Campus",           "Calendar", "sky",   "grid-l", 5),
+    # Plus sheet. The camera is the syllabus reader on a task row and the On-now
+    # row; the bag is the Shop; the calendar page is the send-out to Apple Calendar.
+    ("camera",        "Camera",           "Plus", "coral", "grid-m", 0),
+    ("shopBag",       "Shop",             "Plus", "gold",  "grid-m", 1),
+    ("calendarOut",   "Calendar out",     "Plus", "sky",   "grid-m", 2),
 ]
 
 # Drawn big: the Monday sheet shows a badge at 132pt and the ladder card at 72.

@@ -1,195 +1,350 @@
 import SwiftUI
 
-/// The perks, drawn as the things they are.
+/// The perks, drawn as fragments of the app's own UI at the size they appear in
+/// the app.
 ///
-/// Eight rows of an SF Symbol in a circle is a settings screen, which is what the
-/// old sheet looked like. Imprint fans its cards out instead and shows the goods at
-/// the size you will see them; these are the Prepkin version of that — a real chip
-/// row, a real slot row, a real page. Nothing here is an icon standing in for a
-/// feature.
+/// Not illustrations and not icons in circles. Flighty's Pro screen is the
+/// reference: it does not illustrate a feature, it shows a picture of the real
+/// screen at real size and lets it sell itself. So the shop perk is the pick row
+/// with today's real picks and their real coin prices, the focus perk is the chip
+/// row, and the calendar perk is a task row with an arrow out to a calendar.
 ///
-/// Everything is `Theme`. No colour was invented for this file.
+/// Everything is `Theme`. No colour was invented for this file, and nothing here
+/// carries a shadow — the only shadow on the sheet is the floating price card.
 enum PlusArt {
-
-    private static let shadow = Theme.hex(0x2E2622).opacity(0.06)
 
     // MARK: The kin
 
     /// The student's own kin, doing what it does on Home. Not sad, not locked, not
     /// holding a sign, and not a crowd of mascots.
-    static func kin(_ chibi: OwnedChibi) -> some View {
-        KinArtView(speciesID: chibi.speciesID, level: chibi.level, skin: chibi.skinID, size: 108)
-    }
-
-    /// An **example** fish wearing a Plus coat, never the student's own. Previewing
-    /// a coat on their kin would be showing them a thing they do not have on the
-    /// animal they love, which is the padlock feeling wearing a costume.
-    static var coatRow: some View {
-        HStack(spacing: -14) {
-            KinArtView(speciesID: "slime", level: 3, skin: "scholar", size: 46)
-                .opacity(0.55)
-            KinArtView(speciesID: "slime", level: 3, skin: "grad", size: 58)
-        }
-    }
-
-    // MARK: Seven slots
-
-    /// The shop row, at seven. Five in ink and two in coral, so the picture says
-    /// "two more" without a caption saying it.
-    static var slots: some View {
-        HStack(spacing: 5) {
-            ForEach(0..<7, id: \.self) { i in
-                RoundedRectangle(cornerRadius: 5, style: .continuous)
-                    .fill(i < 5 ? Theme.card : Theme.coralSoft)
-                    .overlay(RoundedRectangle(cornerRadius: 5, style: .continuous)
-                        .strokeBorder(i < 5 ? Theme.hairline : Theme.coral, lineWidth: 1.5))
-                    .frame(width: 15, height: 22)
-            }
-        }
-        .shadow(color: shadow, radius: 5, y: 3)
-    }
-
-    // MARK: The chips
-
-    /// The Focus chip row, with 60 and 90 on it in full colour. This is the picture
-    /// most likely to be a padlock in another app; here 15, 25 and 45 are drawn
-    /// exactly as they are on Focus and the two new ones simply sit beside them.
-    static var chips: some View {
-        HStack(spacing: 5) {
-            chip("15", plus: false)
-            chip("25", plus: false)
-            chip("45", plus: false)
-            chip("60", plus: true)
-            chip("90", plus: true)
-        }
-    }
-
-    /// The two new chips alone, sized for a perk tile.
-    ///
-    /// The full row is 170pt wide and a tile is 78. Scaling the row down would make
-    /// five unreadable pills; showing the two the perk is actually about is both
-    /// narrower and truer.
-    static var chipsCompact: some View {
-        HStack(spacing: 5) {
-            chip("60", plus: true)
-            chip("90", plus: true)
-        }
-    }
-
-    /// Seven slots at tile width. Narrower cells, not a scaled-down row.
-    static var slotsCompact: some View {
-        HStack(spacing: 3) {
-            ForEach(0..<7, id: \.self) { i in
-                RoundedRectangle(cornerRadius: 3, style: .continuous)
-                    .fill(i < 5 ? Theme.card : Theme.coralSoft)
-                    .overlay(RoundedRectangle(cornerRadius: 3, style: .continuous)
-                        .strokeBorder(i < 5 ? Theme.hairline : Theme.coral, lineWidth: 1.2))
-                    .frame(width: 8, height: 18)
-            }
-        }
-        .shadow(color: shadow, radius: 4, y: 2)
-    }
-
-    private static func chip(_ label: String, plus: Bool) -> some View {
-        Text(label)
-            .font(Theme.fixedFont(11, .black))
-            .foregroundStyle(plus ? Theme.coralShade : Theme.ink)
-            .frame(width: 30, height: 26)
-            .background(Capsule().fill(plus ? Theme.coralSoft : Theme.card))
-            .overlay(Capsule().strokeBorder(plus ? Theme.coral : Theme.hairline, lineWidth: 1.5))
+    static func kin(_ chibi: OwnedChibi, size: CGFloat = 108) -> some View {
+        KinArtView(speciesID: chibi.speciesID, level: chibi.level, skin: chibi.skinID, size: size)
     }
 
     // MARK: A syllabus page
 
-    /// A page with dates down it. The lines are ruled and two of them carry a date
-    /// pill, which is the whole thing the reader does.
-    static var page: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 7, style: .continuous)
-                .fill(Theme.card)
-                .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
-                    .strokeBorder(Theme.hairline, lineWidth: 1.5))
-                .shadow(color: shadow, radius: 6, y: 4)
-                .frame(width: 62, height: 78)
-                .rotationEffect(.degrees(-4))
-            VStack(alignment: .leading, spacing: 6) {
-                ruled(width: 34)
-                dated(width: 26)
-                ruled(width: 38)
-                dated(width: 22)
-                ruled(width: 30)
+    /// The photographed page, 104pt, turned −4° the way a phone never quite holds
+    /// a sheet straight. Two dates on it are the whole thing the reader finds.
+    static func syllabusPage(_ dates: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Capsule().fill(Theme.ink).frame(width: 44, height: 5)
+            Capsule().fill(Theme.hairline).frame(width: 66, height: 4)
+            Capsule().fill(Theme.hairline).frame(width: 58, height: 4)
+            HStack(spacing: 5) {
+                ForEach(dates, id: \.self) { d in
+                    Text(d)
+                        .font(Theme.fixedFont(8, .black))
+                        .foregroundStyle(Theme.coralShade)
+                        .padding(.horizontal, 5).padding(.vertical, 2.5)
+                        .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(Theme.coralSoft))
+                }
             }
-            .rotationEffect(.degrees(-4))
+            Capsule().fill(Theme.hairline).frame(width: 62, height: 4)
+            Capsule().fill(Theme.hairline).frame(width: 48, height: 4)
         }
+        .padding(.horizontal, 12).padding(.vertical, 13)
+        .frame(width: 104, height: 104, alignment: .topLeading)
+        .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Theme.card))
+        .rotationEffect(.degrees(-4))
+        .accessibilityHidden(true)
     }
 
-    private static func ruled(width: CGFloat) -> some View {
-        Capsule().fill(Theme.hairline).frame(width: width, height: 3.5)
-    }
-
-    private static func dated(width: CGFloat) -> some View {
-        HStack(spacing: 4) {
-            Capsule().fill(Theme.coral).frame(width: 13, height: 6)
-            Capsule().fill(Theme.hairline).frame(width: width, height: 3.5)
+    /// One corner of the camera's frame: an L in `coralIcon`.
+    static func cornerMark(flipped: Bool = false) -> some View {
+        Path { p in
+            p.move(to: CGPoint(x: 0, y: 18))
+            p.addLine(to: CGPoint(x: 0, y: 0))
+            p.addLine(to: CGPoint(x: 18, y: 0))
         }
+        .stroke(Theme.coralIcon, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+        .frame(width: 18, height: 18)
+        .rotationEffect(.degrees(flipped ? 180 : 0))
+        .accessibilityHidden(true)
     }
 
-    // MARK: A calendar
+    /// The arrow between a thing and where it goes.
+    static func arrow(_ color: Color, size: CGFloat = 16) -> some View {
+        Image(systemName: "arrow.right")
+            .font(.system(size: size, weight: .black))
+            .foregroundStyle(color)
+            .accessibilityHidden(true)
+    }
+}
 
-    /// A month, with three days marked. Dots rather than numbers, because at this
-    /// size numbers are noise and the shape is the message.
-    static var calendar: some View {
-        VStack(spacing: 4) {
-            Capsule().fill(Theme.coral).frame(width: 44, height: 5)
-            VStack(spacing: 4) {
-                ForEach(0..<3, id: \.self) { row in
-                    HStack(spacing: 4) {
-                        ForEach(0..<5, id: \.self) { col in
-                            Circle()
-                                .fill(Self.marked.contains(row * 5 + col) ? Theme.coral : Theme.hairline)
-                                .frame(width: 6, height: 6)
-                        }
-                    }
+// MARK: - The pick row
+
+/// The Shop's picks, at the size they are in the Shop's own row: today's real
+/// picks with their real coin prices, then the two slots Plus adds. The hold pin
+/// sits on a held pick, or on the first one when nothing is held, because the
+/// picture is about holding.
+struct PickRowFragment: View {
+    let picks: [ShopPick]
+    let held: Set<String>
+    /// 44 × 52 on the band; 24 × 26 inside a goods band.
+    var tile: CGFloat = 44
+    /// Two rows (4 + 3) when the fragment has to fit a 138pt art column.
+    var wrapped = false
+
+    private var plusSlots: Int { max(0, PlusGate.shopSlots.plus - PlusGate.shopSlots.free) }
+    private var pinned: String? { picks.first { held.contains($0.id) }?.id ?? picks.first?.id }
+
+    var body: some View {
+        let shown = Array(picks.prefix(PlusGate.shopSlots.free))
+        let cells = shown.map(Cell.pick) + Array(repeating: Cell.plus, count: plusSlots)
+        Group {
+            if wrapped {
+                let split = 4
+                VStack(alignment: .leading, spacing: 6) {
+                    row(Array(cells.prefix(split)))
+                    row(Array(cells.dropFirst(split)))
+                }
+            } else {
+                row(cells)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Today's picks, and two more slots on Plus")
+    }
+
+    private enum Cell { case pick(ShopPick), plus }
+
+    private func row(_ cells: [Cell]) -> some View {
+        HStack(spacing: tile > 30 ? 8 : 5) {
+            ForEach(Array(cells.enumerated()), id: \.offset) { _, cell in
+                switch cell {
+                case .pick(let p): pickTile(p)
+                case .plus: plusTile
                 }
             }
         }
-        .padding(7)
-        .background(RoundedRectangle(cornerRadius: 8, style: .continuous)
-            .fill(Theme.card)
-            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(Theme.hairline, lineWidth: 1.5))
-            .shadow(color: shadow, radius: 6, y: 4))
     }
 
-    private static let marked: Set<Int> = [2, 7, 11]
+    private var radius: CGFloat { tile > 30 ? Theme.Radius.control : 7 }
+    private var height: CGFloat { tile > 30 ? tile + 8 : tile + 2 }
 
-    // MARK: Grades
-
-    /// A rising bar pair with a target line above it. The one place a line is drawn
-    /// on purpose, because a grade goal *is* a target the student set.
-    static var grades: some View {
-        HStack(alignment: .bottom, spacing: 6) {
-            bar(26, Theme.hairline)
-            bar(38, Theme.hairline)
-            bar(50, Theme.coral)
+    private func pickTile(_ pick: ShopPick) -> some View {
+        VStack(spacing: tile > 30 ? 3 : 0) {
+            PickObject(pick: pick, size: tile > 30 ? 26 : 15)
+            if tile > 30 {
+                Text("\(pick.price)")
+                    .font(Theme.fixedFont(8, .black))
+                    .foregroundStyle(Theme.coinInk)
+            }
         }
-        .overlay(alignment: .top) {
-            Capsule()
-                .fill(Theme.mintDark)
-                .frame(height: 2.5)
-                .padding(.top, 4)
+        .frame(width: tile, height: height)
+        .background(RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: radius, style: .continuous)
+            .strokeBorder(Theme.cardEdge, lineWidth: 1))
+        .overlay(alignment: .topTrailing) {
+            if pinned == pick.id { holdPin }
         }
-        .padding(9)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .fill(Theme.card)
-            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .strokeBorder(Theme.hairline, lineWidth: 1.5))
-            .shadow(color: shadow, radius: 6, y: 4))
     }
 
-    private static func bar(_ h: CGFloat, _ color: Color) -> some View {
-        RoundedRectangle(cornerRadius: 3, style: .continuous)
-            .fill(color)
-            .frame(width: 12, height: h)
+    /// The hold: a `coral` disc with the pin on it, 14pt on the band and 9 in a
+    /// goods band. The mark on a control takes the control's colour.
+    private var holdPin: some View {
+        let d: CGFloat = tile > 30 ? 14 : 9
+        return Circle()
+            .fill(Theme.coral)
+            .frame(width: d, height: d)
+            .overlay(Image(systemName: "pin.fill")
+                .font(.system(size: d * 0.5, weight: .black))
+                .foregroundStyle(Theme.onDarkWarm))
+            .offset(x: d * 0.3, y: -d * 0.3)
+    }
+
+    private var plusTile: some View {
+        RoundedRectangle(cornerRadius: radius, style: .continuous)
+            .fill(Theme.coralSoft)
+            .frame(width: tile, height: height)
+            .overlay(RoundedRectangle(cornerRadius: radius, style: .continuous)
+                .strokeBorder(Theme.coralIcon, style: StrokeStyle(lineWidth: 1.2, dash: [3, 2.5])))
+            .overlay {
+                if tile > 30 {
+                    Text("Plus")
+                        .font(Theme.fixedFont(9, .black))
+                        .foregroundStyle(Theme.coralShade)
+                }
+            }
+    }
+}
+
+/// The thing a pick is: a kin's face on its plate, or a scene cut to a thumb.
+struct PickObject: View {
+    let pick: ShopPick
+    var size: CGFloat = 26
+
+    var body: some View {
+        switch pick.kind {
+        case .kin(let s):
+            SproutFace(speciesID: s.id, size: size, plate: Theme.plate(for: s.id))
+        case .scene(let s):
+            Image(s.asset)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size * 0.82)
+                .clipShape(RoundedRectangle(cornerRadius: size * 0.22, style: .continuous))
+        }
+    }
+}
+
+// MARK: - The chip row
+
+/// Focus's length chips: 15, 25 and 45 on white, 60 and 90 in `coralSoft` with a
+/// `coralIcon` hairline, and a dashed chip showing a typed length. Same shape as
+/// `FocusView.lengthChip`, so the picture is the control.
+struct ChipRowFragment: View {
+    /// The band draws chips at Focus's own 50 × 36; a goods band at 36 × 26.
+    var compact = false
+    /// A length someone might type. Not a gate number; it stands for "any".
+    var typed = 42
+
+    private var free: [Int] { FocusView.freeLengths }
+    private var plus: [Int] { FocusView.moreItems.compactMap { if case .minutes(let m) = $0 { m } else { nil } } }
+
+    var body: some View {
+        Group {
+            if compact {
+                VStack(spacing: 5) {
+                    HStack(spacing: 5) { ForEach(free, id: \.self) { chip("\($0)", .free) } }
+                    HStack(spacing: 5) {
+                        ForEach(plus, id: \.self) { chip("\($0)", .plus) }
+                        chip("\(typed)", .typed)
+                    }
+                }
+            } else {
+                HStack(spacing: 7) {
+                    ForEach(free, id: \.self) { chip("\($0)", .free) }
+                    ForEach(plus, id: \.self) { chip("\($0)", .plus) }
+                    chip("\(typed)", .typed)
+                }
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Fifteen, twenty-five and forty-five minute shifts, then sixty, ninety, or any length you type")
+    }
+
+    private enum Kind { case free, plus, typed }
+
+    private func chip(_ label: String, _ kind: Kind) -> some View {
+        Text(label)
+            .font(compact ? Theme.fixedFont(11, .black) : Theme.font(14.5, .black))
+            .foregroundStyle(kind == .free ? Theme.ink : Theme.coralShade)
+            .frame(width: compact ? 36 : 50, height: compact ? 26 : 36)
+            .background(Capsule().fill(kind == .free ? Theme.card : Theme.coralSoft))
+            .overlay {
+                switch kind {
+                case .free: Capsule().strokeBorder(Theme.cardEdge, lineWidth: 1)
+                case .plus: Capsule().strokeBorder(Theme.coralIcon, lineWidth: 1)
+                case .typed: Capsule().strokeBorder(Theme.coralIcon, style: StrokeStyle(lineWidth: 1.2, dash: [3, 2.5]))
+                }
+            }
+    }
+}
+
+// MARK: - The calendar
+
+/// A task row the reader made, at 46pt: the camera in its tile, the read date
+/// in its caption, and the checkbox — Calendar's row anatomy, drawn small.
+struct ReadTaskRow: View {
+    let title: String
+    let caption: String
+
+    var body: some View {
+        HStack(spacing: 9) {
+            IconTile(icon: "camera", size: 32)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(Theme.fixedFont(12, .black))
+                    .foregroundStyle(Theme.ink)
+                    .lineLimit(1)
+                Text(caption)
+                    .font(Theme.fixedFont(9.5, .heavy))
+                    .foregroundStyle(Theme.caption)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 4)
+            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(Theme.checkFill)
+                .frame(width: 22, height: 22)
+                .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .strokeBorder(Theme.checkBorder, lineWidth: 2))
+        }
+        .padding(.horizontal, 9)
+        .frame(height: 46)
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
+            .strokeBorder(Theme.cardEdge, lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title), \(caption)")
+    }
+}
+
+/// The read-in and the send-out in one picture: the Calendar tab's own page, an
+/// arrow, and the calendar the phone already has.
+struct CalendarFragment: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            Image("icon-tabCalendar").resizable().scaledToFit().frame(width: 46, height: 46)
+            PlusArt.arrow(Theme.skyDeep, size: 15)
+            Image("icon-calendarOut").resizable().scaledToFit().frame(width: 46, height: 46)
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - Grades
+
+/// The Grade calculator's term card, as it looks with Plus on: the term GPA and
+/// a row per graded course. Real courses when the phone has any; otherwise two
+/// example rows, so the picture is never a blank card.
+struct TermCardFragment: View {
+    let courses: [CanvasCourse]
+
+    private var rows: [(String, Double)] {
+        let real = courses.compactMap { c -> (String, Double)? in
+            guard let s = c.score else { return nil }
+            return (c.code.isEmpty ? c.name : c.code, s)
+        }
+        return real.isEmpty ? [("PHYS 13", 91), ("ENGL 20", 84)] : Array(real.prefix(2))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Your term")
+                    .font(Theme.fixedFont(12.5, .black))
+                    .foregroundStyle(Theme.ink)
+                Spacer()
+                if let gpa = GradeProjection.termGPA(rows.map(\.1)) {
+                    Text(GradeProjection.format(gpa))
+                        .font(Theme.fixedFont(19, .black))
+                        .foregroundStyle(Theme.ink)
+                }
+            }
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: 8) {
+                    Text(row.0)
+                        .font(Theme.fixedFont(11, .heavy))
+                        .foregroundStyle(Theme.caption)
+                        .lineLimit(1)
+                    Spacer(minLength: 6)
+                    Text(GradeProjection.letter(forPercent: row.1))
+                        .font(Theme.fixedFont(10, .black))
+                        .foregroundStyle(Theme.caption)
+                    Text(String(format: "%.1f", GradeProjection.points(forPercent: row.1)))
+                        .font(Theme.fixedFont(10, .black))
+                        .foregroundStyle(Theme.ink)
+                        .frame(width: 24, alignment: .trailing)
+                }
+            }
+        }
+        .padding(.horizontal, 16).padding(.vertical, 13)
+        .frame(width: 236)
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+            .strokeBorder(Theme.cardEdge, lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Your GPA for the term, and a row per course")
     }
 }

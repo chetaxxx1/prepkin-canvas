@@ -3,27 +3,27 @@ import StoreKit
 
 /// The one screen in Prepkin that asks for money.
 ///
-/// The shape, and why each part is where it is:
+/// The shape, and why each part is where it is (`design_handoff_plus_sheet`):
 ///
-/// 1. **The kin, doing what it does on Home.** Never sad, never pleading, never
-///    holding a sign. Duolingo's paywall was checked to decide what to avoid.
-/// 2. **What stays free, first.** Finch puts this on line one of its benefits page,
-///    and it is the reason its own reviewers forgive it for being cosmetic. Copy the
-///    placement, not the wording.
-/// 3. **The perks as pictures of the goods.** Imprint fans its cards out rather than
-///    listing them; eight rows of an icon in a circle is a settings screen.
-/// 4. **Two plain price cards**, yearly first because it saves 42%, which is
-///    arithmetic and not a badge.
-/// 5. **"Support our mission"**, last, in Finch's and Duolingo's words but ours.
+/// 1. **A 150pt art band holding a real fragment of the app**, tinted per reason.
+///    It is the only part that changes with where the student came from.
+/// 2. **The headline, then what stays free**, left aligned on the gutter every
+///    other screen uses.
+/// 3. **Three goods bands**, each a piece of the app's own UI at the size it
+///    appears in the app — not an icon in a circle, which is a settings screen.
+///    The other perks are numbers in the compare table one tap down.
+/// 4. **The price and the button in a floating card pinned to the bottom**, so the
+///    four things App Review looks for can never be scrolled away from. It is the
+///    only shadow on the sheet, because it is the one thing that floats.
+/// 5. Restore, the hardship row and the mission line under the fold.
 ///
 /// And the things it may never do, from `PLUS-SPEC.md` section 9: no countdown, no
-/// crossed-out price, no "most popular" that is not true, no padlock, no greyed-out
-/// anything, and not once the word "unlock". A student who is already Plus never
-/// sees a price at all.
+/// crossed-out price, no "most popular", no padlock, no greyed-out anything, and
+/// not once the word "unlock". A student who is already Plus never sees a price.
 struct PlusSheet: View {
 
-    /// Where the student came from. Only the top third changes; everything below it
-    /// is the same sheet every time, which is the whole point of a swap.
+    /// Where the student came from. Only the band and the headline change;
+    /// everything below is the same sheet every time, which is the point of a swap.
     enum Reason: String, CaseIterable, Identifiable {
         var id: String { rawValue }
 
@@ -44,20 +44,16 @@ struct PlusSheet: View {
             }
         }
 
-        /// The picture over the headline. One drawing per reason, at the size the
-        /// student will see the real thing.
-        var art: Art {
+        /// The band's tint. One flat colour, no radius of its own.
+        var tint: Color {
             switch self {
-            case .scan, .calendarExport: return .page
-            case .shop:                  return .slots
-            case .focus:                 return .chips
-            case .look, .vibe:           return .kin
-            case .grades:                return .grades
-            case .general:               return .kin
+            case .scan, .calendarExport: return Theme.coralSoft
+            case .shop:                  return Theme.coinSoft
+            case .focus:                 return Theme.mintSoft
+            case .look, .vibe, .general: return Theme.checkFill
+            case .grades:                return Theme.unowned
             }
         }
-
-        enum Art { case kin, slots, chips, page, grades }
     }
 
     let reason: Reason
@@ -66,14 +62,17 @@ struct PlusSheet: View {
     @EnvironmentObject var state: AppState
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var pick: PlusProduct = .yearly
     @State private var busy = false
     @State private var failed = false
     @State private var showingCompare = false
+    /// Measured, so the scroll content clears the card at any text size.
+    @State private var cardHeight: CGFloat = 190
 
     private enum D {
-        static let shadow = Theme.hex(0x2E2622).opacity(0.05)
+        static let gutter: CGFloat = 22
         static let privacy = URL(string: "https://prepkin.com/privacy")!
         /// Apple's standard EULA. 3.1.2 wants a tappable Terms of Use and this is
         /// the one App Review accepts when an app has not written its own.
@@ -81,22 +80,33 @@ struct PlusSheet: View {
         static let ask = URL(string: "mailto:support@prepkin.com?subject=Prepkin%20Plus")!
     }
 
+    private var swap: Animation? { reduceMotion ? nil : .snappy(duration: 0.24) }
+
     var body: some View {
-        VStack(spacing: 0) {
-            RoundedRectangle(cornerRadius: 3, style: .continuous)
-                .fill(Theme.hairline)
-                .frame(width: 38, height: 5)
-                .frame(height: 24)
-            ScrollView {
-                if state.isPlus {
-                    alreadyPlus
-                } else if showingCompare {
-                    compare
-                } else {
-                    offer
+        Group {
+            // The entitlement is read before the body renders, so a paying student
+            // never sees a price frame even for one tick.
+            if state.isPlus {
+                ScrollView { alreadyPlus }
+                    .scrollIndicators(.hidden)
+                    .overlay(alignment: .top) { grabber(Theme.hairline) }
+            } else {
+                ZStack(alignment: .bottom) {
+                    ScrollView {
+                        Group {
+                            if showingCompare { compare } else { offer }
+                        }
+                        .padding(.bottom, cardHeight)
+                    }
+                    .scrollIndicators(.hidden)
+                    footerCard
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { cardHeight = $0 }
                 }
+                // The card is 190 from the screen's bottom edge, home indicator
+                // included, which is where the drawing puts it. Pinned above the
+                // indicator it is 224 and the compare link's words go under it.
+                .ignoresSafeArea(edges: .bottom)
             }
-            .scrollIndicators(.hidden)
         }
         .background(Theme.paper)
         .presentationDragIndicator(.hidden)
@@ -108,16 +118,130 @@ struct PlusSheet: View {
         }
     }
 
+    /// 38 × 5 at y = 9. White at 85% on the art band, `hairline` on paper.
+    private func grabber(_ color: Color) -> some View {
+        RoundedRectangle(cornerRadius: 3, style: .continuous)
+            .fill(color)
+            .frame(width: 38, height: 5)
+            .padding(.top, 9)
+            .accessibilityHidden(true)
+    }
+
     // MARK: - The offer
 
     private var offer: some View {
-        VStack(spacing: 20) {
-            hero
-            freeLine
-            perks
-            seeEverything
-            prices
-            cta
+        VStack(alignment: .leading, spacing: 0) {
+            ReasonBand(reason: reason)
+                .overlay(alignment: .top) { grabber(.white.opacity(0.85)) }
+
+            VStack(alignment: .leading, spacing: 0) {
+                Text(reason.headline)
+                    .font(Theme.font(23, .black))
+                    .foregroundStyle(Theme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 12)
+
+                Text(Self.freeLine)
+                    .font(Theme.font(11.5, .heavy))
+                    .foregroundStyle(Theme.caption)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 10)
+
+                goods.padding(.top, 14)
+
+                Button {
+                    withAnimation(swap) { showingCompare = true }
+                } label: {
+                    // Top of its 44pt row, not the middle: the row's bottom edge
+                    // slips under the price card at rest (the scroll signal) and
+                    // the words must stay clear of it.
+                    Text("All eight, free and Plus side by side")
+                        .font(Theme.font(13, .heavy))
+                        .foregroundStyle(Theme.caption)
+                        .underline()
+                        .padding(.top, 8)
+                        .frame(minHeight: 44, alignment: .top)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+
+                belowTheFold
+            }
+            .padding(.horizontal, D.gutter)
+            .padding(.bottom, 8)
+        }
+    }
+
+    /// First on the sheet, not last. The sentence that makes the ask honest.
+    static let freeLine = "Canvas, the Receipt, coins, every kin and costume coins buy, the timer, all 57 lessons, Friends, leagues and Games are free, and stay free."
+
+    // MARK: Goods
+
+    static let goods: [(title: String, detail: String)] = [
+        ("Seven picks, three holds, 30% off",
+         "Six free rerolls. Every item is still on the shelf at full coin price."),
+        ("Sixty and ninety minute shifts",
+         "Or any length you type, and a week of your own hours."),
+        ("Read in, and sent back out",
+         "Photos into your calendar, and every dated task out to Apple Calendar."),
+    ]
+
+    /// Three bands, art on the left at the size the thing is in the app, one line
+    /// of plain fact on the right. Perk 4's two halves share the third band: page,
+    /// arrow, calendar says more than two rows would.
+    private var goods: some View {
+        VStack(spacing: 8) {
+            goodsBand(Theme.coinSoft, Self.goods[0]) {
+                PickRowFragment(picks: state.picks, held: heldIDs, tile: 24, wrapped: true)
+            }
+            goodsBand(Theme.mintSoft, Self.goods[1]) {
+                VStack(spacing: 6) {
+                    Image("icon-classTime").resizable().scaledToFit().frame(width: 22, height: 22)
+                    ChipRowFragment(compact: true)
+                }
+            }
+            goodsBand(Theme.skySoft, Self.goods[2]) {
+                CalendarFragment()
+            }
+        }
+    }
+
+    private var heldIDs: Set<String> { Set(state.picks.map(\.id).filter(state.isHeld)) }
+
+    private func goodsBand<A: View>(_ tint: Color, _ good: (title: String, detail: String),
+                                    @ViewBuilder art: () -> A) -> some View {
+        HStack(spacing: 0) {
+            art()
+                .frame(width: 138, height: 96)
+                .background(tint)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(good.title)
+                    .font(Theme.font(15, .black))
+                    .foregroundStyle(Theme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(good.detail)
+                    .font(Theme.font(11.5, .heavy))
+                    .foregroundStyle(Theme.caption)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(minHeight: 96)
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous).fill(Theme.card))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+            .strokeBorder(Theme.cardEdge, lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(good.title). \(good.detail)")
+    }
+
+    // MARK: Under the fold
+
+    /// Restore, the hardship row, and the mission line, in that order, under the
+    /// card until the sheet scrolls. All three keep their 44pt rows.
+    private var belowTheFold: some View {
+        VStack(alignment: .leading, spacing: 0) {
             Button {
                 Task {
                     await plus.restore()
@@ -125,148 +249,48 @@ struct PlusSheet: View {
                 }
             } label: {
                 Text("Restore a purchase")
-                    .font(Theme.font(13.5, .heavy))
-                    .foregroundStyle(Theme.muted)
+                    .font(Theme.font(13, .heavy))
+                    .foregroundStyle(Theme.caption)
                     .frame(minHeight: 44)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.vertical, -12)
 
-            hardship
-            mission
-            legal
-        }
-        .padding(.horizontal, 22)
-        .padding(.bottom, 32)
-    }
-
-    /// The top third, and the only part that changes with the reason.
-    private var hero: some View {
-        VStack(spacing: 14) {
-            reasonArt.frame(height: 118)
-            Text(reason.headline)
-                .font(Theme.font(23, .black))
-                .foregroundStyle(Theme.ink)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.top, 4)
-    }
-
-    @ViewBuilder
-    private var reasonArt: some View {
-        switch reason.art {
-        case .kin:    PlusArt.kin(state.activeChibi)
-        case .slots:  PlusArt.slots
-        case .chips:  PlusArt.chips
-        case .page:   PlusArt.page
-        case .grades: PlusArt.grades
-        }
-    }
-
-    /// First on the sheet, not last. The sentence that makes the ask honest. It
-    /// was a 27-word list of everything free; the compare table one tap down
-    /// already lists it, so this says the one thing that matters.
-    static let freeLine = "Everything else stays free."
-
-    private var freeLine: some View {
-        Text(Self.freeLine)
-            .font(Theme.font(13, .heavy))
-            .foregroundStyle(Theme.muted)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 4)
-    }
-
-    /// Five pictures of the goods, one line each: Imprint's "your subscription
-    /// includes" is a label and a picture of the thing, stacked (Mobbin
-    /// 9036a4f7-80dd-4781-b9c3-695383698d5a); Finch's Plus sheet is the bird
-    /// first and four perks with one line each (Mobbin
-    /// 0525a643-772d-4665-b5fc-b0d7d10a3a3a). The tiles this replaced carried a
-    /// second sentence each; the compare table still has every word.
-    static let perkTitles = [
-        "A look and three scenes",
-        "Seven picks, three holds, 30% off",
-        "Sixty and ninety minute shifts",
-        "Photos read into your calendar",
-        "Your work in your own calendar",
-    ]
-
-    private var perks: some View {
-        VStack(spacing: 18) {
-            perkPicture(PlusArt.coatRow, Self.perkTitles[0])
-            perkPicture(PlusArt.slots, Self.perkTitles[1])
-            perkPicture(PlusArt.chips, Self.perkTitles[2])
-            perkPicture(PlusArt.page, Self.perkTitles[3])
-            perkPicture(PlusArt.calendar, Self.perkTitles[4])
-        }
-    }
-
-    /// One line, then the goods at the size the student will see them.
-    private func perkPicture<A: View>(_ art: A, _ title: String) -> some View {
-        VStack(spacing: 10) {
-            Text(title)
-                .font(Theme.font(14.5, .black))
-                .foregroundStyle(Theme.ink)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-            art.frame(height: 72)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-            .fill(Theme.card)
-            .shadow(color: D.shadow, radius: 10, y: 6))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(title)
-    }
-
-    private func perkTile<A: View>(_ art: A, _ title: String, _ body: String) -> some View {
-        HStack(alignment: .center, spacing: 14) {
-            art.frame(width: 78, height: 62)
-                .clipped()
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(Theme.font(14.5, .black))
-                    .foregroundStyle(Theme.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(body)
-                    .font(Theme.font(12, .heavy))
-                    .foregroundStyle(Theme.muted)
-                    .fixedSize(horizontal: false, vertical: true)
+            // Perk 8. A plain text row, never a tile and never a padlock.
+            Button { openURL(D.ask) } label: {
+                Text("Can't swing it? Ask.")
+                    .font(Theme.font(13, .heavy))
+                    .foregroundStyle(Theme.caption)
+                    .underline()
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
             }
-            Spacer(minLength: 0)
-        }
-        .padding(13)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-            .fill(Theme.card)
-            .shadow(color: D.shadow, radius: 10, y: 6))
-    }
+            .buttonStyle(.plain)
 
-    private var seeEverything: some View {
-        Button {
-            withAnimation(.snappy(duration: 0.24)) { showingCompare = true }
-        } label: {
-            Text("See everything, side by side")
-                .font(Theme.font(13.5, .heavy))
-                .foregroundStyle(Theme.muted)
-                .underline()
+            // Last on the sheet. Finch and Duolingo both say a version of this.
+            Text("Plus keeps Canvas, coins and every lesson free for everyone else.")
+                .font(Theme.font(12, .heavy))
+                .foregroundStyle(Theme.bagInk)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(minHeight: 44)
-                .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .padding(.vertical, -12)
     }
 
-    // MARK: - Price
+    // MARK: - The floating card
 
-    private var prices: some View {
-        VStack(spacing: 10) {
-            priceCard(.yearly)
-            priceCard(.monthly)
-        }
+    /// The plan row, the button and the 3.1.2 line, pinned over the scroll. The
+    /// title, length, price, price per period and both links are all in here.
+    private var footerCard: some View {
+        PlusFooterCard(
+            pick: $pick,
+            busy: busy,
+            failed: failed,
+            price: displayPrice,
+            perMonth: perMonth(),
+            buy: { Task { await buy() } },
+            privacy: { openURL(D.privacy) },
+            terms: { openURL(D.terms) }
+        )
     }
 
     private func displayPrice(_ p: PlusProduct) -> String {
@@ -274,10 +298,10 @@ struct PlusSheet: View {
             ?? (p == .yearly ? "$69.99" : "$9.99")
     }
 
-    /// "$5.83 a month" under the yearly card. Derived from the real product price
+    /// "$5.83 a month" on the yearly card. Derived from the real product price
     /// where StoreKit gave us one, so a storefront in another currency is not told
     /// a dollar figure.
-    private func perMonth() -> String? {
+    private func perMonth() -> String {
         guard let product = plus.products.first(where: { $0.id == PlusProduct.yearly.rawValue }) else {
             return "$5.83 a month"
         }
@@ -285,129 +309,16 @@ struct PlusSheet: View {
         return monthly.formatted(product.priceFormatStyle) + " a month"
     }
 
-    private func priceCard(_ p: PlusProduct) -> some View {
-        let on = pick == p
-        let yearly = p == .yearly
-        return Button {
-            UISelectionFeedbackGenerator().selectionChanged()
-            withAnimation(.snappy(duration: 0.22)) { pick = p }
-        } label: {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(yearly ? "Plus, yearly" : "Plus, monthly")
-                        .font(Theme.font(14, .black))
-                        .foregroundStyle(on ? Theme.coralShade : Theme.ink)
-                    Text(yearly
-                         ? (perMonth().map { "\($0), billed once a year" } ?? "Billed once a year")
-                         : "Billed every month")
-                        .font(Theme.font(12, .heavy))
-                        .foregroundStyle(Theme.muted)
-                }
-                Spacer(minLength: 0)
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text(displayPrice(p))
-                        .font(Theme.font(19, .black))
-                        .foregroundStyle(Theme.ink)
-                    if yearly {
-                        Text("saves 42%")
-                            .font(Theme.fixedFont(10.5, .black))
-                            .foregroundStyle(Theme.mintDark)
-                    }
-                }
-            }
-            .padding(15)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(on ? Theme.coralSoft : Theme.card)
-                .shadow(color: D.shadow, radius: 10, y: 6))
-            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .strokeBorder(on ? Theme.coral : .clear, lineWidth: 2))
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(on ? .isSelected : [])
-    }
-
-    private var cta: some View {
-        VStack(spacing: 9) {
-            Button { Task { await buy() } } label: {
-                HStack(spacing: 8) {
-                    if busy { ProgressView().tint(Theme.onDarkWarm) }
-                    Text(busy ? "One moment" : "Get Plus")
-                        .font(Theme.font(17, .heavy))
-                }
-                .foregroundStyle(Theme.onDarkWarm)
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Theme.coral))
-            }
-            .buttonStyle(PressStyle())
-            .disabled(busy)
-            if failed {
-                Text("That didn't go through. Nothing was charged.")
-                    .font(Theme.font(13, .heavy))
-                    .foregroundStyle(Theme.coralDeep)
-                    .multilineTextAlignment(.center)
-            }
-        }
-    }
-
-    /// Perk 8. A plain text row, never a tile and never a padlock.
-    private var hardship: some View {
-        Button { openURL(D.ask) } label: {
-            Text("Can't swing it? Ask.")
-                .font(Theme.font(13.5, .heavy))
-                .foregroundStyle(Theme.muted)
-                .underline()
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .padding(.vertical, -12)
-    }
-
-    /// Last on the sheet. Finch and Duolingo both say a version of this, and it is
-    /// why their own reviewers forgive them for selling cosmetics.
-    private var mission: some View {
-        Text("Plus keeps Canvas, coins and every lesson free for everyone else.")
-            .font(Theme.font(12.5, .heavy))
-            .foregroundStyle(Theme.bagInk)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 8)
-    }
-
-    /// Apple 3.1.2 wants the title, the length, the price, the price per period and
-    /// two tappable links on this screen. Missing one is the commonest first
-    /// rejection there is.
-    private var legal: some View {
-        VStack(spacing: 8) {
-            Text("Prepkin Plus renews until you turn it off. Cancel any time in Settings.")
-                .font(Theme.font(11.5, .bold))
-                .foregroundStyle(Theme.dim)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 16) {
-                Button { openURL(D.privacy) } label: {
-                    Text("Privacy").frame(minHeight: 44).contentShape(Rectangle())
-                }
-                Button { openURL(D.terms) } label: {
-                    Text("Terms of Use").frame(minHeight: 44).contentShape(Rectangle())
-                }
-            }
-            .font(Theme.font(11.5, .heavy))
-            .foregroundStyle(Theme.muted)
-            .buttonStyle(.plain)
-            .padding(.vertical, -14)
-        }
-    }
-
     // MARK: - Already Plus
 
-    /// The shortest screen here, and the one most apps get wrong. A student who has
-    /// paid, or who is inside the gift week, must never be shown a price again.
+    /// The shortest screen here, and the one most apps get wrong. No price, no plan
+    /// row, no Restore, no compare link, nothing to buy.
     private var alreadyPlus: some View {
-        VStack(spacing: 18) {
-            PlusArt.kin(state.activeChibi).frame(height: 118)
+        VStack(spacing: 0) {
+            PlusArt.kin(state.activeChibi)
+                .frame(width: 92, height: 118)
+                .padding(.top, 30)
+
             Text(state.plusAccess.isGift()
                  ? "Plus is on. Nothing to cancel, because nothing was started."
                  : "Plus is on. Thank you.")
@@ -415,31 +326,41 @@ struct PlusSheet: View {
                 .foregroundStyle(Theme.ink)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 18)
 
             if state.plusAccess.isGift() {
-                giftTimeline
+                giftTimeline.padding(.top, 18)
             }
 
-            VStack(spacing: 12) {
-                perkTile(PlusArt.slotsCompact, "Seven picks, three holds, 30% off", "In the Shop, now.")
-                perkTile(PlusArt.chipsCompact, "Sixty and ninety minute shifts", "On Focus, now.")
-                perkTile(PlusArt.page, "Photos read into your calendar", "On the Calendar tab.")
+            Text("On now")
+                .font(Theme.font(13, .black))
+                .foregroundStyle(Theme.caption)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 16)
+
+            VStack(spacing: 10) {
+                OnNowRow(icon: "shopBag", title: Self.goods[0].title, place: "In the Shop, now.")
+                OnNowRow(icon: "classTime", title: Self.goods[1].title, place: "On Focus, now.")
+                OnNowRow(icon: "camera", title: "Photos read into your calendar", place: "On the Calendar tab.")
             }
+            .padding(.top, 8)
 
             Text("Everything you wear, make or save stays yours, whatever happens to this.")
                 .font(Theme.font(12.5, .heavy))
-                .foregroundStyle(Theme.muted)
+                .foregroundStyle(Theme.caption)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 20)
 
             Button("Done") { dismiss() }
                 .font(Theme.font(17, .heavy))
                 .foregroundStyle(Theme.onDarkWarm)
                 .frame(maxWidth: .infinity).frame(height: 56)
-                .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Theme.coral))
-                .buttonStyle(.plain)
+                .background(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous).fill(Theme.coral))
+                .buttonStyle(PressStyle())
+                .padding(.top, 22)
         }
-        .padding(.horizontal, 22)
+        .padding(.horizontal, D.gutter)
         .padding(.bottom, 32)
     }
 
@@ -450,7 +371,7 @@ struct PlusSheet: View {
         if let start = state.game.plus.giftStartedAt {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(PlusGift.timeline(start: start).enumerated()), id: \.offset) { i, row in
-                    if i > 0 { Divider().padding(.leading, 74) }
+                    if i > 0 { Divider().overlay(Theme.hairline).padding(.leading, 74) }
                     HStack(alignment: .top, spacing: 12) {
                         Text(row.when)
                             .font(Theme.font(12.5, .black))
@@ -458,7 +379,7 @@ struct PlusSheet: View {
                             .frame(width: 62, alignment: .leading)
                         Text(row.what)
                             .font(Theme.font(12.5, .heavy))
-                            .foregroundStyle(Theme.muted)
+                            .foregroundStyle(Theme.caption)
                             .fixedSize(horizontal: false, vertical: true)
                         Spacer(minLength: 0)
                     }
@@ -466,9 +387,7 @@ struct PlusSheet: View {
                     .padding(.horizontal, 14)
                 }
             }
-            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Theme.card)
-                .shadow(color: D.shadow, radius: 10, y: 6))
+            .card(padding: 0)
         }
     }
 
@@ -476,22 +395,25 @@ struct PlusSheet: View {
 
     /// Structured's and Forest's shape. It is the second screen, not the first,
     /// because a table is what you read when you have already decided to look
-    /// closely.
+    /// closely. The floating card stays under it.
     private var compare: some View {
         VStack(spacing: 16) {
             HStack {
                 Button {
-                    withAnimation(.snappy(duration: 0.24)) { showingCompare = false }
+                    withAnimation(swap) { showingCompare = false }
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: "chevron.left").font(.system(size: 12, weight: .black))
                         Text("Back").font(Theme.font(14, .heavy))
                     }
-                    .foregroundStyle(Theme.muted)
+                    .foregroundStyle(Theme.caption)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 Spacer()
             }
+            .padding(.top, 20)
 
             Text("Free and Plus, side by side")
                 .font(Theme.font(20, .black))
@@ -500,25 +422,20 @@ struct PlusSheet: View {
             VStack(spacing: 0) {
                 compareHead
                 ForEach(Array(PlusCompare.rows.enumerated()), id: \.offset) { i, row in
-                    if i > 0 { Divider() }
+                    if i > 0 { Divider().overlay(Theme.hairline) }
                     compareRow(row)
                 }
             }
-            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Theme.card)
-                .shadow(color: D.shadow, radius: 10, y: 6))
+            .card(padding: 0)
 
             Text("Nothing in the left column ever moves to the right one.")
                 .font(Theme.font(12, .heavy))
                 .foregroundStyle(Theme.bagInk)
                 .multilineTextAlignment(.center)
-
-            prices
-            cta
-            legal
+                .padding(.top, 8)
         }
-        .padding(.horizontal, 22)
-        .padding(.bottom, 32)
+        .padding(.horizontal, D.gutter)
+        .padding(.bottom, 24)
     }
 
     private var compareHead: some View {
@@ -526,7 +443,7 @@ struct PlusSheet: View {
             Text("").frame(maxWidth: .infinity, alignment: .leading)
             Text("Free")
                 .font(Theme.fixedFont(11, .black))
-                .foregroundStyle(Theme.muted)
+                .foregroundStyle(Theme.caption)
                 .frame(width: 62)
             Text("Plus")
                 .font(Theme.fixedFont(11, .black))
@@ -544,11 +461,20 @@ struct PlusSheet: View {
                 .foregroundStyle(Theme.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            cell(row.free, tint: Theme.muted)
+            cell(row.free, tint: Theme.caption)
             cell(row.plus, tint: Theme.coralShade)
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 11)
+        .padding(.vertical, 12)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(row.name): free \(spoken(row.free)), Plus \(spoken(row.plus))")
+    }
+
+    private func spoken(_ mark: PlusCompare.Mark) -> String {
+        switch mark {
+        case .yes: return "yes"
+        case .text(let s): return s
+        }
     }
 
     @ViewBuilder
@@ -559,10 +485,6 @@ struct PlusSheet: View {
                 Image(systemName: "checkmark")
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(Theme.mintDark)
-            case .no:
-                Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .black))
-                    .foregroundStyle(Theme.dim)
             case .text(let s):
                 Text(s)
                     .font(Theme.fixedFont(11.5, .black))
@@ -585,5 +507,260 @@ struct PlusSheet: View {
         } catch {
             failed = true
         }
+    }
+}
+
+// MARK: - The reason band
+
+/// One 150pt band, full bleed, tinted per reason, holding a real fragment of the
+/// screen the student was just on. Nothing else on the sheet changes with it.
+struct ReasonBand: View {
+    let reason: PlusSheet.Reason
+
+    @EnvironmentObject var state: AppState
+
+    var body: some View {
+        ZStack {
+            reason.tint
+            fragment
+        }
+        .frame(height: 150)
+        .frame(maxWidth: .infinity)
+        .clipped()
+        .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private var fragment: some View {
+        switch reason {
+        case .scan, .calendarExport: scan
+        case .shop:                  shop
+        case .focus:                 focus
+        case .look, .vibe, .general: look
+        case .grades:                grades
+        }
+    }
+
+    /// The photographed page, two corner marks, an arrow, and the two rows the
+    /// reader made from it. The dates are a few days out from today, so the
+    /// picture is never a page from last term.
+    private var scan: some View {
+        let course = state.courses.first.map { $0.code.isEmpty ? $0.name : $0.code } ?? "Physics 13"
+        let soon = PlusGift.stamp(Calendar.current.date(byAdding: .day, value: 5, to: Date()) ?? Date())
+        let later = PlusGift.stamp(Calendar.current.date(byAdding: .day, value: 19, to: Date()) ?? Date())
+        return HStack(spacing: 14) {
+            ZStack(alignment: .topLeading) {
+                PlusArt.syllabusPage([soon, later])
+                    .padding(.leading, 18).padding(.top, 14)
+                PlusArt.cornerMark()
+            }
+            PlusArt.arrow(Theme.coralIcon, size: 18)
+            VStack(spacing: 8) {
+                ReadTaskRow(title: "Ch. 5 Problem Set", caption: "\(course) · \(soon)")
+                ReadTaskRow(title: "Midterm", caption: "\(course) · \(later)")
+            }
+            .frame(width: 210)
+        }
+        .padding(.horizontal, 14)
+    }
+
+    /// The Shop's own row: today's real picks, their real prices, and the two
+    /// slots Plus adds. The caption is the Shop's own sentence about the hold.
+    private var shop: some View {
+        VStack(spacing: 14) {
+            PickRowFragment(picks: state.picks, held: Set(state.picks.map(\.id).filter(state.isHeld)))
+            Text("today's picks · the pin holds one through a reroll")
+                .font(Theme.fixedFont(11, .black))
+                .foregroundStyle(Theme.coinInk)
+        }
+    }
+
+    private var focus: some View {
+        ChipRowFragment()
+    }
+
+    /// The three scene paintings are not drawn yet, so until they land this is the
+    /// kin, doing what it does on Home.
+    private var look: some View {
+        PlusArt.kin(state.activeChibi, size: 112)
+            .frame(height: 118)
+    }
+
+    private var grades: some View {
+        TermCardFragment(courses: state.courses)
+    }
+}
+
+// MARK: - The floating price card
+
+/// The plan row, `Get Plus`, and the 3.1.2 line, in one card pinned to the bottom
+/// of the sheet. It is the only shadow on the sheet. Purchasing and failed both
+/// live inside it: never a dialog, never an alert.
+struct PlusFooterCard: View {
+    @Binding var pick: PlusProduct
+    let busy: Bool
+    let failed: Bool
+    let price: (PlusProduct) -> String
+    let perMonth: String
+    let buy: () -> Void
+    let privacy: () -> Void
+    let terms: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// Between `Radius.card` and `Radius.sheet`: at 20 it reads as a big band, at
+    /// 28 as a second sheet.
+    static let radius: CGFloat = 24
+
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 8) {
+                plan(.yearly)
+                plan(.monthly)
+            }
+            .opacity(busy ? 0.5 : 1)
+            .disabled(busy)
+            .padding(.bottom, 2)
+
+            Button(action: buy) {
+                HStack(spacing: 8) {
+                    if busy {
+                        ProgressView().tint(Theme.onDarkWarm).controlSize(.small)
+                    }
+                    Text(busy ? "One moment" : "Get Plus")
+                        .font(Theme.font(17, .heavy))
+                }
+                .foregroundStyle(Theme.onDarkWarm)
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
+                .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Theme.coral))
+            }
+            .buttonStyle(PressStyle())
+            .disabled(busy)
+            .accessibilityLabel(busy ? "One moment" : "Get Plus")
+
+            if failed {
+                Text("That didn't go through. Nothing was charged.")
+                    .font(Theme.font(11.5, .heavy))
+                    .foregroundStyle(Theme.coralDeep)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            legal.padding(.top, -2)
+        }
+        .padding(.top, 12).padding(.horizontal, 12).padding(.bottom, 10)
+        .frame(maxWidth: .infinity)
+        .background(
+            UnevenRoundedRectangle(topLeadingRadius: Self.radius, topTrailingRadius: Self.radius, style: .continuous)
+                .fill(Theme.card)
+                .shadow(color: Theme.ink.opacity(0.10), radius: 26, y: -8)
+        )
+        .overlay(
+            UnevenRoundedRectangle(topLeadingRadius: Self.radius, topTrailingRadius: Self.radius, style: .continuous)
+                .strokeBorder(Theme.cardEdge, lineWidth: 1)
+        )
+        .padding(.horizontal, 12)
+    }
+
+    /// Yearly is the default because it saves 42%, and that number is arithmetic
+    /// off the two prices. There is no "most popular" badge.
+    private func plan(_ p: PlusProduct) -> some View {
+        let on = pick == p
+        let yearly = p == .yearly
+        return Button {
+            UISelectionFeedbackGenerator().selectionChanged()
+            withAnimation(reduceMotion ? nil : .snappy(duration: 0.22)) { pick = p }
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(yearly ? "Plus, yearly" : "Plus, monthly")
+                    .font(Theme.font(12, .black))
+                    .foregroundStyle(on ? Theme.coralShade : Theme.ink)
+                HStack(alignment: .firstTextBaseline, spacing: 5) {
+                    Text(price(p))
+                        .font(Theme.fixedFont(19, .black))
+                        .foregroundStyle(Theme.ink)
+                    if yearly {
+                        Text("saves 42%")
+                            .font(Theme.fixedFont(9.5, .black))
+                            .foregroundStyle(Theme.mintDark)
+                    }
+                }
+                Text(yearly ? "\(perMonth), once a year" : "Billed every month")
+                    .font(Theme.font(9.5, .heavy))
+                    .foregroundStyle(Theme.caption)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+            }
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, minHeight: 68, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(on ? Theme.coralSoft : Theme.paper))
+            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(on ? Theme.coral : Theme.cardEdge, lineWidth: on ? 2 : 1))
+            .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(on ? .isSelected : [])
+        .accessibilityLabel(yearly ? "Plus, yearly, \(price(p)), \(perMonth), saves 42%"
+                                   : "Plus, monthly, \(price(p)), billed every month")
+    }
+
+    /// Apple 3.1.2 wants the title, the length, the price, the price per period and
+    /// two tappable links on this screen. Missing one is the commonest first
+    /// rejection there is.
+    private var legal: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Text("Prepkin Plus renews until you turn it off. Cancel any time in Settings.")
+                .font(Theme.font(10, .bold))
+                .foregroundStyle(Theme.caption)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 12) {
+                Button(action: privacy) {
+                    Text("Privacy").underline().frame(minHeight: 32).contentShape(Rectangle())
+                }
+                Button(action: terms) {
+                    Text("Terms of Use").underline().frame(minHeight: 32).contentShape(Rectangle())
+                }
+            }
+            .font(Theme.font(10, .heavy))
+            .foregroundStyle(Theme.caption)
+            .buttonStyle(.plain)
+            .padding(.vertical, -8)
+            .fixedSize()
+        }
+    }
+}
+
+// MARK: - On now
+
+/// One perk that is on, and where it is. A 44pt tile with the object, the title,
+/// and the place — the anatomy of a task row, because that is what a student
+/// already knows how to read.
+struct OnNowRow: View {
+    let icon: String
+    let title: String
+    let place: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            IconTile(icon: icon, size: 44)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(Theme.font(14.5, .black))
+                    .foregroundStyle(Theme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(place)
+                    .font(Theme.font(12, .heavy))
+                    .foregroundStyle(Theme.caption)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .frame(minHeight: 62)
+        .card(padding: 0)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title). \(place)")
     }
 }

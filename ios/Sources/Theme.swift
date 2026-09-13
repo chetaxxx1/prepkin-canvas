@@ -24,6 +24,10 @@ enum Theme {
     static let mutedDeep = hex(0x7B6C63)
     /// The glyph and label inside a `paperSunk` pill.
     static let mutedInk = hex(0x5F534A)
+    /// Every caption at 10–13pt on white. `muted` is 3.46:1 there, which is the
+    /// bar for a 19pt label and not for a caption; this is 5.04:1. Same hex as
+    /// `mutedDeep`, named for the job so a sweep can find every caption by name.
+    static let caption = hex(0x7B6C63)
 
     /// Task-row tile: one constant near-white circle for every category, so six
     /// objects give the variety without six competing backgrounds.
@@ -75,6 +79,11 @@ enum Theme {
     // Aliases kept for the other tabs.
     static var sun: Color { coin }
     static var sky: Color { hex(0x9BC8F2) }
+    /// Sky at the strength of `coralSoft` and `mintSoft`: a band tint, never a fill
+    /// under text smaller than a title.
+    static let skySoft = hex(0xEEF5FC)
+    /// Sky as ink, for an arrow or a mark that has to read on `skySoft`.
+    static let skyDeep = hex(0x5C8FBD)
 
     // MARK: - Kin tier ramp
 
