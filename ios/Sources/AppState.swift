@@ -1311,6 +1311,7 @@ final class AppState: ObservableObject {
     func answerPlate(_ items: [PlateItem]) { game.plate = items }
 
     func pickCoat(_ coat: StarterCoat) { game.starterCoat = coat.rawValue }
+    var starterPersonality: KinPersonality { game.starterPersonality }
 
     /// The Learn track shelf with this student's lead track first.
     var leadTracks: [Track] { FirstRun.trackOrder(school: school) }

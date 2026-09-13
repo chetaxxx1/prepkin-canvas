@@ -548,7 +548,7 @@ struct HomeView: View {
         if isFirstSession, !state.tasks.contains(where: \.done) { return "Tap one when it's done." }
         let name = state.activeChibi.displayName
         if state.tasks.allSatisfy(\.done) { return "All done. Go outside." }
-        return "\(name) is watching. No pressure."
+        return state.starterPersonality.greeting(name: name, day: DayBank.dayNumber(raw: state.game.currentDay.raw))
     }
 
     // MARK: - Header

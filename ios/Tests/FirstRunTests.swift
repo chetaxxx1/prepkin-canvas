@@ -214,6 +214,64 @@ final class FirstRunTests: XCTestCase {
         }
     }
 
+    /// Every personality fits the coat card and Home's one-line bubble.
+    func testEveryStarterCoatHasAShortPersonality() {
+        for coat in StarterCoat.allCases {
+            guard let personality = KinPersonality.all[coat] else {
+                XCTFail("\(coat) has no personality")
+                continue
+            }
+            XCTAssertEqual(coat.personality, personality)
+            XCTAssertLessThanOrEqual(personality.title.count, 18, personality.title)
+            XCTAssertEqual(personality.traits.count, 3, "\(coat) needs three traits")
+            for trait in personality.traits {
+                XCTAssertLessThanOrEqual(trait.count, 9, trait)
+                XCTAssertEqual(trait, trait.capitalized, trait)
+                XCTAssertEqual(trait.split(whereSeparator: { $0.isWhitespace }).count, 1, trait)
+            }
+            XCTAssertLessThanOrEqual(personality.line.count, 40, personality.line)
+            XCTAssertFalse(personality.line.contains("!"), personality.line)
+            XCTAssertEqual(personality.greetings.count, 3, "\(coat) needs three greetings")
+            for greeting in personality.greetings {
+                let named = greeting.replacingOccurrences(of: "%@", with: "Marigold")
+                XCTAssertLessThanOrEqual(named.count, 40, named)
+                XCTAssertFalse(named.contains("!"), named)
+            }
+        }
+    }
+
+    func testPersonalityGreetingCyclesByDayAndIncludesTheName() {
+        let personality = StarterCoat.coral.personality
+        let greetings = (0...3).map { personality.greeting(name: "Marigold", day: $0) }
+        XCTAssertEqual(Array(greetings.prefix(3)), [
+            "Marigold is ready when you are.",
+            "Marigold wants the big one first.",
+            "Marigold says go. Then go again.",
+        ])
+        XCTAssertEqual(greetings[3], greetings[0])
+        for greeting in greetings { XCTAssertTrue(greeting.contains("Marigold"), greeting) }
+    }
+
+    func testSavedCoatPicksThePersonalityAndOldSavesUseMint() {
+        var game = GameState()
+        game.starterCoat = "sky"
+        XCTAssertEqual(game.starterPersonality, StarterCoat.sky.personality)
+        XCTAssertEqual(game.starterPersonality.title, "The planner")
+        game.starterCoat = nil
+        XCTAssertEqual(game.starterPersonality, StarterCoat.mint.personality)
+        game.starterCoat = "unknown"
+        XCTAssertEqual(game.starterPersonality, StarterCoat.mint.personality)
+    }
+
+    func testSixStarterCoatRawValuesRoundTrip() {
+        let rawValues = ["mint", "coral", "butter", "lilac", "peach", "sky"]
+        XCTAssertEqual(StarterCoat.allCases.count, 6)
+        XCTAssertEqual(StarterCoat.allCases.map(\.rawValue), rawValues)
+        for rawValue in rawValues {
+            XCTAssertEqual(StarterCoat(rawValue: rawValue)?.rawValue, rawValue)
+        }
+    }
+
     // MARK: - Day 3
 
     /// The attribution answer stores one of five and the card shows once.

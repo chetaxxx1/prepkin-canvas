@@ -157,10 +157,80 @@ enum HeardFrom: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-/// The four coats the first run offers. A coat is a colour of the one fish.
+/// The six coats the first run offers. A coat is a colour of the one fish, and
+/// each colour has a personality: a title, three traits, one line, and the
+/// things it says over the tank on Home.
 enum StarterCoat: String, CaseIterable, Identifiable {
-    case mint, coral, butter, lilac
+    case mint, coral, butter, lilac, peach, sky
     var id: String { rawValue }
+
+    /// Readable colour name for labels: "Mint", "Coral", ...
+    var displayName: String { rawValue.capitalized }
+
+    var personality: KinPersonality { KinPersonality.all[self]! }
+}
+
+struct KinPersonality: Equatable {
+    let title: String
+    let traits: [String]
+    let line: String
+    let greetings: [String]
+
+    /// The Home bubble line for today: `greetings[day % 3]` with the name filled in.
+    func greeting(name: String, day: Int) -> String {
+        greetings[day % 3].replacingOccurrences(of: "%@", with: name)
+    }
+
+    static let all: [StarterCoat: KinPersonality] = [
+        .mint: KinPersonality(
+            title: "The steady one",
+            traits: ["Calm", "Patient", "Early"],
+            line: "Gets the reading done before lunch.",
+            greetings: ["%@ is here. One thing at a time.",
+                        "%@ says the first one is hardest.",
+                        "%@ is not counting. Promise."]
+        ),
+        .coral: KinPersonality(
+            title: "The spark",
+            traits: ["Bold", "Quick", "Loud"],
+            line: "Starts Friday's thing on Monday.",
+            greetings: ["%@ is ready when you are.",
+                        "%@ wants the big one first.",
+                        "%@ says go. Then go again."]
+        ),
+        .butter: KinPersonality(
+            title: "The sunny one",
+            traits: ["Warm", "Easy", "Kind"],
+            line: "Thinks a walk counts. It does.",
+            greetings: ["%@ is glad you opened this.",
+                        "%@ says small ones count too.",
+                        "%@ is happy either way."]
+        ),
+        .lilac: KinPersonality(
+            title: "The night owl",
+            traits: ["Quiet", "Curious", "Late"],
+            line: "Does the best work after ten.",
+            greetings: ["%@ is up too. No rush.",
+                        "%@ likes the quiet hours.",
+                        "%@ says start with the odd one."]
+        ),
+        .peach: KinPersonality(
+            title: "The soft one",
+            traits: ["Gentle", "Slow", "Sure"],
+            line: "Finishes. Just not fast.",
+            greetings: ["%@ is here. Take the easy one.",
+                        "%@ says slow is still moving.",
+                        "%@ is fine with a short list."]
+        ),
+        .sky: KinPersonality(
+            title: "The planner",
+            traits: ["Tidy", "Sharp", "Early"],
+            line: "Knows what is due before Canvas does.",
+            greetings: ["%@ has the list. Top one first.",
+                        "%@ says Friday means Thursday.",
+                        "%@ checked. You are fine."]
+        ),
+    ]
 }
 
 /// The card that comes first after the first coin.
@@ -234,6 +304,12 @@ extension GameState {
     var pickedCoat: String? {
         guard let picked = starterCoat, StarterCoat(rawValue: picked) != nil else { return nil }
         return picked
+    }
+
+    /// The starter's personality: the picked coat's, or mint's when nothing was picked
+    /// (old saves from before the pick existed).
+    var starterPersonality: KinPersonality {
+        StarterCoat(rawValue: starterCoat ?? "")?.personality ?? StarterCoat.mint.personality
     }
 
     /// What the laptop, the pod and friends are told the kin is. A starter with
