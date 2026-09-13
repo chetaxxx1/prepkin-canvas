@@ -1,0 +1,14 @@
+{
+  "host": "dallasisd.instructure.com",
+  "final": "dallasisd.instructure.com",
+  "fetchedAt": "2026-09-13T07:27:03.359Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster64",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' dallasisd.instructure.com dallasisd.beta.instructure.com dallasisd.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {},
+  "brand": {}
+}

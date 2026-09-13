@@ -1,0 +1,69 @@
+{
+  "host": "canvas.slu.edu",
+  "final": "canvas.slu.edu",
+  "fetchedAt": "2026-09-13T07:29:39.190Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster236",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.slu.edu slu.instructure.com slu.beta.instructure.com slu.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/19d7c2d958ba635acb6fd2f4454a5568/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3772
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/579/CanvasLoginBoxBorderWidth.css",
+      "bytes": 210
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/1626244/template_js.js",
+      "bytes": 550
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#003A9D",
+    "ic-brand-primary-darkened-10": "#003795",
+    "ic-brand-primary-darkened-15": "#00348D",
+    "ic-brand-primary-lightened-5": "#0C46A9",
+    "ic-brand-primary-lightened-10": "#1950AE",
+    "ic-brand-primary-lightened-15": "#265AB2",
+    "ic-brand-button--primary-bgd-darkened-5": "#003A9D",
+    "ic-brand-button--primary-bgd-darkened-15": "#00348D",
+    "ic-brand-button--secondary-bgd-darkened-5": "#003958",
+    "ic-brand-button--secondary-bgd-darkened-15": "#00334F",
+    "ic-brand-font-color-dark-lightened-15": "#4A4A4A",
+    "ic-brand-font-color-dark-lightened-28": "#666666",
+    "ic-link-color-darkened-10": "#003653",
+    "ic-link-color-lightened-10": "#194E6C",
+    "ic-brand-primary": "#003da5",
+    "ic-brand-font-color-dark": "#2b2b2b",
+    "ic-link-color": "#003b5c",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#003b5c",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#003da5",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#003da5",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/570/logo_White_rgb.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/571/favicons.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/572/slu_logowithyear_white_rgb.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/573/slu_logowithyear_white_rgb.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/574/logohorizontal_white_rgb.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_135580000000000001/attachments/575/wordmark_rgb.jpg')"
+  },
+  "deps": {
+    "https://d2v9wwpahpeccv.cloudfront.net/uwf/canvasGlobal.js": {
+      "error": "fetch failed"
+    }
+  }
+}

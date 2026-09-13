@@ -594,7 +594,8 @@ tests covers the rest.
 
 **1. Instructure's cloud is one Canvas build for everyone.** `test/schools/harvest.js`
 reads a school's sign-in page (or its not-found page) without logging in and
-records the stylesheet bundle id Canvas prints there. Seventy-three schools —
+records the stylesheet bundle id Canvas prints there. Seventy-three schools
+(137 after the second sweep on 2026-09-13, K-12 districts included) —
 Ivies on their own domains, big publics on `instructure.com`, community
 colleges, K-12 districts, UK, Canada, Australia — all answer `common-7faef57a1a`,
 and so does canvas.dartmouth.edu with George logged in. A selector that holds
@@ -646,8 +647,9 @@ policy lists each school's other names (`canvas.dartmouth.edu`,
 | X9 | 20 courses on a school with Canvas's bucket: every course arrives on the first sync, at most 6 in flight, 0 refusals | pass |
 | X10 | bucket already half full from page loads: refusals happen, the wait-and-retry recovers every course | pass |
 | C29 | next-page link under the school's other name: 150 of 150 read, no request leaves for the other host | pass |
-| S1–S73 | each harvested school's theme on the real sandbox: classes on, buddy mounted, hooks match, paper in both papers, no errors | 73 of 73 pass (2026-09-13 01:15; `design/signoff/canvas-schools/report.json`) |
-| S (fake) | the same themes on the fake's skeleton pages, minutes for all | 73 of 73 pass |
+| S1–S137 | each harvested school's theme on the real sandbox: classes on, buddy mounted, hooks match, paper in both papers, no errors | 135 of 135 with a theme pass (73 on 2026-09-13 01:15, 62 more at 06:00; two districts show no theme files; `design/signoff/canvas-schools/report.json`) |
+| S (fake) | the same themes on the fake's skeleton pages, minutes for all | 135 of 135 pass |
+| B | `harvest.js --beta`: the next release on every school's beta host | 136 of 137 betas already run `8eb672e26f` (one school's policy names no beta host); rail, logo, layout and skip link intact on all |
 | V1 | Spanish; Arabic (Canvas flips to right-to-left): hooks, paper, buddy on the page, no sideways scroll | pass — after a fix: the panel opened off the left edge in RTL (content.js `data-flip`) |
 | V2 | List View and Recent Activity dashboards (Canvas's route is `PUT /dashboard/view`, not the API) | pass |
 | V3 | colour overlays hidden (George's own setting): the hero keeps whatever opacity Canvas wrote, course colour stays on the title | pass |
@@ -667,6 +669,13 @@ disables personal access tokens; the extension never needs one. His account
 hides colour overlays: Canvas writes no opacity on a plain-colour hero, so the
 V3 assertion is "whatever Canvas wrote is what shows", not "opacity 0".
 
+**Two more traps from the second sweep.** An unassigned `*.instructure.com`
+name answers with Instructure's own "can't find your login page" — Canvas,
+nobody's school; the harvester now refuses a 404 on a bare layout (twelve
+junk rows removed). And the ground sample sat 6px inside the content column,
+which at Charlotte-Mecklenburg and Wake County is still on the nav rail their
+themes widen to 93px; it now sits 12px clear of the rail's right edge.
+
 **One trap the run itself hit.** Stanford's theme script (356 KB) polls the
 dashboard with synchronous `$.ajax({async: false})` calls to the Canvas API.
 A Playwright tab on that page never navigates away — `page.goto` waits the
@@ -677,6 +686,16 @@ tab for every page, the way a student opens the next page, and Stanford
 passes. Their students are not stuck: the wedge is a driver-under-load thing,
 not a Canvas thing; but it is the kind of school script the gauntlet exists
 to meet.
+
+**The next release is visible today.** Every school's policy header names its
+`.beta.instructure.com` host, and Instructure's beta runs the next release
+about three weeks before production. `node test/schools/harvest.js --beta`
+reads each beta's not-found page anonymously: on 2026-09-13 all 74 betas ran
+`8eb672e26f` against production's `7faef57a1a`, with the rail, logo, layout
+and skip link intact. The pages behind a login — dashboard, modules, grades —
+need George on `dartmouth.beta.instructure.com` (his Dartmouth login works
+there; beta is refreshed from production weekly). Run that after each
+"NEXT RELEASE" line and the extension meets a deploy before students do.
 
 What this does not prove, said plainly: a school on a self-hosted or
 deliberately held-back Canvas (rare; the harvester would show a different

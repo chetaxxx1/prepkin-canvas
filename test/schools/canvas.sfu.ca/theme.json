@@ -1,0 +1,65 @@
+{
+  "host": "canvas.sfu.ca",
+  "final": "canvas.sfu.ca",
+  "fetchedAt": "2026-09-13T07:33:58.265Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster222",
+  "region": "ca-central-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.sfu.ca simonfraseru.instructure.com simonfraseru.beta.instructure.com simonfraseru.test.instructure.com sfu.instructure.com sfu.beta.instructure.com sfu.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/836e40400f6289852da1b34bf926c7ad/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3402
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_278920000000000001/attachments/549293/sfu.css",
+      "bytes": 381
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_278920000000000001/attachments/2611539/sfu.js",
+      "bytes": 3957
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#036FAC",
+    "ic-brand-primary-darkened-10": "#0369A3",
+    "ic-brand-primary-darkened-15": "#03639A",
+    "ic-brand-primary-lightened-5": "#0F7AB8",
+    "ic-brand-primary-lightened-10": "#1C81BC",
+    "ic-brand-primary-lightened-15": "#2888C0",
+    "ic-brand-button--primary-bgd-darkened-5": "#036FAC",
+    "ic-brand-button--primary-bgd-darkened-15": "#03639A",
+    "ic-brand-button--secondary-bgd-darkened-5": "#505456",
+    "ic-brand-button--secondary-bgd-darkened-15": "#484B4D",
+    "ic-brand-font-color-dark-lightened-15": "#5D5C5E",
+    "ic-brand-font-color-dark-lightened-28": "#767576",
+    "ic-link-color-darkened-10": "#0369A3",
+    "ic-link-color-lightened-10": "#1C81BC",
+    "ic-brand-primary": "#0374B5",
+    "ic-brand-font-color-dark": "#414042",
+    "ic-link-color": "#0374B5",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#54585A",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#54585A",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#54585A",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#54585A",
+    "ic-brand-header-image": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_278920000000000001/attachments/4517/SFU_block_colour_rgb_1000px.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_278920000000000001/attachments/4519/SFU_block_colour_rgb.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {}
+}

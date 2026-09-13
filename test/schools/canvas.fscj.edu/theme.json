@@ -1,0 +1,70 @@
+{
+  "host": "canvas.fscj.edu",
+  "final": "canvas.fscj.edu",
+  "fetchedAt": "2026-09-13T07:33:14.589Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster365",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.fscj.edu fscj.instructure.com fscj.beta.instructure.com fscj.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/6c04c2614bb8331d381fa09e3cf86745/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3362
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_104620000000000001/attachments/18357635/fscj-styles-min%20%25281%2529.css",
+      "bytes": 58314
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_104620000000000001/attachments/18573936/fscj-script-min.js",
+      "bytes": 11100
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#005B79",
+    "ic-brand-primary-darkened-10": "#005673",
+    "ic-brand-primary-darkened-15": "#00516C",
+    "ic-brand-primary-lightened-5": "#0C6785",
+    "ic-brand-primary-lightened-10": "#196F8B",
+    "ic-brand-primary-lightened-15": "#267792",
+    "ic-brand-button--primary-bgd-darkened-5": "#005B79",
+    "ic-brand-button--primary-bgd-darkened-15": "#00516C",
+    "ic-brand-button--secondary-bgd-darkened-5": "#38A7BE",
+    "ic-brand-button--secondary-bgd-darkened-15": "#3295AA",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#005f7f",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#3aafc8",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#007698",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#007698",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_104620000000000001/attachments/8209/fscj-logo-stacked-white.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_104620000000000001/attachments/8204/favicon-96x96.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_104620000000000001/attachments/8213/mobile_ico.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_104620000000000001/attachments/8206/fscj-logo-stacked-white.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_104620000000000001/attachments/8207/fscj-logo-hor-white.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://h5p.com/canvas-resizer.js": {
+      "file": "deps/0.js",
+      "bytes": 2342
+    }
+  }
+}

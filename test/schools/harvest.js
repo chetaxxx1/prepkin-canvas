@@ -7,6 +7,8 @@
 //
 //   node test/schools/harvest.js                 # every host in hosts.txt
 //   node test/schools/harvest.js canvas.mit.edu  # one
+//   node test/schools/harvest.js --new           # only hosts not yet harvested
+//   node test/schools/harvest.js --beta          # the NEXT release: each school's beta host
 //
 // Writes test/schools/<host>/theme.json (kept in git: URLs, brand values, the
 // build id) and custom.css / custom.js / variables.css (not in git — a
@@ -95,7 +97,10 @@ async function harvest(host) {
   const dir = path.join(HERE, host);
   const page = await get(`https://${host}/login/canvas`);
   const isCanvas = /brandable_css|ic-Login|window\.ENV|CANVAS_ACTIVE_BRAND_VARIABLES/.test(page.text);
-  if (!isCanvas) return { host, canvas: false, status: page.status, final: page.url };
+  // An unassigned *.instructure.com name answers with Instructure's own
+  // "can't find your login page" (a 404 on a bare layout) — Canvas, but
+  // nobody's school.
+  if (!isCanvas || page.status === 404 || /bare-layout/.test(page.text)) return { host, canvas: false, status: page.status, final: page.url };
   // Schools on the React sign-in page (`new_login`) do not load the Theme
   // Editor files there. Canvas's not-found page uses the ordinary layout for
   // everyone, signed in or not, and that layout carries them — and the build
@@ -143,10 +148,51 @@ async function harvest(host) {
   return { host, canvas: true, build: theme.build, files: Object.keys(theme.files), newLogin: theme.newLogin };
 }
 
+/// Instructure's beta environment runs the next release about three weeks
+/// before production does, and every school's policy header names its beta
+/// host. Read the not-found page there — no login — for the build id and the
+/// global hooks the skin hangs off, and say which schools' beta already
+/// differs from their production: that is the early warning that a deploy is
+/// coming, and the moment to run test/live.test.js L7 against beta.
+async function beta(hosts) {
+  const rows = [];
+  for (const host of hosts) {
+    const theme = JSON.parse(fs.readFileSync(path.join(HERE, host, 'theme.json'), 'utf8'));
+    const betaHost = (theme.csp || '').split(/\s+/).find((w) => /\.beta\.instructure\.com$/.test(w));
+    if (!betaHost) { rows.push({ host, beta: null }); continue; }
+    try {
+      const r = await get(`https://${betaHost}/prepkin-theme-check`);
+      const html = r.text;
+      rows.push({
+        host, beta: betaHost, production: theme.build,
+        build: (html.match(/bundles\/common-([0-9a-f]+)\.css/) || [])[1] ?? null,
+        hooks: {
+          navRail: /<header id="header" class="ic-app-header/.test(html),
+          headerLogo: /ic-app-header__logomark-container/.test(html),
+          skipLink: /id="skip_navigation_link"/.test(html),
+          layout: /ic-Layout-wrapper/.test(html),
+        },
+      });
+    } catch (e) {
+      rows.push({ host, beta: betaHost, error: e.message });
+    }
+  }
+  const ahead = rows.filter((r) => r.build && r.production && r.build !== r.production);
+  for (const r of rows) console.log(`${r.host}: ${r.beta ? `beta ${r.build ?? '?'} vs production ${r.production}${r.build && r.build !== r.production ? '  <-- NEXT RELEASE' : ''} ${Object.entries(r.hooks ?? {}).filter(([, v]) => !v).map(([k]) => `MISSING ${k}`).join(' ')}` : 'no beta host in its policy'}`);
+  console.log(`\n${ahead.length} of ${rows.length} schools' beta run a newer build than production.`);
+  fs.writeFileSync(path.join(HERE, 'beta.json'), `${JSON.stringify({ at: new Date().toISOString(), rows }, null, 2)}\n`);
+}
+
 async function main() {
-  const named = process.argv.slice(2);
-  const hosts = named.length ? named
+  if (process.argv[2] === '--beta') {
+    const hosts = process.argv.slice(3);
+    return beta(hosts.length ? hosts : fs.readdirSync(HERE).filter((d) => fs.existsSync(path.join(HERE, d, 'theme.json'))));
+  }
+  const onlyNew = process.argv[2] === '--new';
+  const named = onlyNew ? [] : process.argv.slice(2);
+  let hosts = named.length ? named
     : fs.readFileSync(path.join(HERE, 'hosts.txt'), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
+  if (onlyNew) hosts = hosts.filter((h) => !fs.existsSync(path.join(HERE, h, 'theme.json')));
   const summary = [];
   for (const host of hosts) {
     try {

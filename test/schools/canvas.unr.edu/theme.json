@@ -1,0 +1,65 @@
+{
+  "host": "canvas.unr.edu",
+  "final": "webcampus.unr.edu",
+  "fetchedAt": "2026-09-13T07:30:20.887Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster82",
+  "region": "us-east-1b",
+  "bucketMax": 699.9679075050475,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' webcampus.unr.edu unr.instructure.com unr.beta.instructure.com unr.test.instructure.com unr.canvaslms.com unr.beta.canvaslms.com unr.test.canvaslms.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/aa6d9080edf3296ac9c08dd50e9da0b2/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3467
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_44240000000000001/attachments/19180036/Aug212026.css",
+      "bytes": 12949
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_44240000000000001/attachments/19180037/Aug212026.js",
+      "bytes": 11064
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#041D3F",
+    "ic-brand-primary-darkened-10": "#041B3C",
+    "ic-brand-primary-darkened-15": "#041A39",
+    "ic-brand-primary-lightened-5": "#10294B",
+    "ic-brand-primary-lightened-10": "#1D3454",
+    "ic-brand-primary-lightened-15": "#293F5E",
+    "ic-brand-button--primary-bgd-darkened-5": "#041D3F",
+    "ic-brand-button--primary-bgd-darkened-15": "#041A39",
+    "ic-brand-button--secondary-bgd-darkened-5": "#1673B1",
+    "ic-brand-button--secondary-bgd-darkened-15": "#14679F",
+    "ic-brand-font-color-dark-lightened-15": "#57585A",
+    "ic-brand-font-color-dark-lightened-28": "#717174",
+    "ic-link-color-darkened-10": "#25639B",
+    "ic-link-color-lightened-10": "#3E7BB4",
+    "ic-brand-primary": "#041E42",
+    "ic-brand-font-color-dark": "#3A3B3E",
+    "ic-link-color": "#296DAC",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#1779BA",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#041E42",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#041E42",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_44240000000000001/attachments/8599321/university-logo.svg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_44240000000000001/attachments/8599322/University%20Logo%20RGB_block_n_blue-48.fw.png')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {}
+}

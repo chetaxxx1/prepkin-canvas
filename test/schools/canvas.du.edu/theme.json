@@ -1,0 +1,70 @@
+{
+  "host": "canvas.du.edu",
+  "final": "canvas.du.edu",
+  "fetchedAt": "2026-09-13T07:31:21.162Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster206",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' canvas.du.edu du.instructure.com du.beta.instructure.com du.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/a4d8cfdf588b2a593228b701a21a994a/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3789
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/14047983/0318%20dp.css",
+      "bytes": 5852316
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/13862094/dp_0226.js",
+      "bytes": 7120
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#B10C2D",
+    "ic-brand-primary-darkened-10": "#A80B2B",
+    "ic-brand-primary-darkened-15": "#9F0B28",
+    "ic-brand-primary-lightened-5": "#BD1839",
+    "ic-brand-primary-lightened-10": "#C02443",
+    "ic-brand-primary-lightened-15": "#C4304E",
+    "ic-brand-button--primary-bgd-darkened-5": "#B10C2D",
+    "ic-brand-button--primary-bgd-darkened-15": "#9F0B28",
+    "ic-brand-button--secondary-bgd-darkened-5": "#A09263",
+    "ic-brand-button--secondary-bgd-darkened-15": "#8F8359",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#10486F",
+    "ic-link-color-lightened-10": "#286088",
+    "ic-brand-primary": "#BA0C2F",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#114f7b",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#A89968",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#c2bba7",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#604337",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#400013",
+    "ic-brand-global-nav-logo-bgd": "#c2bba7",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/11148017/Canvas_DU_Logo_Red_Top_Left_183x142.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/11148202/MicrosoftTeams-image%20%25285%2529.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/11144163/DUBotMonogram.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/11144176/du-logo-logomark-white.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/11144187/du-logo-logomark-white.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_15650000000000001/attachments/11148035/Canvas_DU-logo-Horizontal-Stacked_Login_and_top_Right_352x82_.png')"
+  },
+  "deps": {
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/0.js",
+      "bytes": 52310
+    }
+  }
+}

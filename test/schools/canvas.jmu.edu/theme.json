@@ -1,0 +1,61 @@
+{
+  "host": "canvas.jmu.edu",
+  "final": "canvas.jmu.edu",
+  "fetchedAt": "2026-09-13T07:27:39.199Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster19",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.jmu.edu jmu.instructure.com jmu.beta.instructure.com jmu.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/c23d33ce571af9e8c7c8d312c6241878/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3517
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_190000000081707/attachments/186740840/JMUCanvasTheme.js",
+      "bytes": 566
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#A59560",
+    "ic-brand-primary-darkened-10": "#9C8D5B",
+    "ic-brand-primary-darkened-15": "#948556",
+    "ic-brand-primary-lightened-5": "#B1A06C",
+    "ic-brand-primary-lightened-10": "#B5A574",
+    "ic-brand-primary-lightened-15": "#B9AA7C",
+    "ic-brand-button--primary-bgd-darkened-5": "#A59560",
+    "ic-brand-button--primary-bgd-darkened-15": "#948556",
+    "ic-brand-button--secondary-bgd-darkened-5": "#313131",
+    "ic-brand-button--secondary-bgd-darkened-15": "#2C2C2C",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#3F0077",
+    "ic-link-color-lightened-10": "#571990",
+    "ic-brand-primary": "#ad9c65",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#450084",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#333333",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#450084",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#3c738b",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#450084",
+    "ic-brand-header-image": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/canvas_logomark_only@2x-e197434829.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_190000000081707/attachments/97113517/JMU-Logo-RGB-vert-purple%20-%20ResizedSmall.png')"
+  },
+  "deps": {}
+}

@@ -1,0 +1,65 @@
+{
+  "host": "canvas.nau.edu",
+  "final": "canvas.nau.edu",
+  "fetchedAt": "2026-09-13T07:30:54.680Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster342",
+  "region": "us-west-2a",
+  "bucketMax": 700,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' canvas.nau.edu northernarizona.instructure.com northernarizona.beta.instructure.com northernarizona.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/70577c4bb76807725c3ebdbdc74d2d01/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3812
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/10113059/dp.css",
+      "bytes": 5628555
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/14591553/YuJa%20Visualizer.js",
+      "bytes": 2007
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#002350",
+    "ic-brand-primary-darkened-10": "#00214C",
+    "ic-brand-primary-darkened-15": "#001F48",
+    "ic-brand-primary-lightened-5": "#0C2E5C",
+    "ic-brand-primary-lightened-10": "#193965",
+    "ic-brand-primary-lightened-15": "#26446D",
+    "ic-brand-button--primary-bgd-darkened-5": "#002350",
+    "ic-brand-button--primary-bgd-darkened-15": "#001F48",
+    "ic-brand-button--secondary-bgd-darkened-5": "#0061AA",
+    "ic-brand-button--secondary-bgd-darkened-15": "#005798",
+    "ic-brand-font-color-dark-lightened-15": "#262626",
+    "ic-brand-font-color-dark-lightened-28": "#474747",
+    "ic-link-color-darkened-10": "#010233",
+    "ic-link-color-lightened-10": "#1A1B4B",
+    "ic-brand-primary": "#002454",
+    "ic-brand-font-color-dark": "#000000",
+    "ic-link-color": "#010238",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#0066B2",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#002454",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#0066b2",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#000421",
+    "ic-brand-header-image": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/68505/NAU_Acronym_logomark_rev-3514.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/68506/NAU_Acronym_logomark_rev-3514.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/68507/NAU_canvas_favicon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/68512/NAU-canvas-app-icon3.png')",
+    "ic-brand-msapplication-tile-color": "#010238",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/68509/NAU_Acronym_primary_rev-3514.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/68510/NAU_Acronym_primary_rev-3514.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_196640000000000001/attachments/1197250/NAU_Ligature_282_3514.png')"
+  },
+  "deps": {}
+}

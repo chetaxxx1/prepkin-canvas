@@ -1,0 +1,14 @@
+{
+  "host": "cfisd.instructure.com",
+  "final": "cfisd.instructure.com",
+  "fetchedAt": "2026-09-13T07:27:12.438Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster3",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' cfisd.instructure.com cfisd.beta.instructure.com cfisd.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {},
+  "brand": {}
+}

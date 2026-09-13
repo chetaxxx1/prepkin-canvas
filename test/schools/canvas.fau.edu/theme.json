@@ -1,0 +1,74 @@
+{
+  "host": "canvas.fau.edu",
+  "final": "canvas.fau.edu",
+  "fetchedAt": "2026-09-13T07:29:10.690Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster63",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.fau.edu fau.instructure.com fau.beta.instructure.com fau.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/35bbbbec85601a765ade89bda63f2dc2/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4404
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/19112860/canvas.css",
+      "bytes": 1040
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/48388067/canvas_emergency.js",
+      "bytes": 17859
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#003161",
+    "ic-brand-primary-darkened-10": "#002E5C",
+    "ic-brand-primary-darkened-15": "#002C57",
+    "ic-brand-primary-lightened-5": "#0C3D6D",
+    "ic-brand-primary-lightened-10": "#194775",
+    "ic-brand-primary-lightened-15": "#26517C",
+    "ic-brand-button--primary-bgd-darkened-5": "#003161",
+    "ic-brand-button--primary-bgd-darkened-15": "#002C57",
+    "ic-brand-button--secondary-bgd-darkened-5": "#C2C2C2",
+    "ic-brand-button--secondary-bgd-darkened-15": "#AEAEAE",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#003366",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#cccccc",
+    "ic-brand-button--secondary-text": "#000000",
+    "ic-brand-global-nav-bgd": "#003366",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#003366",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/461738/150391_canvas_topicon.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1950782824&Signature=p7LU0a2yVfHM90O7LFFbcZD22l4%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "0.1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/10038/global_nav.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1931364176&Signature=R9sBberbMd3TkmuA6yQJnHPJ5SQ%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/10038/global_nav.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1931364176&Signature=R9sBberbMd3TkmuA6yQJnHPJ5SQ%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/10038/global_nav.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1931364176&Signature=R9sBberbMd3TkmuA6yQJnHPJ5SQ%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/10042/fau_right.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1931364176&Signature=iLw73ppv4wAsKxYt%2BTxVngIdiOY%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')"
+  },
+  "deps": {
+    "https://instructure-uploads.s3.amazonaws.com/account_79550000000000001/attachments/10067/_new_sis_imports_js.js?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1931498766&Signature=BAvod1vcEd0oNRdUs9M3V8%2BzyxU%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000": {
+      "file": "deps/0.js",
+      "bytes": 120004
+    },
+    "https://d1embgbpmfo5b.cloudfront.net/main.js": {
+      "file": "deps/1.js",
+      "bytes": 293
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-13T06:11:51.526Z",
+  "at": "2026-09-13T11:09:17.823Z",
   "real": true,
   "schools": {
     "bcourses.berkeley.edu": {
@@ -6408,6 +6408,5081 @@
           },
           "at": [
             90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "aacps.instructure.com": {
+      "at": "2026-09-13T09:19:28.373Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "aps.instructure.com": {
+      "at": "2026-09-13T09:20:09.513Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.alaska.edu": {
+      "at": "2026-09-13T09:20:33.831Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.byu.edu": {
+      "at": "2026-09-13T09:21:14.710Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.calpoly.edu": {
+      "at": "2026-09-13T09:21:55.630Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.case.edu": {
+      "at": "2026-09-13T09:22:36.530Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.chapman.edu": {
+      "at": "2026-09-13T09:23:17.346Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.cmu.edu": {
+      "at": "2026-09-13T09:24:09.185Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.cpp.edu": {
+      "at": "2026-09-13T09:24:57.099Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.csun.edu": {
+      "at": "2026-09-13T09:25:49.417Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.du.edu": {
+      "at": "2026-09-13T09:26:58.896Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.fau.edu": {
+      "at": "2026-09-13T09:28:27.558Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.fscj.edu": {
+      "at": "2026-09-13T09:30:02.086Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            231
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            231
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.gmu.edu": {
+      "at": "2026-09-13T09:31:21.884Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.gsu.edu": {
+      "at": "2026-09-13T09:32:30.939Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.jccc.edu": {
+      "at": "2026-09-13T09:33:02.917Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.jmu.edu": {
+      "at": "2026-09-13T09:33:51.766Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.lanecc.edu": {
+      "at": "2026-09-13T09:34:55.683Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.mccneb.edu": {
+      "at": "2026-09-13T09:35:56.903Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.morainevalley.edu": {
+      "at": "2026-09-13T09:36:49.350Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.msstate.edu": {
+      "at": "2026-09-13T09:37:39.448Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.nau.edu": {
+      "at": "2026-09-13T09:38:42.747Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.odu.edu": {
+      "at": "2026-09-13T09:40:10.502Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.okstate.edu": {
+      "at": "2026-09-13T09:41:19.709Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.ou.edu": {
+      "at": "2026-09-13T09:42:57.508Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.pasadena.edu": {
+      "at": "2026-09-13T09:44:16.267Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.pdx.edu": {
+      "at": "2026-09-13T09:45:36.600Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.pepperdine.edu": {
+      "at": "2026-09-13T09:46:49.503Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.pitt.edu": {
+      "at": "2026-09-13T09:49:06.199Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.sdsu.edu": {
+      "at": "2026-09-13T09:50:40.825Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.sfu.ca": {
+      "at": "2026-09-13T09:51:51.826Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.slu.edu": {
+      "at": "2026-09-13T09:53:31.739Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.tccd.edu": {
+      "at": "2026-09-13T09:55:49.761Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.tufts.edu": {
+      "at": "2026-09-13T09:58:14.799Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.ualberta.ca": {
+      "at": "2026-09-13T10:03:49.305Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.uccs.edu": {
+      "at": "2026-09-13T10:06:14.260Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.ucmerced.edu": {
+      "at": "2026-09-13T10:08:38.188Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.ucsc.edu": {
+      "at": "2026-09-13T10:10:33.650Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.uidaho.edu": {
+      "at": "2026-09-13T10:12:37.783Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.umt.edu": {
+      "at": "2026-09-13T10:14:39.239Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.unf.edu": {
+      "at": "2026-09-13T10:16:28.275Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.unm.edu": {
+      "at": "2026-09-13T10:18:19.155Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.unr.edu": {
+      "at": "2026-09-13T10:20:12.165Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.utah.edu": {
+      "at": "2026-09-13T10:21:52.735Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.wpi.edu": {
+      "at": "2026-09-13T10:23:08.130Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.wustl.edu": {
+      "at": "2026-09-13T10:24:40.509Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "ccsdut.instructure.com": {
+      "at": "2026-09-13T10:27:33.065Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "cms.instructure.com": {
+      "at": "2026-09-13T11:06:22.637Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            107,
+            151
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            283,
+            223
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            283,
+            223
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "dpsk12.instructure.com": {
+      "at": "2026-09-13T10:31:54.351Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "gwinnett.instructure.com": {
+      "at": "2026-09-13T10:34:13.381Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "hillsboroughschools.instructure.com": {
+      "at": "2026-09-13T10:35:39.993Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "houstonisd.instructure.com": {
+      "at": "2026-09-13T10:37:02.750Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "jeffco.instructure.com": {
+      "at": "2026-09-13T10:38:17.444Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "katyisd.instructure.com": {
+      "at": "2026-09-13T10:40:41.739Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "lausd.instructure.com": {
+      "at": "2026-09-13T10:46:44.977Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            251,
+            251,
+            249
+          ],
+          "sidebarIsPaper": false
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "lcps.instructure.com": {
+      "at": "2026-09-13T10:48:44.215Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "mcpsmd.instructure.com": {
+      "at": "2026-09-13T10:49:47.829Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "mnps.instructure.com": {
+      "at": "2026-09-13T10:51:36.162Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "ncvps.instructure.com": {
+      "at": "2026-09-13T10:52:30.731Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "pwcs.instructure.com": {
+      "at": "2026-09-13T10:54:44.877Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "sandiegounified.instructure.com": {
+      "at": "2026-09-13T10:56:58.972Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            90,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "wcpss.instructure.com": {
+      "at": "2026-09-13T11:07:28.600Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            112,
             150
           ],
           "content": [

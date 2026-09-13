@@ -61,12 +61,17 @@ fake_v = {h: verdict(fake['schools'].get(h)) for h in themes}
 n_real_pass = sum(1 for v in real_v.values() if v == 'pass')
 n_real_fail = sum(1 for v in real_v.values() if v == 'fail')
 n_real_run = n_real_pass + n_real_fail
+n_bare = sum(1 for t in themes.values() if not t.get('files'))  # a login page that shows no theme at all: nothing to put on the page
 n_fake_pass = sum(1 for v in fake_v.values() if v == 'pass')
 n_fake_fail = sum(1 for v in fake_v.values() if v == 'fail')
 biggest = max(((h, t['files'].get('custom.css', {}).get('bytes', 0)) for h, t in themes.items()), key=lambda x: x[1])
 regions = sorted({t.get('region') for t in themes.values() if t.get('region')})
 csp_n = sum(1 for t in themes.values() if (t.get('csp') or '').startswith('frame-ancestors'))
 dialogs = {h: r.get('dialogs') for h, r in real['schools'].items() if r.get('dialogs')}
+beta = load(f'{ROOT}/test/schools/beta.json', {'rows': []})['rows']
+beta_builds = sorted({r.get('build') for r in beta if r.get('build')})
+beta_ahead = sum(1 for r in beta if r.get('build') and r.get('production') and r['build'] != r['production'])
+beta_missing = [r['host'] for r in beta if r.get('hooks') and not all(r['hooks'].values())]
 build_id = list(builds.keys())[0] if len(builds) == 1 else 'mixed'
 
 
@@ -120,8 +125,8 @@ if fails:
     fail_html = (f'<h3>What failed, by name</h3><div class="scroll"><table><thead><tr><th>School</th><th>What the run saw</th></tr></thead>'
                  f'<tbody>{"".join(rows)}</tbody></table></div>')
 
-if n_real_run == n_schools and not n_real_fail:
-    real_line = f'all {n_schools} pass on real Canvas'
+if n_real_run + n_bare == n_schools and not n_real_fail:
+    real_line = f'all {n_real_run} with a theme pass on real Canvas' if n_bare else f'all {n_schools} pass on real Canvas'
 elif n_real_run:
     real_line = f'{n_real_pass} of {n_real_run} run so far pass on real Canvas' + (f', {n_real_fail} fail' if n_real_fail else '')
 else:
@@ -204,7 +209,7 @@ ul.plain {{ padding-left: 20px; }} ul.plain li {{ margin-bottom: 6px; }}
 </div>
 
 <h2>What "every type of Canvas" turned out to mean</h2>
-<p>A school's Canvas can differ from Dartmouth's in eight ways. Each was either proven the same, tested, or fixed.</p>
+<p>A school's Canvas can differ from Dartmouth's in nine ways. Each was either proven the same, tested, fixed, or put under watch.</p>
 <div class="scroll"><table>
 <thead><tr><th>Dimension</th><th>What we found</th><th>State</th></tr></thead>
 <tbody>
@@ -214,6 +219,7 @@ ul.plain {{ padding-left: 20px; }} ul.plain li {{ margin-bottom: 6px; }}
 <tr><td>Feature flags that rewrite markup</td><td>Only one leaks into the page for signed-out visitors, <code>responsive_student_grades_page</code>, and it is on at every school read; on Dartmouth it keeps <code>#grades_summary</code>. The modules rewrite and the widget dashboard stay behind flags the sandbox can flip (L6, R2) and the skin steps aside on both.</td><td class="state"><span class="pill pass">covered</span></td></tr>
 <tr><td>The student's own settings</td><td>Language (Spanish; Arabic flips Canvas to right-to-left), List View and Recent Activity dashboards, colour overlays hidden (George's own setting), a collapsed nav, a narrow window, High Contrast. Set through the student's session on real Canvas, no admin.</td><td class="state"><span class="pill {"pass" if variant_shots else "todo"}">{"run, see below" if variant_shots else "pending"}</span></td></tr>
 <tr><td>Canvas's request budget</td><td>Every school rations a session with the same leaky bucket: 50 units held per request in flight, refused at 600, drains 10 a second (cloud: 700). Twelve reads at once already lose the twelfth, so a student in a dozen courses lost one on every first sync. Fixed: six reads at a time, and a refusal waits and asks again.</td><td class="state"><span class="pill pass">fixed · X9, X10</span></td></tr>
+<tr><td>Instructure's next deploy</td><td>Every school's policy header names its <code>.beta.instructure.com</code> host, and beta runs the next release about three weeks early. Read anonymously: {len(beta)} betas, {"one build, " + ", ".join(beta_builds) if len(beta_builds) == 1 else ", ".join(beta_builds)}, {beta_ahead} of them already ahead of production; the global chrome the skin hangs off (rail, logo, layout, skip link) is intact on {"all of them" if not beta_missing else "all but " + ", ".join(beta_missing)}. <code>harvest.js --beta</code> is the early warning; the dashboard and course pages on beta need a login, so that check is George's, on <code>dartmouth.beta.instructure.com</code>.</td><td class="state"><span class="pill {"pass" if not beta_missing else "fail"}">watched · beta</span></td></tr>
 <tr><td>Courses the school has locked by date</td><td>Many schools close a course once its dates pass. Canvas still lists it as an active enrolment, as a stub — id, name, <code>access_restricted_by_date</code> — that answers 401 to everything else. It was kept, listed on the phone with no work, and cost two refused requests per sync. Now dropped at the door.</td><td class="state"><span class="pill pass">fixed</span></td></tr>
 <tr><td>Which name the school uses</td><td><code>canvas.school.edu</code> and <code>school.instructure.com</code> are one Canvas (every school's policy lists both, plus <code>.beta.</code> and <code>.test.</code>). Its next-page links carry the request's own host (checked in source, and on Dartmouth), so a plain school never hits it; a proxy that rewrites hosts would. A next-page link is now moved onto the connected origin rather than dropped — cookies still never leave it.</td><td class="state"><span class="pill pass">fixed · C29</span></td></tr>
 </tbody></table></div>
@@ -231,7 +237,7 @@ ul.plain {{ padding-left: 20px; }} ul.plain li {{ margin-bottom: 6px; }}
 </tbody></table></div>
 
 <h2>The schools</h2>
-<p>Read from each sign-in page (or not-found page) on 2026-09-12. Hover a name for what it ships.</p>
+<p>Read from each sign-in page (or not-found page) on 2026-09-12 and 13. Hover a name for what it ships.{" Two districts' pages show no theme files at all, so there was nothing to put on the page for them." if n_bare else ""}</p>
 <div class="legend"><span class="p">pass on real Canvas</span><span class="k">pass on the fake's pages, real run pending</span><span class="f">fail</span><span>not run</span></div>
 {group_html}
 {fail_html}
@@ -247,7 +253,7 @@ ul.plain {{ padding-left: 20px; }} ul.plain li {{ margin-bottom: 6px; }}
 <li><b>A school that is not on Instructure's cloud.</b> Self-hosted Canvas is rare and the harvester would show it as a different build id; the sandbox is the closest stand-in.</li>
 <li><b>A sub-account with its own theme.</b> The sign-in page shows the root account's theme; a department can layer its own on top of course pages.</li>
 <li><b>A school's JavaScript that loads more JavaScript at run time.</b> One level of those files is kept with the harvest; the run refuses the rest of the network on purpose.</li>
-<li><b>Instructure's next deploy.</b> It lands everywhere at once. The answer is the same as before this work: <code>test/live.test.js</code> L7 and <code>harvest.js</code>'s build id after each release, and the remote off-switch for the day something moves.</li>
+<li><b>Instructure's next deploy, on the pages behind a login.</b> Beta shows the next build's global chrome to anyone; its dashboard, modules and grades need a Dartmouth login on <code>dartmouth.beta.instructure.com</code>. Three weeks' warning every release, if that check is run; the remote off-switch covers the day something moves anyway.</li>
 </ul>
 
 <h2>What changed in the code</h2>

@@ -1,0 +1,70 @@
+{
+  "host": "wcpss.instructure.com",
+  "final": "wcpss.instructure.com",
+  "fetchedAt": "2026-09-13T07:27:20.197Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster375",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' wcpss.instructure.com wcpss.beta.instructure.com wcpss.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/2ec8a47ad527d76dc1daed1132d67a4b/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4659
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/42231146/c_root.css",
+      "bytes": 2074
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/114035726/1-main.js",
+      "bytes": 15327
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#00A7D1",
+    "ic-brand-primary-darkened-10": "#009EC6",
+    "ic-brand-primary-darkened-15": "#0095BB",
+    "ic-brand-primary-lightened-5": "#0CB3DC",
+    "ic-brand-primary-lightened-10": "#19B7DE",
+    "ic-brand-primary-lightened-15": "#26BBE0",
+    "ic-brand-button--primary-bgd-darkened-5": "#00A7D1",
+    "ic-brand-button--primary-bgd-darkened-15": "#0095BB",
+    "ic-brand-button--secondary-bgd-darkened-5": "#42515C",
+    "ic-brand-button--secondary-bgd-darkened-15": "#3B4952",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#1272A2",
+    "ic-link-color-lightened-10": "#2B8ABA",
+    "ic-brand-primary": "#00afdb",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#147EB3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#455560",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#005595",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#860038",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#005595",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/2311035/logoB.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1958823589&Signature=%2BYdQxhG1yh5%2BnekXTtisbMJAajc%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/29834180/4DBAC1C4-49CD-4DDA-9FE3-3DB5E4244D75.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/3319/favicon.ico?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1912675353&Signature=JHdDn8qhskjryamL%2B6uQkbpO6wE%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/3337/blue-h.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1912941784&Signature=QeFNj7Fka6hv2GGeUaznvrWJixs%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-msapplication-tile-color": "#ffffff",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/3339/WindowsTileSqare.svg?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1912942278&Signature=DuEuSoXHBazEKAhoHeyeLXLBKRE%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_57310000000000001/attachments/3338/WindowsTileWide.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1912942124&Signature=ckXWP%2FJ%2BgPbR5sXfkWJuId7w9vI%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/0.js",
+      "bytes": 52310
+    }
+  }
+}

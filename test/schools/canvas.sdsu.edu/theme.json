@@ -1,0 +1,66 @@
+{
+  "host": "canvas.sdsu.edu",
+  "final": "sdsu.instructure.com",
+  "fetchedAt": "2026-09-13T07:31:48.292Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster325",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' sdsu.instructure.com sdsu.beta.instructure.com sdsu.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/3dc219ab3b2e0a98637f7da069ea6a8d/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3287
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_100820000000000001/attachments/22316635/EesySoftPlugin2_PROD_and_ally_google_and_UDOIT.js",
+      "bytes": 7317
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#B92E36",
+    "ic-brand-primary-darkened-10": "#AF2C33",
+    "ic-brand-primary-darkened-15": "#A52930",
+    "ic-brand-primary-lightened-5": "#C53A41",
+    "ic-brand-primary-lightened-10": "#C8444B",
+    "ic-brand-primary-lightened-15": "#CB4F55",
+    "ic-brand-button--primary-bgd-darkened-5": "#B92E36",
+    "ic-brand-button--primary-bgd-darkened-15": "#A52930",
+    "ic-brand-button--secondary-bgd-darkened-5": "#221E1F",
+    "ic-brand-button--secondary-bgd-darkened-15": "#1E1B1C",
+    "ic-brand-font-color-dark-lightened-15": "#444041",
+    "ic-brand-font-color-dark-lightened-28": "#605D5E",
+    "ic-link-color-darkened-10": "#0000E6",
+    "ic-link-color-lightened-10": "#1919FF",
+    "ic-brand-primary": "#c23038",
+    "ic-brand-font-color-dark": "#231f20",
+    "ic-link-color": "#0000FF",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#231f20",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#231f20",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#231f20",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_100820000000000001/attachments/5839762/sdsu-monogram-rgb-solid-red-google.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/0.js",
+      "bytes": 52310
+    }
+  }
+}

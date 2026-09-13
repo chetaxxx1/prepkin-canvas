@@ -1,0 +1,66 @@
+{
+  "host": "canvas.morainevalley.edu",
+  "final": "canvas.morainevalley.edu",
+  "fetchedAt": "2026-09-13T07:33:35.145Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster81",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.morainevalley.edu morainevalley.instructure.com morainevalley.beta.instructure.com morainevalley.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/0d94f9eab2993cee16bb7b4c70429ff7/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4002
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_72210000000000001/attachments/7578977/morainevalley_v1.7.js",
+      "bytes": 14196
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#085243",
+    "ic-brand-primary-darkened-10": "#084E3F",
+    "ic-brand-primary-darkened-15": "#074A3C",
+    "ic-brand-primary-lightened-5": "#145E4F",
+    "ic-brand-primary-lightened-10": "#206658",
+    "ic-brand-primary-lightened-15": "#2D6F61",
+    "ic-brand-button--primary-bgd-darkened-5": "#085243",
+    "ic-brand-button--primary-bgd-darkened-15": "#074A3C",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#085646",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#085646",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#085646",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_72210000000000001/attachments/3391/sq-logo-working.jpg?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1931097193&Signature=Foxp77Aeleryi%2Bhcm%2FmuJ9yc4M0%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "0.7",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_72210000000000001/attachments/3392/canvas_at_mv.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1931097254&Signature=iP%2BFNjdFYtwzZbyjaPEgWuELB08%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000%2C%20public&response-expires=473364000')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://www.google-analytics.com/analytics.js": {
+      "file": "deps/0.js",
+      "bytes": 52310
+    }
+  }
+}

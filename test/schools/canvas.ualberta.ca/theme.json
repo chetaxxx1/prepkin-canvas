@@ -1,0 +1,65 @@
+{
+  "host": "canvas.ualberta.ca",
+  "final": "canvas.ualberta.ca",
+  "fetchedAt": "2026-09-13T07:33:55.496Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster222",
+  "region": "ca-central-1b",
+  "bucketMax": 700,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' canvas.ualberta.ca universityofalberta.instructure.com universityofalberta.beta.instructure.com universityofalberta.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/fe80c9df457a9c6d9108e2d5e9e03d3c/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3808
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/1439941/ualberta.css",
+      "bytes": 1103
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/9078800/script.js",
+      "bytes": 1234
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#265936",
+    "ic-brand-primary-darkened-10": "#245433",
+    "ic-brand-primary-darkened-15": "#225030",
+    "ic-brand-primary-lightened-5": "#316541",
+    "ic-brand-primary-lightened-10": "#3C6D4B",
+    "ic-brand-primary-lightened-15": "#477555",
+    "ic-brand-button--primary-bgd-darkened-5": "#265936",
+    "ic-brand-button--primary-bgd-darkened-15": "#225030",
+    "ic-brand-button--secondary-bgd-darkened-5": "#E6C300",
+    "ic-brand-button--secondary-bgd-darkened-15": "#CEAF00",
+    "ic-brand-font-color-dark-lightened-15": "#4A4949",
+    "ic-brand-font-color-dark-lightened-28": "#666465",
+    "ic-link-color-darkened-10": "#006E2E",
+    "ic-link-color-lightened-10": "#198747",
+    "ic-brand-primary": "#275D38",
+    "ic-brand-font-color-dark": "#2b292a",
+    "ic-link-color": "#007A33",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#F2CD00",
+    "ic-brand-button--secondary-text": "#000000",
+    "ic-brand-global-nav-bgd": "#275D38",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#275d38",
+    "ic-brand-global-nav-avatar-border": "#F2CD00",
+    "ic-brand-global-nav-logo-bgd": "#275d38",
+    "ic-brand-header-image": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/23234/403600_CanvasLMS_CrestImages_CrestOnly_TransparentDarkPNG_1920px.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/5771/UA_Logo_Green_RGB.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/23237/favicon%20%25282%2529.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/23363/Mobile_Homescreen_Icon.png')",
+    "ic-brand-msapplication-tile-color": "#FFDE02",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/23364/Windows_Tile_Square.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/23365/Windows_Tile_Wide.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads-yul.s3.ca-central-1.amazonaws.com/account_262750000000000001/attachments/23238/Right_Sidebar_Logo.png')"
+  },
+  "deps": {}
+}

@@ -1,0 +1,74 @@
+{
+  "host": "canvas.pepperdine.edu",
+  "final": "canvas.pepperdine.edu",
+  "fetchedAt": "2026-09-13T07:32:25.261Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster306",
+  "region": "us-west-2a",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.pepperdine.edu pepperdine.instructure.com pepperdine.beta.instructure.com pepperdine.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/afef8c2591c6baab488622bf367ddcb9/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3857
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_264900000000000001/attachments/147804/canvas_css.css",
+      "bytes": 1421
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_264900000000000001/attachments/556215/Canvas%20JS%20NEW.js",
+      "bytes": 2601
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#001F57",
+    "ic-brand-primary-darkened-10": "#001D52",
+    "ic-brand-primary-darkened-15": "#001C4E",
+    "ic-brand-primary-lightened-5": "#0C2B63",
+    "ic-brand-primary-lightened-10": "#19366B",
+    "ic-brand-primary-lightened-15": "#264173",
+    "ic-brand-button--primary-bgd-darkened-5": "#001F57",
+    "ic-brand-button--primary-bgd-darkened-15": "#001C4E",
+    "ic-brand-button--secondary-bgd-darkened-5": "#001F57",
+    "ic-brand-button--secondary-bgd-darkened-15": "#001C4E",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#001D52",
+    "ic-link-color-lightened-10": "#19366B",
+    "ic-brand-primary": "#00205B",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#00205B",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#00205B",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#00205B",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#00205b",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#00205B",
+    "ic-brand-header-image": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_264900000000000001/attachments/58422/pepperdine-shield-canvas-lato-logo-700x700.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_264900000000000001/attachments/20533/pepperdine-shield-favicon.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_264900000000000001/attachments/20535/pepperdine-shield-mobile-home-180x180.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_264900000000000001/attachments/20534/pepperdine-shield-windows-tile-558x558.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_264900000000000001/attachments/20536/pepperdine-university-windows-tile-wide-558x270.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://kit.fontawesome.com/39baa97a5f.js": {
+      "file": "deps/0.js",
+      "bytes": 16569
+    },
+    "https://s3.us-west-1.amazonaws.com/ddl.public/${TENANT_ID}/gradeExportButton.js": {
+      "status": 403,
+      "bytes": 263
+    }
+  }
+}

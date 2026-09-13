@@ -1,0 +1,70 @@
+{
+  "host": "canvas.okstate.edu",
+  "final": "canvas.okstate.edu",
+  "fetchedAt": "2026-09-13T07:29:29.860Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster232",
+  "region": "us-east-1e",
+  "bucketMax": 700,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' canvas.okstate.edu okstate.instructure.com okstate.beta.instructure.com okstate.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/846634ef68e4d90dd533346923683edb/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3550
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/486/_new_default_css_with_login_opacity.css",
+      "bytes": 989
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/19900835/theme-pronto_2024-05-03.js",
+      "bytes": 120690
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#F25800",
+    "ic-brand-primary-darkened-10": "#E55300",
+    "ic-brand-primary-darkened-15": "#D84F00",
+    "ic-brand-primary-lightened-5": "#FE640C",
+    "ic-brand-primary-lightened-10": "#FE6C19",
+    "ic-brand-primary-lightened-15": "#FE7426",
+    "ic-brand-button--primary-bgd-darkened-5": "#F25800",
+    "ic-brand-button--primary-bgd-darkened-15": "#D84F00",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#fe5c00",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#000000",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#272727",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#272727",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/3265127/logo-brand.svg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/4630208/logo-brand.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/3264926/favicon-32x32.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/3264927/apple-touch-icon-152x152.png')",
+    "ic-brand-msapplication-tile-color": "#272727",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/3264928/apple-touch-icon-152x152.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_122980000000000001/attachments/3264929/apple-touch-icon-152x152.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://chat.trypronto.com/js/embedded.js?cb=${Math.round(new": {
+      "file": "deps/0.js",
+      "bytes": 30246
+    }
+  }
+}

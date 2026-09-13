@@ -1,0 +1,65 @@
+{
+  "host": "canvas.umt.edu",
+  "final": "canvas.umt.edu",
+  "fetchedAt": "2026-09-13T07:29:52.347Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster78",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.umt.edu umt.instructure.com umt.beta.instructure.com umt.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/e211d76bedba85e85a60b24488333ddb/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3568
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_74050000000000001/attachments/954405/umonline-style.css",
+      "bytes": 1669
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_74050000000000001/attachments/2084429/verity-panorama-canvas-theme_20250410.js",
+      "bytes": 1738
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#2974B3",
+    "ic-brand-primary-darkened-10": "#276EAA",
+    "ic-brand-primary-darkened-15": "#2568A0",
+    "ic-brand-primary-lightened-5": "#3580BF",
+    "ic-brand-primary-lightened-10": "#4087C2",
+    "ic-brand-primary-lightened-15": "#4A8DC6",
+    "ic-brand-button--primary-bgd-darkened-5": "#2974B3",
+    "ic-brand-button--primary-bgd-darkened-15": "#2568A0",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#2B7ABC",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#70002E",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#70002E",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_74050000000000001/attachments/13060/UM%20Alternate.svg')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_74050000000000001/attachments/13293/UM%20Alternate.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_74050000000000001/attachments/13300/favicon.png')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_74050000000000001/attachments/13301/um-right-sidebar.png')"
+  },
+  "deps": {}
+}

@@ -1,0 +1,70 @@
+{
+  "host": "canvas.ucsc.edu",
+  "final": "canvas.ucsc.edu",
+  "fetchedAt": "2026-09-13T07:31:53.585Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster57",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": true,
+  "csp": "frame-ancestors 'self' canvas.ucsc.edu ucsc.instructure.com ucsc.beta.instructure.com ucsc.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/39ccee34e0e45d437655dcb7144d3cc3/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 4290
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/8318939/dp.css",
+      "bytes": 5805442
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/11326669/ucsc_custom_js_09102025.js",
+      "bytes": 37143
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#0074B8",
+    "ic-brand-primary-darkened-10": "#006EAE",
+    "ic-brand-primary-darkened-15": "#0068A5",
+    "ic-brand-primary-lightened-5": "#0C80C4",
+    "ic-brand-primary-lightened-10": "#1987C7",
+    "ic-brand-primary-lightened-15": "#268DCA",
+    "ic-brand-button--primary-bgd-darkened-5": "#0074B8",
+    "ic-brand-button--primary-bgd-darkened-15": "#0068A5",
+    "ic-brand-button--secondary-bgd-darkened-5": "#2B3942",
+    "ic-brand-button--secondary-bgd-darkened-15": "#27333B",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#006EAE",
+    "ic-link-color-lightened-10": "#1987C7",
+    "ic-brand-primary": "#007ac1",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#007ac1",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#2d3b45",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#334451",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#00458c",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#334451",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/578/logo-sq3.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1958585707&Signature=SMZt1CzuXtYjvYdxgjNSkeqcKRY%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "url('https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/606/slug-watermark-lt-sm-offset.png')",
+    "ic-brand-watermark-opacity": "0.4",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/1065/logo-b-g-sq-noborder.ico')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/583/logo-180.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1958655665&Signature=wDPZlxbPlFa2DbJUmM%2B%2F4Z9Qk0o%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-color": "#f1b521",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/584/logo-558.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1958655665&Signature=kDnqljk7pfAxIn220J35qh7KmQE%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/585/logo-558x270.png?AWSAccessKeyId=AKIAJFNFXH2V2O7RPCAA&Expires=1958655842&Signature=X2bdj%2BQFuZb5vEKitcS104vl2N4%3D&response-cache-control=Cache-Control%3Amax-age%3D473364000.0%2C%20public&response-expires=473364000.0')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_92700000000000001/attachments/5335700/blank.png')"
+  },
+  "deps": {
+    "https://blue.ucsc.edu/ucscBlueConnector//Scripts/Canvas/BlueCanvas.min.js": {
+      "file": "deps/0.js",
+      "bytes": 32069
+    }
+  }
+}

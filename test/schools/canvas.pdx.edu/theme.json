@@ -1,0 +1,61 @@
+{
+  "host": "canvas.pdx.edu",
+  "final": "canvas.pdx.edu",
+  "fetchedAt": "2026-09-13T07:30:16.044Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster344",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.pdx.edu pdx1.instructure.com pdx1.beta.instructure.com pdx1.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/0e0c27faeac181dbf0ed272302a09aa7/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3641
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/16516694/Portland%20State%20University%20-%20Production-canvas-visualizer.js",
+      "bytes": 862
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#203720",
+    "ic-brand-primary-darkened-10": "#1E341E",
+    "ic-brand-primary-darkened-15": "#1D311D",
+    "ic-brand-primary-lightened-5": "#2C422C",
+    "ic-brand-primary-lightened-10": "#374C37",
+    "ic-brand-primary-lightened-15": "#425642",
+    "ic-brand-button--primary-bgd-darkened-5": "#203720",
+    "ic-brand-button--primary-bgd-darkened-15": "#1D311D",
+    "ic-brand-button--secondary-bgd-darkened-5": "#203720",
+    "ic-brand-button--secondary-bgd-darkened-15": "#1D311D",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#005678",
+    "ic-link-color-lightened-10": "#196F91",
+    "ic-brand-primary": "#213921",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#005F85",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#213921",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#213921",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#213921",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/310/PSU_logo_white_smaller.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/315/PSU_logo_biggest.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/305/PSU_logo.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/295/PSU_logo.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/311/PSU_logo_white_Big.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/312/PSU_logo_white_transparent.png')",
+    "ic-brand-right-sidebar-logo": "url('https://instructure-uploads.s3.amazonaws.com/account_200830000000000001/attachments/313/PSU_logo_transparent.png')"
+  },
+  "deps": {}
+}

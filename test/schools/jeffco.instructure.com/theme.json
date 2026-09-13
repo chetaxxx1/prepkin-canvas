@@ -1,0 +1,61 @@
+{
+  "host": "jeffco.instructure.com",
+  "final": "jeffco.instructure.com",
+  "fetchedAt": "2026-09-13T07:26:27.363Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster269",
+  "region": "us-west-2c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' jeffco.instructure.com jeffco.beta.instructure.com jeffco.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/f26eb5d0e6e0dfff8614aed10bb6df45/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3385
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_153810000000000001/attachments/1931715/Jefferson%20College-canvas-visualizer.js",
+      "bytes": 862
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#2974B3",
+    "ic-brand-primary-darkened-10": "#276EAA",
+    "ic-brand-primary-darkened-15": "#2568A0",
+    "ic-brand-primary-lightened-5": "#3580BF",
+    "ic-brand-primary-lightened-10": "#4087C2",
+    "ic-brand-primary-lightened-15": "#4A8DC6",
+    "ic-brand-button--primary-bgd-darkened-5": "#2974B3",
+    "ic-brand-button--primary-bgd-darkened-15": "#2568A0",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0D5EA2",
+    "ic-link-color-lightened-10": "#2677BA",
+    "ic-brand-primary": "#2B7ABC",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0E68B3",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#334451",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#334451",
+    "ic-brand-header-image": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_153810000000000001/attachments/1874822/JC%20Logo.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {}
+}

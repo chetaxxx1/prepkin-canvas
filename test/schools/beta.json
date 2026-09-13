@@ -1,0 +1,1641 @@
+{
+  "at": "2026-09-13T11:13:59.612Z",
+  "rows": [
+    {
+      "host": "aacps.instructure.com",
+      "beta": "aacps.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "aps.instructure.com",
+      "beta": null
+    },
+    {
+      "host": "bcourses.berkeley.edu",
+      "beta": "ucberkeley.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "browardschools.instructure.com",
+      "beta": "browardschools.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "bruinlearn.ucla.edu",
+      "beta": "ucla.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "byu.instructure.com",
+      "beta": "byu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.alaska.edu",
+      "beta": "alaska.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.asu.edu",
+      "beta": "asu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.auckland.ac.nz",
+      "beta": "auckland.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.bham.ac.uk",
+      "beta": "birmingham.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.brown.edu",
+      "beta": "brown.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.byu.edu",
+      "beta": "byu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.calpoly.edu",
+      "beta": "calpoly.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.case.edu",
+      "beta": "case.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.chapman.edu",
+      "beta": "chapman.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.cmu.edu",
+      "beta": "cmu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.colorado.edu",
+      "beta": "cuboulder.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.cornell.edu",
+      "beta": "cornell.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.cpp.edu",
+      "beta": "cpp.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.csun.edu",
+      "beta": "csun.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.dartmouth.edu",
+      "beta": "dartmouth.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.du.edu",
+      "beta": "du.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.duke.edu",
+      "beta": "duke.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.emory.edu",
+      "beta": "emory.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.fau.edu",
+      "beta": "fau.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.fscj.edu",
+      "beta": "fscj.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.fsu.edu",
+      "beta": "fsu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.gmu.edu",
+      "beta": "gmu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.gsu.edu",
+      "beta": "robinsongsu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.harvard.edu",
+      "beta": "harvard.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.hull.ac.uk",
+      "beta": "hull.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.iastate.edu",
+      "beta": "iowastate.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.illinois.edu",
+      "beta": "illinoisedu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.its.virginia.edu",
+      "beta": "universityofvirginia.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.jccc.edu",
+      "beta": "jccc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.jmu.edu",
+      "beta": "jmu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ku.edu",
+      "beta": "ku.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.lanecc.edu",
+      "beta": "lanecc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.liberty.edu",
+      "beta": "libertyuniversity.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.liverpool.ac.uk",
+      "beta": "liverpool.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.lms.unimelb.edu.au",
+      "beta": "unimelb-prod.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.mccneb.edu",
+      "beta": "mccneb.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.mit.edu",
+      "beta": "mitgsl.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.morainevalley.edu",
+      "beta": "morainevalley.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.msstate.edu",
+      "beta": "msstate.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.nau.edu",
+      "beta": "northernarizona.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.nd.edu",
+      "beta": "notredame.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.northwestern.edu",
+      "beta": "northwestern.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.odu.edu",
+      "beta": "odu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.okstate.edu",
+      "beta": "okstate.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.oregonstate.edu",
+      "beta": "oregonstate.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ou.edu",
+      "beta": "oklahoma.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ox.ac.uk",
+      "beta": "universityofoxford.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.pasadena.edu",
+      "beta": "pcc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.pdx.edu",
+      "beta": "pdx1.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.pepperdine.edu",
+      "beta": "pepperdine.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.pitt.edu",
+      "beta": "pittsburgh.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.rice.edu",
+      "beta": "rice.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.sdsu.edu",
+      "beta": "sdsu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.sfu.ca",
+      "beta": "simonfraseru.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.slu.edu",
+      "beta": "slu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.stanford.edu",
+      "beta": "stanford.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.sussex.ac.uk",
+      "beta": "universityofsussex.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.sydney.edu.au",
+      "beta": "sydney.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.tamu.edu",
+      "beta": "texasam.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.tccd.edu",
+      "beta": "tccd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.tufts.edu",
+      "beta": "tufts.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.txstate.edu",
+      "beta": "txstate.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ualberta.ca",
+      "beta": "universityofalberta.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ubc.ca",
+      "beta": "ubc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.uccs.edu",
+      "beta": "uccs.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ucdavis.edu",
+      "beta": "ucdavis.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.uchicago.edu",
+      "beta": "uchicago.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ucmerced.edu",
+      "beta": "ucmerced.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ucsc.edu",
+      "beta": "ucsc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.ucsd.edu",
+      "beta": "ucsd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.uidaho.edu",
+      "beta": "uidaho.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.umn.edu",
+      "beta": "umn.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.umt.edu",
+      "beta": "umt.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.unf.edu",
+      "beta": "unf.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.unl.edu",
+      "beta": "unl.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.unm.edu",
+      "beta": "unm.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.unr.edu",
+      "beta": "unr.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.uoregon.edu",
+      "beta": "uoregon.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.upenn.edu",
+      "beta": "wharton.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.utah.edu",
+      "beta": "utah.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.uw.edu",
+      "beta": "uw.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.vt.edu",
+      "beta": "vt.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.wisc.edu",
+      "beta": "wisconsin-madison.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.wpi.edu",
+      "beta": "wpi.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "canvas.wustl.edu",
+      "beta": "wusm.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "ccsd.instructure.com",
+      "beta": "ccsd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "ccsdut.instructure.com",
+      "beta": "ccsdut.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "cfisd.instructure.com",
+      "beta": "cfisd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "cms.instructure.com",
+      "beta": "cms.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "courseworks2.columbia.edu",
+      "beta": "columbiasce.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "dallasisd.instructure.com",
+      "beta": "dallasisd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "dcps.instructure.com",
+      "beta": "dcps.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "dpsk12.instructure.com",
+      "beta": "dpsk12.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "gatech.instructure.com",
+      "beta": "gatech.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "gwinnett.instructure.com",
+      "beta": "gwinnett.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "hcpss.instructure.com",
+      "beta": "hcpss.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "hillsboroughschools.instructure.com",
+      "beta": "hillsboroughschools.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "houstonisd.instructure.com",
+      "beta": "houstonisd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "ilearn.laccd.edu",
+      "beta": "ilearn.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "iu.instructure.com",
+      "beta": "iu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "jeffco.instructure.com",
+      "beta": "jeffco.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "katyisd.instructure.com",
+      "beta": "katyisd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "lausd.instructure.com",
+      "beta": "lausd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "lcps.instructure.com",
+      "beta": "lcps.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "learn.canvas.net",
+      "beta": "canvasnet.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "learn.maricopa.edu",
+      "beta": "maricopa.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "mcpsmd.instructure.com",
+      "beta": "mcpsmd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "mdc.instructure.com",
+      "beta": "mdc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "mnps.instructure.com",
+      "beta": "mnps.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "ncvps.instructure.com",
+      "beta": "ncvps.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "osu.instructure.com",
+      "beta": "osu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "pcc.instructure.com",
+      "beta": "pcc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "princeton.instructure.com",
+      "beta": "princeton.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "psu.instructure.com",
+      "beta": "psu.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "pwcs.instructure.com",
+      "beta": "pwcs.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "q.utoronto.ca",
+      "beta": "utoronto.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "sandiegounified.instructure.com",
+      "beta": "sandiegounified.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "sbcc.instructure.com",
+      "beta": "sbcc.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "sdccd.instructure.com",
+      "beta": "sdccd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "sfusd.instructure.com",
+      "beta": "sfusd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "ufl.instructure.com",
+      "beta": "ufl.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "uiowa.instructure.com",
+      "beta": "uiowa.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "umd.instructure.com",
+      "beta": "umd.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "umich.instructure.com",
+      "beta": "umich.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "uncch.instructure.com",
+      "beta": "uncch.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "utah.instructure.com",
+      "beta": "utah.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "utexas.instructure.com",
+      "beta": "utexas.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "wcpss.instructure.com",
+      "beta": "wcpss.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "webcourses.ucf.edu",
+      "beta": "webcourses2c.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "wustl.instructure.com",
+      "beta": "wustl.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    },
+    {
+      "host": "yale.instructure.com",
+      "beta": "yale.beta.instructure.com",
+      "production": "7faef57a1a",
+      "build": "8eb672e26f",
+      "hooks": {
+        "navRail": true,
+        "headerLogo": true,
+        "skipLink": true,
+        "layout": true
+      }
+    }
+  ]
+}

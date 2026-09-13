@@ -47,7 +47,12 @@ node test/schools/harvest.js                  # once, or to refresh: 70+ sign-in
 npm run test:schools                          # ~5 min per themed school on a quiet Mac; SCHOOLS=a,b to pick
 CANVAS_UPSTREAM=none npm run test:schools     # the same themes on the fake's pages, minutes for all
 npm run test:variants                         # Spanish, Arabic/RTL, List View, hidden overlays, High Contrast
+node test/schools/harvest.js --beta           # the NEXT release on every school's beta host, anonymous, 2 min
+node test/schools/harvest.js --new            # harvest only hosts added to hosts.txt since last time
 ```
+When `--beta` prints NEXT RELEASE lines, the deploy is ~3 weeks out: ask George to log into
+dartmouth.beta.instructure.com and repeat the read-only Dartmouth check there (selectors, skin
+on, buddy) before it reaches production.
 Results: `design/signoff/canvas-schools/` (a dashboard shot per school, light and dark, and
 `report.json`), `design/signoff/canvas-variants/`. `test/schools/<host>/theme.json` is committed;
 the school's own CSS/JS is not (harvest again). A school on a build other than the others' is

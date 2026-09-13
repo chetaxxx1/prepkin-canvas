@@ -70,7 +70,10 @@ function schools() {
 /// stylesheet claims. A 1x1 PNG is eight bytes past its IDAT. The fake's
 /// pages are short, so the point is kept inside whatever is on screen.
 async function pixelAt(x, y) {
-  const box = await page.evaluate(() => ({ w: innerWidth, h: Math.min(innerHeight, document.documentElement.scrollHeight) }));
+  // Not `innerWidth`: one district's theme script declares a global of that
+  // name and the sample landed on its nav rail (a content script's own
+  // world never sees such a global, so the extension is not affected).
+  const box = await page.evaluate(() => ({ w: document.documentElement.clientWidth, h: Math.min(document.documentElement.clientHeight, document.documentElement.scrollHeight) }));
   x = Math.min(x, box.w - 2); y = Math.min(y, box.h - 2);
   const png = await page.screenshot({ clip: { x, y, width: 1, height: 1 } });
   let off = 8; const idat = [];
@@ -90,7 +93,11 @@ const isTone = (rgb, tones) => tones.some((t) => t.join() === rgb.join());
 async function groundPoint() {
   return page.evaluate(() => {
     const r = (document.getElementById('content') ?? document.body).getBoundingClientRect();
-    const x = Math.round(r.left + 6);
+    // Clear of the global nav rail even where a school's theme widens it
+    // (Charlotte-Mecklenburg's is 93px, and 6px into the content column was
+    // still on it), and short of the first card.
+    const rail = document.getElementById('header')?.getBoundingClientRect();
+    const x = Math.round(Math.max(r.left + 6, (rail?.right ?? 0) + 12));
     const y = Math.round(Math.min(r.top + 150, innerHeight - 3, r.bottom - 3));
     return [Math.max(x, 1), Math.max(y, 1)];
   });

@@ -1,0 +1,90 @@
+{
+  "host": "canvas.wustl.edu",
+  "final": "canvas.wustl.edu",
+  "fetchedAt": "2026-09-13T07:29:43.123Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster50",
+  "region": "us-east-1c",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.wustl.edu wusm.instructure.com wusm.beta.instructure.com wusm.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/9ec57a5cabd32304cd96617824f54901/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3362
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_25780000000000001/attachments/165890/css_override.css",
+      "bytes": 9694
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_25780000000000001/attachments/291654/canvas_override.js",
+      "bytes": 46420
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#740000",
+    "ic-brand-primary-darkened-10": "#6E0000",
+    "ic-brand-primary-darkened-15": "#680000",
+    "ic-brand-primary-lightened-5": "#800C0C",
+    "ic-brand-primary-lightened-10": "#871919",
+    "ic-brand-primary-lightened-15": "#8D2626",
+    "ic-brand-button--primary-bgd-darkened-5": "#740000",
+    "ic-brand-button--primary-bgd-darkened-15": "#680000",
+    "ic-brand-button--secondary-bgd-darkened-5": "#26333D",
+    "ic-brand-button--secondary-bgd-darkened-15": "#222E37",
+    "ic-brand-font-color-dark-lightened-15": "#47535C",
+    "ic-brand-font-color-dark-lightened-28": "#636D75",
+    "ic-link-color-darkened-10": "#0075AB",
+    "ic-link-color-lightened-10": "#198DC3",
+    "ic-brand-primary": "#7a0000",
+    "ic-brand-font-color-dark": "#273540",
+    "ic-link-color": "#0081bd",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#273540",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#7a0000",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#7a0000",
+    "ic-brand-header-image": "url('https://instructure-uploads.s3.amazonaws.com/account_25780000000000001/attachments/206953/nav-logo_Medicine.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {
+    "https://kendo.cdn.telerik.com/2017.1.118/js/kendo.all.min.js": {
+      "file": "deps/0.js",
+      "bytes": 2946963
+    },
+    "https://kendo.cdn.telerik.com/2012.2.710/js/kendo.all.min.js": {
+      "file": "deps/1.js",
+      "bytes": 602886
+    },
+    "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js": {
+      "file": "deps/2.js",
+      "bytes": 101939
+    },
+    "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.js": {
+      "file": "deps/3.js",
+      "bytes": 364732
+    },
+    "https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.0.2/jszip-utils-ie.min.js": {
+      "file": "deps/4.js",
+      "bytes": 1609
+    },
+    "https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.0.2/jszip-utils.min.js": {
+      "file": "deps/5.js",
+      "bytes": 1776
+    }
+  }
+}

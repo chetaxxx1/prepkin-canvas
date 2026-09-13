@@ -183,7 +183,7 @@ JavaScript behind it, and Show me brings both back while the outline is up.
 npm test              # canvas.js mapping rules and the panel's helpers, no browser
 npm run test:e2e      # the real extension in Chromium against a fake Canvas and bridge
 npm run test:stress   # slow, dead and throttling schools; races; volume
-npm run test:schools  # the real extension on real Canvas dressed as 70+ real schools
+npm run test:schools  # the real extension on real Canvas dressed as 130+ real schools
 npm run test:variants # Spanish, Arabic (right-to-left), List View, hidden overlays, High Contrast
 ```
 
@@ -194,10 +194,12 @@ scenario it covers and how to set it up on a new Mac.
 
 Instructure's cloud runs one Canvas build for every school — `test/schools/harvest.js`
 reads each school's sign-in page without logging in and records the build id, and
-seventy-odd schools from Dartmouth to Berkeley to a Nevada school district all answer
-with the same one. What differs between schools is the theme: the brand colours and
-the CSS and JavaScript a school's admin uploads in the Theme Editor. Those files are
-public (the sign-in page loads them), so the harvester keeps a copy of each, and
+137 schools from Dartmouth to Berkeley to Houston's school district all answer with the
+same one. Every school's beta host runs the next release three weeks early, and
+`harvest.js --beta` reads that too — the early warning for a deploy. What differs
+between schools is the theme: the brand colours and the CSS and JavaScript a school's
+admin uploads in the Theme Editor. Those files are public (the sign-in page loads
+them), so the harvester keeps a copy of each, and
 `test/schools.test.js` puts every one of them onto the sandbox's real pages under the
 real extension and checks that the paper still comes through, the buddy mounts, every
 selector the receipt hangs off still matches, and nothing of ours errors. A school

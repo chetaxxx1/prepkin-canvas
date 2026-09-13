@@ -1,0 +1,65 @@
+{
+  "host": "canvas.unm.edu",
+  "final": "canvas.unm.edu",
+  "fetchedAt": "2026-09-13T07:31:02.245Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster290",
+  "region": "us-west-2a",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.unm.edu unm.instructure.com unm.beta.instructure.com unm.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/aa4f2a899ecb8fefe58e388facc15f52/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3650
+    },
+    "custom.css": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/18896726/css-beta.css",
+      "bytes": 418
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/27938169/js-prod.js",
+      "bytes": 30217
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#007A92",
+    "ic-brand-primary-darkened-10": "#00748A",
+    "ic-brand-primary-darkened-15": "#006D83",
+    "ic-brand-primary-lightened-5": "#0C869E",
+    "ic-brand-primary-lightened-10": "#198CA3",
+    "ic-brand-primary-lightened-15": "#2693A8",
+    "ic-brand-button--primary-bgd-darkened-5": "#007A92",
+    "ic-brand-button--primary-bgd-darkened-15": "#006D83",
+    "ic-brand-button--secondary-bgd-darkened-5": "#007A92",
+    "ic-brand-button--secondary-bgd-darkened-15": "#006D83",
+    "ic-brand-font-color-dark-lightened-15": "#262626",
+    "ic-brand-font-color-dark-lightened-28": "#474747",
+    "ic-link-color-darkened-10": "#00748A",
+    "ic-link-color-lightened-10": "#198CA3",
+    "ic-brand-primary": "#008099",
+    "ic-brand-font-color-dark": "#000000",
+    "ic-link-color": "#008099",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#008099",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#63666a",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#ffffff",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "var(--ic-brand-primary)",
+    "ic-brand-global-nav-avatar-border": "#ffffff",
+    "ic-brand-global-nav-logo-bgd": "#ba0c2f",
+    "ic-brand-header-image": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/27044782/UNM-Canvas-Nav-Logo-lower-case.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/569/UNM-logo-horizontal-color.png')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1.0",
+    "ic-brand-favicon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/339/favicon-canvas.png')",
+    "ic-brand-apple-touch-icon": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/545/UNM%20Logo%20White.png')",
+    "ic-brand-msapplication-tile-color": "var(--ic-brand-primary)",
+    "ic-brand-msapplication-tile-square": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/546/UNM%20Logo%20White.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://instructure-uploads-pdx.s3.us-west-2.amazonaws.com/account_200220000000000001/attachments/547/UNM%20Logo%20White.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {}
+}

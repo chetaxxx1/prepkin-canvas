@@ -1,0 +1,61 @@
+{
+  "host": "canvas.ou.edu",
+  "final": "canvas.ou.edu",
+  "fetchedAt": "2026-09-13T07:29:27.305Z",
+  "build": "7faef57a1a",
+  "cluster": "cluster54",
+  "region": "us-east-1b",
+  "bucketMax": 700,
+  "newLogin": false,
+  "csp": "frame-ancestors 'self' canvas.ou.edu oklahoma.instructure.com oklahoma.beta.instructure.com oklahoma.test.instructure.com oklahoma2.instructure.com oklahoma2.beta.instructure.com oklahoma2.test.instructure.com;",
+  "bodyClass": " primary-nav-expanded full-width responsive_student_grades_page",
+  "files": {
+    "variables": {
+      "url": "https://du11hjcvx0uqb.cloudfront.net/dist/brandable_css/5ef9b8db72794f7555fa40e9d8538ce1/variables-9dec371ad57e3dd0396f0b2eddb63479.css",
+      "bytes": 3312
+    },
+    "custom.js": {
+      "url": "https://instructure-uploads.s3.amazonaws.com/account_88080000000000001/attachments/125682850/University%20of%20Oklahoma%20Prod-canvas-visualizer.js",
+      "bytes": 862
+    }
+  },
+  "brand": {
+    "ic-brand-primary-darkened-5": "#7E1516",
+    "ic-brand-primary-darkened-10": "#771415",
+    "ic-brand-primary-darkened-15": "#711314",
+    "ic-brand-primary-lightened-5": "#8A2122",
+    "ic-brand-primary-lightened-10": "#902D2E",
+    "ic-brand-primary-lightened-15": "#963839",
+    "ic-brand-button--primary-bgd-darkened-5": "#7E1516",
+    "ic-brand-button--primary-bgd-darkened-15": "#711314",
+    "ic-brand-button--secondary-bgd-darkened-5": "#000000",
+    "ic-brand-button--secondary-bgd-darkened-15": "#000000",
+    "ic-brand-font-color-dark-lightened-15": "#262626",
+    "ic-brand-font-color-dark-lightened-28": "#474747",
+    "ic-link-color-darkened-10": "#771415",
+    "ic-link-color-lightened-10": "#902D2E",
+    "ic-brand-primary": "#841617",
+    "ic-brand-font-color-dark": "#000000",
+    "ic-link-color": "#841617",
+    "ic-brand-button--primary-bgd": "var(--ic-brand-primary)",
+    "ic-brand-button--primary-text": "#ffffff",
+    "ic-brand-button--secondary-bgd": "#000000",
+    "ic-brand-button--secondary-text": "#ffffff",
+    "ic-brand-global-nav-bgd": "#f0f0f0",
+    "ic-brand-global-nav-ic-icon-svg-fill": "#841617",
+    "ic-brand-global-nav-ic-icon-svg-fill--active": "#4e0002",
+    "ic-brand-global-nav-avatar-border": "#323232",
+    "ic-brand-global-nav-logo-bgd": "#841617",
+    "ic-brand-header-image": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/canvas_logomark_only@2x-e197434829.png')",
+    "ic-brand-mobile-global-nav-logo": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/mobile-global-nav-logo-aff8453309.svg')",
+    "ic-brand-watermark": "",
+    "ic-brand-watermark-opacity": "1",
+    "ic-brand-favicon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico')",
+    "ic-brand-apple-touch-icon": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/apple-touch-icon-585e5d997d.png')",
+    "ic-brand-msapplication-tile-color": "#ffffff",
+    "ic-brand-msapplication-tile-square": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-eda8889e7b.png')",
+    "ic-brand-msapplication-tile-wide": "url('https://du11hjcvx0uqb.cloudfront.net/dist/images/windows-tile-wide-44d3cc1060.png')",
+    "ic-brand-right-sidebar-logo": ""
+  },
+  "deps": {}
+}
