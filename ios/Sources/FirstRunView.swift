@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The first run, per `design/ONBOARDING-PROMPT.md`.
 ///
-/// Seven screens: welcome, where in school, what's on your plate, pick a coat,
+/// Seven screens: welcome, where in school, what's on your plate, pick your kin,
 /// name, pick three, your day is set — then Home. Every question changes a screen
 /// after it (`FirstRun.swift` says which), the two questions can be skipped, the
 /// coat and the name cannot, and the step is saved as it moves so a killed app
@@ -19,7 +19,7 @@ struct FirstRunView: View {
     @State private var forward = true
     @State private var school: SchoolLevel?
     @State private var plate: [PlateItem] = []
-    @State private var coat: StarterCoat?
+    @State private var coat: StarterCoat = .mint
     @State private var name = ""
     @State private var shuffleIndex = -1
     @State private var picked: Set<String> = []
@@ -70,7 +70,9 @@ struct FirstRunView: View {
         step = state.firstRunStep
         school = state.schoolLevel
         plate = state.plate
-        coat = state.pickedCoat.flatMap(StarterCoat.init(rawValue:))
+        if let saved = state.pickedCoat.flatMap(StarterCoat.init(rawValue:)) {
+            coat = saved
+        }
         if let saved = state.activeChibi.name { name = saved }
         picked = Set(state.presetMenu().filter(\.isActive).map(\.id))
         if step == .picks, picked.count != 3 { picked = suggested }
@@ -360,15 +362,16 @@ struct FirstRunView: View {
         .accessibilityAddTraits(on ? .isSelected : [])
     }
 
-    // MARK: - 4 · Pick your coat
+    // MARK: - 4 · Pick your kin
     //
-    // Finch's egg pick, https://mobbin.com/screens/9a45c4b2-8ef7-4b6b-af4f-434673afd0c0:
-    // the choices in a ring, one ringed, one button. A coat is a colour of the
-    // one fish, so Sprout is still the only species on screen.
+    // Tolan's "Introducing …", https://mobbin.com/screens/c832ed72-d56a-406f-89c7-31cff999ce19:
+    // one character large, its name, three trait chips, one line, swipe to the
+    // next. Finch's beak colours, https://mobbin.com/screens/a26f7348-f05a-4ce8-a2de-893c70cc2dc9:
+    // a row of plain colour circles, the chosen one ringed.
 
     private var coatScreen: some View {
         VStack(spacing: 0) {
-            Text("Pick your coat")
+            Text("Pick your kin")
                 .font(Theme.font(30, .black))
                 .kerning(-0.7)
                 .foregroundStyle(Theme.ink)
@@ -381,26 +384,29 @@ struct FirstRunView: View {
                             .resizable()
                             .scaledToFill()
                             .opacity(0.9))
-                    .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 32, style: .continuous)
-                        .strokeBorder(Theme.tileRing, lineWidth: 1.5))
-                let cols = [GridItem(.flexible(), spacing: 18), GridItem(.flexible(), spacing: 18)]
-                LazyVGrid(columns: cols, spacing: 18) {
-                    ForEach(StarterCoat.allCases) { c in coatTile(c) }
+                TabView(selection: $coat) {
+                    ForEach(StarterCoat.allCases) { c in
+                        coatPage(c).tag(c)
+                    }
                 }
-                .padding(24)
+                .tabViewStyle(.page(indexDisplayMode: .never))
             }
+            .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 32, style: .continuous)
+                .strokeBorder(Theme.tileRing, lineWidth: 1.5))
             .frame(maxWidth: .infinity)
-            .frame(height: 400)
+            .frame(height: 440)
             .padding(.top, 18)
+
+            HStack(spacing: 14) {
+                ForEach(StarterCoat.allCases) { c in
+                    coatDot(c)
+                }
+            }
+            .padding(.top, 14)
+
             Spacer(minLength: 12)
-            Text("A coat is a colour. Each one is Sprout.")
-                .font(Theme.font(15, .semibold))
-                .foregroundStyle(Theme.muted)
-                .multilineTextAlignment(.center)
-            Spacer(minLength: 12)
-            primaryButton("Meet", enabled: coat != nil) {
-                guard let coat else { return }
+            primaryButton("Meet", enabled: true) {
                 state.pickCoat(coat)
                 swamIn = false; fieldUp = false; fieldLive = false; waved = 0
                 go(to: .name)
@@ -410,34 +416,79 @@ struct FirstRunView: View {
         .padding(.bottom, 20)
     }
 
-    private func coatTile(_ c: StarterCoat) -> some View {
+    /// One Tolan-style page: still, title, three chips, one line.
+    private func coatPage(_ c: StarterCoat) -> some View {
+        let p = c.personality
+        return VStack(spacing: 10) {
+            // The still is a square box with the one-star fish on its floor, so
+            // the picture is lifted to put the fish in the card's upper half.
+            Image("sprout-\(c.rawValue)-1")
+                .resizable()
+                .interpolation(.high)
+                .scaledToFit()
+                .frame(width: 210, height: 210)
+                .offset(y: -48)
+                .padding(.bottom, -48)
+            Text(p.title)
+                .font(Theme.font(22, .black))
+                .kerning(-0.4)
+                .foregroundStyle(Theme.ink)
+            HStack(spacing: 6) {
+                ForEach(p.traits, id: \.self) { trait in
+                    Text(trait)
+                        .font(Theme.font(12.5, .black))
+                        .foregroundStyle(Theme.ink.opacity(0.75))
+                        .padding(.horizontal, 10)
+                        .frame(height: 26)
+                        .background(Capsule().fill(Theme.ink.opacity(0.08)))
+                }
+            }
+            Text(p.line)
+                .font(Theme.font(15, .semibold))
+                .foregroundStyle(Theme.muted)
+                .multilineTextAlignment(.center)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(c.displayName). \(p.title). \(p.traits.joined(separator: ", ")). \(p.line)")
+    }
+
+    /// Finch beak-colour dots under the tank: plain fill, coral ring when chosen.
+    private func coatDot(_ c: StarterCoat) -> some View {
         let on = coat == c
         return Button {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            coat = c
+            withAnimation(.easeInOut(duration: 0.25)) { coat = c }
         } label: {
             Circle()
-                .fill(Theme.card.opacity(on ? 1 : 0.82))
-                .overlay(Circle().strokeBorder(on ? Theme.coral : Theme.tileRing, lineWidth: on ? 3 : 1.5))
-                // The still is a square box with the one-star fish on its floor, so
-                // the picture is lifted to put the fish, not the box, in the middle.
-                .overlay(
-                    Image("sprout-\(c.rawValue)-1")
-                        .resizable()
-                        .interpolation(.high)
-                        .scaledToFit()
-                        .frame(width: 150, height: 150)
-                        .offset(y: -34))
-                .clipShape(Circle())
-                .scaleEffect(on ? 1.06 : 1)
-                .shadow(color: on ? Theme.coral.opacity(0.25) : D.cardShadow, radius: 12, y: 8)
-                .frame(height: 148)
-                .contentShape(Circle())
+                .fill(coatColor(c))
+                .frame(width: 36, height: 36)
+                .padding(4)
+                .overlay {
+                    if on {
+                        Circle().strokeBorder(Theme.coral, lineWidth: 3)
+                    }
+                }
+                .scaleEffect(on ? 1.12 : 1)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.18), value: on)
-        .accessibilityLabel("\(c.rawValue.capitalized) coat")
+        .accessibilityLabel("\(c.displayName) coat")
         .accessibilityAddTraits(on ? .isSelected : [])
+    }
+
+    /// Coat fills for the dots. `Theme.species` keys on species ids, not coats.
+    private func coatColor(_ c: StarterCoat) -> Color {
+        switch c {
+        case .mint: return Theme.hex(0x58CC9F)
+        case .coral: return Theme.hex(0xE07A72)
+        case .butter: return Theme.hex(0xE4C45C)
+        case .lilac: return Theme.hex(0xB08EE0)
+        case .peach: return Theme.hex(0xE9A07C)
+        case .sky: return Theme.hex(0x6BAFE0)
+        }
     }
 
     // MARK: - 5 · The reveal, then the name
