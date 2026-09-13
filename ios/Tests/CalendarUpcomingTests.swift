@@ -128,6 +128,11 @@ final class CalendarUpcomingTests: XCTestCase {
         XCTAssertTrue(f("2026-09-11", 16 * 60).hasPrefix("Tomorrow "))
     }
 
+    func testTheWeekCaptionLeavesAnEmptyWeekQuiet() {
+        XCTAssertEqual(CalendarTitle.caption(open: 0, events: 0), "")
+        XCTAssertEqual(CalendarTitle.caption(open: 2, events: 0), "2 things due this week")
+    }
+
     // MARK: - Grouping: only days with something on them
 
     private let today = DayKey(raw: "2026-09-10")

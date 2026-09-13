@@ -71,7 +71,7 @@ struct KinView: View {
             DecorateEditor().environmentObject(state)
         }
         .sheet(isPresented: $showCard) {
-            KinCardSheet()
+            KinCardSheet(onRename: renameFromCard)
                 .environmentObject(state)
                 .presentationDetents([.fraction(0.92)])
                 .presentationDragIndicator(.visible)
@@ -238,15 +238,24 @@ struct KinView: View {
         .onTapGesture { showCard = true }
         .onLongPressGesture(minimumDuration: 0.5) {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            draftName = kin.name ?? ""
-            renaming = true
+            beginRename()
         }
         .accessibilityElement(children: .ignore)
         .accessibilityAddTraits(.isButton)
         .accessibilityLabel("\(KinPlate.text(name: kin.displayName, level: kin.level, stage: state.friendshipStage)). Opens the card")
-        .accessibilityAction(named: "Rename") {
-            draftName = kin.name ?? ""
-            renaming = true
+        .accessibilityAction(named: "Rename") { beginRename() }
+    }
+
+    private func beginRename() {
+        draftName = kin.name ?? ""
+        renaming = true
+    }
+
+    private func renameFromCard() {
+        showCard = false
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(260))
+            beginRename()
         }
     }
 
