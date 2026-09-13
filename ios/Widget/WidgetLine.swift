@@ -176,18 +176,27 @@ enum WidgetLine {
         return dates.sorted()
     }
 
-    /// Cuts a task name so the whole line stays under `maxLength`. At a word
-    /// break when one falls in the back half of the room, so "Read for one
-    /// class" becomes "Read for one…" rather than "Read for one cl…".
+    /// Cuts a task name so the whole line stays under `maxLength`. A useful
+    /// phrase before a colon stands alone; otherwise the last whole words that
+    /// fit end in an ellipsis.
     static func fit(_ title: String, leaving fixed: Int) -> String {
         let room = maxLength - 1 - fixed
         let clean = title.trimmingCharacters(in: .whitespaces)
         guard clean.count > room, room > 1 else { return clean }
-        var cut = String(clean.prefix(room - 1))
-        if let space = cut.lastIndex(of: " "), cut.distance(from: cut.startIndex, to: space) * 2 >= room {
-            cut = String(cut[..<space])
+        if let colon = clean.firstIndex(of: ":") {
+            let beforeColon = String(clean[..<colon]).trimmingCharacters(in: .whitespaces)
+            if beforeColon.count >= 8, beforeColon.count <= room {
+                return beforeColon
+            }
         }
-        return cut.trimmingCharacters(in: .whitespaces) + "…"
+        let prefix = String(clean.prefix(room - 1))
+        guard let space = prefix.lastIndex(of: " ") else { return "…" }
+        var cut = String(prefix[..<space]).trimmingCharacters(in: .whitespaces)
+        if cut.hasSuffix(":") {
+            cut.removeLast()
+            cut = cut.trimmingCharacters(in: .whitespaces)
+        }
+        return cut + "…"
     }
 
     static func day(_ date: Date, calendar: Calendar) -> String {

@@ -91,6 +91,17 @@ final class StudyTogetherTests: XCTestCase {
         XCTAssertFalse(back.isLive(at: now), "a broken row shows nobody, never a ghost")
     }
 
+    /// Postgres drops ".000" when the fractional part is exactly zero. That spelling
+    /// must still decode; treating it as unreadable would mark a live friend finished.
+    func testAWholeSecondEndTimeStillDecodes() throws {
+        let json = Data(#"{"id":"p","adj":1,"noun":2,"species":"slime","look":"classic","level":1,"ends":"2026-09-12T20:00:00Z"}"#.utf8)
+        let back = try JSONDecoder().decode(FocusPresence.self, from: json)
+        XCTAssertNotEqual(back.endsAt, .distantPast)
+        let expected = ISO8601DateFormatter()
+        expected.formatOptions = [.withInternetDateTime]
+        XCTAssertEqual(back.endsAt, expected.date(from: "2026-09-12T20:00:00Z"))
+    }
+
     func testAnEmptyPayloadDoesNotThrow() throws {
         let back = try JSONDecoder().decode(FocusPresence.self, from: Data("{}".utf8))
         XCTAssertEqual(back.level, 1)

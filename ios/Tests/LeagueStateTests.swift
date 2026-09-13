@@ -161,4 +161,19 @@ final class LeagueStateTests: XCTestCase {
         let back = try Store.decoder.decode(GameState.self, from: data)
         XCTAssertEqual(back.league, s.league)
     }
+
+    // MARK: - The offer name
+
+    func testOfferNameUsesTheIdentityWhenPresent() {
+        let identity = LeagueIdentity(id: "x", token: "y", adjective: 3, noun: 4)
+        let shown = PodSection.offerName(identity: identity)
+        XCTAssertEqual(shown.name, identity.displayName)
+        XCTAssertFalse(shown.isExample)
+    }
+
+    func testOfferNameFallsBackToAnExampleWhenAbsent() {
+        let shown = PodSection.offerName(identity: nil)
+        XCTAssertEqual(shown.name, PodName.name(adjective: 0, noun: 0))
+        XCTAssertTrue(shown.isExample)
+    }
 }

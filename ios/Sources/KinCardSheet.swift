@@ -12,6 +12,8 @@ import SwiftUI
 struct KinCardSheet: View {
     @EnvironmentObject var state: AppState
 
+    let onRename: () -> Void
+
     @State private var share: ShareFile?
     @State private var showCalc = false
 
@@ -32,6 +34,23 @@ struct KinCardSheet: View {
                              friendCode: state.friendCode,
                              firsts: state.game.firsts.rows(for: kin.speciesID),
                              finds: state.finds(for: kin.speciesID))
+
+                Button(action: onRename) {
+                    HStack(spacing: 8) {
+                        Text("Rename")
+                            .font(Theme.font(15, .black))
+                            .foregroundStyle(Theme.ink)
+                        Spacer(minLength: 8)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(Theme.dim)
+                    }
+                    .padding(.horizontal, 4)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Rename")
 
                 Button {
                     let image = StoryCard.render(kin: kin, scene: scene,

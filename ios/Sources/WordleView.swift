@@ -262,7 +262,11 @@ struct WordleView: View {
     /// miss, the answer when the tries run out.
     private var kinLine: some View {
         HStack(spacing: 9) {
-            SproutFace(speciesID: state.activeChibiID, size: 34, plate: Theme.plate(for: state.activeChibiID))
+            SproutFace(speciesID: state.activeChibiID,
+                       level: state.activeChibi.level,
+                       skin: state.activeChibi.skinID,
+                       size: 34,
+                       plate: Theme.plate(for: state.activeChibiID))
             Text(kinCopy)
                 .font(Theme.font(13.5, .heavy))
                 .foregroundStyle(Theme.ink)

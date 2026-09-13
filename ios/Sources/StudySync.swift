@@ -79,7 +79,7 @@ struct FocusPresence: Codable, Equatable, Identifiable {
                   speciesID: try c.decodeIfPresent(String.self, forKey: .species) ?? "slime",
                   lookID: try c.decodeIfPresent(String.self, forKey: .look) ?? "classic",
                   level: try c.decodeIfPresent(Int.self, forKey: .level) ?? 1,
-                  endsAt: FocusPresence.wireDate.date(from: raw) ?? .distantPast)
+                  endsAt: FocusPresence.parseWireDate(raw) ?? .distantPast)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -93,13 +93,25 @@ struct FocusPresence: Codable, Equatable, Identifiable {
         try c.encode(FocusPresence.wireDate.string(from: endsAt), forKey: .ends)
     }
 
-    /// Postgres hands back ISO 8601 with fractional seconds. Both spellings are
-    /// accepted because a server upgrade must not empty the table.
+    /// Postgres hands back ISO 8601 with fractional seconds, and omits the
+    /// fractional part when it is exactly zero. Encode with fractions so a round
+    /// trip stays precise; parse both spellings so one timestamp in a million does
+    /// not decode as already finished.
     static let wireDate: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return f
     }()
+
+    private static let wireDateWhole: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
+
+    static func parseWireDate(_ raw: String) -> Date? {
+        wireDate.date(from: raw) ?? wireDateWhole.date(from: raw)
+    }
 }
 
 // MARK: - Joining
@@ -186,7 +198,7 @@ struct SupabaseStudyClient: StudyClient {
         ])
         let raw = String(decoding: data, as: UTF8.self)
             .trimmingCharacters(in: CharacterSet(charactersIn: "\"\n\r "))
-        guard let ends = FocusPresence.wireDate.date(from: raw) else { throw StudyError.badResponse }
+        guard let ends = FocusPresence.parseWireDate(raw) else { throw StudyError.badResponse }
         return ends
     }
 

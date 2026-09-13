@@ -759,7 +759,10 @@ struct HomeView: View {
         case .notify:
             offerShell(title: "Want \(name) to check in tomorrow evening?") {
                 HStack(spacing: 10) {
-                    KinChip(speciesID: state.activeChibiID, size: 30)
+                    KinChip(speciesID: state.activeChibiID,
+                            level: state.activeChibi.level,
+                            skin: state.activeChibi.skinID,
+                            size: 30)
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
                             Text("From \(name)")
