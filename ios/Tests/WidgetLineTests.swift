@@ -160,6 +160,24 @@ final class WidgetLineTests: XCTestCase {
         XCTAssertEqual(all.count, 30)
     }
 
+    // MARK: - Fitting task titles
+
+    func testFitCutsALongTitleAtItsColon() {
+        XCTAssertEqual(WidgetLine.fit("Lab writeup: Momentum", leaving: 22), "Lab writeup")
+    }
+
+    func testFitKeepsTheWordsBeforeALaterColon() {
+        XCTAssertEqual(WidgetLine.fit("Problem Set 7: Rotational Inertia", leaving: 22), "Problem Set 7")
+    }
+
+    func testFitNeverCutsThroughAWord() {
+        XCTAssertEqual(WidgetLine.fit("Read extraordinarily long notes", leaving: 22), "Read…")
+    }
+
+    func testFitLeavesAShortTitleUntouched() {
+        XCTAssertEqual(WidgetLine.fit("Bio quiz", leaving: 22), "Bio quiz")
+    }
+
     // MARK: - Under 40, no scolding
 
     func testEveryLineIsUnderFortyCharacters() {
