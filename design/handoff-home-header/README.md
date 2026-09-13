@@ -110,4 +110,4 @@ meter. Ours is the pips + words, from the Kin tab's own plate.
 ## What comes back
 
 `BUILD-NOTES.md` here: deviations, and shots of states a–e plus XL from the simulator
-(`design/handoff-home-header/shots/built-*.png`).
+(`design/handoff-home-header/shots/built-*.jpg`).
