@@ -300,9 +300,12 @@ struct PodSection: View {
     /// of this, never counted against it.
     private static let rowsShown = 8
 
-    /// A name the shipped word lists can really produce, used as the example in the
-    /// offer. Built rather than typed, so it cannot drift from `podnames.json`.
-    private var exampleName: String { PodName.name(adjective: 0, noun: 0) }
+    /// What the offer row prints for the name: this phone's real pod name when the
+    /// bridge has already minted one, otherwise a built example flagged as such.
+    static func offerName(identity: LeagueIdentity?) -> (name: String, isExample: Bool) {
+        if let identity { return (identity.displayName, false) }
+        return (PodName.name(adjective: 0, noun: 0), true)
+    }
 
     @ViewBuilder private var podSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -347,7 +350,17 @@ struct PodSection: View {
                 offerRow("Your kin") { SproutFace(speciesID: state.activeChibiID, size: 24) }
                 offerRow("Its stars") { StarPips(level: state.activeChibi.level, size: 9, spacing: 2.5) }
                 offerRow("A name this app picks") {
-                    Text(exampleName).font(Theme.font(12.5, .black)).foregroundStyle(Theme.ink)
+                    let shown = Self.offerName(identity: state.league.identity)
+                    HStack(spacing: 6) {
+                        Text(shown.name)
+                            .font(Theme.font(12.5, .black))
+                            .foregroundStyle(Theme.ink)
+                        if shown.isExample {
+                            Text("example")
+                                .font(Theme.font(12.5, .bold))
+                                .foregroundStyle(Theme.muted)
+                        }
+                    }
                 }
                 offerRow("Coins you earned this week", last: true) {
                     HStack(spacing: 4) {
