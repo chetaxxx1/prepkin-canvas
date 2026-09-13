@@ -1,5 +1,16 @@
 import SwiftUI
 
+enum CalendarTitle {
+    static func caption(open: Int, events: Int) -> String {
+        var parts: [String] = []
+        if open > 0 {
+            parts.append(open == 1 ? "1 thing due this week" : "\(open) things due this week")
+        }
+        if events > 0 { parts.append(events == 1 ? "1 event" : "\(events) events") }
+        return parts.joined(separator: " · ")
+    }
+}
+
 /// The Calendar tab: what is coming, on days. Home is "what do I do right now";
 /// this is the same work laid out on its due days, plus the course calendar's
 /// events and anything the student put on a day themselves.
@@ -170,25 +181,34 @@ struct CalendarView: View {
     /// chevron opens the month; the pill comes back when the ticker has left
     /// today's week.
     private var titleRow: some View {
-        HStack(spacing: 6) {
+        let caption = titleCaption
+        return HStack(alignment: .top, spacing: 6) {
             Button {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 monthSheet = true
             } label: {
-                HStack(alignment: .lastTextBaseline, spacing: 7) {
-                    Text(monthName(tickerMiddle))
-                        .font(Theme.font(34, .black))
-                        .foregroundStyle(Theme.ink)
-                        // One line, always: when the Today pill is up beside a fat
-                        // coin badge, "September" shrinks rather than breaks or
-                        // trails off — Outlook's header does the same.
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 15, weight: .black))
-                        .foregroundStyle(Theme.muted)
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(alignment: .lastTextBaseline, spacing: 7) {
+                        Text(monthName(tickerMiddle))
+                            .font(Theme.font(34, .black))
+                            .foregroundStyle(Theme.ink)
+                            // One line, always: when the Today pill is up beside a fat
+                            // coin badge, "September" shrinks rather than breaks or
+                            // trails off — Outlook's header does the same.
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.6)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 15, weight: .black))
+                            .foregroundStyle(Theme.muted)
+                    }
+                    .frame(height: 44)
+                    if !caption.isEmpty {
+                        Text(caption)
+                            .font(Theme.font(12.5, .heavy))
+                            .foregroundStyle(Theme.muted)
+                            .contentTransition(.numericText())
+                    }
                 }
-                .frame(height: 44)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -226,8 +246,15 @@ struct CalendarView: View {
         }
         .animation(pageMotion, value: tickerHoldsToday)
         .padding(.horizontal, Theme.gutter)
-        .frame(height: 44)
+        .frame(minHeight: 44, alignment: .top)
         .padding(.bottom, 4)
+    }
+
+    private var titleCaption: String {
+        let days = weekDays(from: tickerWeek)
+        let open = days.flatMap { state.tasks(on: $0) }.filter { !$0.done }.count
+        let events = days.flatMap { state.events(on: $0) }.count
+        return CalendarTitle.caption(open: open, events: events)
     }
 
     // MARK: - Out to a real calendar
