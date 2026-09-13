@@ -174,13 +174,19 @@ test.before(async () => {
   if (real) await h.sw((o) => syncNow(o), SCHOOL_A);
 });
 
-test.after(async () => {
-  // Folded into what earlier runs found, so a re-run of a few schools
-  // (SCHOOLS=a,b) updates their rows and keeps everyone else's.
+/// Folded into what earlier runs found, so a re-run of a few schools
+/// (SCHOOLS=a,b) updates their rows and keeps everyone else's. Written after
+/// every school, not at the end: a run of seventy schools takes hours, and a
+/// Mac that reboots in hour two should not take hour one with it.
+function saveReport() {
   const file = path.join(OUT, 'report.json');
   let previous = {};
   try { previous = JSON.parse(fs.readFileSync(file, 'utf8')).schools ?? {}; } catch {}
   fs.writeFileSync(file, `${JSON.stringify({ at: new Date().toISOString(), real, schools: { ...previous, ...report } }, null, 2)}\n`);
+}
+
+test.after(async () => {
+  saveReport();
   await h?.close(); await server?.stop();
 });
 
@@ -236,6 +242,7 @@ for (const school of schools()) {
     const { errorLog = [] } = await h.storage();
     r.errors = [...ours, ...errorLog.map((e) => `${e.where}: ${e.message}`)];
     await h.sw(() => chrome.storage.local.remove('errorLog'));
+    saveReport();
 
     // What must hold at every school.
     for (const [name, p] of Object.entries(r.pages)) {

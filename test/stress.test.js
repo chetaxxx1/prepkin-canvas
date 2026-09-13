@@ -53,8 +53,10 @@ test('X1 a slow school still syncs, in parallel not in series', { timeout: 90_00
   const [status, ms] = await timed(sync);
   assert.equal(status.ok, true);
   assert.equal((await phone.fetchTodo()).tasks.length, 160);
-  // 8 courses x (assignments + groups) + 3 = 19 calls at 700 ms; serial would be ~13 s.
-  assert.ok(ms < 6000, `took ${ms} ms`);
+  // 8 courses x (assignments + groups) + 3 = 19 calls at 700 ms; serial would be
+  // ~13 s. Six courses read at a time (the bucket, X9): two rounds of 1.4 s
+  // plus the three single calls is about 5 s on a quiet Mac.
+  assert.ok(ms < 8000, `took ${ms} ms`);
 });
 
 test('X2 a school that never answers cannot hang the other school forever', { timeout: 90_000 }, async () => {

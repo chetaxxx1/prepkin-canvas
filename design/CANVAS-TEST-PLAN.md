@@ -646,13 +646,14 @@ policy lists each school's other names (`canvas.dartmouth.edu`,
 | X9 | 20 courses on a school with Canvas's bucket: every course arrives on the first sync, at most 6 in flight, 0 refusals | pass |
 | X10 | bucket already half full from page loads: refusals happen, the wait-and-retry recovers every course | pass |
 | C29 | next-page link under the school's other name: 150 of 150 read, no request leaves for the other host | pass |
-| S1–S73 | each harvested school's theme on the real sandbox: classes on, buddy mounted, hooks match, paper in both papers, no errors | see `design/signoff/canvas-schools/report.json` |
-| S (fake) | the same themes on the fake's skeleton pages, minutes for all | see `design/signoff/canvas-schools-fake/report.json` |
-| V1 | Spanish; Arabic (Canvas flips to right-to-left) | see `design/signoff/canvas-variants/` |
-| V2 | List View and Recent Activity dashboards | " |
-| V3 | colour overlays hidden (George's own setting): hero stays at opacity 0, course colour stays on the title | " |
-| V4 | collapsed global nav | " |
-| V5 | High Contrast on, on a real page: no class, no stylesheet of ours | " |
+| S1–S73 | each harvested school's theme on the real sandbox: classes on, buddy mounted, hooks match, paper in both papers, no errors | 73 of 73 pass (2026-09-13 01:15; `design/signoff/canvas-schools/report.json`) |
+| S (fake) | the same themes on the fake's skeleton pages, minutes for all | 73 of 73 pass |
+| V1 | Spanish; Arabic (Canvas flips to right-to-left): hooks, paper, buddy on the page, no sideways scroll | pass — after a fix: the panel opened off the left edge in RTL (content.js `data-flip`) |
+| V2 | List View and Recent Activity dashboards (Canvas's route is `PUT /dashboard/view`, not the API) | pass |
+| V3 | colour overlays hidden (George's own setting): the hero keeps whatever opacity Canvas wrote, course colour stays on the title | pass |
+| V4 | collapsed global nav | pass |
+| V5 | High Contrast on, on a real page: no class, no stylesheet of ours | pass |
+| V6 | a 620px window: Canvas folds its sidebar and rail away; skin on, buddy there | pass |
 
 **Dartmouth, live, in George's Chrome (read-only, 12:55).** Dashboard: rail,
 logo, two cards with heroes and action rows, Coming Up, Recent Feedback, the

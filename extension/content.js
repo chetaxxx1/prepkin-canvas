@@ -2007,9 +2007,15 @@ function placeSprite(place = spritePlace()) {
     h.style.setProperty('--pk-tab-h', `${place.side === 'left' ? 120 : place.side === 'tank' ? 108 : Math.round(place.h * 0.62)}px`);
     h.style.setProperty('--pk-tab-bottom', `${place.side === 'left' ? place.bottom : 0}px`);
     if (place.side === 'tank') {
-      // The panel takes the column to his left (360 + 12), so the launcher lands on the band.
-      h.style.position = 'absolute'; h.style.left = `${place.abs.left - 372}px`; h.style.top = `${place.abs.top + place.h - 108}px`; h.style.right = 'auto'; h.style.bottom = 'auto';
+      // The panel takes the column to his left (360 + 12), so the launcher
+      // lands on the band. With no room there — Canvas read right-to-left
+      // puts the sidebar on the left edge — it takes the column to his right
+      // instead; off the page's edge it was a sideways scroll on every page.
+      const flip = place.abs.left - 372 < 0;
+      h.toggleAttribute('data-flip', flip);
+      h.style.position = 'absolute'; h.style.left = `${flip ? place.abs.left : place.abs.left - 372}px`; h.style.top = `${place.abs.top + place.h - 108}px`; h.style.right = 'auto'; h.style.bottom = 'auto';
     } else {
+      h.removeAttribute('data-flip');
       h.style.position = ''; h.style.left = ''; h.style.top = ''; h.style.right = ''; h.style.bottom = '';
     }
   }

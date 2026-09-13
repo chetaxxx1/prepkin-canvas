@@ -1,0 +1,88 @@
+(node:4039) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ bcourses.berkeley.edu: the paper, the buddy and every hook survive the school's theme (349207.197083ms)
+✔ browardschools.instructure.com: the paper, the buddy and every hook survive the school's theme (69742.452709ms)
+✔ bruinlearn.ucla.edu: the paper, the buddy and every hook survive the school's theme (75064.296125ms)
+✔ byu.instructure.com: the paper, the buddy and every hook survive the school's theme (88970.165292ms)
+✔ canvas.asu.edu: the paper, the buddy and every hook survive the school's theme (83536.129459ms)
+✔ canvas.auckland.ac.nz: the paper, the buddy and every hook survive the school's theme (86061.745333ms)
+✔ canvas.bham.ac.uk: the paper, the buddy and every hook survive the school's theme (63435.416792ms)
+✔ canvas.brown.edu: the paper, the buddy and every hook survive the school's theme (53778.924833ms)
+✔ canvas.colorado.edu: the paper, the buddy and every hook survive the school's theme (51029.458791ms)
+✔ canvas.cornell.edu: the paper, the buddy and every hook survive the school's theme (44862.34125ms)
+✔ canvas.dartmouth.edu: the paper, the buddy and every hook survive the school's theme (45823.810333ms)
+✔ canvas.duke.edu: the paper, the buddy and every hook survive the school's theme (66153.518125ms)
+✔ canvas.emory.edu: the paper, the buddy and every hook survive the school's theme (63407.096583ms)
+✔ canvas.fsu.edu: the paper, the buddy and every hook survive the school's theme (56525.325791ms)
+✔ canvas.harvard.edu: the paper, the buddy and every hook survive the school's theme (50350.059917ms)
+✔ canvas.hull.ac.uk: the paper, the buddy and every hook survive the school's theme (73515.33475ms)
+✔ canvas.iastate.edu: the paper, the buddy and every hook survive the school's theme (66842.173875ms)
+✔ canvas.illinois.edu: the paper, the buddy and every hook survive the school's theme (54071.827416ms)
+✔ canvas.its.virginia.edu: the paper, the buddy and every hook survive the school's theme (44685.655375ms)
+✔ canvas.ku.edu: the paper, the buddy and every hook survive the school's theme (62945.075542ms)
+✔ canvas.liberty.edu: the paper, the buddy and every hook survive the school's theme (75131.557458ms)
+✔ canvas.liverpool.ac.uk: the paper, the buddy and every hook survive the school's theme (47229.701542ms)
+✔ canvas.lms.unimelb.edu.au: the paper, the buddy and every hook survive the school's theme (56808.204583ms)
+✔ canvas.mit.edu: the paper, the buddy and every hook survive the school's theme (45847.463375ms)
+✔ canvas.nd.edu: the paper, the buddy and every hook survive the school's theme (52932.282167ms)
+✔ canvas.northwestern.edu: the paper, the buddy and every hook survive the school's theme (51198.432416ms)
+✔ canvas.oregonstate.edu: the paper, the buddy and every hook survive the school's theme (44744.024042ms)
+✔ canvas.ox.ac.uk: the paper, the buddy and every hook survive the school's theme (65416.365167ms)
+✔ canvas.rice.edu: the paper, the buddy and every hook survive the school's theme (74368.454125ms)
+✔ canvas.stanford.edu: the paper, the buddy and every hook survive the school's theme (76968.823292ms)
+✔ canvas.sussex.ac.uk: the paper, the buddy and every hook survive the school's theme (75922.303375ms)
+✔ canvas.sydney.edu.au: the paper, the buddy and every hook survive the school's theme (64342.960584ms)
+✔ canvas.tamu.edu: the paper, the buddy and every hook survive the school's theme (57266.287375ms)
+✔ canvas.txstate.edu: the paper, the buddy and every hook survive the school's theme (58232.212125ms)
+✔ canvas.ubc.ca: the paper, the buddy and every hook survive the school's theme (98721.946458ms)
+✔ canvas.ucdavis.edu: the paper, the buddy and every hook survive the school's theme (72617.626916ms)
+✔ canvas.uchicago.edu: the paper, the buddy and every hook survive the school's theme (73682.420459ms)
+✔ canvas.ucsd.edu: the paper, the buddy and every hook survive the school's theme (73161.211292ms)
+✔ canvas.umn.edu: the paper, the buddy and every hook survive the school's theme (73495.281459ms)
+✔ canvas.unl.edu: the paper, the buddy and every hook survive the school's theme (67331.822042ms)
+✔ canvas.uoregon.edu: the paper, the buddy and every hook survive the school's theme (78810.267417ms)
+✔ canvas.upenn.edu: the paper, the buddy and every hook survive the school's theme (114998.517083ms)
+✔ canvas.uw.edu: the paper, the buddy and every hook survive the school's theme (60932.161625ms)
+✔ canvas.vt.edu: the paper, the buddy and every hook survive the school's theme (66288.432667ms)
+✔ canvas.wisc.edu: the paper, the buddy and every hook survive the school's theme (89559.859833ms)
+✔ ccsd.instructure.com: the paper, the buddy and every hook survive the school's theme (108114.600042ms)
+✔ courseworks2.columbia.edu: the paper, the buddy and every hook survive the school's theme (84644.227708ms)
+✔ dcps.instructure.com: the paper, the buddy and every hook survive the school's theme (80660.712084ms)
+✔ gatech.instructure.com: the paper, the buddy and every hook survive the school's theme (71685.66725ms)
+✔ hcpss.instructure.com: the paper, the buddy and every hook survive the school's theme (78753.088208ms)
+✔ ilearn.laccd.edu: the paper, the buddy and every hook survive the school's theme (74742.883416ms)
+✔ iu.instructure.com: the paper, the buddy and every hook survive the school's theme (66448.527208ms)
+✔ learn.canvas.net: the paper, the buddy and every hook survive the school's theme (59574.710375ms)
+✔ learn.maricopa.edu: the paper, the buddy and every hook survive the school's theme (87935.761708ms)
+✔ mdc.instructure.com: the paper, the buddy and every hook survive the school's theme (68500.931042ms)
+✔ osu.instructure.com: the paper, the buddy and every hook survive the school's theme (66272.956708ms)
+✔ pcc.instructure.com: the paper, the buddy and every hook survive the school's theme (67103.50725ms)
+✔ princeton.instructure.com: the paper, the buddy and every hook survive the school's theme (66255.582458ms)
+✔ psu.instructure.com: the paper, the buddy and every hook survive the school's theme (66684.997291ms)
+✔ q.utoronto.ca: the paper, the buddy and every hook survive the school's theme (66571.411583ms)
+✔ sbcc.instructure.com: the paper, the buddy and every hook survive the school's theme (65961.515959ms)
+✔ sdccd.instructure.com: the paper, the buddy and every hook survive the school's theme (67546.170042ms)
+✔ sfusd.instructure.com: the paper, the buddy and every hook survive the school's theme (78533.59475ms)
+✔ ufl.instructure.com: the paper, the buddy and every hook survive the school's theme (91871.270083ms)
+✔ uiowa.instructure.com: the paper, the buddy and every hook survive the school's theme (56617.703167ms)
+✔ umd.instructure.com: the paper, the buddy and every hook survive the school's theme (320831.796541ms)
+✖ umich.instructure.com: the paper, the buddy and every hook survive the school's theme (942888.898042ms)
+✖ test/schools.test.js (6048636.700084ms)
+ℹ tests 68
+ℹ suites 0
+ℹ pass 66
+ℹ fail 0
+ℹ cancelled 2
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6048594.519291
+
+✖ failing tests:
+
+test at test/schools.test.js:202:3
+✖ umich.instructure.com: the paper, the buddy and every hook survive the school's theme (942888.898042ms)
+  'test timed out after 900000ms'
+
+test at test/schools.test.js:1:1
+✖ test/schools.test.js (6048636.700084ms)
+  'Promise resolution is still pending but the event loop has already resolved'

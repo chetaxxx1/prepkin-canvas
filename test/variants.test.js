@@ -100,7 +100,7 @@ test.before(async () => {
 test.after(async () => {
   // Alex back the way the seed left them, whatever happened above.
   await asStudent('PUT', '/api/v1/users/self', { user: { locale: 'en' } }).catch(() => {});
-  await asStudent('PUT', '/api/v1/users/self/dashboard_view', { dashboard_view: 'cards' }).catch(() => {});
+  await asStudent('PUT', '/dashboard/view', { dashboard_view: 'cards' }).catch(() => {});
   await asStudent('PUT', '/api/v1/users/self/settings', { hide_dashcard_color_overlays: false, collapse_global_nav: false }).catch(() => {});
   await asStudent('DELETE', '/api/v1/users/self/features/flags/high_contrast').catch(() => {});
   await h?.close(); await server?.stop();
@@ -121,6 +121,13 @@ for (const locale of ['es', 'ar']) {
         assert.ok(m.paper, `${name}: ground is ${m.content}`);
       }
       if (locale === 'ar') assert.equal(dash.dir, 'rtl', 'Canvas really went right-to-left');
+      // Nothing of ours may hang off the page's edge: right-to-left Canvas
+      // keeps the sidebar on the left, and a panel opened to the buddy's left
+      // was a sideways scroll on every page.
+      await open('/');
+      const edges = await page.evaluate(() => { const b = document.getElementById('prepkin-buddy')?.getBoundingClientRect(); return { scrollWidth: document.documentElement.scrollWidth, innerWidth, buddy: b ? [Math.round(b.left), Math.round(b.right)] : null }; });
+      assert.ok(edges.buddy && edges.buddy[0] >= 0 && edges.buddy[1] <= edges.innerWidth, `the buddy's box sits on the page: ${JSON.stringify(edges)}`);
+      assert.ok(edges.scrollWidth <= edges.innerWidth, `no sideways scroll: ${edges.scrollWidth} wide in a ${edges.innerWidth} window`);
       assert.deepEqual(await noErrors(), []);
     } finally {
       await asStudent('PUT', '/api/v1/users/self', { user: { locale: 'en' } });
@@ -130,7 +137,7 @@ for (const locale of ['es', 'ar']) {
 
 for (const view of ['planner', 'activity']) {
   test(`V2 the ${view === 'planner' ? 'List View' : 'Recent Activity'} dashboard: skin on, buddy there, nothing errors`, { timeout: 600_000 }, async () => {
-    const set = await asStudent('PUT', '/api/v1/users/self/dashboard_view', { dashboard_view: view });
+    const set = await asStudent('PUT', '/dashboard/view', { dashboard_view: view });
     assert.equal(set.status, 200, set.text);
     try {
       await open('/');
@@ -139,7 +146,7 @@ for (const view of ['planner', 'activity']) {
       assert.ok(m.paper, `ground is ${m.content}`);
       assert.deepEqual(await noErrors(), []);
     } finally {
-      await asStudent('PUT', '/api/v1/users/self/dashboard_view', { dashboard_view: 'cards' });
+      await asStudent('PUT', '/dashboard/view', { dashboard_view: 'cards' });
     }
   });
 }
