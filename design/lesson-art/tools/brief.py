@@ -10,7 +10,7 @@ import sys, textwrap
 sys.path.insert(0, __import__("os").path.dirname(__import__("os").path.abspath(__file__)))
 import plan as P
 
-def part_c(ids):
+def part_c(ids, owed_only=False):
     out = []
     out.append(textwrap.dedent(f"""\
     Read /workspace/prepkin/LESSON-ART-RULES.md first. This batch is {len(ids)} lesson{'s' if len(ids) != 1 else ''}. Do them
@@ -20,6 +20,8 @@ def part_c(ids):
     """))
     for k, lid in enumerate(ids, 1):
         L = P.load(lid); ps = P.paintings(L)
+        if owed_only: ps = [(n, c) for n, c in ps if not P.source_path(lid, c)]
+        if not ps: continue
         out.append("=" * 71)
         out.append(f"LESSON {k} of {len(ids)}: {lid} \"{L['title']}\". {len(ps)} pictures.")
         out.append(f"Folder: /workspace/prepkin/lesson-art/{lid}/   Zip it as {lid}.zip when done.\n")
@@ -34,4 +36,5 @@ def part_c(ids):
     return "\n".join(out)
 
 if __name__ == "__main__":
-    print(part_c(sys.argv[1:]))
+    args = sys.argv[1:]; owed = "--owed" in args
+    print(part_c([a for a in args if not a.startswith("--")], owed))

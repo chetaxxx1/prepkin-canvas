@@ -3858,6 +3858,164 @@
     ]
   },
   {
+    "id": "ppl-10",
+    "title": "A compliment that sticks is specific",
+    "track": "people",
+    "minutes": 3,
+    "blurb": "'Great job' is forgotten by lunch. You'll see why specific praise sticks, what Carol Dweck's research says to praise so it helps, and the two places a compliment counts double.",
+    "takeaway": "Name the thing, praise the choice, say what it did for you.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-01",
+        "eyebrow": "Great job",
+        "body": "Your friend nails a presentation and you say 'great job!' They say thanks, and by lunch neither of you remembers it. It was kind and it was also nothing, and there's a version of it they'd keep for years."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-02",
+        "eyebrow": "What a compliment is",
+        "body": "A compliment is telling someone what they did well so they know to do it again. 'Great job' has no information in it, so it can't be repeated. Specific praise can, which is the whole difference."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-03",
+        "eyebrow": "Name the thing",
+        "body": "'The way you paused before the numbers made everyone look up.' Now they know what worked. That sentence is worth fifty 'great jobs', because it proves you were paying attention and nobody can fake it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-04",
+        "eyebrow": "The choice, not the talent",
+        "body": "Praise what they chose, not what they are. Carol Dweck's studies found kids told 'you're so smart' picked easier tasks next time, while kids praised for effort picked harder ones, and adults don't behave much differently."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-05",
+        "eyebrow": "Say what it did for you",
+        "body": "Add the effect: 'Your notes got me through that exam.' Now it isn't a rating, it's a thank-you with evidence. People remember what they did for you long after they've forgotten being rated."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-06",
+        "eyebrow": "Where it counts double",
+        "body": "In front of others, and to their boss. Praise in a group costs you nothing and gives them status. A two-line email to their manager can change their year. Both are rare, which is exactly why both land."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-07",
+        "eyebrow": "Receiving one",
+        "body": "When you get a compliment, say 'thank you' and stop. Not 'oh, it was nothing'. Deflecting tells them their judgement was wrong. Take it, and give one back later, not in the same breath, or it reads as a trade."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-08",
+        "eyebrow": "Soon, not perfect",
+        "body": "Say it within a day. A specific compliment a week late is still good, and a perfect one you never sent is worth nothing. A two-line text counts. The catch is it has to be true, or they'll know within a second."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl10-09",
+        "eyebrow": "One a day",
+        "body": "Try one real compliment a day for a week: specific, about a choice, with the effect on you. Watch how people's faces change, and then watch how they start treating you. It's uncomfortable for about three days."
+      },
+      {
+        "kind": "key",
+        "body": "Name the thing, praise the choice, say what it did for you. Say it within a day."
+      },
+      {
+        "kind": "check",
+        "question": "Your roommate cooked dinner for everyone. Which compliment will they remember?",
+        "choices": [
+          "'Timing the rice with the curry made it all land hot. Thank you.'",
+          "'You're honestly such a natural cook, that was really amazing.'",
+          "'Great dinner! We should honestly do this every single week.'"
+        ],
+        "answer": 0,
+        "why": "It names a choice they made and what it did for you, while the other two rate them and give them nothing to do again."
+      }
+    ]
+  },
+  {
+    "id": "ppl-11",
+    "title": "Roommate rules before the first fight",
+    "track": "people",
+    "minutes": 3,
+    "blurb": "The dishes fight is never about the dishes. You'll see the twenty-minute talk to have in week one, the six things it settles, and the sentence for when the rule slips anyway.",
+    "takeaway": "Set the rules early, out loud, when nobody's angry yet.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-01",
+        "eyebrow": "The dishes",
+        "body": "Week six and the sink is full again. You say nothing, then you say it badly, and now it's a fight about dishes that isn't about dishes. It's about a rule nobody ever said out loud, and you both had one."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-02",
+        "eyebrow": "What a rule is",
+        "body": "A roommate rule is a shared expectation said out loud. Unsaid, each of you has one anyway, and they're different. Every roommate fight is two unsaid rules meeting in the kitchen at midnight."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-03",
+        "eyebrow": "The six things",
+        "body": "Guests, and overnight guests. Noise, and quiet hours. Cleaning, who and when. Shared food. Temperature. Bills, and who pays first. Twenty minutes in week one covers all six, and it's the least awkward those topics will ever be."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-04",
+        "eyebrow": "Week one, not week six",
+        "body": "Have it in week one, over food, before anything's gone wrong. 'Can we do the boring roommate talk now so we never need to?' Nobody's angry yet, which is exactly why it works and why week six doesn't."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-05",
+        "eyebrow": "Write it down",
+        "body": "Put the answers somewhere visible: a whiteboard, a note on the fridge, a shared note on your phones. Nobody's run a study on fridge notes, but memory bends toward whatever suits you, and yours bends as far as theirs."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-06",
+        "eyebrow": "When it slips",
+        "body": "It will slip. Say the rule, not the person: 'We said dishes same day. Can you get those tonight?' Not 'you never clean up.' The first is a reminder and the second is a fight, and they take the same ten seconds."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-07",
+        "eyebrow": "Money, early",
+        "body": "Bills are where roommates end. Decide who pays the landlord, who pays for the internet, and by what day, and use an app that shows who owes what. Never let it reach two months, because by then it's a loan."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-08",
+        "eyebrow": "The monthly reset",
+        "body": "Once a month, five minutes: 'Anything bugging you?' Ask it before you have something to say yourself. Small things said at five minutes never become the big thing said at midnight, and most of the time the answer is no."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-ppl11-09",
+        "eyebrow": "When it's not working",
+        "body": "Some pairs don't work, and that's nobody's crime. If the talk and the reset both fail, go to the RA or housing early. A room change in October beats a bad year, and the office has done it a hundred times."
+      },
+      {
+        "kind": "key",
+        "body": "Six things in week one, written down. Say the rule, not the person, when it slips."
+      },
+      {
+        "kind": "check",
+        "question": "Your roommate left dishes again after you agreed on same-day. What do you say?",
+        "choices": [
+          "'We said same day. Can you get those tonight?'",
+          "'You never clean up after yourself, ever.'",
+          "Nothing. Just wash them and keep the peace."
+        ],
+        "answer": 0,
+        "why": "It names the shared rule and asks for one action, while accusing makes it about character and silence teaches them the rule is gone."
+      }
+    ]
+  },
+  {
     "id": "fin-11",
     "title": "Why the minimum payment is a trap",
     "track": "finance",
@@ -4571,6 +4729,1191 @@
         ],
         "answer": 0,
         "why": "By December the pot was divided months ago. Mid-year is while your manager still has something to argue for, and still has time to argue for it."
+      }
+    ]
+  },
+  {
+    "id": "work-4",
+    "title": "How to read an offer letter",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "An offer letter has five parts and most people read one. You'll see what each line promises, why a 10% target bonus isn't $6,000, and the two-line reply that adds what's missing.",
+    "takeaway": "Base is promised, bonus is hoped, and anything not in the letter isn't real yet.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work4-01",
+        "eyebrow": "The moment",
+        "body": "The offer's in your inbox and you've read it once, fast, hunting for the number. Now you want to sign tonight before it disappears. It won't. There are five parts in that letter and the salary is only one of them."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-02",
+        "eyebrow": "What it is",
+        "body": "An offer letter is the company's written promise of a job: what you get and when you start. If something isn't in the letter, it isn't promised yet, whatever anyone said to you in the interview."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-03",
+        "eyebrow": "The real number",
+        "body": "Base salary is the only number you can count on. $60,000 a year is $5,000 a month before tax and roughly $4,000 after, depending on your state. Build your rent and your budget on the after-tax number."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-04",
+        "eyebrow": "The maybe number",
+        "body": "A 10% target bonus sounds like $6,000. Target means if the company hits its goals and you hit yours. Some years it pays in full, some years nothing, and the letter doesn't say which year this is."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-05",
+        "eyebrow": "Said out loud",
+        "body": "In the interview the manager said you could work from home on Fridays, and it's not in the letter. Spoken promises leave when that manager leaves. If it matters to you, ask for it in writing before you sign anything."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-06",
+        "eyebrow": "Ask in writing",
+        "body": "Asking is normal and nobody minds. One short reply does it: thank them, name the one thing, say you'll sign once it's added. Keep it warm and short, and don't pile three more requests on top of it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-07",
+        "eyebrow": "The deadline",
+        "body": "'Please sign by Friday' is standard, and asking for a week is standard too. Pew found in 2023 that most people who asked for more when hired got some of it. A place that pulls the offer for asking has told you something."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-08",
+        "eyebrow": "The small print",
+        "body": "Most offers are contingent, which means the job is real once a few checks clear: a background check, proof of your degree, sometimes a drug test. Until they clear, don't hand in notice anywhere else."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work4-09",
+        "eyebrow": "Then sign",
+        "body": "Now you know what's promised, what's hoped, and what's missing. Reply with the signed letter and your start date in one line, and keep a copy. You'll want it at your first review, when someone asks what you were told."
+      },
+      {
+        "kind": "key",
+        "body": "Base is promised. Bonus is hoped. Anything not in the letter isn't real yet."
+      },
+      {
+        "kind": "check",
+        "question": "Your offer says $60,000 base with a 10% target bonus. What can you count on?",
+        "choices": [
+          "$60,000, plus the bonus if goals are hit",
+          "$66,000, since the target is in writing",
+          "$60,000, plus a smaller guaranteed bonus"
+        ],
+        "answer": 0,
+        "why": "Target means conditional on the company's year and on yours, so you budget on the base and treat a paid bonus as extra."
+      }
+    ]
+  },
+  {
+    "id": "work-5",
+    "title": "Your first week: write everything down",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "Nobody expects work from you in week one; they expect questions and a notebook. You'll see the four lists to start on day one, why a question costs more every month, and the one thing to ask your manager.",
+    "takeaway": "Week one is for collecting, and asking is cheapest right now.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work5-01",
+        "eyebrow": "Day one",
+        "body": "You get a laptop, a badge, and a wall of names. By lunch you've met twelve people and can name three, and nobody minds. Week one isn't a test you can fail, it's a collection you're starting."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-02",
+        "eyebrow": "What it is",
+        "body": "Onboarding is the company's word for learning how it actually works. Nobody expects output from you yet. They expect you to ask, watch, and write things down, and that's the whole job for a couple of weeks."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-03",
+        "eyebrow": "Four lists",
+        "body": "Start four lists in the first hour and keep them all month. Names, and what each person owns. Words and acronyms you didn't know. Where things live. Questions you haven't asked yet."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-04",
+        "eyebrow": "Questions are free",
+        "body": "Every question is free in the first month. 'What does that acronym mean?' costs you nothing in week one. In month three the same question costs a little pride, and by month six people assume you already know."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-05",
+        "eyebrow": "The price goes up",
+        "body": "It's not that people get meaner. They start assuming you know, so the sooner you ask, the cheaper it is. Nobody has measured this well, but anyone in their second year will tell you the same thing."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-06",
+        "eyebrow": "The one question",
+        "body": "In your first one-to-one, ask this: 'What does good look like at ninety days?' Write the answer down word for word. That sentence is your real job description for the next three months, whatever the posting said."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-07",
+        "eyebrow": "Watch how it's done",
+        "body": "Ask to sit in on something: a call, a review, a meeting you weren't invited to. Say you want to see how it works. People like showing, and the unwritten rules live in those rooms, not in the handbook."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-08",
+        "eyebrow": "The name trick",
+        "body": "By Friday most of the names are gone unless you wrote each one down with one fact. 'Priya, runs the Tuesday report, has a dog.' The fact is the hook the name hangs on, and it beats the org chart."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work5-09",
+        "eyebrow": "Friday",
+        "body": "On Friday, read the four lists back and ask the three questions still open. Then send your manager two lines: what you learned, what you'll pick up Monday. Most people never send the two lines."
+      },
+      {
+        "kind": "key",
+        "body": "Week one is for collecting. Names, words, places, questions. Ask while asking is free."
+      },
+      {
+        "kind": "check",
+        "question": "It's day three and you still don't know what an acronym in every meeting means. What do you do?",
+        "choices": [
+          "Ask the next person who says it, today",
+          "Look it up quietly so nobody notices",
+          "Wait until you know the team better"
+        ],
+        "answer": 0,
+        "why": "Asking gets pricier every month, and people also tell you who owns what, which no search can find."
+      }
+    ]
+  },
+  {
+    "id": "work-6",
+    "title": "Feedback is data, not a verdict",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "Feedback lands like a grade on who you are, and it isn't one. You'll see how to hear it, the three words that stop you defending, and why the useful half only shows up the next morning.",
+    "takeaway": "Feedback is information about the work, not a ruling on you.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work6-01",
+        "eyebrow": "The sting",
+        "body": "Your manager says the report was hard to follow and your face goes hot. You start explaining. Ten minutes later you can't remember what they said, only that it hurt, and the useful part is already gone."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-02",
+        "eyebrow": "What it is",
+        "body": "Feedback is one person telling you how your work landed for them. It's a data point about the work, not a grade on you. Those two feel identical in the moment, and they aren't."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-03",
+        "eyebrow": "Delivery vs content",
+        "body": "Every piece of feedback has two parts: how it was said and what it says. A clumsy delivery can carry a true point. Judge the content and let the delivery go, which is harder than it sounds."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-04",
+        "eyebrow": "Three words",
+        "body": "Say 'Thanks, tell me more' and then stop talking. Those three words do two jobs. They stop you defending, and they get you an example, which is the only part of feedback you can actually use."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-05",
+        "eyebrow": "Twenty-four hours",
+        "body": "Don't decide anything in the room. Sleep on it. Feedback that felt unfair at 3pm often reads as half right by morning, and the half that's right is the useful half. The other half you're allowed to drop."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-06",
+        "eyebrow": "Sort it",
+        "body": "Next morning, sort it into three piles: true, do it; true, but not now; not true, let it go. Most feedback has something in the first pile. Almost none of it belongs entirely in the third, however it felt."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-07",
+        "eyebrow": "Ask early",
+        "body": "Waiting for the review means feedback arrives too late to use. Ask while the work is half done: 'What's one thing that would make this better?' One thing is easy to give, easy to take, and early enough to fix."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-08",
+        "eyebrow": "The praise sandwich",
+        "body": "If someone opens with praise, listen for the 'but'. The middle is the message. Nobody has shown the sandwich lands better, and most people hear the 'but' coming, so when you give feedback, say the one thing plainly and kindly."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work6-09",
+        "eyebrow": "Close the loop",
+        "body": "Two weeks later, go back. 'I tried the shorter version you suggested. Did it read better?' That closes the loop. It also tells them their feedback was worth giving, which is how you get more of it next time."
+      },
+      {
+        "kind": "key",
+        "body": "Hear it, thank them, ask for an example, decide tomorrow. It's about the work."
+      },
+      {
+        "kind": "check",
+        "question": "Your manager says your report was hard to follow. What's the best first reply?",
+        "choices": [
+          "'Thanks. Which part lost you first, exactly?'",
+          "'I only had a day, and the data was messy.'",
+          "'Okay, I'll rewrite the whole thing tonight.'"
+        ],
+        "answer": 0,
+        "why": "Thanking them and asking for the example gets you the one part you can use, while explaining or rewriting everything skips finding out what was actually wrong."
+      }
+    ]
+  },
+  {
+    "id": "work-7",
+    "title": "How to quit without burning the bridge",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "Leaving a job well takes about ten days and four moves. You'll see who hears first, what the three-line email is for, what a counteroffer usually fixes, and what to say on the way out.",
+    "takeaway": "Leave so the people you leave would hire you again.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work7-01",
+        "eyebrow": "You're leaving",
+        "body": "You've signed a new offer and now there's the old job. Most people get this part wrong by being rushed, not rude. Ten days of care here pays off for years, because these are the people your next employer calls."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-02",
+        "eyebrow": "What notice is",
+        "body": "Notice is the warning you give before you go. Two weeks is the US custom, not a law, and most states let either side end a job on the spot. Give it anyway. It's the cheap price of a good reference."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-03",
+        "eyebrow": "Who hears first",
+        "body": "Your manager hears first, live, before anyone else. Then a short email confirming the date, then your team once your manager says so. Never Slack first and never a coworker first, however close you are."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-04",
+        "eyebrow": "The conversation",
+        "body": "Keep it short and kind: 'I've accepted another role. My last day is the 24th. I want to make the handover easy.' No list of grievances. You aren't asking permission, you're informing them, and they'll respect that more."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-05",
+        "eyebrow": "The email",
+        "body": "Three lines: that you're resigning, your last day, and thanks. It goes in your file and gets read again when someone calls about you in two years. Write it for that reader, not for today's mood."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-06",
+        "eyebrow": "The counteroffer",
+        "body": "They might offer more money to stay. Ask yourself why it took quitting to get it. A counteroffer fixes the pay, so ask what else changes, and if the answer is nothing, the answer is still no."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-07",
+        "eyebrow": "The handover doc",
+        "body": "Spend your last week writing the document you wish you'd been given: where things live, what's due, who to ask. Hand it over in a real meeting. It's the thing they'll remember about you a year from now."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-08",
+        "eyebrow": "The exit interview",
+        "body": "HR might ask why you're leaving. Be honest about the job and quiet about the people. Nothing you say here changes your old team, but it can follow you, so keep it short, true, and warm."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work7-09",
+        "eyebrow": "Last day",
+        "body": "Say goodbye in person to the people who taught you something. Send your personal email to the three you want to keep. The bridge you leave standing is your next reference, and you won't know which one until you need it."
+      },
+      {
+        "kind": "key",
+        "body": "Manager first, in person. Two weeks. A handover doc. Warm on the way out."
+      },
+      {
+        "kind": "check",
+        "question": "You've accepted a new job. Who hears about it first?",
+        "choices": [
+          "Your manager, live, before anyone else",
+          "Your closest coworker, so it isn't a shock",
+          "HR, so the paperwork starts right away"
+        ],
+        "answer": 0,
+        "why": "A manager who hears it secondhand feels blindsided, and that's the person your next employer will call."
+      }
+    ]
+  },
+  {
+    "id": "work-8",
+    "title": "The cold email that gets a reply",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "Most emails to strangers get no answer, and length is usually why. You'll see the five-line shape, the ask that gets a yes, and the one follow-up to send after a week.",
+    "takeaway": "Write to a stranger so that replying is easier than ignoring you.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work8-01",
+        "eyebrow": "The blank email",
+        "body": "You want to ask someone for advice, an internship, ten minutes of their time. So you write four paragraphs about yourself, delete them, and never send anything. Here's the version that gets sent and gets answered."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-02",
+        "eyebrow": "What a cold email is",
+        "body": "A cold email is a message to someone who doesn't know you and owes you nothing. So it has one job: make replying easier than ignoring. Short does that. Specific does that. Four paragraphs about you do the opposite."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-03",
+        "eyebrow": "Five lines",
+        "body": "Line one, who you are. Line two, why them, specifically. Line three, the ask, one small thing. Line four, make yes easy. Line five, thanks. Under a hundred words, and most good ones are under sixty."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-04",
+        "eyebrow": "Before and after",
+        "body": "'I'd love to pick your brain sometime' is a chore, because they have to plan it. 'Could I ask two questions about your first year? Fifteen minutes, any day next week' is a yes or a no, and yes takes ten seconds."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-05",
+        "eyebrow": "Why them",
+        "body": "Line two is where most emails die. 'I admire your work' is nothing. 'Your talk on pricing changed how I did my project' is something, because it proves this didn't go to forty people with the names swapped."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-06",
+        "eyebrow": "The subject line",
+        "body": "The subject decides whether it opens. Say what it is: 'Two questions from a Purdue junior' beats 'Hello' or 'Quick question'. Plain and honest, and it tells them the size of the ask before they've opened it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-07",
+        "eyebrow": "Send it",
+        "body": "Send it on a weekday morning, then do nothing. Don't refresh and don't send a second one on day two. Busy people answer in bursts, often a week later, and the ones who never answer weren't going to."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-08",
+        "eyebrow": "One follow-up",
+        "body": "No reply in seven days? Reply to your own email with two lines: 'Bumping this in case it got buried. Totally understand if not.' One follow-up, then stop. Silence is an answer, and a third email costs you the next ask."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work8-09",
+        "eyebrow": "When they say yes",
+        "body": "Be on time, ask your two questions, and stop at fifteen minutes even if it's going well. Send a thank-you the same day with the one thing you'll do because of it. That's how a stranger becomes a contact."
+      },
+      {
+        "kind": "key",
+        "body": "Five lines, one small ask, make yes easy. Follow up once after a week, then stop."
+      },
+      {
+        "kind": "check",
+        "question": "Which ask is most likely to get a reply from a busy stranger?",
+        "choices": [
+          "'Two questions about your first year. Fifteen minutes next week?'",
+          "'I'd love to pick your brain whenever you have some free time.'",
+          "'Could you look over my resume and tell me what you think of it?'"
+        ],
+        "answer": 0,
+        "why": "It's small, timed, and specific, so they can say yes without planning anything, while the other two hand them work or leave the size of the ask open."
+      }
+    ]
+  },
+  {
+    "id": "work-9",
+    "title": "A resume gets seven seconds",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "A recruiter's first look at your resume lasts about seven seconds. You'll see what they read in that time, the bullet shape that survives it, and the four things to cut tonight.",
+    "takeaway": "Write the resume for a seven-second read: top third, verb, what, number.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work9-01",
+        "eyebrow": "The pile",
+        "body": "A recruiter opens two hundred resumes for one job, and yours gets about seven seconds on the first pass. Not seven minutes. Seven seconds, then keep or skip, and the top third decides which."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-02",
+        "eyebrow": "What it is",
+        "body": "A resume isn't your life story. It's a one-page argument that you can do this job, and every line either helps that argument or takes space from a line that would. That's the only editing rule you need."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-03",
+        "eyebrow": "Where the eyes go",
+        "body": "Eye-tracking research by Ladders in 2018 clocked the first look at 7.4 seconds, moving in an F shape: the top third, the left edge, the bold words. Your name, your latest job, and its first bullet carry almost everything."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-04",
+        "eyebrow": "The bullet shape",
+        "body": "Verb, what, number. 'Ran the club's Instagram' says nothing. 'Grew the club's Instagram from 200 to 1,400 followers in a year' says you can do a thing and proves it, in the same amount of space."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-05",
+        "eyebrow": "Find the numbers",
+        "body": "Every job has numbers, even the ones that feel small. How many customers a shift, how many hours a week, how much money you handled. Go back through each job and dig them out, because nobody else will."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-06",
+        "eyebrow": "What to cut",
+        "body": "Cut the objective statement, 'references available', and high school once you're in college. Cut every adjective about yourself. 'Hard-working' is a claim anyone can make, and a number is proof nobody can argue with."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-07",
+        "eyebrow": "Match the posting",
+        "body": "Many companies run resumes through software before a person sees them. Use the posting's own words for skills: if it says 'data analysis', you say 'data analysis', not 'crunching numbers', or the software never finds you."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-08",
+        "eyebrow": "The seven-second test",
+        "body": "Hand it to a friend, count to seven, take it back. Ask what job you're applying for and what your best thing is. If they can't say, the top third isn't doing its job, and page two won't save it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work9-09",
+        "eyebrow": "One page, PDF",
+        "body": "One page, plain font, saved as a PDF with your name in the file name. That's a resume a stranger can read in seven seconds and a machine can read at all. Two pages is for people ten years in."
+      },
+      {
+        "kind": "key",
+        "body": "Seven seconds, top third, verb-what-number. Cut everything that isn't proof."
+      },
+      {
+        "kind": "check",
+        "question": "Which bullet survives a seven-second read?",
+        "choices": [
+          "'Cut checkout wait times 30% by adding a second register at peak'",
+          "'Responsible for customer service and store operations at peak'",
+          "'Hard-working team player with strong communication and drive'"
+        ],
+        "answer": 0,
+        "why": "It starts with a verb, says what changed, and gives a number, while the other two are claims anyone could make."
+      }
+    ]
+  },
+  {
+    "id": "work-10",
+    "title": "'Tell me about yourself' has a shape",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "It's the first question in almost every interview, and most people answer it by reading their resume aloud. You'll see the three-part shape, the 220-word budget, and the last line that hands the conversation back.",
+    "takeaway": "Present, past, future, in ninety seconds, ending on why this role.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work10-01",
+        "eyebrow": "The first question",
+        "body": "You sit down, they smile, and they say 'So, tell me about yourself.' It sounds like small talk and it's the interview. Most people answer with their resume, read aloud, slowly, and the interviewer has already read it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-02",
+        "eyebrow": "What it is",
+        "body": "The question really means 'why are you here, and can you explain yourself?' They want the story that connects the lines on the resume, told by someone who can talk. That's a different thing from the resume itself."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-03",
+        "eyebrow": "Present, past, future",
+        "body": "Three parts. Present: what you do now, in one line. Past: the two things that led here. Future: why this role is the next step. That order every time, because it ends on the job they're hiring for."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-04",
+        "eyebrow": "Ninety seconds",
+        "body": "People talk at about 150 words a minute, so ninety seconds is about 220 words. That's your budget. Longer and they stop listening. Shorter and it sounds like you didn't prepare, which they'll assume about everything else too."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-05",
+        "eyebrow": "Say it out loud",
+        "body": "Write it, then say it to a wall ten times, then to a friend. It has to sound like talking, not reading. Around the tenth time it stops being a script and starts being something you believe."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-06",
+        "eyebrow": "An example",
+        "body": "'I'm a junior in econ. Last summer I ran the data for a campus food pantry, which is where I got hooked on analysis. This role is that, full time.' Forty words: present, past, future, and it took twenty seconds."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-07",
+        "eyebrow": "The last line",
+        "body": "End on why this role: 'And that's why this one caught my eye.' It hands the conversation back and says you want this job, not any job. Then stop talking, even if the silence feels long."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-08",
+        "eyebrow": "Then listen",
+        "body": "The follow-up questions come from your answer, so put in it the two things you want to talk about. You aren't only answering. You're setting the table for the next thirty minutes, and they'll eat what you put out."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work10-09",
+        "eyebrow": "Every interview",
+        "body": "This answer is the same in every interview with one line changed for the role. Build it once, keep it in your notes, update it each year. The catch: if you can't say it without the notes, it isn't ready yet."
+      },
+      {
+        "kind": "key",
+        "body": "Present, past, future. Ninety seconds, about 220 words. End on why this role."
+      },
+      {
+        "kind": "check",
+        "question": "The interviewer says 'tell me about yourself'. What's the strongest opening?",
+        "choices": [
+          "'I'm a junior in econ. Last summer I ran the data for a food pantry.'",
+          "'I grew up in Ohio, went to Westlake High, then came here for econ.'",
+          "'Sure. Where would you like me to start, with school or with jobs?'"
+        ],
+        "answer": 0,
+        "why": "It starts in the present and moves to a real detail, while childhood spends the budget on nothing and asking them to choose hands back the one question you could prepare."
+      }
+    ]
+  },
+  {
+    "id": "work-11",
+    "title": "Ask for the reference before you need it",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "A reference is a person, and people forget. You'll see when to ask, the one word that gives them an out, the lead times a letter needs, and the one page that makes saying yes easy.",
+    "takeaway": "Line up references while people still remember you, then keep them warm.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work11-01",
+        "eyebrow": "The last day",
+        "body": "It's the last day of your internship and your manager likes you. In six months they'll have forgotten your project's name. Ask now, while it's fresh, for something you won't need until much later."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-02",
+        "eyebrow": "What a reference is",
+        "body": "A reference is a person a future employer calls to ask what you were like. A recommendation letter is the same thing written down, mostly for grad school. Both need someone who remembers you well, and memory is the whole problem."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-03",
+        "eyebrow": "When to ask",
+        "body": "Ask at the end of the job, the course, or the project, not when you need it. A yes given now holds for years. A cold ask two years on gets a maybe, and a maybe on the phone sounds like a no."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-04",
+        "eyebrow": "The sentence",
+        "body": "'Would you be comfortable being a strong reference for me?' The word 'comfortable' gives them an out. If they hesitate, thank them and ask someone else, because a lukewarm reference does more damage than none at all."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-05",
+        "eyebrow": "For professors",
+        "body": "A professor with 200 students can't write about someone they've never spoken to. Go to office hours twice and ask one real question each time. Now you're a face, and a letter is possible. Skip that and there's nothing to write."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-06",
+        "eyebrow": "The one page",
+        "body": "When you use them, send one page: the job, the deadline, what you did for them, two things you'd like them to mention. You aren't being pushy. You're making it easy, and easy is what gets done on time."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-07",
+        "eyebrow": "Lead time",
+        "body": "A phone reference needs a week's warning. A letter needs three to four weeks, and a grad school letter needs six. Asking for a letter due Friday is asking for a no, or worse, a rushed one that says nothing."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-08",
+        "eyebrow": "Keep them warm",
+        "body": "Once a year, send two lines: what you're doing, and one thing you learned from them. No ask. Then when you do ask, you aren't a stranger from three years ago, you're someone they've been quietly rooting for."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work11-09",
+        "eyebrow": "Close the loop",
+        "body": "Whatever happens, tell them: 'I got it, thank you' or 'I didn't, but thank you.' People who hear the ending say yes next time. People who never hear back don't, and they remember that too."
+      },
+      {
+        "kind": "key",
+        "body": "Ask at the end, while they remember. 'Comfortable' gives them an out. Send one page."
+      },
+      {
+        "kind": "check",
+        "question": "Your internship ends Friday. You won't need a reference for a year. What do you do?",
+        "choices": [
+          "Ask on Friday, then send a two-line update once a year",
+          "Wait until you need it, so the ask is specific and real",
+          "Ask HR to keep a note on file that you did good work"
+        ],
+        "answer": 0,
+        "why": "Memory of you fades fastest in the first months, so a yes given now and kept warm stays strong while a cold ask in a year gets a vague one."
+      }
+    ]
+  },
+  {
+    "id": "work-12",
+    "title": "What 'benefits' actually means",
+    "track": "work",
+    "minutes": 3,
+    "blurb": "Two offers, and the lower salary can pay more. You'll see what the four insurance words mean, what fifteen days off and a 4% match are worth in dollars, and the one line that compares two jobs honestly.",
+    "takeaway": "Price the benefits, then compare the one line, not the bold number.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-work12-01",
+        "eyebrow": "Two offers",
+        "body": "Job A pays $60,000 and Job B pays $58,000, so it's easy, right? Not yet. Job A wants $300 a month for health insurance and Job B wants $50. Now B pays more, and that's what 'benefits' means."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-02",
+        "eyebrow": "What benefits are",
+        "body": "Benefits are the parts of pay that aren't salary: health insurance, paid days off, a retirement match. They're real money. They're just harder to see than the number in bold, which is why the bold number wins arguments it shouldn't."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-03",
+        "eyebrow": "Four insurance words",
+        "body": "Premium: what you pay every month no matter what. Deductible: what you pay yourself before insurance starts. Copay: the flat fee per visit. Out-of-pocket max: the most you can pay in a year, and the number that matters if something goes wrong."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-04",
+        "eyebrow": "The one-line compare",
+        "body": "Salary minus the year's premiums. A: $60,000 minus $3,600 is $56,400. B: $58,000 minus $600 is $57,400. B pays $1,000 more before you've seen a doctor, and the bold number said the opposite."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-05",
+        "eyebrow": "Under 26",
+        "body": "If you're under 26 you can usually stay on a parent's plan, which the Affordable Care Act guarantees. Then a job's insurance is worth less to you and salary matters more. Ask what it costs your parents to keep you on."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-06",
+        "eyebrow": "Days off are pay",
+        "body": "Paid time off is days you're paid not to work. Job B's fifteen days at $58,000 are about $3,300 of pay for not working, and Job A's ten days about $2,300. Count them, and ask whether unused days roll over."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-07",
+        "eyebrow": "The match",
+        "body": "A 401(k) match is free money on top of salary, if you put some in. Job B's 4% match on $58,000 is $2,320 a year. Job A has no match, so it quietly pays $2,320 less, and the bold number never says so."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-08",
+        "eyebrow": "Ask for the summary",
+        "body": "Every company has a one-page benefits summary. Ask the recruiter for it before you decide, and nobody will mind. Reading it is the difference between choosing a number and choosing a job."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-work12-09",
+        "eyebrow": "Total it up",
+        "body": "Put it on one line: salary, minus premiums, plus the match, plus days off. A comes to about $58,700 and B to about $63,100. Two thousand apart on paper, over four thousand apart in truth, and it took five minutes."
+      },
+      {
+        "kind": "key",
+        "body": "Salary minus premiums, plus the match, plus days off. Compare that line, not the bold number."
+      },
+      {
+        "kind": "check",
+        "question": "Job A: $60,000, $300 a month for insurance. Job B: $58,000, $50 a month. Which pays more?",
+        "choices": [
+          "Job B, by about $1,000 a year after premiums",
+          "Job A, since $2,000 more salary beats a premium",
+          "They're equal, because premiums come out pre-tax"
+        ],
+        "answer": 0,
+        "why": "A's premiums cost $3,600 a year and B's cost $600, and that $3,000 gap is bigger than the $2,000 salary gap."
+      }
+    ]
+  },
+  {
+    "id": "hlth-1",
+    "title": "Caffeine has a half-life",
+    "track": "health",
+    "minutes": 3,
+    "blurb": "A 4pm coffee is still half there at 9pm. You'll see what a half-life is, why you fall asleep but sleep worse, and the ten-hour cutoff that a 2013 sleep study points to.",
+    "takeaway": "Time caffeine by its half-life, not by how awake you feel.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-01",
+        "eyebrow": "4pm",
+        "body": "It's 4pm and the afternoon has gone flat, so you get a coffee and it works. At 11pm you're in bed, tired, and somehow not asleep. The coffee's still there, and you can't feel it anymore."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-02",
+        "eyebrow": "What a half-life is",
+        "body": "A half-life is how long your body takes to clear half of something. For caffeine it's about five hours, though it runs from three to seven depending on the person. Not all of it, half, then half of what's left."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-03",
+        "eyebrow": "The math",
+        "body": "A regular coffee is about 200mg of caffeine. Drink it at 4pm and 100mg is still in you at 9pm, and 50mg at 2am. That's a cup of black tea's worth, at 2am, while you're trying to sleep."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-04",
+        "eyebrow": "Not about falling asleep",
+        "body": "You might still fall asleep. Caffeine isn't only a wake-up drug. It blocks the signal that tells your brain how tired it is, so you sleep, but lighter, and you wake up less rested than the hours suggest."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-05",
+        "eyebrow": "Adenosine",
+        "body": "All day a chemical called adenosine piles up in your brain, and that pile is what tiredness is. Caffeine parks in adenosine's spots. The pile keeps growing, you just can't feel it, and it's all still there at midnight."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-06",
+        "eyebrow": "What it costs",
+        "body": "In a 2013 study, Christopher Drake gave people 400mg of caffeine six hours before bed. They lost about an hour of sleep and didn't notice. The sleep recording did, and that's the catch: you can't feel this one."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-07",
+        "eyebrow": "The cutoff",
+        "body": "Count back from bed. If lights out is at midnight, the last coffee is at 2pm. Ten hours is two half-lives, which leaves a quarter of the dose, and most people sleep through a quarter."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-08",
+        "eyebrow": "Know your dose",
+        "body": "Not all cups are equal. A large cafe coffee is about 200mg and an energy drink can hit 160. Black tea is about 50 and decaf is close to zero. The size and the kind both matter, and the label usually doesn't say."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth1-09",
+        "eyebrow": "Move it, don't lose it",
+        "body": "You don't have to quit. Move it: coffee before noon, tea after. In a week the 4pm slump shrinks, because you slept, and the coffee you do drink works better on a rested brain."
+      },
+      {
+        "kind": "key",
+        "body": "Half of a 4pm coffee is still in you at 9pm. Make the last one ten hours before bed."
+      },
+      {
+        "kind": "check",
+        "question": "Lights out is at 11pm. What is the latest a regular coffee is safe for your sleep?",
+        "choices": [
+          "Around 1pm, ten hours before bed",
+          "Around 5pm, six hours before bed",
+          "Around 8pm, if it is a small cup"
+        ],
+        "answer": 0,
+        "why": "Ten hours is two half-lives and leaves a quarter of the dose, while six hours leaves half, and the study showed half still costs about an hour of sleep."
+      }
+    ]
+  },
+  {
+    "id": "hlth-2",
+    "title": "Alcohol wrecks the second half of sleep",
+    "track": "health",
+    "minutes": 3,
+    "blurb": "Drinks make you fall asleep fast, which is why they feel like a sleep aid. You'll see what happens after 3am, what a wrecked second half costs the next day, and the three-hour rule that softens it.",
+    "takeaway": "Alcohol buys a fast first half of the night and sells the second.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-01",
+        "eyebrow": "Out like a light",
+        "body": "Three drinks, home by midnight, asleep in minutes. It feels like the best sleep aid there is. At 4am you're wide awake, thirsty, heart going, and that's the second half of the deal you didn't read."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-02",
+        "eyebrow": "What it is",
+        "body": "Alcohol is a sedative. It slows the brain, so you fall asleep faster and deeper at first. As your body clears it, the brain rebounds: lighter sleep, more waking, less dreaming, and none of it feels like the drinks."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-03",
+        "eyebrow": "Two halves",
+        "body": "The first half of the night goes deep. The second half is where it falls apart: short wake-ups you don't remember and much less REM, the dreaming sleep that files what you learned that day."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-04",
+        "eyebrow": "One drink an hour",
+        "body": "Your body clears roughly one standard drink an hour. Three drinks at 11pm are gone by about 2am, and that's when the rebound starts, right in the middle of the night. The timing isn't bad luck, it's arithmetic."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-05",
+        "eyebrow": "What it costs",
+        "body": "You slept eight hours and feel like five. Reaction time, memory, and mood all take the hit, which is why the day after feels foggy even without a hangover. The hours were there. The sleep wasn't."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-06",
+        "eyebrow": "REM and learning",
+        "body": "REM is when the brain files the day. Drinking after studying cuts REM, so less of what you learned gets filed. Study nights and drink nights are best kept apart, and a 2013 review of the research says the same."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-07",
+        "eyebrow": "Timing",
+        "body": "Stop drinking three hours before bed. A drink at 8pm is mostly cleared by 11, so the rebound happens while you're still awake, not at 4am. Same drinks, much better night, and nobody at the table will notice."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-08",
+        "eyebrow": "Water between",
+        "body": "A glass of water between drinks slows the pace and softens the 4am thirst. It's the least fun advice and the most reliable. Order it with the drink, not after, because after never happens."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth2-09",
+        "eyebrow": "The trade",
+        "body": "Nobody's saying never. It's a trade, and you should know what you're trading: the second half of tonight and the first half of tomorrow. On a Friday, fine. The night before an exam, it's a bad deal."
+      },
+      {
+        "kind": "key",
+        "body": "Alcohol buys a fast first half and sells the second. Stop three hours before bed."
+      },
+      {
+        "kind": "check",
+        "question": "Exam Thursday. A friend suggests a couple of drinks Wednesday to sleep well. What's true?",
+        "choices": [
+          "You'll fall asleep faster, sleep worse, and remember less",
+          "Two drinks are fine, it's only four or more that hurt sleep",
+          "Alcohol helps sleep, it's the hangover that hurts the exam"
+        ],
+        "answer": 0,
+        "why": "The sedative effect covers the first half, and the rebound wrecks the second half and cuts the REM that files what you studied."
+      }
+    ]
+  },
+  {
+    "id": "hlth-3",
+    "title": "Anxiety is a body thing first",
+    "track": "health",
+    "minutes": 3,
+    "blurb": "The racing heart comes before the worried thoughts, not after. You'll see why, the breathing pattern a 2023 Stanford study found beats meditation, and what to do with the thoughts once the body's quiet.",
+    "takeaway": "Calm the body first, because the mind follows it.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-01",
+        "eyebrow": "Before the exam",
+        "body": "Heart going, hands cold, stomach tight. Then the thoughts arrive: 'I'm going to fail.' It feels like the thought caused the feeling, and usually it's the other way round, which changes what you do about it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-02",
+        "eyebrow": "What it is",
+        "body": "Anxiety is the body's alarm system running when there's no fire. The alarm is physical: fast heart, fast breath, tight muscles. The thoughts are the brain trying to explain the alarm, and it isn't a reliable narrator."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-03",
+        "eyebrow": "The loop",
+        "body": "Body fires, brain explains, the explanation scares the body more, and round it goes. You can't argue with the thoughts while the body's at full alarm, so start with the body. The thoughts wait."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-04",
+        "eyebrow": "The physiological sigh",
+        "body": "Breathe in through the nose. At the top, take one more short sip of air. Then a long, slow breath out through the mouth. That's one, and you do it three times, which takes about a minute."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-05",
+        "eyebrow": "Why the exhale",
+        "body": "Your heart speeds up a little when you breathe in and slows when you breathe out. A long exhale tips the balance toward slow, and a minute of it turns the alarm down without you having to believe anything."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-06",
+        "eyebrow": "The study",
+        "body": "In 2023, a Stanford team led by Melis Balban compared five minutes a day of this breathing with five minutes of meditation. The breathing group's mood improved more, and their resting breathing rate dropped. Five minutes, no app."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-07",
+        "eyebrow": "Move the alarm",
+        "body": "The alarm wants you to run, so walk. Five minutes, fast, outside if you can. The body gets to do the thing it was gearing up for and stands down, which no amount of sitting still can manage."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-08",
+        "eyebrow": "Then the thoughts",
+        "body": "Once the body's quieter, look at the thought. 'I'm going to fail' becomes 'I'm worried about question three.' Smaller, truer, and something you can act on tonight instead of dread all week."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth3-09",
+        "eyebrow": "When it's every day",
+        "body": "Nerves before an exam are normal. Alarm most days for weeks is different. Campus counselling is free at most schools and the wait is shorter than people think. It's a body thing, and it's worth getting looked at."
+      },
+      {
+        "kind": "key",
+        "body": "Body first. Double inhale, long exhale, three times. Then the thoughts get smaller."
+      },
+      {
+        "kind": "check",
+        "question": "Heart racing before a presentation. What's the first move?",
+        "choices": [
+          "Three slow breaths: double inhale, long exhale, then think",
+          "Tell yourself firmly that there's nothing to be scared of",
+          "Run through your notes one more time so you feel prepared"
+        ],
+        "answer": 0,
+        "why": "The alarm is physical, so words can't reach it yet, and the long exhale slows the heart in about a minute."
+      }
+    ]
+  },
+  {
+    "id": "hlth-4",
+    "title": "The ten-minute walk",
+    "track": "health",
+    "minutes": 3,
+    "blurb": "A short walk beats coffee for the afternoon and beats the desk for ideas. You'll see the 1987 study that put it against a candy bar, the Stanford creativity numbers, and where ten minutes fits in a day.",
+    "takeaway": "Ten minutes, brisk, phone away: two hours of energy and more ideas than the desk.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-01",
+        "eyebrow": "3pm",
+        "body": "You're reading the same line for the fourth time. The options feel like coffee, a snack, or pushing through. There's a fourth one, and it's been tested head to head against the snack."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-02",
+        "eyebrow": "What it does",
+        "body": "A brisk ten-minute walk raises your heart rate a little. More blood reaches the brain, and the chemicals that set mood shift. It's small, and it's also fast, free, and measured, which most afternoon fixes aren't."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-03",
+        "eyebrow": "Walk vs candy bar",
+        "body": "In 1987, Robert Thayer gave people either a candy bar or a ten-minute walk. The candy gave energy for an hour, then more tiredness and tension. The walk gave energy for two hours with no crash."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-04",
+        "eyebrow": "Ideas",
+        "body": "Stanford researchers tested people on inventing new uses for objects, sitting and then walking. Walking raised creative output by about 60%, and four in five people did better on their feet. The effect lasted a while after sitting back down."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-05",
+        "eyebrow": "Outside if you can",
+        "body": "Outdoors adds a little more: daylight, which resets your clock, and a change of scene. But a lap of the building counts. The walk is the thing, and the scenery is a bonus you can skip on a bad day."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-06",
+        "eyebrow": "When it fits",
+        "body": "Three natural slots: after lunch, when the dip hits; before a hard task, for ideas; after studying, to let it settle. Pick one and tie it to something you already do, or it won't survive the second week."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-07",
+        "eyebrow": "Phone in your pocket",
+        "body": "Leave the phone in your pocket or the walk is scrolling upright. Let the mind wander, because that wandering is where the creativity study got its effect. The catch: the first few minutes feel boring, and that's the point."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-08",
+        "eyebrow": "Stack it",
+        "body": "Ten minutes a day is seventy minutes a week and about two hours of extra energy each afternoon. Walk to the far coffee shop. Take the call standing up. It adds up without a gym or a plan."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth4-09",
+        "eyebrow": "Back at the desk",
+        "body": "Come back and read that line again. It reads the first time now. That isn't willpower, it's blood flow, and it'll be there again tomorrow at the same time."
+      },
+      {
+        "kind": "key",
+        "body": "Ten minutes, brisk, phone away. Two hours of energy and more ideas than the desk."
+      },
+      {
+        "kind": "check",
+        "question": "It's 3pm and you're flat. Which gives energy for the longest, with no crash?",
+        "choices": [
+          "A brisk ten-minute walk, ideally outside",
+          "A candy bar, then straight back to the desk",
+          "A second coffee and a cold glass of water"
+        ],
+        "answer": 0,
+        "why": "The walk gave two hours with no crash, the candy gave one hour then more tiredness, and a 3pm coffee is still half there at 8pm."
+      }
+    ]
+  },
+  {
+    "id": "hlth-5",
+    "title": "When to actually see a doctor",
+    "track": "health",
+    "minutes": 3,
+    "blurb": "Most students wait too long or go to the wrong door. You'll see what the campus clinic is for, the signs that mean today, the ones that mean the ER, and what each door typically costs.",
+    "takeaway": "Clinic for most things, today for a fever past three days, ER for chest, breath, head, fainting.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-01",
+        "eyebrow": "Day four",
+        "body": "Day four of the fever. You've missed two classes, googled it twice, and told yourself it's fine. It might be. There's a way to know without the googling, and it's mostly a short list."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-02",
+        "eyebrow": "Three doors",
+        "body": "The campus clinic for most things. Urgent care when the clinic's closed. The ER for emergencies only. Same problem, three prices, three waits, and picking the right door is most of the skill."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-03",
+        "eyebrow": "What can wait",
+        "body": "A cold, a cough without fever, a sore throat with a cough, a stomach bug under a day. Rest, fluids, time. See someone if it's still there after a week or gets worse, and don't feel dumb for going then."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-04",
+        "eyebrow": "What means today",
+        "body": "A fever over 103°F, or any fever past three days. A sore throat with fever and no cough, which can be strep. An ear that hurts and leaks. Pain when you pee. Book the clinic today, not Monday."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-05",
+        "eyebrow": "What means the ER, now",
+        "body": "Chest pain. Trouble breathing. The worst headache of your life. Fainting. A stiff neck with a fever. Can't keep water down for a day. Thoughts of ending your life: call or text 988, any hour."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-06",
+        "eyebrow": "The campus clinic",
+        "body": "Most schools have a clinic you've already paid for in your fees, and visits are often free or under $25. Nurses answer the phone. Use it for the boring stuff, because the boring stuff is what it's for."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-07",
+        "eyebrow": "What each costs",
+        "body": "A typical campus clinic visit: $0 to $25. Urgent care: around $150 to $250. The ER for the same sore throat: often over $1,000 before insurance. The ER is for when the price doesn't matter, and the list above is when."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-08",
+        "eyebrow": "Call first",
+        "body": "Not sure which door? Call the clinic's nurse line or your insurance's nurse line. It's free and they'll tell you where to go. Two minutes on the phone can save a four-hour wait and a four-figure bill."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth5-09",
+        "eyebrow": "For a friend",
+        "body": "If a friend can't stay awake, can't breathe right, or has taken too much of anything, call 911. Don't wait for them to agree. Most schools won't punish the caller, and yours publishes the policy, so look it up now."
+      },
+      {
+        "kind": "key",
+        "body": "Clinic for most things. Today for fever over 103°F or past three days. ER for chest, breath, head, fainting."
+      },
+      {
+        "kind": "check",
+        "question": "Sore throat, fever of 101°F, no cough, day two. Where do you go?",
+        "choices": [
+          "The campus clinic today, it could be strep",
+          "The ER tonight, in case it gets any worse",
+          "Nowhere yet, wait a week and see if it clears"
+        ],
+        "answer": 0,
+        "why": "Fever plus a sore throat with no cough is the strep pattern, which needs a test and antibiotics but isn't an emergency."
+      }
+    ]
+  },
+  {
+    "id": "hlth-6",
+    "title": "Why you crash at 3pm",
+    "track": "health",
+    "minutes": 3,
+    "blurb": "The afternoon dip is built into your body clock, and lunch makes it worse. You'll see what causes it, what a big carb lunch adds, and the three fixes in the order to try them.",
+    "takeaway": "The dip is on the clock. Walk, then nap twenty, then light, and coffee last.",
+    "cards": [
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-01",
+        "eyebrow": "The 2pm lecture",
+        "body": "Two o'clock lecture, and by 2:40 your eyes are closing. You slept fine and you ate lunch. Nothing's wrong with you. This dip has a name and a schedule, and it's been on that schedule your whole life."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-02",
+        "eyebrow": "What it is",
+        "body": "Your body clock runs a 24-hour wave of alertness with two low points, around 3am and around 2pm. Sleep researchers call the second one the post-lunch dip, and it happens even if you skip lunch. Lunch just deepens it."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-03",
+        "eyebrow": "What lunch adds",
+        "body": "A big, carb-heavy lunch sends blood sugar up, then down, and the down lands right on the dip. Two waves, same time. A smaller lunch with some protein flattens the second wave, and you'll feel that by Thursday."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-04",
+        "eyebrow": "The coffee trap",
+        "body": "A 3pm coffee works. It's also 100mg still in you at 8pm and 50mg at 1am. The dip is a two-hour problem and the coffee is a tonight problem, so reach for it last, after the three fixes below."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-05",
+        "eyebrow": "Fix one: move",
+        "body": "First, ten minutes of brisk walking. It lifts energy for about two hours, which is exactly the length of the dip. Outside if you can, for the light, and a lap of the building if you can't."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-06",
+        "eyebrow": "Fix two: the 20-minute nap",
+        "body": "If you can, nap: twenty minutes, before 3pm, alarm set. Longer and you wake up groggy from deep sleep. Later and it eats tonight. Twenty minutes is the whole trick, and the alarm isn't optional."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-07",
+        "eyebrow": "Fix three: light",
+        "body": "Bright light tells the clock it's still day. Sit by a window or step outside for five minutes. Dim rooms after lunch deepen the dip, and lecture halls are dim rooms, which explains a lot about 2:40."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-08",
+        "eyebrow": "Plan around it",
+        "body": "Put the easy work at 2pm and the hard work at 10am or 4pm. Reading emails in the dip costs nothing. Writing an essay in the dip costs an hour, and the hour comes out of tonight."
+      },
+      {
+        "kind": "image",
+        "image": "lesson-hlth6-09",
+        "eyebrow": "The second wind",
+        "body": "Around 5pm the wave comes back up on its own. That's the second wind, and it was always coming. The fixes just get you there without spending tonight's sleep, which the coffee would have."
+      },
+      {
+        "kind": "key",
+        "body": "The dip is on the clock, and lunch deepens it. Walk, then nap 20, then light. Coffee last."
+      },
+      {
+        "kind": "check",
+        "question": "It's 2:30pm and you're fading, with a big exam tomorrow. What's the best first move?",
+        "choices": [
+          "A ten-minute brisk walk, ideally in daylight",
+          "A coffee now, so you can study until midnight",
+          "A one-hour nap to properly catch up on sleep"
+        ],
+        "answer": 0,
+        "why": "The walk covers the two-hour dip and costs nothing tonight, while the coffee is still half there at 7:30pm and an hour's nap wakes you groggy."
       }
     ]
   }
