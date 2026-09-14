@@ -200,6 +200,46 @@ final class SubmissionTests: XCTestCase {
         XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward)
     }
 
+    private func ticked(_ id: String) -> CanvasItem {
+        var item = CanvasItem(id: id, title: "Reading check", courseName: "AP Physics", dueAt: nil)
+        item.doneAt = Date()
+        return item
+    }
+
+    func testATickOnTheLaptopPaysOnceLikeAHandIn() {
+        var s = GameState()
+        s.applyCanvas(CanvasSnapshot(tasks: [ticked("c-1")]))
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward)
+        XCTAssertTrue(s.tasks.first { $0.id == "c-1" }!.done)
+        XCTAssertFalse(s.tasks.first { $0.id == "c-1" }!.isLocked, "the student's word, so it can be taken back")
+        s.applyCanvas(CanvasSnapshot(tasks: [ticked("c-1")]))
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward, "resent, pays nothing more")
+        var handed = ticked("c-1"); handed.doneAt = nil; handed.submittedAt = Date()
+        s.applyCanvas(CanvasSnapshot(tasks: [handed]))
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward, "Canvas catching up pays nothing more")
+        XCTAssertTrue(s.tasks.first { $0.id == "c-1" }!.isLocked)
+    }
+
+    func testTheLaptopTakingATickBackRevokesItHere() {
+        var s = GameState()
+        s.applyCanvas(CanvasSnapshot(tasks: [ticked("c-1")]))
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward)
+        let open = CanvasItem(id: "c-1", title: "Reading check", courseName: "AP Physics", dueAt: nil)
+        s.applyCanvas(CanvasSnapshot(tasks: [open]))
+        XCTAssertEqual(s.ledger.balance, 0, "undone on the laptop, undone here")
+        XCTAssertFalse(s.tasks.first { $0.id == "c-1" }!.done)
+    }
+
+    func testAPhoneTickIsNeverRevokedByTheLaptop() {
+        var s = GameState()
+        let open = CanvasItem(id: "c-1", title: "Reading check", courseName: "AP Physics", dueAt: nil)
+        s.applyCanvas(CanvasSnapshot(tasks: [open]))
+        s.complete(taskID: "c-1", reward: TaskKind.canvas.reward)
+        s.applyCanvas(CanvasSnapshot(tasks: [open]))   // the laptop never had a tick to take back
+        XCTAssertEqual(s.ledger.balance, TaskKind.canvas.reward)
+        XCTAssertTrue(s.tasks.first { $0.id == "c-1" }!.done)
+    }
+
     func testYouCannotUntickSomethingCanvasSaysYouHandedIn() {
         var s = GameState()
         s.applyCanvas(CanvasSnapshot(tasks: [submitted("c-1")]))

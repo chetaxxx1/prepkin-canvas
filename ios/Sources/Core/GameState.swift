@@ -1267,14 +1267,23 @@ struct GameState: Codable, Equatable {
 
     /// Takes a push from the extension. Work Canvas confirms you handed in pays
     /// on the spot: submitting *is* completing, and the ledger key means a student
-    /// who also ticked it by hand is never paid twice.
+    /// who also ticked it by hand is never paid twice. A tick made on the laptop
+    /// (`doneAt`) pays the same way, once; a tick the laptop has since taken back
+    /// is revoked here too, unless the coins are already spent. A tick made on
+    /// this phone carries no `doneAt`, so the laptop can never take it back.
     mutating func applyCanvas(_ snapshot: CanvasSnapshot, now: Date = Date()) {
+        let before = canvasItems
         canvasItems = snapshot.tasks
         canvasCourses = snapshot.courses
         canvasEvents = snapshot.events
         lastCanvasSyncAt = now
-        for item in snapshot.tasks where item.isSubmitted {
+        for item in snapshot.tasks where item.isSubmitted || item.doneAt != nil {
             complete(taskID: item.id, reward: TaskKind.canvas.reward, now: now)
+        }
+        for old in before where old.doneAt != nil {
+            guard let fresh = snapshot.tasks.first(where: { $0.id == old.id }),
+                  fresh.doneAt == nil, !fresh.isSubmitted else { continue }
+            uncomplete(taskID: old.id)
         }
     }
 

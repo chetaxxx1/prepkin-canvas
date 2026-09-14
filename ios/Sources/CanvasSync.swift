@@ -15,6 +15,10 @@ struct CanvasItem: Codable, Equatable {
     var submittedAt: Date?
     var score: Double?
     var pointsPossible: Double?
+    /// When the student ticked it on the laptop (the extension's circle). Their
+    /// word, not Canvas's: paid once like a hand-in, and taken back if the
+    /// laptop takes the tick back. Never set alongside `submittedAt`.
+    var doneAt: Date? = nil
 
     var isSubmitted: Bool { submittedAt != nil }
 }
@@ -327,13 +331,15 @@ struct SupabaseCanvasClient: CanvasSyncClient {
         var submittedAt: String?
         var score: Double?
         var pointsPossible: Double?
+        var doneAt: String?
 
         var item: CanvasItem {
             CanvasItem(id: id, title: title, courseName: courseName,
                        dueAt: SupabaseCanvasClient.date(from: dueAt),
                        courseId: courseId, colorHex: colorHex,
                        submittedAt: SupabaseCanvasClient.date(from: submittedAt),
-                       score: score, pointsPossible: pointsPossible)
+                       score: score, pointsPossible: pointsPossible,
+                       doneAt: SupabaseCanvasClient.date(from: doneAt))
         }
     }
 
