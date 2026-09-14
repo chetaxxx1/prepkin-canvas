@@ -6,7 +6,7 @@
 //
 //   ssh -N -L 3000:localhost:3000 canvas@<VM IP>      (in another terminal)
 //   PREPKIN_PORT=8445 node --test test/pages.test.js
-//   PAGES=dashboard,files MODES=dark node --test test/pages.test.js   (a subset)
+//   PAGES=dashboard,files MODES=dark WIDTHS=1280 node --test test/pages.test.js   (a subset)
 //   BASELINE=1 node --test test/pages.test.js   (skin off: records Canvas's own
 //        failures into test/pages-baseline.json so only what we add counts)
 //
@@ -31,6 +31,10 @@ const BASELINE_FILE = path.join(__dirname, 'pages-baseline.json');
 const BASELINE = !!process.env.BASELINE;
 const ONLY = process.env.PAGES ? process.env.PAGES.split(',') : null;
 const MODES = (process.env.MODES || 'light,dark').split(',');
+/// 1280 is the width most laptops run Canvas at; 768 is Canvas's own
+/// breakpoint (the global nav collapses to #mobile-header below it), a real
+/// layout mode of the page. Not a claim about students' windows.
+const WIDTHS = (process.env.WIDTHS || '1280,768').split(',').map(Number);
 
 /// Every page a student meets, with the element that says it has mounted.
 const PAGES = [
@@ -123,21 +127,22 @@ async function open(url, ready) {
   return mount;
 }
 
-for (const mode of MODES) {
+for (const width of WIDTHS) for (const mode of MODES) {
   const dark = mode === 'dark';
-  test(`${mode}: paper set`, async () => {
+  test(`${width} ${mode}: paper set`, async () => {
+    await page.setViewportSize({ width, height: 860 });
     const { skin } = await h.storage();
     await h.setStorage({ skin: { ...skin, dark } });
   });
   for (const [name, url, ready, storage] of PAGES) {
     if (ONLY && !ONLY.includes(name)) continue;
-    test(`${mode}: ${name} reads`, async () => {
+    test(`${width} ${mode}: ${name} reads`, async () => {
       if (storage) await h.setStorage(storage);
       const mount = await open(url, ready);
       if (storage) await h.setStorage({ dashTab: 'cards' });
       const findings = await page.evaluate(auditSource({ dark }));
-      await page.screenshot({ path: path.join(SHOTS, `${name}-${mode}.jpg`), type: 'jpeg', quality: 80 });
-      const id = `${name}-${mode}`;
+      await page.screenshot({ path: path.join(SHOTS, `${name}-${mode}-${width}.jpg`), type: 'jpeg', quality: 80 });
+      const id = `${name}-${mode}-${width}`;
       report[id] = { mount, findings };
       if (BASELINE) return;
       const text = counts(id, 'text', findings.text).filter((f) => !known(id, f));
@@ -159,6 +164,7 @@ for (const mode of MODES) {
 /// One place per fact: on the dashboard, a course card carries one due line
 /// and the rail carries the rest; the count is said once.
 test('dashboard: what is due is said once per place', { skip: !!(BASELINE || (ONLY && !ONLY.includes('dashboard'))) }, async () => {
+  await page.setViewportSize({ width: 1280, height: 860 });
   await open('/', '.ic-DashboardCard');
   await page.waitForSelector('#pk-week', { timeout: 30_000 }).catch(() => {});
   const seen = await page.evaluate(() => {
@@ -199,6 +205,7 @@ test('dashboard: Canvas\'s To Do never shows before the rail folds it', { skip: 
 /// session, skin on then off; the cards must mount within 2 s of each other.
 test('dashboard: the skin does not delay the cards', { skip: !!(BASELINE || (ONLY && !ONLY.includes('dashboard'))) }, async () => {
   // Three loads each, the best of them: this Mac often carries a load of 300.
+  await page.setViewportSize({ width: 1280, height: 860 });
   const time = async () => {
     const times = [];
     for (let i = 0; i < 3; i++) times.push(await open('/', '.ic-DashboardCard'));

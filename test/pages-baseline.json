@@ -1,5 +1,5 @@
 {
- "dashboard-light": {
+ "dashboard-light-1280": {
   "text": [
    "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
    "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
@@ -24,11 +24,11 @@
   ],
   "controls": []
  },
- "courses-light": {
+ "courses-light-1280": {
   "text": [],
   "controls": []
  },
- "course-home-light": {
+ "course-home-light-1280": {
   "text": [
    "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
    "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
@@ -36,71 +36,71 @@
   ],
   "controls": []
  },
- "modules-light": {
+ "modules-light-1280": {
   "text": [],
   "controls": []
  },
- "assignments-light": {
+ "assignments-light-1280": {
   "text": [],
   "controls": []
  },
- "assignment-light": {
+ "assignment-light-1280": {
   "text": [],
   "controls": []
  },
- "grades-light": {
+ "grades-light-1280": {
   "text": [],
   "controls": []
  },
- "all-grades-light": {
+ "all-grades-light-1280": {
   "text": [],
   "controls": []
  },
- "calendar-light": {
+ "calendar-light-1280": {
   "text": [],
   "controls": []
  },
- "inbox-light": {
+ "inbox-light-1280": {
   "text": [],
   "controls": []
  },
- "announcements-light": {
+ "announcements-light-1280": {
   "text": [],
   "controls": []
  },
- "discussions-light": {
+ "discussions-light-1280": {
   "text": [],
   "controls": []
  },
- "files-light": {
+ "files-light-1280": {
   "text": [],
   "controls": []
  },
- "page-light": {
+ "page-light-1280": {
   "text": [],
   "controls": []
  },
- "quizzes-light": {
+ "quizzes-light-1280": {
   "text": [],
   "controls": []
  },
- "quiz-light": {
+ "quiz-light-1280": {
   "text": [],
   "controls": []
  },
- "people-light": {
+ "people-light-1280": {
   "text": [],
   "controls": []
  },
- "syllabus-light": {
+ "syllabus-light-1280": {
   "text": [],
   "controls": []
  },
- "settings-light": {
+ "settings-light-1280": {
   "text": [],
   "controls": []
  },
- "dashboard-dark": {
+ "dashboard-dark-1280": {
   "text": [
    "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
    "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
@@ -125,11 +125,11 @@
   ],
   "controls": []
  },
- "courses-dark": {
+ "courses-dark-1280": {
   "text": [],
   "controls": []
  },
- "course-home-dark": {
+ "course-home-dark-1280": {
   "text": [
    "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
    "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
@@ -137,67 +137,303 @@
   ],
   "controls": []
  },
- "modules-dark": {
+ "modules-dark-1280": {
   "text": [],
   "controls": []
  },
- "assignments-dark": {
+ "assignments-dark-1280": {
   "text": [],
   "controls": []
  },
- "assignment-dark": {
+ "assignment-dark-1280": {
   "text": [],
   "controls": []
  },
- "grades-dark": {
+ "grades-dark-1280": {
   "text": [],
   "controls": []
  },
- "all-grades-dark": {
+ "all-grades-dark-1280": {
   "text": [],
   "controls": []
  },
- "calendar-dark": {
+ "calendar-dark-1280": {
   "text": [],
   "controls": []
  },
- "inbox-dark": {
+ "inbox-dark-1280": {
   "text": [],
   "controls": []
  },
- "announcements-dark": {
+ "announcements-dark-1280": {
   "text": [],
   "controls": []
  },
- "discussions-dark": {
+ "discussions-dark-1280": {
   "text": [],
   "controls": []
  },
- "files-dark": {
+ "files-dark-1280": {
   "text": [],
   "controls": []
  },
- "page-dark": {
+ "page-dark-1280": {
   "text": [],
   "controls": []
  },
- "quizzes-dark": {
+ "quizzes-dark-1280": {
   "text": [],
   "controls": []
  },
- "quiz-dark": {
+ "quiz-dark-1280": {
   "text": [],
   "controls": []
  },
- "people-dark": {
+ "people-dark-1280": {
   "text": [],
   "controls": []
  },
- "syllabus-dark": {
+ "syllabus-dark-1280": {
   "text": [],
   "controls": []
  },
- "settings-dark": {
+ "settings-dark-1280": {
+  "text": [],
+  "controls": []
+ },
+ "dashboard-light-768": {
+  "text": [
+   "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "dashboard-planner-light-768": {
+  "text": [
+   "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "courses-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "course-home-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "modules-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "assignments-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "assignment-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "grades-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "all-grades-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "calendar-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "inbox-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "announcements-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "discussions-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "files-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "page-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "quizzes-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "quiz-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "people-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "syllabus-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "settings-light-768": {
+  "text": [],
+  "controls": []
+ },
+ "dashboard-dark-768": {
+  "text": [
+   "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "dashboard-planner-dark-768": {
+  "text": [
+   "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "courses-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "course-home-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "modules-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "assignments-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "assignment-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "grades-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "all-grades-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "calendar-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "inbox-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "announcements-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "discussions-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "files-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "page-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "quizzes-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "quiz-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "people-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "syllabus-dark-768": {
+  "text": [],
+  "controls": []
+ },
+ "settings-dark-768": {
   "text": [],
   "controls": []
  }

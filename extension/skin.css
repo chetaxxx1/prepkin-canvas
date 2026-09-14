@@ -675,6 +675,9 @@ html.pk-on:not(.pk-back-paper) #footer a { color: var(--pk-link) !important; }
 html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_prev:not(:hover),
 html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_next:not(:hover) { color: var(--pk-canvas-btn-ink) !important; }
 html.pk-on.pk-dark:not(.pk-back-paper) body.files #content [class*="-view--inlineBlock-baseButton"]:not(:hover) { color: var(--pk-ink) !important; }
+/* InstUI's disclosure toggle (Settings' feature list at 768) is a text button
+ * with no ground by design; the same carve-out. */
+html.pk-on.pk-dark:not(.pk-back-paper) #content [class*="toggleDetails__toggle"]:not(:hover) { color: var(--pk-ink) !important; }
 /* Plain links already follow --ic-link-color (set above); InstUI links do not. */
 html.pk-on:not(.pk-back-paper) #content [class*="-view-link"],
 html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--pk-link) !important; }

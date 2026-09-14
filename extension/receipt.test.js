@@ -333,9 +333,10 @@ const TEXT_BUTTON_OK = new Set([
   'html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_prev:not(:hover)',
   'html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_next:not(:hover)',
   'html.pk-on.pk-dark:not(.pk-back-paper) body.files #content [class*="-view--inlineBlock-baseButton"]:not(:hover)',
+  'html.pk-on.pk-dark:not(.pk-back-paper) #content [class*="toggleDetails__toggle"]:not(:hover)',
 ]);
 
-test('no rule in the skin writes any property on a button, except colour on the three named', () => {
+test('no rule in the skin writes any property on a button, except colour on the four named', () => {
   const buttonish = /(^|[\s,>+~(])(button|\.btn|\.Button|\[type="?submit"?\]|input\[type="?submit"?\]|\[role="?button"?\]|\[class\*?="[^"]*[Bb]utton[^"]*"\])/i;
   let seen = 0;
   for (const r of rules) {
