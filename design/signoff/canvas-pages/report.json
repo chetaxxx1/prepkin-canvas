@@ -1,0 +1,28 @@
+{
+  "quiz-light": {
+    "mount": 7173,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 45
+    }
+  },
+  "quiz-dark": {
+    "mount": 6921,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 45
+    }
+  }
+}

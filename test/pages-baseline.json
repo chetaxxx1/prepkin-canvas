@@ -1,0 +1,204 @@
+{
+ "dashboard-light": {
+  "text": [
+   "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.event > a > div.event-details > p|ENG-11",
+   "li.event > a > div.event-details > p|100 points\n            •\n          Sep 1",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "courses-light": {
+  "text": [],
+  "controls": []
+ },
+ "course-home-light": {
+  "text": [
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "modules-light": {
+  "text": [],
+  "controls": []
+ },
+ "assignments-light": {
+  "text": [],
+  "controls": []
+ },
+ "assignment-light": {
+  "text": [],
+  "controls": []
+ },
+ "grades-light": {
+  "text": [],
+  "controls": []
+ },
+ "all-grades-light": {
+  "text": [],
+  "controls": []
+ },
+ "calendar-light": {
+  "text": [],
+  "controls": []
+ },
+ "inbox-light": {
+  "text": [],
+  "controls": []
+ },
+ "announcements-light": {
+  "text": [],
+  "controls": []
+ },
+ "discussions-light": {
+  "text": [],
+  "controls": []
+ },
+ "files-light": {
+  "text": [],
+  "controls": []
+ },
+ "page-light": {
+  "text": [],
+  "controls": []
+ },
+ "quizzes-light": {
+  "text": [],
+  "controls": []
+ },
+ "quiz-light": {
+  "text": [],
+  "controls": []
+ },
+ "people-light": {
+  "text": [],
+  "controls": []
+ },
+ "syllabus-light": {
+  "text": [],
+  "controls": []
+ },
+ "settings-light": {
+  "text": [],
+  "controls": []
+ },
+ "dashboard-dark": {
+  "text": [
+   "li.todo > a.item > div.todo-details > p.todo-details__context|LAB-TA",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|10 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.todo > a.item > div.todo-details > p.todo-details__context|PHYS-C-1",
+   "li.todo > a.item > div.todo-details > p|50 points\n                    •\n        ",
+   "li.event > a > div.event-details > p|ENG-11",
+   "li.event > a > div.event-details > p|100 points\n            •\n          Sep 1",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "li.event > a.recent_feedback_icon > div.event-details > p.event-details__context|PHYS-C-1",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "courses-dark": {
+  "text": [],
+  "controls": []
+ },
+ "course-home-dark": {
+  "text": [
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50",
+   "a.recent_feedback_icon > div.event-details > p > strong|47 out of 50"
+  ],
+  "controls": []
+ },
+ "modules-dark": {
+  "text": [],
+  "controls": []
+ },
+ "assignments-dark": {
+  "text": [],
+  "controls": []
+ },
+ "assignment-dark": {
+  "text": [],
+  "controls": []
+ },
+ "grades-dark": {
+  "text": [],
+  "controls": []
+ },
+ "all-grades-dark": {
+  "text": [],
+  "controls": []
+ },
+ "calendar-dark": {
+  "text": [],
+  "controls": []
+ },
+ "inbox-dark": {
+  "text": [],
+  "controls": []
+ },
+ "announcements-dark": {
+  "text": [],
+  "controls": []
+ },
+ "discussions-dark": {
+  "text": [],
+  "controls": []
+ },
+ "files-dark": {
+  "text": [],
+  "controls": []
+ },
+ "page-dark": {
+  "text": [],
+  "controls": []
+ },
+ "quizzes-dark": {
+  "text": [],
+  "controls": []
+ },
+ "quiz-dark": {
+  "text": [],
+  "controls": []
+ },
+ "people-dark": {
+  "text": [],
+  "controls": []
+ },
+ "syllabus-dark": {
+  "text": [],
+  "controls": []
+ },
+ "settings-dark": {
+  "text": [],
+  "controls": []
+ }
+}

@@ -22,3 +22,6 @@ design/vfx/out/
 design/lesson-art/pages/
 design/lesson-art/inbox/done/
 design/lesson-art/tools/paint.log
+
+# The visual-floor gauntlet (test/pages.test.js) writes a screen per page and mode; keep them local, commit only its report.
+design/signoff/canvas-pages/*.jpg
