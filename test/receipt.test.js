@@ -261,6 +261,12 @@ test('R14 the grade sits on the band by default, reads the synced score, and its
   assert.equal(await page.$('.pk-card-grade'), null, 'its receipt row turns it off');
   await h.setStorage({ skin: SKIN({}) }); await page.waitForTimeout(500);
   assert.ok(await page.$('.pk-card-grade'), 'and back on');
+  // For a shared screen: hidden until the mouse is on the card.
+  await h.setStorage({ skin: SKIN({ cardGradesHover: true }) }); await page.waitForTimeout(500);
+  assert.equal(await style(page, '.pk-card-grade', 'opacity'), '0', 'hover mode hides the chip');
+  await page.hover('.ic-DashboardCard');
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('.pk-card-grade')).opacity === '1', null, { timeout: 2000 });
+  await h.setStorage({ skin: SKIN({}) }); await page.waitForTimeout(500);
   await page.close();
 });
 

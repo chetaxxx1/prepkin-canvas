@@ -97,15 +97,12 @@ const COIN_REWARD = 30;
 /// is what the phone told us about coins and looks, `ui` is where the student is.
 /// The view the last render drew, so the scroll position is kept within a view
 /// and dropped when the student moves to a different one.
-let prevView = 'panel';
 /// Whether the panel was open on the last draw, so focus moves in once, on the
 /// draw that opened it, and never again while the student is typing.
 let wasOpen = false;
-const ui = {
-  open: false, view: 'panel', filter: null, expanded: null,
-  target: null, askWeight: null, sheet: null,
-  planning: null, courseFilter: 'all',
-};
+/// The buddy's own state: the palette (Command-K) and the coin float.
+/// Everything else lives on the dashboard's tabs.
+const ui = { open: false, view: 'search', query: '', float: null };
 let data = { tasks: [], courses: [], graded: {}, weights: {} };
 /// Names the student gave courses, by course id, and tasks they added
 /// themselves. Both live in this browser only: Canvas and the phone never see them.
@@ -154,15 +151,12 @@ function searchItems(d = data) {
   }
   return items;
 }
-/// Before a word is typed, the palette is grouped the way Linear's and Causal's
-/// are: your classes, what is due soonest, then Canvas's own pages. Typing
-/// turns it into one ranked list.
+/// Before a word is typed, the palette is grouped the way Linear's is: your
+/// classes, then Canvas's own pages. What is due sits on the rail beside it,
+/// said once. Typing turns the palette into one ranked list, tasks included.
 function searchGroups(items) {
-  const soon = items.filter((i) => i.kind === 'task' && !i.done && i.dueAt)
-    .sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt)).slice(0, 3);
   return [
     ['Classes', items.filter((i) => i.kind === 'course').slice(0, 6)],
-    ['Due soon', soon],
     ['Canvas', items.filter((i) => i.kind === 'page').slice(0, 4)],
   ].filter(([, list]) => list.length);
 }
@@ -259,7 +253,7 @@ function applySkin(s) {
   killed = detectKill();
   facts = detectFacts();
   const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
-  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, look, putBack, detect: facts }));
+  const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, gradeHover: !!s.cardGradesHover, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
     if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && !next.has(c)) root.classList.remove(c);
   }
@@ -285,7 +279,7 @@ function receiptForPage() {
     on: !!skin.cards,
     rows: killed || !skin.cards ? [] : receiptRows({
       present: (k) => document.querySelectorAll(SELECTORS[k].sel).length,
-      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: skin.cardGrades !== false, dense: !!skin.dense, hidePast: !!skin.hidePast, nicknames: Object.keys(nicknames).length, ownArt: Object.keys(cardArt).length, search: skin.search !== false,
+      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: skin.cardGrades !== false, cardGradesHover: !!skin.cardGradesHover, dense: !!skin.dense, hidePast: !!skin.hidePast, nicknames: Object.keys(nicknames).length, ownArt: Object.keys(cardArt).length, search: skin.search !== false,
       stock: stockFor(look, !!skin.dark), putBack,
     }),
   };
@@ -303,23 +297,6 @@ const COIN_SVG = `
     <circle cx="7" cy="7" r="6.4" fill="var(--pk-coin)"/>
     <circle cx="7" cy="7" r="3.4" fill="none" stroke="var(--pk-coin-ring)" stroke-width="1.6"/>
   </svg>`;
-
-function checkSVG(size = 18) {
-  return `
-  <svg width="${size}" height="${size}" viewBox="0 0 16 16" aria-hidden="true">
-    <circle cx="8" cy="8" r="8" fill="#51CFA0"/>
-    <path d="M4.6 8.3 L7 10.6 L11.4 5.6" stroke="#101820" stroke-width="1.9"
-          fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>`;
-}
-
-function chevronSVG(dir = 'right') {
-  const d = { right: 'M5 3 L10 7 L5 11', left: 'M9 3 L4 7 L9 11',
-              down: 'M3 5 L7 10 L11 5', up: 'M3 10 L7 5 L11 10' }[dir];
-  return `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-    <path d="${d}" stroke="currentColor" stroke-width="2" fill="none"
-          stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-}
 
 // MARK: - Reading the day: see day.js
 
@@ -479,155 +456,6 @@ function safeURL(u) {
   return typeof u === 'string' && u.startsWith('https://') ? u : null;
 }
 
-function startButton(t, soft) {
-  const url = safeURL(t.url);
-  if (!url) return '';
-  return `<a class="pk-start${soft ? ' soft' : ''}" href="${escapeHTML(url)}">Start</a>`;
-}
-
-function taskRow(t, { now, state }) {
-  if (state === 'done') {
-    return `
-      <li class="done">
-        <span class="pk-tick">${checkSVG(18)}</span>
-        <div><b>${escapeHTML(t.title)}</b><small>${t.own ? 'done' : submittedLabel(t)}</small></div>
-        ${t.own ? `<button class="pk-x" data-own-remove="${escapeHTML(t.id)}" aria-label="Remove">×</button>` : `<span class="pk-plus">${COIN_SVG}+${COIN_REWARD}</span>`}
-      </li>`;
-  }
-  if (t.own) {
-    const color = safeColor(t.colorHex);
-    return `
-      <li class="${state === 'overdue' ? 'overdue' : ''} own">
-        <span class="pk-dot"${state !== 'overdue' && color ? ` style="background:${escapeHTML(color)}"` : ''}></span>
-        <div><b>${escapeHTML(t.title)}</b>
-             <small>${escapeHTML(shortCourse(t.courseName))} · ${dueLabel(t, now)}</small></div>
-        <button class="pk-done" data-own-done="${escapeHTML(t.id)}">Done</button>
-        <button class="pk-x" data-own-remove="${escapeHTML(t.id)}" aria-label="Remove">×</button>
-      </li>`;
-  }
-  const overdue = state === 'overdue';
-  // The dot is the course's own Canvas colour, so the eye lands by colour the
-  // way it does on the dashboard. Slipped work gets the amber ring instead.
-  const color = safeColor(t.colorHex);
-  return `
-    <li class="${overdue ? 'overdue' : ''}">
-      <span class="pk-dot"${!overdue && color ? ` style="background:${escapeHTML(color)}"` : ''}></span>
-      <div><b>${escapeHTML(t.title)}</b>
-           <small>${escapeHTML(shortCourse(t.courseName))} · ${overdue ? dueLabel(t, now).replace(' · still counts', '') : dueLabel(t, now)}${isMoved(t) ? ' · you planned this' : ''}</small></div>
-      ${overdue ? startButton(t, true) : ''}
-    </li>`;
-}
-
-/// A planner row: colour bar, title, course and time, points on the right.
-function plannerRow(t, now) {
-  // Validated again here, not only in the worker: what is in storage today
-  // was written by an older version, and this string lands in a style attribute.
-  const color = safeColor(t.colorHex) ?? '#C9BCA4';
-  const due = t.dueAt ? new Date(t.dueAt) : null;
-  const time = due && !isNaN(due)
-    ? due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
-    : 'anytime';
-  const moved = isMoved(t);
-  const dueWord = due && !isNaN(due)
-    ? (sameLocalDay(due, now) ? 'due today' : `due ${due.toLocaleDateString([], { weekday: 'short' })}`)
-    : 'no due date';
-  const slipped = due && !isNaN(due) && due < now && !sameLocalDay(due, now) && !t.submittedAt;
-  const when = slipped ? `was due ${due.toLocaleDateString([], { month: 'short', day: 'numeric' })}` : time;
-  const sub = t.submittedAt ? 'submitted' : moved ? `${escapeHTML(shortCourse(t.courseName))} · ${dueWord}` : `${escapeHTML(shortCourse(t.courseName))} · ${when}`;
-  return `
-    <li class="${t.submittedAt ? 'done' : ''}${moved ? ' moved' : ''}"${t.submittedAt ? '' : ` draggable="true" data-drag="${escapeHTML(t.id)}"`}>
-      <span class="pk-bar" style="background:${escapeHTML(color)}"></span>
-      ${t.submittedAt ? `<span class="pk-tick">${checkSVG(16)}</span>` : ''}
-      <div><b>${safeURL(t.url) ? `<a href="${escapeHTML(safeURL(t.url))}">${escapeHTML(t.title)}</a>` : escapeHTML(t.title)}</b>
-           <small>${t.submittedAt ? `${escapeHTML(shortCourse(t.courseName))} · submitted` : sub}</small></div>
-      ${t.submittedAt ? (t.pointsPossible ? `<span class="pk-pts">${t.pointsPossible} pts</span>` : '')
-        : `<button class="pk-planbtn${plans[t.id] ? ' on' : ''}" data-plan-open="${escapeHTML(t.id)}"
-             aria-expanded="${ui.planning === t.id}"
-             aria-label="When will you do ${escapeHTML(t.title)}?">${plans[t.id] ? 'Moved' : 'Plan'}</button>`}
-    </li>
-    ${ui.planning === t.id ? planPicker(t, now) : ''}`;
-}
-
-/// Seven days from today, plus a way back. One tap, no calendar, no times —
-/// the question is only which day you will sit down, and a time you invent at
-/// 11 PM is a time you will not keep.
-function planPicker(t, now) {
-  const chips = Array.from({ length: 7 }, (_, i) => {
-    const d = startOfDay(new Date(now.getTime() + i * DAY_MS));
-    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString([], { weekday: 'short' });
-    const on = plans[t.id] === dayKey(d);
-    return `<button type="button" role="radio" aria-checked="${on}" class="${on ? 'on' : ''}"
-      data-plan-set="${escapeHTML(t.id)}" data-plan-day="${dayKey(d)}"
-      aria-label="${label}, ${d.toLocaleDateString([], { month: 'long', day: 'numeric' })}">${label}</button>`;
-  }).join('');
-  return `
-    <li class="pk-planpick" role="radiogroup" aria-label="What day will you do ${escapeHTML(t.title)}?">
-      <span class="pk-planlead" aria-hidden="true">Do it on</span>
-      ${chips}
-      ${plans[t.id] ? `<button class="clear" data-plan-clear="${escapeHTML(t.id)}">Back to its due date</button>` : ''}
-    </li>`;
-}
-
-// MARK: - Views
-
-/// The home is the planner: the one thing to start, then the week by day.
-/// The chips that used to filter one flat list are gone; the day groups say
-/// what they are. Work the school marked missing long ago sits behind one row.
-function panelView(b, said, now) {
-  const nextUp = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
-
-  if (ui.filter === 'missed') {
-    return `
-    <div class="pk-group">
-      <span class="pk-label amber">Marked missing</span>
-      <button class="pk-lenchange" data-filter="today">Back</button>
-    </div>
-    <div class="pk-foot">Your school marked these missing. Late work still counts. Teachers take it more often than students ask.</div>
-    ${missingCostLines(b.missed)}
-    <ul class="pk-list">${b.missed.map((t) => taskRow(t, { now, state: 'overdue' })).join('') || '<li class="empty">Nothing here. Enjoy it.</li>'}</ul>`;
-  }
-
-  // On the dashboard the rail beside the panel already holds the Next up
-  // card with its two buttons, so the panel lists that task with the rest.
-  const railHasIt = typeof document !== 'undefined' && !!document.getElementById?.(WEEK_ID);
-  const g = weekGroups(b, now, { skip: railHasIt ? null : nextUp });
-  return `
-    ${nextUp && !railHasIt ? nextUpCard(nextUp, now) : ''}
-    ${g.blocks || (nextUp ? '' : '<ul class="pk-list"><li class="empty">Nothing this week. Enjoy it.</li></ul>')}
-    ${g.undatedBlock}
-    <div class="pk-listfoot"><button class="pk-add" data-view="addtask">+ Add a task</button><button class="pk-add" data-view="search">Search <kbd>⌘K</kbd></button></div>
-    ${b.missed.length ? `<button class="pk-recaprow amber" data-filter="missed"><b>${b.missed.length} marked missing</b><span>Older work your school flagged. Still counts.</span></button>` : ''}
-    ${recapDue(data.courses, data.tasks, now) ? '<button class="pk-recaprow" data-view="recap"><b>Your term, in numbers</b><span>The whole term, from your own laptop</span></button>' : ''}
-    ${gradesCard()}
-    ${leagueCard()}
-    <div class="pk-foot center">Settings, and what changed on this page, are in the toolbar button.</div>`;
-}
-
-/// Start (the page) and one focus chip at the remembered length, the same words
-/// the dashboard strip uses. "Still counts" is the headline whenever this is
-/// late, so the meta line does not say it again. The three lengths sit behind "change" so most nights
-/// the row is two taps wide, not five.
-function nextUpCard(t, now) {
-  const mins = [15, 25, 45].map((m) => `
-    <button class="pk-mins${skin.focusMinutes === m ? ' on' : ''}" data-mins="${m}">${m}</button>`).join('');
-  return `
-    <div class="pk-next">
-      <span class="pk-label green">Next up</span>
-      <div class="pk-row">
-        <div>
-          <b>${escapeHTML(t.title)}</b>
-          <small>${escapeHTML(shortCourse(t.courseName))} · ${dueLabel(t, now).replace(' · still counts', '')}${t.pointsPossible ? ` · ${t.pointsPossible} pts` : ''}</small>
-        </div>
-        ${startButton(t, false)}
-      </div>
-      <div class="pk-focusrow${ui.lengthOpen ? ' open' : ''}">
-        <button class="pk-mins go" data-focus="${escapeHTML(t.id)}">Focus ${skin.focusMinutes} min</button>
-        <button class="pk-lenchange" data-len-toggle="1" aria-expanded="${ui.lengthOpen ? 'true' : 'false'}">${ui.lengthOpen ? 'minutes' : 'change'}</button>
-        <span class="pk-lenopts">${mins}</span>
-      </div>
-    </div>`;
-}
-
 // MARK: - The league, the way the phone draws it
 //
 // Six depths of water, shallowest first. KEEP IN STEP WITH LeagueTier and its
@@ -648,61 +476,7 @@ function ownSpecies() {
   const species = board.find((member) => member?.you === true)?.species;
   return KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
 }
-function kinFace(species, size = 28, className = '') {
-  const id = KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
-  const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL && alive() ? chrome.runtime.getURL(`art/kin/${id}.webp`) : `art/kin/${id}.webp`;
-  return `<span class="pk-kin${className ? ` ${className}` : ''}" style="width:${size}px;height:${size}px;background-image:url('${url}')" aria-hidden="true"></span>`;
-}
 function tierOf(league) { return TIERS[Math.max(0, Math.min(TIERS.length - 1, Number(league?.tier) || 0))]; }
-
-/// The pennant: a flag with a fold, the app's shape at panel size.
-function pennantSVG(tier, h = 20, earned = true) {
-  const w = Math.round(h * 1.5);
-  const fill = earned ? tier.color : 'none';
-  return `<svg width="${w}" height="${h}" viewBox="0 0 30 20" aria-hidden="true">
-    <path d="M1 1 H29 L22 10 L29 19 H1 Z" fill="${fill}" stroke="${tier.edge}" stroke-width="1.5" stroke-linejoin="round"/>
-    <path d="M1 1 L8 10 L1 19 Z" fill="${earned ? tier.edge : 'none'}" opacity="${earned ? 1 : 0}"/>
-  </svg>`;
-}
-
-/// Nothing to say without a phone. With one: the tier, the week so far and the
-/// bar, then the pod, best first, with the student's own row marked.
-function leagueCard() {
-  const league = wallet.league;
-  // No phone, no league card: the trio is the product, the app is the door.
-  if (!league) return '';
-  const tier = tierOf(league);
-  const points = Math.max(0, Number(league.points) || 0);
-  const bar = typeof league.bar === 'number' ? league.bar : null;
-  const toGo = bar === null ? null : Math.max(0, bar - points);
-  const pct = bar ? Math.min(100, Math.round((points / bar) * 100)) : 100;
-  const board = Array.isArray(league.board) ? league.board : null;
-  const rows = board ? board.slice(0, 20).map((m, i) => `
-      <li class="${m.you ? 'you' : ''}">
-        <span class="pk-rank">${i + 1}</span>
-        ${kinFace(m.species)}
-        <b>${escapeHTML(m.you ? 'You' : podName(m.adjective, m.noun))}</b>
-        <span class="pk-pts">${escapeHTML(String(Math.max(0, Number(m.points) || 0)))}</span>
-      </li>`).join('') : '';
-  return `
-    <span class="pk-label">League</span>
-    <div class="pk-league" style="--tier:${tier.color};--tier-edge:${tier.edge};--tier-ink:${tier.ink}">
-      <div class="pk-league-head">
-        ${pennantSVG(tier, 34, true)}
-        <div><b>${tier.name}</b><small>${leagueDaysLeft(league) ?? tier.water}</small></div>
-      </div>
-      <div class="pk-league-week">
-        <b>${points} earned this week</b>
-        ${bar !== null ? `<div class="pk-league-bar"><i style="width:${pct}%"></i></div>
-        <small>${toGo === 0 ? `Bar cleared. ${TIERS[TIERS.indexOf(tier) + 1]?.name ?? ''} next week.` : `${toGo} to go for ${TIERS[TIERS.indexOf(tier) + 1]?.name ?? 'the next tier'}`}</small>`
-        : '<small>Deep is the last one. Nothing below it, and nothing to lose.</small>'}
-      </div>
-      ${board === null ? '<div class="pk-league-note">No pod this week. Join one from the app to swim with strangers.</div>'
-        : board.length <= 1 ? '<div class="pk-league-note">Only you at this tier this week. The bar is the same bar.</div>'
-        : `<ol class="pk-league-board">${rows}</ol>`}
-      <div class="pk-foot">Nothing here ever moves you down.</div>
-    </div>`;
-}
 
 /// "3 days left", the way a league says it, from the week the phone named.
 function leagueDaysLeft(league) {
@@ -714,167 +488,9 @@ function leagueDaysLeft(league) {
   return days === 1 ? '1 day left' : `${days} days left`;
 }
 
-function gradesCard() {
-  const courses = data.courses.filter((c) => c.name).slice(0, 8);
-  if (!courses.length) return '';
-  const est = gpa(data.courses, levels);
-  return `
-    <span class="pk-label">Grades</span>
-    <div class="pk-grades">
-      ${courses.map(gradeRow).join('')}
-      ${est ? `<hr />
-        <div class="pk-gpa"><b>GPA (est.)</b><strong>${est.unweighted}</strong></div>
-        ${est.weighted ? `<div class="pk-gpa weighted"><b>Weighted</b><strong>${est.weighted}</strong></div>` : ''}
-        <div class="pk-foot">Updated ${freshness()}</div>` : ''}
-    </div>`;
-}
-
-function gradeRow(c) {
-  const pct = typeof c.score === 'number' ? Math.max(0, Math.min(100, c.score)) : null;
-  const color = safeColor(c.colorHex) ?? '#51CFA0';
-  const open = ui.expanded === c.id;
-  const graded = data.graded?.[c.id] ?? [];
-  const recent = graded.slice(-3).reverse();
-
-  const head = `
-    <div class="pk-row">
-      <span class="pk-cdot" style="background:${escapeHTML(color)}"></span>
-      <b>${escapeHTML(c.name)}</b>
-      <span class="pk-pct">${pct === null ? '—' : `${pct}%`}</span>
-      <span class="pk-letter">${escapeHTML(c.grade ?? '')}</span>
-      ${levels[c.id] && levels[c.id] !== 'regular' ? `<span class="pk-level">${LEVEL_NAMES[levels[c.id]]}</span>` : ''}
-      <span class="pk-chev">${chevronSVG(open ? 'up' : 'down')}</span>
-    </div>`;
-
-  const aim = targets[c.id] ?? null;
-  const aimLetter = aim === null ? null : (LETTERS.find(([, cut]) => cut === aim)?.[0] ?? null);
-
-  if (!open) {
-    return `<div class="pk-grade" data-course="${escapeHTML(c.id)}">
-      ${head}
-      ${pct === null ? '' : `<div class="pk-mini"><i style="width:${pct}%;background:${escapeHTML(color)}"></i>${
-        aim === null ? '' : `<u style="left:${Math.max(0, Math.min(100, aim))}%" title="Aiming for ${escapeHTML(aimLetter ?? '')}"></u>`}</div>`}
-    </div>`;
-  }
-
-  return `<div class="pk-grade open" data-course="${escapeHTML(c.id)}">
-    ${head}
-    ${sparkline(graded, color)}
-    ${recent.length ? `<div class="pk-recent">${recent.map((g) => `
-      <div><span>${escapeHTML(g.title)}</span>${
-        typeof g.classMean === 'number' ? `<i>class ${g.classMean}</i>` : ''
-      }<em>${g.score}/${g.outOf}</em></div>`).join('')}</div>` : ''}
-    <div class="pk-rename">
-      <input type="text" maxlength="40" placeholder="Nickname, like BIO 101" data-rename="${escapeHTML(c.id)}" value="${escapeHTML(nicknames[c.id] ?? '')}" aria-label="Nickname for ${escapeHTML(c.fullName ?? c.name)}">
-      <button type="button" data-rename-save="${escapeHTML(c.id)}">Save</button>
-    </div>
-    <div class="pk-levels" role="radiogroup" aria-label="Class level">
-      ${Object.keys(LEVELS).map((k) => `<button type="button" role="radio" data-level="${k}" data-level-course="${escapeHTML(c.id)}"
-        aria-checked="${(levels[c.id] ?? 'regular') === k}">${LEVEL_NAMES[k]}</button>`).join('')}
-    </div>
-    ${pct === null ? '' : `
-    <div class="pk-aim" role="radiogroup" aria-label="Grade you are aiming for in ${escapeHTML(c.name)}">
-      <span class="pk-aimlead" aria-hidden="true">Aiming for</span>
-      ${targetsFor(pct).map(([letter, cut]) => `<button type="button" role="radio" aria-checked="${aim === cut}"
-        class="${aim === cut ? 'on' : ''}" data-aim="${cut}" data-aim-course="${escapeHTML(c.id)}"
-        aria-label="${letter}, ${cut} percent">${letter}</button>`).join('')}
-      ${aim === null ? '' : `<button class="clear" data-aim-clear="${escapeHTML(c.id)}">Clear</button>`}
-    </div>
-    ${aim === null ? '' : `<div class="pk-foot">${
-      pct >= aim
-        ? `You are at ${pct}%, ${Math.round((pct - aim) * 10) / 10} above ${escapeHTML(aimLetter ?? '')}. Keep it there.`
-        : `${Math.round((aim - pct) * 10) / 10} points of average to reach ${escapeHTML(aimLetter ?? '')}. Still counts.`
-    }</div>`}`}
-    <button class="pk-press wide" data-open-course="${escapeHTML(c.id)}"
-        style="font-size:12px;padding:8px 10px">See every assignment</button>
-    ${pct === null ? '' : `<button class="pk-press wide" data-whatif="${escapeHTML(c.id)}"
-        style="font-size:12px;padding:8px 10px">What do I need on the final?</button>`}
-  </div>`;
-}
-
-/// Everything this class has that we already fetched: what is graded, what the
-/// school marked missing, what is still ahead. Canvas hides the same list behind
-/// four clicks and a page load.
-function courseView(now) {
-  const c = data.courses.find((x) => x.id === ui.expanded);
-  if (!c) return panelViewFallback();
-  const filter = ui.courseFilter ?? 'all';
-  const tasks = (data.tasks ?? []).filter((t) => String(t.courseId) === String(c.id));
-  const graded = (data.graded?.[c.id] ?? []).slice().reverse();
-
-  const missing = tasks.filter((t) => t.missing && !t.submittedAt);
-  const upcoming = tasks.filter((t) => !t.submittedAt && !t.missing);
-  // A zero the teacher entered for work never handed in is both missing and a
-  // grade. It belongs in Missing, where something can still be done about it.
-  const missingIds = new Set(missing.map((t) => t.id));
-  const gradedOnly = graded.filter((g) => !missingIds.has(g.id));
-
-  const gradedRow = (g) => `
-    <li>
-      <div><b>${escapeHTML(g.title)}</b>
-           <small>${g.percent}%${typeof g.classMean === 'number' ? ` · class ${g.classMean}` : ''}</small></div>
-      <span class="pk-pts">${g.score}/${g.outOf}</span>
-    </li>`;
-  const gradedRows = graded.map(gradedRow).join('');
-  const gradedOnlyRows = gradedOnly.map(gradedRow).join('');
-  const taskRows = (list, amber) => list.map((t) => `
-    <li class="${amber ? 'overdue' : ''}">
-      <div><b>${escapeHTML(t.title)}</b><small>${escapeHTML(dueLabel(t, now))}</small></div>
-      ${startButton(t, true)}
-    </li>`).join('');
-
-  const body =
-    filter === 'graded' ? (gradedRows || '<li class="empty">Nothing marked yet.</li>')
-    : filter === 'missing' ? (taskRows(missing, true) || '<li class="empty">Nothing missing. Good.</li>')
-    : filter === 'upcoming' ? (taskRows(upcoming, false) || '<li class="empty">Nothing ahead.</li>')
-    : (taskRows(missing, true) + taskRows(upcoming, false) + gradedOnlyRows) || '<li class="empty">Nothing here yet.</li>';
-
-  const chip = (key, label, n) => `<button data-cfilter="${key}" aria-pressed="${filter === key}" class="${filter === key ? 'on' : ''}">${label}<em>${n}</em></button>`;
-  return `
-    <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
-      <h2>${escapeHTML(c.name)}</h2>
-      <span class="pk-meta">${typeof c.score === 'number' ? `${c.score}%` : ''}</span>
-    </div>
-    <div class="pk-filters">
-      ${chip('all', 'All', missing.length + upcoming.length + gradedOnly.length)}
-      ${chip('graded', 'Graded', graded.length)}
-      ${chip('missing', 'Missing', missing.length)}
-      ${chip('upcoming', 'Upcoming', upcoming.length)}
-    </div>
-    <ul class="pk-list">${body}</ul>
-    <div class="pk-foot">What Canvas handed over, nothing added. Older work drops off Canvas's own list, not ours.</div>`;
-}
-
-function freshness() {
-  const at = data.at ? new Date(data.at) : null;
-  if (!at || isNaN(at)) return 'just now';
-  const mins = Math.round((Date.now() - at) / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins} min ago`;
-  return `${Math.round(mins / 60)} hr ago`;
-}
-
-function addTaskView() {
-  const courses = data.courses.filter((c) => c.name).map((c) => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
-  return `
-    <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
-      <h2>Add a task</h2>
-    </div>
-    <form id="pk-addtask" class="pk-form">
-      <input name="title" type="text" maxlength="120" placeholder="What is it?" required autocomplete="off">
-      <div class="pk-formrow"><input name="date" type="date" aria-label="Due date"><input name="time" type="time" aria-label="Due time"></div>
-      <select name="course" aria-label="Class"><option value="">No class</option>${courses}</select>
-      <button class="pk-press wide" type="submit">Add</button>
-      <div class="pk-foot center">Lives in this browser. Canvas and your phone never see it.</div>
-    </form>`;
-}
-
 function searchView() {
   return `
     <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
       <h2>Search</h2><kbd class="pk-kbd">⌘K</kbd>
     </div>
     <input id="pk-q" class="pk-search" type="text" placeholder="Classes, pages, assignments" value="${escapeHTML(ui.query ?? '')}" autocomplete="off" aria-label="Search">
@@ -892,268 +508,6 @@ function resultsHTML(query) {
   const hits = searchRank(items, query);
   if (!hits.length) return '<li class="empty">Nothing matches.</li>';
   return hits.map((h, i) => row(h, i === 0)).join('');
-}
-
-/// The week as a planner: one group for what slipped, then one per day from
-/// today on, the way Todoist's Upcoming reads. The home and the week view
-/// both draw from it; `skip` is the task the Next up card already shows.
-function weekGroups(b, now, { skip = null } = {}) {
-  // Not b.missed: a month-old zero under a heading that says "Friday" reads as
-  // this Friday. Old missing work has its own list on the panel.
-  const all = [...b.overdue, ...b.today, ...b.week, ...b.doneToday].filter((t) => t !== skip);
-  // Grouped by the day the work sits on, which is the day it was planned for
-  // when the student moved it, and the day it is due when they did not.
-  const placed = all.map((t) => ({ t, day: planDay(t) })).filter((x) => x.day);
-  const undated = all.filter((t) => !planDay(t));
-
-  // One group for everything that slipped, the way Todoist keeps Overdue
-  // together, then a group per day from today on.
-  const today0 = startOfDay(now);
-  const groups = new Map();
-  for (const { t, day } of placed.sort((x, y) => x.day - y.day || String(x.t.dueAt ?? '').localeCompare(String(y.t.dueAt ?? '')))) {
-    const past = day < today0;
-    const key = past ? 'past' : day.toDateString();
-    if (!groups.has(key)) groups.set(key, { date: past ? null : day, items: [] });
-    groups.get(key).items.push(t);
-  }
-
-  // Headers the way Todoist writes them: the date, then the word for it.
-  const tomorrow = new Date(now.getTime() + DAY_MS);
-  const heading = (d) => {
-    if (!d) return 'Past due';
-    const date = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
-    if (sameLocalDay(d, now)) return `${date} · Today`;
-    if (sameLocalDay(d, tomorrow)) return `${date} · Tomorrow`;
-    return `${date} · ${d.toLocaleDateString([], { weekday: 'long' })}`;
-  };
-
-  // Seven dots from Monday: filled when that day's work is all in. Each one is
-  // also where a dragged task lands, so the whole week is a set of drop targets.
-  const monday = new Date(now);
-  monday.setHours(0, 0, 0, 0);
-  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-  const strip = Array.from({ length: 7 }, (_, i) => {
-    const day = new Date(monday.getTime() + i * DAY_MS);
-    const items = placed.filter((x) => sameLocalDay(x.day, day)).map((x) => x.t);
-    const isToday = sameLocalDay(day, now);
-    const full = items.length && items.every((t) => t.submittedAt);
-    return `<div class="${isToday ? 'is-today' : ''}" data-drop="${dayKey(day)}">
-      <i class="${isToday ? 'today' : full ? 'full' : ''}"></i>
-      <span>${'MTWTFSS'[i]}</span></div>`;
-  }).join('');
-
-  const done = all.filter((t) => t.submittedAt).length;
-  const blocks = [...groups.values()].map((g) => {
-    const owed = g.items.filter((t) => !isMoved(t)).length;
-    const moved = g.items.length - owed;
-    const count = [owed ? `${owed} due` : '', moved ? `${moved} planned` : ''].filter(Boolean).join(' · ');
-    return `
-    <div class="pk-group">
-      <span class="pk-label${g.date && sameLocalDay(g.date, now) ? ' green' : ''}${g.date ? '' : ' amber'}">${heading(g.date)}</span>
-      <span class="pk-count-txt">${count}</span>
-    </div>
-    <ul class="pk-list"${g.date ? ` data-drop="${dayKey(g.date)}"` : ''}>${g.items.map((t) => plannerRow(t, now)).join('')}</ul>`;
-  }).join('');
-  const undatedBlock = undated.length ? `
-      <div class="pk-group">
-        <span class="pk-label">No due date</span>
-        <span class="pk-count-txt">${undated.length}</span>
-      </div>
-      <ul class="pk-list">${undated.map((t) => plannerRow(t, now)).join('')}</ul>` : '';
-  return { strip, blocks, undatedBlock, count: all.length, done };
-}
-
-function weekView(b, now) {
-  const g = weekGroups(b, now);
-  return `
-    <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
-      <h2>This week</h2>
-      <span class="pk-meta">${g.count} tasks · ${g.done} done</span>
-    </div>
-    <div class="pk-week">${g.strip}</div>
-    ${g.blocks || '<ul class="pk-list"><li class="empty">Nothing scheduled. Enjoy it.</li></ul>'}
-    ${g.undatedBlock}`;
-}
-
-function whatIfView() {
-  const course = data.courses.find((c) => c.id === ui.expanded);
-  if (!course || typeof course.score !== 'number') return panelViewFallback();
-
-  const groups = data.weights?.[course.id] ?? null;
-  // Canvas only reports weights when the course turns weighting on. Rather than
-  // guess a number that looks authoritative, ask.
-  const guess = groups
-    ? groups.find((g) => /final|exam/i.test(g.name))?.weight ?? null
-    : null;
-  const weight = ui.askWeight ?? guess;
-
-  const options = targetsFor(course.score);
-  const target = ui.target ?? options.find(([, cut]) => course.score >= cut)?.[1] ?? options[0][1];
-
-  const needed = weight != null ? requiredScore({ current: course.score, target, weight }) : null;
-
-  let result;
-  if (weight == null) {
-    result = `
-      <div class="pk-context" style="flex-direction:column;align-items:flex-start;gap:8px">
-        <small>This course does not publish its weights, so tell me what the
-               final is worth and I'll do the rest.</small>
-        <div class="pk-weightask">
-          <input id="pk-weight" type="number" min="1" max="100" placeholder="30" />
-          <span style="font-size:12px;font-weight:600;color:var(--pk-text-2)">% of the grade</span>
-          <button class="pk-press" id="pk-weight-go" style="font-size:12px;padding:8px 12px">Set</button>
-        </div>
-      </div>`;
-  } else if (needed === null) {
-    result = `<div class="pk-result">${kinFace(ownSpecies(), 44, 'pk-buddy')}
-      <div><b>Not enough to go on</b><small>Once something is graded I can work this out.</small></div></div>`;
-  } else if (needed > 100) {
-    const reachable = options.filter(([, cut]) =>
-      (requiredScore({ current: course.score, target: cut, weight }) ?? 999) <= 100)[0];
-    result = `<div class="pk-result">${kinFace(ownSpecies(), 44, 'pk-buddy')}
-      <div><b>That one is out of reach</b>
-      <small>${reachable
-        ? `A ${reachable[0]} needs ${requiredScore({ current: course.score, target: reachable[1], weight })}%. That one is still open.`
-        : 'The grade is settled either way. Finish it and move on.'}</small></div></div>`;
-  } else {
-    const kind = needed <= course.score ? 'Comfortably in reach' : 'Within reach';
-    result = `<div class="pk-result">${kinFace(ownSpecies(), 44, 'pk-buddy')}
-      <div><b>You'd need ${needed}%</b>
-      <small>${kind}. You're averaging ${course.score}% so far.</small></div></div>`;
-  }
-
-  return `
-    <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
-      <h2>What-if · ${escapeHTML(course.name)}</h2>
-    </div>
-    <div class="pk-context">
-      <div><small>Current grade</small><b>${course.score}%${course.grade ? ` · ${escapeHTML(course.grade)}` : ''}</b></div>
-      <div><small>Final exam</small><b>${weight ? `${weight}% of grade` : 'not published'}</b></div>
-    </div>
-    <span class="pk-label">I want to end with</span>
-    <div class="pk-targets">
-      ${options.map(([name, cut]) => `
-        <button data-target="${cut}" class="${target === cut ? 'on' : ''}">${name}</button>`).join('')}
-    </div>
-    ${result}
-    <div class="pk-foot center">Estimates from Canvas weights. Your syllabus wins.</div>`;
-}
-
-function panelViewFallback() {
-  ui.view = 'panel';
-  return '';
-}
-
-/// Course pictures: the theme's own banners for the theme being worn, and a
-/// picture of the student's own for any course, under any theme.
-///
-/// One control, not two. A student who wants their dog on their Chemistry card
-/// should not have to work out that banners live inside a theme sheet and
-/// pictures live somewhere else.
-function picturesSection(look) {
-  if (!alive()) return '';
-  const art = artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f));
-  const showBanners = !!art && wallet.wearing === look.id;
-  const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id))).slice(0, 8);
-  if (!courses.length) return '';
-  const row = (c) => {
-    const own = cardArt[c.id];
-    const busy = ui.picBusy === String(c.id);
-    return `
-      <div class="pk-bannerrow">
-        <b>${escapeHTML(c.name)}</b>
-        <div class="pk-thumbs${showBanners ? '' : ' own-only'}">
-          ${showBanners ? art.cards.map((u, i) => `
-            <button type="button" data-banner-course="${escapeHTML(c.id)}" data-banner="${i + 1}"
-              aria-label="Banner ${i + 1}" aria-pressed="${!own && banners[c.id] === i + 1}"
-              style="background-image:url(&quot;${u}&quot;)"></button>`).join('') : ''}
-          ${own ? `<button type="button" class="pk-own" data-pic-clear="${escapeHTML(c.id)}"
-              aria-label="Remove your picture from ${escapeHTML(c.name)}" aria-pressed="true"
-              style="background-image:url(&quot;${own.thumb ?? own.src}&quot;)"><i aria-hidden="true">×</i></button>` : ''}
-          <label class="pk-pic${busy ? ' busy' : ''}">
-            <input type="file" accept="image/*" data-pic-course="${escapeHTML(c.id)}" ${busy ? 'disabled' : ''} />
-            <span>${busy ? 'Reading…' : own ? 'Change' : 'Your picture'}</span>
-          </label>
-        </div>
-      </div>`;
-  };
-  return `
-    <div class="pk-banners">
-      <span class="pk-label">Course pictures</span>
-      ${courses.map(row).join('')}
-      ${ui.picError ? '<div class="pk-foot">That file could not be read. Any photo your browser can open will work.</div>' : ''}
-      <div class="pk-foot">${showBanners ? 'No pick means the banners take turns. ' : ''}A picture you choose is shrunk here and kept in this browser. It is never uploaded, and it never goes to your phone.</div>
-    </div>`;
-}
-
-function looksView() {
-  if (ui.sheet) {
-    const look = LOOKS_BY_ID[ui.sheet];
-    const afford = wallet.coins !== null && wallet.coins >= look.price;
-    return `
-      <div class="pk-viewhead">
-        <button class="pk-back" data-sheet="">${chevronSVG('left')}</button>
-        <h2>${escapeHTML(look.name)}</h2>
-      </div>
-      <div class="pk-sheet">
-        <div class="pk-well" style="background:${escapeHTML(PAPERS[stockFor(look, !!skin.dark)].paper)}">${kinFace(ownSpecies(), 64, 'pk-buddy')}</div>
-        <b>Wear ${escapeHTML(look.name)}?</b>
-        <small class="pk-paper">${escapeHTML(look.vibe ?? '')}<br>Light: ${escapeHTML(paperLine(stockFor(look, false)))}<br>Dark: ${escapeHTML(paperLine(stockFor(look, true)))}</small>
-        <span class="pk-cost">${COIN_SVG}${look.price} coins${
-          wallet.coins === null ? '' : ` · you have ${wallet.coins}`}</span>
-        ${afford
-          ? `<button class="pk-press wide" data-buy="${escapeHTML(look.id)}">Wear it</button>`
-          : `<div class="pk-foot center">${wallet.coins === null
-              ? 'Link your phone in the Prepkin popup to spend coins.'
-              : `${look.price - wallet.coins} more coins to go. Verified work earns ${COIN_REWARD} each.`}</div>`}
-        <button class="pk-no" data-sheet="">Not now</button>
-      </div>`;
-  }
-
-  // Numo's shop: what you have first, the one you wear ticked, the rest under
-  // "Locked" with a price. The tile is the paper itself, nothing else on it.
-  const yours = LOOKS.filter((look) => look.free || wallet.owned.includes(look.id))
-    .sort((a, b) => (b.id === wallet.wearing) - (a.id === wallet.wearing));
-  const locked = LOOKS.filter((look) => !yours.includes(look));
-  const tile = (look) => {
-    const wearing = wallet.wearing === look.id;
-    const stock = stockFor(look, !!skin.dark);
-    const paper = paperLine(stock);
-    const p = PAPERS[stock];
-    const accent = look.accent?.[skin.dark ? 'dark' : 'light'] ?? p.mark;
-    if (!alive()) return '';
-    const art = artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f));
-    // Inside a double-quoted style attribute, so the url gets single quotes.
-    // The wall sits under a wash of the paper so the name still reads.
-    const pn = parseInt(p.paper.slice(1), 16);
-    const scrim = `rgba(${(pn >> 16) & 255}, ${(pn >> 8) & 255}, ${pn & 255}, 0.62)`;
-    const tex = art ? `linear-gradient(${scrim}, ${scrim}), url('${art.wallpaper}')` : textureImage(look.texture, p.ink);
-    return `
-      <button class="pk-look${wearing ? ' wearing' : ''}${p.dark ? ' on-dark' : ''}${art ? ' has-art' : ''}"
-              data-look="${escapeHTML(look.id)}" aria-pressed="${wearing}" style="background:${escapeHTML(p.paper)};background-image:${tex};background-size:cover;color:${escapeHTML(p.ink)}">
-        <span class="pk-preview" aria-hidden="true">
-          <span style="background:${escapeHTML(p.paper2)};border-color:${escapeHTML(p.rule)}"><i style="background:${escapeHTML(accent)}"></i><em style="background:${escapeHTML(p.ink2)}"></em><em style="background:${escapeHTML(p.rule)}"></em></span>
-          ${wearing ? `<span class="pk-tick">${checkSVG(18)}</span>` : ''}
-        </span>
-        <b>${escapeHTML(look.name)}</b>
-        <small class="pk-paper">${escapeHTML(look.vibe ?? paper)}</small>
-        ${yours.includes(look) ? '' : `<small class="price">${COIN_SVG}${look.price}</small>`}
-      </button>`;
-  };
-
-  return `
-    <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
-      <h2>Themes</h2>
-      <span class="pk-meta">${wallet.coins === null ? '' : `${COIN_SVG} ${wallet.coins}`}</span>
-    </div>
-    <div class="pk-foot">Earned with coins from verified work. Dark is always free.</div>
-    <span class="pk-label">Yours</span>
-    <div class="pk-shop">${yours.map(tile).join('')}</div>
-    ${locked.length ? `<span class="pk-label">Locked</span><div class="pk-shop">${locked.map(tile).join('')}</div>` : ''}
-    ${picturesSection(LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic)}`;
 }
 
 /// "17:21" — what is left of the session.
@@ -1571,7 +925,7 @@ function renderSearchChip() {
   glass.append(c, l);
   const mac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform ?? '');
   chip.append(glass, el('span', '', 'Search'), el('kbd', '', mac ? '⌘K' : 'Ctrl K'));
-  const openSearch = () => { ui.open = true; ui.view = 'search'; ui.query = ''; ui.sheet = null; render(); };
+  const openSearch = () => { ui.open = true; ui.query = ''; render(); };
   chip.addEventListener('click', openSearch);
   chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSearch(); } });
   bar.append(chip);
@@ -1594,29 +948,6 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 function shortCourse(name) {
   const n = String(name ?? '');
   return n.length > 20 && n.includes(':') ? n.split(':')[0].trim() : n;
-}
-
-/// Seven days from Monday, each with a dot per piece of work due that day:
-/// its course colour, and whether it is in, still open, or slipped.
-function weekDays(tasks, w, now = new Date()) {
-  const today0 = startOfDay(now);
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(w.start.getTime() + i * DAY_MS);
-    const next = new Date(date.getTime() + DAY_MS);
-    const due = tasks.filter((t) => { const d = t.dueAt ? new Date(t.dueAt) : null; return d && !isNaN(d) && d >= date && d < next; })
-      .sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
-    const past = date < today0;
-    const dots = due.slice(0, 4).map((t) => ({
-      color: safeColor(t.colorHex), state: t.submittedAt ? 'done' : (Date.parse(t.dueAt) < now.getTime() ? 'late' : 'open'),
-    }));
-    const n = due.length, done = due.filter((t) => t.submittedAt).length;
-    return {
-      date, past, today: sameLocalDay(date, now),
-      letter: date.toLocaleDateString([], { weekday: 'narrow' }),
-      dots,
-      title: n ? `${date.toLocaleDateString([], { weekday: 'long' })}: ${done} of ${n} in` : date.toLocaleDateString([], { weekday: 'long' }),
-    };
-  });
 }
 
 /// Once per week, when the last thing goes in, the buddy dances. The week is
@@ -2039,38 +1370,8 @@ function unmountSprite() {
 
 // MARK: - The term, in numbers
 //
-// Once, when a term ends: what was handed in, how much of it on time, which
-// course took the most, the busiest week and the hour it all went in. The
-// picture a student can save carries course names and counts, never a grade.
-
-function recapView(now) {
-  const r = termRecap(data.tasks, now);
-  const fmt = (d) => d.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  const span = r.firstDue && r.lastDue ? `${fmt(r.firstDue)} to ${fmt(r.lastDue)}` : '';
-  const most = r.byCourse.reduce((m, c) => (m && m.total >= c.total ? m : c), null);
-  const bars = r.byCourse.slice(0, 6).map((c) => `
-    <li><span class="pk-cdot" style="background:${escapeHTML(safeColor(c.colorHex) ?? '#51CFA0')}"></span>
-      <b>${escapeHTML(shortCourse(c.name))}</b><em>${c.done} of ${c.total}</em>
-      <i><u style="width:${c.total ? Math.round((c.done / c.total) * 100) : 0}%;background:${escapeHTML(safeColor(c.colorHex) ?? '#51CFA0')}"></u></i></li>`).join('');
-  const lines = [
-    r.onTimePct !== null ? `${r.onTimePct}% of it on time` : null,
-    r.busiestWeek ? `Busiest week: ${fmt(r.busiestWeek.start)} to ${fmt(r.busiestWeek.end)}, ${r.busiestWeek.count} handed in` : null,
-    r.hour ? `Most often handed in around ${hourLabel(r.hour.hour)}` : null,
-    most ? `${escapeHTML(shortCourse(most.name))} asked the most of you` : null,
-  ].filter(Boolean);
-  return `
-    <div class="pk-viewhead">
-      <button class="pk-back" data-view="panel">${chevronSVG('left')}</button>
-      <h2>Your term</h2><span class="pk-label">${escapeHTML(span)}</span>
-    </div>
-    <div class="pk-recap">
-      <div class="pk-recap-big"><strong>${r.handedIn}</strong><span>thing${r.handedIn === 1 ? '' : 's'} handed in${r.total ? ` of ${r.total}` : ''}</span></div>
-      <ul class="pk-recap-lines">${lines.map((l) => `<li>${l}</li>`).join('')}</ul>
-      ${bars ? `<ul class="pk-recap-courses">${bars}</ul>` : ''}
-      <div class="pk-listfoot"><button class="pk-add" data-recap-save>Save as a picture</button></div>
-      <div class="pk-foot">Counted on your own laptop. Nothing was sent anywhere, and the picture has no grades in it.</div>
-    </div>`;
-}
+// Once, when a term ends. The card lives on the Planner tab; this saves the
+// picture, which carries course names and counts, never a grade.
 
 /// The picture: paper, the big number, the lines, the course bars. Drawn on a
 /// canvas of our own and handed to the browser as a download, so nothing
@@ -2118,63 +1419,24 @@ function saveRecapPicture(now) {
 function render() {
   if (shadow) { shadow.host.toggleAttribute('data-open', ui.open); shadow.host.dataset.view = ui.view; shadow.host.dataset.league = wallet.league ? tierOf(wallet.league).id : ''; }
   if (shadow && sprite) placeSprite(sprite.place);
-  // His line is on the rail and at the top of the panel; while the panel is
-  // open beside the rail, the rail's copy steps back.
+  // His line is on the rail; while the palette is open beside it, it steps back.
   document.getElementById(WEEK_ID)?.classList.toggle('pk-w-quiet', !!ui.open);
   if (!shadow) return;
   const root = shadow;
   const now = new Date();
   const b = buckets(data.tasks ?? [], now, plannedOn);
-  const said = voice(b);
-  const totalToday = b.today.length + b.doneToday.length;
-  const pct = totalToday ? Math.round((b.doneToday.length / totalToday) * 100) : 100;
   const urgent = b.overdue.length + b.today.length;
-  const earned = b.doneToday.length * COIN_REWARD;
 
-  const body =
-    ui.view === 'week' ? weekView(b, now)
-    : ui.view === 'addtask' ? addTaskView()
-    : ui.view === 'search' ? searchView()
-    : ui.view === 'whatif' ? whatIfView()
-    : ui.view === 'course' ? courseView(now)
-    : ui.view === 'looks' ? looksView()
-    : ui.view === 'recap' ? recapView(now)
-    : panelView(b, said, now);
-
-  const showHeader = ui.view === 'panel';
-
-  // Every control redraws the whole panel, so without this a chip near the
-  // bottom — a class level, a grade to aim for — throws the student back to the
-  // top of the list and looks like it did nothing.
-  const keepScroll = ui.view === prevView ? (root.querySelector('.pk-panel')?.scrollTop ?? 0) : 0;
-  prevView = ui.view;
-
+  // The buddy is a door and a palette: Command-K opens search, nothing else
+  // opens here. The planner, grades and looks are tabs on the dashboard.
   root.innerHTML = `
     ${focus.state === 'done' || (focus.state === 'running' && !railShows()) ? focusCard() : ''}
     <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
       ${urgent ? `<span class="pk-count" aria-hidden="true">${urgent}</span>` : ''}
       ${ui.float && Date.now() - ui.float < 2500 ? `<span class="pk-float" aria-hidden="true">${COIN_SVG}+${COIN_REWARD}</span>` : ''}
     </button>
-    <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Prepkin" tabindex="-1" ${ui.open ? '' : 'hidden'}>
-      ${showHeader ? `
-      <div class="pk-head${said.worried ? ' worried' : ''}">
-        <div class="pk-hero">
-          <div class="pk-bubble">
-            <strong>${said.headline}</strong>
-            <span>${said.subline}</span>
-          </div>
-        </div>
-        <div class="pk-chips">
-          <button class="pk-coins" data-view="looks" title="Looks">${COIN_SVG}${
-            wallet.coins === null ? (earned ? `+${earned} today` : 'Looks') : wallet.coins}</button>
-          ${totalToday ? `<span class="pk-donechip">${checkSVG(14)}${b.doneToday.length} of ${totalToday} done today</span>` : ''}
-        </div>
-        ${totalToday ? `<div class="pk-track">
-          <i style="width:${pct}%"></i>
-          <span class="pk-rider" style="left:${pct}%">${kinFace(ownSpecies(), 22, 'pk-buddy')}</span>
-        </div>` : ''}
-      </div>` : ''}
-      <div class="pk-body">${body}</div>
+    <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Search" tabindex="-1" ${ui.open ? '' : 'hidden'}>
+      <div class="pk-body">${ui.open ? searchView() : ''}</div>
     </div>`;
 
   // innerHTML detached the stylesheet; the node itself survives, so putting it
@@ -2182,19 +1444,10 @@ function render() {
   root.prepend(styleEl);
   wire(root);
   const scroller = root.querySelector('.pk-panel');
-  if (scroller && keepScroll) scroller.scrollTop = keepScroll;
   // Opening the panel moves focus into it. Without this a keyboard has to tab
   // back through the whole Canvas page to reach what it just opened.
   if (ui.open && !wasOpen && scroller) scroller.focus({ preventScroll: true });
   wasOpen = ui.open;
-}
-
-async function saveNickname(root, courseId) {
-  const v = root.querySelector(`[data-rename="${CSS.escape(String(courseId))}"]`)?.value.trim() ?? '';
-  const next = { ...nicknames };
-  if (v) next[String(courseId)] = v; else delete next[String(courseId)];
-  nicknames = next;
-  await chrome.storage.local.set({ nicknames });
 }
 
 /// Command-K (Control-K elsewhere) opens search from anywhere on the page.
@@ -2202,7 +1455,7 @@ if (typeof window !== 'undefined' && typeof chrome !== 'undefined' && chrome.sto
   window.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'k' && shadow && skin.mascot !== false) {
       e.preventDefault(); e.stopPropagation();
-      ui.open = true; ui.view = 'search'; ui.query = ''; ui.sheet = null; render();
+      ui.open = true; ui.query = ''; render();
     }
   }, true);
 }
@@ -2214,7 +1467,6 @@ async function setPlan(id, key) {
   const next = { ...plans };
   if (key) next[id] = key; else delete next[id];
   plans = next;
-  ui.planning = null;
   await chrome.storage.local.set({ plans });
   render();
   // The rail counts the same day the panel does, so it has to be redrawn
@@ -2225,53 +1477,19 @@ async function setPlan(id, key) {
 function wire(root) {
   const tab = root.querySelector('.pk-tab');
   tab?.addEventListener('click', () => {
-    // No panel behind him any more: a click is a hello, and if the palette
-    // is open it closes. The planner is a tab on the dashboard; the palette
-    // is Command-K.
-    if (ui.open) { ui.open = false; ui.view = 'panel'; ui.sheet = null; render(); return; }
+    // No panel behind him: a click is a hello, and if the palette is open it
+    // closes. The planner is a tab on the dashboard; the palette is Command-K.
+    if (ui.open) { closePalette(); return; }
     spriteSend({ do: 'play', emote: ['wave', 'curious', 'bounce'][Math.floor(Math.random() * 3)] });
   });
   tab?.addEventListener('mouseenter', () => { if (!ui.open) spriteSend({ do: 'play', emote: 'curious' }); });
-  // Escape closes the panel wherever you are inside it, and hands focus back to
-  // the buddy rather than dropping it on the page behind.
+  // Escape closes the palette and hands focus back to the buddy rather than
+  // dropping it on the page behind.
   root.querySelector('.pk-panel')?.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     e.stopPropagation();
-    // One layer at a time, and only the layers that sit on top of a view: a
-    // sheet, then an open day picker. Escape has always closed the buddy from
-    // anywhere else, and it still does — a view is not a layer.
-    if (ui.sheet) { ui.sheet = null; render(); return; }
-    if (ui.planning) { ui.planning = null; render(); return; }
-    ui.open = false;
-    ui.view = 'panel';
-    ui.sheet = null;
-    render();
+    closePalette();
     shadow?.querySelector('.pk-tab')?.focus();
-  });
-  root.querySelectorAll('[data-rename-save]').forEach((el) => el.addEventListener('click', () => saveNickname(root, el.dataset.renameSave)));
-  root.querySelectorAll('[data-rename]').forEach((el) => el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); saveNickname(root, el.dataset.rename); } }));
-  root.querySelectorAll('[data-own-done]').forEach((el) => el.addEventListener('click', async () => {
-    ownTasks = ownTasks.map((t) => (t.id === el.dataset.ownDone ? { ...t, submittedAt: new Date().toISOString() } : t));
-    await chrome.storage.local.set({ ownTasks });
-  }));
-  root.querySelectorAll('[data-own-remove]').forEach((el) => el.addEventListener('click', async () => {
-    ownTasks = ownTasks.filter((t) => t.id !== el.dataset.ownRemove);
-    await chrome.storage.local.set({ ownTasks });
-  }));
-  root.querySelector('#pk-addtask')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const f = e.target;
-    const title = f.title.value.trim(); if (!title) return;
-    const date = f.date.value, time = f.time.value;
-    const due = date ? new Date(`${date}T${time || '23:59'}`) : null;
-    const course = data.courses.find((c) => String(c.id) === f.course.value);
-    ownTasks = [...ownTasks, {
-      id: `own-${Date.now()}`, title, dueAt: due && !isNaN(due) ? due.toISOString() : null,
-      courseId: course?.id ?? null, courseName: course?.fullName ?? course?.name ?? '', colorHex: course?.colorHex ?? null,
-      createdAt: new Date().toISOString(), submittedAt: null,
-    }];
-    ui.view = 'panel';
-    await chrome.storage.local.set({ ownTasks });
   });
   const q = root.querySelector('#pk-q');
   if (q) {
@@ -2287,162 +1505,12 @@ function wire(root) {
         e.preventDefault();
         const href = (items[at] ?? items[0])?.querySelector('a')?.getAttribute('href');
         if (href) location.assign(href);
-      } else if (e.key === 'Escape') { ui.open = false; ui.view = 'panel'; render(); }
+      } else if (e.key === 'Escape') { closePalette(); }
     });
     q.focus();
   }
-  root.querySelectorAll('[data-filter]').forEach((el) => el.addEventListener('click', () => {
-    const key = el.dataset.filter;
-    // "This week" is a view of its own, the other two just filter the list.
-    if (key === 'week') { ui.view = 'week'; } else { ui.filter = key; }
-    render();
-  }));
-  root.querySelector('[data-recap-save]')?.addEventListener('click', () => saveRecapPicture(new Date()));
-  root.querySelectorAll('[data-view]').forEach((el) => el.addEventListener('click', () => {
-    ui.view = el.dataset.view; ui.sheet = null; render();
-  }));
-  root.querySelectorAll('[data-pic-course]').forEach((el) => el.addEventListener('change', async () => {
-    const id = el.dataset.picCourse;
-    const file = el.files?.[0];
-    if (!file) return;
-    ui.picBusy = String(id); ui.picError = false; render();
-    try {
-      const pic = await readPicture(file);
-      // A picture wins over a banner for that course: the student just chose it.
-      if (pic) {
-        cardArt = { ...cardArt, [id]: pic };
-        banners = { ...banners, [id]: undefined };
-        await chrome.storage.local.set({ cardArt, banners });
-      }
-    } catch (e) {
-      logError('picture', e);
-      ui.picError = true;
-    } finally {
-      ui.picBusy = null;
-      decorateCards();
-      render();
-    }
-  }));
-  root.querySelectorAll('[data-pic-clear]').forEach((el) => el.addEventListener('click', async () => {
-    const { [el.dataset.picClear]: gone, ...rest } = cardArt;
-    cardArt = rest;
-    await chrome.storage.local.set({ cardArt });
-    decorateCards(); render();
-  }));
-  root.querySelectorAll('[data-banner]').forEach((el) => el.addEventListener('click', async () => {
-    const id = el.dataset.bannerCourse, n = Number(el.dataset.banner);
-    banners = { ...banners, [id]: banners[id] === n ? undefined : n };
-    await chrome.storage.local.set({ banners });
-    decorateCards(); render();
-  }));
-  root.querySelectorAll('[data-plan-open]').forEach((el) => el.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const id = el.dataset.planOpen;
-    ui.planning = ui.planning === id ? null : id;
-    render();
-  }));
-  root.querySelectorAll('[data-plan-set]').forEach((el) => el.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    await setPlan(el.dataset.planSet, el.dataset.planDay);
-  }));
-  root.querySelectorAll('[data-plan-clear]').forEach((el) => el.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    await setPlan(el.dataset.planClear, null);
-  }));
-  // Dragging is the quick way for a mouse; the Plan button is the same move for
-  // a keyboard, a phone, or anyone who cannot drag. Neither is the only way in.
-  root.querySelectorAll('[data-drag]').forEach((el) => {
-    el.addEventListener('dragstart', (e) => {
-      e.dataTransfer?.setData('text/plain', el.dataset.drag);
-      if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
-      el.classList.add('dragging');
-    });
-    el.addEventListener('dragend', () => el.classList.remove('dragging'));
-  });
-  root.querySelectorAll('[data-drop]').forEach((el) => {
-    el.addEventListener('dragover', (e) => { e.preventDefault(); el.classList.add('over'); });
-    el.addEventListener('dragleave', () => el.classList.remove('over'));
-    el.addEventListener('drop', async (e) => {
-      e.preventDefault(); el.classList.remove('over');
-      const id = e.dataTransfer?.getData('text/plain');
-      if (id) await setPlan(id, el.dataset.drop);
-    });
-  });
-  root.querySelectorAll('[data-aim]').forEach((el) => el.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    targets = { ...targets, [el.dataset.aimCourse]: Number(el.dataset.aim) };
-    await chrome.storage.local.set({ targets });
-    render();
-  }));
-  root.querySelectorAll('[data-aim-clear]').forEach((el) => el.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    const next = { ...targets }; delete next[el.dataset.aimClear];
-    targets = next;
-    await chrome.storage.local.set({ targets });
-    render();
-  }));
-  root.querySelectorAll('[data-open-course]').forEach((el) => el.addEventListener('click', (e) => {
-    e.stopPropagation();
-    ui.expanded = el.dataset.openCourse; ui.view = 'course'; ui.courseFilter = 'all';
-    render();
-  }));
-  root.querySelectorAll('[data-cfilter]').forEach((el) => el.addEventListener('click', () => {
-    ui.courseFilter = el.dataset.cfilter; render();
-  }));
-  root.querySelectorAll('[data-level]').forEach((el) => el.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    levels = { ...levels, [el.dataset.levelCourse]: el.dataset.level };
-    await chrome.storage.local.set({ levels });
-    render();
-  }));
-  root.querySelectorAll('[data-course]').forEach((el) => el.addEventListener('click', (e) => {
-    if (e.target.closest('[data-whatif], [data-level]')) return;
-    ui.expanded = ui.expanded === el.dataset.course ? null : el.dataset.course;
-    render();
-  }));
-  root.querySelectorAll('[data-whatif]').forEach((el) => el.addEventListener('click', (e) => {
-    e.stopPropagation();
-    ui.expanded = el.dataset.whatif; ui.view = 'whatif'; ui.target = null; ui.askWeight = null;
-    render();
-  }));
-  root.querySelectorAll('[data-target]').forEach((el) => el.addEventListener('click', () => {
-    ui.target = Number(el.dataset.target); render();
-  }));
-  root.querySelector('#pk-weight-go')?.addEventListener('click', () => {
-    const n = Number(root.querySelector('#pk-weight')?.value);
-    if (n > 0 && n <= 100) { ui.askWeight = n; render(); }
-  });
-  root.querySelectorAll('[data-look]').forEach((el) => el.addEventListener('click', () => {
-    ui.sheet = el.dataset.look; render();
-  }));
-  root.querySelectorAll('[data-sheet]').forEach((el) => el.addEventListener('click', () => {
-    ui.sheet = null; render();
-  }));
-  root.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => {
-    if (!e.isTrusted) return;
-    buy(el.dataset.buy);
-  }));
-  root.querySelectorAll('[data-mins]').forEach((el) => el.addEventListener('click', async () => {
-    skin = { ...skin, focusMinutes: Number(el.dataset.mins) };
-    ui.lengthOpen = false;
-    await chrome.storage.local.set({ skin });
-    render();
-  }));
-  root.querySelector('[data-len-toggle]')?.addEventListener('click', () => {
-    ui.lengthOpen = !ui.lengthOpen; render();
-  });
-  root.querySelector('[data-focus]')?.addEventListener('click', (e) => {
-    // A script on the page can fire a click at this button. Only a real one
-    // starts a timer or spends anything.
-    if (!e.isTrusted) return;
-    const id = e.currentTarget.dataset.focus;
-    const task = (data.tasks ?? []).find((t) => t.id === id);
-    if (!alive()) return;
-    chrome.runtime.sendMessage({
-      type: 'focus-start', taskId: id, title: task?.title, url: task?.url,
-      minutes: skin.focusMinutes,
-    });
-  });
+  // The focus card's buttons. A script on the page can fire a click at one;
+  // only a real click reaches the worker.
   root.querySelector('[data-focus-extend]')?.addEventListener('click', (e) => {
     if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-extend' });
   });
@@ -2453,6 +1521,8 @@ function wire(root) {
     if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-clear' });
   });
 }
+
+function closePalette() { ui.open = false; ui.query = ''; render(); }
 
 /// Wearing a look is local and instant; spending the coins is the phone's call.
 /// The extension only files the request — the app's ledger stays the truth.
@@ -2473,7 +1543,6 @@ async function buy(id) {
   await chrome.storage.local.set({ wallet });
   if (!alive()) return;
   if (!owned) await chrome.runtime.sendMessage({ type: 'spend', lookId: id, price: look.price });
-  ui.sheet = null;
   applySkin(skin);
   render();
 }
@@ -2572,8 +1641,8 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, weekDays, tankId, TANKS, TIERS, tierOf, kinFace, ownSpecies, KIN_SPECIES, recapView,
-                     panelView, looksView, weekView, weekGroups, whatIfView, courseView, addTaskView, searchView, focusCard, gradesCard, leagueCard,
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, tankId, TANKS, TIERS, tierOf, ownSpecies, KIN_SPECIES,
+                     searchView, focusCard,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {
   // A fresh sync, a toggle, a purchase or a Put back should show up without a reload.

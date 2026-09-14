@@ -5,7 +5,7 @@
 (async () => {
   try {
     if (isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
-    const s = await chrome.storage.local.get(['skin', 'wallet', 'putBack', 'flags']);
+    const s = await chrome.storage.local.get(['skin', 'wallet', 'putBack', 'flags', 'lastPayload']);
     if (remoteKill(s.flags, {
       host: location.host,
       page: pageName(location.pathname),
@@ -14,10 +14,16 @@
     })) return;
     const skin = { dark: false, cards: true, mascot: true, ...(s.skin ?? {}) };
     if (skin.mode === 'auto') skin.dark = matchMedia('(prefers-color-scheme: dark)').matches;
+    // On a synced dashboard the rail will replace Canvas's To Do, so its box
+    // is folded from the first paint rather than after its spinner has shown.
+    // content.js checks the real page and takes the class back if the rail
+    // turns out not to draw.
+    const putBack = s.putBack ?? {};
+    const todoFold = /^\/(dashboard)?\/?$/.test(location.pathname) && !!s.lastPayload?.at && !putBack.week && !putBack['todo-fold'];
     const classes = skinClasses({
-      on: !!skin.cards, dark: !!skin.dark, dense: !!skin.dense, hidePast: !!skin.hidePast,
+      on: !!skin.cards, dark: !!skin.dark, dense: !!skin.dense, hidePast: !!skin.hidePast, gradeHover: !!skin.cardGradesHover,
       look: LOOKS_BY_ID[s.wallet?.wearing] ?? LOOKS_BY_ID.classic,
-      putBack: s.putBack ?? {},
+      putBack, detect: { todoFold },
     });
     document.documentElement.classList.add(...classes);
     if (classes.length) {

@@ -323,14 +323,35 @@ const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|#pk-planner|#pk-dashtab
 // A rule counts as Canvas's if any selector in it reaches Canvas markup.
 const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours(sel)));
 
-test('no rule in the skin writes any property on a button', () => {
-  const buttonish = /(^|[\s,>+~(])(button|\.btn|\.Button|\[type="?submit"?\]|input\[type="?submit"?\]|\[role="?button"?\])/i;
+// The one carve-out from "never a property on a button": colour only, dark
+// only, not while hovered, on Canvas buttons that have no ground of their own
+// (measured on the real sandbox, 2026-09-14). Listed whole, so adding one is a
+// deliberate edit here, not a habit in the stylesheet.
+const TEXT_BUTTON_OK = new Set([
+  'html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_prev:not(:hover)',
+  'html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_next:not(:hover)',
+  'html.pk-on.pk-dark:not(.pk-back-paper) body.files #content [class*="-view--inlineBlock-baseButton"]:not(:hover)',
+]);
+
+test('no rule in the skin writes any property on a button, except colour on the three named', () => {
+  const buttonish = /(^|[\s,>+~(])(button|\.btn|\.Button|\[type="?submit"?\]|input\[type="?submit"?\]|\[role="?button"?\]|\[class\*?="[^"]*[Bb]utton[^"]*"\])/i;
+  let seen = 0;
   for (const r of rules) {
-    for (const sel of r.selectors.split(',')) {
-      if (sel.includes('*') || sel.includes(':not([type="submit"])') || ours(sel)) continue;
-      assert.doesNotMatch(sel, buttonish, `selects a button: ${sel.trim()}`);
+    for (const raw of r.selectors.split(',')) {
+      const sel = raw.trim();
+      if (ours(sel)) continue;
+      if (TEXT_BUTTON_OK.has(sel)) {
+        seen++;
+        assert.ok(sel.startsWith('html.pk-on.pk-dark:not(.pk-back-paper) '), `dark only, under Put back: ${sel}`);
+        assert.doesNotMatch(sel, /submit|primary|quiz|\[type/i, `never a submit: ${sel}`);
+        assert.match(r.body.replace(/\s+/g, ''), /^color:var\(--pk-[a-z-]+\)!important;?$/, `colour and nothing else: ${sel}`);
+        continue;
+      }
+      // `:not([type="submit"])` excludes a button; it is not a way of naming one.
+      assert.doesNotMatch(sel.replace(/:not\((\[type="(submit|button)"\]|\[class\*="[^"]*[Bb]utton[^"]*"\])\)/g, ''), buttonish, `selects a button: ${sel}`);
     }
   }
+  assert.equal(seen, TEXT_BUTTON_OK.size, 'every named carve-out is in the stylesheet, and nothing else is');
 });
 
 test('the skin never sets font-family, a shadow that is not none, a hover lift, or red', () => {
@@ -373,6 +394,10 @@ test('the grade row needs a card; on by default, and its own switch strikes it t
   const row = (o) => receiptRows({ present, ...o }).find((r) => r.key === 'card-grade');
   assert.equal(row({}).back, false, 'listed and live by default');
   assert.equal(row({ cardGrades: false }).back, true, 'struck through, Turn on');
+  const hover = (o) => receiptRows({ present, ...o }).find((r) => r.key === 'card-grade-hover');
+  assert.equal(hover({}).back, true, 'the hover row is listed, off, under the grade row');
+  assert.equal(hover({ cardGradesHover: true }).back, false);
+  assert.equal(hover({ cardGrades: false }), undefined, 'no grade, no hover row');
   assert.ok(!keys({ cardGrades: true, present: () => 0 }).includes('card-grade'), 'no cards, no row');
 });
 

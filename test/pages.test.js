@@ -68,15 +68,10 @@ const key = (f) => `${f.path}|${f.text || f.word || f.size || f.prop || ''}`;
 /// did not already have them.
 const counts = (name, kind, list) => list.filter((f) => f.pk || !(baseline[name]?.[kind] || []).includes(key(f)));
 
-/// Known and left alone, on purpose: Canvas renders some words as <button>s
-/// (the syllabus's "due by" times, the calendar's month arrows), and the
-/// skin's rule is to write no property on a button, so on a dark paper those
-/// stay in Canvas's own dark ink. A rule change, not a stylesheet fix; listed
-/// here so the suite stays honest and green. See VERDICT-2026-09-14.md.
-const KNOWN = [
-  { page: /^syllabus-dark$/, path: /^td\.dates > .* > button$/ },
-  { page: /^calendar-dark$/, path: /button\.navigate_(prev|next)/ },
-];
+/// Known and left alone, on purpose. Empty since the button carve-out
+/// (extension/receipt.test.js TEXT_BUTTON_OK) landed; a row here is a debt
+/// with its reason, never a way to make a run green.
+const KNOWN = [];
 const known = (name, f) => KNOWN.some((k) => k.page.test(name) && k.path.test(f.path));
 
 test.before(async () => {
@@ -172,6 +167,28 @@ test('dashboard: what is due is said once per place', { skip: !!(BASELINE || (ON
   assert.ok(seen.perCard.every((n) => n <= 1), `a card shows more than one due line: ${seen.perCard.join(', ')}`);
   assert.ok(seen.rail <= 5, `the rail lists ${seen.rail} rows; five things is the rail`);
   assert.ok(seen.counts.length <= 1, `a count is said ${seen.counts.length} times: ${seen.counts.join(' · ')}`);
+});
+
+/// Canvas's own To Do (with its spinner) is folded from the first paint: boot.js
+/// adds the fold class at document_start on a synced dashboard, so the student
+/// never sees Canvas's list flash before the rail replaces it.
+test('dashboard: Canvas\'s To Do never shows before the rail folds it', { skip: !!(BASELINE || (ONLY && !ONLY.includes('dashboard'))) }, async () => {
+  const p = await h.context.newPage();
+  await p.setViewportSize({ width: 1280, height: 860 });
+  await p.addInitScript(() => {
+    window.__pkSeen = [];
+    const look = () => {
+      const el = document.querySelector('.Sidebar__TodoListContainer, ul.right-side-list.to-do-list');
+      if (el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0) window.__pkSeen.push(performance.now());
+    };
+    setInterval(look, 50);
+  });
+  await p.goto(`${SCHOOL_A}/`, { waitUntil: 'domcontentloaded' });
+  await p.waitForSelector('#pk-week', { timeout: 60_000 });
+  await p.waitForTimeout(3000);
+  const seen = await p.evaluate(() => window.__pkSeen);
+  await p.close();
+  assert.equal(seen.length, 0, `Canvas's To Do was on screen ${seen.length} times (first at ${Math.round(seen[0] ?? 0)} ms)`);
 });
 
 /// The skin must not slow Canvas's own React pages down. Same page, same

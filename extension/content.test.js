@@ -159,19 +159,15 @@ test('searchRank: every word must match, what starts with the query comes first,
   assert.equal(searchRank(items, '').length, 8);
 });
 
-test('searchGroups: before typing, classes, then what is due soonest and not handed in, then Canvas pages', () => {
-  const { searchItems, searchGroups } = require('./content.js');
-  const d = { courses: [{ id: 1, name: 'Physics' }, { id: 2, name: 'English' }], tasks: [
-    { id: 'a', title: 'Late one', courseId: 1, courseName: 'Physics', url: 'https://school.edu/courses/1/assignments/1', dueAt: '2026-09-01T00:00:00Z' },
-    { id: 'b', title: 'Handed in', courseId: 1, courseName: 'Physics', url: 'https://school.edu/courses/1/assignments/2', dueAt: '2026-09-02T00:00:00Z', submittedAt: '2026-09-01T00:00:00Z' },
-    { id: 'c', title: 'Soon', courseId: 2, courseName: 'English', url: 'https://school.edu/courses/2/assignments/3', dueAt: '2026-09-03T00:00:00Z' },
-    { id: 'd', title: 'Undated', courseId: 2, courseName: 'English', url: 'https://school.edu/courses/2/assignments/4', dueAt: null },
-  ] };
-  const groups = searchGroups(searchItems(d));
-  assert.deepEqual(groups.map((g) => g[0]), ['Classes', 'Due soon', 'Canvas']);
-  assert.deepEqual(groups[0][1].map((i) => i.label), ['Physics', 'English']);
-  assert.deepEqual(groups[1][1].map((i) => i.label), ['Late one', 'Soon'], 'handed-in and undated work stay out');
-  assert.equal(groups[2][1].length, 4, 'four Canvas pages, not the settings one');
+test('searchGroups: before typing, classes then Canvas pages; what is due is the rail\'s to say', () => {
+  const { searchItems, searchGroups, _setData } = require('./content.js');
+  _setData({
+    courses: [{ id: 1, name: 'AP Physics C', courseCode: 'PHYS', url: 'https://x/courses/1', colorHex: '#123' }],
+    tasks: [{ id: 't1', title: 'Problem Set 7', courseId: 1, courseName: 'AP Physics C', dueAt: '2026-09-20T05:00:00Z', url: 'https://x/courses/1/assignments/7', submittedAt: null }],
+  });
+  const groups = searchGroups(searchItems());
+  assert.deepEqual(groups.map((g) => g[0]), ['Classes', 'Canvas']);
+  assert.ok(!groups.flatMap((g) => g[1]).some((i) => i.kind === 'task'), 'no task before typing');
 });
 
 test('the league on the laptop spells tiers and strangers the way the phone does', () => {
@@ -185,12 +181,6 @@ test('the league on the laptop spells tiers and strangers the way the phone does
   assert.equal(podName('x', 1), `${POD_NAMES.adjectives[0]} ${POD_NAMES.nouns[1]}`, 'junk is index zero, never a crash');
 });
 
-test('a pod member gets the phone\'s kin face, Mint when the species is unknown', () => {
-  const { kinFace, KIN_SPECIES } = require('./content.js');
-  assert.equal(KIN_SPECIES.length, 6);
-  assert.match(kinFace('coral'), /art\/kin\/coral\.webp/);
-  assert.match(kinFace('<img onerror=x>'), /art\/kin\/mint\.webp/, 'never page data in a url');
-});
 
 test('the buddy is the student\'s own kin, mint until the phone says otherwise', () => {
   const { ownSpecies, _setWallet } = require('./content.js');
@@ -331,28 +321,6 @@ test('tankId: the band paints the tank the phone named, and Lagoon until it name
   assert.equal(tankId(), 'lagoon', 'an unknown name is the default, never a path');
 });
 
-test('weekDays: seven days from Monday, a dot per piece of work in its state, today marked', () => {
-  const { weekDays } = require('./content.js');
-  const { weekStats } = require('./day.js');
-  const now = new Date(2026, 8, 11, 14); // Friday Sep 11
-  const at = (d, h = 9) => new Date(2026, 8, d, h).toISOString();
-  const tasks = [
-    { id: 'a', dueAt: at(7), colorHex: '#9B3FA0', submittedAt: at(6) },   // Monday, in
-    { id: 'b', dueAt: at(9), colorHex: '#D91A00', submittedAt: null },    // Wednesday, slipped
-    { id: 'c', dueAt: at(11, 23), colorHex: '#2F6BAA', submittedAt: null }, // Friday night, open
-    { id: 'd', dueAt: at(13), colorHex: 'bad', submittedAt: null },       // Sunday, open, no colour
-    { id: 'e', dueAt: at(20), colorHex: '#000', submittedAt: null },      // next week: not here
-  ];
-  const days = weekDays(tasks, weekStats(tasks, now), now);
-  assert.equal(days.length, 7);
-  assert.deepEqual(days.map((d) => d.letter), ['M', 'T', 'W', 'T', 'F', 'S', 'S']);
-  assert.deepEqual(days.map((d) => d.dots.map((x) => x.state)), [['done'], [], ['late'], [], ['open'], [], ['open']]);
-  assert.equal(days[0].dots[0].color, '#9B3FA0');
-  assert.equal(days[6].dots[0].color, null, 'a bad colour is no colour');
-  assert.deepEqual(days.map((d) => d.today), [false, false, false, false, true, false, false]);
-  assert.deepEqual(days.map((d) => d.past), [true, true, true, true, false, false, false]);
-  assert.equal(days[0].title, 'Monday: 1 of 1 in');
-});
 
 test('voice: a short line for the rail, one line wide', () => {
   const { voice } = require('./day.js');

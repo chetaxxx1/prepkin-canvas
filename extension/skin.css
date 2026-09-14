@@ -9,7 +9,10 @@
  *  - never `font-family`, never a radius Canvas did not use, no shadow, no lift;
  *  - never any property on a button: no rule below selects `button`, `.btn`,
  *    `[type=submit]` or `[role=button]`, so the submit button is always the
- *    school's own and always visible (extension/canvas.test.js lints this);
+ *    school's own and always visible (extension/receipt.test.js lints this).
+ *    One carve-out, listed whole in that lint: `color` only, dark only, not
+ *    while hovered, on the Canvas buttons that have no ground of their own
+ *    and would otherwise read at 1:1 on a dark paper (measured 2026-09-14);
  *  - never `--ic-brand-*`, the hero's opacity, the title span's colour, a
  *    course colour, `.ic-flash-error`, `#skip_navigation_link`, `.ic-sidebar-logo`;
  *  - never a selector containing `css-`.
@@ -28,6 +31,8 @@ html.pk-on {
   --pk-amber-rule: #D9A441;
   --pk-hover: var(--pk-paper-sunk);
   --pk-seam: var(--pk-rule);
+  /* Canvas's own button ink, for the one button that inherits ours by mistake. */
+  --pk-canvas-btn-ink: #273540;
   color-scheme: light;
 }
 html.pk-on.pk-dark {
@@ -333,6 +338,11 @@ html.pk-on:not(.pk-back-card-grade) .pk-card-grade {
   background: var(--pk-paper-2); color: var(--pk-ink); pointer-events: none;
 }
 html.pk-back-card-grade .pk-card-grade { display: none; }
+/* For a shared screen: the grade waits until the mouse (or a keyboard) is on
+ * its card. The chip keeps its place, so nothing shifts. */
+html.pk-on.pk-grade-hover .pk-card-grade { opacity: 0; }
+html.pk-on.pk-grade-hover .ic-DashboardCard:hover .pk-card-grade,
+html.pk-on.pk-grade-hover .ic-DashboardCard:focus-within .pk-card-grade { opacity: 1; }
 
 /* ---- hero: the colour band on a card, 8px --------------------------------
  * Height only. Its opacity is a student's accessibility preference. */
@@ -638,6 +648,16 @@ html.pk-on:not(.pk-back-paper) #content .hint { color: var(--pk-ink-2) !importan
 /* The page foot: Canvas's "Open Source LMS" line and links, in the quiet ink. */
 html.pk-on:not(.pk-back-paper) #footer { color: var(--pk-ink-2) !important; border-color: var(--pk-rule) !important; }
 html.pk-on:not(.pk-back-paper) #footer a { color: var(--pk-link) !important; }
+/* The button carve-out (see the head of this file). Two cases, measured on the
+ * real sandbox in dark: the calendar's month arrows are jQuery-UI buttons that
+ * inherit the page's ink onto Canvas's own light ground, so they take Canvas's
+ * ink back; and on the Files page every InstUI button a student sees is drawn
+ * without a ground (the kebab, Download, the pages, "All My Files"), in
+ * Canvas's dark ink on our dark paper, so those take the paper's ink. Not while
+ * hovered: Canvas's own hover pair stays whole. Never a submit button. */
+html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_prev:not(:hover),
+html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_next:not(:hover) { color: var(--pk-canvas-btn-ink) !important; }
+html.pk-on.pk-dark:not(.pk-back-paper) body.files #content [class*="-view--inlineBlock-baseButton"]:not(:hover) { color: var(--pk-ink) !important; }
 /* Plain links already follow --ic-link-color (set above); InstUI links do not. */
 html.pk-on:not(.pk-back-paper) #content [class*="-view-link"],
 html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--pk-link) !important; }

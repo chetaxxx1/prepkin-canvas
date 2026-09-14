@@ -137,6 +137,8 @@ const RULES = [
   // settings card: the row is struck through while the switch is off and its
   // button turns it on. Same receipt, one fewer panel of toggles.
   { key: 'card-grade', kind: 'added', label: 'Your grade on each course card', hook: 'card', opt: 'cardGrades', undo: 'Turn on' },
+  // For a shared screen: the grade stays hidden until the mouse is on its card.
+  { key: 'card-grade-hover', kind: 'added', label: 'The grade only while the mouse is on the card', hook: 'card', opt: 'cardGradesHover', undo: 'Turn on', when: (ctx) => ctx.cardGrades },
   { key: 'week', kind: 'added', label: 'This week, at the top of the sidebar', hook: 'card' },
   { key: 'todo-fold', kind: 'taken', label: "Canvas's To Do and Coming Up. The rail and the planner hold the same work", detect: 'todoFold' },
   { key: 'search', kind: 'added', label: 'Search, in the corner of every page', when: () => true, opt: 'search', undo: 'Turn on' },
@@ -161,12 +163,13 @@ const WORD_INKS = ['#000000', '#000', 'black', 'rgb(0,0,0)', 'rgb(0, 0, 0)', 'wi
 
 /// The <html> classes for one page state. boot.js runs this before first
 /// paint; content.js runs it again with what the DOM turned out to hold.
-function skinClasses({ on, dark, look, dense = false, hidePast = false, putBack = {}, detect = {} }) {
+function skinClasses({ on, dark, look, dense = false, hidePast = false, gradeHover = false, putBack = {}, detect = {} }) {
   if (!on) return [];
   const classes = ['pk-on', `pk-paper-${stockFor(look, !!dark)}`];
   if (dark) classes.push('pk-dark');
   if (dense) classes.push('pk-dense');
   if (hidePast) classes.push('pk-hide-past');
+  if (gradeHover) classes.push('pk-grade-hover');
   if (look?.id) classes.push(`pk-theme-${look.id}`);
   if (look?.header === 'wash') classes.push('pk-head-wash');
   if (look?.texture && look.texture !== 'none') classes.push('pk-textured');
@@ -182,8 +185,8 @@ function skinClasses({ on, dark, look, dense = false, hidePast = false, putBack 
 /// put back. `present(hookName)` says how many times the hook matches (a
 /// boolean reads as one); the content script supplies it from the DOM, tests
 /// supply it directly.
-function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = true, dense = false, hidePast = false, nicknames = 0, ownArt = 0, search = true }) {
-  const ctx = { dark, mascot, stock, detect, cardGrades, dense, hidePast, nicknames, ownArt, search };
+function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = true, cardGradesHover = false, dense = false, hidePast = false, nicknames = 0, ownArt = 0, search = true }) {
+  const ctx = { dark, mascot, stock, detect, cardGrades, cardGradesHover, dense, hidePast, nicknames, ownArt, search };
   return RULES.flatMap((rule) => {
     if (rule.darkOnly && !dark) return [];
     const hits = rule.hook ? Number(present(rule.hook)) || 0 : 0;

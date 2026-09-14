@@ -79,29 +79,6 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   display: grid; place-items: center;
 }
 
-/* ---- The term, in numbers -------------------------------------------------- */
-.pk-recaprow {
-  width: 100%; margin: 12px 0 0; padding: 12px 14px; border: 0; border-radius: 14px; cursor: pointer; text-align: left;
-  background: var(--pk-inset); color: var(--pk-text); font: inherit;
-  display: flex; flex-direction: column; gap: 2px;
-}
-.pk-recaprow:hover { background: var(--pk-card); box-shadow: inset 0 0 0 1px var(--pk-line); }
-.pk-recaprow b { font-size: 14px; font-weight: 800; }
-.pk-recaprow span { font-size: 13px; font-weight: 600; color: var(--pk-text-2); }
-.pk-recap { display: flex; flex-direction: column; gap: 14px; padding: 6px 0 0; }
-.pk-recap-big { display: flex; align-items: baseline; gap: 10px; }
-.pk-recap-big strong { font-size: 56px; line-height: 1; font-weight: 900; letter-spacing: -.03em; }
-.pk-recap-big span { font-size: 16px; font-weight: 800; }
-.pk-recap-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.pk-recap-lines li { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--pk-text-2); padding-left: 14px; position: relative; }
-.pk-recap-lines li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 999px; background: var(--pk-mint); }
-.pk-recap-courses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.pk-recap-courses li { display: grid; grid-template-columns: 8px 1fr auto; column-gap: 8px; row-gap: 6px; align-items: center; font-size: 13px; }
-.pk-recap-courses b { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pk-recap-courses em { font-style: normal; font-weight: 700; color: var(--pk-text-2); }
-.pk-recap-courses i { grid-column: 2 / 4; display: block; height: 8px; border-radius: 999px; background: var(--pk-track); overflow: hidden; }
-.pk-recap-courses i u { display: block; height: 100%; border-radius: 999px; }
-
 /* ---- The panel shell ------------------------------------------------------ */
 .pk-panel {
   grid-column: 2; grid-row: 2; margin-bottom: 8px;
@@ -115,40 +92,6 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 :host([data-side="right"]) .pk-panel { grid-column: 1; grid-row: 2; margin-bottom: 0; }
 :host([data-side="right"]) .pk-timer { grid-column: 1; grid-row: 1; }
 
-/* ---- The head: the buddy speaks, then the day in one line ---------------- */
-.pk-head {
-  background: var(--pk-inset); padding: 18px 18px 16px;
-  display: flex; flex-direction: column; gap: 14px;
-}
-.pk-head.worried { background: var(--pk-amber-tint); }
-.pk-hero { display: flex; align-items: center; gap: 14px; }
-.pk-hero > .pk-buddy { flex-shrink: 0; }
-.pk-bubble { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.pk-bubble strong { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; }
-.pk-bubble span { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-text-mid); }
-
-.pk-chips { display: flex; align-items: center; gap: 10px; }
-.pk-coins {
-  display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer;
-  background: var(--pk-ink); color: var(--pk-on-ink); border-radius: 999px;
-  padding: 6px 12px; font-size: 13px; font-weight: 800;
-  transition: transform .15s var(--pk-ease);
-}
-.pk-coins:hover { transform: translateY(-1px); }
-.pk-donechip {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 700; color: var(--pk-green);
-}
-.pk-head.worried .pk-donechip { color: var(--pk-amber-text); }
-.pk-chips .pk-label { margin-left: auto; }
-
-.pk-label {
-  font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em;
-  text-transform: uppercase; color: var(--pk-text-2);
-}
-.pk-label.green { color: var(--pk-green); }
-.pk-label.amber { color: var(--pk-amber-text, #8A5A12); }
-
 /* Daily progress, the buddy riding the fill edge. It only ever moves right. */
 .pk-track { position: relative; height: 8px; border-radius: 999px; background: var(--pk-track); }
 .pk-track > i {
@@ -156,46 +99,16 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   border-radius: 999px; background: var(--pk-mint); display: block;
   transition: width .4s var(--pk-ease);
 }
-.pk-rider { position: absolute; top: -12px; transform: translateX(-50%); transition: left .4s var(--pk-ease); }
-
 /* ---- Body ------------------------------------------------------------------ */
 .pk-body { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
 
-/* Four chips do not fit 324 px, so the row bleeds to the panel's edges and
-   scrolls sideways, the way an App Store category row does. No scrollbar. */
-.pk-filters { display: flex; gap: 6px; overflow-x: auto; margin: 0 -18px; padding: 0 18px; scrollbar-width: none; }
-.pk-filters::-webkit-scrollbar { display: none; }
-.pk-filters button {
-  border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer;
-  font-size: 13px; font-weight: 700; background: var(--pk-inset); color: var(--pk-text-2);
-  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease); white-space: nowrap; }
-.pk-filters button:hover { color: var(--pk-text); }
-.pk-filters button em { font-style: normal; opacity: .7; margin-left: 4px; }
-.pk-filters button.on { background: var(--pk-mint-tint-strong); color: var(--pk-green); font-weight: 800; }
-.pk-filters button.on em { opacity: .65; }
-.pk-filters button.on.amber { background: var(--pk-amber-tint); color: var(--pk-amber-text); }
-
 /* Sub-view header (week planner, what-if, looks) */
 .pk-viewhead { display: flex; align-items: center; gap: 10px; }
-.pk-back {
-  border: 0; background: none; cursor: pointer; padding: 4px; display: flex;
-  color: var(--pk-green); border-radius: 8px;
-}
-.pk-back:hover { background: var(--pk-inset); }
 .pk-viewhead h2 { margin: 0; font-size: 16px; line-height: 20px; font-weight: 800; letter-spacing: -.01em; }
 .pk-viewhead .pk-meta { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--pk-text-2); display: inline-flex; gap: 4px; align-items: center; }
 
-/* ---- Next up: the one accent block on the surface ------------------------- */
-.pk-next {
-  background: var(--pk-mint-tint); border-radius: 16px;
-  box-shadow: inset 0 0 0 1px var(--pk-mint-border);
-  padding: 12px 12px 12px 14px; display: flex; flex-direction: column; gap: 10px;
-}
 .pk-next .pk-row { display: flex; align-items: center; gap: 10px; }
 .pk-next .pk-row > div { flex-grow: 1; min-width: 0; }
-.pk-next b { display: block; font-size: 14px; line-height: 20px; font-weight: 800; }
-.pk-next small { font-size: 13px; font-weight: 600; color: var(--pk-text-mid); }
-
 /* The press button: mint, with an edge that gives under the thumb. */
 .pk-start,
 .pk-press {
@@ -207,177 +120,19 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 }
 .pk-start:hover, .pk-press:hover { filter: brightness(1.04); }
 .pk-start:active, .pk-press:active { transform: translateY(3px); box-shadow: 0 0 0 var(--pk-mint-edge); }
-.pk-press.wide { width: 100%; }
-.pk-press:disabled { opacity: .5; cursor: default; transform: none; }
 .pk-start.soft { background: var(--pk-card); color: var(--pk-text) !important; box-shadow: inset 0 0 0 1px var(--pk-line); font-size: 13px; padding: 7px 14px; }
 .pk-start.soft:hover { background: var(--pk-inset); filter: none; }
 .pk-start.soft:active { transform: none; box-shadow: inset 0 0 0 1px var(--pk-line); }
 
-.pk-focusrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.pk-focusrow span { font-size: 13px; font-weight: 700; color: var(--pk-text-2); margin-right: 2px; }
-.pk-mins {
-  border: 0; box-shadow: inset 0 0 0 1px var(--pk-line-soft); background: var(--pk-card);
-  color: var(--pk-text-2); border-radius: 999px; padding: 5px 10px;
-  font-size: 13px; font-weight: 700; cursor: pointer;
-  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease);
-}
-.pk-mins:hover { color: var(--pk-text); }
-.pk-mins.on { background: var(--pk-mint-tint-strong); box-shadow: inset 0 0 0 1px var(--pk-mint-border); color: var(--pk-green); font-weight: 800; }
-.pk-mins.go { color: var(--pk-text); font-weight: 800; }
-.pk-lenchange { border: 0; background: none; padding: 4px 6px; font-size: 13px; font-weight: 700; color: var(--pk-green); cursor: pointer; }
-.pk-lenchange:hover { text-decoration: underline; }
-.pk-lenopts { display: none; gap: 6px; }
-.pk-focusrow.open .pk-lenopts { display: inline-flex; }
-
-/* ---- Rows: a list is a list --------------------------------------------- */
-.pk-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.pk-list li {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 0; min-height: 44px;
-  border-top: 1px solid var(--pk-line);
-}
-.pk-list li:first-child { border-top: 0; }
-.pk-list li > .pk-dot {
-  flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px;
-  background: var(--pk-circle);
-}
-.pk-list li.overdue > .pk-dot { background: var(--pk-card); box-shadow: inset 0 0 0 2px var(--pk-coin); }
-.pk-list li > .pk-tick { flex-shrink: 0; display: flex; }
-.pk-list li > .pk-bar { flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px; }
-.pk-list li > div { flex-grow: 1; min-width: 0; }
-.pk-list b {
-  display: block; font-size: 14px; line-height: 20px; font-weight: 700;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.pk-list small { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-text-2); }
-.pk-list li.overdue small { color: var(--pk-amber-text); }
-.pk-list li.done b { color: var(--pk-text-3); text-decoration: line-through; text-decoration-color: var(--pk-circle); font-weight: 600; }
-.pk-list .pk-pts { flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
 .pk-plus {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;
   background: var(--pk-amber-tint); color: var(--pk-amber-text);
   border-radius: 999px; padding: 4px 9px; font-size: 13px; font-weight: 800;
 }
-.pk-list li.empty {
-  border-top: 0; background: var(--pk-inset); border-radius: 12px; justify-content: center;
-  font-size: 13px; font-weight: 600; color: var(--pk-text-2); padding: 14px;
-}
-
-/* ---- Week planner --------------------------------------------------------- */
-.pk-week {
-  background: var(--pk-inset); border-radius: 16px; padding: 12px 14px;
-  display: flex; justify-content: space-between;
-}
-.pk-week div { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.pk-week i { width: 12px; height: 12px; border-radius: 999px; background: var(--pk-track); display: block; }
-.pk-week i.full { background: var(--pk-mint); }
-.pk-week i.today { background: var(--pk-card); box-shadow: inset 0 0 0 2px var(--pk-mint); }
-.pk-week span { font-size: 11px; font-weight: 800; color: var(--pk-text-2); }
-.pk-week div.is-today span { color: var(--pk-green); }
 .pk-group { display: flex; align-items: center; gap: 8px; padding-top: 4px; }
-.pk-group .pk-count-txt { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
 
-/* ---- Grades: rows, a bar under each, one open at a time ------------------- */
-.pk-grades { display: flex; flex-direction: column; }
-.pk-grade { display: flex; flex-direction: column; gap: 6px; cursor: pointer; padding: 10px 0; border-top: 1px solid var(--pk-line); }
-.pk-grade:first-child { border-top: 0; }
-.pk-grade .pk-row { display: flex; align-items: center; gap: 10px; }
-.pk-grade .pk-cdot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 999px; }
-.pk-grade b {
-  flex-grow: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 700;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.pk-grade .pk-pct { font-size: 14px; font-weight: 800; }
-.pk-grade .pk-letter { width: 22px; text-align: right; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
-.pk-grade .pk-chev { flex-shrink: 0; display: flex; color: var(--pk-text-2); transition: transform .18s var(--pk-ease); }
-.pk-grade .pk-mini { height: 4px; border-radius: 999px; background: var(--pk-track); margin-left: 20px; position: relative; }
-.pk-grade .pk-mini > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; display: block; }
-.pk-grade.open { background: var(--pk-inset); border-radius: 12px; padding: 12px; gap: 10px; border-top: 0; margin-top: 4px; }
-.pk-spark { display: block; width: 100%; height: 36px; }
-.pk-spark path { stroke-dasharray: 1000; stroke-dashoffset: 0; animation: pk-draw .5s var(--pk-ease); }
-@keyframes pk-draw { from { stroke-dashoffset: 1000; } }
-.pk-recent { display: flex; flex-direction: column; gap: 4px; }
-.pk-recent div { display: flex; gap: 8px; font-size: 13px; }
-.pk-recent div span { flex-grow: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pk-recent div em { font-style: normal; font-weight: 700; color: var(--pk-text-2); }
-.pk-grades hr { border: 0; height: 1px; background: var(--pk-line); margin: 6px 0 0; }
-.pk-gpa { display: flex; align-items: center; padding-top: 10px; }
-.pk-gpa b { flex-grow: 1; font-size: 14px; font-weight: 800; }
-.pk-gpa strong { font-size: 16px; font-weight: 900; color: var(--pk-green); }
-.pk-gpa.weighted { padding-top: 2px; }
-.pk-gpa.weighted b { font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
-.pk-gpa.weighted strong { font-size: 14px; }
-.pk-grade .pk-level {
-  flex-shrink: 0; font-size: 10px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase;
-  color: var(--pk-text-2); border: 1px solid var(--pk-line); border-radius: 999px; padding: 1px 6px;
-}
-.pk-levels { display: flex; gap: 4px; margin-left: 20px; }
-.pk-levels button {
-  flex: 1; border: 1px solid var(--pk-line); background: transparent; color: var(--pk-text-2);
-  border-radius: 999px; padding: 5px 0; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
-  transition: background .15s var(--pk-ease), color .15s var(--pk-ease);
-}
-.pk-levels button[aria-checked="true"] { background: var(--pk-ink); color: var(--pk-on-ink); border-color: var(--pk-ink); }
 .pk-foot { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-text-3); }
 .pk-foot.center { text-align: center; }
-
-/* ---- What-if -------------------------------------------------------------- */
-.pk-context { background: var(--pk-inset); border-radius: 16px; padding: 12px 14px; display: flex; gap: 12px; }
-.pk-context div { display: flex; flex-direction: column; gap: 2px; }
-.pk-context div:last-child { margin-left: auto; text-align: right; }
-.pk-context small { font-size: 13px; font-weight: 600; color: var(--pk-text-2); }
-.pk-context b { font-size: 16px; font-weight: 800; }
-.pk-targets { display: flex; gap: 6px; }
-.pk-targets button {
-  flex: 1; border: 0; border-radius: 999px; padding: 8px 0; cursor: pointer;
-  background: var(--pk-inset); color: var(--pk-text-2); font-size: 14px; font-weight: 700;
-  transition: background-color .15s var(--pk-ease), color .15s var(--pk-ease);
-}
-.pk-targets button.on { background: var(--pk-mint-tint-strong); color: var(--pk-green); font-weight: 800; }
-.pk-result {
-  background: var(--pk-mint-tint); border-radius: 16px;
-  box-shadow: inset 0 0 0 1px var(--pk-mint-border);
-  padding: 16px 14px; display: flex; align-items: center; gap: 12px;
-}
-.pk-result > .pk-buddy { flex-shrink: 0; }
-.pk-result div { display: flex; flex-direction: column; gap: 4px; }
-.pk-result b { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; }
-.pk-result small { font-size: 13px; font-weight: 600; color: var(--pk-text-mid); }
-/* A row, even inside .pk-context, whose divs stack. */
-.pk-weightask, .pk-context .pk-weightask { display: flex; flex-direction: row; gap: 8px; align-items: center; margin-left: 0; text-align: left; width: 100%; }
-.pk-weightask input {
-  width: 72px; border: 0; box-shadow: inset 0 0 0 1px var(--pk-line-soft);
-  background: var(--pk-card); color: var(--pk-text); border-radius: 10px;
-  padding: 8px 10px; font: inherit; font-size: 14px; font-weight: 700; text-align: center;
-}
-.pk-weightask input:focus { box-shadow: inset 0 0 0 2px var(--pk-mint); outline: none; }
-
-/* ---- Looks: six papers, a swatch is the honest preview -------------------- */
-.pk-shop { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.pk-look {
-  border: 0; border-radius: 16px; padding: 12px 10px 10px; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  box-shadow: inset 0 0 0 1px var(--pk-line);
-  transition: transform .15s var(--pk-ease), box-shadow .15s var(--pk-ease);
-}
-.pk-look:hover { transform: translateY(-1px); }
-.pk-look.wearing { box-shadow: inset 0 0 0 2px var(--pk-mint); }
-.pk-look b { font-size: 14px; font-weight: 800; color: inherit; margin-top: 2px; }
-.pk-look small { font-size: 11px; font-weight: 700; color: inherit; opacity: .72; display: flex; align-items: center; gap: 4px; }
-.pk-look small.pk-paper { font-weight: 600; letter-spacing: .01em; }
-.pk-look small.price { color: #a0722b; opacity: 1; }
-.pk-look.on-dark small.price { color: #ecb35c; }
-
-.pk-sheet {
-  border-radius: 16px; background: var(--pk-inset); padding: 20px 16px 16px;
-  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
-}
-.pk-well { width: 120px; height: 96px; border-radius: 16px; display: grid; place-items: center; }
-.pk-sheet b { font-size: 16px; font-weight: 800; }
-.pk-sheet .pk-paper { font-size: 13px; font-weight: 600; color: var(--pk-text-2); }
-.pk-sheet .pk-cost { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--pk-text-2); }
-.pk-sheet .pk-no { border: 0; background: none; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--pk-text-2); padding: 6px 10px; border-radius: 8px; }
-.pk-sheet .pk-no:hover { background: var(--pk-card); }
 
 /* ---- Focus timer ----------------------------------------------------------- */
 /* Oura's shape: the time left inside the ring, when it ends under it, two quiet
@@ -403,167 +158,30 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-timer .pk-give:hover { background: var(--pk-inset); color: var(--pk-text); }
 .pk-timer b { font-size: 16px; font-weight: 800; }
 
-/* ---- Motion off ------------------------------------------------------------ */
-@media (prefers-reduced-motion: reduce) {
-  .pk-panel, .pk-spark path { animation: none; }
-  *, *::before, *::after { transition-duration: .01ms !important; }
-}
-
-/* A look tile shows the page it makes: a scrap of paper with one card. */
-.pk-preview { position: relative; width: 100%; height: 64px; display: block; }
-.pk-preview > span:not(.pk-tick) { position: absolute; left: 8px; right: 8px; top: 8px; height: 48px; border-radius: 6px; border: 1px solid; display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; }
-.pk-preview > span i { display: block; width: 28%; height: 4px; border-radius: 2px; }
-.pk-preview > span em { display: block; width: 70%; height: 3px; border-radius: 2px; opacity: .55; }
-.pk-preview > span em + em { width: 45%; }
-/* The tick on the theme you wear, Numo's corner badge. */
-.pk-preview > .pk-tick { position: absolute; right: 2px; top: 2px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 999px; background: var(--pk-card); box-shadow: 0 1px 4px rgba(0, 0, 0, .18); }
-.pk-preview > .pk-tick svg { display: block; }
-
 /* The focus ring, with the time left in the middle of it. */
 .pk-ring { position: relative; width: 120px; height: 120px; flex-shrink: 0; display: grid; place-items: center; }
 .pk-ring > svg { position: absolute; inset: 0; }
 .pk-ring circle:last-child { transition: stroke-dashoffset 1s linear; }
-/* An image theme's tile shows its wallpaper; the preview card floats on it. */
-.pk-look.has-art .pk-preview > span:not(.pk-tick) { box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
-.pk-look.has-art b, .pk-look.has-art small { text-shadow: 0 1px 0 rgba(255, 255, 255, .35); }
-.pk-look.has-art.on-dark b, .pk-look.has-art.on-dark small { text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
-/* The banner picker in a worn image theme's sheet. */
-.pk-banners { width: 100%; display: flex; flex-direction: column; gap: 8px; padding-top: 6px; border-top: 1px solid var(--pk-line); text-align: left; }
-.pk-bannerrow b { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pk-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.pk-thumbs button {
-  height: 28px; border: 2px solid transparent; border-radius: 8px; cursor: pointer; padding: 0;
-  background-size: cover; background-position: center; transition: transform .15s var(--pk-ease);
-}
-.pk-thumbs button:hover { transform: translateY(-1px); }
-.pk-thumbs button[aria-pressed="true"] { border-color: var(--pk-ink); }
-/* Without the theme's four banners the row is just the student's own picture
- * and the button that sets it, so it stops pretending to be a four-up grid. */
-.pk-thumbs.own-only { grid-template-columns: 28px 1fr; }
-.pk-thumbs.own-only:not(:has(.pk-own)) { grid-template-columns: 1fr; }
-/* The student's own picture: a thumbnail that removes itself, the × only on
- * hover and on focus so the picture is the thing you see. */
-.pk-thumbs .pk-own { position: relative; }
-.pk-thumbs .pk-own i {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  border-radius: 6px; background: rgba(0, 0, 0, .55); color: #fff; font-size: 15px; font-weight: 800;
-  font-style: normal; opacity: 0; transition: opacity .12s var(--pk-ease);
-}
-.pk-thumbs .pk-own:hover i, .pk-thumbs .pk-own:focus-visible i { opacity: 1; }
-.pk-pic {
-  display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 10px;
-  border: 1px dashed var(--pk-line); border-radius: 8px; cursor: pointer;
-  font-size: 12px; font-weight: 700; color: var(--pk-text-2); white-space: nowrap;
-}
-.pk-pic:hover { color: var(--pk-text); border-color: var(--pk-text-2); }
-.pk-pic:focus-within { outline: 2px solid var(--pk-mint); outline-offset: 2px; }
-.pk-pic.busy { cursor: default; opacity: .6; }
-/* The file input is the label; a bare one prints its own file name, which is
- * neither ours to style nor anything the student needs to read here. */
-.pk-pic input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-
-/* Own tasks, nicknames and search. */
-.pk-listfoot { display: flex; gap: 8px; margin: 6px 0 14px; }
-.pk-add { flex: 1; border: 1px dashed var(--pk-line); background: transparent; color: var(--pk-text-2); border-radius: 12px; padding: 8px 10px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-.pk-add:hover { color: var(--pk-text); border-color: var(--pk-text-2); }
 .pk-add kbd, .pk-kbd { font: inherit; font-size: 11px; font-weight: 800; padding: 1px 5px; border-radius: 5px; border: 1px solid var(--pk-line); color: var(--pk-text-2); }
 .pk-viewhead .pk-kbd { margin-left: auto; }
-.pk-list li.own .pk-done { flex-shrink: 0; border: 0; border-radius: 999px; padding: 6px 10px; background: var(--pk-mint); color: #101820; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
-.pk-x { flex-shrink: 0; border: 0; background: transparent; color: var(--pk-text-2); font: inherit; font-size: 18px; line-height: 1; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
-.pk-x:hover { background: var(--pk-inset); color: var(--pk-text); }
-.pk-form { display: flex; flex-direction: column; gap: 10px; }
 .pk-form input, .pk-form select, .pk-search, .pk-rename input {
   width: 100%; box-sizing: border-box; border: 1px solid var(--pk-line); border-radius: 12px; padding: 10px 12px;
   background: var(--pk-card); color: var(--pk-text); font: inherit; font-size: 14px; font-weight: 600;
 }
 .pk-form input:focus, .pk-form select:focus, .pk-search:focus, .pk-rename input:focus { outline: 2px solid var(--pk-mint); outline-offset: 0; border-color: transparent; }
-.pk-formrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.pk-rename { display: flex; gap: 6px; margin-left: 20px; }
-.pk-rename input { padding: 7px 10px; font-size: 13px; }
-.pk-rename button { flex-shrink: 0; border: 1px solid var(--pk-line); background: transparent; color: var(--pk-text); border-radius: 999px; padding: 0 12px; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
 .pk-search { margin-bottom: 10px; font-size: 15px; }
 .pk-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 260px; }
 .pk-results li a { display: flex; flex-direction: column; gap: 2px; padding: 9px 10px; border-radius: 10px; color: inherit; text-decoration: none; }
 .pk-results li a b { font-size: 14px; font-weight: 700; }
 .pk-results li a small { font-size: 12px; color: var(--pk-text-2); }
 .pk-results li.on a, .pk-results li a:hover { background: var(--pk-inset); }
-/* A planner row's title opens the work; it reads as text until the mouse is on it. */
-.pk-list li b a { color: inherit; text-decoration: none; }
-.pk-list li b a:hover { text-decoration: underline; text-decoration-color: var(--pk-mint-border, currentColor); }
-.pk-recaprow.amber b { color: var(--pk-amber-text, #8A5A12); }
 /* The groups before a word is typed, and the key hints under the list. */
-.pk-results li.pk-group { font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-text-2); padding: 10px 10px 4px; }
+.pk-results li.pk-group { font-size: 12px; line-height: 16px; font-weight: 800; color: var(--pk-text-2); padding: 10px 10px 4px; }
 .pk-results li.pk-group:first-child { padding-top: 2px; }
 .pk-keys { display: flex; gap: 14px; padding: 10px 10px 0; font-size: 11px; font-weight: 700; color: var(--pk-text-3); }
 .pk-keys span { display: inline-flex; align-items: center; gap: 4px; }
 .pk-keys kbd { font: inherit; font-size: 10px; font-weight: 800; padding: 0 4px; border-radius: 4px; border: 1px solid var(--pk-line); color: var(--pk-text-2); }
 .pk-results li.empty { padding: 12px 10px; color: var(--pk-text-2); font-size: 13px; }
-
-/* The league: the phone's ladder, the same cloth and the same words. */
-.pk-league { border: 1px solid var(--pk-line); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
-.pk-league.empty { flex-direction: row; align-items: center; gap: 12px; }
-.pk-league.empty b, .pk-league-head b { display: block; font-size: 15px; font-weight: 900; letter-spacing: -.01em; }
-.pk-league.empty small, .pk-league-head small { display: block; font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
-.pk-league-head { display: flex; align-items: center; gap: 12px; }
-.pk-league-week b { display: block; font-size: 13px; font-weight: 800; }
-.pk-league-week small { display: block; font-size: 12px; font-weight: 700; color: var(--pk-text-2); margin-top: 4px; }
-.pk-league-bar { height: 8px; border-radius: 999px; background: var(--pk-track); margin-top: 6px; overflow: hidden; }
-.pk-league-bar i { display: block; height: 100%; border-radius: 999px; background: var(--tier); }
-.pk-league-note { font-size: 12px; font-weight: 700; color: var(--pk-text-2); padding: 8px 10px; border-radius: 10px; background: var(--pk-inset); }
-.pk-league-board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.pk-league-board li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 10px; font-size: 13px; }
-.pk-league-board li .pk-rank { width: 18px; text-align: right; font-weight: 800; color: var(--pk-text-2); font-variant-numeric: tabular-nums; }
-.pk-league-board li b { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
-.pk-league-board li .pk-pts { font-weight: 800; font-variant-numeric: tabular-nums; }
-.pk-league-board li.you { background: var(--tier); color: var(--tier-ink); }
-.pk-league-board li.you .pk-rank, .pk-league-board li.you .pk-pts { color: inherit; }
-.pk-league .pk-foot { padding: 0; }
-/* A pod member's kin: the phone's face plate. Eyes and tuft in the circle, feet out. */
-.pk-kin { flex: none; border-radius: 999px; background-color: var(--pk-inset); background-repeat: no-repeat; background-size: 190% auto; background-position: 50% 24%; box-shadow: inset 0 0 0 1px var(--pk-line); }
-.pk-kin.pk-buddy { display: block; border-radius: 0; background-color: transparent; background-size: contain; background-position: center; box-shadow: none; }
-.pk-league-board li.you .pk-kin { box-shadow: inset 0 0 0 1px var(--tier-edge); background-color: rgba(255, 255, 255, .55); }
-
-/* ---- Work dates: when you will do it, not when it is owed ----------------- */
-.pk-week div[data-drop] { border-radius: 10px; padding: 2px 6px; transition: background .14s var(--pk-ease); }
-.pk-week div.over { background: var(--pk-card); box-shadow: inset 0 0 0 2px var(--pk-mint); }
-.pk-list.over { border-radius: 12px; box-shadow: inset 0 0 0 2px var(--pk-mint); }
-.pk-list li.dragging { opacity: .5; }
-.pk-list li.moved .pk-bar { opacity: .55; }
-/* Plan shows itself when the pointer is on the row; a row that was moved keeps
- * its tag so the week still says where things went. Drag works either way. */
-.pk-planbtn {
-  flex-shrink: 0; border: 0; background: var(--pk-inset); color: var(--pk-text-2);
-  font: inherit; font-size: 11px; font-weight: 800; padding: 4px 8px;
-  border-radius: 999px; cursor: pointer; opacity: 0; transition: opacity .12s var(--pk-ease);
-}
-.pk-list li:hover .pk-planbtn, .pk-planbtn:focus-visible, .pk-planbtn[aria-expanded="true"], .pk-planbtn.on { opacity: 1; }
-.pk-planbtn.on { background: var(--pk-mint); color: var(--pk-ink); }
-.pk-planpick {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
-  padding: 8px 10px; background: var(--pk-inset); border-radius: 12px;
-}
-.pk-planpick .pk-planlead { font-size: 11px; font-weight: 800; color: var(--pk-text-2); }
-.pk-planpick button {
-  border: 0; background: var(--pk-card); color: var(--pk-text); font: inherit;
-  font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 999px; cursor: pointer;
-}
-.pk-planpick button.on { background: var(--pk-mint); color: var(--pk-ink); }
-.pk-planpick button.clear { background: none; color: var(--pk-text-2); text-decoration: underline; }
-
-/* ---- Aiming for a grade: a mark on the bar, never a countdown ------------- */
-.pk-aim { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.pk-aim .pk-aimlead { font-size: 11px; font-weight: 800; color: var(--pk-text-2); }
-.pk-aim button {
-  border: 0; background: var(--pk-card); color: var(--pk-text); font: inherit;
-  font-size: 12px; font-weight: 700; padding: 4px 9px; border-radius: 999px; cursor: pointer;
-}
-.pk-aim button.on { background: var(--pk-mint); color: var(--pk-ink); }
-.pk-aim button.clear { background: none; color: var(--pk-text-2); text-decoration: underline; font-size: 11px; }
-.pk-grade .pk-mini > u {
-  position: absolute; top: -2px; bottom: -2px; width: 2px; border-radius: 1px;
-  background: var(--pk-text-2); text-decoration: none;
-}
-.pk-recent div i { font-style: normal; font-size: 12px; font-weight: 600; color: var(--pk-text-2); }
 
 /* The panel takes focus when it opens; that is a announcement, not a highlight. */
 .pk-panel:focus { outline: none; }
