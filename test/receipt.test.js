@@ -532,6 +532,9 @@ test('R24 handing in pays off at once: the form posts, one sync follows, the row
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const ps7 = (p) => p?.tasks?.find((t) => t.title === 'Problem Set 7');
   assert.equal(ps7((await h.storage()).lastPayload)?.submittedAt ?? null, null, 'Problem Set 7 is pending');
+  // Ticked here first: once Canvas has the real hand-in, the tick is redundant and goes.
+  await h.sw((id) => tick(id, true), ps7((await h.storage()).lastPayload).id);
+  assert.ok((await h.storage()).done[ps7((await h.storage()).lastPayload).id], 'ticked');
   await control('log/clear');
   const page = await open('/courses/1/assignments/11');
   await page.click('#submit_text_entry');                       // a real click: the form posts, Canvas comes back
@@ -545,12 +548,56 @@ test('R24 handing in pays off at once: the form posts, one sync follows, the row
     await new Promise((r) => setTimeout(r, 300));
   }
   assert.ok(ps7(payload)?.submittedAt, 'the hand-in reached the laptop without waiting for the alarm');
+  assert.equal((await h.storage()).done?.[ps7(payload).id], undefined, 'Canvas has it, so the tick is pruned');
   const log = await control('log');
   assert.ok(log.some((l) => l.path.startsWith('/api/v1/courses/1/assignments')), 'one sync ran after the post');
   // The dashboard now shows it struck through, and the badge floated the reward.
   const dash = await open('/');
   assert.doesNotMatch(await dash.$eval('.pk-card-due', (e) => e.textContent), /Problem Set 7/, 'the card has moved on from it');
   await page.close(); await dash.close();
+});
+
+test('R28 a tick clears a row everywhere, is undoable, reaches the phone as doneAt, and never a forged id', async () => {
+  const { FakePhone } = require('./fake-phone');
+  const phone = new FakePhone(BRIDGE);
+  await h.sw((c) => bindWriter(c), await phone.claim());
+  await h.setStorage({ done: {} });
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/');
+  await page.waitForSelector('#pk-week .pk-w-then .pk-tick', { timeout: 5000 });
+  const row = await page.$eval('#pk-week .pk-w-then li', (li) => li.querySelector('b').textContent);
+  const task = (await h.storage()).lastPayload.tasks.find((t) => t.title === row);
+  assert.ok(task, `the Then row names a synced task: ${row}`);
+  await page.click(`#pk-week .pk-w-then li:first-child .pk-tick`);         // a real click
+  await page.waitForFunction((title) => ![...document.querySelectorAll('#pk-week li b')].some((b) => b.textContent === title), row, { timeout: 4000 });
+  assert.equal((await h.storage()).done[task.id]?.slice(0, 4), '2026', 'the worker wrote the map');
+  assert.match(await page.$eval('#pk-week .pk-w-foot', (e) => e.textContent), new RegExp(`Done: ${row.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} · Undo`), 'the foot says so, with the way back');
+  const line = await page.$eval(`.ic-DashboardCard[data-pk-course="${task.courseId}"] .pk-card-due`, (e) => e.textContent);
+  assert.doesNotMatch(line, new RegExp(row.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), 'the card moved on from it');
+  // Undo brings it back.
+  await page.click('#pk-week .pk-w-foot .more');
+  await page.waitForFunction((title) => [...document.querySelectorAll('#pk-week li b')].some((b) => b.textContent === title), row, { timeout: 4000 });
+  assert.equal((await h.storage()).done[task.id], undefined, 'undone in the map');
+  // Ticked again: the phone reads it as doneAt, and submittedAt stays null.
+  await page.click(`#pk-week .pk-w-then li:first-child .pk-tick`);
+  await page.waitForFunction((id) => ![...document.querySelectorAll('#pk-week li b')].length || true, task.id);
+  await new Promise((r) => setTimeout(r, 600));
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const pushed = (await phone.fetchTodo()).tasks.find((t) => t.id === task.id);
+  assert.ok(pushed?.doneAt, 'the bridge copy carries the tick');
+  assert.equal(pushed.submittedAt, null, 'and never as a submission');
+  assert.equal((await h.storage()).lastPayload.tasks.find((t) => t.id === task.id).doneAt, undefined, 'lastPayload stays what Canvas said');
+  // The pages test keeps counting: the circle adds no row and no count.
+  const rows = await page.$$eval('#pk-week .pk-w-then li', (els) => els.length);
+  assert.ok(rows <= 3);
+  // A forged id, and a task of the student's own, are refused by the worker.
+  const refused = await h.sw((id) => tick(id, true), 'c-localhost-a999');
+  assert.equal(refused.ok, false);
+  const own = await h.sw((id) => tick(id, true), 'own-1');
+  assert.equal(own.ok, false);
+  assert.deepEqual(Object.keys((await h.storage()).done), [task.id], 'the map holds the one real tick and nothing forged');
+  await h.setStorage({ done: {} });
+  await page.close();
 });
 
 test('R25 while a session runs, the rail\'s top row is the session and Focus cannot restart it', async () => {

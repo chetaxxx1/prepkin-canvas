@@ -439,9 +439,26 @@ html.pk-on.pk-dark:not(.pk-back-seam) .tool_content_wrapper {
   white-space: nowrap;
 }
 .pk-card-due.is-none { font-weight: 400; color: var(--pk-ink-2, inherit); }
-/* One line: the next thing, "+2" when more wait, the date at the right. Slipped
- * work says so in the date's ink only; no band, no label, nothing struck. */
-.pk-due-row { display: flex; gap: 8px; align-items: baseline; padding: 2px 0; }
+/* The circle: a tick is the student's word that a thing is finished. Hollow in
+ * the quiet ink; filled mint with a white check when on. One shape on every
+ * row of ours (the card line, the rail, the planner). */
+.pk-tick {
+  flex: none; width: 18px; height: 18px; margin: 0; padding: 0; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--pk-ink-2, #454B54); background: transparent; box-shadow: none; appearance: none;
+  display: inline-grid; place-items: center; color: transparent; font: inherit; line-height: 1;
+}
+.pk-tick::after { content: ""; width: 10px; height: 10px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5.2l2.4 2.4L8.6 2.6' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5.2l2.4 2.4L8.6 2.6' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+.pk-tick:hover, .pk-tick:focus-visible { border-color: #35A87D; color: #35A87D; }
+.pk-tick.on { background: #51CFA0; border-color: #51CFA0; color: #101820; }
+.pk-tick:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+/* Canvas's own hand-in wears the same mark, but it is not a button: nothing to undo. */
+.pk-tick.locked { cursor: default; opacity: .7; }
+/* One line: the circle, then the next thing, "+2" when more wait, the date at
+ * the right. Slipped work says so in the date's ink only; no band, no label,
+ * nothing struck. */
+.pk-card-due { display: flex; align-items: center; gap: 8px; }
+.pk-card-due.is-none { display: block; }
+.pk-due-row { display: flex; gap: 8px; align-items: baseline; padding: 2px 0; flex: 1 1 auto; min-width: 0; }
 .pk-due-row .t { min-width: 0; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pk-due-row .n { flex: none; font-size: 11px; line-height: 16px; font-weight: 800; padding: 0 5px; border-radius: 8px; background: var(--pk-paper-sunk, rgba(0,0,0,.06)); color: var(--pk-ink-2, inherit); }
 .pk-due-row .d { flex: none; font-weight: 600; font-size: 12px; color: var(--pk-ink-2, inherit); font-variant-numeric: tabular-nums; }
@@ -713,6 +730,12 @@ html.pk-dark #pk-week .pk-w-tank { background-image: var(--pk-tank, none), linea
 #pk-week .pk-w-list small.amber { color: var(--pk-amber-ink); }
 /* The top row: the whole title, the course and when, then the two buttons. */
 #pk-week .pk-w-list li.pk-w-first { flex-direction: column; align-items: stretch; gap: 10px; padding-bottom: 12px; }
+#pk-week .pk-w-info { display: flex; gap: 9px; align-items: flex-start; }
+#pk-week .pk-w-info .pk-tick { margin-top: 1px; }
+#pk-week .pk-w-info > div { min-width: 0; flex: 1 1 auto; }
+#pk-week .pk-w-undo { color: var(--pk-ink); display: flex; gap: 4px; align-items: baseline; min-width: 0; flex: 1 1 auto; }
+#pk-week .pk-w-undo-what { min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pk-week .pk-w-undo .more { flex: none; }
 #pk-week .pk-w-list li.pk-w-first > div { width: 100%; }
 #pk-week .pk-w-list li.pk-w-first b { font-size: 14px; line-height: 18px; font-weight: 800; white-space: normal; }
 #pk-week .pk-w-list li.pk-w-first small { font-weight: 600; margin-top: 2px; }

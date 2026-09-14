@@ -329,3 +329,30 @@ test('voice: a short line for the rail, one line wide', () => {
   assert.equal(voice({ overdue: [], today: [1], doneToday: [] }).short, 'One thing today.');
   assert.equal(voice({ overdue: [], today: [], doneToday: [] }).short, 'Enjoy the space.');
 });
+
+test('a tick is finished: it leaves today, counts as done today and in the week, and never becomes a submission', () => {
+  const { buckets, weekStats, withDone, isDone, pruneDone } = require('./day.js');
+  const now = new Date('2026-09-14T15:00:00');
+  const due = new Date('2026-09-14T23:59:00').toISOString();
+  const tasks = [
+    { id: 'a', title: 'Read chapter 4', dueAt: due, submittedAt: null, courseId: 1 },
+    { id: 'b', title: 'Problem set', dueAt: due, submittedAt: null, courseId: 1 },
+    { id: 'c', title: 'Lab', dueAt: due, submittedAt: '2026-09-14T09:00:00', courseId: 1 },
+  ];
+  const laid = withDone(tasks, { a: '2026-09-14T14:00:00', c: '2026-09-14T14:30:00', zzz: '2026-09-14T14:00:00' });
+  assert.equal(laid[0].doneAt, '2026-09-14T14:00:00');
+  assert.equal(laid[0].submittedAt, null, 'a tick never becomes a submission');
+  assert.equal(laid[2].doneAt, undefined, 'a task Canvas verified takes no tick');
+  assert.ok(isDone(laid[0]) && !isDone(laid[1]) && isDone(laid[2]));
+  const b = buckets(laid, now);
+  assert.deepEqual(b.today.map((t) => t.id), ['b'], 'the ticked one left today');
+  assert.deepEqual(b.doneToday.map((t) => t.id).sort(), ['a', 'c'], 'and counts as done today, beside the hand-in');
+  const w = weekStats(laid, now);
+  assert.equal(w.done, 2);
+  assert.equal(w.byCourse[0].done, 2);
+  // After a sync: the submitted one and the one Canvas no longer lists are pruned.
+  const pruned = pruneDone({ a: 'x', c: 'x', zzz: 'x' }, tasks);
+  assert.deepEqual(Object.keys(pruned), ['a']);
+  const same = { a: 'x' };
+  assert.equal(pruneDone(same, tasks), same, 'unchanged means the same object, so nothing is written');
+});

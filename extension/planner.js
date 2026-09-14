@@ -71,9 +71,9 @@ function plColumns(tasks, now = new Date()) {
     return { date, items, today: sameLocalDay(date, now), past: date < startOfDay(now) };
   });
   // Slipped: not in, sat before the shown week, and not planned into it.
-  const slipped = placed.filter((x) => !x.t.submittedAt && x.day < monday && x.day >= startOfDay(new Date(monday.getTime() - 21 * PLANNER_ONE_DAY)))
+  const slipped = placed.filter((x) => !isDone(x.t) && x.day < monday && x.day >= startOfDay(new Date(monday.getTime() - 21 * PLANNER_ONE_DAY)))
     .map((x) => x.t).sort((a, b) => Date.parse(a.dueAt ?? 0) - Date.parse(b.dueAt ?? 0));
-  const undated = tasks.filter((t) => !planDay(t) && !t.submittedAt);
+  const undated = tasks.filter((t) => !planDay(t) && !isDone(t));
   return { monday, end, cols, slipped, undated };
 }
 
@@ -134,7 +134,7 @@ function renderPlanner() {
   const { data, plans, wallet, focus, skin, levels } = plannerState();
   const week = plColumns(data.tasks, now);
   const running = focus.state === 'running';
-  const key = JSON.stringify([plWeek, week.cols.map((c) => c.items.map((t) => [t.id, t.submittedAt, plans[t.id] ?? null])),
+  const key = JSON.stringify([plWeek, week.cols.map((c) => c.items.map((t) => [t.id, t.submittedAt, t.doneAt, plans[t.id] ?? null])),
     week.slipped.map((t) => t.id), week.undated.map((t) => t.id), data.courses.map((c) => [c.id, c.score, c.grade]),
     wallet.coins, wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.wearing, running && focus.title, focus.state,
     skin.focusMinutes, plAdding, levels]);
@@ -151,7 +151,7 @@ function renderPlanner() {
     ? `${mon(week.monday)} ${week.monday.getDate()} – ${last.getDate()}`
     : `${mon(week.monday)} ${week.monday.getDate()} – ${mon(last)} ${last.getDate()}`;
   const inWeek = week.cols.flatMap((c) => c.items);
-  const done = inWeek.filter((t) => t.submittedAt).length;
+  const done = inWeek.filter(isDone).length;
   const headRow = el('div', 'pk-pl-head');
   const title = el('div', 'pk-pl-title');
   title.append(plIcon('tabCalendar', 28), el('b', '', plWeek === 0 ? 'This week' : plWeek === 1 ? 'Next week' : plWeek === -1 ? 'Last week' : `Week of ${mon(week.monday)} ${week.monday.getDate()}`),
@@ -224,10 +224,14 @@ function renderPlanner() {
 /// One piece of work as a card: the course's colour down the left, the app's
 /// icon for the kind of work, the title (a link), the course and when.
 function plCard(t, now, { slipped = false, wide = false } = {}) {
-  const card = el('div', `pk-pl-task${t.submittedAt ? ' done' : ''}${slipped || (!t.submittedAt && t.dueAt && Date.parse(t.dueAt) < now.getTime() && !sameLocalDay(new Date(t.dueAt), now)) ? ' late' : ''}${isMoved(t) ? ' moved' : ''}`);
+  const finished = isDone(t);
+  const card = el('div', `pk-pl-task${finished ? ' done' : ''}${slipped || (!finished && t.dueAt && Date.parse(t.dueAt) < now.getTime() && !sameLocalDay(new Date(t.dueAt), now)) ? ' late' : ''}${isMoved(t) ? ' moved' : ''}`);
   const color = safeColor(t.colorHex);
   if (color) card.style.setProperty('--c', color);
-  if (!t.submittedAt) { card.draggable = true; card.dataset.drag = String(t.id); plDragSource(card); }
+  if (!finished) { card.draggable = true; card.dataset.drag = String(t.id); plDragSource(card); }
+  // The circle: a tick clears it here and on the phone; Canvas's own hand-in
+  // is locked (nothing to undo). Then the kind of work, then the words.
+  if (t.submittedAt) { const lock = el('span', 'pk-tick on locked'); lock.title = 'Handed in'; card.append(lock); } else card.append(tickCircle(t));
   card.append(plIcon(plIconFor(t.title), 22));
   const body = el('div', 'body');
   const url = safeURL(t.url);
@@ -235,7 +239,7 @@ function plCard(t, now, { slipped = false, wide = false } = {}) {
   if (url) { title.href = url; title.className = 'title'; }
   body.append(title);
   const due = t.dueAt ? new Date(t.dueAt) : null;
-  const when = t.submittedAt ? 'in'
+  const when = t.submittedAt ? 'in' : t.doneAt ? 'done'
     : slipped ? `was due ${due.toLocaleDateString([], { month: 'short', day: 'numeric' })}`
     : isMoved(t) ? `due ${dayShort(t, now)}`
     : due && !isNaN(due) ? due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'anytime';
@@ -243,7 +247,6 @@ function plCard(t, now, { slipped = false, wide = false } = {}) {
   // alone; the wider band cards name the course.
   body.append(el('small', '', wide ? `${shortCourse(t.courseName)} · ${when}` : when));
   card.append(body);
-  if (t.submittedAt) card.append(el('span', 'tick', '✓'));
   card.title = `${t.title}\n${t.courseName}${t.dueAt ? ` · ${dueLabel(t, now)}` : ''}${isMoved(t) ? '\nMoved. Drag it back to its due day to undo.' : ''}`;
   return card;
 }

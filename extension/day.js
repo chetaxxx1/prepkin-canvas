@@ -28,10 +28,33 @@ const MISSED_AFTER_DAYS = 7;
 /// It only ever moves work between "today" and "this week": planning something
 /// for tomorrow does not stop it being overdue, and nothing a student plans
 /// changes what the school is owed.
+/// Finished, either way: Canvas saw a submission (`submittedAt`, verified), or
+/// the student ticked it here (`doneAt`, their word). Every list reads this;
+/// `submittedAt` alone keeps meaning "Canvas verified" (the recap, the cheer).
+function isDone(t) { return !!(t.submittedAt || t.doneAt); }
+/// When it was finished: Canvas's time when it has one, else the tick's.
+function doneTime(t) { return t.submittedAt || t.doneAt || null; }
+/// The synced tasks with the student's own ticks laid over them. `done` is the
+/// map the worker keeps ({ taskId: isoAt }); a task Canvas already verified
+/// never takes a tick, so the two never disagree.
+function withDone(tasks, done = {}) {
+  if (!done || typeof done !== 'object') return tasks;
+  return tasks.map((t) => (!t.submittedAt && done[t.id] ? { ...t, doneAt: done[t.id] } : t));
+}
+
+/// The map after a sync: a tick for work Canvas has since received, or dropped
+/// from every list, goes; the map never grows past the term.
+function pruneDone(done, tasks) {
+  const keep = new Set(tasks.filter((t) => !t.submittedAt).map((t) => t.id));
+  const next = {};
+  for (const [id, at] of Object.entries(done ?? {})) if (keep.has(id)) next[id] = at;
+  return Object.keys(next).length === Object.keys(done ?? {}).length ? done : next;
+}
+
 function buckets(tasks, now = new Date(), plannedOn = () => null) {
-  const pending = tasks.filter((t) => !t.submittedAt);
+  const pending = tasks.filter((t) => !isDone(t));
   const doneToday = tasks.filter((t) => {
-    const at = t.submittedAt && new Date(t.submittedAt);
+    const at = doneTime(t) && new Date(doneTime(t));
     return at && !isNaN(at) && sameLocalDay(at, now);
   });
   const overdue = [], today = [], week = [], missed = [];
@@ -121,14 +144,14 @@ function weekStats(tasks, now = new Date()) {
   for (const t of inWeek) {
     const k = String(t.courseId);
     if (!byCourse.has(k)) byCourse.set(k, { courseId: k, name: t.courseName ?? '', colorHex: t.colorHex ?? null, total: 0, done: 0 });
-    const c = byCourse.get(k); c.total++; if (t.submittedAt) c.done++;
+    const c = byCourse.get(k); c.total++; if (isDone(t)) c.done++;
   }
   return {
-    start, end, total: inWeek.length, done: inWeek.filter((t) => t.submittedAt).length,
+    start, end, total: inWeek.length, done: inWeek.filter(isDone).length,
     byCourse: [...byCourse.values()].sort((a, b) => b.total - a.total),
   };
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { DAY_MS, MISSED_AFTER_DAYS, startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, weekStats };
+  module.exports = { DAY_MS, MISSED_AFTER_DAYS, startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, weekStats, isDone, doneTime, withDone, pruneDone };
 }

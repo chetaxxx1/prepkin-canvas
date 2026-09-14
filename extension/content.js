@@ -116,16 +116,19 @@ let plans = {};
 /// The grade a student is aiming for in a class, by course id, as the cutoff
 /// percentage behind a letter. Their own number, kept here.
 let targets = {};
+/// The student's own ticks, { taskId: isoAt }, read from storage; the worker is
+/// the one writer (background.js `tick`). Laid over the synced tasks as `doneAt`.
+let done = {};
 
 /// The last sync plus the student's own tasks, with nicknames applied to every
 /// course name. The payload itself is never changed, so nothing invented is
 /// ever pushed to the phone.
-function composeData(payload, own = [], nick = {}) {
+function composeData(payload, own = [], nick = {}, ticks = {}) {
   const base = payload ?? { tasks: [], courses: [], graded: {}, weights: {} };
   const name = (id, fallback) => (id != null && nick[String(id)]) || fallback;
   const courses = (base.courses ?? []).map((c) => ({ ...c, fullName: c.name, name: name(c.id, c.name) }));
   const mine = own.map((t) => ({ ...t, own: true, courseId: t.courseId ?? 'own', courseName: t.courseName || 'My tasks' }));
-  const tasks = [...(base.tasks ?? []), ...mine].map((t) => ({ ...t, courseName: name(t.courseId, t.courseName ?? '') }));
+  const tasks = [...withDone(base.tasks ?? [], ticks), ...mine].map((t) => ({ ...t, courseName: name(t.courseId, t.courseName ?? '') }));
   return { ...base, courses, tasks };
 }
 
@@ -147,7 +150,7 @@ function searchItems(d = data) {
   for (const t of d.tasks ?? []) {
     if (!t.title) continue;
     const url = safeURL(t.url) ?? (t.courseId && t.courseId !== 'own' ? `/courses/${t.courseId}/assignments` : null);
-    if (url) items.push({ kind: 'task', label: t.title, sub: `${t.courseName}${t.dueAt ? ' · ' + dueLabel(t, new Date()) : ''}`, url, dueAt: t.dueAt ?? null, done: !!t.submittedAt });
+    if (url) items.push({ kind: 'task', label: t.title, sub: `${t.courseName}${t.dueAt ? ' · ' + dueLabel(t, new Date()) : ''}`, url, dueAt: t.dueAt ?? null, done: isDone(t) });
   }
   return items;
 }
@@ -232,8 +235,10 @@ function detectFacts() {
     logoDup: has('headerLogo') && has('sidebarLogo'),
     todoDup: has('todoReact') && has('todoLegacy'),
     // Canvas's To Do and Coming Up go only under our rail: with no rail there
-    // is no other list, and a page with no to-do list is not calmer.
-    todoFold: (has('todoReact') || has('todoLegacy')) && railShows(),
+    // is no other list, and a page with no to-do list is not calmer. boot.js
+    // folds a synced dashboard from the first paint, before Canvas's list has
+    // mounted; that fold is kept, or its spinner shows in the gap.
+    todoFold: (has('todoReact') || has('todoLegacy') || document.documentElement.classList.contains('pk-todo-fold')) && railShows(),
     // The Planner tab, on the dashboard with cards to stand beside.
     planner: railShows() && !!document.getElementById('DashboardCard_Container'),
     wordPaste: WORD_INKS.some((ink) =>
@@ -698,26 +703,27 @@ function applyCardArt() {
 /// panel's Missing list, never written into the school's own page: a card that
 /// leads with a three-week-old zero has buried the thing due tonight.
 function isStaleMissing(t, now = new Date()) {
-  if (!t.missing || t.submittedAt || !t.dueAt) return false;
+  if (!t.missing || isDone(t) || !t.dueAt) return false;
   const due = Date.parse(t.dueAt);
   return Number.isFinite(due) && (startOfDay(now) - startOfDay(new Date(due))) / DAY_MS > MISSED_AFTER_DAYS;
 }
 
 /// The one line a course card carries: the soonest pending thing (slipped work
 /// first, since it is the oldest), how many more are pending, and whether
-/// anything was handed in at all (so an empty card can say "All handed in").
+/// anything was finished at all, and how: "All handed in" only when Canvas saw
+/// a submission, "All done" when the student's own ticks cleared the rest.
 function nextLineFor(courseId, now = new Date()) {
   const rows = dueRowsFor(courseId, now, Infinity);
   const pending = rows.filter((r) => !r.done);
-  return { next: pending[0] ?? null, more: Math.max(0, pending.length - 1), done: rows.some((r) => r.done) };
+  return { next: pending[0] ?? null, more: Math.max(0, pending.length - 1), done: rows.some((r) => r.done), handedIn: rows.some((r) => r.t.submittedAt) };
 }
 
 function dueRowsFor(courseId, now = new Date(), limit = 3) {
   const mine = data.tasks.filter((t) => String(t.courseId) === String(courseId) && !isStaleMissing(t, now));
   const time = (t) => { const d = t.dueAt ? new Date(t.dueAt) : null; return d && !isNaN(d) ? d.getTime() : Infinity; };
-  const pending = mine.filter((t) => !t.submittedAt).sort((a, b) => time(a) - time(b)).slice(0, limit);
-  const done = mine.filter((t) => t.submittedAt).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, Math.max(0, limit - pending.length));
-  return [...pending, ...done].map((t) => ({ t, done: !!t.submittedAt, overdue: !t.submittedAt && time(t) < now.getTime(), when: dueShort(t, now) }));
+  const pending = mine.filter((t) => !isDone(t)).sort((a, b) => time(a) - time(b)).slice(0, limit);
+  const finished = mine.filter(isDone).sort((a, b) => new Date(doneTime(b)) - new Date(doneTime(a))).slice(0, Math.max(0, limit - pending.length));
+  return [...pending, ...finished].map((t) => ({ t, done: isDone(t), overdue: !isDone(t) && time(t) < now.getTime(), when: dueShort(t, now) }));
 }
 
 /// "7:54 PM" today, "Mon 7:54 PM" this week, "Sep 12" after that.
@@ -733,7 +739,7 @@ function dueShort(t, now) {
 
 function nextUpFor(courseId, now = new Date()) {
   const pending = data.tasks
-    .filter((t) => String(t.courseId) === String(courseId) && !t.submittedAt && !isStaleMissing(t, now))
+    .filter((t) => String(t.courseId) === String(courseId) && !isDone(t) && !isStaleMissing(t, now))
     .map((t) => ({ t, due: t.dueAt ? new Date(t.dueAt) : null }))
     .filter((x) => !x.due || !isNaN(x.due));
   if (!pending.length) return null;
@@ -812,17 +818,19 @@ function decorateCards() {
     }
     // One line per card: the next thing, its date, and how many more wait. The
     // rail beside the cards holds the list; a card says its one thing once.
-    const { next, more, done } = nextLineFor(id, now);
+    const { next, more, done: finished, handedIn } = nextLineFor(id, now);
     el.classList.toggle('overdue', !!next?.overdue);
     el.classList.toggle('is-none', !next);
     // textContent, never markup: titles are other people's text. Rebuilt only
     // when the line changes, so our own write never re-triggers the observer.
-    const sig = next ? `${next.t.id}|${next.overdue ? 1 : 0}|${next.when}|${more}|${next.t.title}` : done ? 'all-in' : 'none';
+    const sig = next ? `${next.t.id}|${next.overdue ? 1 : 0}|${next.when}|${more}|${next.t.title}` : handedIn ? 'all-in' : finished ? 'all-done' : 'none';
     if (el.dataset.sig === sig) continue;
     el.dataset.sig = sig;
     el.replaceChildren();
-    if (!next) { el.textContent = done ? 'All handed in' : 'Nothing due'; continue; }
-    // The line is a link to the work, and says Start when the mouse is on it.
+    if (!next) { el.textContent = handedIn ? 'All handed in' : finished ? 'All done' : 'Nothing due'; continue; }
+    // The circle first, then the line, which is a link to the work and says
+    // Start when the mouse is on it.
+    el.append(tickCircle(next.t));
     const url = safeURL(next.t.url);
     const row = document.createElement(url ? 'a' : 'div');
     row.className = `pk-due-row${next.overdue ? ' overdue' : ''}`;
@@ -1014,6 +1022,47 @@ function plannerBannerAsync(courseId, n) { return plannerBanner(courseId, n); }
 /// Whether the rail belongs on this page: the dashboard, the skin on, nothing
 /// killed or put back, and a sync to show. Shown from the first sync on, even
 /// with nothing due: the empty week is still the student's.
+// MARK: - Ticked done
+//
+// A circle at the left of every row of ours. A tick is the student's word that
+// a thing is finished; it never writes to Canvas. The worker keeps the map and
+// tells the phone (background.js `tick`); a task of the student's own is local.
+
+/// The circle. `on` fills it; a click asks for the other state. A real click
+/// only: a script on the page can dispatch one at the button.
+function tickCircle(t, on = isDone(t)) {
+  const b = el('button', `pk-tick${on ? ' on' : ''}`);
+  b.type = 'button';
+  b.setAttribute('aria-pressed', String(on));
+  b.setAttribute('aria-label', on ? `Done: ${t.title}. Undo` : `Done: ${t.title}`);
+  b.title = on ? 'Undo' : 'Done';
+  b.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if (e.isTrusted) setDone(t, !on); });
+  return b;
+}
+
+/// What the rail's foot says for a moment after a tick, with its Undo.
+let lastTick = null;
+let lastTickTimer = null;
+
+async function setDone(t, on) {
+  if (!alive()) return;
+  // The foot's line is set before the write, so the redraw the write causes
+  // already finds it; a refused tick takes it back.
+  const before = lastTick;
+  lastTick = on ? { id: t.id, title: t.title, at: Date.now() } : null;
+  clearTimeout(lastTickTimer);
+  if (t.own) {
+    // A task the student added never reaches the worker or the phone.
+    ownTasks = ownTasks.map((x) => (x.id === t.id ? { ...x, submittedAt: on ? new Date().toISOString() : null } : x));
+    await chrome.storage.local.set({ ownTasks });
+  } else {
+    if (!alive()) return;
+    const r = await chrome.runtime.sendMessage({ type: on ? 'done' : 'undone', id: t.id }).catch(() => null);
+    if (!r?.ok) { lastTick = before; return; }
+  }
+  if (on) { lastTickTimer = setTimeout(() => { lastTick = null; if (alive()) renderWeek(); }, 8000); spriteSend({ do: 'play', emote: 'bounce' }); }
+}
+
 /// The class as a small tile: its Canvas colour and its first letter. The
 /// colour is the school's, not ours (data-pk-course-color says so to the lint).
 function classTile(t) {
@@ -1047,7 +1096,7 @@ function renderWeek() {
   const running = focus.state === 'running';
   const said = voice(b);
   const key = JSON.stringify([w.start.getTime(), w.total, w.done, said.headline,
-    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId(),
+    first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt, t.doneAt]), b.overdue.length, skin.focusMinutes, tankId(), lastTick?.id,
     running && focus.endsAt, running && focus.title, plTab]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
@@ -1103,8 +1152,12 @@ function renderWeek() {
       actions.append(stop);
     } else {
       const overdue = new Date(first.dueAt) < now;
-      // Amber and "Was due" already say late; the row does not add a comment.
-      info.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now).replace(' · still counts', '')}`));
+      // The circle, then the words. Amber and "Was due" already say late; the
+      // row does not add a comment.
+      info.className = 'pk-w-info';
+      const words = el('div');
+      words.append(el('b', '', first.title), el('small', overdue ? 'amber' : '', `${shortCourse(first.courseName)} · ${dueLabel(first, now).replace(' · still counts', '')}`));
+      info.append(tickCircle(first), words);
       const url = safeURL(first.url);
       if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
       const focusBtn = el('span', '', `Focus ${skin.focusMinutes} min`);
@@ -1127,7 +1180,7 @@ function renderWeek() {
       for (const t of rest) {
         const late = new Date(t.dueAt) < now;
         const li = el('li');
-        li.append(classTile(t));
+        li.append(tickCircle(t), classTile(t));
         const name = el('b', '', t.title);
         name.title = `${t.courseName} · ${dueLabel(t, now)}`;
         li.append(name, el('small', late ? 'amber' : '', dayShort(t, now)));
@@ -1141,8 +1194,29 @@ function renderWeek() {
   // the page. BetterCampus's column is one list, and so is this.
 
   const foot = el('div', 'pk-w-foot');
-  // Finished work is worth a line; nothing finished is not worth a scold.
-  foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
+  if (lastTick && Date.now() - lastTick.at < 8000) {
+    // Just ticked: say so, with the way back (Todoist's toast, in words).
+    // The foot has one job for those seconds: the planner link waits.
+    const line = el('span', 'pk-w-undo');
+    const what = el('span', 'pk-w-undo-what', `Done: ${lastTick.title}`);
+    what.title = lastTick.title;
+    line.append(what, ' · ');
+    const undo = el('span', 'more', 'Undo');
+    undo.setAttribute('role', 'button'); undo.tabIndex = 0;
+    const back = (e) => { if (!e.isTrusted) return; const t = data.tasks.find((x) => x.id === lastTick.id); if (t) setDone(t, false); };
+    undo.addEventListener('click', back);
+    undo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); back(e); } });
+    line.append(undo);
+    foot.append(line);
+    box.append(foot);
+    if (existing) existing.replaceWith(box); else side.prepend(box);
+    renderFold();
+    if (sprite) placeSprite();
+    return;
+  } else {
+    // Finished work is worth a line; nothing finished is not worth a scold.
+    foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
+  }
   const more = el('span', 'more', plTab === 'planner' ? '' : 'Open the planner');
   more.setAttribute('role', 'button'); more.tabIndex = plTab === 'planner' ? -1 : 0;
   const openWeek = () => { plSetTab('planner'); document.getElementById(PLANNER_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
@@ -1585,11 +1659,12 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', HANDED_IN_KEY]);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', 'done', HANDED_IN_KEY]);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
-  data = composeData(stored.lastPayload ?? null, ownTasks, nicknames);
+  done = stored.done && typeof stored.done === 'object' ? stored.done : {};
+  data = composeData(stored.lastPayload ?? null, ownTasks, nicknames, done);
   levels = stored.levels ?? {};
   plans = stored.plans ?? {};
   targets = stored.targets ?? {};
@@ -1656,7 +1731,7 @@ if (typeof module !== 'undefined') {
       // And the number: what the phone will pay for it, floating up from him.
       ui.float = Date.now();
     }
-    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.nicknames || changes.ownTasks || changes.flags) mount();
+    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.nicknames || changes.ownTasks || changes.done || changes.flags) mount();
     // Not plans, levels or targets: the tab that set one has already redrawn,
     // and a remount here would throw the student back to the top of the panel
     // they just tapped in.

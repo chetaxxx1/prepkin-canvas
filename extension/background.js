@@ -22,6 +22,7 @@ importScripts('errlog.js');
 // bridge/apply-config.sh writes config.js. Without it the extension still reads
 // Canvas; it just has nowhere to send the list.
 importScripts('canvas.js');
+importScripts('day.js');
 
 let bridge = null;
 try {
@@ -293,12 +294,15 @@ async function focusDone() {
 /// can dispatch a synthetic click at the panel's own buttons, and without this
 /// any connected site could drive the timer or file spend requests.
 const SETUP_MESSAGES = ['register', 'forget', 'sync-now', 'verify-canvas', 'pair'];
+const TICK_MESSAGES = ['done', 'undone'];
 
 async function senderMayAsk(type, sender) {
   if (!sender || sender.id !== chrome.runtime.id) return false;
   if (SETUP_MESSAGES.includes(type)) {
     return !sender.tab && (sender.url ?? '').startsWith(chrome.runtime.getURL(''));
   }
+  // A tick may also come from the side panel, which is our own page with no tab.
+  if (TICK_MESSAGES.includes(type) && !sender.tab && (sender.url ?? '').startsWith(chrome.runtime.getURL(''))) return true;
   // Only the page itself, never a frame inside it: an embedded tool on the same
   // origin is somebody else's code.
   if (!sender.tab || sender.frameId !== 0) return false;
@@ -339,6 +343,9 @@ function handleMessage(msg, sendResponse, sender) {
   }
   if (msg.type === 'focus-stop' || msg.type === 'focus-clear') {
     response = focusStop().then(() => ({ ok: true }));
+  }
+  if (msg.type === 'done' || msg.type === 'undone') {
+    response = tick(msg.id, msg.type === 'done');
   }
   if (msg.type === 'spend') {
     response = queueRequest({ kind: 'look', lookId: msg.lookId, price: msg.price })
@@ -483,7 +490,13 @@ async function send(fresh) {
   // narrower copy: per-item scores and group weights never leave the laptop,
   // because nothing on the phone reads them and they are the most identifying
   // thing here.
+  // The student's ticks ride with the bridge copy as `doneAt`, so the phone can
+  // pay them and the lists there agree with the lists here. `lastPayload` stays
+  // what Canvas said; the page lays the map over it when it reads.
+  await changeDone((done) => pruneDone(done, payload.tasks));
+  const { done: ticks = {} } = await chrome.storage.local.get('done');
   const { graded, weights, ...rest } = payload;
+  rest.tasks = rest.tasks.map((t) => (!t.submittedAt && ticks[t.id] ? { ...t, doneAt: ticks[t.id] } : t));
   // Old missing work stays on this machine too. The phone's list is today; a
   // term of three-week-old zeros would fill it with work nobody is doing
   // tonight, and it is the panel's Missing list that they belong to.
@@ -597,6 +610,41 @@ function changeRequests(change) {
   });
   requestsLock = run.catch(() => {});
   return run;
+}
+
+// MARK: - Ticked done
+//
+// A circle on every row of ours. A tick is the student's word that a thing is
+// finished: it clears the row here and on the phone, and the phone pays it once
+// under the same key as a hand-in. Nothing is ever written to Canvas. The map
+// lives here, in storage, and this worker is its one writer; pages and the side
+// panel only ask.
+
+let doneLock = Promise.resolve();
+function changeDone(change) {
+  const run = doneLock.then(async () => {
+    const { done = {} } = await chrome.storage.local.get('done');
+    const next = change(done);
+    if (next !== done) await chrome.storage.local.set({ done: next });
+  });
+  doneLock = run.catch(() => {});
+  return run;
+}
+
+/// Only a task Canvas actually listed can be ticked: an id the page made up
+/// (or a task of the student's own, which never leaves this browser) is refused,
+/// so the phone can only ever be asked to pay for a real assignment, once.
+async function tick(id, on) {
+  const { lastPayload } = await chrome.storage.local.get('lastPayload');
+  const task = (lastPayload?.tasks ?? []).find((t) => t.id === id);
+  if (!task) return { ok: false, error: 'Not a task Canvas listed.' };
+  if (task.submittedAt) return { ok: false, error: 'Canvas already has it.' };
+  await changeDone((done) => {
+    if (on) return done[id] ? done : { ...done, [id]: new Date().toISOString() };
+    if (!(id in done)) return done;
+    const { [id]: gone, ...rest } = done; return rest;
+  });
+  return { ok: true };
 }
 
 /// Queued for the next sync rather than sent on the spot, so a click never

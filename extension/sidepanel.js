@@ -43,8 +43,30 @@ function el(tag, cls, text) {
 
 /// One row. Titles are other people's text, so every one of these is
 /// textContent and never markup.
-function row(t, now, overdue) {
-  const li = el('li', overdue ? 'overdue' : '');
+/// The circle: a tick is the student's word. The worker keeps the map and tells
+/// the phone; a task of the student's own stays in this browser.
+function tick(t, on) {
+  const b = el('button', `tick${on ? ' on' : ''}`);
+  b.type = 'button';
+  b.setAttribute('aria-pressed', String(on));
+  b.setAttribute('aria-label', on ? `Done: ${t.title}. Undo` : `Done: ${t.title}`);
+  b.title = on ? 'Undo' : 'Done';
+  b.addEventListener('click', async (e) => {
+    if (!e.isTrusted) return;
+    if (t.own) {
+      const { ownTasks = [] } = await chrome.storage.local.get('ownTasks');
+      await chrome.storage.local.set({ ownTasks: ownTasks.map((x) => (x.id === t.id ? { ...x, submittedAt: on ? null : new Date().toISOString() } : x)) });
+    } else {
+      await chrome.runtime.sendMessage({ type: on ? 'undone' : 'done', id: t.id }).catch(() => null);
+    }
+  });
+  return b;
+}
+
+function row(t, now, overdue, done = false) {
+  const li = el('li', `${overdue ? 'overdue' : ''}${done ? ' done' : ''}`.trim());
+  // Canvas's own hand-in is locked: the same mark, nothing to undo.
+  if (t.submittedAt) { const lock = el('span', 'tick on locked'); lock.title = 'Handed in'; li.append(lock); } else li.append(tick(t, done));
   const dot = el('i');
   // The course's own Canvas colour, so the eye lands by colour the way it does
   // on the dashboard. Validated here because storage may hold an older shape.
@@ -68,7 +90,7 @@ function row(t, now, overdue) {
   return li;
 }
 
-function list(title, tasks, now, { overdue = false, empty } = {}) {
+function list(title, tasks, now, { overdue = false, done = false, empty } = {}) {
   const wrap = document.createDocumentFragment();
   const label = el('p', 'label');
   label.append(el('span', '', title));
@@ -76,20 +98,20 @@ function list(title, tasks, now, { overdue = false, empty } = {}) {
   wrap.append(label);
   const ul = el('ul');
   if (!tasks.length) ul.append(el('li', 'none', empty));
-  else for (const t of tasks.slice(0, LIMIT)) ul.append(row(t, now, overdue));
+  else for (const t of tasks.slice(0, LIMIT)) ul.append(row(t, now, overdue, done));
   wrap.append(ul);
   return wrap;
 }
 
 async function draw() {
-  const { lastPayload, ownTasks, plans = {}, nicknames = {}, skin = {} } =
-    await chrome.storage.local.get(['lastPayload', 'ownTasks', 'plans', 'nicknames', 'skin']);
+  const { lastPayload, ownTasks, plans = {}, nicknames = {}, skin = {}, done = {} } =
+    await chrome.storage.local.get(['lastPayload', 'ownTasks', 'plans', 'nicknames', 'skin', 'done']);
 
   const dark = skin.mode === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : !!skin.dark;
   document.body.classList.toggle('dark', dark);
 
-  const own = Array.isArray(ownTasks) ? ownTasks : [];
-  const tasks = [...(lastPayload?.tasks ?? []), ...own].map((t) => {
+  const own = (Array.isArray(ownTasks) ? ownTasks : []).map((t) => ({ ...t, own: true }));
+  const tasks = [...withDone(lastPayload?.tasks ?? [], done), ...own].map((t) => {
     const nick = nicknames[t.courseId];
     return nick ? { ...t, courseName: nick } : t;
   });
@@ -115,12 +137,14 @@ async function draw() {
   if (b.overdue.length) lists.append(list('Past due', b.overdue, now, { overdue: true }));
   lists.append(list('This week', b.week, now, { empty: 'The rest of the week is clear.' }));
   if (b.missed.length) lists.append(list('Missing', b.missed, now, { overdue: true }));
+  // What was finished today stays in sight, struck, with the way back.
+  if (b.doneToday.length) lists.append(list('Done today', b.doneToday, now, { done: true }));
 
   document.getElementById('foot').textContent = `Read from your Canvas ${freshness(lastPayload?.at)}.`;
 }
 
 draw();
 chrome.storage.onChanged.addListener((changes) => {
-  if (changes.lastPayload || changes.ownTasks || changes.plans || changes.nicknames || changes.skin) draw();
+  if (changes.lastPayload || changes.ownTasks || changes.plans || changes.nicknames || changes.skin || changes.done) draw();
 });
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => draw());
