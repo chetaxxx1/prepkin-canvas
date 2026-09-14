@@ -238,6 +238,27 @@ function themeStyle(look, textureImage, art = null) {
   return `html.pk-on.pk-theme-${look.id}{${rule(false)}}html.pk-on.pk-dark.pk-theme-${look.id}{${rule(true)}}`;
 }
 
+/// A Looks tile as this student's own dashboard in that theme: the tokens one
+/// tile needs, as an inline style. The same maths as themeStyle() (the stock,
+/// the accent, the rail, the wallpaper under the paper's wash), plus the first
+/// two course colours so the two cards on the tile are the student's own.
+/// Pure: node tests it for every theme in both modes.
+function tileTokens(look, dark, courses = [], art = null) {
+  const p = PAPERS[stockFor(look, dark)];
+  const hex = (h) => parseInt(String(h).slice(1), 16);
+  const rgba = (h, a) => { const n = hex(h); return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`; };
+  const accent = look?.accent?.[dark ? 'dark' : 'light'] ?? p.mark;
+  const rail = look?.rail?.[dark ? 'dark' : 'light'] ?? p.ink;
+  const ok = (c) => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c) ? c : null;
+  const band = (i) => ok(courses[i]?.colorHex) ?? (i === 0 ? p.mark : p.rule);
+  const wall = art ? `url("${art.wallpaper}")` : 'none';
+  const wash = art ? rgba(p.paper, look?.wash?.[dark ? 'dark' : 'light'] ?? 0.8) : 'transparent';
+  const cards = art ? art.cards : [];
+  return `--tp:${p.paper};--tp2:${p.paper2};--tr:${p.rule};--ti:${p.ink};--ti2:${p.ink2};--ta:${accent};--trail:${rail};`
+    + `--tc1:${band(0)};--tc2:${band(1)};--twall:${wall};--twash:${wash};`
+    + `--tcard1:${cards[0] ? `url("${cards[0]}")` : 'none'};--tcard2:${cards[1] ? `url("${cards[1]}")` : 'none'};`;
+}
+
 /// Where the popup says you are.
 function pageName(pathname) {
   if (/^\/?$|^\/dashboard/.test(pathname)) return 'Dashboard';
@@ -331,5 +352,5 @@ function shouldStepAside({ mine, current, alive }) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PAPERS, RULES, WORD_INKS, contrast, scrimFor, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, shouldStepAside };
+  module.exports = { PAPERS, RULES, WORD_INKS, contrast, scrimFor, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, tileTokens, shouldStepAside };
 }

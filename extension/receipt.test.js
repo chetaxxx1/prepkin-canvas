@@ -422,3 +422,24 @@ test('handing work in is never skinned', () => {
   assert.ok(!isSubmissionPath('/courses/4/assignments'));
   assert.ok(!isSubmissionPath('/'));
 });
+
+test('tileTokens: every theme in both modes draws, in the student\'s own course colours, with no undefined', () => {
+  const { tileTokens, PAPERS, stockFor } = require('./receipt.js');
+  const { THEMES: LOOKS, THEMES_BY_ID: LOOKS_BY_ID, artFor } = require('./themes.js');
+  const art = (look) => artFor(look, [look.art].filter(Boolean), (f) => `chrome-extension://x/${f}`);
+  for (const look of LOOKS) for (const dark of [false, true]) {
+    const t = tileTokens(look, dark, [{ colorHex: '#112233' }, { colorHex: '#445566' }], art(look));
+    assert.doesNotMatch(t, /undefined|NaN/, `${look.id} ${dark ? 'dark' : 'light'}: ${t}`);
+    assert.ok(t.includes(`--tp:${PAPERS[stockFor(look, dark)].paper};`), `${look.id}: its paper`);
+    assert.ok(t.includes('--tc1:#112233;--tc2:#445566;'), `${look.id}: the student\'s colours`);
+  }
+  const g = tileTokens(LOOKS_BY_ID.graffiti, true, [], art(LOOKS_BY_ID.graffiti));
+  assert.ok(g.includes('--tp:#17191D;'), 'graffiti dark sits on Carbon');
+  assert.ok(g.includes('--twall:url("chrome-extension://x/art/graffiti/wallpaper.webp");'), 'its wallpaper');
+  assert.match(g, /--twash:rgba\(23, 25, 29, 0\.72\);/, 'under the paper\'s wash at the theme\'s alpha');
+  assert.ok(g.includes('--tcard1:url("chrome-extension://x/art/graffiti/card-1.webp");'), 'its banner on the first card');
+  const m = tileTokens(LOOKS_BY_ID.matcha, false, [], null);
+  assert.ok(m.includes('--twall:none;--twash:transparent;'), 'no art, no wallpaper');
+  assert.ok(m.includes(`--tc1:${PAPERS.sage.mark};`) && m.includes(`--tc2:${PAPERS.sage.rule};`), 'no classes yet: the mark, then the rule');
+  assert.ok(tileTokens(LOOKS_BY_ID.matcha, false, [{ colorHex: 'javascript:alert(1)' }]).includes(`--tc1:${PAPERS.sage.mark};`), 'junk in storage is never a colour');
+});

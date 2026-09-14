@@ -201,10 +201,15 @@ test('dashboard: the skin does not delay the cards', { skip: !!(BASELINE || (ONL
     return Math.min(...times);
   };
   const on = await time();
+  // With the Looks tab open: 26 tiles drawn from tokens must not move the number.
+  await h.setStorage({ dashTab: 'looks' });
+  const looks = await time();
+  await h.setStorage({ dashTab: 'cards' });
   const { skin } = await h.storage();
   await h.setStorage({ skin: { ...skin, cards: false, mascot: false } });
   const off = await time();
   await h.setStorage({ skin });
-  report['mount'] = { on, off };
+  report['mount'] = { on, looks, off };
   assert.ok(on <= off + 2000, `cards mounted in ${on} ms with the skin on, ${off} ms with it off`);
+  assert.ok(looks <= off + 2000, `cards mounted in ${looks} ms with the Looks tab open, ${off} ms with the skin off`);
 });

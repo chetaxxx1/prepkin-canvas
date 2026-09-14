@@ -1030,24 +1030,36 @@ html.pk-dark #pk-planner .pk-pl-card .lens span.on { color: #7FDDB8; }
 /* Tiles, four across: the theme's own paper with one card drawn on it. */
 #pk-looks .pk-pl-looks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 #pk-looks .pk-pl-look {
-  position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0;
-  padding: 12px 10px 12px; border-radius: 16px; cursor: pointer; user-select: none; text-align: center;
-  box-shadow: inset 0 0 0 1px var(--pk-rule); transition: transform .15s ease, box-shadow .15s ease;
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; container-type: inline-size;
+  padding: 8px 8px 12px; border-radius: 16px; cursor: pointer; user-select: none; text-align: center;
+  background: var(--pk-paper-2); color: var(--pk-ink);
+  box-shadow: inset 0 0 0 1px var(--pk-rule); transition: box-shadow .15s ease;
 }
-#pk-looks .pk-pl-look:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--pk-ink-2); }
+#pk-looks .pk-pl-look:hover { box-shadow: inset 0 0 0 1px var(--pk-ink-2); }
 #pk-looks .pk-pl-look.wearing, #pk-looks .pk-pl-look.wearing:hover { box-shadow: inset 0 0 0 2px #51CFA0; }
 #pk-looks .pk-pl-look:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
-#pk-looks .pk-pl-look .preview { position: relative; width: 100%; height: 64px; }
-#pk-looks .pk-pl-look .preview > span:first-child { position: absolute; left: 8px; right: 8px; top: 8px; height: 48px; border-radius: 6px; border: 1px solid; display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; }
-#pk-looks .pk-pl-look .preview i { display: block; width: 28%; height: 4px; border-radius: 2px; }
-#pk-looks .pk-pl-look .preview em { display: block; width: 70%; height: 3px; border-radius: 2px; opacity: .55; }
-#pk-looks .pk-pl-look .preview em + em { width: 45%; }
-#pk-looks .pk-pl-look .preview .tick { position: absolute; right: 2px; top: 2px; width: 22px; height: 22px; border-radius: 999px; background: #51CFA0; color: #101820; font-size: 12px; font-weight: 900; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--pk-paper-2); }
-#pk-looks .pk-pl-look.has-art .preview > span:first-child { box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
+/* The scene: the dashboard in that theme, at 4:3, every size in container
+ * units (cqw of the tile, which is the container: a unit on the container
+ * itself would read its ancestor) so it is the page small and not a picture
+ * of one. Tokens (--tp …) come inline from tileTokens(); the wallpaper sits
+ * under the paper's wash. */
+#pk-looks .pk-pl-look .scene {
+  position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; overflow: hidden;
+  display: grid; grid-template-columns: 11cqw 1fr; color: var(--ti);
+  background: linear-gradient(var(--twash), var(--twash)), var(--twall) center / cover no-repeat, var(--tp);
+}
+#pk-looks .pk-pl-look .scene .rail { display: block; background: var(--trail); }
+#pk-looks .pk-pl-look .scene .page { padding: 6cqw 6cqw 0; display: grid; grid-template-columns: 1fr 1fr 30cqw; gap: 4cqw; align-content: start; }
+#pk-looks .pk-pl-look .scene .title { display: block; grid-column: 1 / 3; height: 5cqw; width: 34cqw; border-radius: 1cqw; background: var(--ti); }
+#pk-looks .pk-pl-look .scene .link { display: block; grid-column: 3; height: 5cqw; width: 18cqw; border-radius: 2.5cqw; background: var(--ta); justify-self: end; }
+#pk-looks .pk-pl-look .scene .card, #pk-looks .pk-pl-look .scene .side { display: block; background: var(--tp2); border: 1px solid var(--tr); border-radius: 3cqw; overflow: hidden; height: 42cqw; }
+#pk-looks .pk-pl-look .scene .band { display: block; height: 14cqw; background: var(--art, none) top / cover no-repeat, var(--band); }
+#pk-looks .pk-pl-look .scene em { display: block; margin: 3cqw 3cqw 0; height: 2.5cqw; border-radius: 1cqw; background: var(--ti2); opacity: .55; }
+#pk-looks .pk-pl-look .scene em:nth-of-type(2) { width: 55%; }
+#pk-looks .pk-pl-look .scene .side em:first-of-type { margin-top: 5cqw; background: var(--ta); opacity: .9; width: 60%; }
+#pk-looks .pk-pl-look .scene .tick { position: absolute; right: 6px; top: 6px; width: 22px; height: 22px; border-radius: 999px; background: #51CFA0; color: #101820; font-size: 12px; font-weight: 900; display: grid; place-items: center; }
 #pk-looks .pk-pl-look b { font-size: 14px; line-height: 18px; font-weight: 800; margin-top: 2px; }
 #pk-looks .pk-pl-look small { font-size: 11px; line-height: 14px; font-weight: 600; opacity: .8; }
-#pk-looks .pk-pl-look.has-art b, #pk-looks .pk-pl-look.has-art small { text-shadow: 0 1px 0 rgba(255, 255, 255, .35); }
-#pk-looks .pk-pl-look.has-art.on-dark b, #pk-looks .pk-pl-look.has-art.on-dark small { text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
 #pk-looks .pk-pl-look .price { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 12px; font-weight: 800; color: #8A5A12; }
 #pk-looks .pk-pl-look.on-dark .price { color: #ECB35C; }
 

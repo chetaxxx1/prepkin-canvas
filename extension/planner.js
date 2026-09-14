@@ -436,7 +436,7 @@ function renderLooks() {
   if (!plannerShows() || plTab !== 'looks' || !head) { existing?.remove(); return; }
   const { wallet, skin, data } = plannerState();
   const { LOOKS, LOOKS_BY_ID, PAPERS, ART_AVAILABLE, cardArt, banners } = plannerLooks();
-  const key = JSON.stringify([wallet.coins, wallet.owned, wallet.wearing, !!skin.dark, plConfirm, Object.keys(cardArt), banners, data.courses.map((c) => c.id)]);
+  const key = JSON.stringify([wallet.coins, wallet.owned, wallet.wearing, !!skin.dark, plConfirm, Object.keys(cardArt), banners, data.courses.map((c) => [c.id, c.colorHex])]);
   if (existing && existing.dataset.key === key) return;
 
   const box = el('section', '', null);
@@ -478,12 +478,14 @@ function renderLooks() {
     box.append(ask);
   }
 
+  // The student's own classes, so every tile's two cards are theirs.
+  const courses = data.courses.filter((c) => /^\d+$/.test(String(c.id)));
   const yours = LOOKS.filter((look) => look.free || wallet.owned.includes(look.id))
     .sort((a, b) => (b.id === wallet.wearing) - (a.id === wallet.wearing));
   const locked = LOOKS.filter((look) => !yours.includes(look));
   const grid = (list) => {
     const g = el('div', 'pk-pl-looks');
-    for (const look of list) g.append(plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned: yours.includes(look) }));
+    for (const look of list) g.append(plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned: yours.includes(look), courses }));
     return g;
   };
   box.append(el('span', 'pk-pl-label plain', 'Yours'), grid(yours));
@@ -493,32 +495,41 @@ function renderLooks() {
   if (existing) existing.replaceWith(box); else head.after(box);
 }
 
-/// A tile is the paper itself: the theme's paper with one card on it, the
-/// name, the mood, a tick when worn, a price when locked.
-function plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned }) {
+/// A tile is this student's dashboard in that theme, small: the paper (or the
+/// wallpaper under its wash), the rail, a title and a link in the accent, two
+/// cards banded in the student's own first two course colours, the rail card
+/// beside them. Drawn in container units, so the tile is the page at 4:3 and
+/// nothing is scaled. The name and the mood under it, a tick when worn, a
+/// price when locked. No request: the wallpapers are the ones already bundled.
+function plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned, courses = [] }) {
   const wearing = wallet.wearing === look.id;
-  const stock = stockFor(look, !!skin.dark);
+  const dark = !!skin.dark;
+  const stock = stockFor(look, dark);
   const p = PAPERS[stock];
-  const accent = look.accent?.[skin.dark ? 'dark' : 'light'] ?? p.mark;
-  const tile = el('div', `pk-pl-look${wearing ? ' wearing' : ''}${p.dark ? ' on-dark' : ''}`);
-  tile.setAttribute('role', 'button'); tile.tabIndex = 0; tile.setAttribute('aria-pressed', String(wearing));
-  tile.style.background = p.paper; tile.style.color = p.ink;
   const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)) : null;
-  if (art) {
-    const n = parseInt(p.paper.slice(1), 16);
-    tile.style.backgroundImage = `linear-gradient(rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, .62), rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, .62)), url("${art.wallpaper}")`;
-    tile.style.backgroundSize = 'cover';
-    tile.classList.add('has-art');
+  const tile = el('div', `pk-pl-look${wearing ? ' wearing' : ''}${p.dark ? ' on-dark' : ''}${art ? ' has-art' : ''}`);
+  tile.setAttribute('role', 'button'); tile.tabIndex = 0; tile.setAttribute('aria-pressed', String(wearing));
+  tile.dataset.look = look.id;
+  tile.style.cssText = tileTokens(look, dark, courses, art);
+  const scene = el('div', 'scene');
+  scene.setAttribute('aria-hidden', 'true');
+  scene.append(el('i', 'rail'));
+  const page = el('div', 'page');
+  page.append(el('b', 'title'), el('i', 'link'));
+  for (const n of [1, 2]) {
+    const card = el('span', 'card');
+    const band = el('i', 'band');
+    band.style.setProperty('--band', `var(--tc${n})`);
+    band.style.setProperty('--art', `var(--tcard${n})`);
+    card.append(band, el('em'), el('em'));
+    page.append(card);
   }
-  const preview = el('div', 'preview');
-  const card = el('span', '', null); card.style.background = p.paper2; card.style.borderColor = p.rule;
-  const bar = el('i', '', null); bar.style.background = accent;
-  const l1 = el('em', '', null); l1.style.background = p.ink2;
-  const l2 = el('em', '', null); l2.style.background = p.rule;
-  card.append(bar, l1, l2);
-  preview.append(card);
-  if (wearing) preview.append(el('span', 'tick', '✓'));
-  tile.append(preview, el('b', '', look.name), el('small', '', look.vibe ?? paperLine(stock)));
+  const side = el('span', 'side');
+  side.append(el('em'), el('em'), el('em'));
+  page.append(side);
+  scene.append(page);
+  if (wearing) scene.append(el('span', 'tick', '✓'));
+  tile.append(scene, el('b', '', look.name), el('small', '', look.vibe ?? paperLine(stock)));
   if (!owned) { const price = el('span', 'price', null); price.append(el('i', 'coin', null), el('span', '', String(look.price))); tile.append(price); }
   const pick = (e) => {
     if (!e.isTrusted) return;

@@ -671,6 +671,20 @@ test('R27 the Planner and Looks tabs: a week grid and the shop in the main colum
   assert.equal(await page.$('#pk-planner'), null, 'one tab at a time');
   assert.ok(await page.$('#pk-looks .pk-pl-look.wearing .tick'), 'the worn look is ticked');
   assert.ok((await page.$$('#pk-looks .pk-pl-look .price')).length >= 10, 'the rest carry a price');
+  // Every tile is this student's dashboard in that theme: its paper, its rail,
+  // the first card banded in the fake's first course colour, the accent link.
+  const { PAPERS, stockFor } = require('../extension/receipt.js');
+  const { THEMES_BY_ID: LOOKS_BY_ID } = require('../extension/themes.js');
+  const matcha = LOOKS_BY_ID.matcha;
+  assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene', 'backgroundColor'), rgb(PAPERS[stockFor(matcha, false)].paper), 'the paper');
+  assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene .rail', 'backgroundColor'), rgb(matcha.rail.light), 'the rail');
+  assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene .card:first-of-type .band', 'backgroundColor'), rgb('#FF6F61'), 'the first card in the student\'s own course colour');
+  assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene .link', 'backgroundColor'), rgb(matcha.accent.light), 'the accent');
+  assert.match(await style(page, '.pk-pl-look[data-look="graffiti"] .scene', 'backgroundImage'), /art\/graffiti\/wallpaper\.webp/, 'an image theme shows its wallpaper');
+  assert.ok((await page.$$eval('.pk-pl-look .scene', (els) => els.map((e) => e.getBoundingClientRect()))).every((r) => r.width > 100 && Math.abs(r.width / r.height - 4 / 3) < 0.05), 'every scene is 4:3 and real size');
+  await h.setStorage({ skin: SKIN({ dark: true }) }); await page.waitForTimeout(500);
+  assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene', 'backgroundColor'), rgb(PAPERS[stockFor(matcha, true)].paper), 'dark redraws every tile in its dark stock');
+  await h.setStorage({ skin: SKIN({}) }); await page.waitForTimeout(300);
   assert.equal(await style(page, '#DashboardCard_Container', 'display'), 'none', 'the cards stay aside');
   // Courses brings the cards back; Put back on the planner row hides the tab itself.
   await page.click('#pk-dashtabs [data-tab="cards"]');
