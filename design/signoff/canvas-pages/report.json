@@ -1,6 +1,6 @@
 {
-  "syllabus-light-1280": {
-    "mount": 4719,
+  "dashboard-light-1280": {
+    "mount": 5591,
     "findings": {
       "text": [],
       "blocks": [],
@@ -9,11 +9,11 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 66
+      "counted": 58
     }
   },
-  "syllabus-dark-1280": {
-    "mount": 5145,
+  "dashboard-dark-1280": {
+    "mount": 4812,
     "findings": {
       "text": [],
       "blocks": [],
@@ -22,11 +22,11 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 66
+      "counted": 58
     }
   },
-  "syllabus-light-768": {
-    "mount": 4736,
+  "dashboard-light-768": {
+    "mount": 5460,
     "findings": {
       "text": [],
       "blocks": [],
@@ -35,11 +35,11 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 65
+      "counted": 58
     }
   },
-  "syllabus-dark-768": {
-    "mount": 4940,
+  "dashboard-dark-768": {
+    "mount": 5197,
     "findings": {
       "text": [],
       "blocks": [],
@@ -48,7 +48,13 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 65
+      "counted": 58
     }
+  },
+  "mount": {
+    "on": 4583,
+    "looks": 5302,
+    "off": 4935,
+    "stalls": []
   }
 }

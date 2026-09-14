@@ -240,7 +240,15 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // whole main column is a change to the page, so it is a row with a Put back.
   // Raised to 19 on 2026-09-14 for `course-next`: three rows at the top of a
   // course home's sidebar, with Canvas's To Do folded under them.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 19, 'nineteen keys at most, so it cannot sprawl');
+  // Raised to 20 on 2026-09-14 for `module-band`: the 90px bar above the
+  // modules folded to its one button is a change a student sees on every
+  // modules page and course home, so it is a row with a Put back.
+  // Raised to 21 the same day for `grades-fit`: Canvas's grades table runs
+  // 137px under the sidebar at 1280; fixed columns that fit the page are a
+  // change to every grades page, so a row with a Put back.
+  // And 22 for `cal-rows`: every event chip on the calendar redrawn as one
+  // ink line with the class colour on its edge.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 22, 'twenty-two keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names
@@ -371,7 +379,7 @@ test('the skin never sets font-family, a shadow that is not none, a hover lift, 
 });
 
 test('every receipt key that has CSS is gated on its put-back class', () => {
-  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'word-paste', 'seam']) {
+  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'module-band', 'grades-fit', 'cal-rows', 'word-paste', 'seam']) {
     assert.ok(css.includes(`:not(.pk-back-${key})`), `${key} has no put-back gate`);
   }
 });

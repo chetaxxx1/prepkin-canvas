@@ -822,6 +822,34 @@ function decorateCards() {
     row.append(d);
     if (url) { const go = document.createElement('span'); go.className = 'go'; go.textContent = 'Start'; row.append(go); }
     el.append(row);
+    fitAtWord(t, next.t.title);
+  }
+}
+
+/// The card's line shares its row with "+2", the date and Start, so how much
+/// title fits depends on the card. Measured, not guessed: drop whole words
+/// until the span no longer overflows, so the cut lands at a word (the CSS
+/// ellipsis stays as the backstop for one word wider than the row).
+function fitAtWord(span, full) {
+  span.textContent = full;
+  const words = full.split(' ');
+  while (words.length > 1 && span.scrollWidth > span.clientWidth) {
+    words.pop();
+    span.textContent = `${words.join(' ').replace(/[\s:;,.\-–—]+$/, '')}…`;
+  }
+}
+/// Every `.pk-fit` name in a box, whenever the box has a width: now, and again
+/// each time its size changes (a course home's aside is laid out after the
+/// page; a window narrows). Nothing measures at width 0, so those are skipped.
+function fitAll(box) {
+  const fit = () => {
+    if (!box.isConnected || box.clientWidth === 0) return;
+    for (const node of box.querySelectorAll('.pk-fit')) fitAtWord(node, node.title ? node.title.split(' · ')[0] : node.textContent);
+  };
+  fit();
+  if (!box.pkFitWatch && typeof ResizeObserver !== 'undefined') {
+    box.pkFitWatch = new ResizeObserver(fit);
+    box.pkFitWatch.observe(box);
   }
 }
 
@@ -1194,8 +1222,8 @@ function renderWeek() {
         const late = new Date(t.dueAt) < now;
         const li = el('li');
         li.append(tickCircle(t), classTile(t));
-        const name = el('b', '', t.title);
-        name.title = `${t.courseName} · ${dueLabel(t, now)}`;
+        const name = el('b', 'pk-fit', t.title);
+        name.title = `${t.title} · ${t.courseName} · ${dueLabel(t, now)}`;
         li.append(name, el('small', late ? 'amber' : '', dayShort(t, now)));
         more.append(li);
       }
@@ -1223,6 +1251,7 @@ function renderWeek() {
     foot.append(line);
     box.append(foot);
     if (existing) existing.replaceWith(box); else side.prepend(box);
+    fitAll(box);
     renderFold();
     if (sprite) placeSprite();
     return;
@@ -1236,6 +1265,7 @@ function renderWeek() {
     foot.append(door);
     box.append(foot);
     if (existing) existing.replaceWith(box); else side.prepend(box);
+    fitAll(box);
     renderFold();
     if (sprite) placeSprite();
     return;
@@ -1251,6 +1281,7 @@ function renderWeek() {
   foot.append(more);
   box.append(foot);
   if (existing) existing.replaceWith(box); else side.prepend(box);
+  fitAll(box);
   renderFold();
   if (sprite) placeSprite();
 }
@@ -1293,7 +1324,7 @@ function renderCourseNext() {
     const url = safeURL(r.t.url);
     const name = url ? el('a', '', r.t.title) : el('b', '', r.t.title);
     if (url) name.href = url;
-    name.className = 'pk-cn-name';
+    name.className = 'pk-cn-name pk-fit';
     name.title = r.t.title;
     // The sidebar is narrow: one word for the day, amber when it slipped.
     li.append(name, el('small', r.overdue ? 'amber' : '', dayShort(r.t, now)));
@@ -1301,6 +1332,7 @@ function renderCourseNext() {
   }
   box.append(list);
   if (existing) existing.replaceWith(box); else document.getElementById('right-side').prepend(box);
+  fitAll(box);
 }
 
 /// Canvas's own To Do and Coming Up are replaced by the rail and the planner

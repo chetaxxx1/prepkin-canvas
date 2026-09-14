@@ -290,7 +290,11 @@ test('R16 everywhere: calendar, the courses table and a quiz page take the paper
   assert.equal(await style(page, '.header-bar', 'backgroundColor'), paper2, 'the calendar toolbar is paper');
   assert.equal(await style(page, '.fc-widget-header', 'backgroundColor'), sunk, 'day headers are sunk paper');
   assert.equal(await style(page, '.fc-day', 'backgroundColor'), paper2);
-  assert.equal(await style(page, '.fc-event', 'backgroundColor'), 'rgb(255, 111, 97)', 'an event keeps its course colour');
+  // cal-rows: the chip is one ink line; the course colour stays on its edge.
+  assert.equal(await style(page, '.fc-event', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'an event chip has no fill of its own');
+  assert.equal(await style(page, '.fc-event', 'borderLeftColor'), 'rgb(255, 111, 97)', 'an event keeps its course colour, on the edge');
+  assert.equal(await style(page, '.fc-event', 'borderLeftWidth'), '3px');
+  assert.equal(await style(page, '.fc-event .fc-title', 'color'), ink, 'the title is in the ink');
   assert.equal(await style(page, '#calendar-list', 'backgroundColor'), paper2, 'the calendar list is paper');
   await page.close();
   page = await open('/courses');
@@ -586,18 +590,19 @@ test('R28 a tick clears a row everywhere, is undoable, reaches the phone as done
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');
   await page.waitForSelector('#pk-week .pk-w-then .pk-tick', { timeout: 5000 });
-  const row = await page.$eval('#pk-week .pk-w-then li', (li) => li.querySelector('b').textContent);
+  // The row's text is cut at a word to fit; the full title leads its hover.
+  const row = await page.$eval('#pk-week .pk-w-then li', (li) => li.querySelector('b').title.split(' · ')[0]);
   const task = (await h.storage()).lastPayload.tasks.find((t) => t.title === row);
   assert.ok(task, `the Then row names a synced task: ${row}`);
   await page.click(`#pk-week .pk-w-then li:first-child .pk-tick`);         // a real click
-  await page.waitForFunction((title) => ![...document.querySelectorAll('#pk-week li b')].some((b) => b.textContent === title), row, { timeout: 4000 });
+  await page.waitForFunction((title) => ![...document.querySelectorAll('#pk-week li b')].some((b) => (b.title || b.textContent).split(' · ')[0] === title), row, { timeout: 4000 });
   assert.equal((await h.storage()).done[task.id]?.slice(0, 4), '2026', 'the worker wrote the map');
   assert.match(await page.$eval('#pk-week .pk-w-foot', (e) => e.textContent), new RegExp(`Done: ${row.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} · Undo`), 'the foot says so, with the way back');
   const line = await page.$eval(`.ic-DashboardCard[data-pk-course="${task.courseId}"] .pk-card-due`, (e) => e.textContent);
   assert.doesNotMatch(line, new RegExp(row.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), 'the card moved on from it');
   // Undo brings it back.
   await page.click('#pk-week .pk-w-foot .more');
-  await page.waitForFunction((title) => [...document.querySelectorAll('#pk-week li b')].some((b) => b.textContent === title), row, { timeout: 4000 });
+  await page.waitForFunction((title) => [...document.querySelectorAll('#pk-week li b')].some((b) => (b.title || b.textContent).split(' · ')[0] === title), row, { timeout: 4000 });
   assert.equal((await h.storage()).done[task.id], undefined, 'undone in the map');
   // Ticked again: the phone reads it as doneAt, and submittedAt stays null.
   await page.click(`#pk-week .pk-w-then li:first-child .pk-tick`);

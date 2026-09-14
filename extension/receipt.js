@@ -127,7 +127,10 @@ const RULES = [
     // Counts what this course actually shows: many schools expose one or two of the four.
     label: (ctx, n) => `${['One', 'Two', 'Three', 'Four'][n - 1] ?? n} menu item${n === 1 ? '' : 's'} dimmed` },
   { key: 'module-sticky', kind: 'fixed', label: 'Module header stays at the top while you scroll', hook: 'moduleHeader' },
-  { key: 'due-column', kind: 'fixed', label: 'Due dates lined up in one column', hook: 'moduleDue' },
+  { key: 'due-column', kind: 'fixed', label: 'Due dates lined up in one column, in readable type', hook: 'moduleDue' },
+  { key: 'module-band', kind: 'fixed', label: 'The empty bar above the modules, folded to its one button', hook: 'moduleBar' },
+  { key: 'cal-rows', kind: 'fixed', label: 'Calendar events as one line each, the class colour on the edge', hook: 'calEvent' },
+  { key: 'grades-fit', kind: 'fixed', label: 'The grades table fits the page: wider names, nothing under the sidebar, late and missing in amber', hook: 'gradesTable' },
   { key: 'word-paste', kind: 'fixed', label: 'Text pasted from Word, made readable', detect: 'wordPaste', darkOnly: true },
   { key: 'seam', kind: 'fixed', label: 'Pages from other companies, dimmed to match', hook: 'ltiFrame', darkOnly: true },
   { key: 'card-due', kind: 'added', label: 'Next due date on each course card', hook: 'card' },

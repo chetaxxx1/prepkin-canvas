@@ -26,6 +26,10 @@ const SELECTORS = {
   courseNavLowUse: { sel: '#section-tabs a.files, #section-tabs a.outcomes, #section-tabs a.conferences, #section-tabs a.collaborations', page: 'course', conf: 'verified' },
   moduleHeader:    { sel: '.context_module .ig-header.header', page: 'modules', conf: 'verified' },
   moduleDue:       { sel: '.context_module .due_date_display', page: 'modules', conf: 'verified' },
+  // Canvas's bar above the module list: 90px of paper holding one Collapse All.
+  moduleBar:       { sel: '#content .header-bar:has(#expand_collapse_all)', page: 'modules', conf: 'verified' },
+  // A calendar event chip: a link, coloured by its course's own class rule.
+  calEvent:        { sel: '#calendar-app .fc-event', page: 'calendar', conf: 'verified' },
   userContent:     { sel: '.user_content', page: 'assignment', conf: 'verified' },
   gradesReact:     { sel: '#grade-summary-react', page: 'grades', conf: 'verified' },
   gradesTable:     { sel: '#grades_summary', page: 'grades', conf: 'verified' },

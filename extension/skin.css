@@ -393,6 +393,60 @@ html.pk-on:not(.pk-back-due-column) .context_module .due_date_display {
   display: inline-block; min-width: 8.5rem; text-align: right;
   font-variant-numeric: tabular-nums lining-nums;
 }
+/* The details line under a module row (due, points, "Submit") is Canvas's
+ * 11px grey; it reads at the page's small size in the quiet ink. */
+html.pk-on:not(.pk-back-due-column) .context_module .ig-details { font-size: 13px !important; line-height: 18px !important; color: var(--pk-ink-2) !important; }
+
+/* ---- module-band: Canvas's bar above the modules is 90px of paper holding
+ * one Collapse All. Folded to the button's own height; the button is untouched. */
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_all) {
+  min-height: 0 !important; height: auto !important; padding: 0 0 8px !important; margin: 0 !important;
+  background-color: transparent !important; border: 0 !important; box-shadow: none !important;
+  display: flex !important; justify-content: flex-end !important;
+}
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_all) .header-bar-right,
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_all) .header-bar-right__buttons { min-height: 0 !important; padding: 0 !important; margin: 0 !important; }
+
+/* ---- cal-rows: the month's event chips. Canvas paints each one white with
+ * its course colour as the border and the text, seven to a row on the dark
+ * paper. One line each in the paper's ink; the course colour stays as a bar
+ * on the edge (its own class rule sets border-color, which nothing here
+ * touches) and on the icon. A link, not a button. */
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event {
+  background-color: transparent !important; border-width: 0 0 0 3px !important; border-style: solid !important;
+  border-radius: 0 !important; padding-left: 5px !important; box-shadow: none !important;
+}
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-title { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-time { color: var(--pk-ink-2) !important; font-weight: 600 !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event:hover { background-color: var(--pk-hover) !important; }
+
+/* ---- grades-fit: Canvas's grades table is 757px wide at 1280 and runs under
+ * the sidebar (its own bug: #assignments is 620px, overflow visible). Fixed
+ * columns that add to the width, the name widest, the two icon columns 18px;
+ * the hidden tooltip links in Details stop holding 90px of nothing. Widths
+ * are by position: this table's columns have no classes on their heads. */
+html.pk-on:not(.pk-back-grades-fit) #grades_summary { table-layout: fixed !important; width: 100% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(1) { width: 30% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(2) { width: 17% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(3) { width: 14% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(4) { width: 11% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(5) { width: 12% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(6),
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(8) { width: 18px !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(7) { width: 10% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary td { overflow-wrap: anywhere; }
+/* Canvas keeps a due date on one line whatever the column; in a fixed column
+ * that ran "Sep 1 by 5:03am" into the Submitted cell. Two lines is fine. */
+html.pk-on:not(.pk-back-grades-fit) #grades_summary td.due,
+html.pk-on:not(.pk-back-grades-fit) #grades_summary td.submitted { white-space: normal !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary td.details { min-width: 0 !important; white-space: normal !important; padding-left: 4px !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary td.details .tooltip[aria-hidden="true"] { display: none !important; }
+/* Missing and late are amber here, as everywhere in the skin: a pill in the
+ * amber ink on its own tint, never red, never Canvas's grey outline. */
+html.pk-on:not(.pk-back-grades-fit) #grades_summary .submission-missing-pill [class*="-pill"],
+html.pk-on:not(.pk-back-grades-fit) #grades_summary .submission-late-pill [class*="-pill"] {
+  color: var(--pk-amber-ink) !important; background-color: var(--pk-amber-tint) !important; border-color: var(--pk-amber-rule) !important;
+}
 
 /* ---- word-paste: dark only; the inks Word actually emits ---------------- */
 html.pk-on.pk-dark:not(.pk-back-word-paste) .user_content [style*="color:#000000" i],
@@ -620,7 +674,19 @@ html.pk-on:not(.pk-back-paper) input[class*="__input"]:not(:checked) + label [cl
 html.pk-on:not(.pk-back-paper) input[class*="__input"]:not(:checked) + label [class*="radioInput__label"] { color: var(--pk-ink) !important; }
 html.pk-on:not(.pk-back-paper) #minical .fc-toolbar,
 html.pk-on:not(.pk-back-paper) #minical .fc-center,
-html.pk-on:not(.pk-back-paper) #minical .fc-day-number { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #minical .fc-day-number,
+/* The syllabus page's own mini calendar (div.mini_month, jQuery, not
+ * FullCalendar) writes its month and year in Canvas's grey: 2.2:1 on Carbon
+ * on the real sandbox (the floor, 2026-09-14). Words only; its arrows are
+ * buttons and stay Canvas's. */
+html.pk-on:not(.pk-back-paper) .mini_month .mini-cal-header .month_name,
+html.pk-on:not(.pk-back-paper) .mini_month .mini-cal-header .year_number { color: var(--pk-ink) !important; }
+/* Its day cells: Canvas paints a day with work on it in a light wash, which
+ * carried our ink at 1.8:1 on Carbon. The cell is the paper; a day with work
+ * sits a shade sunk, like today in the big calendar. */
+html.pk-on:not(.pk-back-paper) .mini_month .mini_calendar_day .day_wrapper { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) .mini_month .mini_calendar_day.has_event .day_wrapper,
+html.pk-on:not(.pk-back-paper) .mini_month .mini_calendar_day.today .day_wrapper { background-color: var(--pk-paper-sunk) !important; }
 /* Sunk surfaces: table heads and calendar day headers. */
 html.pk-on:not(.pk-back-paper) .ic-Table th,
 html.pk-on:not(.pk-back-paper) #content [class*="-view-head"] [class*="-view-cell"],
@@ -803,6 +869,9 @@ html.pk-on:not(.pk-back-title) body:not(:has(#dashboard_header_container)) #cont
  *    named. `.ic-Dashboard-header__title` is not on this Canvas at all. */
 html.pk-on:not(.pk-back-title) #dashboard_header_container [class*="-view-heading"],
 html.pk-on:not(.pk-back-title) #content > h1,
+/* The Files page (and any InstUI page) writes its h1 as a hashed heading at
+ * 38px; the stable suffix names it, never the hash. */
+html.pk-on:not(.pk-back-title) #content h1[class*="-view-heading"],
 html.pk-on:not(.pk-back-title) #content h1.title,
 html.pk-on:not(.pk-back-title) #content h1.page-title,
 html.pk-on:not(.pk-back-title) .ic-Action-header__Heading {
@@ -814,6 +883,9 @@ html.pk-on:not(.pk-back-title) .ic-Action-header__Heading {
  *    did not reach, or Put back — is absolutely positioned, so it takes the
  *    padding and the rule without drawing either. */
 html.pk-on:not(.pk-back-title) #content > h1,
+/* The Files page (and any InstUI page) writes its h1 as a hashed heading at
+ * 38px; the stable suffix names it, never the hash. */
+html.pk-on:not(.pk-back-title) #content h1[class*="-view-heading"],
 html.pk-on:not(.pk-back-title) #content h1.title,
 html.pk-on:not(.pk-back-title) #content h1.page-title {
   padding-top: 10px !important; padding-bottom: 14px !important;
