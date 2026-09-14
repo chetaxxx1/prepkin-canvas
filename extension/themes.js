@@ -166,6 +166,8 @@ function artFor(theme, available, toURL) {
   const ext = folder === '_placeholder' ? 'svg' : 'webp';
   return {
     wallpaper: toURL(`art/${folder}/wallpaper.${ext}`),
+    // 480x270, for the Looks tiles; the placeholder's SVG is its own thumb.
+    thumb: toURL(`art/${folder}/wallpaper${ext === 'svg' ? '' : '-thumb'}.${ext}`),
     cards: [1, 2, 3, 4].map((i) => toURL(`art/${folder}/card-${i}.${ext}`)),
   };
 }

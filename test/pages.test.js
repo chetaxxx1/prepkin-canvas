@@ -206,21 +206,30 @@ test('dashboard: Canvas\'s To Do never shows before the rail folds it', { skip: 
 test('dashboard: the skin does not delay the cards', { skip: !!(BASELINE || (ONLY && !ONLY.includes('dashboard'))) }, async () => {
   // Three loads each, the best of them: this Mac often carries a load of 300.
   await page.setViewportSize({ width: 1280, height: 860 });
-  const time = async () => {
+  // A load that runs past 20 s is the sandbox stalling (one skin-off read
+  // hit 60 s on 09-14), not the skin: it is loaded once more and the stall
+  // is named in the log, so a stalled best-of-three never grades the skin.
+  const STALL = 20_000; const stalls = [];
+  const time = async (label) => {
     const times = [];
-    for (let i = 0; i < 3; i++) times.push(await open('/', '.ic-DashboardCard'));
+    for (let i = 0; i < 3; i++) {
+      let t = await open('/', '.ic-DashboardCard');
+      if (t > STALL) { stalls.push(`${label} load ${i + 1}: ${t} ms`); const again = await open('/', '.ic-DashboardCard'); stalls.push(`  retried: ${again} ms`); t = Math.min(t, again); }
+      times.push(t);
+    }
     return Math.min(...times);
   };
-  const on = await time();
+  const on = await time('skin on');
   // With the Looks tab open: 26 tiles drawn from tokens must not move the number.
   await h.setStorage({ dashTab: 'looks' });
-  const looks = await time();
+  const looks = await time('looks tab');
   await h.setStorage({ dashTab: 'cards' });
   const { skin } = await h.storage();
   await h.setStorage({ skin: { ...skin, cards: false, mascot: false } });
-  const off = await time();
+  const off = await time('skin off');
   await h.setStorage({ skin });
-  report['mount'] = { on, looks, off };
+  if (stalls.length) console.log(`mount: stalled loads (past ${STALL} ms), each loaded once more:\n${stalls.join('\n')}`);
+  report['mount'] = { on, looks, off, stalls };
   assert.ok(on <= off + 2000, `cards mounted in ${on} ms with the skin on, ${off} ms with it off`);
   assert.ok(looks <= off + 2000, `cards mounted in ${looks} ms with the Looks tab open, ${off} ms with the skin off`);
 });

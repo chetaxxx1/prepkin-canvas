@@ -722,7 +722,7 @@ test('R27 the Planner and Looks tabs: one list by day with the grades block, the
   assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene .rail', 'backgroundColor'), rgb(matcha.rail.light), 'the rail');
   assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene .card:first-of-type .band', 'backgroundColor'), rgb('#FF6F61'), 'the first card in the student\'s own course colour');
   assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene .link', 'backgroundColor'), rgb(matcha.accent.light), 'the accent');
-  assert.match(await style(page, '.pk-pl-look[data-look="graffiti"] .scene', 'backgroundImage'), /art\/graffiti\/wallpaper\.webp/, 'an image theme shows its wallpaper');
+  assert.match(await style(page, '.pk-pl-look[data-look="graffiti"] .scene', 'backgroundImage'), /art\/graffiti\/wallpaper-thumb\.webp/, 'an image theme shows its wallpaper, as the 480x270 thumb');
   assert.ok((await page.$$eval('.pk-pl-look .scene', (els) => els.map((e) => e.getBoundingClientRect()))).every((r) => r.width > 100 && Math.abs(r.width / r.height - 4 / 3) < 0.05), 'every scene is 4:3 and real size');
   await h.setStorage({ skin: SKIN({ dark: true }) }); await page.waitForTimeout(500);
   assert.equal(await style(page, '.pk-pl-look[data-look="matcha"] .scene', 'backgroundColor'), rgb(PAPERS[stockFor(matcha, true)].paper), 'dark redraws every tile in its dark stock');

@@ -438,7 +438,7 @@ test('tileTokens: every theme in both modes draws, in the student\'s own course 
   }
   const g = tileTokens(LOOKS_BY_ID.graffiti, true, [], art(LOOKS_BY_ID.graffiti));
   assert.ok(g.includes('--tp:#17191D;'), 'graffiti dark sits on Carbon');
-  assert.ok(g.includes('--twall:url("chrome-extension://x/art/graffiti/wallpaper.webp");'), 'its wallpaper');
+  assert.ok(g.includes('--twall:url("chrome-extension://x/art/graffiti/wallpaper-thumb.webp");'), 'its wallpaper, the 480x270 thumb');
   assert.match(g, /--twash:rgba\(23, 25, 29, 0\.72\);/, 'under the paper\'s wash at the theme\'s alpha');
   assert.ok(g.includes('--tcard1:url("chrome-extension://x/art/graffiti/card-1.webp");'), 'its banner on the first card');
   const m = tileTokens(LOOKS_BY_ID.matcha, false, [], null);

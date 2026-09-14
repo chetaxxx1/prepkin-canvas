@@ -241,7 +241,7 @@ function themeStyle(look, textureImage, art = null) {
 
 /// A Looks tile as this student's own dashboard in that theme: the tokens one
 /// tile needs, as an inline style. The same maths as themeStyle() (the stock,
-/// the accent, the rail, the wallpaper under the paper's wash), plus the first
+/// the accent, the rail, the wallpaper's 480x270 thumb under the paper's wash), plus the first
 /// two course colours so the two cards on the tile are the student's own.
 /// Pure: node tests it for every theme in both modes.
 function tileTokens(look, dark, courses = [], art = null) {
@@ -252,7 +252,7 @@ function tileTokens(look, dark, courses = [], art = null) {
   const rail = look?.rail?.[dark ? 'dark' : 'light'] ?? p.ink;
   const ok = (c) => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c) ? c : null;
   const band = (i) => ok(courses[i]?.colorHex) ?? (i === 0 ? p.mark : p.rule);
-  const wall = art ? `url("${art.wallpaper}")` : 'none';
+  const wall = art ? `url("${art.thumb ?? art.wallpaper}")` : 'none';
   const wash = art ? rgba(p.paper, look?.wash?.[dark ? 'dark' : 'light'] ?? 0.8) : 'transparent';
   const cards = art ? art.cards : [];
   return `--tp:${p.paper};--tp2:${p.paper2};--tr:${p.rule};--ti:${p.ink};--ti2:${p.ink2};--ta:${accent};--trail:${rail};`

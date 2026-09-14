@@ -17,6 +17,13 @@ for dir in "$SRC"/*/; do
     if [ "$name" = wallpaper ]; then w=1920; q=78; else w=1200; q=82; fi
     mkdir -p "$OUT/$t"
     cwebp -quiet -q "$q" -resize "$w" 0 "$src" -o "$OUT/$t/$name.webp"
+    # The Looks tiles draw twenty-six dashboards at once, so each takes a
+    # 480x270 thumb of the wallpaper, centre-cropped to 16:9, not the 1920.
+    if [ "$name" = wallpaper ]; then
+      read -r sw sh <<< "$(sips -g pixelWidth -g pixelHeight "$src" | awk '/pixel/{printf "%s ", $2}')"
+      cw=$sw; ch=$(( sw * 9 / 16 )); [ "$ch" -gt "$sh" ] && { ch=$sh; cw=$(( sh * 16 / 9 )); }
+      cwebp -quiet -q 80 -crop $(( (sw - cw) / 2 )) $(( (sh - ch) / 2 )) "$cw" "$ch" -resize 480 270 "$src" -o "$OUT/$t/wallpaper-thumb.webp"
+    fi
   done
   [ "$ok" = 1 ] && themes+=("\"$t\"")
 done
