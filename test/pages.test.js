@@ -35,6 +35,8 @@ const MODES = (process.env.MODES || 'light,dark').split(',');
 /// Every page a student meets, with the element that says it has mounted.
 const PAGES = [
   ['dashboard', '/', '.ic-DashboardCard'],
+  // The Planner tab, on the same page: opened through storage before the load.
+  ['dashboard-planner', '/', '#pk-planner .pk-pl-rows', { dashTab: 'planner' }],
   ['courses', '/courses', '#my_courses_table, .ic-Table'],
   ['course-home', '/courses/4', '#course_home_content, .context_module'],
   ['modules', '/courses/4/modules', '.context_module'],
@@ -127,10 +129,12 @@ for (const mode of MODES) {
     const { skin } = await h.storage();
     await h.setStorage({ skin: { ...skin, dark } });
   });
-  for (const [name, url, ready] of PAGES) {
+  for (const [name, url, ready, storage] of PAGES) {
     if (ONLY && !ONLY.includes(name)) continue;
     test(`${mode}: ${name} reads`, async () => {
+      if (storage) await h.setStorage(storage);
       const mount = await open(url, ready);
+      if (storage) await h.setStorage({ dashTab: 'cards' });
       const findings = await page.evaluate(auditSource({ dark }));
       await page.screenshot({ path: path.join(SHOTS, `${name}-${mode}.jpg`), type: 'jpeg', quality: 80 });
       const id = `${name}-${mode}`;
@@ -178,7 +182,7 @@ test('dashboard: Canvas\'s To Do never shows before the rail folds it', { skip: 
   await p.addInitScript(() => {
     window.__pkSeen = [];
     const look = () => {
-      const el = document.querySelector('.Sidebar__TodoListContainer, ul.right-side-list.to-do-list');
+      const el = document.querySelector('.Sidebar__TodoListContainer, ul.right-side-list.to-do-list, #right-side > .placeholder');
       if (el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0) window.__pkSeen.push(performance.now());
     };
     setInterval(look, 50);

@@ -170,16 +170,6 @@ test('searchGroups: before typing, classes then Canvas pages; what is due is the
   assert.ok(!groups.flatMap((g) => g[1]).some((i) => i.kind === 'task'), 'no task before typing');
 });
 
-test('the league on the laptop spells tiers and strangers the way the phone does', () => {
-  const { TIERS, tierOf } = require('./content.js');
-  const { podName, POD_NAMES } = require('./podnames.js');
-  assert.equal(TIERS.length, 6);
-  assert.deepEqual([tierOf({ tier: 0 }).name, tierOf({ tier: 5 }).name, tierOf({ tier: 9 }).name, tierOf(null).name], ['Tidepool', 'Deep', 'Deep', 'Tidepool']);
-  assert.equal(POD_NAMES.adjectives.length, 64);
-  assert.equal(podName(0, 0), `${POD_NAMES.adjectives[0]} ${POD_NAMES.nouns[0]}`);
-  assert.equal(podName(64, -1), `${POD_NAMES.adjectives[0]} ${POD_NAMES.nouns[63]}`, 'wraps like the phone');
-  assert.equal(podName('x', 1), `${POD_NAMES.adjectives[0]} ${POD_NAMES.nouns[1]}`, 'junk is index zero, never a crash');
-});
 
 
 test('the buddy is the student\'s own kin, mint until the phone says otherwise', () => {
@@ -355,4 +345,34 @@ test('a tick is finished: it leaves today, counts as done today and in the week,
   assert.deepEqual(Object.keys(pruned), ['a']);
   const same = { a: 'x' };
   assert.equal(pruneDone(same, tasks), same, 'unchanged means the same object, so nothing is written');
+});
+
+test('dayGroups: slipped, today and six days, later folded, undated, old zeros apart; a plan moves a thing; finished work stays today only', () => {
+  const { dayGroups, startOfDay, DAY_MS } = require('./day.js');
+  const now = new Date('2026-09-14T15:00:00');
+  const at = (d, h = 23) => new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, h, 59).toISOString();
+  const tasks = [
+    { id: 'y', title: 'Yesterday', dueAt: at(-1), submittedAt: null },
+    { id: 'old', title: 'Old zero', dueAt: at(-20), submittedAt: null, missing: true },
+    { id: 't', title: 'Today', dueAt: at(0), submittedAt: null },
+    { id: 'f', title: 'Friday', dueAt: at(4), submittedAt: null },
+    { id: 'n', title: 'Nine days out', dueAt: at(9), submittedAt: null },
+    { id: 'u', title: 'No date', dueAt: null, submittedAt: null },
+    { id: 'd', title: 'Ticked today', dueAt: at(2), submittedAt: null, doneAt: now.toISOString() },
+    { id: 'e', title: 'Handed in last week', dueAt: at(-3), submittedAt: at(-3, 10) },
+  ];
+  const dayOf = (t, plans = {}) => plans[t.id] ? new Date(plans[t.id]) : (t.dueAt ? startOfDay(new Date(t.dueAt)) : null);
+  const g = dayGroups(tasks, now, (t) => dayOf(t));
+  assert.deepEqual(g.past.map((t) => t.id), ['y'], 'a day old is past due');
+  assert.deepEqual(g.missed.map((t) => t.id), ['old'], 'an old zero is its own folded list');
+  assert.equal(g.days.length, 7);
+  assert.deepEqual(g.days[0].items.map((t) => t.id), ['t', 'd'], 'today: pending first, then what was finished today');
+  assert.deepEqual(g.days[4].items.map((t) => t.id), ['f']);
+  assert.deepEqual(g.later.map((t) => t.id), ['n'], 'nine days out is later');
+  assert.deepEqual(g.undated.map((t) => t.id), ['u']);
+  assert.ok(!g.days.some((d) => d.items.some((t) => t.id === 'e')), 'handed in last week is nowhere on the list');
+  // A plan moves Friday's thing to today.
+  const planned = dayGroups(tasks, now, (t) => dayOf(t, { f: at(0) }));
+  assert.deepEqual(planned.days[0].items.map((t) => t.id), ['t', 'f', 'd']);
+  assert.deepEqual(planned.days[4].items, []);
 });

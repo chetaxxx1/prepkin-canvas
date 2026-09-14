@@ -1,10 +1,12 @@
-// The Planner: the dashboard's main column as a week, in the page.
+// The Planner: the dashboard's main column as one list by day, in the page.
 //
-// A tab beside Canvas's own course cards. Seven columns, one per day, a card
-// per piece of work in its course's colour with one of the app's icons on it;
-// drag a card to another day to plan it. Under the week, three small cards:
-// grades, the league, and focus. No pop-out: this is where the buddy's panel
-// used to keep all of it.
+// A tab beside Canvas's own course cards. What slipped, then today and the
+// next six days, then what sits further out (folded), then work with no date;
+// one row per piece of work in the rail's shape (circle, class tile, title,
+// date), drag a row onto a day to plan it. Under the list, Grades: a row per
+// class that opens in place to the marks, a what-if line, a nickname, the
+// level, and every assignment. When a term is ending, the recap sits at the
+// top. No pop-out: this is where the buddy's panel used to keep all of it.
 //
 // Runs in the same world as content.js, before it. content.js sits inside one
 // block, so only its plain function declarations reach this world (Annex B
@@ -19,29 +21,21 @@ const PLANNER_TABS_ID = 'pk-dashtabs';
 const PLANNER_ICON_DIR = 'art/icons/';
 const PLANNER_ONE_DAY = 86400000;
 
-/// Which week the grid shows, in weeks from this one. The arrows move it;
-/// Today brings it back.
-let plWeek = 0;
 /// Which tab is showing: 'cards' (Canvas's own), 'planner' or 'looks'. Remembered.
 let plTab = 'cards';
+/// The course whose grades row is open, by id, or null; and which of its lists.
+let plOpenCourse = null;
+let plCourseList = 'all';
+/// The folded groups the student opened this visit.
+const plUnfolded = new Set();
+/// The what-if target picked per course, and a final's weight typed in, this visit.
+const plTarget = {};
+const plWeight = {};
 const LOOKS_ID = 'pk-looks';
 /// The look waiting for a yes, by id, or null.
 let plConfirm = null;
 /// The add-a-task form, open or not.
 let plAdding = false;
-
-/// The app's icon for a piece of work, read off its title. The pencil is the
-/// plain assignment; a wrong icon would be worse than a plain one.
-const PLANNER_ICONS = [
-  [/problem set|pset|homework|\bhw\b|exercise|worksheet/i, 'problemSet'],
-  [/\blab\b|\blabs\b|lab writeup|lab report/i, 'labs'],
-  [/quiz|exam|\btest\b|midterm|final|review|check\b/i, 'study'],
-  [/\bread|chapter|article|textbook/i, 'reading'],
-];
-function plIconFor(title) {
-  for (const [re, id] of PLANNER_ICONS) if (re.test(String(title ?? ''))) return id;
-  return 'writing';
-}
 
 function plIcon(name, size = 22) {
   const img = document.createElement('img');
@@ -49,32 +43,6 @@ function plIcon(name, size = 22) {
   img.className = 'pk-pl-icon';
   if (alive()) img.src = chrome.runtime.getURL(`${PLANNER_ICON_DIR}${name}.webp`);
   return img;
-}
-
-/// The Monday the shown week starts on.
-function plMonday(now = new Date()) {
-  const d = startOfDay(now);
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + plWeek * 7);
-  return d;
-}
-
-/// Seven columns for the shown week: each day's date and the work sitting on
-/// it (planned there, or due there), plus what slipped from before the week.
-function plColumns(tasks, now = new Date()) {
-  const monday = plMonday(now);
-  const end = new Date(monday.getTime() + 7 * PLANNER_ONE_DAY);
-  const placed = tasks.map((t) => ({ t, day: planDay(t) })).filter((x) => x.day);
-  const cols = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(monday.getTime() + i * PLANNER_ONE_DAY);
-    const items = placed.filter((x) => sameLocalDay(x.day, date)).map((x) => x.t)
-      .sort((a, b) => Date.parse(a.dueAt ?? 0) - Date.parse(b.dueAt ?? 0));
-    return { date, items, today: sameLocalDay(date, now), past: date < startOfDay(now) };
-  });
-  // Slipped: not in, sat before the shown week, and not planned into it.
-  const slipped = placed.filter((x) => !isDone(x.t) && x.day < monday && x.day >= startOfDay(new Date(monday.getTime() - 21 * PLANNER_ONE_DAY)))
-    .map((x) => x.t).sort((a, b) => Date.parse(a.dueAt ?? 0) - Date.parse(b.dueAt ?? 0));
-  const undated = tasks.filter((t) => !planDay(t) && !isDone(t));
-  return { monday, end, cols, slipped, undated };
 }
 
 function plannerShows() {
@@ -122,273 +90,411 @@ function plSetTab(key) {
   renderPlannerTabs();
   renderPlanner();
   renderLooks();
+  // The rail folds its list while the planner is open, and unfolds after.
+  renderWeek();
 }
 
 /// The planner itself, right under the dashboard's title row. Rebuilt only
-/// when what it shows has changed; the clock in the focus card ticks in place.
+/// when what it shows has changed.
 function renderPlanner() {
   const existing = document.getElementById(PLANNER_ID);
   const head = document.getElementById('dashboard_header_container');
   if (!plannerShows() || plTab !== 'planner' || !head) { existing?.remove(); return; }
   const now = new Date();
-  const { data, plans, wallet, focus, skin, levels } = plannerState();
-  const week = plColumns(data.tasks, now);
+  const { data, plans, focus, skin, levels, plannedOn, nicknames, targets, recapDismissed } = plannerState();
+  const groups = dayGroups(data.tasks, now, (t) => planDay(t, plans));
   const running = focus.state === 'running';
-  const key = JSON.stringify([plWeek, week.cols.map((c) => c.items.map((t) => [t.id, t.submittedAt, t.doneAt, plans[t.id] ?? null])),
-    week.slipped.map((t) => t.id), week.undated.map((t) => t.id), data.courses.map((c) => [c.id, c.score, c.grade]),
-    wallet.coins, wallet.league?.tier ?? null, wallet.league?.points ?? null, wallet.wearing, running && focus.title, focus.state,
-    skin.focusMinutes, plAdding, levels]);
+  const recap = recapDue(data.courses, data.tasks, now) && plRecapKey(data.tasks, now) !== recapDismissed;
+  const key = JSON.stringify([
+    groups.past.map((t) => t.id), groups.days.map((d) => d.items.map((t) => [t.id, t.submittedAt, t.doneAt, plans[t.id] ?? null])),
+    groups.later.map((t) => t.id), groups.undated.map((t) => t.id), groups.missed.map((t) => t.id),
+    data.courses.map((c) => [c.id, c.name, c.score, c.grade]), running && focus.title, focus.state, focus.endsAt,
+    skin.focusMinutes, plAdding, levels, nicknames, targets, plOpenCourse, plCourseList, [...plUnfolded], plTarget, plWeight, recap,
+  ]);
   if (existing && existing.dataset.key === key) return;
 
   const box = el('section', '', null);
   box.id = PLANNER_ID; box.dataset.key = key;
   box.setAttribute('aria-label', 'Prepkin: planner');
 
-  // The week's head: the range, arrows, Today, and a way to add a task.
-  const last = new Date(week.end - 1);
-  const mon = (d) => d.toLocaleDateString([], { month: 'short' });
-  const range = week.monday.getMonth() === last.getMonth()
-    ? `${mon(week.monday)} ${week.monday.getDate()} – ${last.getDate()}`
-    : `${mon(week.monday)} ${week.monday.getDate()} – ${mon(last)} ${last.getDate()}`;
-  const inWeek = week.cols.flatMap((c) => c.items);
-  const done = inWeek.filter(isDone).length;
+  // One head row: the title and a way to add a task. No arrows, no count.
   const headRow = el('div', 'pk-pl-head');
   const title = el('div', 'pk-pl-title');
-  title.append(plIcon('tabCalendar', 28), el('b', '', plWeek === 0 ? 'This week' : plWeek === 1 ? 'Next week' : plWeek === -1 ? 'Last week' : `Week of ${mon(week.monday)} ${week.monday.getDate()}`),
-    el('small', '', `${range}${inWeek.length ? ` · ${done} of ${inWeek.length} in` : ''}`));
-  const nav = el('div', 'pk-pl-nav');
-  const arrow = (dir, label) => {
-    const a = el('span', dir < 0 ? 'prev' : 'next', null);
-    a.setAttribute('role', 'button'); a.tabIndex = 0; a.setAttribute('aria-label', label);
-    const go = () => { plWeek += dir; renderPlanner(); };
-    a.addEventListener('click', go);
-    a.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
-    return a;
-  };
-  const today = el('span', 'today', 'Today');
-  today.setAttribute('role', 'button'); today.tabIndex = 0;
-  today.addEventListener('click', () => { plWeek = 0; renderPlanner(); });
-  today.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); plWeek = 0; renderPlanner(); } });
+  title.append(plIcon('tabCalendar', 28), el('b', '', 'Planner'));
   const add = el('span', 'add', '+ Add a task');
   add.setAttribute('role', 'button'); add.tabIndex = 0;
   add.addEventListener('click', () => { plAdding = !plAdding; renderPlanner(); });
   add.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); plAdding = !plAdding; renderPlanner(); } });
-  nav.append(arrow(-1, 'Previous week'), today, arrow(1, 'Next week'), add);
-  headRow.append(title, nav);
+  headRow.append(title, add);
   box.append(headRow);
-
   if (plAdding) box.append(plAddForm(now));
 
-  // What slipped from before this week: a band of cards, amber, above the grid.
-  if (week.slipped.length && plWeek === 0) {
-    const band = el('div', 'pk-pl-slipped');
-    band.append(el('span', 'pk-pl-label', `Past due · ${week.slipped.length}`));
-    const row = el('div', 'row');
-    for (const t of week.slipped) row.append(plCard(t, now, { slipped: true, wide: true }));
-    band.append(row);
-    box.append(band);
-  }
+  // The term, in numbers, when a term is ending.
+  if (recap) box.append(plRecapCard(now));
 
-  // The grid.
-  const grid = el('div', 'pk-pl-grid');
-  for (const c of week.cols) {
-    const col = el('div', `pk-pl-col${c.today ? ' today' : c.past ? ' past' : ''}`);
-    col.dataset.drop = dayKey(c.date);
-    const h = el('div', 'pk-pl-day');
-    h.append(el('span', '', c.date.toLocaleDateString([], { weekday: 'short' })), el('b', '', String(c.date.getDate())));
-    col.append(h);
-    for (const t of c.items) col.append(plCard(t, now, {}));
-    if (!c.items.length) col.append(el('div', 'pk-pl-empty', c.today ? 'Nothing due' : ''));
-    plDropTarget(col);
-    grid.append(col);
+  const list = el('div', 'pk-pl-list');
+  // What slipped: amber dates, and one line saying what it is still worth.
+  if (groups.past.length) {
+    list.append(plGroupHead('Past due', groups.past.length));
+    const cost = missingCost(groups.past);
+    const points = cost.reduce((n, r) => n + r.points, 0);
+    if (points) list.append(el('p', 'pk-pl-still', `Still counts: ${points} point${points === 1 ? '' : 's'} across ${cost.length} class${cost.length === 1 ? '' : 'es'}.`));
+    list.append(plRows(groups.past, now, { slipped: true }));
   }
-  box.append(grid);
+  // Today and the next six days, each a drop target for a plan.
+  groups.days.forEach((d, i) => {
+    const name = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.date.toLocaleDateString([], { weekday: 'long' });
+    const h = plGroupHead(name, d.items.filter((t) => !isDone(t)).length, { today: i === 0, date: d.date });
+    plDropTarget(h, d.date);
+    list.append(h);
+    if (d.items.length) list.append(plRows(d.items, now, { first: i === 0 && !running ? d.items.find((t) => !isDone(t)) ?? null : null, running: i === 0 && running }));
+    else list.append(el('p', 'pk-pl-empty', i === 0 ? 'Nothing due today.' : ''));
+  });
+  // Further out, folded until asked; then work with no date; then the old zeros.
+  const fold = (id, name, items, opts = {}) => {
+    if (!items.length) return;
+    const open = plUnfolded.has(id);
+    const h = plGroupHead(name, items.length, { fold: true, open, onToggle: () => { if (open) plUnfolded.delete(id); else plUnfolded.add(id); renderPlanner(); } });
+    list.append(h);
+    if (open) list.append(plRows(items, now, opts));
+  };
+  fold('later', 'Later', groups.later);
+  if (groups.undated.length) { list.append(plGroupHead('No due date', groups.undated.length)); list.append(plRows(groups.undated, now)); }
+  fold('missed', 'Missing, older', groups.missed, { slipped: true });
+  box.append(list);
 
-  if (week.undated.length) {
-    const band = el('div', 'pk-pl-slipped undated');
-    band.append(el('span', 'pk-pl-label', `No due date · ${week.undated.length}`));
-    const row = el('div', 'row');
-    for (const t of week.undated) row.append(plCard(t, now, { wide: true }));
-    band.append(row);
-    box.append(band);
-  }
-
-  // Under the week: grades, the league, focus.
-  const cards = el('div', 'pk-pl-cards');
-  cards.append(plGradesCard(), plLeagueCard(), plFocusCard(now));
-  box.append(cards);
+  box.append(plGrades(now));
 
   if (existing) existing.replaceWith(box); else head.after(box);
 }
 
-/// One piece of work as a card: the course's colour down the left, the app's
-/// icon for the kind of work, the title (a link), the course and when.
-function plCard(t, now, { slipped = false, wide = false } = {}) {
-  const finished = isDone(t);
-  const card = el('div', `pk-pl-task${finished ? ' done' : ''}${slipped || (!finished && t.dueAt && Date.parse(t.dueAt) < now.getTime() && !sameLocalDay(new Date(t.dueAt), now)) ? ' late' : ''}${isMoved(t) ? ' moved' : ''}`);
-  const color = safeColor(t.colorHex);
-  if (color) card.style.setProperty('--c', color);
-  if (!finished) { card.draggable = true; card.dataset.drag = String(t.id); plDragSource(card); }
-  // The circle: a tick clears it here and on the phone; Canvas's own hand-in
-  // is locked (nothing to undo). Then the kind of work, then the words.
-  if (t.submittedAt) { const lock = el('span', 'pk-tick on locked'); lock.title = 'Handed in'; card.append(lock); } else card.append(tickCircle(t));
-  card.append(plIcon(plIconFor(t.title), 22));
-  const body = el('div', 'body');
-  const url = safeURL(t.url);
-  const title = url ? el('a', '', t.title) : el('b', '', t.title);
-  if (url) { title.href = url; title.className = 'title'; }
-  body.append(title);
-  const due = t.dueAt ? new Date(t.dueAt) : null;
-  const when = t.submittedAt ? 'in' : t.doneAt ? 'done'
-    : slipped ? `was due ${due.toLocaleDateString([], { month: 'short', day: 'numeric' })}`
-    : isMoved(t) ? `due ${dayShort(t, now)}`
-    : due && !isNaN(due) ? due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'anytime';
-  // In a day column the colour bar is the course, so the line is the time
-  // alone; the wider band cards name the course.
-  body.append(el('small', '', wide ? `${shortCourse(t.courseName)} · ${when}` : when));
-  card.append(body);
-  card.title = `${t.title}\n${t.courseName}${t.dueAt ? ` · ${dueLabel(t, now)}` : ''}${isMoved(t) ? '\nMoved. Drag it back to its due day to undo.' : ''}`;
-  return card;
+/// A group's heading: plain words, the count in the quiet ink, today outlined.
+/// A folded group's heading is the button that opens it.
+function plGroupHead(name, count, { today = false, fold = false, open = false, onToggle = null, date = null } = {}) {
+  const h = el('div', `pk-pl-group${today ? ' today' : ''}${fold ? ' fold' : ''}${open ? ' open' : ''}`);
+  h.append(el('b', '', name));
+  if (count) h.append(el('em', '', String(count)));
+  if (date) h.dataset.drop = dayKey(date);
+  if (fold && onToggle) {
+    h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', String(open));
+    h.addEventListener('click', onToggle);
+    h.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } });
+  }
+  return h;
 }
 
-// Drag a card to a day: the plan. Dropping it on its own due day clears the plan.
-let plDragging = null;
-function plDragSource(card) {
-  card.addEventListener('dragstart', (e) => {
-    plDragging = card.dataset.drag;
-    card.classList.add('dragging');
-    try { e.dataTransfer.setData('text/plain', card.dataset.drag); e.dataTransfer.effectAllowed = 'move'; } catch {}
-  });
-  card.addEventListener('dragend', () => { plDragging = null; card.classList.remove('dragging'); document.querySelectorAll(`#${PLANNER_ID} .over`).forEach((n) => n.classList.remove('over')); });
+/// Rows in the rail's shape: circle, class tile, title, the date at the right.
+/// Today's first pending row is the one to start, with Start and Focus under
+/// it; while a session runs, that row is the session, ticking in place.
+function plRows(items, now, { slipped = false, first = null, running = false } = {}) {
+  const ul = el('ul', 'pk-w-list pk-pl-rows');
+  const { focus, skin } = plannerState();
+  if (running) ul.append(plSessionRow(focus));
+  for (const t of items) {
+    const finished = isDone(t);
+    const late = !finished && t.dueAt && Date.parse(t.dueAt) < now.getTime();
+    const li = el('li', `${finished ? 'done' : ''}${isMoved(t) ? ' moved' : ''}${t === first ? ' pk-w-first' : ''}`.trim());
+    if (!finished) { li.draggable = true; li.dataset.drag = String(t.id); plDragSource(li); }
+    if (t.submittedAt) { const lock = el('span', 'pk-tick on locked'); lock.title = 'Handed in'; li.append(lock); } else li.append(tickCircle(t));
+    li.append(classTile(t));
+    const url = safeURL(t.url);
+    const name = url ? el('a', '', t.title) : el('b', '', t.title);
+    if (url) name.href = url;
+    name.className = 'pk-pl-name';
+    name.title = `${t.title}\n${t.courseName}${t.dueAt ? ` · ${dueLabel(t, now)}` : ''}${isMoved(t) ? '\nMoved. Drag it back to its due day to undo.' : ''}`;
+    li.append(name);
+    const when = t.submittedAt ? 'in' : t.doneAt ? 'done'
+      : slipped && t.dueAt ? `was due ${new Date(t.dueAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}`
+      : isMoved(t) ? `due ${dayShort(t, now)}`
+      : t.dueAt ? new Date(t.dueAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'any time';
+    if (t === first) {
+      // The one to start: the class and when under the title, then the two
+      // ways to start it, the rail's shape.
+      name.replaceWith(el('span', 'pk-pl-words'));
+      const words = li.querySelector('.pk-pl-words');
+      name.className = 'pk-pl-name';
+      words.append(name, el('small', late ? 'amber' : '', `${shortCourse(t.courseName)} · ${t.dueAt ? dueLabel(t, now).replace(' · still counts', '') : 'any time'}`));
+      const actions = el('div', 'pk-w-actions');
+      if (url) { const a = el('a', 'start', 'Start'); a.href = url; actions.append(a); }
+      const focusBtn = el('span', '', `Focus ${skin.focusMinutes} min`);
+      focusBtn.setAttribute('role', 'button'); focusBtn.tabIndex = 0;
+      const go = (e) => { if (!e.isTrusted || !alive()) return; chrome.runtime.sendMessage({ type: 'focus-start', taskId: t.id, title: t.title, url: t.url, minutes: skin.focusMinutes }); };
+      focusBtn.addEventListener('click', go);
+      focusBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
+      actions.append(focusBtn);
+      li.append(actions);
+    } else li.append(el('small', late || slipped ? 'amber' : '', when));
+    ul.append(li);
+  }
+  return ul;
 }
-function plDropTarget(col) {
-  col.addEventListener('dragover', (e) => { if (!plDragging) return; e.preventDefault(); col.classList.add('over'); });
-  col.addEventListener('dragleave', () => col.classList.remove('over'));
-  col.addEventListener('drop', (e) => {
+
+/// The running session as today's first row: what, how long is left (ticked
+/// in place by tickClocks), and one way to stop.
+function plSessionRow(focus) {
+  const li = el('li', 'pk-w-first session');
+  const words = el('div');
+  const meta = el('small', '', '');
+  meta.append(el('span', 'pk-w-clock', clockLeft()), ' left');
+  words.append(el('b', '', focus.title ?? 'Focus'), meta);
+  li.append(words);
+  const actions = el('div', 'pk-w-actions');
+  const url = safeURL(focus.url);
+  if (url) { const a = el('a', 'start', 'Open'); a.href = url; actions.append(a); }
+  const stop = el('span', '', 'Stop');
+  stop.setAttribute('role', 'button'); stop.tabIndex = 0;
+  stop.addEventListener('click', (e) => { if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-stop' }); });
+  actions.append(stop);
+  li.append(actions);
+  return li;
+}
+
+// Drag a row to a day: the plan. Dropping it on its own due day clears the plan.
+let plDragging = null;
+function plDragSource(row) {
+  row.addEventListener('dragstart', (e) => {
+    plDragging = row.dataset.drag;
+    row.classList.add('dragging');
+    try { e.dataTransfer.setData('text/plain', row.dataset.drag); e.dataTransfer.effectAllowed = 'move'; } catch {}
+  });
+  row.addEventListener('dragend', () => { plDragging = null; row.classList.remove('dragging'); document.querySelectorAll(`#${PLANNER_ID} .over`).forEach((n) => n.classList.remove('over')); });
+}
+function plDropTarget(node, date) {
+  node.addEventListener('dragover', (e) => { if (!plDragging) return; e.preventDefault(); node.classList.add('over'); });
+  node.addEventListener('dragleave', () => node.classList.remove('over'));
+  node.addEventListener('drop', (e) => {
     if (!plDragging) return;
     e.preventDefault();
     const id = plDragging; plDragging = null;
-    col.classList.remove('over');
+    node.classList.remove('over');
     const t = plannerState().data.tasks.find((x) => String(x.id) === id);
     if (!t) return;
     const due = t.dueAt ? startOfDay(new Date(t.dueAt)) : null;
-    const target = dayFromKey(col.dataset.drop);
     // Back on its due day is not a plan, it is the plan's end.
-    plannerPlan(id, due && target && sameLocalDay(due, target) ? null : col.dataset.drop).then(() => renderPlanner());
+    plannerPlan(id, due && sameLocalDay(due, date) ? null : dayKey(date)).then(() => renderPlanner());
   });
 }
 
-/// Grades: each course's score and letter, one bar each, the estimate under.
-function plGradesCard() {
+// MARK: - Grades: a row per class, one open at a time
+
+/// The block under the list. A row: tile, name, per cent, letter. Open, it
+/// holds the sparkline and the last three marks, one what-if line, the
+/// nickname, the level, and every assignment the laptop already has.
+function plGrades(now) {
   const { data, levels } = plannerState();
-  const card = el('div', 'pk-pl-card grades');
-  const h = el('div', 'head'); h.append(plIcon('calculator', 26), el('b', '', 'Grades'));
-  card.append(h);
+  const wrap = el('div', 'pk-pl-grades');
+  const h = el('div', 'pk-pl-group'); h.append(el('b', '', 'Grades'));
+  wrap.append(h);
   const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id)));
-  const list = el('div', 'list');
-  for (const c of courses) {
-    const row = el('div', 'grow');
-    const dot = el('i', '', null); const color = safeColor(c.colorHex); if (color) dot.style.background = color;
-    const name = el('span', '', shortCourse(c.name)); name.title = c.name;
-    const pct = typeof c.score === 'number' ? Math.max(0, Math.min(100, c.score)) : null;
-    const val = el('b', '', pct === null ? '—' : `${c.score}%${c.grade ? ` · ${c.grade}` : ''}`);
-    row.append(dot, name, val);
-    if (pct !== null) { const bar = el('div', 'bar'); const fill = el('i', '', null); fill.style.width = `${pct}%`; if (color) fill.style.background = color; bar.append(fill); row.append(bar); }
-    list.append(row);
-  }
-  if (!courses.length) list.append(el('div', 'quiet', 'Nothing graded yet.'));
-  card.append(list);
+  if (!courses.length) { wrap.append(el('p', 'pk-pl-empty', 'Nothing graded yet.')); return wrap; }
+  for (const c of courses) wrap.append(plGradeRow(c, now));
   const est = gpa(courses, levels);
-  if (est) card.append(el('div', 'foot', `GPA about ${est.weighted ?? est.unweighted}${est.weighted ? ' weighted' : ''}. An estimate; your school's scale wins.`));
-  return card;
+  if (est) wrap.append(el('p', 'pk-pl-foot', `GPA about ${est.weighted ?? est.unweighted}${est.weighted ? ' weighted' : ''}. An estimate; your school's scale wins.`));
+  return wrap;
 }
 
-/// The league: the tier's shield, how long is left, the bar, the pod place.
-function plLeagueCard() {
-  const { wallet, TIERS } = plannerState();
-  const card = el('div', 'pk-pl-card league');
-  const L = wallet.league;
-  const tier = L ? tierOf(L) : null;
-  const h = el('div', 'head');
-  h.append(plIcon(tier ? `tier${tier.id === 'openwater' ? 'OpenWater' : tier.id[0].toUpperCase() + tier.id.slice(1)}` : 'pod', 26), el('b', '', tier ? tier.name : 'League'));
-  const left = L ? leagueDaysLeft(L) : null;
-  if (left) h.append(el('span', 'meta', left));
-  card.append(h);
-  if (!L) { card.append(el('div', 'quiet', 'Link your phone and your week counts in a pod of five.')); return card; }
-  const pts = Math.max(0, Number(L.points) || 0);
-  const bar = typeof L.bar === 'number' ? L.bar : null;
-  const next = TIERS[TIERS.indexOf(tier) + 1] ?? null;
-  card.append(el('div', 'big', `${pts} earned this week`));
-  if (bar !== null) {
-    const track = el('div', 'bar'); const fill = el('i', '', null); fill.style.width = `${Math.min(100, Math.round((pts / bar) * 100))}%`; fill.style.background = tier.color; track.append(fill);
-    card.append(track);
-    card.append(el('div', 'foot', pts >= bar ? `Bar cleared. ${next?.name ?? ''} next week.` : `${bar - pts} to go for ${next?.name ?? 'the next tier'}.`));
-  } else card.append(el('div', 'foot', 'Deep is the last one.'));
-  const board = Array.isArray(L.board) ? L.board : null;
-  const rank = board ? board.findIndex((m) => m.you) + 1 : 0;
-  const ordinal = (n) => `${n}${['th', 'st', 'nd', 'rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4 || 0] ?? 'th'}`;
-  if (board && board.length > 1 && rank) card.append(el('div', 'foot', `${ordinal(rank)} of ${board.length} in your pod. Nothing here ever moves you down.`));
-  return card;
+function plGradeRow(c, now) {
+  const { data, levels, nicknames, LEVELS, LEVEL_NAMES } = plannerState();
+  const open = plOpenCourse === String(c.id);
+  const pct = typeof c.score === 'number' ? Math.max(0, Math.min(100, c.score)) : null;
+  const color = safeColor(c.colorHex);
+  const row = el('div', `pk-pl-grade${open ? ' open' : ''}`);
+  row.dataset.course = String(c.id);
+  const headRow = el('div', 'pk-pl-grow');
+  headRow.setAttribute('role', 'button'); headRow.tabIndex = 0; headRow.setAttribute('aria-expanded', String(open));
+  const tile = classTile({ courseName: c.name, colorHex: c.colorHex });
+  const name = el('span', 'name', c.name); name.title = c.fullName ?? c.name;
+  const val = el('b', 'pct', pct === null ? '—' : `${c.score}%`);
+  const letter = el('span', 'letter', c.grade ?? '');
+  headRow.append(tile, name, val, letter);
+  if (levels[c.id] && levels[c.id] !== 'regular') headRow.append(el('span', 'level', LEVEL_NAMES[levels[c.id]]));
+  const toggle = () => { plOpenCourse = open ? null : String(c.id); plCourseList = 'all'; renderPlanner(); };
+  headRow.addEventListener('click', toggle);
+  headRow.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  row.append(headRow);
+  // The fill is the school's course colour (data-pk-course-color says so to the floor).
+  if (pct !== null) { const bar = el('div', 'bar'); const fill = el('i', '', null); fill.style.width = `${pct}%`; if (color) { fill.style.background = color; fill.dataset.pkCourseColor = ''; } bar.append(fill); row.append(bar); }
+  if (!open) return row;
+
+  const body = el('div', 'body');
+  const graded = data.graded?.[c.id] ?? [];
+  // The line of marks and the last three, newest first.
+  if (graded.length >= 2) { const spark = el('div', 'spark'); spark.innerHTML = sparkline(graded, color ?? '#51CFA0'); body.append(spark); }
+  const recent = graded.slice(-3).reverse();
+  if (recent.length) {
+    const ul = el('ul', 'recent');
+    for (const g of recent) {
+      const li = el('li');
+      li.append(el('span', '', g.title), el('em', '', `${g.score}/${g.outOf}${typeof g.classMean === 'number' ? ` · class ${g.classMean}` : ''}`));
+      ul.append(li);
+    }
+    body.append(ul);
+  }
+  // What-if: one line, from Canvas's weights or a weight the student typed.
+  if (pct !== null) body.append(plWhatIf(c));
+  // The nickname and the level: the student's own words for the class.
+  const rename = el('div', 'rename');
+  const input = el('input', '', null); input.type = 'text'; input.maxLength = 40; input.placeholder = 'Nickname, like BIO 101'; input.value = nicknames[c.id] ?? '';
+  input.setAttribute('aria-label', `Nickname for ${c.fullName ?? c.name}`);
+  const save = el('button', '', 'Save'); save.type = 'button';
+  save.addEventListener('click', (e) => { if (e.isTrusted) plannerNickname(c.id, input.value); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); plannerNickname(c.id, input.value); } });
+  rename.append(input, save);
+  body.append(rename);
+  const lvl = el('div', 'levels'); lvl.setAttribute('role', 'radiogroup'); lvl.setAttribute('aria-label', 'Class level');
+  for (const k of Object.keys(LEVELS)) {
+    const b = el('button', (levels[c.id] ?? 'regular') === k ? 'on' : '', LEVEL_NAMES[k]); b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', String((levels[c.id] ?? 'regular') === k));
+    b.addEventListener('click', (e) => { if (e.isTrusted) plannerLevel(c.id, k); });
+    lvl.append(b);
+  }
+  body.append(lvl);
+  // Every assignment the laptop already has: missing, ahead, marked.
+  body.append(plCourseLists(c, now));
+  row.append(body);
+  return row;
 }
 
-/// Focus: the next thing and the two ways to start it; while a session runs,
-/// what it is and how long is left, ticking in place.
-function plFocusCard(now) {
-  const { data, focus, skin, plannedOn } = plannerState();
-  const card = el('div', 'pk-pl-card focus');
-  const h = el('div', 'head'); h.append(plIcon('tabFocus', 26), el('b', '', 'Focus'));
-  card.append(h);
-  const press = (node, fn) => {
-    node.setAttribute('role', 'button'); node.tabIndex = 0;
-    node.addEventListener('click', fn);
-    node.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } });
+/// "An A needs 91% on the final." Canvas only reports weights when the course
+/// turns weighting on; with none, one small field asks what the final is worth.
+function plWhatIf(c) {
+  const { data, targets } = plannerState();
+  const wrap = el('div', 'whatif');
+  const groups = data.weights?.[c.id] ?? null;
+  const guess = groups ? groups.find((g) => /final|exam/i.test(g.name))?.weight ?? null : null;
+  const weight = plWeight[c.id] ?? guess;
+  const options = targetsFor(c.score);
+  const aim = targets[c.id] ?? null;
+  const target = plTarget[c.id] ?? aim ?? options.find(([, cut]) => c.score >= cut)?.[1] ?? options[0][1];
+  const letterOf = (cut) => options.find(([, x]) => x === cut)?.[0] ?? `${cut}%`;
+  const chips = el('div', 'targets');
+  chips.append(el('span', 'lead', 'Aiming for'));
+  for (const [name, cut] of options) {
+    const b = el('button', target === cut ? 'on' : '', name); b.type = 'button'; b.setAttribute('aria-pressed', String(target === cut));
+    b.addEventListener('click', (e) => { if (!e.isTrusted) return; plTarget[c.id] = cut; plannerAim(c.id, cut); });
+    chips.append(b);
+  }
+  wrap.append(chips);
+  if (weight == null) {
+    const ask = el('div', 'weight');
+    ask.append(el('span', '', 'The final is worth'));
+    const input = el('input', '', null); input.type = 'number'; input.min = 1; input.max = 100; input.placeholder = '30'; input.setAttribute('aria-label', 'What the final is worth, as a per cent of the grade');
+    const set = el('button', '', 'Set'); set.type = 'button';
+    const go = () => { const n = Number(input.value); if (n > 0 && n <= 100) { plWeight[c.id] = n; renderPlanner(); } };
+    set.addEventListener('click', go);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+    ask.append(input, el('span', '', '% of the grade'), set);
+    wrap.append(ask);
+    return wrap;
+  }
+  const needed = requiredScore({ current: c.score, target, weight });
+  let line;
+  if (needed === null) line = 'Once something is graded this works itself out.';
+  else if (needed > 100) {
+    const reachable = options.filter(([, cut]) => (requiredScore({ current: c.score, target: cut, weight }) ?? 999) <= 100)[0];
+    line = reachable ? `${letterOf(target)} is out of reach. ${reachable[0]} needs ${requiredScore({ current: c.score, target: reachable[1], weight })}% on the final.` : `${letterOf(target)} is out of reach; the grade is settled either way.`;
+  } else line = `${letterOf(target)} needs ${needed}% on the final (${weight}% of the grade). You are at ${c.score}%.`;
+  wrap.append(el('p', 'line', line));
+  return wrap;
+}
+
+/// Every assignment the laptop already has for one class: what the school
+/// marked missing, what is ahead, what is marked. Canvas hides the same list
+/// behind four clicks and a page load.
+function plCourseLists(c, now) {
+  const { data } = plannerState();
+  const wrap = el('div', 'every');
+  const tasks = data.tasks.filter((t) => String(t.courseId) === String(c.id));
+  const graded = (data.graded?.[c.id] ?? []).slice().reverse();
+  const missing = tasks.filter((t) => t.missing && !isDone(t));
+  const upcoming = tasks.filter((t) => !isDone(t) && !t.missing);
+  const missingIds = new Set(missing.map((t) => t.id));
+  const gradedOnly = graded.filter((g) => !missingIds.has(g.id));
+  const chips = el('div', 'chips');
+  const counts = { all: missing.length + upcoming.length + gradedOnly.length, missing: missing.length, upcoming: upcoming.length, graded: graded.length };
+  for (const [key, label] of [['all', 'Every assignment'], ['missing', 'Missing'], ['upcoming', 'Ahead'], ['graded', 'Marked']]) {
+    const b = el('button', plCourseList === key ? 'on' : '', label); b.type = 'button'; b.setAttribute('aria-pressed', String(plCourseList === key));
+    b.append(el('em', '', String(counts[key])));
+    b.addEventListener('click', (e) => { if (!e.isTrusted) return; plCourseList = key; renderPlanner(); });
+    chips.append(b);
+  }
+  wrap.append(chips);
+  const ul = el('ul', 'pk-w-list pk-pl-rows small');
+  const taskRow = (t, amber) => {
+    const li = el('li', amber ? 'late' : '');
+    li.append(classTile(t));
+    const url = safeURL(t.url);
+    const name = url ? el('a', 'pk-pl-name', t.title) : el('b', 'pk-pl-name', t.title);
+    if (url) name.href = url;
+    li.append(name, el('small', amber ? 'amber' : '', t.dueAt ? dueLabel(t, now).replace(' · still counts', '') : 'any time'));
+    return li;
   };
-  if (focus.state === 'running') {
-    card.append(el('div', 'big', focus.title ?? 'Focus'));
-    const line = el('div', 'foot', ''); line.append(el('span', 'pk-w-clock', clockLeft()), ' left · ends at ', new Date(focus.endsAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
-    card.append(line);
-    const actions = el('div', 'actions');
-    const url = safeURL(focus.url);
-    if (url) { const a = el('a', 'start', 'Open'); a.href = url; actions.append(a); }
-    const stop = el('span', 'ghost', 'Stop');
-    press(stop, (e) => { if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-stop' }); });
-    actions.append(stop);
-    card.append(actions);
-    return card;
+  const gradedRow = (g) => {
+    const li = el('li', 'marked');
+    li.append(classTile({ courseName: c.name, colorHex: c.colorHex }), el('b', 'pk-pl-name', g.title), el('small', '', `${g.score}/${g.outOf}${typeof g.classMean === 'number' ? ` · class ${g.classMean}` : ''}`));
+    return li;
+  };
+  const rows = plCourseList === 'graded' ? graded.map(gradedRow)
+    : plCourseList === 'missing' ? missing.map((t) => taskRow(t, true))
+    : plCourseList === 'upcoming' ? upcoming.map((t) => taskRow(t, false))
+    : [...missing.map((t) => taskRow(t, true)), ...upcoming.map((t) => taskRow(t, false)), ...gradedOnly.map(gradedRow)];
+  if (!rows.length) ul.append(el('li', 'empty', plCourseList === 'missing' ? 'Nothing missing. Good.' : plCourseList === 'graded' ? 'Nothing marked yet.' : 'Nothing here yet.'));
+  for (const r of rows) ul.append(r);
+  wrap.append(ul);
+  wrap.append(el('p', 'pk-pl-foot', 'What Canvas handed over, nothing added.'));
+  return wrap;
+}
+
+// MARK: - The term, in numbers
+
+/// Which term the recap is for: the month the last due date fell in. The
+/// dismiss remembers it, so the card shows once a term.
+function plRecapKey(tasks, now) {
+  const r = termRecap(tasks, now);
+  const d = r.lastDue ?? now;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/// The card at the top of the planner when a term is ending: the big number,
+/// the lines, a bar per course, Save as a picture, and a way to put it away.
+function plRecapCard(now) {
+  const { data } = plannerState();
+  const r = termRecap(data.tasks, now);
+  const fmt = (d) => d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  const card = el('div', 'pk-pl-recap');
+  const h = el('div', 'head');
+  h.append(el('b', '', 'Your term, in numbers'));
+  if (r.firstDue && r.lastDue) h.append(el('small', '', `${fmt(r.firstDue)} to ${fmt(r.lastDue)}`));
+  card.append(h);
+  const big = el('div', 'big');
+  big.append(el('strong', '', String(r.handedIn)), el('span', '', ` thing${r.handedIn === 1 ? '' : 's'} handed in${r.total ? ` of ${r.total}` : ''}`));
+  card.append(big);
+  const most = r.byCourse.reduce((m, c) => (m && m.total >= c.total ? m : c), null);
+  const lines = [
+    r.onTimePct !== null ? `${r.onTimePct}% of it on time` : null,
+    r.busiestWeek ? `Busiest week: ${fmt(r.busiestWeek.start)} to ${fmt(r.busiestWeek.end)}, ${r.busiestWeek.count} handed in` : null,
+    r.hour ? `Most often handed in around ${hourLabel(r.hour.hour)}` : null,
+    most ? `${shortCourse(most.name)} asked the most of you` : null,
+  ].filter(Boolean);
+  const ul = el('ul', 'lines');
+  for (const l of lines) ul.append(el('li', '', l));
+  card.append(ul);
+  const bars = el('ul', 'courses');
+  for (const c of r.byCourse.slice(0, 6)) {
+    const li = el('li');
+    li.append(classTile({ courseName: c.name, colorHex: c.colorHex }), el('b', '', shortCourse(c.name)), el('em', '', `${c.done} of ${c.total}`));
+    const bar = el('i'); const fill = el('u'); fill.style.width = `${c.total ? Math.round((c.done / c.total) * 100) : 0}%`; const color = safeColor(c.colorHex); if (color) { fill.style.background = color; fill.dataset.pkCourseColor = ''; } bar.append(fill);
+    li.append(bar);
+    bars.append(li);
   }
-  if (focus.state === 'done') {
-    card.append(el('div', 'big', `${focus.durationMin} minutes. Nice.`));
-    card.append(el('div', 'foot', `+${focus.durationMin} coins on your phone.`));
-    const actions = el('div', 'actions');
-    const ok = el('span', 'ghost', 'Done');
-    press(ok, (e) => { if (e.isTrusted && alive()) chrome.runtime.sendMessage({ type: 'focus-clear' }); });
-    actions.append(ok);
-    card.append(actions);
-    return card;
-  }
-  const b = buckets(data.tasks, now, plannedOn);
-  const next = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
-  if (!next) { card.append(el('div', 'quiet', 'Nothing waiting. Rest counts too.')); return card; }
-  card.append(el('div', 'big', next.title));
-  card.append(el('div', 'foot', `${shortCourse(next.courseName)} · ${dueLabel(next, now).replace(' · still counts', '')}`));
+  card.append(bars);
   const actions = el('div', 'actions');
-  const go = el('span', 'start', `Focus ${skin.focusMinutes} min`);
-  press(go, (e) => {
-    if (!e.isTrusted || !alive()) return;
-    chrome.runtime.sendMessage({ type: 'focus-start', taskId: next.id, title: next.title, url: next.url, minutes: skin.focusMinutes });
-  });
-  actions.append(go);
-  const url = safeURL(next.url);
-  if (url) { const a = el('a', 'ghost', 'Open'); a.href = url; actions.append(a); }
+  const save = el('span', 'start', 'Save as a picture'); save.setAttribute('role', 'button'); save.tabIndex = 0;
+  save.addEventListener('click', (e) => { if (e.isTrusted) saveRecapPicture(now); });
+  const later = el('span', 'ghost', 'Put it away'); later.setAttribute('role', 'button'); later.tabIndex = 0;
+  later.addEventListener('click', (e) => { if (e.isTrusted) plannerDismissRecap(plRecapKey(data.tasks, now)); });
+  actions.append(save, later);
   card.append(actions);
-  const lens = el('div', 'lens');
-  for (const m of [15, 25, 45]) {
-    const chip = el('span', skin.focusMinutes === m ? 'on' : '', `${m}`);
-    press(chip, (e) => { if (!e.isTrusted || !alive()) return; chrome.storage.local.get('skin').then(({ skin: s }) => chrome.storage.local.set({ skin: { ...(s ?? {}), focusMinutes: m } })); });
-    lens.append(chip);
-  }
-  lens.prepend(el('span', 'lead', 'minutes'));
-  card.append(lens);
+  card.append(el('p', 'pk-pl-foot', 'Counted on your own laptop. Nothing was sent anywhere, and the picture has no grades in it.'));
   return card;
 }
 

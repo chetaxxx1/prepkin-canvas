@@ -447,7 +447,7 @@ test('R21 a pending task of your own counts in the week without inflating the fi
   await page.close();
 });
 
-test('R22 the league the phone publishes reaches the buddy, not the rail, names from the same word lists', async () => {
+test('R22 the league the phone publishes never reaches the page: not the rail, not the buddy, not the planner', async () => {
   const { FakePhone } = require('./fake-phone');
   const phone = new FakePhone(BRIDGE);
   await h.sw((c) => bindWriter(c), await phone.claim());
@@ -462,10 +462,14 @@ test('R22 the league the phone publishes reaches the buddy, not the rail, names 
   // and the tier reaches the page only as the buddy's own attribute.
   assert.equal(await page.$('#pk-week .pk-w-league'), null, 'no league card on the rail');
   assert.equal(await page.$eval('#pk-week', (e) => /Shallows|to go for|in your pod/.test(e.textContent)), false);
-  await page.waitForFunction(() => document.getElementById('prepkin-buddy')?.dataset.league === 'shallows', null, { timeout: 5000 });
+  // Since 2026-09-14 the league does not reach the page at all: no tier on the
+  // buddy, no League card on the planner. The app owns it.
+  assert.equal(await page.$eval('#prepkin-buddy', (e) => e.dataset.league ?? null), null, 'no tier on the buddy either');
+  await page.click('#pk-dashtabs [data-tab="planner"]'); await page.waitForSelector('#pk-planner .pk-pl-rows', { timeout: 5000 });
+  assert.equal(await page.$eval('#pk-planner', (e) => /Shallows|to go for|in your pod|earned this week/.test(e.textContent)), false, 'no League card on the planner');
+  await page.click('#pk-dashtabs [data-tab="cards"]'); await page.waitForTimeout(300);
   // The band is the tank the phone named, cut from the same plate Home shows.
   assert.match(await page.$eval('#pk-week .pk-w-tank', (e) => e.style.getPropertyValue('--pk-tank')), /art\/tanks\/deep\.webp/, 'the phone\'s tank, on the band');
-  assert.equal(await page.$eval('#prepkin-buddy', (e) => e.dataset.league), 'shallows');
   assert.ok(!(await page.evaluate(() => document.body.textContent)).includes('Otter'), 'no stranger\'s name lands in the page itself');
   await page.close();
 });
@@ -557,6 +561,23 @@ test('R24 handing in pays off at once: the form posts, one sync follows, the row
   await page.close(); await dash.close();
 });
 
+test('R29 a course home carries its next three at the top of the sidebar, ticks, and Put back removes them', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/courses/1');
+  await page.waitForSelector('#right-side > #pk-course-next', { timeout: 5000 });
+  const rows = await page.$$eval('#pk-course-next li', (els) => els.map((e) => e.querySelector('.pk-cn-name').textContent));
+  assert.ok(rows.length >= 1 && rows.length <= 3, `up to three: ${rows.join(' | ')}`);
+  assert.equal(rows[0], 'Problem Set 7', 'the soonest pending thing in Physics');
+  assert.equal(await page.$eval('#pk-course-next .pk-w-label', (e) => e.textContent), 'Next in this class');
+  const todo = require('../extension/selectors').SELECTORS.todoLegacy.sel;
+  if (await page.$(todo)) assert.equal(await style(page, todo, 'display'), 'none', 'Canvas\'s own To Do folds under it');
+  assert.ok(await page.$('#pk-course-next li .pk-tick'), 'a circle on each row');
+  await h.setStorage({ putBack: { 'course-next': true } }); await page.waitForTimeout(400);
+  assert.equal(await page.$('#pk-course-next'), null, 'Put back removes it');
+  await h.setStorage({ putBack: {} });
+  await page.close();
+});
+
 test('R28 a tick clears a row everywhere, is undoable, reaches the phone as doneAt, and never a forged id', async () => {
   const { FakePhone } = require('./fake-phone');
   const phone = new FakePhone(BRIDGE);
@@ -642,7 +663,7 @@ test('R26 a pending row on a course card is a link that says Start on hover; han
   await page.close();
 });
 
-test('R27 the Planner and Looks tabs: a week grid and the shop in the main column, the cards put away and brought back, one click off', async () => {
+test('R27 the Planner and Looks tabs: one list by day with the grades block, the shop, the cards put away and brought back, one click off', async () => {
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');
   await page.waitForSelector('#pk-dashtabs [role="tab"]', { timeout: 5000 });
@@ -650,21 +671,42 @@ test('R27 the Planner and Looks tabs: a week grid and the shop in the main colum
   assert.deepEqual(tabs, [['Courses', 'true'], ['Planner', 'false'], ['Looks', 'false']], 'Courses first, the cards showing');
   assert.equal(await page.$('#pk-planner'), null);
   await page.click('#pk-dashtabs [data-tab="planner"]');
-  await page.waitForSelector('#pk-planner .pk-pl-grid', { timeout: 5000 });
-  assert.equal(await page.$$eval('#pk-planner .pk-pl-col', (els) => els.length), 7, 'seven days');
-  assert.equal(await page.$$eval('#pk-planner .pk-pl-col.today', (els) => els.length), 1, 'one of them today');
+  await page.waitForSelector('#pk-planner .pk-pl-rows', { timeout: 5000 });
+  assert.equal(await page.$('#pk-planner .pk-pl-grid'), null, 'no grid: one list by day');
+  const groups = await page.$$eval('#pk-planner .pk-pl-list .pk-pl-group b', (els) => els.map((e) => e.textContent.replace(/ [›⌄]$/, '')));
+  assert.ok(groups.every((g) => /^(Past due|Today|Tomorrow|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Later|No due date|Missing, older)$/.test(g)), `plain group names: ${groups.join(' · ')}`);
+  assert.equal(groups.filter((g) => g === 'Today').length, 1, 'one Today');
+  assert.equal(await page.$$eval('#pk-planner .pk-pl-group.today', (els) => els.length), 1, 'and it is outlined');
   assert.equal(await style(page, '#DashboardCard_Container', 'display'), 'none', 'the cards step aside');
-  assert.ok((await page.$$('#pk-planner .pk-pl-task')).length >= 3, 'the week\'s work as cards');
-  assert.ok(await page.$('#pk-planner .pk-pl-task img.pk-pl-icon'), 'each with one of the app\'s icons');
-  assert.equal(await page.$$eval('#pk-planner .pk-pl-card', (els) => els.map((e) => e.querySelector('.head b').textContent)).then((x) => x.join(',')), 'Grades,League,Focus');
-  assert.equal(await page.$eval('#pk-planner', (e) => /\d+%|GPA about/.test(e.textContent)), true, 'grades live here now');
+  assert.ok((await page.$$('#pk-planner .pk-pl-list .pk-pl-rows li')).length >= 3, 'the work as rows');
+  assert.ok(await page.$('#pk-planner .pk-pl-rows li .pk-tick'), 'each with a circle');
+  assert.ok(await page.$('#pk-planner .pk-pl-rows li .pk-tile'), 'and a class tile, no icons');
+  assert.equal(await page.$('#pk-planner img.pk-pl-icon:not(:first-child)'), null);
+  assert.ok(await page.$('#pk-planner .pk-pl-rows li.pk-w-first .pk-w-actions a.start'), 'today\'s first row is the one to start, with Start under it');
+  assert.equal(await page.$$eval('#pk-planner *', (els) => els.filter((e) => getComputedStyle(e).textTransform === 'uppercase' && (e.textContent || '').trim()).length), 0, 'nothing uppercase');
+  assert.equal(await page.$eval('#pk-planner', (e) => /\d+ of \d+|League|Shallows|earned this week/.test(e.textContent)), false, 'no count said twice, no league on the page');
+  assert.equal(await page.$$eval('#pk-week .pk-w-label', (els) => els.length), 0, 'the rail folds its list while the planner is open');
+  assert.ok(await page.$('#pk-week .pk-w-tank'), 'and keeps the tank');
+  // Grades: a row per class; the open one carries the what-if line.
+  assert.equal(await page.$$eval('#pk-planner .pk-pl-grade', (els) => els.length), 2, 'a row per class');
+  await page.click('#pk-planner .pk-pl-grade .pk-pl-grow');
+  await page.waitForSelector('#pk-planner .pk-pl-grade.open .whatif', { timeout: 3000 });
+  assert.match(await page.$eval('#pk-planner .pk-pl-grade.open .whatif', (e) => e.textContent), /needs \d+% on the final|is worth/, 'the what-if line');
+  assert.ok(await page.$('#pk-planner .pk-pl-grade.open .rename input'), 'the nickname');
+  assert.ok(await page.$('#pk-planner .pk-pl-grade.open .levels button.on'), 'the level');
+  assert.ok((await page.$$('#pk-planner .pk-pl-grade.open .every .pk-pl-rows li')).length >= 1, 'every assignment');
   assert.equal((await h.storage()).dashTab, 'planner', 'the choice is kept');
-  // Dragging a card to another day plans it; the plan is kept in this browser only.
-  const id = await page.$eval('#pk-planner .pk-pl-col .pk-pl-task:not(.done)', (e) => e.dataset.drag);
-  await page.dragAndDrop(`#pk-planner .pk-pl-task[data-drag="${id}"]`, '#pk-planner .pk-pl-col:last-child');
+  // Dragging a row onto a day plans it; the plan is kept in this browser only.
+  const id = await page.$eval('#pk-planner .pk-pl-list .pk-pl-rows li[draggable="true"]', (e) => e.dataset.drag);
+  const lastDay = (await page.$$('#pk-planner .pk-pl-list .pk-pl-group[data-drop]')).at(-1);
+  await page.dragAndDrop(`#pk-planner li[data-drag="${id}"]`, `#pk-planner .pk-pl-group[data-drop="${await lastDay.evaluate((e) => e.dataset.drop)}"]`);
   await page.waitForTimeout(600);
   assert.ok((await h.storage()).plans?.[id], 'planned onto a day');
-  assert.ok(await page.$(`#pk-planner .pk-pl-col:last-child [data-drag="${id}"]`), 'and shown there');
+  await page.click('#pk-dashtabs [data-tab="cards"]');
+  await page.waitForTimeout(400);
+  assert.equal(await page.$$eval('#pk-week .pk-w-label', (els) => els.length), 2, 'the rail\'s list is back on Courses');
+  await page.click('#pk-dashtabs [data-tab="planner"]');
+  await page.waitForSelector('#pk-planner .pk-pl-rows', { timeout: 5000 });
   // Looks: the shop in the page, the worn one ticked, the rest priced.
   await page.click('#pk-dashtabs [data-tab="looks"]');
   await page.waitForSelector('#pk-looks .pk-pl-looks', { timeout: 5000 });
@@ -811,7 +853,7 @@ test('R9 the popup is the extension; one button opens the planner on the page, a
   assert.equal(await popup.evaluate(`document.getElementById('buddy').hidden`), false, 'a connected Canvas is in front');
   assert.equal(await page.$('#pk-planner'), null, 'the cards before');
   await popup.click('#open-buddy');
-  await page.waitForSelector('#pk-planner .pk-pl-grid', { timeout: 5000 });
+  await page.waitForSelector('#pk-planner .pk-pl-rows', { timeout: 5000 });
   await popup.close().catch(() => {});
   await page.close();
 });

@@ -140,6 +140,7 @@ const RULES = [
   // For a shared screen: the grade stays hidden until the mouse is on its card.
   { key: 'card-grade-hover', kind: 'added', label: 'The grade only while the mouse is on the card', hook: 'card', opt: 'cardGradesHover', undo: 'Turn on', when: (ctx) => ctx.cardGrades },
   { key: 'week', kind: 'added', label: 'This week, at the top of the sidebar', hook: 'card' },
+  { key: 'course-next', kind: 'added', label: 'Next in this class, at the top of the sidebar', detect: 'courseNext' },
   { key: 'todo-fold', kind: 'taken', label: "Canvas's To Do and Coming Up. The rail and the planner hold the same work", detect: 'todoFold' },
   { key: 'search', kind: 'added', label: 'Search, in the corner of every page', when: () => true, opt: 'search', undo: 'Turn on' },
   { key: 'planner', kind: 'added', label: 'A Planner tab beside your courses', detect: 'planner' },

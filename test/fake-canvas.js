@@ -214,6 +214,11 @@ function pageFor(url) {
 </ul></div>
 <div class="context_module"><div class="ig-header header"><h2 class="ig-header-title"><span class="name">Unit 5 — Oscillation</span></h2></div><ul class="ig-list items context_module_items"><li class="context_module_item indent_0"><div class="ig-row"><div class="ig-info"><a class="ig-title" href="#">Read: Hooke's law</a></div></div></li></ul></div>
 </div></div>`;
+  } else if (/^\/courses\/\d+\/?$/.test(p)) {
+    // A course home: the modules as the front page, Canvas's own To Do beside it.
+    main = `<div id="course_home_content"><h2 class="screenreader-only">Course home</h2><div id="context_modules" class="ig-list"><div class="context_module"><div class="ig-header header"><h2 class="ig-header-title"><span class="name">Unit 4 — Rotation</span></h2></div></div></div></div>`;
+    side = `<div id="course_show_secondary"><div class="course-options"><a class="btn button-sidebar-wide" id="view_course_stream_btn" href="#">View Course Stream</a></div>
+<h2 class="todo-list-header">To Do</h2><ul class="right-side-list to-do-list"><li class="todo"><a href="#">Turn in Problem Set 7 <span class="todo-badge">1</span></a></li></ul></div>`;
   } else if (/\/courses\/\d+\/assignments\/\d+/.test(p)) {
     main = `<div id="assignment_show"><h1 id="assignment_head">Problem Set 7</h1><div class="user_content"><p>Read the chapter.</p>
 <p><span style="color: #000000; font-family: Calibri;">This paragraph came from Word.</span></p>

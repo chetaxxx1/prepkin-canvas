@@ -7,7 +7,7 @@
 
 if (typeof module !== 'undefined') {
   // Under node the sibling scripts are modules, not page globals.
-  Object.assign(globalThis, require('./receipt.js'), require('./themes.js'), require('./art/manifest.js'), require('./selectors.js'), require('./looks.js'), require('./canvas.js'), require('./day.js'), require('./podnames.js'), require('./recap.js'));
+  Object.assign(globalThis, require('./receipt.js'), require('./themes.js'), require('./art/manifest.js'), require('./selectors.js'), require('./looks.js'), require('./canvas.js'), require('./day.js'), require('./recap.js'));
 }
 
 const ROOT_ID = 'prepkin-buddy';
@@ -238,7 +238,9 @@ function detectFacts() {
     // is no other list, and a page with no to-do list is not calmer. boot.js
     // folds a synced dashboard from the first paint, before Canvas's list has
     // mounted; that fold is kept, or its spinner shows in the gap.
-    todoFold: (has('todoReact') || has('todoLegacy') || document.documentElement.classList.contains('pk-todo-fold')) && railShows(),
+    todoFold: (has('todoReact') || has('todoLegacy') || document.documentElement.classList.contains('pk-todo-fold')) && (railShows() || courseNextShows()),
+    // "Next in this class" on a course's home page.
+    courseNext: courseNextShows(),
     // The Planner tab, on the dashboard with cards to stand beside.
     planner: railShows() && !!document.getElementById('DashboardCard_Container'),
     wordPaste: WORD_INKS.some((ink) =>
@@ -461,37 +463,15 @@ function safeURL(u) {
   return typeof u === 'string' && u.startsWith('https://') ? u : null;
 }
 
-// MARK: - The league, the way the phone draws it
-//
-// Six depths of water, shallowest first. KEEP IN STEP WITH LeagueTier and its
-// colours in ios/Sources/Core/LeagueState.swift and ios/Sources/LeagueView.swift.
-const TIERS = [
-  { id: 'tidepool', name: 'Tidepool', water: 'Sunlit rock pools at the tide line.', color: '#8FDCCB', edge: '#3E9E8C', ink: '#1B1F24' },
-  { id: 'shallows', name: 'Shallows', water: 'Sand you can still stand on.', color: '#4FBDC6', edge: '#2A8C95', ink: '#1B1F24' },
-  { id: 'reef', name: 'Reef', water: 'Warm water over living coral.', color: '#3A9FBF', edge: '#226F8C', ink: '#1B1F24' },
-  { id: 'kelp', name: 'Kelp', water: 'Green forest, light in columns.', color: '#1F767E', edge: '#0F4F55', ink: '#FBF4EA' },
-  { id: 'openwater', name: 'Open water', water: 'No bottom under you.', color: '#1D5787', edge: '#123B5D', ink: '#FBF4EA' },
-  { id: 'deep', name: 'Deep', water: 'Cold, quiet, a long way down.', color: '#173A60', edge: '#0E2440', ink: '#FBF4EA' },
-];
-/// The kin stills the phone draws on its board, level three, shipped in the
-/// zip. An unknown species gets Mint rather than a broken image.
+// MARK: - The kin
+
 const KIN_SPECIES = ['butter', 'coral', 'lilac', 'mint', 'peach', 'sky'];
 function ownSpecies() {
   const board = Array.isArray(wallet.league?.board) ? wallet.league.board : [];
   const species = board.find((member) => member?.you === true)?.species;
   return KIN_SPECIES.includes(String(species)) ? String(species) : 'mint';
 }
-function tierOf(league) { return TIERS[Math.max(0, Math.min(TIERS.length - 1, Number(league?.tier) || 0))]; }
 
-/// "3 days left", the way a league says it, from the week the phone named.
-function leagueDaysLeft(league) {
-  const start = Date.parse(String(league?.week ?? ''));
-  if (!Number.isFinite(start)) return null;
-  const end = start + 7 * DAY_MS;
-  const days = Math.ceil((end - Date.now()) / DAY_MS);
-  if (days <= 0) return 'Week over';
-  return days === 1 ? '1 day left' : `${days} days left`;
-}
 
 function searchView() {
   return `
@@ -986,8 +966,39 @@ function dayShort(t, now) {
 /// and a script cannot see the top-level let/const of one that runs after it;
 /// function declarations it can. So the state goes out through this one.
 function plannerState() {
-  return { data, plans, wallet, focus, skin, putBack, levels, ownTasks, TIERS, plannedOn };
+  return { data, plans, wallet, focus, skin, putBack, levels, ownTasks, plannedOn, nicknames, targets, recapDismissed, LEVELS, LEVEL_NAMES };
 }
+/// The student's own words for a class: a nickname, its level, the grade they
+/// aim for. Each is kept in this browser; the tab that set it redraws itself.
+async function setNickname(courseId, value) {
+  const v = String(value ?? '').trim();
+  const next = { ...nicknames };
+  if (v) next[String(courseId)] = v; else delete next[String(courseId)];
+  nicknames = next;
+  await chrome.storage.local.set({ nicknames });
+}
+function plannerNickname(courseId, value) { return setNickname(courseId, value); }
+async function setLevel(courseId, level) {
+  levels = { ...levels, [String(courseId)]: level };
+  await chrome.storage.local.set({ levels });
+  renderPlanner();
+}
+function plannerLevel(courseId, level) { return setLevel(courseId, level); }
+async function setAim(courseId, cut) {
+  targets = { ...targets, [String(courseId)]: Number(cut) };
+  await chrome.storage.local.set({ targets });
+  renderPlanner();
+}
+function plannerAim(courseId, cut) { return setAim(courseId, cut); }
+/// The recap card, put away for this term; the rail's door goes with it.
+let recapDismissed = null;
+async function dismissRecap(key) {
+  recapDismissed = key;
+  await chrome.storage.local.set({ recapDismissed: key });
+  renderPlanner();
+  renderWeek();
+}
+function plannerDismissRecap(key) { return dismissRecap(key); }
 function plannerSetOwnTasks(next) { ownTasks = next; }
 // This file sits in one block, so only its plain function declarations reach
 // the world (Annex B hoisting); an async function does not. Hence the wrappers.
@@ -1097,7 +1108,7 @@ function renderWeek() {
   const said = voice(b);
   const key = JSON.stringify([w.start.getTime(), w.total, w.done, said.headline,
     first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt, t.doneAt]), b.overdue.length, skin.focusMinutes, tankId(), lastTick?.id,
-    running && focus.endsAt, running && focus.title, plTab]);
+    running && focus.endsAt, running && focus.title, plTab, recapDismissed]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
   const box = el('section', '', null);
   box.id = WEEK_ID;
@@ -1127,7 +1138,9 @@ function renderWeek() {
   // One list, the way BetterCampus keeps one: the thing to start at the top
   // with its two ways to start it, the next few under it. Always today's,
   // whichever week the rings show.
-  if (running || first) {
+  // While the Planner tab is open the list is there, by day; the rail keeps
+  // the tank, his line and the foot, so nothing is said twice.
+  if ((running || first) && plTab !== 'planner') {
     box.append(el('p', 'pk-w-label', running ? 'Now' : 'Start with'));
     const list = el('ul', 'pk-w-list');
     const top = el('li', 'pk-w-first');
@@ -1213,6 +1226,19 @@ function renderWeek() {
     renderFold();
     if (sprite) placeSprite();
     return;
+  } else if (recapDue(data.courses, data.tasks, now) && plRecapKey(data.tasks, now) !== recapDismissed && plTab !== 'planner') {
+    // A term is ending: the door to the recap, on the planner tab.
+    const door = el('span', 'more', 'Your term, in numbers');
+    door.setAttribute('role', 'button'); door.tabIndex = 0;
+    const openRecap = () => { plSetTab('planner'); document.getElementById(PLANNER_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    door.addEventListener('click', openRecap);
+    door.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openRecap(); } });
+    foot.append(door);
+    box.append(foot);
+    if (existing) existing.replaceWith(box); else side.prepend(box);
+    renderFold();
+    if (sprite) placeSprite();
+    return;
   } else {
     // Finished work is worth a line; nothing finished is not worth a scold.
     foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
@@ -1227,6 +1253,54 @@ function renderWeek() {
   if (existing) existing.replaceWith(box); else side.prepend(box);
   renderFold();
   if (sprite) placeSprite();
+}
+
+// MARK: - Next in this class: the course home's own three rows (A3)
+//
+// A student lands on a course home from a link and wants "what's due here".
+// Up to three rows in the rail's shape, filtered to this class, at the top of
+// the sidebar; Canvas's own To Do folds under them as it does on the dashboard.
+// Nothing at all when the class has nothing pending.
+
+const COURSE_NEXT_ID = 'pk-course-next';
+
+function courseId() {
+  return /^\/courses\/(\d+)\/?$/.exec(location.pathname)?.[1] ?? null;
+}
+
+function courseNextShows() {
+  const id = courseId();
+  return !!id && !!document.getElementById('right-side') && !!skin.cards && !killed && !putBack['course-next']
+    && (data.tasks ?? []).some((t) => String(t.courseId) === id && !isDone(t) && !isStaleMissing(t));
+}
+
+function renderCourseNext() {
+  const existing = document.getElementById(COURSE_NEXT_ID);
+  if (!courseNextShows()) { existing?.remove(); return; }
+  const now = new Date();
+  const id = courseId();
+  const rows = dueRowsFor(id, now, 3).filter((r) => !r.done);
+  const key = JSON.stringify(rows.map((r) => [r.t.id, r.when, r.overdue, r.t.doneAt]));
+  if (existing && existing.dataset.key === key) return;
+  const box = el('section', '', null);
+  box.id = COURSE_NEXT_ID; box.dataset.key = key;
+  box.setAttribute('aria-label', 'Prepkin: next in this class');
+  box.append(el('p', 'pk-w-label', 'Next in this class'));
+  const list = el('ul', 'pk-w-list');
+  for (const r of rows) {
+    const li = el('li');
+    li.append(tickCircle(r.t));
+    const url = safeURL(r.t.url);
+    const name = url ? el('a', '', r.t.title) : el('b', '', r.t.title);
+    if (url) name.href = url;
+    name.className = 'pk-cn-name';
+    name.title = r.t.title;
+    // The sidebar is narrow: one word for the day, amber when it slipped.
+    li.append(name, el('small', r.overdue ? 'amber' : '', dayShort(r.t, now)));
+    list.append(li);
+  }
+  box.append(list);
+  if (existing) existing.replaceWith(box); else document.getElementById('right-side').prepend(box);
 }
 
 /// Canvas's own To Do and Coming Up are replaced by the rail and the planner
@@ -1247,6 +1321,7 @@ function refreshPage() {
   applySkin(skin);
   decorateCards();
   renderWeek();
+  renderCourseNext();
   renderSearchChip();
   renderPlannerTabs();
   renderPlanner();
@@ -1491,7 +1566,7 @@ function saveRecapPicture(now) {
 // MARK: - Render
 
 function render() {
-  if (shadow) { shadow.host.toggleAttribute('data-open', ui.open); shadow.host.dataset.view = ui.view; shadow.host.dataset.league = wallet.league ? tierOf(wallet.league).id : ''; }
+  if (shadow) { shadow.host.toggleAttribute('data-open', ui.open); shadow.host.dataset.view = ui.view; }
   if (shadow && sprite) placeSprite(sprite.place);
   // His line is on the rail; while the palette is open beside it, it steps back.
   document.getElementById(WEEK_ID)?.classList.toggle('pk-w-quiet', !!ui.open);
@@ -1659,11 +1734,12 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', 'done', HANDED_IN_KEY]);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', 'done', 'recapDismissed', HANDED_IN_KEY]);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
   done = stored.done && typeof stored.done === 'object' ? stored.done : {};
+  recapDismissed = typeof stored.recapDismissed === 'string' ? stored.recapDismissed : null;
   data = composeData(stored.lastPayload ?? null, ownTasks, nicknames, done);
   levels = stored.levels ?? {};
   plans = stored.plans ?? {};
@@ -1680,6 +1756,7 @@ async function mount() {
   applySkin(skin);
   decorateCards();
   renderWeek();
+  renderCourseNext();
   renderSearchChip();
   // The planner tab: remembered, and #planner in the address opens it.
   plTab = location.hash === '#planner' ? 'planner' : location.hash === '#looks' ? 'looks' : (['planner', 'looks'].includes(stored.dashTab) ? stored.dashTab : 'cards');
@@ -1716,7 +1793,7 @@ async function mount() {
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
   module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
-                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, tankId, TANKS, TIERS, tierOf, ownSpecies, KIN_SPECIES,
+                     targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, tankId, TANKS, ownSpecies, KIN_SPECIES,
                      searchView, focusCard,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };
 } else {

@@ -133,6 +133,38 @@ function voice({ overdue, today, doneToday }) {
   };
 }
 
+/// The planner's list, grouped by day the way Todoist's Upcoming reads: what
+/// slipped, then today and the next six days, then what sits further out
+/// (folded), then work with no date, then old zeros the school marked missing
+/// (folded, so a term of them never scolds). `dayOf(task)` is the day the
+/// student planned it or the day it is due, or null. A finished thing stays in
+/// its day for the day it was finished, struck; other days list pending work.
+function dayGroups(tasks, now = new Date(), dayOf = () => null) {
+  const today = startOfDay(now);
+  const horizon = new Date(today.getTime() + 7 * DAY_MS);
+  const byTime = (a, b) => Date.parse(a.dueAt ?? 0) - Date.parse(b.dueAt ?? 0);
+  const past = [], later = [], undated = [], missed = [];
+  const days = Array.from({ length: 7 }, (_, i) => ({ date: new Date(today.getTime() + i * DAY_MS), items: [] }));
+  for (const t of tasks) {
+    const day = dayOf(t);
+    if (isDone(t)) {
+      // Finished work shows only in the day it was finished, and only today.
+      const at = doneTime(t) ? new Date(doneTime(t)) : null;
+      if (at && !isNaN(at) && sameLocalDay(at, now)) days[0].items.push(t);
+      continue;
+    }
+    if (!day) { undated.push(t); continue; }
+    if (day < today) {
+      const daysAgo = (today - startOfDay(day)) / DAY_MS;
+      (t.missing && daysAgo > MISSED_AFTER_DAYS ? missed : past).push(t);
+    } else if (day >= horizon) later.push(t);
+    else days[Math.round((startOfDay(day) - today) / DAY_MS)].items.push(t);
+  }
+  past.sort(byTime); later.sort(byTime); missed.sort(byTime);
+  for (const d of days) d.items.sort((a, b) => (isDone(a) - isDone(b)) || byTime(a, b));
+  return { past, days, later, undated, missed };
+}
+
 /// The week's numbers for the rail: Monday to Sunday around `now`, how many
 /// tasks fall in it and how many are handed in, split by course.
 function weekStats(tasks, now = new Date()) {
@@ -153,5 +185,5 @@ function weekStats(tasks, now = new Date()) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { DAY_MS, MISSED_AFTER_DAYS, startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, weekStats, isDone, doneTime, withDone, pruneDone };
+  module.exports = { DAY_MS, MISSED_AFTER_DAYS, startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, weekStats, isDone, doneTime, withDone, pruneDone, dayGroups };
 }
