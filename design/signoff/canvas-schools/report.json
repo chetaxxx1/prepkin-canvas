@@ -1,9 +1,9 @@
 {
-  "at": "2026-09-13T11:09:17.823Z",
+  "at": "2026-09-14T22:10:47.885Z",
   "real": true,
   "schools": {
     "bcourses.berkeley.edu": {
-      "at": "2026-09-12T19:36:11.286Z",
+      "at": "2026-09-14T22:08:57.244Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -21,7 +21,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -93,7 +93,7 @@
       "dialogs": []
     },
     "canvas.mit.edu": {
-      "at": "2026-09-12T20:00:00.656Z",
+      "at": "2026-09-14T19:54:42.139Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -111,7 +111,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -183,7 +183,7 @@
       "dialogs": []
     },
     "canvas.stanford.edu": {
-      "at": "2026-09-12T20:05:35.185Z",
+      "at": "2026-09-14T20:15:54.862Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -201,7 +201,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -224,7 +224,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -273,7 +273,7 @@
       "dialogs": []
     },
     "canvas.sussex.ac.uk": {
-      "at": "2026-09-12T20:06:52.165Z",
+      "at": "2026-09-14T20:17:11.329Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -289,7 +289,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -318,7 +318,7 @@
       "dialogs": []
     },
     "browardschools.instructure.com": {
-      "at": "2026-09-12T19:37:00.625Z",
+      "at": "2026-09-14T22:09:56.595Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -336,7 +336,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -408,7 +408,7 @@
       "dialogs": []
     },
     "bruinlearn.ucla.edu": {
-      "at": "2026-09-12T19:38:10.350Z",
+      "at": "2026-09-14T19:16:20.524Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -426,7 +426,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -498,7 +498,7 @@
       "dialogs": []
     },
     "byu.instructure.com": {
-      "at": "2026-09-12T19:39:25.436Z",
+      "at": "2026-09-14T19:17:22.266Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -516,7 +516,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -539,7 +539,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -588,7 +588,7 @@
       "dialogs": []
     },
     "canvas.asu.edu": {
-      "at": "2026-09-12T19:40:54.391Z",
+      "at": "2026-09-14T19:19:30.313Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -606,7 +606,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -629,7 +629,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -678,7 +678,7 @@
       "dialogs": []
     },
     "canvas.auckland.ac.nz": {
-      "at": "2026-09-12T19:42:17.990Z",
+      "at": "2026-09-14T19:20:35.886Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -696,7 +696,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -719,7 +719,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -768,7 +768,7 @@
       "dialogs": []
     },
     "canvas.bham.ac.uk": {
-      "at": "2026-09-12T19:43:44.067Z",
+      "at": "2026-09-14T19:21:42.286Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -786,7 +786,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -809,7 +809,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -858,7 +858,7 @@
       "dialogs": []
     },
     "canvas.brown.edu": {
-      "at": "2026-09-12T19:44:47.480Z",
+      "at": "2026-09-14T19:22:48.091Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -876,7 +876,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -899,7 +899,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -948,7 +948,7 @@
       "dialogs": []
     },
     "canvas.colorado.edu": {
-      "at": "2026-09-12T19:45:41.260Z",
+      "at": "2026-09-14T19:29:06.177Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -966,7 +966,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -989,7 +989,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -1038,7 +1038,7 @@
       "dialogs": []
     },
     "canvas.cornell.edu": {
-      "at": "2026-09-12T19:46:32.293Z",
+      "at": "2026-09-14T19:30:11.815Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1056,7 +1056,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -1079,7 +1079,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -1128,7 +1128,7 @@
       "dialogs": []
     },
     "canvas.dartmouth.edu": {
-      "at": "2026-09-12T19:47:17.147Z",
+      "at": "2026-09-14T19:33:28.945Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1146,7 +1146,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -1169,7 +1169,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -1218,7 +1218,7 @@
       "dialogs": []
     },
     "canvas.duke.edu": {
-      "at": "2026-09-12T19:48:02.969Z",
+      "at": "2026-09-14T19:35:37.470Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1236,7 +1236,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -1308,7 +1308,7 @@
       "dialogs": []
     },
     "canvas.emory.edu": {
-      "at": "2026-09-12T19:49:09.124Z",
+      "at": "2026-09-14T19:36:40.747Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1326,7 +1326,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -1398,7 +1398,7 @@
       "dialogs": []
     },
     "canvas.fsu.edu": {
-      "at": "2026-09-12T19:50:12.531Z",
+      "at": "2026-09-14T19:39:50.726Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1416,187 +1416,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
-            150
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": [
-            255,
-            255,
-            255
-          ],
-          "sidebarIsPaper": true
-        },
-        "modules": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "moduleHeader": 3,
-            "moduleDue": 4
-          },
-          "at": [
-            282,
-            222
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": null,
-          "sidebarIsPaper": null
-        },
-        "assignment": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "userContent": 1
-          },
-          "at": [
-            282,
-            222
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": null,
-          "sidebarIsPaper": null
-        },
-        "dashboardDark": {
-          "content": [
-            23,
-            25,
-            29
-          ],
-          "contentIsPaper": true
-        }
-      },
-      "errors": [],
-      "dialogs": []
-    },
-    "canvas.harvard.edu": {
-      "at": "2026-09-12T19:51:09.062Z",
-      "build": "7faef57a1a",
-      "files": [
-        "variables",
-        "custom.css",
-        "custom.js"
-      ],
-      "pages": {
-        "dashboard": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "card": 4,
-            "cardHero": 4
-          },
-          "at": [
-            90,
-            150
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": [
-            255,
-            255,
-            255
-          ],
-          "sidebarIsPaper": true
-        },
-        "modules": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "moduleHeader": 3,
-            "moduleDue": 4
-          },
-          "at": [
-            282,
-            222
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": null,
-          "sidebarIsPaper": null
-        },
-        "assignment": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "userContent": 1
-          },
-          "at": [
-            282,
-            222
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": null,
-          "sidebarIsPaper": null
-        },
-        "dashboardDark": {
-          "content": [
-            23,
-            25,
-            29
-          ],
-          "contentIsPaper": true
-        }
-      },
-      "errors": [],
-      "dialogs": []
-    },
-    "canvas.hull.ac.uk": {
-      "at": "2026-09-12T19:51:59.410Z",
-      "build": "7faef57a1a",
-      "files": [
-        "variables",
-        "custom.css",
-        "custom.js"
-      ],
-      "pages": {
-        "dashboard": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "card": 4,
-            "cardHero": 4
-          },
-          "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -1667,8 +1487,8 @@
       "errors": [],
       "dialogs": []
     },
-    "canvas.iastate.edu": {
-      "at": "2026-09-12T19:53:12.923Z",
+    "canvas.harvard.edu": {
+      "at": "2026-09-14T19:41:55.914Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1686,7 +1506,187 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 2
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.hull.ac.uk": {
+      "at": "2026-09-14T19:42:58.110Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            96,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 4
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.iastate.edu": {
+      "at": "2026-09-14T19:43:52.724Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            96,
             150
           ],
           "content": [
@@ -1758,7 +1758,7 @@
       "dialogs": []
     },
     "canvas.illinois.edu": {
-      "at": "2026-09-12T19:54:19.766Z",
+      "at": "2026-09-14T19:44:57.021Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1776,7 +1776,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -1799,7 +1799,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -1848,7 +1848,7 @@
       "dialogs": []
     },
     "canvas.its.virginia.edu": {
-      "at": "2026-09-12T19:55:13.840Z",
+      "at": "2026-09-14T19:45:51.623Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -1866,7 +1866,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -1876,11 +1876,101 @@
           ],
           "contentIsPaper": true,
           "sidebar": [
-            251,
-            251,
-            249
+            255,
+            255,
+            255
           ],
-          "sidebarIsPaper": false
+          "sidebarIsPaper": true
+        },
+        "modules": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "moduleHeader": 3,
+            "moduleDue": 2
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "assignment": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "userContent": 1
+          },
+          "at": [
+            282,
+            222
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": null,
+          "sidebarIsPaper": null
+        },
+        "dashboardDark": {
+          "content": [
+            23,
+            25,
+            29
+          ],
+          "contentIsPaper": true
+        }
+      },
+      "errors": [],
+      "dialogs": []
+    },
+    "canvas.ku.edu": {
+      "at": "2026-09-14T19:48:42.887Z",
+      "build": "7faef57a1a",
+      "files": [
+        "variables",
+        "custom.css",
+        "custom.js"
+      ],
+      "pages": {
+        "dashboard": {
+          "on": true,
+          "buddy": true,
+          "hooks": {
+            "navRail": 1,
+            "headerLogo": 1,
+            "card": 4,
+            "cardHero": 4
+          },
+          "at": [
+            96,
+            150
+          ],
+          "content": [
+            247,
+            246,
+            243
+          ],
+          "contentIsPaper": true,
+          "sidebar": [
+            255,
+            255,
+            255
+          ],
+          "sidebarIsPaper": true
         },
         "modules": {
           "on": true,
@@ -1937,98 +2027,8 @@
       "errors": [],
       "dialogs": []
     },
-    "canvas.ku.edu": {
-      "at": "2026-09-12T19:55:58.528Z",
-      "build": "7faef57a1a",
-      "files": [
-        "variables",
-        "custom.css",
-        "custom.js"
-      ],
-      "pages": {
-        "dashboard": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "card": 4,
-            "cardHero": 4
-          },
-          "at": [
-            90,
-            150
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": [
-            255,
-            255,
-            255
-          ],
-          "sidebarIsPaper": true
-        },
-        "modules": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "moduleHeader": 3,
-            "moduleDue": 2
-          },
-          "at": [
-            282,
-            222
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": null,
-          "sidebarIsPaper": null
-        },
-        "assignment": {
-          "on": true,
-          "buddy": true,
-          "hooks": {
-            "navRail": 1,
-            "headerLogo": 1,
-            "userContent": 1
-          },
-          "at": [
-            282,
-            222
-          ],
-          "content": [
-            247,
-            246,
-            243
-          ],
-          "contentIsPaper": true,
-          "sidebar": null,
-          "sidebarIsPaper": null
-        },
-        "dashboardDark": {
-          "content": [
-            23,
-            25,
-            29
-          ],
-          "contentIsPaper": true
-        }
-      },
-      "errors": [],
-      "dialogs": []
-    },
     "canvas.liberty.edu": {
-      "at": "2026-09-12T19:57:01.474Z",
+      "at": "2026-09-14T19:50:42.938Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2046,7 +2046,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2069,7 +2069,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 2
+            "moduleDue": 4
           },
           "at": [
             282,
@@ -2118,7 +2118,7 @@
       "dialogs": []
     },
     "canvas.liverpool.ac.uk": {
-      "at": "2026-09-12T19:58:16.609Z",
+      "at": "2026-09-14T19:51:31.308Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2135,7 +2135,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2207,7 +2207,7 @@
       "dialogs": []
     },
     "canvas.lms.unimelb.edu.au": {
-      "at": "2026-09-12T19:59:03.839Z",
+      "at": "2026-09-14T19:52:15.159Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2225,7 +2225,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2248,7 +2248,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 2
+            "moduleDue": 4
           },
           "at": [
             282,
@@ -2297,7 +2297,7 @@
       "dialogs": []
     },
     "canvas.nd.edu": {
-      "at": "2026-09-12T20:00:46.495Z",
+      "at": "2026-09-14T19:58:19.206Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2315,7 +2315,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2387,7 +2387,7 @@
       "dialogs": []
     },
     "canvas.northwestern.edu": {
-      "at": "2026-09-12T20:01:39.428Z",
+      "at": "2026-09-14T19:59:11.423Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2404,7 +2404,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2476,7 +2476,7 @@
       "dialogs": []
     },
     "canvas.oregonstate.edu": {
-      "at": "2026-09-12T20:02:30.631Z",
+      "at": "2026-09-14T20:02:46.335Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2494,7 +2494,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2517,7 +2517,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -2566,7 +2566,7 @@
       "dialogs": []
     },
     "canvas.ox.ac.uk": {
-      "at": "2026-09-12T20:03:15.371Z",
+      "at": "2026-09-14T20:04:57.112Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2584,7 +2584,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2607,7 +2607,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -2656,7 +2656,7 @@
       "dialogs": []
     },
     "canvas.rice.edu": {
-      "at": "2026-09-12T20:04:20.836Z",
+      "at": "2026-09-14T20:11:29.497Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2674,7 +2674,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2697,7 +2697,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -2746,7 +2746,7 @@
       "dialogs": []
     },
     "canvas.sydney.edu.au": {
-      "at": "2026-09-12T20:08:08.092Z",
+      "at": "2026-09-14T20:17:54.596Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2764,7 +2764,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2787,7 +2787,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -2836,7 +2836,7 @@
       "dialogs": []
     },
     "canvas.tamu.edu": {
-      "at": "2026-09-12T20:09:12.433Z",
+      "at": "2026-09-14T20:19:06.651Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2854,7 +2854,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2877,7 +2877,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -2926,7 +2926,7 @@
       "dialogs": []
     },
     "canvas.txstate.edu": {
-      "at": "2026-09-12T20:10:09.702Z",
+      "at": "2026-09-14T20:22:48.081Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -2944,7 +2944,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -2967,7 +2967,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -3016,7 +3016,7 @@
       "dialogs": []
     },
     "canvas.ubc.ca": {
-      "at": "2026-09-12T20:11:07.933Z",
+      "at": "2026-09-14T20:25:16.584Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3034,7 +3034,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3106,7 +3106,7 @@
       "dialogs": []
     },
     "canvas.ucdavis.edu": {
-      "at": "2026-09-12T20:12:46.653Z",
+      "at": "2026-09-14T20:27:38.172Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3124,7 +3124,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3196,7 +3196,7 @@
       "dialogs": []
     },
     "canvas.uchicago.edu": {
-      "at": "2026-09-12T20:13:59.273Z",
+      "at": "2026-09-14T20:28:49.415Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3214,7 +3214,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3286,7 +3286,7 @@
       "dialogs": []
     },
     "canvas.ucsd.edu": {
-      "at": "2026-09-12T20:15:12.963Z",
+      "at": "2026-09-14T20:32:00.407Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3304,7 +3304,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3327,7 +3327,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -3376,7 +3376,7 @@
       "dialogs": []
     },
     "canvas.umn.edu": {
-      "at": "2026-09-12T20:16:26.130Z",
+      "at": "2026-09-14T20:34:30.247Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3394,7 +3394,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3466,7 +3466,7 @@
       "dialogs": []
     },
     "canvas.unl.edu": {
-      "at": "2026-09-12T20:17:39.624Z",
+      "at": "2026-09-14T20:38:08.749Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3484,7 +3484,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3507,7 +3507,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -3556,7 +3556,7 @@
       "dialogs": []
     },
     "canvas.uoregon.edu": {
-      "at": "2026-09-12T20:18:46.959Z",
+      "at": "2026-09-14T20:41:28.605Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3574,7 +3574,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3597,7 +3597,7 @@
             "navRail": 1,
             "headerLogo": 2,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -3646,7 +3646,7 @@
       "dialogs": []
     },
     "canvas.upenn.edu": {
-      "at": "2026-09-12T20:20:05.810Z",
+      "at": "2026-09-14T20:42:32.518Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3664,7 +3664,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3736,7 +3736,7 @@
       "dialogs": []
     },
     "canvas.uw.edu": {
-      "at": "2026-09-12T20:22:00.831Z",
+      "at": "2026-09-14T20:44:42.324Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3754,7 +3754,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3777,7 +3777,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -3826,7 +3826,7 @@
       "dialogs": []
     },
     "canvas.vt.edu": {
-      "at": "2026-09-12T20:23:01.729Z",
+      "at": "2026-09-14T20:45:43.105Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3844,7 +3844,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -3867,7 +3867,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -3916,7 +3916,7 @@
       "dialogs": []
     },
     "canvas.wisc.edu": {
-      "at": "2026-09-12T20:24:08.023Z",
+      "at": "2026-09-14T20:46:45.764Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -3934,7 +3934,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4006,7 +4006,7 @@
       "dialogs": []
     },
     "ccsd.instructure.com": {
-      "at": "2026-09-12T20:25:38.047Z",
+      "at": "2026-09-14T20:49:56.139Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4024,7 +4024,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4096,7 +4096,7 @@
       "dialogs": []
     },
     "courseworks2.columbia.edu": {
-      "at": "2026-09-12T20:27:25.760Z",
+      "at": "2026-09-14T20:52:38.306Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4114,7 +4114,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4137,7 +4137,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -4186,7 +4186,7 @@
       "dialogs": []
     },
     "dcps.instructure.com": {
-      "at": "2026-09-12T20:28:50.394Z",
+      "at": "2026-09-14T20:53:45.738Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4204,7 +4204,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4276,7 +4276,7 @@
       "dialogs": []
     },
     "gatech.instructure.com": {
-      "at": "2026-09-12T20:30:11.070Z",
+      "at": "2026-09-14T20:55:16.368Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4294,7 +4294,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4317,7 +4317,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -4366,7 +4366,7 @@
       "dialogs": []
     },
     "hcpss.instructure.com": {
-      "at": "2026-09-12T20:31:22.739Z",
+      "at": "2026-09-14T20:56:46.781Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4384,7 +4384,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4456,7 +4456,7 @@
       "dialogs": []
     },
     "ilearn.laccd.edu": {
-      "at": "2026-09-12T20:32:41.492Z",
+      "at": "2026-09-14T20:58:54.702Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4474,7 +4474,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4497,7 +4497,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -4546,7 +4546,7 @@
       "dialogs": []
     },
     "iu.instructure.com": {
-      "at": "2026-09-12T20:33:56.248Z",
+      "at": "2026-09-14T20:59:59.484Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4564,7 +4564,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4587,7 +4587,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -4636,7 +4636,7 @@
       "dialogs": []
     },
     "learn.canvas.net": {
-      "at": "2026-09-12T20:35:02.696Z",
+      "at": "2026-09-14T21:06:05.130Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4654,7 +4654,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4677,7 +4677,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -4726,7 +4726,7 @@
       "dialogs": []
     },
     "learn.maricopa.edu": {
-      "at": "2026-09-12T20:36:02.271Z",
+      "at": "2026-09-14T21:08:00.090Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4744,7 +4744,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4816,7 +4816,7 @@
       "dialogs": []
     },
     "mdc.instructure.com": {
-      "at": "2026-09-12T20:37:30.218Z",
+      "at": "2026-09-14T21:11:18.832Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4834,7 +4834,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -4906,7 +4906,7 @@
       "dialogs": []
     },
     "osu.instructure.com": {
-      "at": "2026-09-12T20:38:38.721Z",
+      "at": "2026-09-14T21:16:07.277Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -4924,7 +4924,7 @@
             "cardHero": 4
           },
           "at": [
-            102,
+            108,
             222
           ],
           "content": [
@@ -4996,7 +4996,7 @@
       "dialogs": []
     },
     "pcc.instructure.com": {
-      "at": "2026-09-12T20:39:44.997Z",
+      "at": "2026-09-14T21:17:21.594Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5014,7 +5014,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5086,7 +5086,7 @@
       "dialogs": []
     },
     "princeton.instructure.com": {
-      "at": "2026-09-12T20:40:52.109Z",
+      "at": "2026-09-14T21:19:20.108Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5104,7 +5104,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5176,7 +5176,7 @@
       "dialogs": []
     },
     "psu.instructure.com": {
-      "at": "2026-09-12T20:41:58.362Z",
+      "at": "2026-09-14T21:21:18.265Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5194,7 +5194,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5217,7 +5217,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 2
+            "moduleDue": 4
           },
           "at": [
             282,
@@ -5266,7 +5266,7 @@
       "dialogs": []
     },
     "q.utoronto.ca": {
-      "at": "2026-09-12T20:43:05.051Z",
+      "at": "2026-09-14T21:24:35.505Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5284,7 +5284,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5307,7 +5307,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 2
+            "moduleDue": 4
           },
           "at": [
             282,
@@ -5356,7 +5356,7 @@
       "dialogs": []
     },
     "sbcc.instructure.com": {
-      "at": "2026-09-12T20:44:11.626Z",
+      "at": "2026-09-14T21:27:08.911Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5373,7 +5373,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5396,7 +5396,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 2
+            "moduleDue": 4
           },
           "at": [
             282,
@@ -5445,7 +5445,7 @@
       "dialogs": []
     },
     "sdccd.instructure.com": {
-      "at": "2026-09-12T20:45:17.584Z",
+      "at": "2026-09-14T21:29:14.516Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5463,7 +5463,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5486,7 +5486,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 2
+            "moduleDue": 4
           },
           "at": [
             282,
@@ -5535,7 +5535,7 @@
       "dialogs": []
     },
     "sfusd.instructure.com": {
-      "at": "2026-09-12T20:46:25.136Z",
+      "at": "2026-09-14T21:31:24.043Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -5551,7 +5551,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5580,7 +5580,7 @@
       "dialogs": []
     },
     "ufl.instructure.com": {
-      "at": "2026-09-12T20:47:43.725Z",
+      "at": "2026-09-14T21:32:42.754Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5598,7 +5598,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5670,7 +5670,7 @@
       "dialogs": []
     },
     "uiowa.instructure.com": {
-      "at": "2026-09-12T20:49:15.574Z",
+      "at": "2026-09-14T21:34:08.780Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5688,7 +5688,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5760,7 +5760,7 @@
       "dialogs": []
     },
     "umd.instructure.com": {
-      "at": "2026-09-12T20:50:12.198Z",
+      "at": "2026-09-14T21:35:26.954Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5778,7 +5778,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5788,9 +5788,9 @@
           ],
           "contentIsPaper": true,
           "sidebar": [
-            247,
-            246,
-            243
+            255,
+            255,
+            255
           ],
           "sidebarIsPaper": true
         },
@@ -5850,7 +5850,7 @@
       "dialogs": []
     },
     "umich.instructure.com": {
-      "at": "2026-09-13T06:05:40.854Z",
+      "at": "2026-09-14T21:37:11.755Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5868,7 +5868,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -5940,7 +5940,7 @@
       "dialogs": []
     },
     "uncch.instructure.com": {
-      "at": "2026-09-13T06:06:27.386Z",
+      "at": "2026-09-14T21:40:09.184Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -5958,7 +5958,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6030,7 +6030,7 @@
       "dialogs": []
     },
     "utah.instructure.com": {
-      "at": "2026-09-13T06:07:49.850Z",
+      "at": "2026-09-14T21:43:15.785Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6048,7 +6048,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6120,7 +6120,7 @@
       "dialogs": []
     },
     "utexas.instructure.com": {
-      "at": "2026-09-13T06:08:44.298Z",
+      "at": "2026-09-14T21:45:05.058Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6138,7 +6138,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6210,7 +6210,7 @@
       "dialogs": []
     },
     "webcourses.ucf.edu": {
-      "at": "2026-09-13T06:09:30.159Z",
+      "at": "2026-09-14T21:49:41.379Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6228,7 +6228,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6300,7 +6300,7 @@
       "dialogs": []
     },
     "wustl.instructure.com": {
-      "at": "2026-09-13T06:10:24.933Z",
+      "at": "2026-09-14T21:52:00.381Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6317,7 +6317,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6389,7 +6389,7 @@
       "dialogs": []
     },
     "yale.instructure.com": {
-      "at": "2026-09-13T06:11:07.683Z",
+      "at": "2026-09-14T21:53:57.463Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6407,7 +6407,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6479,7 +6479,7 @@
       "dialogs": []
     },
     "aacps.instructure.com": {
-      "at": "2026-09-13T09:19:28.373Z",
+      "at": "2026-09-14T19:12:36.789Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6496,7 +6496,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6519,7 +6519,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -6568,7 +6568,7 @@
       "dialogs": []
     },
     "aps.instructure.com": {
-      "at": "2026-09-13T09:20:09.513Z",
+      "at": "2026-09-14T22:08:12.541Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -6584,7 +6584,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6613,7 +6613,7 @@
       "dialogs": []
     },
     "canvas.alaska.edu": {
-      "at": "2026-09-13T09:20:33.831Z",
+      "at": "2026-09-14T19:18:26.711Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6630,7 +6630,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6653,7 +6653,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -6702,7 +6702,7 @@
       "dialogs": []
     },
     "canvas.byu.edu": {
-      "at": "2026-09-13T09:21:14.710Z",
+      "at": "2026-09-14T19:23:52.824Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6720,7 +6720,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6743,7 +6743,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -6792,7 +6792,7 @@
       "dialogs": []
     },
     "canvas.calpoly.edu": {
-      "at": "2026-09-13T09:21:55.630Z",
+      "at": "2026-09-14T19:24:45.439Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6810,7 +6810,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6833,7 +6833,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -6882,7 +6882,7 @@
       "dialogs": []
     },
     "canvas.case.edu": {
-      "at": "2026-09-13T09:22:36.530Z",
+      "at": "2026-09-14T19:25:52.724Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6900,7 +6900,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -6923,7 +6923,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -6972,7 +6972,7 @@
       "dialogs": []
     },
     "canvas.chapman.edu": {
-      "at": "2026-09-13T09:23:17.346Z",
+      "at": "2026-09-14T19:26:56.800Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -6990,7 +6990,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7013,7 +7013,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7062,7 +7062,7 @@
       "dialogs": []
     },
     "canvas.cmu.edu": {
-      "at": "2026-09-13T09:24:09.185Z",
+      "at": "2026-09-14T19:28:01.714Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7079,7 +7079,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7102,7 +7102,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7151,7 +7151,7 @@
       "dialogs": []
     },
     "canvas.cpp.edu": {
-      "at": "2026-09-13T09:24:57.099Z",
+      "at": "2026-09-14T19:31:21.478Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7169,7 +7169,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7192,7 +7192,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7241,7 +7241,7 @@
       "dialogs": []
     },
     "canvas.csun.edu": {
-      "at": "2026-09-13T09:25:49.417Z",
+      "at": "2026-09-14T19:32:24.250Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7259,7 +7259,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7282,7 +7282,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7331,7 +7331,7 @@
       "dialogs": []
     },
     "canvas.du.edu": {
-      "at": "2026-09-13T09:26:58.896Z",
+      "at": "2026-09-14T19:34:33.419Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7349,7 +7349,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7372,7 +7372,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7421,7 +7421,7 @@
       "dialogs": []
     },
     "canvas.fau.edu": {
-      "at": "2026-09-13T09:28:27.558Z",
+      "at": "2026-09-14T19:37:44.828Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7439,7 +7439,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7462,7 +7462,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7511,7 +7511,7 @@
       "dialogs": []
     },
     "canvas.fscj.edu": {
-      "at": "2026-09-13T09:30:02.086Z",
+      "at": "2026-09-14T19:38:50.808Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7529,7 +7529,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7552,7 +7552,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7601,7 +7601,7 @@
       "dialogs": []
     },
     "canvas.gmu.edu": {
-      "at": "2026-09-13T09:31:21.884Z",
+      "at": "2026-09-14T19:40:43.123Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7619,7 +7619,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7691,7 +7691,7 @@
       "dialogs": []
     },
     "canvas.gsu.edu": {
-      "at": "2026-09-13T09:32:30.939Z",
+      "at": "2026-09-14T19:41:26.447Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -7707,7 +7707,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7736,7 +7736,7 @@
       "dialogs": []
     },
     "canvas.jccc.edu": {
-      "at": "2026-09-13T09:33:02.917Z",
+      "at": "2026-09-14T19:46:54.050Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7754,7 +7754,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7777,7 +7777,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -7826,7 +7826,7 @@
       "dialogs": []
     },
     "canvas.jmu.edu": {
-      "at": "2026-09-13T09:33:51.766Z",
+      "at": "2026-09-14T19:47:58.227Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7843,7 +7843,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7915,7 +7915,7 @@
       "dialogs": []
     },
     "canvas.lanecc.edu": {
-      "at": "2026-09-13T09:34:55.683Z",
+      "at": "2026-09-14T19:49:27.638Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -7933,7 +7933,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -7956,7 +7956,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8005,7 +8005,7 @@
       "dialogs": []
     },
     "canvas.mccneb.edu": {
-      "at": "2026-09-13T09:35:56.903Z",
+      "at": "2026-09-14T19:53:11.106Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8023,7 +8023,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8095,7 +8095,7 @@
       "dialogs": []
     },
     "canvas.morainevalley.edu": {
-      "at": "2026-09-13T09:36:49.350Z",
+      "at": "2026-09-14T19:55:44.044Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8112,7 +8112,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8184,7 +8184,7 @@
       "dialogs": []
     },
     "canvas.msstate.edu": {
-      "at": "2026-09-13T09:37:39.448Z",
+      "at": "2026-09-14T19:56:31.590Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8202,7 +8202,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8274,7 +8274,7 @@
       "dialogs": []
     },
     "canvas.nau.edu": {
-      "at": "2026-09-13T09:38:42.747Z",
+      "at": "2026-09-14T19:57:29.087Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8292,7 +8292,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8364,7 +8364,7 @@
       "dialogs": []
     },
     "canvas.odu.edu": {
-      "at": "2026-09-13T09:40:10.502Z",
+      "at": "2026-09-14T20:00:34.167Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8382,7 +8382,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8405,7 +8405,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8454,7 +8454,7 @@
       "dialogs": []
     },
     "canvas.okstate.edu": {
-      "at": "2026-09-13T09:41:19.709Z",
+      "at": "2026-09-14T20:01:43.621Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8472,7 +8472,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8495,7 +8495,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8544,7 +8544,7 @@
       "dialogs": []
     },
     "canvas.ou.edu": {
-      "at": "2026-09-13T09:42:57.508Z",
+      "at": "2026-09-14T20:03:51.833Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8561,7 +8561,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8584,7 +8584,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8633,7 +8633,7 @@
       "dialogs": []
     },
     "canvas.pasadena.edu": {
-      "at": "2026-09-13T09:44:16.267Z",
+      "at": "2026-09-14T20:06:07.737Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8651,7 +8651,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8674,7 +8674,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8723,7 +8723,7 @@
       "dialogs": []
     },
     "canvas.pdx.edu": {
-      "at": "2026-09-13T09:45:36.600Z",
+      "at": "2026-09-14T20:07:33.343Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8740,7 +8740,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8763,7 +8763,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8812,7 +8812,7 @@
       "dialogs": []
     },
     "canvas.pepperdine.edu": {
-      "at": "2026-09-13T09:46:49.503Z",
+      "at": "2026-09-14T20:09:11.656Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8830,7 +8830,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8853,7 +8853,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8902,7 +8902,7 @@
       "dialogs": []
     },
     "canvas.pitt.edu": {
-      "at": "2026-09-13T09:49:06.199Z",
+      "at": "2026-09-14T20:10:17.799Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -8920,7 +8920,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -8943,7 +8943,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -8992,7 +8992,7 @@
       "dialogs": []
     },
     "canvas.sdsu.edu": {
-      "at": "2026-09-13T09:50:40.825Z",
+      "at": "2026-09-14T20:12:39.410Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9009,7 +9009,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9032,7 +9032,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9081,7 +9081,7 @@
       "dialogs": []
     },
     "canvas.sfu.ca": {
-      "at": "2026-09-13T09:51:51.826Z",
+      "at": "2026-09-14T20:13:42.916Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9099,7 +9099,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9122,7 +9122,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9171,7 +9171,7 @@
       "dialogs": []
     },
     "canvas.slu.edu": {
-      "at": "2026-09-13T09:53:31.739Z",
+      "at": "2026-09-14T20:14:49.263Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9189,7 +9189,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9212,7 +9212,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9261,7 +9261,7 @@
       "dialogs": []
     },
     "canvas.tccd.edu": {
-      "at": "2026-09-13T09:55:49.761Z",
+      "at": "2026-09-14T20:20:16.132Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9279,7 +9279,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9302,7 +9302,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9351,7 +9351,7 @@
       "dialogs": []
     },
     "canvas.tufts.edu": {
-      "at": "2026-09-13T09:58:14.799Z",
+      "at": "2026-09-14T20:21:34.454Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9369,7 +9369,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9392,7 +9392,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9441,7 +9441,7 @@
       "dialogs": []
     },
     "canvas.ualberta.ca": {
-      "at": "2026-09-13T10:03:49.305Z",
+      "at": "2026-09-14T20:23:51.451Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9459,7 +9459,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9482,7 +9482,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9531,7 +9531,7 @@
       "dialogs": []
     },
     "canvas.uccs.edu": {
-      "at": "2026-09-13T10:06:14.260Z",
+      "at": "2026-09-14T20:26:26.391Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9549,7 +9549,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9572,7 +9572,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9621,7 +9621,7 @@
       "dialogs": []
     },
     "canvas.ucmerced.edu": {
-      "at": "2026-09-13T10:08:38.188Z",
+      "at": "2026-09-14T20:29:54.227Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9638,7 +9638,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9661,7 +9661,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9710,7 +9710,7 @@
       "dialogs": []
     },
     "canvas.ucsc.edu": {
-      "at": "2026-09-13T10:10:33.650Z",
+      "at": "2026-09-14T20:31:01.502Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9728,7 +9728,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9751,7 +9751,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9800,7 +9800,7 @@
       "dialogs": []
     },
     "canvas.uidaho.edu": {
-      "at": "2026-09-13T10:12:37.783Z",
+      "at": "2026-09-14T20:33:11.435Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9818,7 +9818,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9841,7 +9841,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9890,7 +9890,7 @@
       "dialogs": []
     },
     "canvas.umt.edu": {
-      "at": "2026-09-13T10:14:39.239Z",
+      "at": "2026-09-14T20:35:43.655Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9908,7 +9908,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -9931,7 +9931,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -9980,7 +9980,7 @@
       "dialogs": []
     },
     "canvas.unf.edu": {
-      "at": "2026-09-13T10:16:28.275Z",
+      "at": "2026-09-14T20:36:58.458Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -9998,7 +9998,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10021,7 +10021,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -10070,7 +10070,7 @@
       "dialogs": []
     },
     "canvas.unm.edu": {
-      "at": "2026-09-13T10:18:19.155Z",
+      "at": "2026-09-14T20:39:17.238Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10088,7 +10088,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10111,7 +10111,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -10160,7 +10160,7 @@
       "dialogs": []
     },
     "canvas.unr.edu": {
-      "at": "2026-09-13T10:20:12.165Z",
+      "at": "2026-09-14T20:40:22.885Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10178,7 +10178,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10201,7 +10201,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -10250,7 +10250,7 @@
       "dialogs": []
     },
     "canvas.utah.edu": {
-      "at": "2026-09-13T10:21:52.735Z",
+      "at": "2026-09-14T20:43:39.550Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10268,7 +10268,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10291,7 +10291,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -10340,7 +10340,7 @@
       "dialogs": []
     },
     "canvas.wpi.edu": {
-      "at": "2026-09-13T10:23:08.130Z",
+      "at": "2026-09-14T20:47:48.212Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10358,7 +10358,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10381,7 +10381,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -10430,7 +10430,7 @@
       "dialogs": []
     },
     "canvas.wustl.edu": {
-      "at": "2026-09-13T10:24:40.509Z",
+      "at": "2026-09-14T20:48:52.470Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10448,7 +10448,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10471,7 +10471,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -10520,7 +10520,7 @@
       "dialogs": []
     },
     "ccsdut.instructure.com": {
-      "at": "2026-09-13T10:27:33.065Z",
+      "at": "2026-09-14T20:51:05.070Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -10536,7 +10536,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10565,7 +10565,7 @@
       "dialogs": []
     },
     "cms.instructure.com": {
-      "at": "2026-09-13T11:06:22.637Z",
+      "at": "2026-09-14T20:51:35.453Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10606,7 +10606,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             283,
@@ -10655,7 +10655,7 @@
       "dialogs": []
     },
     "dpsk12.instructure.com": {
-      "at": "2026-09-13T10:31:54.351Z",
+      "at": "2026-09-14T20:54:48.448Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -10671,7 +10671,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10700,7 +10700,7 @@
       "dialogs": []
     },
     "gwinnett.instructure.com": {
-      "at": "2026-09-13T10:34:13.381Z",
+      "at": "2026-09-14T20:56:18.064Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -10716,7 +10716,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10745,7 +10745,7 @@
       "dialogs": []
     },
     "hillsboroughschools.instructure.com": {
-      "at": "2026-09-13T10:35:39.993Z",
+      "at": "2026-09-14T20:57:55.572Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -10761,7 +10761,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10790,7 +10790,7 @@
       "dialogs": []
     },
     "houstonisd.instructure.com": {
-      "at": "2026-09-13T10:37:02.750Z",
+      "at": "2026-09-14T20:58:23.076Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -10806,7 +10806,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10835,7 +10835,7 @@
       "dialogs": []
     },
     "jeffco.instructure.com": {
-      "at": "2026-09-13T10:38:17.444Z",
+      "at": "2026-09-14T21:01:13.903Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10852,7 +10852,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10924,7 +10924,7 @@
       "dialogs": []
     },
     "katyisd.instructure.com": {
-      "at": "2026-09-13T10:40:41.739Z",
+      "at": "2026-09-14T21:03:41.482Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -10942,7 +10942,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -10965,7 +10965,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -11014,7 +11014,7 @@
       "dialogs": []
     },
     "lausd.instructure.com": {
-      "at": "2026-09-13T10:46:44.977Z",
+      "at": "2026-09-14T21:04:58.711Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -11030,7 +11030,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -11040,11 +11040,11 @@
           ],
           "contentIsPaper": true,
           "sidebar": [
-            251,
-            251,
-            249
+            255,
+            255,
+            255
           ],
-          "sidebarIsPaper": false
+          "sidebarIsPaper": true
         },
         "dashboardDark": {
           "content": [
@@ -11059,7 +11059,7 @@
       "dialogs": []
     },
     "lcps.instructure.com": {
-      "at": "2026-09-13T10:48:44.215Z",
+      "at": "2026-09-14T21:05:32.789Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -11075,7 +11075,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -11104,7 +11104,7 @@
       "dialogs": []
     },
     "mcpsmd.instructure.com": {
-      "at": "2026-09-13T10:49:47.829Z",
+      "at": "2026-09-14T21:09:34.541Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -11122,7 +11122,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -11145,7 +11145,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -11194,7 +11194,7 @@
       "dialogs": []
     },
     "mnps.instructure.com": {
-      "at": "2026-09-13T10:51:36.162Z",
+      "at": "2026-09-14T21:13:08.911Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -11210,7 +11210,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -11239,7 +11239,7 @@
       "dialogs": []
     },
     "ncvps.instructure.com": {
-      "at": "2026-09-13T10:52:30.731Z",
+      "at": "2026-09-14T21:13:56.125Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -11257,7 +11257,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -11280,7 +11280,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -11329,7 +11329,7 @@
       "dialogs": []
     },
     "pwcs.instructure.com": {
-      "at": "2026-09-13T10:54:44.877Z",
+      "at": "2026-09-14T21:22:53.397Z",
       "build": "7faef57a1a",
       "files": [
         "variables",
@@ -11347,7 +11347,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -11370,7 +11370,7 @@
             "navRail": 1,
             "headerLogo": 1,
             "moduleHeader": 3,
-            "moduleDue": 4
+            "moduleDue": 2
           },
           "at": [
             282,
@@ -11419,7 +11419,7 @@
       "dialogs": []
     },
     "sandiegounified.instructure.com": {
-      "at": "2026-09-13T10:56:58.972Z",
+      "at": "2026-09-14T21:26:24.219Z",
       "build": "7faef57a1a",
       "files": [
         "variables"
@@ -11435,7 +11435,7 @@
             "cardHero": 4
           },
           "at": [
-            90,
+            96,
             150
           ],
           "content": [
@@ -11464,7 +11464,7 @@
       "dialogs": []
     },
     "wcpss.instructure.com": {
-      "at": "2026-09-13T11:07:28.600Z",
+      "at": "2026-09-14T21:47:11.457Z",
       "build": "7faef57a1a",
       "files": [
         "variables",

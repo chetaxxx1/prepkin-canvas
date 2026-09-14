@@ -205,7 +205,13 @@ function depFile(dir, url) {
   } catch { return null; }
 }
 
-for (const school of schools()) {
+// The theme files are gitignored (harvest.js writes them): a fresh worktree has
+// theme.json alone, and a run with nothing to test used to sit forever in
+// test.before with no word. Say so instead.
+const SCHOOLS = schools();
+assert.ok(SCHOOLS.length, 'no school under test/schools has its theme files: run node test/schools/harvest.js, or copy test/schools/ from the main checkout');
+
+for (const school of SCHOOLS) {
   test(`${school.host}: the paper, the buddy and every hook survive the school's theme`, { timeout: 900_000 }, async () => {
     await control('theme', { dir: school.dir });
     const r = { at: new Date().toISOString(), build: school.theme.build, files: Object.keys(school.theme.files), pages: {}, errors: [], dialogs: [] };

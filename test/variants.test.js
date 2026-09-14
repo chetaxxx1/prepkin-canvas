@@ -6,7 +6,7 @@
 // here needs an admin.
 //
 //   ssh -N -L 3000:localhost:3000 canvas@VM
-//   node --test test/variants.test.js
+//   node --test test/variants.test.js            (PREPKIN_PORT=8450 to run beside another suite)
 //
 // Screenshots go to design/signoff/canvas-variants/.
 
@@ -17,7 +17,7 @@ const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
 const { FakeServer } = require('./fake-canvas');
-const { launch, SCHOOL_A } = require('./harness');
+const { launch, SCHOOL_A, PORT } = require('./harness');
 const { SELECTORS } = require('../extension/selectors');
 
 const UPSTREAM = process.env.CANVAS_UPSTREAM || 'http://127.0.0.1:3000';
@@ -80,7 +80,7 @@ async function noErrors() {
 
 test.before(async () => {
   fs.mkdirSync(OUT, { recursive: true });
-  server = await new FakeServer({ upstream: UPSTREAM }).start(8443);
+  server = await new FakeServer({ upstream: UPSTREAM }).start(PORT);
   h = await launch();
   page = await h.context.newPage();
   page.setDefaultNavigationTimeout(120_000);

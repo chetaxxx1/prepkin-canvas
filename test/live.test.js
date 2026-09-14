@@ -21,6 +21,7 @@ const { FakePhone } = require('./fake-phone');
 const { launch, SCHOOL_A, BRIDGE } = require('./harness');
 const { openPopup } = require('./popup');
 const { SELECTORS } = require('../extension/selectors');
+const { teacherSession, deleteAssignments } = require('./live-clean');
 
 const UPSTREAM = process.env.CANVAS_UPSTREAM || 'http://127.0.0.1:3000';
 const TOKEN = process.env.CANVAS_TOKEN;
@@ -29,6 +30,10 @@ const SHOTS = path.join(__dirname, '..', 'design', 'signoff', 'canvas-live');
 const STUDENT = { login: 'alex@prepkin.test', password: 'PrepkinSandbox!2026' };
 
 let server, h, phone, page, physics, english, alex;
+// What this run made on the sandbox; test.after deletes it (teacher session
+// + _csrf_token, no admin needed), so the "Live:" rows never pile up in
+// course 4. `node test/live-clean.js` sweeps leftovers from a killed run.
+const made = [];
 
 /// Admin calls straight to the tunnel, the same way seed.py does.
 async function api(method, p, params = null, asUser = null) {
@@ -81,7 +86,13 @@ test.before(async () => {
   alex = (await api('GET', `accounts/1/users?search_term=${STUDENT.login}`)).find((u) => u.login_id === STUDENT.login);
   assert.ok(physics && english && alex, 'seed.py has not run');
 });
-test.after(async () => { await h?.close(); await server?.stop(); });
+test.after(async () => {
+  await h?.close(); await server?.stop();
+  if (made.length) {
+    const gone = await deleteAssignments(await teacherSession(UPSTREAM), physics.id, made).catch((e) => { console.log(`live-clean failed: ${e.message}`); return []; });
+    console.log(`live-clean: ${gone.length}/${made.length} of this run's assignments deleted`);
+  }
+});
 
 test('L1 the real Canvas is recognised and the panel mounts on a real page', async () => {
   await h.setStorage({ onboarded: true });
@@ -154,6 +165,7 @@ async function freshAssignment(label) {
     'assignment[submission_types][]': 'online_text_entry',
     'assignment[due_at]': new Date(Date.now() + 86_400_000).toISOString(),
   });
+  made.push(a.id);
   return { title, a };
 }
 
