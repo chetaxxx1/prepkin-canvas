@@ -9,7 +9,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const test = require('node:test');
 const assert = require('node:assert');
 const { FakeServer } = require('./fake-canvas');
-const { launch, SCHOOL_A, BRIDGE } = require('./harness');
+const { launch, PORT, SCHOOL_A, BRIDGE } = require('./harness');
 const { openPopup } = require('./popup');
 const S = require('./scenarios');
 
@@ -18,7 +18,7 @@ const control = (p, body) => fetch(`${BRIDGE}/__${p}`, { method: 'POST', body: J
 const SKIN = (over = {}) => ({ dark: false, cards: true, mascot: true, focusMinutes: 25, ...over });
 
 test.before(async () => {
-  server = await new FakeServer().start(8443);
+  server = await new FakeServer().start(PORT);
   h = await launch();
 });
 test.after(async () => { await h?.close(); await server?.stop(); });
@@ -492,7 +492,7 @@ test('R10 the rail is one list: the thing to start on top, the next few, Canvas 
   assert.doesNotMatch(first, /still counts/, 'the amber says late; no comment on top');
   assert.match(first, /Focus 25 min/);
   assert.equal(await page.$eval('#pk-week .pk-w-first small', (el) => el.className), 'amber');
-  assert.equal(await page.$eval('#pk-week a.start', (a) => a.getAttribute('href')), 'https://localhost:8443/courses/1/assignments/15');
+  assert.equal(await page.$eval('#pk-week a.start', (a) => a.getAttribute('href')), `${SCHOOL_A}/courses/1/assignments/15`);
   assert.ok((await page.$$('#pk-week .pk-w-list li')).length >= 1, 'then, the next few');
   assert.equal(await page.$eval('#pk-week', (el) => /\d+%|GPA/.test(el.textContent)), false, 'no grade leaves the panel');
   // Rings: one track per course with work this week, a fill only where something is handed in.

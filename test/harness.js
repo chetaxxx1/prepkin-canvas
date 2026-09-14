@@ -14,9 +14,12 @@ const DEPS = process.env.PREPKIN_TEST_DEPS
 const { chromium } = require(path.join(DEPS, 'node_modules/playwright'));
 
 const ROOT = path.join(__dirname, '..');
-const SCHOOL_A = 'https://localhost:8443';
-const SCHOOL_B = 'https://127.0.0.1:8443';
-const BRIDGE = 'https://localhost:8443';
+/// Another session's screenshot script kills whatever holds 8443 before each
+/// shot, so a suite can pick a port of its own: PREPKIN_PORT=8444 npm test:e2e.
+const PORT = Number(process.env.PREPKIN_PORT) || 8443;
+const SCHOOL_A = `https://localhost:${PORT}`;
+const SCHOOL_B = `https://127.0.0.1:${PORT}`;
+const BRIDGE = `https://localhost:${PORT}`;
 
 /// A copy of extension/ with two test-only changes: the fake origins are granted
 /// up front (a permission prompt cannot be clicked from a test), and config.js
@@ -86,4 +89,4 @@ async function launch({ headless = !process.env.HEADED } = {}) {
   return h;
 }
 
-module.exports = { launch, stageExtension, DEPS, SCHOOL_A, SCHOOL_B, BRIDGE };
+module.exports = { launch, stageExtension, DEPS, PORT, SCHOOL_A, SCHOOL_B, BRIDGE };

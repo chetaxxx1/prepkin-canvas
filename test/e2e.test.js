@@ -12,7 +12,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const { FakeServer } = require('./fake-canvas');
 const { FakePhone } = require('./fake-phone');
-const { launch, SCHOOL_A, SCHOOL_B, BRIDGE } = require('./harness');
+const { launch, PORT, SCHOOL_A, SCHOOL_B, BRIDGE } = require('./harness');
 const { openPopup } = require('./popup');
 const S = require('./scenarios');
 const { THEMES } = require('../extension/themes.js');
@@ -25,7 +25,7 @@ const HOST_A = 'localhost';
 const HOST_B = '127.0.0.1';
 
 test.before(async () => {
-  server = await new FakeServer().start(8443);
+  server = await new FakeServer().start(PORT);
   h = await launch();
 });
 test.after(async () => { await h?.close(); await server?.stop(); });

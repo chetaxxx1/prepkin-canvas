@@ -7,6 +7,8 @@
 // (a real Canvas) is what confirms them.
 
 const { DAY } = require('./fake-canvas');
+/// The same port the harness listens on, so every link points at this run's school.
+const SCHOOL = `https://localhost:${Number(process.env.PREPKIN_PORT) || 8443}`;
 
 const NOW = Date.now();
 const at = (days, now = NOW) => new Date(now + days * DAY).toISOString();
@@ -66,7 +68,7 @@ function assignment({ id = fresh(), name = `Assignment ${id}`, due = 3, points =
   return {
     id, name, due_at: due === null ? null : at(due), points_possible: points,
     created_at: at(created), unlock_at: unlock === null ? null : at(unlock),
-    html_url: `https://localhost:8443/courses/${course}/assignments/${id}`,
+    html_url: `${SCHOOL}/courses/${course}/assignments/${id}`,
     submission_types: types, published: true, has_overrides: false,
     ...(quizId ? { quiz_id: quizId } : {}),
     submission: sub,
@@ -84,7 +86,7 @@ function todoQuiz({ id = fresh(), title, due = 3, points = 10, courseId, courseN
   return {
     type: 'submitting', context_type: 'Course', course_id: courseId, context_name: courseName,
     quiz: { id, title, due_at: due === null ? null : at(due), points_possible: points,
-            html_url: `https://localhost:8443/courses/${courseId}/quizzes/${id}` },
+            html_url: `${SCHOOL}/courses/${courseId}/quizzes/${id}` },
   };
 }
 

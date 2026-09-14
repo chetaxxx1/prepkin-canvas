@@ -9,7 +9,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const { FakeServer } = require('./fake-canvas');
 const { FakePhone } = require('./fake-phone');
-const { launch, SCHOOL_A, SCHOOL_B, BRIDGE } = require('./harness');
+const { launch, PORT, SCHOOL_A, SCHOOL_B, BRIDGE } = require('./harness');
 const S = require('./scenarios');
 
 let server, h;
@@ -18,7 +18,7 @@ const world = (host, w) => control('world', { host, world: w });
 const HOST_A = 'localhost';
 const HOST_B = '127.0.0.1';
 
-test.before(async () => { server = await new FakeServer().start(8443); h = await launch(); });
+test.before(async () => { server = await new FakeServer().start(PORT); h = await launch(); });
 test.after(async () => { await h?.close(); await server?.stop(); });
 test.beforeEach(async () => { await control('reset'); await h.clearStorage(); });
 
