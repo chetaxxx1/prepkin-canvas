@@ -111,8 +111,13 @@ New Quizzes page, and on the widget dashboard.
 
 Click Sprout, bottom-right of any connected Canvas page.
 
-- **Today / This week / Overdue / Missing.** "This week" opens a day-by-day
-  planner with a seven-dot week strip. Overdue work is amber and says "still
+- **Tick it done.** A circle at the left of every row of ours: the rail, the
+  card's line, every planner card, every side-panel row. A tick is the
+  student's word that a thing is finished; it never writes to Canvas. The
+  worker keeps the map and is its one writer, so the phone pays a real
+  assignment once, and takes the coins back if the laptop unticks it.
+- **Today / This week / Overdue / Missing.** "This week" is the planner: one
+  list by day, with the grades block and the course doors under it. Overdue work is amber and says "still
   counts" — never red, never a scold. **Missing** only appears when there is
   something in it: work the school itself marked missing more than a week ago,
   which Canvas's own lists quietly drop. It is a separate list on purpose —
@@ -155,11 +160,16 @@ Click Sprout, bottom-right of any connected Canvas page.
   takes a scrim measured from how bright it is — just enough that white clears
   4.5:1 (`scrimFor` in `receipt.js`). **A bright picture is dimmed, never
   refused.** It is one receipt row with one Put back.
+- **Next in this class.** A course's home page carries its own next three
+  rows, ticks and all, so a student on the course page never opens the panel
+  to find out what that class wants.
 - **Next due, on the card.** Every dashboard card of a course you are a student
   in carries one line: what is due next and when, or "still counts" in amber if
   it slipped. Updates on every sync; goes away with the cards toggle.
-- **Looks.** A paper pair plus something the buddy wears, earned with coins from
-  verified work. On the page a look moves exactly the seven paper tokens —
+- **Looks.** Every tile in the picker is this student's own dashboard, drawn
+  in that look with their own courses and course colours, so the choice is
+  made on what they would get. A look is a paper pair plus something the buddy
+  wears, earned with coins from verified work. On the page a look moves exactly the seven paper tokens —
   type, layout and Canvas's own course colours never change.
 
 Dark mode is a warm charcoal, not a grey filter. Sprout never recolours.

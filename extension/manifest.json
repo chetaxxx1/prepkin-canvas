@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Prepkin for Canvas",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Dark mode, one to-do list and your grades, on Canvas. Free, no account. Everything it changes has a Put back.",
   "homepage_url": "https://prepkin.com",
   "permissions": [

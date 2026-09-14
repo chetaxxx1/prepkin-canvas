@@ -16,7 +16,9 @@ Dark mode, one to-do list, and your grades. That is what this is for.
 
 **Dark mode** that is a real reading surface, not a grey filter — 26 papers, every ink measured, and it follows your Mac or PC if you want it to. Free, and it always will be.
 
-**One to-do list.** Today, This week, Overdue, and Missing, in one place, so you are not opening five course pages to find out what is due. Every course card says what is due next.
+**One to-do list.** Today, This week, Overdue, and Missing, in one place, so you are not opening five course pages to find out what is due. Every course card says what is due next. A course's home page says "Next in this class" with its own next three. This week is a planner, one list by day, and you can drag any task onto the day you will do it.
+
+**Tick it done.** Every row has a circle. Tick it when the work is finished, on the laptop or in the side panel, and it stays ticked on the phone too. It never writes to Canvas.
 
 **Your grades**, with the class average beside each score, a grade you are aiming for, and "what do I need on the final?".
 
@@ -28,9 +30,11 @@ Every single change it makes to a Canvas page is listed in the popup — taken o
 
 The app has a paid plan, Prepkin Plus. Plus may add. Plus will never take away something that was free, and never something you already made.
 
+**Looks.** Twenty-six papers and pictures, and every tile in the picker is your own dashboard drawn in that look, with your own courses, so you see what you would get before you pick it.
+
 There is also a buddy in the corner with a focus timer, and a free Prepkin app for iPhone that shares the same list. Both are optional, and both stay out of the way if you leave them alone.
 
-Word count: about 280 (limit 400)
+Word count: about 370 (limit 400)
 
 ## Category
 
@@ -98,7 +102,7 @@ https://prepkin.com/support
 ## Screenshot shot list (1280×800)
 
 1. Canvas dashboard with the quiet look on, buddy closed, course cards readable.
-2. Buddy panel open on Today, amber "still counts" row visible, no red.
-3. Popup Receipt list with Taken off / Fixed / Added and one Put back control.
+2. Buddy panel open on Today, a row ticked done, amber "still counts" row visible, no red.
+3. Popup list of changes with Taken off / Fixed / Added and one Put back control.
 4. Grades view in the buddy: one course expanded with the aim tick on the bar.
 5. Laptop and phone together: coursework on the phone after a Connect and pair.
