@@ -176,7 +176,7 @@ document.getElementById('resync').addEventListener('click', async () => {
 
 // The page overlay reads these live, so a tick takes effect on any open Canvas
 // tab without a reload.
-const SKIN_DEFAULTS = { dark: false, cards: true, tidy: true, mascot: true, focusMinutes: 25, search: true };
+const SKIN_DEFAULTS = { dark: false, cards: true, tidy: true, mascot: true, focusMinutes: 25, search: true, cardGrades: true };
 
 document.querySelectorAll('[data-skin]').forEach((box) => {
   box.addEventListener('change', async () => {

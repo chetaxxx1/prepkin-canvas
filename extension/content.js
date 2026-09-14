@@ -285,7 +285,7 @@ function receiptForPage() {
     on: !!skin.cards,
     rows: killed || !skin.cards ? [] : receiptRows({
       present: (k) => document.querySelectorAll(SELECTORS[k].sel).length,
-      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: !!skin.cardGrades, dense: !!skin.dense, hidePast: !!skin.hidePast, nicknames: Object.keys(nicknames).length, ownArt: Object.keys(cardArt).length, search: skin.search !== false,
+      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: skin.cardGrades !== false, dense: !!skin.dense, hidePast: !!skin.hidePast, nicknames: Object.keys(nicknames).length, ownArt: Object.keys(cardArt).length, search: skin.search !== false,
       stock: stockFor(look, !!skin.dark), putBack,
     }),
   };
@@ -1349,11 +1349,20 @@ function isStaleMissing(t, now = new Date()) {
   return Number.isFinite(due) && (startOfDay(now) - startOfDay(new Date(due))) / DAY_MS > MISSED_AFTER_DAYS;
 }
 
-function dueRowsFor(courseId, now = new Date()) {
+/// The one line a course card carries: the soonest pending thing (slipped work
+/// first, since it is the oldest), how many more are pending, and whether
+/// anything was handed in at all (so an empty card can say "All handed in").
+function nextLineFor(courseId, now = new Date()) {
+  const rows = dueRowsFor(courseId, now, Infinity);
+  const pending = rows.filter((r) => !r.done);
+  return { next: pending[0] ?? null, more: Math.max(0, pending.length - 1), done: rows.some((r) => r.done) };
+}
+
+function dueRowsFor(courseId, now = new Date(), limit = 3) {
   const mine = data.tasks.filter((t) => String(t.courseId) === String(courseId) && !isStaleMissing(t, now));
   const time = (t) => { const d = t.dueAt ? new Date(t.dueAt) : null; return d && !isNaN(d) ? d.getTime() : Infinity; };
-  const pending = mine.filter((t) => !t.submittedAt).sort((a, b) => time(a) - time(b)).slice(0, 3);
-  const done = mine.filter((t) => t.submittedAt).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 3 - pending.length);
+  const pending = mine.filter((t) => !t.submittedAt).sort((a, b) => time(a) - time(b)).slice(0, limit);
+  const done = mine.filter((t) => t.submittedAt).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, Math.max(0, limit - pending.length));
   return [...pending, ...done].map((t) => ({ t, done: !!t.submittedAt, overdue: !t.submittedAt && time(t) < now.getTime(), when: dueShort(t, now) }));
 }
 
@@ -1410,9 +1419,9 @@ function decorateCards() {
       delete span.dataset.pkName;
     }
   }
-  // The grade pill: only when the student turned it on (its receipt row), so a
-  // score is never written into the page by default.
-  const showGrades = skin.cards && !killed && skin.cardGrades;
+  // The grade, on the band's corner, on unless the student's receipt row turned
+  // it off (the #3 thing students name; BetterCampus shows it by default too).
+  const showGrades = skin.cards && !killed && skin.cardGrades !== false;
   for (const card of cards) {
     const course = data.courses.find((c) => String(c.id) === courseOf(card));
     const score = showGrades && typeof course?.score === 'number' ? course.score : null;
@@ -1421,8 +1430,8 @@ function decorateCards() {
     if (!pill) {
       pill = document.createElement('span');
       pill.className = CARD_GRADE_CLASS;
-      const actions = card.querySelector('.ic-DashboardCard__action-container');
-      if (actions) actions.append(pill); else continue;
+      const header = card.querySelector('.ic-DashboardCard__header');
+      if (header) header.append(pill); else continue;
     }
     const text = `${Number.isInteger(score) ? score : score.toFixed(1)}%`;
     if (pill.textContent !== text) pill.textContent = text;
@@ -1447,31 +1456,30 @@ function decorateCards() {
       const actions = card.querySelector('.ic-DashboardCard__action-container');
       if (actions) actions.before(el); else card.append(el);
     }
-    const rows = dueRowsFor(id, now);
-    el.classList.toggle('overdue', rows.some((r) => r.overdue));
-    el.classList.toggle('is-none', !rows.length);
+    // One line per card: the next thing, its date, and how many more wait. The
+    // rail beside the cards holds the list; a card says its one thing once.
+    const { next, more, done } = nextLineFor(id, now);
+    el.classList.toggle('overdue', !!next?.overdue);
+    el.classList.toggle('is-none', !next);
     // textContent, never markup: titles are other people's text. Rebuilt only
-    // when the rows change, so our own write never re-triggers the observer.
-    const sig = rows.map((r) => `${r.t.id}|${r.done ? 1 : 0}|${r.overdue ? 1 : 0}|${r.when}|${r.t.title}`).join('\n') || 'none';
+    // when the line changes, so our own write never re-triggers the observer.
+    const sig = next ? `${next.t.id}|${next.overdue ? 1 : 0}|${next.when}|${more}|${next.t.title}` : done ? 'all-in' : 'none';
     if (el.dataset.sig === sig) continue;
     el.dataset.sig = sig;
     el.replaceChildren();
-    if (!rows.length) { el.textContent = 'Nothing due'; continue; }
-    const label = document.createElement('span'); label.className = 'pk-due-label'; label.textContent = 'Due';
-    el.append(label);
-    for (const r of rows) {
-      // A pending row is a link to the work, and says Start when the mouse is
-      // on it; handed-in rows stay plain text.
-      const url = r.done ? null : safeURL(r.t.url);
-      const row = document.createElement(url ? 'a' : 'div');
-      row.className = `pk-due-row${r.done ? ' done' : ''}${r.overdue ? ' overdue' : ''}`;
-      if (url) row.href = url;
-      const t = document.createElement('span'); t.className = 't'; t.textContent = r.t.title; t.title = r.t.title;
-      const d = document.createElement('span'); d.className = 'd'; d.textContent = r.done ? 'handed in' : r.overdue ? `was due ${r.when}` : r.when;
-      row.append(t, d);
-      if (url) { const go = document.createElement('span'); go.className = 'go'; go.textContent = 'Start'; row.append(go); }
-      el.append(row);
-    }
+    if (!next) { el.textContent = done ? 'All handed in' : 'Nothing due'; continue; }
+    // The line is a link to the work, and says Start when the mouse is on it.
+    const url = safeURL(next.t.url);
+    const row = document.createElement(url ? 'a' : 'div');
+    row.className = `pk-due-row${next.overdue ? ' overdue' : ''}`;
+    if (url) row.href = url;
+    const t = document.createElement('span'); t.className = 't'; t.textContent = next.t.title; t.title = next.t.title;
+    row.append(t);
+    if (more) { const n = document.createElement('span'); n.className = 'n'; n.textContent = `+${more}`; n.title = `${more} more in this class`; row.append(n); }
+    const d = document.createElement('span'); d.className = 'd'; d.textContent = next.overdue ? `was due ${next.when}` : next.when;
+    row.append(d);
+    if (url) { const go = document.createElement('span'); go.className = 'go'; go.textContent = 'Start'; row.append(go); }
+    el.append(row);
   }
 }
 
@@ -1675,6 +1683,16 @@ function plannerBannerAsync(courseId, n) { return plannerBanner(courseId, n); }
 /// Whether the rail belongs on this page: the dashboard, the skin on, nothing
 /// killed or put back, and a sync to show. Shown from the first sync on, even
 /// with nothing due: the empty week is still the student's.
+/// The class as a small tile: its Canvas colour and its first letter. The
+/// colour is the school's, not ours (data-pk-course-color says so to the lint).
+function classTile(t) {
+  const tile = el('i', 'pk-tile', (shortCourse(t.courseName) || '?').trim().charAt(0).toUpperCase());
+  const color = safeColor(t.colorHex);
+  if (color) { tile.style.background = color; tile.dataset.pkCourseColor = ''; }
+  tile.setAttribute('aria-hidden', 'true');
+  return tile;
+}
+
 function railShows() {
   const onDashboard = /^\/(dashboard)?\/?$/.test(location.pathname);
   return onDashboard && !!document.getElementById('right-side') && !!skin.cards && !killed && !putBack.week && !!(data.tasks?.length || data.at);
@@ -1697,8 +1715,7 @@ function renderWeek() {
   const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 3);
   const running = focus.state === 'running';
   const said = voice(b);
-  const days = weekDays(data.tasks, w, now);
-  const key = JSON.stringify([w.start.getTime(), w.total, w.done, days.map((d) => d.dots.map((x) => x.state + (x.color ?? ''))), said.headline,
+  const key = JSON.stringify([w.start.getTime(), w.total, w.done, said.headline,
     first?.id, first?.dueAt, then.map((t) => [t.id, t.dueAt, t.submittedAt]), b.overdue.length, skin.focusMinutes, tankId(),
     running && focus.endsAt, running && focus.title, plTab]);
   if (existing && existing.dataset.key === key) { renderFold(); return; }
@@ -1715,64 +1732,15 @@ function renderWeek() {
     box.append(tank);
   }
   const say = el('div', 'pk-w-say');
-  say.append(el('b', '', said.headline), el('small', '', said.short ?? said.subline));
+  say.append(el('b', '', said.headline));
+  // His second line only when nothing follows it: "Start with" says the rest.
+  if (!(running || first)) say.append(el('small', '', said.short ?? said.subline));
   box.append(say);
 
-  // The week as a planner strip (Structured, Tiimo): seven days, today
-  // filled, and under each day a dot per piece of work in its course's
-  // colour — solid once it is in, hollow while it waits, amber if it slipped.
-  const strip = el('div', 'pk-w-days');
-  strip.setAttribute('aria-label', 'This week');
-  for (const d of days) {
-    const day = el('div', `day${d.today ? ' today' : d.past ? ' past' : ''}`);
-    day.append(el('small', '', d.letter), el('b', '', String(d.date.getDate())));
-    const dots = el('i', 'dots');
-    for (const x of d.dots) {
-      const dot = el('span', `dot ${x.state}`);
-      if (x.color) dot.style.setProperty('--c', x.color);
-      dots.append(dot);
-    }
-    day.append(dots);
-    day.title = d.title;
-    strip.append(day);
-  }
-  box.append(strip);
-
-  // The rings: one per course, in the course's own colour, filled by how much
-  // of that course's week is handed in. The biggest week sits outermost.
-  const ring = el('div', 'pk-w-ring');
-  const size = 120, stroke = 9, gapStep = 12;
-  const svg = document.createElementNS(SVG_NS, 'svg');
-  svg.setAttribute('viewBox', `0 0 ${size} ${size}`); svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('aria-hidden', 'true');
-  const g = document.createElementNS(SVG_NS, 'g');
-  g.setAttribute('transform', `rotate(-90 ${size / 2} ${size / 2})`);
-  g.setAttribute('fill', 'none'); g.setAttribute('stroke-width', String(stroke)); g.setAttribute('stroke-linecap', 'round');
-  const circle = (r, color, dash, opacity) => {
-    const n = document.createElementNS(SVG_NS, 'circle');
-    n.setAttribute('cx', size / 2); n.setAttribute('cy', size / 2); n.setAttribute('r', r); n.setAttribute('stroke', color);
-    if (dash) n.setAttribute('stroke-dasharray', dash);
-    if (opacity) n.setAttribute('stroke-opacity', opacity);
-    return n;
-  };
-  const rings = w.byCourse.slice(0, 4);
-  const outer = (size - stroke) / 2 - 1;
-  rings.forEach((course, i) => {
-    const r = outer - i * gapStep, c = 2 * Math.PI * r;
-    const color = safeColor(course.colorHex) ?? 'var(--pk-mark)';
-    g.append(circle(r, color, null, skin.dark ? '0.3' : '0.18'));
-    if (course.done > 0) g.append(circle(r, color, `${(course.done / course.total) * c} ${c}`, null));
-  });
-  if (!rings.length) g.append(circle(outer, 'var(--pk-ink-2)', null, '0.15'));
-  svg.append(g);
-  const centre = el('div', 'pk-w-centre');
+  // No strip, no ring (2026-09-14): the rail is five things — the tank, his
+  // line, the thing to start, the next three, and a foot in words. The week's
+  // count lives in the foot; the planner tab holds the week itself.
   const allIn = w.total > 0 && w.done === w.total;
-  if (allIn) centre.append(el('b', '', `${w.done}/${w.total}`), el('small', '', 'all in'));
-  else if (w.total) centre.append(el('b', '', `${w.done}/${w.total}`), el('small', '', 'done'));
-  else centre.append(el('b', '', '0'), el('small', '', 'due'));
-  ring.append(svg, centre);
-  ring.title = w.byCourse.map((c) => `${c.name}: ${c.done} of ${c.total}`).join('\n');
-  box.append(ring);
-  if (!w.total) box.append(el('p', 'pk-w-empty', 'Nothing due this week. Good week for a head start.'));
   // The week closes: he dances once for it. Confetti, without the confetti.
   celebrateWeek(allIn, w.start);
 
@@ -1780,7 +1748,7 @@ function renderWeek() {
   // with its two ways to start it, the next few under it. Always today's,
   // whichever week the rings show.
   if (running || first) {
-    box.append(el('p', 'pk-w-label', running ? 'Now' : 'Up next'));
+    box.append(el('p', 'pk-w-label', running ? 'Now' : 'Start with'));
     const list = el('ul', 'pk-w-list');
     const top = el('li', 'pk-w-first');
     const info = el('div');
@@ -1817,19 +1785,25 @@ function renderWeek() {
     }
     top.append(info, actions);
     list.append(top);
-    // The next few are one line each: the dot is the course, the day is on
-    // the right. The full course and time sit in the title for a hover.
-    for (const t of running ? [first, ...then].filter((t) => t && String(t.id) !== String(focus.taskId)).slice(0, 3) : then) {
-      const late = new Date(t.dueAt) < now;
-      const li = el('li');
-      const dot = el('i', late ? 'late' : '');
-      const color = safeColor(t.colorHex); if (color && !late) dot.style.background = color;
-      const name = el('b', '', t.title);
-      name.title = `${t.courseName} · ${dueLabel(t, now)}`;
-      li.append(dot, name, el('small', late ? 'amber' : '', dayShort(t, now)));
-      list.append(li);
-    }
     box.append(list);
+    // Then: the next few, one line each — the class as a tile in its colour
+    // with its first letter (the row George picked from Finch), the title, the
+    // day on the right. The full course and time sit in the title for a hover.
+    const rest = running ? [first, ...then].filter((t) => t && String(t.id) !== String(focus.taskId)).slice(0, 3) : then;
+    if (rest.length) {
+      box.append(el('p', 'pk-w-label', 'Then'));
+      const more = el('ul', 'pk-w-list pk-w-then');
+      for (const t of rest) {
+        const late = new Date(t.dueAt) < now;
+        const li = el('li');
+        li.append(classTile(t));
+        const name = el('b', '', t.title);
+        name.title = `${t.courseName} · ${dueLabel(t, now)}`;
+        li.append(name, el('small', late ? 'amber' : '', dayShort(t, now)));
+        more.append(li);
+      }
+      box.append(more);
+    }
   }
 
   // The league is the buddy's: it lives in his panel, one tap away, not on

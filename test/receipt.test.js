@@ -250,16 +250,17 @@ test('R13 the left menu wears the theme rail; an image theme shows its wall thro
   await page.close();
 });
 
-test('R14 the grade pill is opt-in, reads the synced score, and Put back hides it', async () => {
+test('R14 the grade sits on the band by default, reads the synced score, and its receipt row turns it off', async () => {
   const page = await open('/');
-  assert.equal(await page.$('.pk-card-grade'), null, 'off by default');
-  await h.setStorage({ skin: SKIN({ cardGrades: true }) }); await page.waitForTimeout(500);
+  await page.waitForSelector('.pk-card-grade', { timeout: 5000 });
   const pills = await page.$$eval('.ic-DashboardCard', (els) => els.map((e) => e.querySelector('.pk-card-grade')?.textContent ?? null));
-  assert.equal(pills[0], '88.5%', 'AP Physics has a score');
+  assert.equal(pills[0], '88.5%', 'AP Physics has a score, on by default');
   assert.equal(pills[1], null, 'English has none, so no pill');
-  assert.ok(await page.$('.ic-DashboardCard__action-container > .pk-card-grade:last-child'), 'the grade ends the action row');
+  assert.ok(await page.$('.ic-DashboardCard__header > .pk-card-grade'), 'the grade sits on the band');
   await h.setStorage({ skin: SKIN({ cardGrades: false }) }); await page.waitForTimeout(500);
-  assert.equal(await page.$('.pk-card-grade'), null, 'its receipt row turns it off again');
+  assert.equal(await page.$('.pk-card-grade'), null, 'its receipt row turns it off');
+  await h.setStorage({ skin: SKIN({}) }); await page.waitForTimeout(500);
+  assert.ok(await page.$('.pk-card-grade'), 'and back on');
   await page.close();
 });
 
@@ -310,13 +311,14 @@ test('R17 this week: our rail card reports finished work, counts by course, and 
   const page = await open('/');
   await page.waitForSelector('#right-side > #pk-week', { timeout: 5000 });
   assert.ok(await page.$('#pk-week + *'), 'Canvas\'s own sidebar follows it, folded, not gone');
-  assert.match(await page.$eval('#pk-week .pk-w-centre b', (e) => e.textContent), /^\d+\/\d+$|^0$/);
+  assert.equal(await page.$('#pk-week .pk-w-ring, #pk-week .pk-w-days'), null, 'no ring, no week strip: the count is in the foot');
   const finished = await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent);
   assert.match(finished, /^(?:\d+ things? finished this week|)$/, 'finished work gets a line; nothing finished gets no scold');
   assert.doesNotMatch(finished, /streak|in a row/i, 'the rail no longer presents a streak');
   const legend = await page.$$eval('#pk-week .pk-w-legend li span', (els) => els.map((e) => e.textContent));
   assert.ok(legend.length === 0 || legend.includes('AP Physics C'), legend.join(','));
-  assert.equal(await page.$$eval('#pk-week svg circle', (els) => els.length) >= 1, true);
+  const labels = await page.$$eval('#pk-week .pk-w-label', (els) => els.map((e) => e.textContent));
+  assert.ok(labels.every((l) => /^(Start with|Then|Now)$/.test(l)), `headings in plain words: ${labels.join(' · ')}`);
   assert.equal(await style(page, '#pk-week', 'backgroundColor'), 'rgb(255, 255, 255)', 'paper-2 on Newsprint');
   await h.setStorage({ putBack: { week: true } }); await page.waitForTimeout(400);
   assert.equal(await page.$('#pk-week'), null);
@@ -423,13 +425,15 @@ test('R21 a pending task of your own counts in the week without inflating the fi
   await h.sw((c) => bindWriter(c), await phone.claim());
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');
-  const before = await page.$eval('#pk-week .pk-w-centre b', (e) => e.textContent);
+  // The rail's key carries the week's total; the ring that showed it is gone.
+  const total = () => page.$eval('#pk-week', (e) => JSON.parse(e.dataset.key)[1]);
+  const before = await total();
   const finishedBefore = await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent);
   const today = new Date(); today.setHours(20, 0, 0, 0);
   await h.setStorage({ ownTasks: [{ id: 'own-1', title: 'Read chapter 4', dueAt: today.toISOString(), courseId: 1, courseName: 'AP Physics C', submittedAt: null }] });
-  await page.waitForFunction(() => [...document.querySelectorAll('.pk-due-row .t')].some((e) => e.textContent === 'Read chapter 4'), null, { timeout: 4000 });
-  const after = await page.$eval('#pk-week .pk-w-centre b', (e) => e.textContent);
-  assert.notEqual(after, before, `the week counts it: ${before} then ${after}`);
+  await page.waitForFunction((n) => JSON.parse(document.getElementById('pk-week')?.dataset.key ?? '[0,0]')[1] > n, before, { timeout: 4000 });
+  const after = await total();
+  assert.equal(after, before + 1, `the week counts it: ${before} then ${after}`);
   assert.equal(await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent), finishedBefore, 'pending work is not called finished');
   const pushed = await phone.fetchTodo();
   assert.ok(!pushed.tasks.some((t) => t.title === 'Read chapter 4'), 'the phone never sees it');
@@ -495,9 +499,10 @@ test('R10 the rail is one list: the thing to start on top, the next few, Canvas 
   assert.equal(await page.$eval('#pk-week a.start', (a) => a.getAttribute('href')), `${SCHOOL_A}/courses/1/assignments/15`);
   assert.ok((await page.$$('#pk-week .pk-w-list li')).length >= 1, 'then, the next few');
   assert.equal(await page.$eval('#pk-week', (el) => /\d+%|GPA/.test(el.textContent)), false, 'no grade leaves the panel');
-  // Rings: one track per course with work this week, a fill only where something is handed in.
-  const rings = await page.$$eval('#pk-week .pk-w-ring circle', (els) => els.map((c) => c.getAttribute('stroke')));
-  assert.ok(rings.length >= 1, 'at least one ring');
+  // Five things: the tank, his line, Start with, Then, the foot. Nothing uppercase.
+  assert.equal(await page.$('#pk-week .pk-w-ring, #pk-week .pk-w-days, #pk-week .pk-w-legend'), null, 'no ring, strip or legend');
+  assert.ok(await page.$('#pk-week .pk-w-then .pk-tile'), 'the next few carry a class tile');
+  assert.equal(await page.$$eval('#pk-week *', (els) => els.filter((e) => getComputedStyle(e).textTransform === 'uppercase' && (e.textContent || '').trim()).length), 0, 'no uppercase labels on the rail');
   // Canvas's own To Do and Coming Up are replaced; Put back on that row brings them back.
   const todo = require('../extension/selectors').SELECTORS.todoReact.sel;
   assert.equal(await page.$eval(todo, (el) => getComputedStyle(el).display), 'none', 'replaced');
@@ -538,7 +543,7 @@ test('R24 handing in pays off at once: the form posts, one sync follows, the row
   assert.ok(log.some((l) => l.path.startsWith('/api/v1/courses/1/assignments')), 'one sync ran after the post');
   // The dashboard now shows it struck through, and the badge floated the reward.
   const dash = await open('/');
-  assert.match(await dash.$eval('.pk-card-due', (e) => e.textContent), /Problem Set 7[\s\S]*handed in/, 'struck on the card');
+  assert.doesNotMatch(await dash.$eval('.pk-card-due', (e) => e.textContent), /Problem Set 7/, 'the card has moved on from it');
   await page.close(); await dash.close();
 });
 
@@ -573,14 +578,14 @@ test('R26 a pending row on a course card is a link that says Start on hover; han
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');
   await page.waitForSelector('.pk-card-due a.pk-due-row', { timeout: 5000 });
-  const pending = await page.$('.pk-card-due a.pk-due-row:not(.done)');
+  const pending = await page.$('.pk-card-due a.pk-due-row');
   assert.ok(pending, 'a pending row is a link');
   assert.match(await pending.getAttribute('href'), /\/courses\/1\/assignments\/1[123]$/);
-  assert.equal(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .go', (e) => getComputedStyle(e).display), 'none', 'Start hides until hover');
+  assert.equal(await page.$eval('.pk-card-due a.pk-due-row .go', (e) => getComputedStyle(e).display), 'none', 'Start hides until hover');
   await pending.hover();
-  assert.notEqual(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .go', (e) => getComputedStyle(e).display), 'none', 'Start on hover');
-  assert.equal(await page.$eval('.pk-card-due a.pk-due-row:not(.done) .d', (e) => getComputedStyle(e).display), 'none', 'the date steps aside');
-  assert.equal(await page.$('.pk-card-due a.pk-due-row.done'), null, 'handed-in rows are not links');
+  assert.notEqual(await page.$eval('.pk-card-due a.pk-due-row .go', (e) => getComputedStyle(e).display), 'none', 'Start on hover');
+  assert.equal(await page.$eval('.pk-card-due a.pk-due-row .d', (e) => getComputedStyle(e).display), 'none', 'the date steps aside');
+  assert.ok((await page.$$('.pk-card-due .pk-due-row')).length <= (await page.$$('.ic-DashboardCard')).length, 'one line per card, never more');
   await page.close();
 });
 

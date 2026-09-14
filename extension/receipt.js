@@ -182,7 +182,7 @@ function skinClasses({ on, dark, look, dense = false, hidePast = false, putBack 
 /// put back. `present(hookName)` says how many times the hook matches (a
 /// boolean reads as one); the content script supplies it from the DOM, tests
 /// supply it directly.
-function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = false, dense = false, hidePast = false, nicknames = 0, ownArt = 0, search = true }) {
+function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = true, dense = false, hidePast = false, nicknames = 0, ownArt = 0, search = true }) {
   const ctx = { dark, mascot, stock, detect, cardGrades, dense, hidePast, nicknames, ownArt, search };
   return RULES.flatMap((rule) => {
     if (rule.darkOnly && !dark) return [];

@@ -600,12 +600,11 @@ test('F3 each dashboard card says what is due next, and updates after a sync', a
   const page = await h.context.newPage();
   await page.goto(`${SCHOOL_A}/`);
   await page.waitForSelector('.pk-card-due', { timeout: 5000 });
-  const lines = await page.$$eval('.ic-DashboardCard', (cards) => cards.map((c) => [...c.querySelectorAll('.pk-due-row')].map((r) => (r.classList.contains('done') ? '~' : '') + r.querySelector('.t').textContent)));
-  assert.equal(lines[0][0], 'Problem Set 7', 'the soonest unsubmitted item in Physics comes first');
-  assert.ok(lines[0].length <= 3 && lines[0].length >= 2, `up to three rows: ${lines[0].join(' | ')}`);
-  assert.equal(lines[1][0], 'Rhetorical analysis', 'the only pending item in English');
-  assert.ok(!lines[0].includes('Problem Set 6'), 'handed-in work is never a pending row');
-  assert.ok(lines.flat().some((x) => x.startsWith('~')) || true, 'handed-in work may fill the list, struck');
+  const lines = await page.$$eval('.ic-DashboardCard', (cards) => cards.map((c) => [...c.querySelectorAll('.pk-due-row')].map((r) => `${r.querySelector('.t').textContent}${r.querySelector('.n') ? ' ' + r.querySelector('.n').textContent : ''}`)));
+  assert.equal(lines[0].length, 1, `one line per card: ${lines[0].join(' | ')}`);
+  assert.match(lines[0][0], /^Problem Set 7 \+\d+$/, 'the soonest unsubmitted item in Physics, and how many more wait');
+  assert.equal(lines[1][0], 'Rhetorical analysis', 'the only pending item in English, nothing more');
+  assert.ok(!lines.flat().some((x) => x.startsWith('Problem Set 6')), 'handed-in work is never the line');
   // Alex hands in Problem Set 7: the card moves on to the next one.
   const w = S.plainSemester();
   w.assignments[1][0].submission = S.submitted(-0.01);

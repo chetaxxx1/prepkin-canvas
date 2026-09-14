@@ -367,12 +367,12 @@ test('every rail carries white text at AA, and the theme style names it', () => 
   assert.match(art, /--pk-rail-image:linear-gradient\(rgba\(35, 18, 38, 0\.74\)[^;]*url\("x\.webp"\)/);
 });
 
-test('the grade row needs the toggle and a card; off by default so no score lands in the page', () => {
+test('the grade row needs a card; on by default, and its own switch strikes it through', () => {
   const present = (k) => (k === 'card' ? 2 : 0);
   const keys = (o) => receiptRows({ present, ...o }).map((r) => r.key);
   const row = (o) => receiptRows({ present, ...o }).find((r) => r.key === 'card-grade');
-  assert.equal(row({}).back, true, 'listed, struck through, Turn on');
-  assert.equal(row({ cardGrades: true }).back, false);
+  assert.equal(row({}).back, false, 'listed and live by default');
+  assert.equal(row({ cardGrades: false }).back, true, 'struck through, Turn on');
   assert.ok(!keys({ cardGrades: true, present: () => 0 }).includes('card-grade'), 'no cards, no row');
 });
 

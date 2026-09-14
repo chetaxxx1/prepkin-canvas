@@ -165,9 +165,12 @@ html.pk-on:not(.pk-back-paper) .ic-DashboardCard:hover { transform: none !import
 /* One text stack under the band: name, code, due line, then Canvas's action
  * row. Canvas floats the name box up over the band with rounded corners; that
  * is what made the card look like parts stuck together. */
-html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header { padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header { padding: 0 !important; position: relative !important; }
+/* Canvas draws a 2px rule above and below the name box; with the band flush
+ * above it that read as three boxes with seams (measured 2026-09-14). One card:
+ * the band, the words, the line, then Canvas's row under one hairline. */
 html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header_content {
-  position: static !important; margin: 0 !important; padding: 14px 16px 0 !important; border-radius: 0 !important; background: none !important;
+  position: static !important; margin: 0 !important; padding: 14px 16px 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important;
 }
 html.pk-on:not(.pk-back-paper) .ic-DashboardCard__header-title {
   font-size: 15px !important; line-height: 20px !important; font-weight: 900 !important; letter-spacing: -.01em !important;
@@ -321,11 +324,13 @@ html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-2 .ic-Dashboard
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-3 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-3) !important; }
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard.pk-banner-4 .ic-DashboardCard__header_hero { background-image: var(--pk-card-art-4) !important; }
 
-/* The grade: the last thing in Canvas's action row, right-aligned, a stat and
- * not a sticker. No fill, no border. */
+/* The grade: a paper chip in the band's corner (content.js appends it to the
+ * header), where the eye lands first and where the course colour or picture is
+ * behind it. Tabular digits; no border. */
 html.pk-on:not(.pk-back-card-grade) .pk-card-grade {
-  margin-left: auto; padding: 0 6px; font-size: 14px; line-height: 32px; font-weight: 900; letter-spacing: -.01em;
-  font-variant-numeric: tabular-nums; color: var(--pk-ink);
+  position: absolute; top: 10px; left: 12px; z-index: 1; padding: 0 9px; border-radius: 12px; height: 24px;
+  font-size: 13px; line-height: 24px; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums;
+  background: var(--pk-paper-2); color: var(--pk-ink); pointer-events: none;
 }
 html.pk-back-card-grade .pk-card-grade { display: none; }
 
@@ -424,22 +429,18 @@ html.pk-on.pk-dark:not(.pk-back-seam) .tool_content_wrapper {
   white-space: nowrap;
 }
 .pk-card-due.is-none { font-weight: 400; color: var(--pk-ink-2, inherit); }
-/* Up to three rows under a small "Due" label: pending first, handed-in work
- * struck through, the overdue row on an amber tint. */
-.pk-card-due .pk-due-label { display: block; font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-ink-2, inherit); margin-bottom: 4px; }
-.pk-due-row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; padding: 2px 0; }
-.pk-due-row .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* One line: the next thing, "+2" when more wait, the date at the right. Slipped
+ * work says so in the date's ink only; no band, no label, nothing struck. */
+.pk-due-row { display: flex; gap: 8px; align-items: baseline; padding: 2px 0; }
+.pk-due-row .t { min-width: 0; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-due-row .n { flex: none; font-size: 11px; line-height: 16px; font-weight: 800; padding: 0 5px; border-radius: 8px; background: var(--pk-paper-sunk, rgba(0,0,0,.06)); color: var(--pk-ink-2, inherit); }
 .pk-due-row .d { flex: none; font-weight: 600; font-size: 12px; color: var(--pk-ink-2, inherit); font-variant-numeric: tabular-nums; }
-.pk-due-row.done { font-weight: 500; color: var(--pk-ink-2, inherit); }
-.pk-due-row.done .t { text-decoration: line-through; text-decoration-color: var(--pk-rule, currentColor); }
-.pk-due-row.overdue { margin: 0 -6px; padding: 3px 6px; border-radius: 6px; background: var(--pk-amber-tint, rgba(222, 154, 34, .14)); color: var(--pk-amber-ink, #8A5A12); }
-.pk-due-row.overdue .d { color: inherit; }
+.pk-due-row.overdue .d { color: var(--pk-amber-ink, #8A5A12); }
 /* A pending row is a link; on hover its date steps aside for Start. */
 a.pk-due-row { color: inherit; text-decoration: none !important; }
 a.pk-due-row .go { display: none; flex: none; font-size: 12px; font-weight: 800; color: var(--pk-green, #0B7A55); }
 a.pk-due-row:hover .d, a.pk-due-row:focus-visible .d { display: none; }
 a.pk-due-row:hover .go, a.pk-due-row:focus-visible .go { display: inline; }
-a.pk-due-row.overdue:hover .go { color: inherit; }
 a.pk-due-row:focus-visible { outline: 2px solid #51CFA0; outline-offset: 1px; border-radius: 6px; }
 html.pk-back-card-due .pk-card-due { display: none; }
 
@@ -542,6 +543,9 @@ html.pk-on:not(.pk-back-paper) .ic-Action-header,
 html.pk-on:not(.pk-back-paper) #calendar_header,
 html.pk-on:not(.pk-back-paper) .calendar_header,
 html.pk-on:not(.pk-back-paper) .fc-view,
+html.pk-on:not(.pk-back-paper) .fc-view table,
+html.pk-on:not(.pk-back-paper) .fc-body,
+html.pk-on:not(.pk-back-paper) .fc-bg,
 html.pk-on:not(.pk-back-paper) .fc-day,
 html.pk-on:not(.pk-back-paper) .fc-widget-content,
 html.pk-on:not(.pk-back-paper) #calendar-list,
@@ -560,14 +564,40 @@ html.pk-on:not(.pk-back-paper) .entry-content,
 html.pk-on:not(.pk-back-paper) [class*="-discussions-v2__wrapper"],
 html.pk-on:not(.pk-back-paper) .discussions-v2__container-image,
 html.pk-on:not(.pk-back-paper) .ic-discussion-row-container,
-html.pk-on:not(.pk-back-paper) [class*="checkboxFacade__facade"],
-html.pk-on:not(.pk-back-paper) [class*="radioInput__facade"],
 html.pk-on:not(.pk-back-paper) [class*="-view--inlineBlock-avatar"],
-html.pk-on:not(.pk-back-paper) .ic-avatar {
+html.pk-on:not(.pk-back-paper) .ic-avatar,
+/* Surfaces measured on the real sandbox, 2026-09-14 (test/pages.test.js): the
+ * mini calendar and the calendar list on /calendar, InstUI's table (Files),
+ * and the Next/Previous footer under a page, all of which Canvas paints white. */
+html.pk-on:not(.pk-back-paper) #minical,
+html.pk-on:not(.pk-back-paper) #calendar-list-holder,
+html.pk-on:not(.pk-back-paper) #content [class*="-view-table"],
+html.pk-on:not(.pk-back-paper) #content [class*="-view-body"],
+html.pk-on:not(.pk-back-paper) #content [class*="-view-row"],
+html.pk-on:not(.pk-back-paper) #content [class*="-view-cell"],
+html.pk-on:not(.pk-back-paper) .module-sequence-footer-content,
+html.pk-on:not(.pk-back-paper) .fc-day-top {
   background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
 }
+/* Today, in the calendar's day-number row and its grid cell, sits a shade sunk. */
+html.pk-on:not(.pk-back-paper) .fc-day-top.fc-today,
+html.pk-on:not(.pk-back-paper) .fc-day.fc-today { background-color: var(--pk-paper-sunk) !important; }
+/* A check box or radio that is NOT checked takes the paper; a checked one keeps
+ * Canvas's own fill, because InstUI paints its tick and its toggle label white
+ * and expects the dark fill under them. Painting the checked facade made the
+ * selected "Show by date" toggle white on white (2026-09-14). */
+html.pk-on:not(.pk-back-paper) input[class*="__input"]:not(:checked) + label [class*="checkboxFacade__facade"],
+html.pk-on:not(.pk-back-paper) input[class*="__input"]:not(:checked) + label [class*="radioInput__facade"] {
+  background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
+}
+html.pk-on:not(.pk-back-paper) input[class*="__input"]:not(:checked) + label [class*="radioInput__label"] { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #minical .fc-toolbar,
+html.pk-on:not(.pk-back-paper) #minical .fc-center,
+html.pk-on:not(.pk-back-paper) #minical .fc-day-number { color: var(--pk-ink) !important; }
 /* Sunk surfaces: table heads and calendar day headers. */
 html.pk-on:not(.pk-back-paper) .ic-Table th,
+html.pk-on:not(.pk-back-paper) #content [class*="-view-head"] [class*="-view-cell"],
+html.pk-on:not(.pk-back-paper) #content [class*="-colHeader"],
 html.pk-on:not(.pk-back-paper) .fc-widget-header,
 html.pk-on:not(.pk-back-paper) .fc-day-header {
   background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
@@ -581,8 +611,33 @@ html.pk-on:not(.pk-back-paper) .fc-widget-content td { border-color: var(--pk-ru
 html.pk-on:not(.pk-back-paper) #content h1, html.pk-on:not(.pk-back-paper) #content h2,
 html.pk-on:not(.pk-back-paper) #content h3, html.pk-on:not(.pk-back-paper) #content h4,
 html.pk-on:not(.pk-back-paper) #content [class*="-view-heading"],
+html.pk-on:not(.pk-back-paper) #content [class*="-colHeader"] span,
+html.pk-on:not(.pk-back-paper) #content [class*="formFieldLayout__label"],
+html.pk-on:not(.pk-back-paper) #content .ig-header-title .element_toggler,
 html.pk-on:not(.pk-back-paper) #content [class*="-text"]:not([class*="-view-link"]),
 html.pk-on:not(.pk-back-paper) #right-side [class*="-text"]:not([class*="-view-link"]) { color: var(--pk-ink) !important; }
+/* Words Canvas sets in its own dark grey or blue, which vanish on a dark paper
+ * (measured by test/pages.test.js, 2026-09-14): the courses table's sortable
+ * headers, the roster's striped rows, the assignment sidebar's "Submitted!",
+ * the syllabus table's links, the settings page's hint lines. */
+html.pk-on:not(.pk-back-paper) .ic-Table th a,
+html.pk-on:not(.pk-back-paper) #my_courses_table th a { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) .roster tr,
+html.pk-on:not(.pk-back-paper) .roster td { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #sidebar_content .details .header { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #syllabusTableBody a { color: var(--pk-link) !important; }
+html.pk-on:not(.pk-back-paper) #syllabus tr,
+html.pk-on:not(.pk-back-paper) #syllabus td { background-color: var(--pk-paper-2) !important; border-color: var(--pk-rule) !important; }
+/* InstUI's own grey "secondary" surfaces: a table's head, the inbox's message
+ * header band. Named by the stable end of the class, never the hash. */
+html.pk-on:not(.pk-back-paper) #content thead[class*="-head"] { background-color: var(--pk-paper-sunk) !important; }
+html.pk-on:not(.pk-back-paper) #content [class*="-view--inlineBlock"]:not([class*="baseButton"]):not([class*="-pill"]):not([class*="avatar"]) { background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content .requirement a { color: var(--pk-link) !important; }
+html.pk-on:not(.pk-back-paper) #content [id^="hints_"],
+html.pk-on:not(.pk-back-paper) #content .hint { color: var(--pk-ink-2) !important; }
+/* The page foot: Canvas's "Open Source LMS" line and links, in the quiet ink. */
+html.pk-on:not(.pk-back-paper) #footer { color: var(--pk-ink-2) !important; border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #footer a { color: var(--pk-link) !important; }
 /* Plain links already follow --ic-link-color (set above); InstUI links do not. */
 html.pk-on:not(.pk-back-paper) #content [class*="-view-link"],
 html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--pk-link) !important; }
@@ -609,29 +664,11 @@ html.pk-dark #pk-week .pk-w-tank { background-image: var(--pk-tank, none), linea
 #pk-week .pk-w-say b { display: block; font-size: 15px; line-height: 20px; font-weight: 800; letter-spacing: -.01em; }
 #pk-week .pk-w-say small { display: block; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); margin-top: 2px; }
 #pk-week.pk-w-quiet .pk-w-say { display: none; }
-/* The week strip: seven days, today filled, a dot per piece of work under
- * each day in its course's colour. Solid is in, hollow is open, amber slipped. */
-#pk-week .pk-w-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin: 0 0 14px; }
-#pk-week .pk-w-days .day { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
-#pk-week .pk-w-days small { font-size: 10px; line-height: 12px; font-weight: 800; letter-spacing: .04em; color: var(--pk-ink-2); }
-#pk-week .pk-w-days b { width: 24px; height: 24px; border-radius: 999px; display: grid; place-items: center; font-size: 12px; line-height: 1; font-weight: 800; color: var(--pk-ink); }
-/* .day.today, not .today: the sidebar's own "b is ink" rule above carries an
- * extra element in its selector, and these have to outrank it. */
-#pk-week .pk-w-days .day.past b, #pk-week .pk-w-days .day.past small { color: var(--pk-ink-2); opacity: .7; }
-#pk-week .pk-w-days .day.today b { background: var(--pk-ink); color: var(--pk-paper-2); }
-#pk-week .pk-w-days .day.today small { color: var(--pk-ink); }
-#pk-week .pk-w-days .dots { display: flex; gap: 2px; height: 6px; }
-#pk-week .pk-w-days .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--c, var(--pk-ink-2)); }
-#pk-week .pk-w-days .dot.open { background: transparent; box-shadow: inset 0 0 0 1.5px var(--c, var(--pk-ink-2)); }
-#pk-week .pk-w-days .dot.late { background: transparent; box-shadow: inset 0 0 0 1.5px var(--pk-amber-rule); }
-#pk-week .pk-w-ring { position: relative; width: 120px; max-width: 100%; margin: 0 auto 12px; }
-#pk-week .pk-w-ring svg { display: block; width: 100%; height: auto; }
-#pk-week .pk-w-centre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
-#pk-week .pk-w-centre b { font-size: 24px; font-weight: 900; letter-spacing: -.02em; }
-#pk-week .pk-w-centre small { font-size: 10px; font-weight: 800; color: var(--pk-ink-2); margin-top: 3px; text-transform: uppercase; letter-spacing: .08em; }
-#pk-week .pk-w-empty { margin: 0 0 12px; font-size: 13px; line-height: 18px; color: var(--pk-ink-2); text-align: center; }
-#pk-week .pk-w-label { margin: 0 0 6px; padding-top: 12px; border-top: 1px solid var(--pk-rule);
-  font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pk-ink-2); }
+/* Headings in plain words (Imprint): the body face, air above, a little below.
+ * Never uppercase, never tracked. */
+#pk-week .pk-w-label { margin: 0 0 8px; padding-top: 12px; border-top: 1px solid var(--pk-rule);
+  font-size: 13px; line-height: 18px; font-weight: 800; color: var(--pk-ink); }
+#pk-week .pk-w-say + .pk-w-label { border-top: 0; padding-top: 0; }
 #pk-week .pk-w-actions { display: grid; grid-template-columns: auto 1fr; gap: 6px; }
 #pk-week .pk-w-actions a, #pk-week .pk-w-actions span[role="button"] {
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; min-width: 0;
@@ -643,10 +680,14 @@ html.pk-dark #pk-week .pk-w-tank { background-image: var(--pk-tank, none), linea
 #pk-week .pk-w-actions span[role="button"]:hover { background: var(--pk-paper-sunk); }
 #pk-week .pk-w-actions a:focus-visible, #pk-week .pk-w-actions span:focus-visible, #pk-week .pk-w-foot .more:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
 #pk-week .pk-w-list { list-style: none; margin: 0 0 4px; padding: 0; }
-#pk-week .pk-w-list li { display: flex; align-items: center; gap: 9px; padding: 8px 0; border-top: 1px solid var(--pk-rule); }
+#pk-week .pk-w-list li { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-top: 1px solid var(--pk-rule); }
 #pk-week .pk-w-list li:first-child { border-top: 0; padding-top: 0; }
-#pk-week .pk-w-list i { flex: none; width: 8px; height: 8px; border-radius: 999px; background: var(--pk-ink-2); }
-#pk-week .pk-w-list i.late { background: transparent; box-shadow: inset 0 0 0 2px var(--pk-amber-rule); }
+#pk-week .pk-w-then { margin-bottom: 8px; }
+/* The class tile: 22px, its colour, its first letter in white; a hairline of
+ * the ink at 12% keeps a pale colour off the paper. */
+#pk-week .pk-tile { flex: none; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center;
+  font-style: normal; font-size: 11px; font-weight: 800; color: #fff; background: var(--pk-ink-2);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); text-shadow: 0 1px 0 rgba(0, 0, 0, .18); }
 #pk-week .pk-w-list b { display: block; flex: 1; min-width: 0; font-size: 13px; line-height: 17px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #pk-week .pk-w-list small { display: block; flex: none; font-size: 12px; line-height: 15px; font-weight: 700; color: var(--pk-ink-2); }
 #pk-week .pk-w-list small.amber { color: var(--pk-amber-ink); }
