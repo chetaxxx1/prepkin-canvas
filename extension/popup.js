@@ -453,7 +453,15 @@ chrome.storage.local.get('wallet').then(({ wallet: storedWallet }) => {
 // awaiting before the call. It is hidden entirely on a Chrome too old to have
 // the API rather than shown as a button that does nothing.
 
-if (chrome.sidePanel?.open) {
+// Firefox has no sidePanel; its sidebarAction opens from a click the same way.
+const sidebar = typeof browser !== 'undefined' && browser.sidebarAction?.open ? browser.sidebarAction : null;
+if (sidebar) {
+  const btn = document.getElementById('open-side');
+  btn.hidden = false;
+  btn.addEventListener('click', () => {
+    sidebar.open().then(() => window.close(), (e) => { document.getElementById('status').textContent = 'Firefox would not open the sidebar.'; console.warn('Prepkin', e); });
+  });
+} else if (chrome.sidePanel?.open) {
   const btn = document.getElementById('open-side');
   const hint = document.getElementById('side-hint');
   // The window is looked up now, while nothing is waiting, so the click handler

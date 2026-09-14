@@ -17,17 +17,21 @@ const CONTENT_SCRIPTS = ['canvas.js', 'selectors.js', 'day.js', 'recap.js', 'pla
 const FETCH_TIMEOUT_MS = 20_000;
 const withTimeout = (init = {}) => ({ ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
 
-importScripts('errlog.js');
+// Chrome runs this as a service worker and pulls the shared files in here;
+// Firefox runs it as an event page with those files already listed before it
+// in background.scripts (bridge/firefox.sh), where importScripts does not exist.
+const inWorker = typeof importScripts === 'function';
+if (inWorker) importScripts('errlog.js');
 
 // bridge/apply-config.sh writes config.js. Without it the extension still reads
 // Canvas; it just has nowhere to send the list.
-importScripts('canvas.js');
-importScripts('day.js');
+if (inWorker) { importScripts('canvas.js'); importScripts('day.js'); }
 
 let bridge = null;
 try {
-  importScripts('config.js');
-  bridge = PREPKIN_BRIDGE;
+  if (inWorker) importScripts('config.js');
+  bridge = typeof PREPKIN_BRIDGE !== 'undefined' ? PREPKIN_BRIDGE : null;
+  if (!bridge) throw new Error('no config');
 } catch (e) {
   console.warn('Prepkin: no config.js — run bridge/apply-config.sh');
 }
