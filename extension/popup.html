@@ -45,8 +45,8 @@
 
   section { padding: 0 16px; }
   .label {
-    font-size: 11px; line-height: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--ink-2); margin: 14px 0 6px;
+    font-size: 13px; line-height: 18px; font-weight: 800;
+    color: var(--ink); margin: 16px 0 6px;
   }
   .label.first { margin-top: 4px; }
   .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -64,8 +64,8 @@
   .receipt .sum { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 14px 6px;
                   font-size: 14px; line-height: 18px; font-weight: 800; }
   .receipt .grp-head { display: flex; align-items: center; gap: 6px; width: 100%; border: 0; background: none; cursor: pointer;
-                       margin: 0; padding: 10px 14px 4px; font: inherit; font-size: 11px; line-height: 14px; font-weight: 800;
-                       letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); text-align: left; }
+                       margin: 0; padding: 10px 14px 4px; font: inherit; font-size: 13px; line-height: 18px; font-weight: 800;
+                       color: var(--ink); text-align: left; }
   .receipt .grp-head em { font-style: normal; color: var(--ink-3); }
   .receipt .grp-head::after { content: ""; margin-left: auto; width: 6px; height: 6px; border-right: 2px solid var(--ink-3);
                               border-bottom: 2px solid var(--ink-3); transform: rotate(-45deg); transition: transform 150ms var(--ease); }
@@ -202,7 +202,7 @@
 
 <section class="receipt" id="receipt" hidden>
   <div class="row">
-    <p class="label">Receipt · <span id="receipt-page">This page</span></p>
+    <p class="label">Changed on <span id="receipt-page">this page</span></p>
     <button id="show-me" class="link">Show me</button>
   </div>
   <div class="card outline">
@@ -244,7 +244,7 @@
   <p class="label">Canvas</p>
   <div class="card outline">
     <ul class="toggles">
-      <li><label><span class="name">Quiet Canvas, with a receipt</span>
+      <li><label><span class="name">Quiet Canvas</span>
         <input type="checkbox" data-skin="cards" /><span class="sw"></span></label></li>
       <li class="modes"><span class="name">Paper</span>
         <div class="seg" id="mode" role="radiogroup" aria-label="Paper">
@@ -253,7 +253,7 @@
           <button type="button" data-mode="auto" role="radio">Auto</button>
         </div></li>
     </ul>
-    <p class="foot">Grades on cards, compact pages and the buddy live on the receipt above.</p>
+    <p class="foot">Grades on cards, compact pages and the buddy are on the list above.</p>
   </div>
 </section>
 

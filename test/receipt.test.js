@@ -754,7 +754,7 @@ test('R4 the popup lists what this page got, Put back reverses one thing and is 
     assert.ok(listed.some((t) => t.startsWith(line)), `missing: ${line}`);
   }
   assert.ok(!listed.some((t) => /Four menu items|Module header|Word/.test(t)), 'no course-page rows on the dashboard');
-  assert.equal(await popup.text('#receipt-page'), 'Dashboard');
+  assert.equal(await popup.text('#receipt-page'), 'the Dashboard');
   assert.equal(await popup.text('#receipt .foot'), 'Everything here is one click from coming back.');
   // Put back the hero.
   await popup.click('li[data-key="hero"] .put');
@@ -811,7 +811,7 @@ test('R4 the receipt on Modules and on a dark assignment names the right rows; T
   await popup.waitFor('#receipt-fixed li');
   listed = await popup.evaluate(`[...document.querySelectorAll('#receipt li')].map((li) => li.textContent.trim())`);
   assert.ok(listed.some((t) => t.startsWith('Text pasted from Word, made readable')), listed.join(' | '));
-  assert.equal(await popup.text('#receipt-page'), 'Assignment');
+  assert.equal(await popup.text('#receipt-page'), 'this assignment');
   await popup.close();
   await dark.close();
 });

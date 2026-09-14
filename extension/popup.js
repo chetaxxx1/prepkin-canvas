@@ -259,12 +259,14 @@ async function loadReceipt() {
   }
   receiptEl.hidden = !r;
   if (!r) return;
-  document.getElementById('receipt-page').textContent = r.page;
+  // 'Changed on the Dashboard', 'Changed on this assignment', 'Changed on this page'.
+  const where = { Dashboard: 'the Dashboard', Modules: 'Modules', Assignment: 'this assignment', Grades: 'Grades', 'Course home': 'the course home', Quiz: 'this quiz' };
+  document.getElementById('receipt-page').textContent = where[r.page] ?? 'this page';
   document.getElementById('show-me').hidden = !r.rows.length || !!r.off;
   const off = document.getElementById('receipt-off');
   const lists = document.getElementById('receipt-lists');
   if (r.off || !r.on) {
-    off.textContent = r.off ?? 'Quiet Canvas is off. Turn it on below and this page gets its receipt.';
+    off.textContent = r.off ?? 'Quiet Canvas is off. Turn it on below and this page gets its list.';
     off.hidden = false;
     lists.hidden = true;
     return;
