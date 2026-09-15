@@ -35,3 +35,12 @@ The receipt gained three rows with Put backs (module-band, grades-fit, cal-rows;
 raised 19 → 22 in `receipt.test.js`). What holds every dark page under A is the
 "never a property on a button" rule: the carve-out allows colour only, which cannot
 take a white ground away. That change is George's call.
+
+## After the buttons pass (2026-09-15, a3e79b81)
+
+George opened the button rule: Canvas's plain buttons take the paper (never a submit,
+primary, danger, success or icon-only button; never an InstUI button inside a form).
+The title bar is the paper, not a white block, and the count badge is gone from the
+buddy. Every page is now A− or A in both papers: Dashboard A · A, the other five A− · A−.
+Left, all Canvas's own: the cached Recent Feedback list, the underlined month link on the
+calendar, the grey icon-only download button on Files, the totals row wrapping on Grades.
