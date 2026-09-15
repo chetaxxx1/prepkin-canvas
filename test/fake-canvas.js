@@ -228,8 +228,8 @@ function pageFor(url) {
 <div class="submit_assignment"><button type="button" class="btn btn-primary" id="assignment_submit">Start Assignment</button></div>
 <div id="submit_assignment"><form id="submit_online_text_entry_form" method="post" action="${p}/submissions"><textarea name="submission[body]"></textarea><button type="submit" class="btn btn-primary" id="submit_text_entry">Submit Assignment</button></form></div></div>`;
   } else if (/\/courses\/\d+\/grades/.test(p)) {
-    main = `<h1>Grades for Alex Rivera</h1><div id="grade-summary-content"><table id="grades_summary"><thead><tr><th>Name</th><th>Due</th><th>Score</th></tr></thead>
-<tbody><tr class="student_assignment"><th class="title">Problem Set 6</th><td class="due">Sep 1</td><td class="assignment_score"><span class="grade">41</span><span class="possible points_possible">/ 50</span></td></tr></tbody></table>
+    main = `<div id="grade-summary-content"><div id="print-grades-container" class="ic-Action-header"><div class="ic-Action-header__Primary"><h1 class="ic-Action-header__Heading">Grades for Alex Rivera</h1></div></div><div id="assignments"><table id="grades_summary"><thead><tr><th>Name</th><th>Due</th><th>Score</th></tr></thead>
+<tbody><tr class="student_assignment"><th class="title">Problem Set 6</th><td class="due">Sep 1</td><td class="assignment_score"><span class="grade">41</span><span class="possible points_possible">/ 50</span></td></tr></tbody></table></div>
 <div id="student-grades-final">Total: 82%</div></div>`;
   } else if (/\/courses\/\d+\/external_tools\//.test(p)) {
     main = `<h1>Tool</h1><div class="tool_content_wrapper"><iframe id="tool_content" src="about:blank" title="tool"></iframe></div>`;

@@ -243,6 +243,8 @@ function detectFacts() {
     courseNext: courseNextShows(),
     // The Planner tab, on the dashboard with cards to stand beside.
     planner: railShows() && !!document.getElementById('DashboardCard_Container'),
+    // Our grades row on a course's own grades page, Canvas's table under it.
+    gradesPage: gradesPageShows(),
     wordPaste: WORD_INKS.some((ink) =>
       document.querySelector(`.user_content [style*="color:${ink}" i], .user_content [style*="color: ${ink}" i]`)),
   };
@@ -994,7 +996,7 @@ function dayShort(t, now) {
 /// and a script cannot see the top-level let/const of one that runs after it;
 /// function declarations it can. So the state goes out through this one.
 function plannerState() {
-  return { data, plans, wallet, focus, skin, putBack, levels, ownTasks, plannedOn, nicknames, targets, recapDismissed, LEVELS, LEVEL_NAMES };
+  return { data, plans, wallet, focus, skin, putBack, killed, levels, ownTasks, plannedOn, nicknames, targets, recapDismissed, LEVELS, LEVEL_NAMES };
 }
 /// The student's own words for a class: a nickname, its level, the grade they
 /// aim for. Each is kept in this browser; the tab that set it redraws itself.
@@ -1357,6 +1359,7 @@ function refreshPage() {
   renderSearchChip();
   renderPlannerTabs();
   renderPlanner();
+  renderGradesPage();
   renderLooks();
   if (sprite) mountSprite();
 }

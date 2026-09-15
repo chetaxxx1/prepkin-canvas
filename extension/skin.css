@@ -453,6 +453,18 @@ html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .clear { dis
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details::after { display: none !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.more_link { color: var(--pk-link) !important; font-size: 12px !important; }
 
+/* ---- grades-page: our grade row is the page; Canvas's table under it ---- */
+#pk-grades { margin: 8px 0 20px; }
+#pk-grades .pk-pl-grade { margin-left: 0; }
+#pk-grades .pk-gr-foot { margin: 10px 0 0; }
+#pk-grades .pk-gr-show { border: 0; padding: 0; background: none; font: inherit; font-weight: 700; color: var(--pk-link); cursor: pointer; }
+#pk-grades .pk-gr-show:focus-visible { outline: 2px solid var(--pk-mark); outline-offset: 2px; border-radius: 4px; }
+/* Everything of Canvas's under its title row — the Course / Arrange By
+ * controls, the table — folds; the title and Print Grades stay. */
+html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #grade-summary-content > :not(.ic-Action-header):not(#pk-grades),
+html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content > #assignments,
+html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content #grade-summary-react { display: none !important; }
+
 /* ---- grades-fit: Canvas's grades table is 757px wide at 1280 and runs under
  * the sidebar (its own bug: #assignments is 620px, overflow visible). Fixed
  * columns that add to the width, the name widest, the two icon columns 18px;
@@ -703,7 +715,10 @@ html.pk-on:not(.pk-back-paper) .fc-day-top {
 /* The bar a page's title and its buttons sit in (Grades, the calendar, the
  * assignments index): Canvas paints it white, which on a paper read as a
  * block behind the title. It is the paper itself, no block, no rule. */
-html.pk-on:not(.pk-back-paper) .header-bar { background-color: var(--pk-paper) !important; color: var(--pk-ink) !important; border-color: transparent !important; box-shadow: none !important; }
+html.pk-on:not(.pk-back-paper) .header-bar,
+html.pk-on:not(.pk-back-paper) .ic-Action-header,
+html.pk-on:not(.pk-back-paper) .ic-Action-header__Primary,
+html.pk-on:not(.pk-back-paper) .ic-Action-header__Secondary { background-color: var(--pk-paper) !important; color: var(--pk-ink) !important; border-color: transparent !important; box-shadow: none !important; }
 /* A module's requirement pill ("Complete All Items"): Canvas's white pill. */
 html.pk-on:not(.pk-back-paper) .context_module .pill li { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important; }
 /* Today, in the calendar's day-number row and its grid cell, sits a shade sunk. */
@@ -1035,146 +1050,146 @@ html.pk-on.pk-show.pk-hide-past #future_enrollments_table {
 /* The Planner tab hides the cards; Put back on the planner row keeps the cards. */
 /* Canvas sets display:block inline on the container, so this needs the weight. */
 html.pk-on.pk-planner-on:not(.pk-back-planner) #DashboardCard_Container { display: none !important; }
-html.pk-back-planner #pk-dashtabs, html.pk-back-planner #pk-planner { display: none; }
+html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-grades) { display: none; }
 
-#pk-planner {
+:is(#pk-planner, #pk-grades) {
   margin: 6px 0 28px; max-width: 720px; color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums;
 }
-#pk-planner .pk-pl-icon { display: block; flex: none; }
-#pk-planner .pk-pl-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 4px 0 6px; }
-#pk-planner .pk-pl-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
-#pk-planner .pk-pl-title b { font-size: 22px; line-height: 28px; font-weight: 900; letter-spacing: -.02em; }
-#pk-planner .pk-pl-head .add {
+:is(#pk-planner, #pk-grades) .pk-pl-icon { display: block; flex: none; }
+:is(#pk-planner, #pk-grades) .pk-pl-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 4px 0 6px; }
+:is(#pk-planner, #pk-grades) .pk-pl-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-title b { font-size: 22px; line-height: 28px; font-weight: 900; letter-spacing: -.02em; }
+:is(#pk-planner, #pk-grades) .pk-pl-head .add {
   height: 30px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; cursor: pointer; user-select: none;
   font-size: 13px; font-weight: 800; background: #51CFA0; border: 1px solid #51CFA0; color: #101820; box-shadow: 0 2px 0 #35A87D;
 }
-#pk-planner .pk-pl-head .add:active { transform: translateY(1px); box-shadow: 0 1px 0 #35A87D; }
-#pk-planner .pk-pl-head .add:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+:is(#pk-planner, #pk-grades) .pk-pl-head .add:active { transform: translateY(1px); box-shadow: 0 1px 0 #35A87D; }
+:is(#pk-planner, #pk-grades) .pk-pl-head .add:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
 
 /* Groups: a heading in plain words, the count in the quiet ink, today outlined
  * down its left. A day's heading takes a dropped row as a plan. */
-#pk-planner .pk-pl-group { display: flex; align-items: baseline; gap: 8px; margin: 18px 0 6px; padding: 0 0 0 10px; border-left: 3px solid transparent; }
-#pk-planner .pk-pl-group b { font-size: 15px; line-height: 20px; font-weight: 800; }
-#pk-planner .pk-pl-group em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-group.today { border-left-color: #51CFA0; }
-#pk-planner .pk-pl-group.over { background: rgba(81, 207, 160, .16); border-radius: 8px; }
-#pk-planner .pk-pl-group.fold { cursor: pointer; user-select: none; }
-#pk-planner .pk-pl-group.fold b::after { content: " ›"; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-group.fold.open b::after { content: " ⌄"; }
-#pk-planner .pk-pl-group.fold:hover b { text-decoration: underline; text-decoration-color: var(--pk-rule); }
-#pk-planner .pk-pl-group:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 6px; }
-#pk-planner .pk-pl-still, #pk-planner .pk-pl-empty, #pk-planner .pk-pl-foot { margin: 0 0 4px 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-empty:empty { display: none; }
+:is(#pk-planner, #pk-grades) .pk-pl-group { display: flex; align-items: baseline; gap: 8px; margin: 18px 0 6px; padding: 0 0 0 10px; border-left: 3px solid transparent; }
+:is(#pk-planner, #pk-grades) .pk-pl-group b { font-size: 15px; line-height: 20px; font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-group em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-group.today { border-left-color: #51CFA0; }
+:is(#pk-planner, #pk-grades) .pk-pl-group.over { background: rgba(81, 207, 160, .16); border-radius: 8px; }
+:is(#pk-planner, #pk-grades) .pk-pl-group.fold { cursor: pointer; user-select: none; }
+:is(#pk-planner, #pk-grades) .pk-pl-group.fold b::after { content: " ›"; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-group.fold.open b::after { content: " ⌄"; }
+:is(#pk-planner, #pk-grades) .pk-pl-group.fold:hover b { text-decoration: underline; text-decoration-color: var(--pk-rule); }
+:is(#pk-planner, #pk-grades) .pk-pl-group:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 6px; }
+:is(#pk-planner, #pk-grades) .pk-pl-still, :is(#pk-planner, #pk-grades) .pk-pl-empty, :is(#pk-planner, #pk-grades) .pk-pl-foot { margin: 0 0 4px 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-empty:empty { display: none; }
 
 /* Rows: the rail's shape, wider. Circle, tile, title, the date at the right. */
-#pk-planner .pk-pl-rows { list-style: none; margin: 0 0 0 13px; padding: 0; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); border-radius: 14px; overflow: hidden; }
-#pk-planner .pk-pl-rows li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-top: 1px solid var(--pk-rule); min-height: 44px; }
-#pk-planner .pk-pl-rows li:first-child { border-top: 0; }
-#pk-planner .pk-pl-rows li[draggable="true"] { cursor: grab; }
-#pk-planner .pk-pl-rows li.dragging { opacity: .5; }
-#pk-planner .pk-pl-name { flex: 1 1 auto; min-width: 0; font-size: 14px; line-height: 18px; font-weight: 700; color: var(--pk-ink) !important; text-decoration: none !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#pk-planner a.pk-pl-name:hover { text-decoration: underline !important; text-decoration-color: #51CFA0 !important; }
-#pk-planner .pk-pl-rows small { flex: none; font-size: 12px; line-height: 15px; font-weight: 700; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-rows small.amber { color: var(--pk-amber-ink); }
-#pk-planner .pk-pl-rows li.done .pk-pl-name { text-decoration: line-through !important; text-decoration-color: var(--pk-ink-2) !important; color: var(--pk-ink-2) !important; }
-#pk-planner .pk-pl-rows li.moved small::before { content: "moved · "; }
-#pk-planner .pk-pl-rows li.empty { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-planner .pk-tile { flex: none; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center;
+:is(#pk-planner, #pk-grades) .pk-pl-rows { list-style: none; margin: 0 0 0 13px; padding: 0; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); border-radius: 14px; overflow: hidden; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-top: 1px solid var(--pk-rule); min-height: 44px; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li:first-child { border-top: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li[draggable="true"] { cursor: grab; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.dragging { opacity: .5; }
+:is(#pk-planner, #pk-grades) .pk-pl-name { flex: 1 1 auto; min-width: 0; font-size: 14px; line-height: 18px; font-weight: 700; color: var(--pk-ink) !important; text-decoration: none !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:is(#pk-planner, #pk-grades) a.pk-pl-name:hover { text-decoration: underline !important; text-decoration-color: #51CFA0 !important; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows small { flex: none; font-size: 12px; line-height: 15px; font-weight: 700; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-rows small.amber { color: var(--pk-amber-ink); }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.done .pk-pl-name { text-decoration: line-through !important; text-decoration-color: var(--pk-ink-2) !important; color: var(--pk-ink-2) !important; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.moved small::before { content: "moved · "; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.empty { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-tile { flex: none; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center;
   font-style: normal; font-size: 11px; font-weight: 800; color: #fff; background: var(--pk-ink-2);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); text-shadow: 0 1px 0 rgba(0, 0, 0, .18); }
 /* The one to start: the two ways to start it under the row, the rail's buttons. */
-#pk-planner .pk-pl-rows li.pk-w-first { flex-wrap: wrap; padding-bottom: 12px; }
-#pk-planner .pk-pl-words { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-#pk-planner .pk-pl-words .pk-pl-name { white-space: normal; font-weight: 800; }
-#pk-planner .pk-pl-words small { flex: none; font-weight: 600; }
-#pk-planner .pk-pl-rows li.session > div { flex: 1 1 auto; min-width: 0; }
-#pk-planner .pk-pl-rows li.session b { display: block; font-size: 14px; line-height: 18px; font-weight: 800; }
-#pk-planner .pk-pl-rows li.session small { display: block; font-weight: 600; margin-top: 2px; }
-#pk-planner .pk-w-clock { font-weight: 800; color: var(--pk-ink); }
-#pk-planner .pk-w-actions { flex-basis: 100%; display: grid; grid-template-columns: auto 1fr; gap: 6px; max-width: 280px; }
-#pk-planner .pk-w-actions a, #pk-planner .pk-w-actions span[role="button"], #pk-planner .start, #pk-planner .ghost {
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.pk-w-first { flex-wrap: wrap; padding-bottom: 12px; }
+:is(#pk-planner, #pk-grades) .pk-pl-words { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+:is(#pk-planner, #pk-grades) .pk-pl-words .pk-pl-name { white-space: normal; font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-words small { flex: none; font-weight: 600; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.session > div { flex: 1 1 auto; min-width: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.session b { display: block; font-size: 14px; line-height: 18px; font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows li.session small { display: block; font-weight: 600; margin-top: 2px; }
+:is(#pk-planner, #pk-grades) .pk-w-clock { font-weight: 800; color: var(--pk-ink); }
+:is(#pk-planner, #pk-grades) .pk-w-actions { flex-basis: 100%; display: grid; grid-template-columns: auto 1fr; gap: 6px; max-width: 280px; }
+:is(#pk-planner, #pk-grades) .pk-w-actions a, :is(#pk-planner, #pk-grades) .pk-w-actions span[role="button"], :is(#pk-planner, #pk-grades) .start, :is(#pk-planner, #pk-grades) .ghost {
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; min-width: 0;
   height: 34px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 800; text-decoration: none !important;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   background: var(--pk-paper-2); color: var(--pk-ink) !important; border: 1px solid var(--pk-rule);
 }
-#pk-planner .pk-w-actions a.start, #pk-planner .start { background: #51CFA0; color: #101820 !important; border-color: #51CFA0; box-shadow: 0 2px 0 #35A87D; }
-#pk-planner .start:active { transform: translateY(1px); box-shadow: 0 1px 0 #35A87D; }
-#pk-planner .pk-w-actions span[role="button"]:hover, #pk-planner .ghost:hover { background: var(--pk-paper-sunk); }
-#pk-planner .pk-w-actions a:focus-visible, #pk-planner .pk-w-actions span:focus-visible, #pk-planner .start:focus-visible, #pk-planner .ghost:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+:is(#pk-planner, #pk-grades) .pk-w-actions a.start, :is(#pk-planner, #pk-grades) .start { background: #51CFA0; color: #101820 !important; border-color: #51CFA0; box-shadow: 0 2px 0 #35A87D; }
+:is(#pk-planner, #pk-grades) .start:active { transform: translateY(1px); box-shadow: 0 1px 0 #35A87D; }
+:is(#pk-planner, #pk-grades) .pk-w-actions span[role="button"]:hover, :is(#pk-planner, #pk-grades) .ghost:hover { background: var(--pk-paper-sunk); }
+:is(#pk-planner, #pk-grades) .pk-w-actions a:focus-visible, :is(#pk-planner, #pk-grades) .pk-w-actions span:focus-visible, :is(#pk-planner, #pk-grades) .start:focus-visible, :is(#pk-planner, #pk-grades) .ghost:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
 
 /* Grades: a row per class; the open one holds the marks, the what-if line, the
  * student's own words for the class, and every assignment. */
-#pk-planner .pk-pl-grades { margin-top: 26px; }
-#pk-planner .pk-pl-grade { margin: 0 0 8px 13px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); border-radius: 14px; overflow: hidden; }
-#pk-planner .pk-pl-grow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; user-select: none; }
-#pk-planner .pk-pl-grow:hover { background: var(--pk-paper-sunk); }
-#pk-planner .pk-pl-grow:focus-visible { outline: 2px solid #51CFA0; outline-offset: -2px; }
-#pk-planner .pk-pl-grow .name { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#pk-planner .pk-pl-grow .pct { font-size: 14px; font-weight: 800; }
-#pk-planner .pk-pl-grow .letter { font-size: 13px; font-weight: 800; color: var(--pk-ink-2); min-width: 22px; }
-#pk-planner .pk-pl-grow .level { font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 999px; background: var(--pk-paper-sunk); color: var(--pk-ink-2); }
-#pk-planner .pk-pl-grade .bar { height: 4px; margin: 0 12px 10px 44px; border-radius: 999px; background: var(--pk-paper-sunk); overflow: hidden; }
-#pk-planner .pk-pl-grade .bar i { display: block; height: 100%; border-radius: 999px; background: #51CFA0; }
-#pk-planner .pk-pl-grade .body { padding: 4px 12px 12px; border-top: 1px solid var(--pk-rule); display: flex; flex-direction: column; gap: 12px; }
-#pk-planner .pk-pl-grade .spark svg { display: block; width: 100%; height: 40px; }
-#pk-planner .pk-pl-grade .recent { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
-#pk-planner .pk-pl-grade .recent li { display: flex; justify-content: space-between; gap: 10px; }
-#pk-planner .pk-pl-grade .recent li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
-#pk-planner .pk-pl-grade .recent li em { flex: none; font-style: normal; font-weight: 800; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-grade .whatif { display: flex; flex-direction: column; gap: 8px; }
-#pk-planner .pk-pl-grade .targets, #pk-planner .pk-pl-grade .levels, #pk-planner .pk-pl-grade .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-#pk-planner .pk-pl-grade .targets .lead { font-size: 13px; font-weight: 700; color: var(--pk-ink-2); margin-right: 2px; }
-#pk-planner .pk-pl-grade .targets button, #pk-planner .pk-pl-grade .levels button, #pk-planner .pk-pl-grade .chips button, #pk-planner .pk-pl-grade .weight button, #pk-planner .pk-pl-grade .rename button {
+:is(#pk-planner, #pk-grades) .pk-pl-grades { margin-top: 26px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade { margin: 0 0 8px 13px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); border-radius: 14px; overflow: hidden; }
+:is(#pk-planner, #pk-grades) .pk-pl-grow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; user-select: none; }
+:is(#pk-planner, #pk-grades) .pk-pl-grow:hover { background: var(--pk-paper-sunk); }
+:is(#pk-planner, #pk-grades) .pk-pl-grow:focus-visible { outline: 2px solid #51CFA0; outline-offset: -2px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grow .name { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:is(#pk-planner, #pk-grades) .pk-pl-grow .pct { font-size: 14px; font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-grow .letter { font-size: 13px; font-weight: 800; color: var(--pk-ink-2); min-width: 22px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grow .level { font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 999px; background: var(--pk-paper-sunk); color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .bar { height: 4px; margin: 0 12px 10px 44px; border-radius: 999px; background: var(--pk-paper-sunk); overflow: hidden; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .bar i { display: block; height: 100%; border-radius: 999px; background: #51CFA0; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .body { padding: 4px 12px 12px; border-top: 1px solid var(--pk-rule); display: flex; flex-direction: column; gap: 12px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .spark svg { display: block; width: 100%; height: 40px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .recent { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .recent li { display: flex; justify-content: space-between; gap: 10px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .recent li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .recent li em { flex: none; font-style: normal; font-weight: 800; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .whatif { display: flex; flex-direction: column; gap: 8px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .targets, :is(#pk-planner, #pk-grades) .pk-pl-grade .levels, :is(#pk-planner, #pk-grades) .pk-pl-grade .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .targets .lead { font-size: 13px; font-weight: 700; color: var(--pk-ink-2); margin-right: 2px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .targets button, :is(#pk-planner, #pk-grades) .pk-pl-grade .levels button, :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button, :is(#pk-planner, #pk-grades) .pk-pl-grade .weight button, :is(#pk-planner, #pk-grades) .pk-pl-grade .rename button {
   appearance: none; font: inherit; font-size: 13px; font-weight: 800; padding: 4px 11px; border-radius: 999px; cursor: pointer;
   border: 1px solid var(--pk-rule); background: var(--pk-paper); color: var(--pk-ink);
 }
-#pk-planner .pk-pl-grade .targets button.on, #pk-planner .pk-pl-grade .levels button.on, #pk-planner .pk-pl-grade .chips button.on { background: rgba(81, 207, 160, .16); border-color: #51CFA0; color: #0B7A55; }
-html.pk-dark #pk-planner .pk-pl-grade .targets button.on, html.pk-dark #pk-planner .pk-pl-grade .levels button.on, html.pk-dark #pk-planner .pk-pl-grade .chips button.on { color: #7FDDB8; }
-#pk-planner .pk-pl-grade .chips button em { font-style: normal; margin-left: 5px; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-grade button:focus-visible, #pk-planner .pk-pl-grade input:focus-visible { outline: 2px solid #51CFA0; outline-offset: 1px; }
-#pk-planner .pk-pl-grade .line { margin: 0; font-size: 13px; line-height: 18px; font-weight: 600; }
-#pk-planner .pk-pl-grade .weight { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-grade .weight input, #pk-planner .pk-pl-grade .rename input {
+:is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, :is(#pk-planner, #pk-grades) .pk-pl-grade .levels button.on, :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button.on { background: rgba(81, 207, 160, .16); border-color: #51CFA0; color: #0B7A55; }
+html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .levels button.on, html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button.on { color: #7FDDB8; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .chips button em { font-style: normal; margin-left: 5px; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-grade button:focus-visible, :is(#pk-planner, #pk-grades) .pk-pl-grade input:focus-visible { outline: 2px solid #51CFA0; outline-offset: 1px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .line { margin: 0; font-size: 13px; line-height: 18px; font-weight: 600; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .weight { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .weight input, :is(#pk-planner, #pk-grades) .pk-pl-grade .rename input {
   font: inherit; font-size: 13px; font-weight: 600; height: 32px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--pk-rule); background: var(--pk-paper); color: var(--pk-ink);
 }
-#pk-planner .pk-pl-grade .weight input { width: 64px; }
-#pk-planner .pk-pl-grade .rename { display: flex; gap: 8px; }
-#pk-planner .pk-pl-grade .rename input { flex: 1 1 auto; min-width: 0; }
-#pk-planner .pk-pl-grade .every { display: flex; flex-direction: column; gap: 8px; }
-#pk-planner .pk-pl-grade .every .pk-pl-rows { margin-left: 0; }
-#pk-planner .pk-pl-rows.small li { min-height: 36px; padding: 6px 10px; }
-#pk-planner .pk-pl-rows.small .pk-pl-name { font-size: 13px; }
-#pk-planner .pk-pl-grade .every .pk-pl-foot { margin: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .weight input { width: 64px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .rename { display: flex; gap: 8px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .rename input { flex: 1 1 auto; min-width: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .every { display: flex; flex-direction: column; gap: 8px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .every .pk-pl-rows { margin-left: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows.small li { min-height: 36px; padding: 6px 10px; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows.small .pk-pl-name { font-size: 13px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .every .pk-pl-foot { margin: 0; }
 
 /* The term, in numbers: a card at the top when a term is ending. */
-#pk-planner .pk-pl-recap { margin: 8px 0 18px; padding: 16px 18px; border-radius: 16px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); display: flex; flex-direction: column; gap: 10px; }
-#pk-planner .pk-pl-recap .head { display: flex; align-items: baseline; gap: 10px; }
-#pk-planner .pk-pl-recap .head b { font-size: 17px; font-weight: 800; }
-#pk-planner .pk-pl-recap .head small { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-recap .big strong { font-size: 40px; line-height: 1; font-weight: 900; letter-spacing: -.02em; }
-#pk-planner .pk-pl-recap .big span { font-size: 15px; font-weight: 700; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-recap .lines { margin: 0; padding-left: 18px; font-size: 14px; line-height: 20px; font-weight: 600; }
-#pk-planner .pk-pl-recap .courses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-#pk-planner .pk-pl-recap .courses li { display: grid; grid-template-columns: 22px 1fr auto; column-gap: 10px; align-items: center; font-size: 13px; }
-#pk-planner .pk-pl-recap .courses li b { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#pk-planner .pk-pl-recap .courses li em { font-style: normal; font-weight: 800; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-recap .courses li i { grid-column: 2 / 4; display: block; height: 4px; border-radius: 999px; background: var(--pk-paper-sunk); overflow: hidden; }
-#pk-planner .pk-pl-recap .courses li u { display: block; height: 100%; border-radius: 999px; background: #51CFA0; }
-#pk-planner .pk-pl-recap .actions { display: flex; gap: 8px; margin-top: 4px; }
-#pk-planner .pk-pl-recap .pk-pl-foot { margin: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap { margin: 8px 0 18px; padding: 16px 18px; border-radius: 16px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); display: flex; flex-direction: column; gap: 10px; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .head { display: flex; align-items: baseline; gap: 10px; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .head b { font-size: 17px; font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .head small { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .big strong { font-size: 40px; line-height: 1; font-weight: 900; letter-spacing: -.02em; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .big span { font-size: 15px; font-weight: 700; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .lines { margin: 0; padding-left: 18px; font-size: 14px; line-height: 20px; font-weight: 600; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .courses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .courses li { display: grid; grid-template-columns: 22px 1fr auto; column-gap: 10px; align-items: center; font-size: 13px; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .courses li b { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .courses li em { font-style: normal; font-weight: 800; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .courses li i { grid-column: 2 / 4; display: block; height: 4px; border-radius: 999px; background: var(--pk-paper-sunk); overflow: hidden; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .courses li u { display: block; height: 100%; border-radius: 999px; background: #51CFA0; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .actions { display: flex; gap: 8px; margin-top: 4px; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap .pk-pl-foot { margin: 0; }
 
 /* Add a task: one row, then it folds away. */
-#pk-planner .pk-pl-add { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; padding: 12px; border-radius: 14px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); }
-#pk-planner .pk-pl-add input, #pk-planner .pk-pl-add select {
+:is(#pk-planner, #pk-grades) .pk-pl-add { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; padding: 12px; border-radius: 14px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); }
+:is(#pk-planner, #pk-grades) .pk-pl-add input, :is(#pk-planner, #pk-grades) .pk-pl-add select {
   height: 34px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--pk-rule); background: var(--pk-paper); color: var(--pk-ink);
   font: inherit; font-size: 13px; font-weight: 600;
 }
-#pk-planner .pk-pl-add input[name="title"] { flex: 1 1 220px; min-width: 0; }
-#pk-planner .pk-pl-add input:focus, #pk-planner .pk-pl-add select:focus { outline: 2px solid #51CFA0; outline-offset: 0; border-color: transparent; }
-#pk-planner .pk-pl-add button.start { border: 1px solid #51CFA0; font: inherit; font-size: 13px; font-weight: 800; }
-#pk-planner .pk-pl-add small { flex-basis: 100%; font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-add input[name="title"] { flex: 1 1 220px; min-width: 0; }
+:is(#pk-planner, #pk-grades) .pk-pl-add input:focus, :is(#pk-planner, #pk-grades) .pk-pl-add select:focus { outline: 2px solid #51CFA0; outline-offset: 0; border-color: transparent; }
+:is(#pk-planner, #pk-grades) .pk-pl-add button.start { border: 1px solid #51CFA0; font: inherit; font-size: 13px; font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-add small { flex-basis: 100%; font-size: 12px; font-weight: 600; color: var(--pk-ink-2); }
 
 /* MARK: - Looks: the theme shop, in the page (planner.js renderLooks). */
 #pk-looks {
@@ -1188,7 +1203,7 @@ html.pk-dark #pk-planner .pk-pl-grade .targets button.on, html.pk-dark #pk-plann
 #pk-looks .pk-pl-title small { font-size: 13px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); margin-left: 4px; }
 #pk-looks .pk-pl-coins { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px 0 8px; border-radius: 999px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); font-size: 13px; font-weight: 800; color: var(--pk-ink); }
 #pk-looks .pk-pl-coins span { font-weight: 700; color: var(--pk-ink-2); }
-#pk-looks .coin, #pk-planner .coin { display: inline-block; width: 14px; height: 14px; border-radius: 999px; background: #DE9A22; box-shadow: inset 0 0 0 3px #F6D27A, inset 0 0 0 4px #DE9A22; flex: none; }
+#pk-looks .coin, :is(#pk-planner, #pk-grades) .coin { display: inline-block; width: 14px; height: 14px; border-radius: 999px; background: #DE9A22; box-shadow: inset 0 0 0 3px #F6D27A, inset 0 0 0 4px #DE9A22; flex: none; }
 #pk-looks .pk-pl-label { display: block; margin: 16px 0 10px; font-size: 15px; line-height: 20px; font-weight: 800; color: var(--pk-ink); }
 #pk-looks .pk-pl-label:first-of-type { margin-top: 4px; }
 

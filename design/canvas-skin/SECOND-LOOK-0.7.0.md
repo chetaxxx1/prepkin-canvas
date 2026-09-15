@@ -85,3 +85,16 @@ Honest grades now, Newsprint · Carbon: Dashboard A · A, Course home A · A, Mo
 Grades A− · A− (the name column at 27% puts more titles on two lines — the price of a
 table that fits 620px; a real A needs Canvas's table gone for our own, which is a
 different product decision), Files A · A, Calendar A · A. Five A, one A−.
+
+## Grades, part four (2026-09-15): our row is the page
+
+`grades-page` (row 25, kind taken, Put back): on a course's own Grades page our grade
+row — the bar, the sparkline, the last three marks with the class average, the aim,
+the what-if, the nickname and level, every assignment as rows — sits under Canvas's
+title row, and Canvas's table with its Course / Arrange By controls folds beneath it.
+"Show Canvas's table" brings it out for the visit; Put back restores it for good.
+R30 covers it on the fake; the floor reads it on the sandbox (12/12 on both grades
+pages). Grades: A · A. The old grades-fit rule stays for the folded-out table.
+
+Six pages A · A. "A+" is not a grade the references define; what is true is that each
+page now matches its reference's mechanic or has our own view where Canvas's could not.

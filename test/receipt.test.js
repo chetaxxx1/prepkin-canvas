@@ -672,6 +672,32 @@ test('R26 a pending row on a course card is a link that says Start on hover; han
   await page.close();
 });
 
+test('R30 a course\'s grades page: our grade row under Canvas\'s title, its table folded, one click out, Put back for good', async () => {
+  await h.setStorage({ putBack: {} });
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/courses/1/grades');
+  await page.waitForSelector('#pk-grades .pk-pl-grade.open', { timeout: 5000 });
+  assert.equal(await page.$eval('#pk-grades', (e) => e.previousElementSibling?.className), 'ic-Action-header', 'under the title row');
+  assert.equal(await page.$('#pk-grades .pk-pl-grow[role="button"]'), null, 'the row is the page, not a toggle');
+  assert.ok((await page.$$('#pk-grades .pk-pl-rows li')).length >= 1, 'every assignment, as rows');
+  assert.equal(await style(page, '#assignments', 'display'), 'none', "Canvas's table is folded");
+  assert.notEqual(await style(page, '#grade-summary-content > .ic-Action-header', 'display'), 'none', 'the title stays');
+  await page.click('#pk-grades .pk-gr-show');
+  await page.waitForFunction(() => getComputedStyle(document.getElementById('assignments')).display !== 'none', null, { timeout: 3000 });
+  assert.equal(await page.$eval('#pk-grades .pk-gr-show', (e) => e.textContent), "Hide Canvas's table");
+  await page.bringToFront();
+  const popup = await openPopup(h);
+  await popup.waitFor('#receipt li');
+  const rows = await popup.evaluate(`[...document.querySelectorAll('#receipt li')].map((li) => li.textContent.trim())`);
+  await popup.close();
+  assert.ok(rows.some((r) => /grades table, folded/.test(r)), `on the receipt: ${rows.join(' | ')}`);
+  await h.setStorage({ putBack: { 'grades-page': true } });
+  await page.waitForFunction(() => !document.getElementById('pk-grades'), null, { timeout: 4000 });
+  assert.notEqual(await style(page, '#assignments', 'display'), 'none', 'put back: the table is Canvas\'s again');
+  await h.setStorage({ putBack: {} });
+  await page.close();
+});
+
 test('R27 the Planner and Looks tabs: one list by day with the grades block, the shop, the cards put away and brought back, one click off', async () => {
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/');

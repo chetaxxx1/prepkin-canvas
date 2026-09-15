@@ -25,6 +25,9 @@ const PLANNER_ONE_DAY = 86400000;
 let plTab = 'cards';
 /// The course whose grades row is open, by id, or null; and which of its lists.
 let plOpenCourse = null;
+/// On a course's own grades page the course's row is the page: open, and not
+/// a toggle. Set by renderGradesPage, read by plGradeRow.
+let plGradesFixed = null;
 let plCourseList = 'all';
 /// The folded groups the student opened this visit.
 const plUnfolded = new Set();
@@ -97,6 +100,7 @@ function plSetTab(key) {
 /// The planner itself, right under the dashboard's title row. Rebuilt only
 /// when what it shows has changed.
 function renderPlanner() {
+  renderGradesPage();
   const existing = document.getElementById(PLANNER_ID);
   const head = document.getElementById('dashboard_header_container');
   if (!plannerShows() || plTab !== 'planner' || !head) { existing?.remove(); return; }
@@ -295,13 +299,14 @@ function plGrades(now) {
 
 function plGradeRow(c, now) {
   const { data, levels, nicknames, LEVELS, LEVEL_NAMES } = plannerState();
-  const open = plOpenCourse === String(c.id);
+  const fixed = plGradesFixed === String(c.id);
+  const open = fixed || plOpenCourse === String(c.id);
   const pct = typeof c.score === 'number' ? Math.max(0, Math.min(100, c.score)) : null;
   const color = safeColor(c.colorHex);
   const row = el('div', `pk-pl-grade${open ? ' open' : ''}`);
   row.dataset.course = String(c.id);
   const headRow = el('div', 'pk-pl-grow');
-  headRow.setAttribute('role', 'button'); headRow.tabIndex = 0; headRow.setAttribute('aria-expanded', String(open));
+  if (!fixed) { headRow.setAttribute('role', 'button'); headRow.tabIndex = 0; headRow.setAttribute('aria-expanded', String(open)); }
   const tile = classTile({ courseName: c.name, colorHex: c.colorHex });
   const name = el('span', 'name', c.name); name.title = c.fullName ?? c.name;
   const val = el('b', 'pct', pct === null ? '—' : `${c.score}%`);
@@ -309,8 +314,10 @@ function plGradeRow(c, now) {
   headRow.append(tile, name, val, letter);
   if (levels[c.id] && levels[c.id] !== 'regular') headRow.append(el('span', 'level', LEVEL_NAMES[levels[c.id]]));
   const toggle = () => { plOpenCourse = open ? null : String(c.id); plCourseList = 'all'; renderPlanner(); };
-  headRow.addEventListener('click', toggle);
-  headRow.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  if (!fixed) {
+    headRow.addEventListener('click', toggle);
+    headRow.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  }
   row.append(headRow);
   // The fill is the school's course colour (data-pk-course-color says so to the floor).
   if (pct !== null) { const bar = el('div', 'bar'); const fill = el('i', '', null); fill.style.width = `${pct}%`; if (color) { fill.style.background = color; fill.dataset.pkCourseColor = ''; } bar.append(fill); row.append(bar); }
@@ -442,6 +449,58 @@ function plCourseLists(c, now) {
   wrap.append(ul);
   wrap.append(el('p', 'pk-pl-foot', 'What Canvas handed over, nothing added.'));
   return wrap;
+}
+
+// MARK: - A course's own grades page: our row is the page
+
+const GRADES_ID = 'pk-grades';
+function gradesCourseId() { return /^\/courses\/(\d+)\/grades\/?$/.exec(location.pathname)?.[1] ?? null; }
+
+/// Our grades row stands in for Canvas's table when it has this course from a
+/// sync, the cards are on, and the row has not been put back. Canvas's table
+/// folds under it (the `grades-page` receipt row); "Show Canvas's table"
+/// brings it out for this visit, Put back for good.
+function gradesPageShows() {
+  const id = gradesCourseId();
+  if (!id || !document.querySelector('#grades_summary, #grade-summary-react')) return false;
+  const { data, putBack, skin, killed } = plannerState();
+  return !killed && !!skin.cards && !putBack['grades-page'] && (data.courses ?? []).some((c) => String(c.id) === id);
+}
+
+function renderGradesPage() {
+  const existing = document.getElementById(GRADES_ID);
+  if (!gradesPageShows()) { existing?.remove(); document.documentElement.classList.remove('pk-grades-page'); plGradesFixed = null; return; }
+  const id = gradesCourseId();
+  const now = new Date();
+  const { data, levels, nicknames, targets } = plannerState();
+  const c = data.courses.find((x) => String(x.id) === id);
+  plGradesFixed = id;
+  const key = JSON.stringify([c.id, c.name, c.score, c.grade, (data.graded?.[id] ?? []).map((g) => [g.id, g.score]), data.tasks.filter((t) => String(t.courseId) === id).map((t) => [t.id, t.submittedAt, t.doneAt, t.missing]), levels[id], nicknames[id], targets[id], plCourseList, plTarget, plWeight]);
+  document.documentElement.classList.add('pk-grades-page');
+  // Under Canvas's own title row, which React draws after the page; until it
+  // is there the box leads #content, and moves under the title when it lands.
+  const anchor = document.querySelector('#grade-summary-content > .ic-Action-header, #content > .header-bar');
+  if (existing && existing.dataset.key === key) {
+    if (anchor && anchor.nextElementSibling !== existing) anchor.after(existing);
+    return;
+  }
+  const box = el('section', '', null);
+  box.id = GRADES_ID; box.dataset.key = key;
+  box.setAttribute('aria-label', 'Prepkin: your grade in this class');
+  const head = el('div', 'pk-pl-group'); head.append(el('b', '', 'Your grade'));
+  box.append(head, plGradeRow(c, now));
+  // Canvas's own table, one click away for this visit; the receipt's Put back
+  // brings it back for good.
+  const foot = el('p', 'pk-pl-foot pk-gr-foot');
+  const open = document.documentElement.classList.contains('pk-grades-open');
+  const show = el('button', 'pk-gr-show', open ? "Hide Canvas's table" : "Show Canvas's table"); show.type = 'button';
+  show.setAttribute('aria-expanded', String(open));
+  show.addEventListener('click', (e) => { if (!e.isTrusted) return; document.documentElement.classList.toggle('pk-grades-open'); existing?.remove(); document.getElementById(GRADES_ID)?.remove(); renderGradesPage(); });
+  foot.append(show);
+  box.append(foot);
+  if (existing) existing.replaceWith(box);
+  else if (anchor) anchor.after(box);
+  else document.getElementById('content')?.prepend(box);
 }
 
 // MARK: - The term, in numbers

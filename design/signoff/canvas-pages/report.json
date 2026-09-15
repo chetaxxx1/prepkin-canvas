@@ -1,6 +1,6 @@
 {
-  "calendar-light-1280": {
-    "mount": 5794,
+  "grades-light-1280": {
+    "mount": 5119,
     "findings": {
       "text": [],
       "blocks": [],
@@ -9,11 +9,11 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 127
+      "counted": 78
     }
   },
-  "calendar-dark-1280": {
-    "mount": 5269,
+  "all-grades-light-1280": {
+    "mount": 4189,
     "findings": {
       "text": [],
       "blocks": [],
@@ -22,11 +22,11 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 127
+      "counted": 20
     }
   },
-  "calendar-light-768": {
-    "mount": 5566,
+  "grades-dark-1280": {
+    "mount": 5243,
     "findings": {
       "text": [],
       "blocks": [],
@@ -35,11 +35,11 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 127
+      "counted": 78
     }
   },
-  "calendar-dark-768": {
-    "mount": 5050,
+  "all-grades-dark-1280": {
+    "mount": 4958,
     "findings": {
       "text": [],
       "blocks": [],
@@ -48,7 +48,59 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 127
+      "counted": 20
+    }
+  },
+  "grades-light-768": {
+    "mount": 5942,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 61
+    }
+  },
+  "all-grades-light-768": {
+    "mount": 5241,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 20
+    }
+  },
+  "grades-dark-768": {
+    "mount": 5865,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 61
+    }
+  },
+  "all-grades-dark-768": {
+    "mount": 4783,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 20
     }
   }
 }

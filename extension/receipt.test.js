@@ -135,7 +135,7 @@ test('a row is on the receipt only when its hook is on the page', () => {
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'week'), 'the rail is on the dashboard receipt');
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'todo-fold'), 'the fold needs a To Do list on the page');
   assert.ok(receiptRows({ present: () => true, detect: { todoFold: true } }).some((r) => r.key === 'todo-fold'), 'and lists itself when there is one');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
   assert.ok(!light.some((r) => r.key === 'word-paste' || r.key === 'seam'), 'dark-only rows stay off in light');
@@ -250,7 +250,9 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // ink line with the class colour on its edge.
   // And 23 on 2026-09-15 for `buttons`: Canvas's plain buttons on the paper.
   // And 24 for `feedback-rows`: Recent Feedback restyled as rows, never removed.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 24, 'twenty-four keys at most, so it cannot sprawl');
+  // And 25 for `grades-page`: our grade row stands in for Canvas's table on a
+  // course's grades page; the table is one click away and Put back restores it.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 25, 'twenty-five keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names
@@ -331,7 +333,7 @@ const css = fs.readFileSync(path.join(__dirname, 'skin.css'), 'utf8').replace(/\
 // The lint guards Canvas's own page. Prepkin's own surfaces on it (the rail,
 // the fold row, the card line) are ours to style, so they are read separately below.
 const allRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selectors: m[1].trim(), body: m[2] }));
-const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|#pk-planner|#pk-dashtabs|#pk-looks|#pk-course-next|\.pk-card-due|\.pk-due-row|\.pk-tick|pk-back-card-due|pk-back-week|pk-back-todo-fold|pk-back-planner|pk-back-course-next/.test(sel);
+const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|#pk-planner|#pk-grades|#pk-dashtabs|#pk-looks|#pk-course-next|\.pk-card-due|\.pk-due-row|\.pk-tick|pk-back-card-due|pk-back-week|pk-back-todo-fold|pk-back-planner|pk-back-course-next/.test(sel);
 // A rule counts as Canvas's if any selector in it reaches Canvas markup.
 const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours(sel)));
 
@@ -390,7 +392,7 @@ test('the skin never sets font-family, a shadow that is not none, a hover lift, 
 });
 
 test('every receipt key that has CSS is gated on its put-back class', () => {
-  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'module-band', 'grades-fit', 'cal-rows', 'feedback-rows', 'buttons', 'word-paste', 'seam']) {
+  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'module-band', 'grades-fit', 'grades-page', 'cal-rows', 'feedback-rows', 'buttons', 'word-paste', 'seam']) {
     assert.ok(css.includes(`:not(.pk-back-${key})`), `${key} has no put-back gate`);
   }
 });
