@@ -248,7 +248,8 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // change to every grades page, so a row with a Put back.
   // And 22 for `cal-rows`: every event chip on the calendar redrawn as one
   // ink line with the class colour on its edge.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 22, 'twenty-two keys at most, so it cannot sprawl');
+  // And 23 on 2026-09-15 for `buttons`: Canvas's plain buttons on the paper.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 23, 'twenty-three keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names
@@ -333,36 +334,42 @@ const ours = (sel) => /#pk-week|#pk-todo-fold|#pk-search|#pk-planner|#pk-dashtab
 // A rule counts as Canvas's if any selector in it reaches Canvas markup.
 const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours(sel)));
 
-// The one carve-out from "never a property on a button": colour only, dark
-// only, not while hovered, on Canvas buttons that have no ground of their own
-// (measured on the real sandbox, 2026-09-14). Listed whole, so adding one is a
-// deliberate edit here, not a habit in the stylesheet.
-const TEXT_BUTTON_OK = new Set([
-  'html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_prev:not(:hover)',
-  'html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_next:not(:hover)',
-  'html.pk-on.pk-dark:not(.pk-back-paper) body.files #content [class*="-view--inlineBlock-baseButton"]:not(:hover)',
-  'html.pk-on.pk-dark:not(.pk-back-paper) #content [class*="toggleDetails__toggle"]:not(:hover)',
-]);
+// The one rule allowed to name a button: `buttons`, which puts Canvas's plain
+// buttons on the paper (George opened this on 2026-09-15 after the second
+// look). Every selector of it must exclude submit, primary, danger, success and
+// icon-only buttons in its own text, its body may write only the paper's three
+// tokens, and it is gated on its Put back. Everything else in the stylesheet
+// still may not select a button at all.
+const BUTTON_RULE_GATE = 'html.pk-on:not(.pk-back-buttons) ';
+// The paper's three tokens; or the ink alone, for a text button with no ground.
+const BUTTON_TOKENS = /^(background-color:var\(--pk-paper-(2|sunk)\)!important;color:var\(--pk-ink\)!important;border-color:var\(--pk-rule\)!important;?|color:var\(--pk-ink\)!important;?)$/;
 
-test('no rule in the skin writes any property on a button, except colour on the four named', () => {
+test('no rule in the skin writes any property on a button, except the buttons rule, which writes the paper and excludes every submit, primary and icon button', () => {
   const buttonish = /(^|[\s,>+~(])(button|\.btn|\.Button|\[type="?submit"?\]|input\[type="?submit"?\]|\[role="?button"?\]|\[class\*?="[^"]*[Bb]utton[^"]*"\])/i;
   let seen = 0;
   for (const r of rules) {
     for (const raw of r.selectors.split(',')) {
       const sel = raw.trim();
       if (ours(sel)) continue;
-      if (TEXT_BUTTON_OK.has(sel)) {
+      if (sel.startsWith(BUTTON_RULE_GATE)) {
         seen++;
-        assert.ok(sel.startsWith('html.pk-on.pk-dark:not(.pk-back-paper) '), `dark only, under Put back: ${sel}`);
-        assert.doesNotMatch(sel, /submit|primary|quiz|\[type/i, `never a submit: ${sel}`);
-        assert.match(r.body.replace(/\s+/g, ''), /^color:var\(--pk-[a-z-]+\)!important;?$/, `colour and nothing else: ${sel}`);
+        assert.match(r.body.replace(/\s+/g, ''), BUTTON_TOKENS, `the paper's three tokens and nothing else: ${sel}`);
+        // `.ui-button` is jQuery UI's, only ever a view toggle; the disclosure
+        // toggle is a text button that takes the ink alone (checked below).
+        if (!/\.ui-button|toggleDetails__toggle/.test(sel)) {
+          assert.match(sel, /:not\(\[type="submit"\]\)/, `excludes a submit button: ${sel}`);
+          assert.ok(/:not\(\.(btn-|Button--)primary\)/.test(sel) || /-baseButton/.test(sel), `excludes a primary button: ${sel}`);
+          assert.ok(/icon-action/.test(sel) || /:not\(:has\(svg\)\)/.test(sel) || /toggleDetails__toggle/.test(sel), `excludes an icon-only button: ${sel}`);
+        }
+        if (/toggleDetails__toggle/.test(sel)) assert.match(r.body.replace(/\s+/g, ''), /^color:/, `the toggle takes the ink alone: ${sel}`);
+        if (/-baseButton/.test(sel)) assert.match(sel, /:not\(form \*\)/, `never an InstUI button inside a form: ${sel}`);
         continue;
       }
       // `:not([type="submit"])` excludes a button; it is not a way of naming one.
       assert.doesNotMatch(sel.replace(/:not\((\[type="(submit|button)"\]|\[class\*="[^"]*[Bb]utton[^"]*"\])\)/g, ''), buttonish, `selects a button: ${sel}`);
     }
   }
-  assert.equal(seen, TEXT_BUTTON_OK.size, 'every named carve-out is in the stylesheet, and nothing else is');
+  assert.ok(seen >= 8, `the buttons rule is in the stylesheet (${seen} selectors)`);
 });
 
 test('the skin never sets font-family, a shadow that is not none, a hover lift, or red', () => {
@@ -379,7 +386,7 @@ test('the skin never sets font-family, a shadow that is not none, a hover lift, 
 });
 
 test('every receipt key that has CSS is gated on its put-back class', () => {
-  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'module-band', 'grades-fit', 'cal-rows', 'word-paste', 'seam']) {
+  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'module-band', 'grades-fit', 'cal-rows', 'buttons', 'word-paste', 'seam']) {
     assert.ok(css.includes(`:not(.pk-back-${key})`), `${key} has no put-back gate`);
   }
 });

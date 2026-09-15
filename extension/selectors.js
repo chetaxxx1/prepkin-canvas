@@ -30,6 +30,8 @@ const SELECTORS = {
   moduleBar:       { sel: '#content .header-bar:has(#expand_collapse_all)', page: 'modules', conf: 'verified' },
   // A calendar event chip: a link, coloured by its course's own class rule.
   calEvent:        { sel: '#calendar-app .fc-event', page: 'calendar', conf: 'verified' },
+  // A plain Canvas button (the buttons rule excludes submit, primary and icon-only ones in its own text).
+  plainButton:     { sel: '.btn, .Button, .ui-button, #content [class*="-baseButton"]', page: 'any', conf: 'verified' },
   userContent:     { sel: '.user_content', page: 'assignment', conf: 'verified' },
   gradesReact:     { sel: '#grade-summary-react', page: 'grades', conf: 'verified' },
   gradesTable:     { sel: '#grades_summary', page: 'grades', conf: 'verified' },

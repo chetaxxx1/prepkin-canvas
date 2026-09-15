@@ -100,8 +100,10 @@ names every Canvas selector it uses):
 - The extension's own additions — the buddy and the next-due line on each
   card — are on the receipt too, with the same one click off.
 
-What it refuses: any property on a button (the submit button is always the
-school's own), `font-family`, shadows, hover lifts, red, the flash-error bar,
+What it refuses: any property on a submit, primary, danger, success or
+icon-only button (the submit button is always the school's own; Canvas's
+plain buttons take the paper's three tokens under one `buttons` row with its
+own Put back), `font-family`, shadows, hover lifts, red, the flash-error bar,
 the skip link, the school's sidebar logo, the login page, and any selector
 containing an InstUI hash. It switches itself off entirely, and says so in the
 popup, when the school has High Contrast on, when the OS forces colours, on a

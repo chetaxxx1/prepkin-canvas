@@ -39,7 +39,6 @@
 :host([data-side="tank"][data-flip]) { grid-template-columns: var(--pk-nav-w, 204px) 360px; justify-items: start; }
 :host([data-side="tank"][data-flip]) .pk-tab { grid-column: 1; }
 :host([data-side="tank"][data-flip]) .pk-panel, :host([data-side="tank"][data-flip]) .pk-timer { grid-column: 2; }
-:host([data-side="tank"][data-flip]) .pk-count { right: auto; left: calc(var(--pk-nav-w, 204px) - 30px); }
 /* Handed in: the reward floats up from him once, then is gone. */
 .pk-float {
   position: absolute; left: 10px; top: 8px; display: inline-flex; align-items: center; gap: 4px;
@@ -49,8 +48,6 @@
 }
 :host([data-side="left"]) .pk-float, :host([data-side="right"]) .pk-float { left: auto; right: 0; top: -10px; }
 @keyframes pk-float { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-18px); } }
-/* On the tank the badge sits on a picture, so it wears a paper ring to stay legible on any water. */
-:host([data-side="tank"]) .pk-count { top: 8px; right: 10px; box-shadow: 0 0 0 2px var(--pk-card), 0 2px 8px var(--pk-shadow); }
 :host([data-side="tank"]) .pk-panel { grid-column: 1; grid-row: 2; margin-bottom: 0; }
 :host([data-side="tank"]) .pk-timer { grid-column: 1; grid-row: 1; }
 *, *::before, *::after { box-sizing: border-box; }
@@ -71,13 +68,6 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 }
 :host([data-side="right"]) .pk-tab { grid-column: 1; grid-row: 3; width: 150px; }
 .pk-tab:focus-visible { outline: 2px solid var(--pk-mint); outline-offset: -2px; border-radius: 24px; }
-.pk-count {
-  position: absolute; top: -6px; right: -4px; min-width: 22px; height: 22px;
-  padding: 0 7px; border-radius: 11px;
-  background: var(--pk-mint); color: #101820; font-size: 12px; font-weight: 800;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, .06), 0 2px 8px var(--pk-shadow);
-  display: grid; place-items: center;
-}
 
 /* ---- The panel shell ------------------------------------------------------ */
 .pk-panel {

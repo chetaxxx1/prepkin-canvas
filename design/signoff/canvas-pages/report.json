@@ -1,6 +1,19 @@
 {
   "dashboard-light-1280": {
-    "mount": 5591,
+    "mount": 6035,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 55
+    }
+  },
+  "course-home-light-1280": {
+    "mount": 5962,
     "findings": {
       "text": [],
       "blocks": [],
@@ -10,10 +23,49 @@
       "red": [],
       "skipped": 0,
       "counted": 58
+    }
+  },
+  "modules-light-1280": {
+    "mount": 6251,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "calendar-light-1280": {
+    "mount": 6047,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 127
     }
   },
   "dashboard-dark-1280": {
-    "mount": 4812,
+    "mount": 6704,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 55
+    }
+  },
+  "course-home-dark-1280": {
+    "mount": 6740,
     "findings": {
       "text": [],
       "blocks": [],
@@ -23,10 +75,36 @@
       "red": [],
       "skipped": 0,
       "counted": 58
+    }
+  },
+  "modules-dark-1280": {
+    "mount": 6061,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "calendar-dark-1280": {
+    "mount": 5602,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 127
     }
   },
   "dashboard-light-768": {
-    "mount": 5460,
+    "mount": 6346,
     "findings": {
       "text": [],
       "blocks": [],
@@ -35,11 +113,50 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 58
+      "counted": 55
+    }
+  },
+  "course-home-light-768": {
+    "mount": 7095,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "modules-light-768": {
+    "mount": 17495,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "calendar-light-768": {
+    "mount": 12214,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 127
     }
   },
   "dashboard-dark-768": {
-    "mount": 5197,
+    "mount": 8963,
     "findings": {
       "text": [],
       "blocks": [],
@@ -48,13 +165,52 @@
       "uppercase": [],
       "red": [],
       "skipped": 0,
-      "counted": 58
+      "counted": 55
+    }
+  },
+  "course-home-dark-768": {
+    "mount": 11260,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "modules-dark-768": {
+    "mount": 7186,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "calendar-dark-768": {
+    "mount": 23580,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "skipped": 0,
+      "counted": 127
     }
   },
   "mount": {
-    "on": 4583,
-    "looks": 5302,
-    "off": 4935,
+    "on": 5391,
+    "looks": 6638,
+    "off": 5427,
     "stalls": []
   }
 }

@@ -287,7 +287,11 @@ test('R16 everywhere: calendar, the courses table and a quiz page take the paper
   await h.setStorage({ skin: SKIN({ dark: true }) });
   const paper2 = 'rgb(30, 33, 38)', sunk = 'rgb(18, 20, 23)', ink = 'rgb(230, 232, 234)', link = 'rgb(111, 168, 220)';
   let page = await open('/calendar');
-  assert.equal(await style(page, '.header-bar', 'backgroundColor'), paper2, 'the calendar toolbar is paper');
+  // The toolbar is the paper itself since 2026-09-15 (no block behind a title);
+  // its plain Today button takes the paper's card tone under the buttons row.
+  assert.equal(await style(page, '.header-bar', 'backgroundColor'), 'rgb(23, 25, 29)', 'the calendar toolbar is the paper');
+  assert.equal(await style(page, '.header-bar .btn', 'backgroundColor'), paper2, 'a plain button takes the paper');
+  assert.equal(await style(page, '.header-bar .btn', 'color'), ink, 'in the ink');
   assert.equal(await style(page, '.fc-widget-header', 'backgroundColor'), sunk, 'day headers are sunk paper');
   assert.equal(await style(page, '.fc-day', 'backgroundColor'), paper2);
   // cal-rows: the chip is one ink line; the course colour stays on its edge.

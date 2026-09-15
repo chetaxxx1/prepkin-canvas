@@ -7,12 +7,13 @@
  *
  * Rules of the house (design/canvas-skin/SPEC-RECEIPT.md):
  *  - never `font-family`, never a radius Canvas did not use, no shadow, no lift;
- *  - never any property on a button: no rule below selects `button`, `.btn`,
- *    `[type=submit]` or `[role=button]`, so the submit button is always the
- *    school's own and always visible (extension/receipt.test.js lints this).
- *    One carve-out, listed whole in that lint: `color` only, dark only, not
- *    while hovered, on the Canvas buttons that have no ground of their own
- *    and would otherwise read at 1:1 on a dark paper (measured 2026-09-14);
+ *  - never any property on a submit, primary, danger or success button, and
+ *    never on an icon-only one: those are always the school's own and always
+ *    visible. Canvas's plain buttons (Collapse All, View Course Stream, the
+ *    Files header, the calendar's toggles) take the paper — background,
+ *    ink and rule, nothing else — under the one `buttons` rule, which is the
+ *    only rule allowed to name a button (extension/receipt.test.js lints
+ *    this; George opened it on 2026-09-15 after the second look);
  *  - never `--ic-brand-*`, the hero's opacity, the title span's colour, a
  *    course colour, `.ic-flash-error`, `#skip_navigation_link`, `.ic-sidebar-logo`;
  *  - never a selector containing `css-`.
@@ -151,7 +152,6 @@ html.pk-on:not(.pk-back-paper) .ic-app-course-menu,
 html.pk-on:not(.pk-back-paper) #section-tabs,
 html.pk-on:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs,
 html.pk-on:not(.pk-back-paper) #breadcrumbs,
-html.pk-on:not(.pk-back-paper) .header-bar,
 html.pk-on:not(.pk-back-paper) [class*="textInput__facade"],
 html.pk-on:not(.pk-back-paper) [class*="-pill"],
 html.pk-on:not(.pk-back-paper) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
@@ -660,6 +660,12 @@ html.pk-on:not(.pk-back-paper) .module-sequence-footer-content,
 html.pk-on:not(.pk-back-paper) .fc-day-top {
   background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
 }
+/* The bar a page's title and its buttons sit in (Grades, the calendar, the
+ * assignments index): Canvas paints it white, which on a paper read as a
+ * block behind the title. It is the paper itself, no block, no rule. */
+html.pk-on:not(.pk-back-paper) .header-bar { background-color: var(--pk-paper) !important; color: var(--pk-ink) !important; border-color: transparent !important; box-shadow: none !important; }
+/* A module's requirement pill ("Complete All Items"): Canvas's white pill. */
+html.pk-on:not(.pk-back-paper) .context_module .pill li { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important; }
 /* Today, in the calendar's day-number row and its grid cell, sits a shade sunk. */
 html.pk-on:not(.pk-back-paper) .fc-day-top.fc-today,
 html.pk-on:not(.pk-back-paper) .fc-day.fc-today { background-color: var(--pk-paper-sunk) !important; }
@@ -731,19 +737,30 @@ html.pk-on:not(.pk-back-paper) #content .hint { color: var(--pk-ink-2) !importan
 /* The page foot: Canvas's "Open Source LMS" line and links, in the quiet ink. */
 html.pk-on:not(.pk-back-paper) #footer { color: var(--pk-ink-2) !important; border-color: var(--pk-rule) !important; }
 html.pk-on:not(.pk-back-paper) #footer a { color: var(--pk-link) !important; }
-/* The button carve-out (see the head of this file). Two cases, measured on the
- * real sandbox in dark: the calendar's month arrows are jQuery-UI buttons that
- * inherit the page's ink onto Canvas's own light ground, so they take Canvas's
- * ink back; and on the Files page every InstUI button a student sees is drawn
- * without a ground (the kebab, Download, the pages, "All My Files"), in
- * Canvas's dark ink on our dark paper, so those take the paper's ink. Not while
- * hovered: Canvas's own hover pair stays whole. Never a submit button. */
-html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_prev:not(:hover),
-html.pk-on.pk-dark:not(.pk-back-paper) #calendar_header button.navigate_next:not(:hover) { color: var(--pk-canvas-btn-ink) !important; }
-html.pk-on.pk-dark:not(.pk-back-paper) body.files #content [class*="-view--inlineBlock-baseButton"]:not(:hover) { color: var(--pk-ink) !important; }
-/* InstUI's disclosure toggle (Settings' feature list at 768) is a text button
- * with no ground by design; the same carve-out. */
-html.pk-on.pk-dark:not(.pk-back-paper) #content [class*="toggleDetails__toggle"]:not(:hover) { color: var(--pk-ink) !important; }
+/* ---- buttons: Canvas's plain buttons on the paper -----------------------
+ * Canvas paints every plain button white with a grey border; on a paper, and
+ * above all on Carbon, they were the loudest thing on the page. The plain
+ * ones take the paper's three tokens and nothing else. Never a submit,
+ * primary, danger or success button (Canvas's own colour is the student's
+ * cue), never an icon-only button (a kebab on a card's colour band, an X),
+ * never an InstUI button inside a form (the hand-in path). The selected
+ * toggle (Month) sits a shade sunk, like a pressed key. */
+html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]),
+html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]),
+html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active),
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)) {
+  background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
+}
+html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]):hover,
+html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]):hover,
+html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active):hover,
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)):hover,
+html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active {
+  background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
+}
+/* InstUI's disclosure toggle (Settings' feature list) is a text button with an
+ * arrow icon and no ground by design; it takes the ink alone. */
+html.pk-on:not(.pk-back-buttons) #content [class*="toggleDetails__toggle"] { color: var(--pk-ink) !important; }
 /* Plain links already follow --ic-link-color (set above); InstUI links do not. */
 html.pk-on:not(.pk-back-paper) #content [class*="-view-link"],
 html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--pk-link) !important; }
@@ -869,6 +886,7 @@ html.pk-on:not(.pk-back-title) body:not(:has(#dashboard_header_container)) #cont
  *    named. `.ic-Dashboard-header__title` is not on this Canvas at all. */
 html.pk-on:not(.pk-back-title) #dashboard_header_container [class*="-view-heading"],
 html.pk-on:not(.pk-back-title) #content > h1,
+html.pk-on:not(.pk-back-title) #content .header-bar h1,
 /* The Files page (and any InstUI page) writes its h1 as a hashed heading at
  * 38px; the stable suffix names it, never the hash. */
 html.pk-on:not(.pk-back-title) #content h1[class*="-view-heading"],
@@ -883,6 +901,7 @@ html.pk-on:not(.pk-back-title) .ic-Action-header__Heading {
  *    did not reach, or Put back — is absolutely positioned, so it takes the
  *    padding and the rule without drawing either. */
 html.pk-on:not(.pk-back-title) #content > h1,
+html.pk-on:not(.pk-back-title) #content .header-bar h1,
 /* The Files page (and any InstUI page) writes its h1 as a hashed heading at
  * 38px; the stable suffix names it, never the hash. */
 html.pk-on:not(.pk-back-title) #content h1[class*="-view-heading"],

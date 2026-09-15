@@ -129,6 +129,7 @@ const RULES = [
   { key: 'module-sticky', kind: 'fixed', label: 'Module header stays at the top while you scroll', hook: 'moduleHeader' },
   { key: 'due-column', kind: 'fixed', label: 'Due dates lined up in one column, in readable type', hook: 'moduleDue' },
   { key: 'module-band', kind: 'fixed', label: 'The empty bar above the modules, folded to its one button', hook: 'moduleBar' },
+  { key: 'buttons', kind: 'fixed', label: "Canvas's plain buttons on the paper; submit buttons stay Canvas's", hook: 'plainButton' },
   { key: 'cal-rows', kind: 'fixed', label: 'Calendar events as one line each, the class colour on the edge', hook: 'calEvent' },
   { key: 'grades-fit', kind: 'fixed', label: 'The grades table fits the page: wider names, nothing under the sidebar, late and missing in amber', hook: 'gradesTable' },
   { key: 'word-paste', kind: 'fixed', label: 'Text pasted from Word, made readable', detect: 'wordPaste', darkOnly: true },

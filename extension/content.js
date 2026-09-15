@@ -1613,7 +1613,6 @@ function render() {
   root.innerHTML = `
     ${focus.state === 'done' || (focus.state === 'running' && !railShows()) ? focusCard() : ''}
     <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
-      ${urgent ? `<span class="pk-count" aria-hidden="true">${urgent}</span>` : ''}
       ${ui.float && Date.now() - ui.float < 2500 ? `<span class="pk-float" aria-hidden="true">${COIN_SVG}+${COIN_REWARD}</span>` : ''}
     </button>
     <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Search" tabindex="-1" ${ui.open ? '' : 'hidden'}>
