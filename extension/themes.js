@@ -113,7 +113,7 @@ const MORE_THEMES = [
   { id: 'oled', name: 'Pure Black', vibe: 'true black, one mint line, nothing else',
     paper: { light: 'newsprint', dark: 'obsidian' }, accent: { light: '#1F7A5A', dark: '#7CC4A4' },
     rail: { light: '#202428', dark: '#0B0C0E' },
-    header: 'band', texture: 'none', accessory: null, price: 250 },
+    header: 'band', texture: 'none', accessory: null, price: 300 },
   { id: 'slate', name: 'Slate', vibe: 'cool grey, steel blue, overcast and calm',
     paper: { light: 'mist', dark: 'slate' }, accent: { light: '#3B5F8A', dark: '#8AB4E8' },
     rail: { light: '#2E3741', dark: '#141920' },
@@ -121,7 +121,7 @@ const MORE_THEMES = [
   { id: 'honey', name: 'Honey', vibe: 'oat paper, amber ink, a warm lamp',
     paper: { light: 'oat', dark: 'espresso' }, accent: { light: '#8C5A12', dark: '#E9B65C' },
     rail: { light: '#5A4218', dark: '#2A1F0E' },
-    header: 'wash', texture: 'dots', accessory: 'beanie', colors: { cap: '#8C5A12', brim: '#5A4218' }, price: 350 },
+    header: 'wash', texture: 'dots', accessory: 'beanie', colors: { cap: '#8C5A12', brim: '#5A4218' }, price: 300 },
   { id: 'inkwell', name: 'Inkwell', vibe: 'white paper, blue-black ink, a fountain pen',
     paper: { light: 'bond', dark: 'ink' }, accent: { light: '#2A4F8F', dark: '#8FB8EA' },
     rail: { light: '#1E2E4A', dark: '#0E121B' },
@@ -129,7 +129,7 @@ const MORE_THEMES = [
   { id: 'peachplum', name: 'Peach & Plum', vibe: 'apricot by day, aubergine by night',
     paper: { light: 'peach', dark: 'plum' }, accent: { light: '#AE4A29', dark: '#E8A48A' },
     rail: { light: '#6E3A2A', dark: '#221A2E' },
-    header: 'wash', texture: 'dots', accessory: 'scarf', colors: { wrap: '#E8A48A', tail: '#AE4A29' }, price: 400 },
+    header: 'wash', texture: 'dots', accessory: 'scarf', colors: { wrap: '#E8A48A', tail: '#AE4A29' }, price: 300 },
 ];
 for (const t of MORE_THEMES) THEMES.push(t);
 
