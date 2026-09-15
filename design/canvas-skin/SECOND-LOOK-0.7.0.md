@@ -44,3 +44,27 @@ The title bar is the paper, not a white block, and the count badge is gone from 
 buddy. Every page is now A− or A in both papers: Dashboard A · A, the other five A− · A−.
 Left, all Canvas's own: the cached Recent Feedback list, the underlined month link on the
 calendar, the grey icon-only download button on Files, the totals row wrapping on Grades.
+
+## The last pass (2026-09-15), and an honest grade
+
+Four more moves: the module header's "Prerequisites" line in the quiet ink at 13px;
+the grades totals on one line; the calendar's month name in the ink with no underline,
+and the selected view a shade sunk; the Files page's icon-only buttons on the paper
+(it has no colour band for them to sit on). Floor 87/87, unit 143, receipt 38, e2e 39,
+stress 10.
+
+Honest grades against the §4 references, Newsprint · Carbon:
+
+| Page | Grade | What keeps it from a clean A |
+|---|---|---|
+| Dashboard | A · A | Nothing of ours. Canvas's Recent Feedback list under the rail is Canvas's, cached. |
+| Course home | A− · A− | Recent Feedback repeats the card above it (Canvas's block; hiding it would be a new "taken" row George has not asked for). |
+| Modules | A · A | — |
+| Grades | A− · A− | The totals' "198.00 / 280.00" runs 24px past the table edge into the gutter; the ⓘ icon on an ungraded row is Canvas's grey. |
+| Files | A · A | — |
+| Calendar | A− · A− | The selected view (Month) is a shade sunk, which reads faintly on Newsprint; Todoist marks the selected view harder. Seven chips a row is still Canvas's density. |
+
+So: three A, three A−. The A− lines are each one Canvas block or one faint tone, not a
+miss. Getting the last three to A means hiding Canvas's Recent Feedback on course
+homes, a bolder selected-view treatment (a filled tab, which is a button change past
+the paper's three tokens), and a fourth column plan for the grades totals.

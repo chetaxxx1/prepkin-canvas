@@ -359,7 +359,8 @@ test('no rule in the skin writes any property on a button, except the buttons ru
         if (!/\.ui-button|toggleDetails__toggle/.test(sel)) {
           assert.match(sel, /:not\(\[type="submit"\]\)/, `excludes a submit button: ${sel}`);
           assert.ok(/:not\(\.(btn-|Button--)primary\)/.test(sel) || /-baseButton/.test(sel), `excludes a primary button: ${sel}`);
-          assert.ok(/icon-action/.test(sel) || /:not\(:has\(svg\)\)/.test(sel) || /toggleDetails__toggle/.test(sel), `excludes an icon-only button: ${sel}`);
+          // The Files page has no colour band, so its icon buttons may take the paper.
+          assert.ok(/icon-action/.test(sel) || /:not\(:has\(svg\)\)/.test(sel) || /toggleDetails__toggle/.test(sel) || /^html\.pk-on:not\(\.pk-back-buttons\) body\.files /.test(sel), `excludes an icon-only button: ${sel}`);
         }
         if (/toggleDetails__toggle/.test(sel)) assert.match(r.body.replace(/\s+/g, ''), /^color:/, `the toggle takes the ink alone: ${sel}`);
         if (/-baseButton/.test(sel)) assert.match(sel, /:not\(form \*\)/, `never an InstUI button inside a form: ${sel}`);

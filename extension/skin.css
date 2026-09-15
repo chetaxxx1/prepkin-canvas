@@ -396,6 +396,7 @@ html.pk-on:not(.pk-back-due-column) .context_module .due_date_display {
 /* The details line under a module row (due, points, "Submit") is Canvas's
  * 11px grey; it reads at the page's small size in the quiet ink. */
 html.pk-on:not(.pk-back-due-column) .context_module .ig-details { font-size: 13px !important; line-height: 18px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-due-column) .context_module .prerequisites_message { font-size: 13px !important; color: var(--pk-ink-2) !important; }
 
 /* ---- module-band: Canvas's bar above the modules is 90px of paper holding
  * one Collapse All. Folded to the button's own height; the button is untouched. */
@@ -419,6 +420,10 @@ html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event {
 html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-title { color: var(--pk-ink) !important; }
 html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-time { color: var(--pk-ink-2) !important; font-weight: 600 !important; }
 html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event:hover { background-color: var(--pk-hover) !important; }
+/* The month's name above the grid is a link Canvas underlines; it reads as the
+ * page's own heading, in the ink, and the hover keeps the underline. */
+html.pk-on:not(.pk-back-cal-rows) #calendar_header .navigation_title_text { color: var(--pk-ink) !important; text-decoration: none !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar_header .navigation_title_text:hover { text-decoration: underline !important; }
 
 /* ---- grades-fit: Canvas's grades table is 757px wide at 1280 and runs under
  * the sidebar (its own bug: #assignments is 620px, overflow visible). Fixed
@@ -441,6 +446,11 @@ html.pk-on:not(.pk-back-grades-fit) #grades_summary td.due,
 html.pk-on:not(.pk-back-grades-fit) #grades_summary td.submitted { white-space: normal !important; }
 html.pk-on:not(.pk-back-grades-fit) #grades_summary td.details { min-width: 0 !important; white-space: normal !important; padding-left: 4px !important; }
 html.pk-on:not(.pk-back-grades-fit) #grades_summary td.details .tooltip[aria-hidden="true"] { display: none !important; }
+/* The totals ("198.00 / 280.00") stay on one line; the last column may run
+ * into the table's own right padding rather than wrap to three. */
+html.pk-on:not(.pk-back-grades-fit) #grades_summary tr.group_total td.details,
+html.pk-on:not(.pk-back-grades-fit) #grades_summary tr.final_grade td.details,
+html.pk-on:not(.pk-back-grades-fit) #grades_summary tr.student_assignment.hard_coded td.details { white-space: nowrap !important; overflow: visible !important; }
 /* Missing and late are amber here, as everywhere in the skin: a pill in the
  * amber ink on its own tint, never red, never Canvas's grey outline. */
 html.pk-on:not(.pk-back-grades-fit) #grades_summary .submission-missing-pill [class*="-pill"],
@@ -748,14 +758,19 @@ html.pk-on:not(.pk-back-paper) #footer a { color: var(--pk-link) !important; }
 html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]),
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]),
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active),
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)) {
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)),
+/* The Files page has no colour band for an icon to sit on, so its icon-only
+ * buttons (download, the kebab) take the paper too. */
+html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([type="submit"]):not(form *) {
   background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
 }
 html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active):hover,
 html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)):hover,
-html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active {
+html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([type="submit"]):not(form *):hover,
+html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active,
+html.pk-on:not(.pk-back-buttons) .btn.calendar-button.active:not(.btn-primary):not([type="submit"]):not([class*="icon-action"]) {
   background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
 }
 /* InstUI's disclosure toggle (Settings' feature list) is a text button with an
