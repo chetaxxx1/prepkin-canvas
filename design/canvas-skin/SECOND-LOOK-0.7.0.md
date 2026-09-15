@@ -68,3 +68,20 @@ So: three A, three A−. The A− lines are each one Canvas block or one faint t
 miss. Getting the last three to A means hiding Canvas's Recent Feedback on course
 homes, a bolder selected-view treatment (a filled tab, which is a button change past
 the paper's three tokens), and a fourth column plan for the grades totals.
+
+## The A pass, part three (2026-09-15)
+
+- `feedback-rows` (row 24, never removes a thing): Canvas's Recent Feedback reads as the
+  rail's rows do — title in the ink, the grade a small chip in the mark, the check in the
+  mark, Canvas's white fade at the row's edge gone.
+- Grades: the totals column is wide enough for "198.00 / 280.00" on one line inside the
+  table; the row's own links (grade info, comments) on a sunk paper in the ink.
+- Calendar: the selected view is filled in the ink, a pressed key you can see (the one
+  place the buttons rule inverts the three tokens; the lint allows it only on `active`).
+
+Floor 87/87 (the last pages re-shot green), unit 143, receipt 38, e2e 39, stress 10.
+
+Honest grades now, Newsprint · Carbon: Dashboard A · A, Course home A · A, Modules A · A,
+Grades A− · A− (the name column at 27% puts more titles on two lines — the price of a
+table that fits 620px; a real A needs Canvas's table gone for our own, which is a
+different product decision), Files A · A, Calendar A · A. Five A, one A−.

@@ -1,6 +1,6 @@
 {
   "calendar-light-1280": {
-    "mount": 5100,
+    "mount": 5794,
     "findings": {
       "text": [],
       "blocks": [],
@@ -13,7 +13,7 @@
     }
   },
   "calendar-dark-1280": {
-    "mount": 6148,
+    "mount": 5269,
     "findings": {
       "text": [],
       "blocks": [],
@@ -26,7 +26,7 @@
     }
   },
   "calendar-light-768": {
-    "mount": 6094,
+    "mount": 5566,
     "findings": {
       "text": [],
       "blocks": [],
@@ -39,7 +39,7 @@
     }
   },
   "calendar-dark-768": {
-    "mount": 5711,
+    "mount": 5050,
     "findings": {
       "text": [],
       "blocks": [],

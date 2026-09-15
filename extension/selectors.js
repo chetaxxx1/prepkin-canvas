@@ -20,7 +20,7 @@ const SELECTORS = {
   todoLegacy:      { sel: 'ul.right-side-list.to-do-list', page: 'dashboard', conf: 'verified' },
   comingUp:        { sel: '.events_list.coming_up', page: 'dashboard', conf: 'verified' },
   comingUpMore:    { sel: '.events_list.coming_up a.more_link', page: 'dashboard', conf: 'verified' },
-  recentFeedback:  { sel: '.events_list.recent_feedback', page: 'dashboard', conf: 'verified', never: true },
+  recentFeedback:  { sel: '.events_list.recent_feedback', page: 'any', conf: 'verified', never: true }, // never hidden; restyled as rows
   courseNav:       { sel: '#section-tabs', page: 'course', conf: 'verified' },
   pastCourses:     { sel: '#past_enrollments_table, #future_enrollments_table', page: 'courses', conf: 'likely' },
   courseNavLowUse: { sel: '#section-tabs a.files, #section-tabs a.outcomes, #section-tabs a.conferences, #section-tabs a.collaborations', page: 'course', conf: 'verified' },

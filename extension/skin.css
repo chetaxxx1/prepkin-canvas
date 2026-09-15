@@ -425,20 +425,50 @@ html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event:hover { background-col
 html.pk-on:not(.pk-back-cal-rows) #calendar_header .navigation_title_text { color: var(--pk-ink) !important; text-decoration: none !important; }
 html.pk-on:not(.pk-back-cal-rows) #calendar_header .navigation_title_text:hover { text-decoration: underline !important; }
 
+/* ---- feedback-rows: Canvas's Recent Feedback, as rows -------------------
+ * The list stays whole (the house never removes information); it reads as
+ * the rail's rows do: the title in the ink, the grade as a small chip in the
+ * mark on a sunk paper, the check in the mark, no grey bar down the side. */
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback li.event { border: 0 !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon {
+  display: flex !important; align-items: flex-start !important; gap: 10px !important; padding: 10px 0 !important;
+  border: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; background: transparent !important; text-decoration: none !important;
+}
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon:hover { background-color: var(--pk-hover) !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon > i { color: var(--pk-mark) !important; margin: 2px 0 0 !important; flex: 0 0 auto !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details { flex: 1 1 auto !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__title {
+  display: block !important; color: var(--pk-ink) !important; font-size: 13px !important; line-height: 17px !important; font-weight: 700 !important;
+  white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
+}
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__context { color: var(--pk-ink-2) !important; font-size: 12px !important; line-height: 16px !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p { margin: 4px 0 0 !important; font-size: 12px !important; line-height: 16px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong {
+  display: inline-block !important; padding: 1px 8px !important; border-radius: 999px !important;
+  background-color: var(--pk-paper-sunk) !important; color: var(--pk-mark) !important; font-weight: 800 !important; font-variant-numeric: tabular-nums !important;
+}
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .clear { display: none !important; }
+/* Canvas fades the row's right edge with a white gradient (::after, 12px); on
+ * a paper it reads as a grey bar. The title is cut with an ellipsis instead. */
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details::after { display: none !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.more_link { color: var(--pk-link) !important; font-size: 12px !important; }
+
 /* ---- grades-fit: Canvas's grades table is 757px wide at 1280 and runs under
  * the sidebar (its own bug: #assignments is 620px, overflow visible). Fixed
  * columns that add to the width, the name widest, the two icon columns 18px;
  * the hidden tooltip links in Details stop holding 90px of nothing. Widths
  * are by position: this table's columns have no classes on their heads. */
 html.pk-on:not(.pk-back-grades-fit) #grades_summary { table-layout: fixed !important; width: 100% !important; }
-html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(1) { width: 30% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(1) { width: 27% !important; }
 html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(2) { width: 17% !important; }
-html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(3) { width: 14% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(3) { width: 13% !important; }
 html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(4) { width: 11% !important; }
-html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(5) { width: 12% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(5) { width: 11% !important; }
 html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(6),
 html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(8) { width: 18px !important; }
-html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(7) { width: 10% !important; }
+html.pk-on:not(.pk-back-grades-fit) #grades_summary thead th:nth-child(7) { width: 17% !important; }
+/* The row's own links (grade info, comments) in the quiet ink, not Canvas's grey. */
+html.pk-on:not(.pk-back-grades-fit) #grades_summary td.details a { color: var(--pk-ink) !important; background-color: var(--pk-paper-sunk) !important; border-color: var(--pk-rule) !important; }
 html.pk-on:not(.pk-back-grades-fit) #grades_summary td { overflow-wrap: anywhere; }
 /* Canvas keeps a due date on one line whatever the column; in a fixed column
  * that ran "Sep 1 by 5:03am" into the Submitted cell. Two lines is fine. */
@@ -754,7 +784,7 @@ html.pk-on:not(.pk-back-paper) #footer a { color: var(--pk-link) !important; }
  * primary, danger or success button (Canvas's own colour is the student's
  * cue), never an icon-only button (a kebab on a card's colour band, an X),
  * never an InstUI button inside a form (the hand-in path). The selected
- * toggle (Month) sits a shade sunk, like a pressed key. */
+ * toggle (Month) is filled in the ink, a pressed key you can see. */
 html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]),
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]),
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active),
@@ -768,10 +798,14 @@ html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.bt
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active):hover,
 html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)):hover,
-html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([type="submit"]):not(form *):hover,
-html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active,
-html.pk-on:not(.pk-back-buttons) .btn.calendar-button.active:not(.btn-primary):not([type="submit"]):not([class*="icon-action"]) {
+html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([type="submit"]):not(form *):hover {
   background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
+}
+/* The selected view (Month) is filled in the ink: a pressed key you can see. */
+html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active,
+/* (The :not() chain matches the plain rule's, so this one outweighs it.) */
+html.pk-on:not(.pk-back-buttons) .btn.calendar-button.active:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]) {
+  background-color: var(--pk-ink) !important; color: var(--pk-paper) !important; border-color: var(--pk-ink) !important;
 }
 /* InstUI's disclosure toggle (Settings' feature list) is a text button with an
  * arrow icon and no ground by design; it takes the ink alone. */

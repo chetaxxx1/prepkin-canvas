@@ -249,7 +249,8 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // And 22 for `cal-rows`: every event chip on the calendar redrawn as one
   // ink line with the class colour on its edge.
   // And 23 on 2026-09-15 for `buttons`: Canvas's plain buttons on the paper.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 23, 'twenty-three keys at most, so it cannot sprawl');
+  // And 24 for `feedback-rows`: Recent Feedback restyled as rows, never removed.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 24, 'twenty-four keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names
@@ -341,8 +342,9 @@ const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours
 // tokens, and it is gated on its Put back. Everything else in the stylesheet
 // still may not select a button at all.
 const BUTTON_RULE_GATE = 'html.pk-on:not(.pk-back-buttons) ';
-// The paper's three tokens; or the ink alone, for a text button with no ground.
-const BUTTON_TOKENS = /^(background-color:var\(--pk-paper-(2|sunk)\)!important;color:var\(--pk-ink\)!important;border-color:var\(--pk-rule\)!important;?|color:var\(--pk-ink\)!important;?)$/;
+// The paper's three tokens; the same three inverted for the one selected view
+// toggle; or the ink alone, for a text button with no ground.
+const BUTTON_TOKENS = /^(background-color:var\(--pk-paper-(2|sunk)\)!important;color:var\(--pk-ink\)!important;border-color:var\(--pk-rule\)!important;?|background-color:var\(--pk-ink\)!important;color:var\(--pk-paper\)!important;border-color:var\(--pk-ink\)!important;?|color:var\(--pk-ink\)!important;?)$/;
 
 test('no rule in the skin writes any property on a button, except the buttons rule, which writes the paper and excludes every submit, primary and icon button', () => {
   const buttonish = /(^|[\s,>+~(])(button|\.btn|\.Button|\[type="?submit"?\]|input\[type="?submit"?\]|\[role="?button"?\]|\[class\*?="[^"]*[Bb]utton[^"]*"\])/i;
@@ -354,6 +356,7 @@ test('no rule in the skin writes any property on a button, except the buttons ru
       if (sel.startsWith(BUTTON_RULE_GATE)) {
         seen++;
         assert.match(r.body.replace(/\s+/g, ''), BUTTON_TOKENS, `the paper's three tokens and nothing else: ${sel}`);
+        if (/background-color:var\(--pk-ink\)/.test(r.body.replace(/\s+/g, ''))) assert.match(sel, /active/, `only the selected view is filled: ${sel}`);
         // `.ui-button` is jQuery UI's, only ever a view toggle; the disclosure
         // toggle is a text button that takes the ink alone (checked below).
         if (!/\.ui-button|toggleDetails__toggle/.test(sel)) {
@@ -387,7 +390,7 @@ test('the skin never sets font-family, a shadow that is not none, a hover lift, 
 });
 
 test('every receipt key that has CSS is gated on its put-back class', () => {
-  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'module-band', 'grades-fit', 'cal-rows', 'buttons', 'word-paste', 'seam']) {
+  for (const key of ['paper', 'hero', 'logo-dup', 'todo-dup', 'todo-fold', 'coming-up', 'nav-dim', 'module-sticky', 'due-column', 'module-band', 'grades-fit', 'cal-rows', 'feedback-rows', 'buttons', 'word-paste', 'seam']) {
     assert.ok(css.includes(`:not(.pk-back-${key})`), `${key} has no put-back gate`);
   }
 });
