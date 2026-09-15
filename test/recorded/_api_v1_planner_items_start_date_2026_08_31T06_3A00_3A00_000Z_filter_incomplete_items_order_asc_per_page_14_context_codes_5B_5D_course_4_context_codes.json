@@ -1,0 +1,267 @@
+{
+  "path": "/api/v1/planner/items?start_date=2026-08-31T06%3A00%3A00.000Z&filter=incomplete_items&order=asc&per_page=14&context_codes%5B%5D=course_4&context_codes%5B%5D=user_3",
+  "status": 200,
+  "link": "<https://localhost:8445/api/v1/planner/items?context_codes%5B%5D=course_4&context_codes%5B%5D=user_3&filter=incomplete_items&order=asc&start_date=2026-08-31T06%3A00%3A00.000Z&page=first&per_page=14>; rel=\"current\",<https://localhost:8445/api/v1/planner/items?context_codes%5B%5D=course_4&context_codes%5B%5D=user_3&filter=incomplete_items&order=asc&start_date=2026-08-31T06%3A00%3A00.000Z&page=first&per_page=14>; rel=\"first\",<https://localhost:8445/api/v1/planner/items?context_codes%5B%5D=course_4&context_codes%5B%5D=user_3&filter=incomplete_items&order=asc&start_date=2026-08-31T06%3A00%3A00.000Z&page=first&per_page=14>; rel=\"last\"",
+  "body": [
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "22",
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": true,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": true,
+        "posted_at": "2026-09-05T11:05:14Z",
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2026-09-03T11:03:49Z",
+      "plannable": {
+        "id": "22",
+        "title": "In-class derivation check",
+        "created_at": "2026-09-05T11:05:12Z",
+        "updated_at": "2026-09-05T11:05:12Z",
+        "points_possible": 20,
+        "due_at": "2026-09-03T11:03:49Z"
+      },
+      "html_url": "/courses/4/assignments/22/submissions/3",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "10",
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": true,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": true,
+        "posted_at": "2026-09-06T20:23:19Z",
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2026-09-05T13:03:49Z",
+      "plannable": {
+        "id": "10",
+        "title": "Problem Set 7: Rotational Inertia",
+        "created_at": "2026-09-05T11:04:17Z",
+        "updated_at": "2026-09-06T20:23:28Z",
+        "points_possible": 50,
+        "due_at": "2026-09-05T13:03:49Z"
+      },
+      "html_url": "/courses/4/assignments/10/submissions/3",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "11",
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": true,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": true,
+        "posted_at": "2026-09-05T11:08:59Z",
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2026-09-06T11:03:49Z",
+      "plannable": {
+        "id": "11",
+        "title": "Lab writeup: Conservation of Momentum",
+        "created_at": "2026-09-05T11:04:19Z",
+        "updated_at": "2026-09-06T20:23:37Z",
+        "points_possible": 50,
+        "due_at": "2026-09-06T11:03:49Z"
+      },
+      "html_url": "/courses/4/assignments/11/submissions/3",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "1",
+      "planner_override": null,
+      "plannable_type": "quiz",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": true,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2026-09-08T11:03:49Z",
+      "plannable": {
+        "id": "1",
+        "title": "Unit 4 concept check",
+        "created_at": "2026-09-05T11:05:35Z",
+        "updated_at": "2026-09-05T11:05:40Z",
+        "assignment_id": "26",
+        "points_possible": 6,
+        "due_at": "2026-09-08T11:03:49Z"
+      },
+      "html_url": "/courses/4/quizzes/1",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "23",
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": true,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2026-09-09T11:03:49Z",
+      "plannable": {
+        "id": "23",
+        "title": "Reading response: Chapter 10",
+        "created_at": "2026-09-05T11:05:19Z",
+        "updated_at": "2026-09-05T11:05:21Z",
+        "points_possible": 15,
+        "due_at": null
+      },
+      "html_url": "/courses/4/assignments/23",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "3",
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2026-09-12T10:38:25Z",
+      "plannable": {
+        "id": "3",
+        "title": "Lab safety refresher on Friday",
+        "unread_count": 0,
+        "read_state": "unread",
+        "created_at": "2026-09-12T10:38:25Z",
+        "updated_at": "2026-09-12T10:38:25Z"
+      },
+      "html_url": "/courses/4/discussion_topics/3",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "4",
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2026-09-12T10:38:27Z",
+      "plannable": {
+        "id": "4",
+        "title": "Problem Set 8 due date moved",
+        "unread_count": 0,
+        "read_state": "unread",
+        "created_at": "2026-09-12T10:38:27Z",
+        "updated_at": "2026-09-12T10:38:27Z"
+      },
+      "html_url": "/courses/4/discussion_topics/4",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "63",
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": true,
+      "submissions": {
+        "submitted": false,
+        "excused": true,
+        "graded": true,
+        "posted_at": "2026-09-15T05:35:05Z",
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2026-09-16T05:35:02Z",
+      "plannable": {
+        "id": "63",
+        "title": "Live: zero then excuse 05:35:02",
+        "created_at": "2026-09-15T05:35:03Z",
+        "updated_at": "2026-09-15T05:35:03Z",
+        "points_possible": 50,
+        "due_at": "2026-09-16T05:35:02Z"
+      },
+      "html_url": "/courses/4/assignments/63/submissions/3",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    },
+    {
+      "context_type": "Course",
+      "course_id": "4",
+      "plannable_id": "13",
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2026-10-02T11:03:49Z",
+      "plannable": {
+        "id": "13",
+        "title": "Unit 4 project proposal",
+        "created_at": "2026-09-05T11:04:24Z",
+        "updated_at": "2026-09-05T11:04:24Z",
+        "points_possible": 50,
+        "due_at": "2026-10-02T11:03:49Z"
+      },
+      "html_url": "/courses/4/assignments/13",
+      "context_name": "AP Physics C: Mechanics",
+      "context_image": null
+    }
+  ]
+}

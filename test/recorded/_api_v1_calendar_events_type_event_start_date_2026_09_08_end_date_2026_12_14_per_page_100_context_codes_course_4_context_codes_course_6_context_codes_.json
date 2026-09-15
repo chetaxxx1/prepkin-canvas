@@ -1,0 +1,6 @@
+{
+  "path": "/api/v1/calendar_events?type=event&start_date=2026-09-08&end_date=2026-12-14&per_page=100&context_codes[]=course_4&context_codes[]=course_6&context_codes[]=course_5",
+  "status": 200,
+  "link": "<https://localhost:8443/api/v1/calendar_events?context_codes%5B%5D=course_4&context_codes%5B%5D=course_6&context_codes%5B%5D=course_5&end_date=2026-12-14&start_date=2026-09-08&type=event&page=1&per_page=100>; rel=\"current\",<https://localhost:8443/api/v1/calendar_events?context_codes%5B%5D=course_4&context_codes%5B%5D=course_6&context_codes%5B%5D=course_5&end_date=2026-12-14&start_date=2026-09-08&type=event&page=1&per_page=100>; rel=\"first\",<https://localhost:8443/api/v1/calendar_events?context_codes%5B%5D=course_4&context_codes%5B%5D=course_6&context_codes%5B%5D=course_5&end_date=2026-12-14&start_date=2026-09-08&type=event&page=1&per_page=100>; rel=\"last\"",
+  "body": []
+}

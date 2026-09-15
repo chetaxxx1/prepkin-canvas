@@ -20,9 +20,9 @@ function jar() {
   };
 }
 
-/// Log a teacher in through the real form and come back with a session that
-/// can call the API. `_csrf_token` is URL-encoded in the cookie; the header
-/// wants it plain.
+/// Log someone in through the real form and come back with a session that
+/// can call the API, the way the Canvas UI does. `_csrf_token` is URL-encoded
+/// in the cookie; the header wants it plain. Defaults to the teacher.
 async function teacherSession(upstream = UPSTREAM, who = TEACHER) {
   const cookies = jar();
   const form = await fetch(`${upstream}/login/canvas`, { redirect: 'manual' });
@@ -37,10 +37,11 @@ async function teacherSession(upstream = UPSTREAM, who = TEACHER) {
   });
   cookies.take(res);
   if (res.status !== 302 || !cookies.get('_csrf_token')) throw new Error(`login as ${who.login} -> ${res.status}`);
-  const api = async (method, p) => {
+  const api = async (method, p, params = null) => {
     const r = await fetch(`${upstream}/api/v1/${p.replace(/^\//, '')}`, {
       method, redirect: 'manual',
       headers: { Cookie: cookies.header(), 'X-CSRF-Token': decodeURIComponent(cookies.get('_csrf_token')), Accept: 'application/json' },
+      body: params ? new URLSearchParams(params) : undefined,
     });
     cookies.take(r);
     const text = (await r.text()).replace(/^while\(1\);/, '');

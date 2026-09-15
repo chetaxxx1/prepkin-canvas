@@ -2,6 +2,13 @@
 //
 //   ssh -N -L 3000:localhost:3000 canvas@VM   (in another terminal)
 //   CANVAS_TOKEN=<admin token> node --test test/live.test.js
+//   node --test test/live.test.js                (no token: the seeded teacher
+//                                                 and student log in instead)
+//
+// Without an admin token every call goes through a real login session
+// (test/live-clean.js): the teacher makes, grades and excuses assignments,
+// the student hands work in, and the account-level feature flag in L6 is
+// reported as needing an admin rather than switched.
 //
 // The fake bridge and fake phone stay; only Canvas is real, proxied from the
 // tunnel onto https://localhost:8443 so the extension sees the origin it
@@ -35,8 +42,13 @@ let server, h, phone, page, physics, english, alex;
 // course 4. `node test/live-clean.js` sweeps leftovers from a killed run.
 const made = [];
 
-/// Admin calls straight to the tunnel, the same way seed.py does.
+const TEACHER = { login: 'teacher@prepkin.test', password: 'PrepkinSandbox!2026' };
+let sessions = null;
+
+/// Admin calls straight to the tunnel, the same way seed.py does — or, with
+/// no token, the same calls as the teacher or the student, logged in.
 async function api(method, p, params = null, asUser = null) {
+  if (!TOKEN) return sessionApi(method, p, params, asUser);
   const url = new URL(`/api/v1/${p.replace(/^\//, '')}`, UPSTREAM);
   if (asUser) url.searchParams.set('as_user_id', asUser);
   const body = params ? new URLSearchParams(params) : undefined;
@@ -44,6 +56,19 @@ async function api(method, p, params = null, asUser = null) {
   const text = (await res.text()).replace(/^while\(1\);/, '');
   if (!res.ok) throw new Error(`${method} ${p} -> ${res.status}: ${text.slice(0, 300)}`);
   return text ? JSON.parse(text) : null;
+}
+
+/// The admin-only paths the test uses, said the way a teacher or the student
+/// can say them: the account's course list is the student's own (Alex is in
+/// every course the test names), the user search is `users/self`, and a call
+/// made as Alex is made by Alex.
+async function sessionApi(method, p, params, asUser) {
+  if (!sessions) sessions = { teacher: await teacherSession(UPSTREAM, TEACHER), student: await teacherSession(UPSTREAM, STUDENT) };
+  if (/^accounts\/1\/courses/.test(p)) return sessions.student.api('GET', 'courses?per_page=100&enrollment_state=active');
+  // `users/self` carries no login_id; the caller matches on it, so it is added.
+  if (/^accounts\/1\/users\?search_term=/.test(p)) return [{ ...await sessions.student.api('GET', 'users/self'), login_id: STUDENT.login }];
+  if (/^accounts\/1\/features/.test(p)) throw new Error('account feature flags need an admin token');
+  return (asUser ? sessions.student : sessions.teacher).api(method, p, params);
 }
 
 const sync = () => h.sw((o) => syncNow(o), SCHOOL_A);
@@ -64,7 +89,7 @@ async function pixelAt(x, y) {
 }
 
 test.before(async () => {
-  assert.ok(TOKEN, 'set CANVAS_TOKEN to an admin access token');
+  if (!TOKEN) console.log('no CANVAS_TOKEN: running as the seeded teacher and student');
   fs.mkdirSync(SHOTS, { recursive: true });
   server = await new FakeServer({ upstream: UPSTREAM, record: RECORD }).start(8443);
   h = await launch();
@@ -89,7 +114,7 @@ test.before(async () => {
 test.after(async () => {
   await h?.close(); await server?.stop();
   if (made.length) {
-    const gone = await deleteAssignments(await teacherSession(UPSTREAM), physics.id, made).catch((e) => { console.log(`live-clean failed: ${e.message}`); return []; });
+    const gone = await deleteAssignments(sessions?.teacher ?? await teacherSession(UPSTREAM), physics.id, made).catch((e) => { console.log(`live-clean failed: ${e.message}`); return []; });
     console.log(`live-clean: ${gone.length}/${made.length} of this run's assignments deleted`);
   }
 });
@@ -113,26 +138,44 @@ test('L2 pairing and the first sync carry the seeded states', async () => {
   const todo = await phone.fetchTodo();
   fs.writeFileSync(path.join(RECORD, '_first-push.json'), JSON.stringify(todo, null, 2));
 
-  const owed = (t) => { const x = byTitle(todo, t); assert.ok(x, `${t} missing`); assert.equal(x.submittedAt, null, `${t} should be owed`); return x; };
-  const handedIn = (t) => { const x = byTitle(todo, t); assert.ok(x, `${t} missing`); assert.ok(x.submittedAt, `${t} should be handed in`); return x; };
+  // Owed work older than DAYS_OVERDUE (7) days is the panel's Missing list,
+  // not the phone's push, so what the seed dated relative to its own day
+  // reads by its due date: within the week, owed; before it, gone.
+  const dues = Object.fromEntries((await Promise.all([physics, english].map((c) => api('GET', `courses/${c.id}/assignments?per_page=100`)))).flat().map((a) => [a.name, a.due_at]));
+  const owed = (t) => {
+    const x = byTitle(todo, t);
+    const due = dues[t] ? Date.parse(dues[t]) : NaN;
+    if (Number.isFinite(due) && Date.now() - due > 7 * 86_400_000) { assert.equal(x, undefined, `${t} was due ${dues[t]} and should be off the phone's list`); return { dueAt: dues[t] }; }
+    assert.ok(x, `${t} missing`); assert.equal(x.submittedAt, null, `${t} should be owed`); return x;
+  };
+  // Canvas dates every seeded submission at seed time (a student cannot
+  // backdate), and handed-in work leaves the list DAYS_AFTER_SUBMIT (3) days
+  // later. The courses were made at the same moment, so their age says which
+  // reading is right: within three days of the seed, handed in; after, gone.
+  const seedAge = (Date.now() - Date.parse(physics.created_at)) / 86_400_000;
+  const settled = seedAge > 3;
+  const handedIn = (t) => {
+    const x = byTitle(todo, t);
+    if (settled) { assert.equal(x, undefined, `${t} was handed in ${Math.floor(seedAge)} days ago and should be off the list`); return { score: undefined }; }
+    assert.ok(x, `${t} missing`); assert.ok(x.submittedAt, `${t} should be handed in`); return x;
+  };
+  const scored = (t, n) => { const x = handedIn(t); if (!settled) assert.equal(x.score, n); };
   const absent = (t) => assert.equal(byTitle(todo, t), undefined, `${t} should be off the list`);
 
-  // Problem Set 8 and the Lab writeup are left out on purpose: earlier runs
-  // of L3/L4 used to grade and excuse them. Every other seeded state is fixed.
-  owed('Problem Set 7: Rotational Inertia');
+  // Problem Set 7, Problem Set 8 and the Lab writeup are left out on purpose:
+  // earlier runs of L3/L4 used to grade and excuse them, and by 2026-09-14 all
+  // three carried scores on the sandbox. Every other seeded state is fixed.
   absent('Unit 4 project proposal');                       // 27 days out
   owed('Extra practice (optional)');                       // undated, has points
   handedIn('Close reading: Song of Myself');               // submitted, ungraded
   // Seeded as "5 days ago", but a student cannot backdate a submission, so
   // Canvas dated it today: inside the three-day grace, graded 54.
-  assert.equal(handedIn('Rhetorical analysis: Letter from Birmingham Jail').score, 54);
-  handedIn('Problem Set 6: Work and Energy');              // late, accepted
-  assert.equal(handedIn('Problem Set 6: Work and Energy').score, 41);
+  scored('Rhetorical analysis: Letter from Birmingham Jail', 54);
+  scored('Problem Set 6: Work and Energy', 41);             // late, accepted
   absent('Reading check: Chapter 9');                      // missing, zero, 8 days overdue
   absent('Quiz corrections');                              // excused
   handedIn('Problem Set 5: Kinematics');                   // resubmitted
-  handedIn('In-class derivation check');                   // on paper
-  assert.equal(handedIn('In-class derivation check').score, 18);
+  scored('In-class derivation check', 18);                 // on paper
   const ov = owed('Reading response: Chapter 10');         // section override
   assert.ok(ov.dueAt, 'the override date is mine, not undated');
   owed('Graded: one sentence on Douglass\'s audience');
@@ -227,7 +270,8 @@ test('L5 the skin and panel on every page that matters', async () => {
   await page.waitForFunction(() => { const cards = [...document.querySelectorAll('.ic-DashboardCard')].filter((c) => !/TA\)/.test(c.textContent)); return cards.length > 0 && cards.every((c) => c.querySelector('.pk-card-due')); }, null, { timeout: 30_000 });
   const lines = await page.$$eval('.ic-DashboardCard', (cards) => cards.map((c) => `${c.querySelector('.ic-DashboardCard__header-title')?.textContent}: ${c.querySelector('.pk-card-due')?.textContent}`));
   console.log(lines);
-  assert.ok(lines.some((l) => /AP Physics.*Problem Set 7/.test(l)), lines.join(' | '));
+  // The line is cut at a word to fit the card, so match the shape, not a title.
+  assert.ok(lines.some((l) => /^AP Physics.*(due|Start)/.test(l)), lines.join(' | '));
   await shot('07-dashboard-cards');
   // Dark mode on an assignment page: the submit button must stay visible.
   const a = (await api('GET', `courses/${physics.id}/assignments?per_page=100`)).find((x) => x.name.startsWith('Problem Set 8'));
@@ -248,7 +292,9 @@ test('L6 the feature flags that rewrite markup, as this Canvas build names them'
   ];
   const report = {};
   for (const [flag, scope, target] of flags) {
-    const known = (await api('GET', `${scope}/features?per_page=200`)).map((f) => f.feature);
+    let known;
+    try { known = (await api('GET', `${scope}/features?per_page=200`)).map((f) => f.feature); }
+    catch (e) { report[flag] = `not switched: ${e.message}`; continue; }
     if (!known.includes(flag)) { report[flag] = 'not in this Canvas'; continue; }
     await api('PUT', `${scope}/features/flags/${flag}`, { state: 'on' });
     try {
@@ -306,7 +352,8 @@ test('L7 every load-bearing selector still matches on this Canvas, and the recei
     const tones = dark ? [[23, 25, 29], [30, 33, 38]] : [[247, 246, 243], [255, 255, 255]];
     // Only the dashboard has a sidebar column worth sampling; course pages keep
     // an empty aside whose pixels are whatever sits there.
-    const side = p === '/' ? await page.evaluate(() => { const r = document.getElementById('right-side')?.getBoundingClientRect(); return r ? [Math.round(r.left + 30), Math.round(r.top + 300)] : null; }) : null;
+    // Below our rail card, which now sits at the top of the column.
+    const side = p === '/' ? await page.evaluate(() => { const r = document.getElementById('right-side')?.getBoundingClientRect(); const w = document.getElementById('pk-week')?.getBoundingClientRect(); return r ? [Math.round(r.left + 30), Math.round((w ? w.bottom : r.top) + 40)] : null; }) : null;
     const samples = { content: await pixelAt(700, 600) };
     if (side) samples.sidebar = await pixelAt(...side);
     for (const [where, rgb] of Object.entries(samples)) {

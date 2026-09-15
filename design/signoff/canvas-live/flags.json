@@ -1,4 +1,4 @@
 {
-  "modules_page_rewrite_student_view": "screenshot",
-  "responsive_student_grades_page": "screenshot"
+  "modules_page_rewrite_student_view": "not in this Canvas",
+  "responsive_student_grades_page": "not switched: account feature flags need an admin token"
 }

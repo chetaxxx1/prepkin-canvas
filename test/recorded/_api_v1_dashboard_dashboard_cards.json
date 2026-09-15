@@ -72,6 +72,13 @@
       "published": true,
       "links": [
         {
+          "css_class": "announcements",
+          "icon": "icon-announcement",
+          "hidden": null,
+          "path": "/courses/4/announcements",
+          "label": "Announcements"
+        },
+        {
           "css_class": "assignments",
           "icon": "icon-assignment",
           "hidden": null,
@@ -131,9 +138,9 @@
         }
       ],
       "canChangeCoursePublishState": false,
-      "defaultView": "modules",
+      "defaultView": "wiki",
       "pagesUrl": "http://canvas.docker/courses/6/pages",
-      "frontPageTitle": null
+      "frontPageTitle": "Welcome to Ceramics I"
     },
     {
       "longName": "English 11: American Voices - ENG-11",
@@ -175,7 +182,7 @@
         }
       ],
       "canChangeCoursePublishState": false,
-      "defaultView": "modules",
+      "defaultView": "feed",
       "pagesUrl": "http://canvas.docker/courses/5/pages",
       "frontPageTitle": null
     }

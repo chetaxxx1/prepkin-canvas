@@ -4,16 +4,34 @@
   "link": null,
   "body": [
     {
+      "type": "Announcement",
+      "notification_category": null,
+      "count": 2,
+      "unread_count": 2
+    },
+    {
+      "type": "Conversation",
+      "notification_category": null,
+      "count": 1,
+      "unread_count": 0
+    },
+    {
+      "type": "DiscussionTopic",
+      "notification_category": null,
+      "count": 0,
+      "unread_count": 0
+    },
+    {
       "type": "Message",
       "notification_category": "Due Date",
-      "count": 43,
+      "count": 49,
       "unread_count": 0
     },
     {
       "type": "Submission",
       "notification_category": null,
-      "count": 39,
-      "unread_count": 39
+      "count": 45,
+      "unread_count": 45
     }
   ]
 }

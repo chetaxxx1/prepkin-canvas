@@ -10,7 +10,7 @@
     "short_name": "Alex Rivera",
     "last_name": "Rivera",
     "first_name": "Alex",
-    "locale": null,
+    "locale": "en",
     "effective_locale": "en",
     "permissions": {
       "can_update_name": true,
