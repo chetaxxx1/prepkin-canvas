@@ -103,6 +103,36 @@ const THEMES = [
     header: 'wash', texture: 'stars', accessory: 'beanie', colors: { cap: '#6A4FB0', brim: '#4E3A8C' }, price: 400 },
 ];
 
+/// The fourth six, 2026-09-15: on the new stocks, and the pairs students name
+/// most — pure black, slate, linen, honey, a plain inkwell blue, peach on plum.
+const MORE_THEMES = [
+  { id: 'linen', name: 'Linen', vibe: 'unbleached cloth, terracotta, a quiet desk',
+    paper: { light: 'linen', dark: 'espresso' }, accent: { light: '#8A4B2E', dark: '#E0A96A' },
+    rail: { light: '#4A3A30', dark: '#2A211C' },
+    header: 'wash', texture: 'grain', accessory: 'scarf', colors: { wrap: '#C98A6A', tail: '#8A4B2E' }, price: 300 },
+  { id: 'oled', name: 'Pure Black', vibe: 'true black, one mint line, nothing else',
+    paper: { light: 'newsprint', dark: 'obsidian' }, accent: { light: '#1F7A5A', dark: '#7CC4A4' },
+    rail: { light: '#202428', dark: '#0B0C0E' },
+    header: 'band', texture: 'none', accessory: null, price: 250 },
+  { id: 'slate', name: 'Slate', vibe: 'cool grey, steel blue, overcast and calm',
+    paper: { light: 'mist', dark: 'slate' }, accent: { light: '#3B5F8A', dark: '#8AB4E8' },
+    rail: { light: '#2E3741', dark: '#141920' },
+    header: 'band', texture: 'none', accessory: 'glasses', colors: { frame: '#3B5F8A' }, price: 300 },
+  { id: 'honey', name: 'Honey', vibe: 'oat paper, amber ink, a warm lamp',
+    paper: { light: 'oat', dark: 'espresso' }, accent: { light: '#8C5A12', dark: '#E9B65C' },
+    rail: { light: '#5A4218', dark: '#2A1F0E' },
+    header: 'wash', texture: 'dots', accessory: 'beanie', colors: { cap: '#8C5A12', brim: '#5A4218' }, price: 350 },
+  { id: 'inkwell', name: 'Inkwell', vibe: 'white paper, blue-black ink, a fountain pen',
+    paper: { light: 'bond', dark: 'ink' }, accent: { light: '#2A4F8F', dark: '#8FB8EA' },
+    rail: { light: '#1E2E4A', dark: '#0E121B' },
+    header: 'band', texture: 'none', accessory: 'glasses', colors: { frame: '#2A4F8F' }, price: 300 },
+  { id: 'peachplum', name: 'Peach & Plum', vibe: 'apricot by day, aubergine by night',
+    paper: { light: 'peach', dark: 'plum' }, accent: { light: '#AE4A29', dark: '#E8A48A' },
+    rail: { light: '#6E3A2A', dark: '#221A2E' },
+    header: 'wash', texture: 'dots', accessory: 'scarf', colors: { wrap: '#E8A48A', tail: '#AE4A29' }, price: 400 },
+];
+for (const t of MORE_THEMES) THEMES.push(t);
+
 /// Image themes: everything above plus a wallpaper under a paper wash and four
 /// banners that rotate across the course cards. The art ships inside the
 /// extension (`extension/art/<theme>/`), never fetched. Until Grok's files land

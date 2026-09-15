@@ -36,10 +36,10 @@ test('every paper clears AAA for body text, and the card prints the measured num
   assert.equal(paperLine('nope'), '');
 });
 
-test('the catalog is sixteen papers, eleven light and five dark, and every theme names two of them', () => {
-  assert.equal(Object.keys(PAPERS).length, 16);
-  assert.equal(Object.values(PAPERS).filter((p) => p.dark).length, 5);
-  assert.equal(LOOKS.length, 26, 'eighteen flat themes and eight image themes');
+test('the catalog is twenty-one papers, thirteen light and eight dark, and every theme names two of them', () => {
+  assert.equal(Object.keys(PAPERS).length, 21);
+  assert.equal(Object.values(PAPERS).filter((p) => p.dark).length, 8);
+  assert.equal(LOOKS.length, 32, 'twenty-four flat themes and eight image themes');
   for (const look of LOOKS) {
     assert.ok(PAPERS[look.paper.light] && !PAPERS[look.paper.light].dark, `${look.id} light`);
     assert.ok(PAPERS[look.paper.dark] && PAPERS[look.paper.dark].dark, `${look.id} dark`);
@@ -382,7 +382,8 @@ test('the skin never sets font-family, a shadow that is not none, a hover lift, 
   for (const r of rules) {
     assert.doesNotMatch(r.body, /font-family/, r.selectors);
     assert.doesNotMatch(r.body, /transform:\s*translate/, r.selectors);
-    assert.doesNotMatch(r.body, /box-shadow:\s*(?!none)\S/, r.selectors);
+    // One lift, the card token, and never another (George, 2026-09-15).
+    assert.doesNotMatch(r.body, /box-shadow:\s*(?!none|var\(--pk-lift\))\S/, r.selectors);
     assert.doesNotMatch(r.body, /#(d41e00|c00000|b0453c|ff0000)/i, r.selectors);
   }
   assert.doesNotMatch(css, /css-/, 'no InstUI hash');

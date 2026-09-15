@@ -120,7 +120,8 @@ test('R3 dashboard: paper, thin hero, one To Do, every Coming Up row, one logo â
   assert.equal(await style(page, '.events_list.recent_feedback a.more_link', 'display'), 'inline');
   assert.equal(await style(page, '.ic-app-header__logomark-container', 'display'), 'none', 'the header copy of the mark');
   assert.equal(await style(page, '.ic-sidebar-logo', 'display'), 'block', 'the school sidebar logo stays');
-  assert.equal(await style(page, '.ic-DashboardCard', 'boxShadow'), 'none');
+  // The one lift: the card token, on a light paper (2026-09-15).
+  assert.match(await style(page, '.ic-DashboardCard', 'boxShadow'), /^rgba\(16, 20, 26, 0\.04\) 0px 1px 2px 0px, rgba\(16, 20, 26, 0\.06\) 0px 6px 20px 0px$/);
   assert.equal(await page.$eval('.ic-DashboardCard__action-badge', (el) => [el.textContent, getComputedStyle(el).backgroundColor].join(' ')), '0 rgb(81, 207, 160)', 'the badge keeps its count, on mint, on the icon corner');
   await page.close();
 });

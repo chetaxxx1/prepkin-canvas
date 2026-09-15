@@ -6,7 +6,9 @@
  * one thing off. Take every class away and the page is Canvas, unchanged.
  *
  * Rules of the house (design/canvas-skin/SPEC-RECEIPT.md):
- *  - never `font-family`, never a radius Canvas did not use, no shadow, no lift;
+ *  - never `font-family`; one radius (`--pk-radius`) and one lift (`--pk-lift`,
+ *    the card tokens, light papers only) on every block, and never another
+ *    shadow or radius (George opened this on 2026-09-15; the lint reads it);
  *  - never any property on a submit, primary, danger or success button, and
  *    never on an icon-only one: those are always the school's own and always
  *    visible. Canvas's plain buttons (Collapse All, View Course Stream, the
@@ -34,6 +36,13 @@ html.pk-on {
   --pk-seam: var(--pk-rule);
   /* Canvas's own button ink, for the one button that inherits ours by mistake. */
   --pk-canvas-btn-ink: #273540;
+  /* One card on every page (George, 2026-09-15, BetterCampus as the reference):
+   * the same radius, and on a light paper a lift instead of a rule around it —
+   * a white block with a hairline on an off-white ground read as a collage.
+   * On a dark paper a lift is invisible, so the hairline stays there. */
+  --pk-radius: 14px;
+  --pk-card-edge: transparent;
+  --pk-lift: 0 1px 2px rgba(16, 20, 26, .04), 0 6px 20px rgba(16, 20, 26, .06);
   color-scheme: light;
 }
 html.pk-on.pk-dark {
@@ -42,6 +51,8 @@ html.pk-on.pk-dark {
   --pk-focus: #7FB2E0;
   --pk-amber-ink: #E0B25C; --pk-amber-tint: rgba(236, 179, 92, .14);
   --pk-amber-rule: #B58A3A;
+  --pk-card-edge: var(--pk-rule);
+  --pk-lift: none;
   color-scheme: dark;
 }
 
@@ -148,10 +159,6 @@ html.pk-on:not(.pk-back-paper) .ig-row,
 html.pk-on:not(.pk-back-paper) .ig-header,
 html.pk-on:not(.pk-back-paper) #grades_summary,
 html.pk-on:not(.pk-back-paper) #grades_summary tr,
-html.pk-on:not(.pk-back-paper) .ic-app-course-menu,
-html.pk-on:not(.pk-back-paper) #section-tabs,
-html.pk-on:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs,
-html.pk-on:not(.pk-back-paper) #breadcrumbs,
 html.pk-on:not(.pk-back-paper) [class*="textInput__facade"],
 html.pk-on:not(.pk-back-paper) [class*="-pill"],
 html.pk-on:not(.pk-back-paper) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
@@ -161,12 +168,43 @@ html.pk-on:not(.pk-back-paper) textarea {
   color: var(--pk-ink) !important;
   border-color: var(--pk-rule) !important;
 }
-/* A hairline instead of a shadow. No `transition` is written anywhere: Canvas
- * has JS waiting on transitionend, and the reduced-motion block below owns
- * durations. `color-scheme` follows the paper so scrollbars and unstyled form
- * fields match; every Canvas button carries its own colours, so it is untouched. */
-html.pk-on:not(.pk-back-paper) .ic-DashboardCard { box-shadow: none !important; border: 1px solid var(--pk-rule) !important; border-radius: 16px !important; overflow: hidden !important; }
-html.pk-on:not(.pk-back-paper) .ic-DashboardCard:hover { transform: none !important; box-shadow: none !important; }
+/* The page's bars and the course menu are the paper itself: no white strip
+ * across the top, no white column down the left. */
+html.pk-on:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs,
+html.pk-on:not(.pk-back-paper) #breadcrumbs,
+html.pk-on:not(.pk-back-paper) .ic-app-course-menu,
+html.pk-on:not(.pk-back-paper) #section-tabs { background-color: var(--pk-paper) !important; color: var(--pk-ink) !important; border-color: transparent !important; box-shadow: none !important; }
+/* One card, everywhere Canvas draws a block: the same radius, the lift on a
+ * light paper and the hairline on a dark one (the two tokens above). Nothing
+ * scrolls inside a card, so `overflow: clip` keeps the module header's
+ * sticky. No `transition` is written anywhere: Canvas has JS waiting on
+ * transitionend, and the reduced-motion block below owns durations. */
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard,
+html.pk-on:not(.pk-back-paper) .item-group-condensed,
+html.pk-on:not(.pk-back-paper) #content #assignments,
+html.pk-on:not(.pk-back-paper) #content [class*="-view-table"],
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-view-container,
+html.pk-on:not(.pk-back-paper) #minical,
+html.pk-on:not(.pk-back-paper) #calendar-list-holder,
+html.pk-on:not(.pk-back-paper) .discussion-topic,
+html.pk-on:not(.pk-back-paper) .ic-announcement-row,
+html.pk-on:not(.pk-back-paper) .ic-discussion-row-container,
+html.pk-on:not(.pk-back-paper) #syllabus,
+html.pk-on:not(.pk-back-paper) .roster,
+html.pk-on:not(.pk-back-paper) .quiz-header,
+html.pk-on:not(.pk-back-paper) .user_content.enhanced,
+html.pk-on:not(.pk-back-paper) .module-sequence-footer-content {
+  border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important;
+  box-shadow: var(--pk-lift) !important; overflow: clip !important; background-color: var(--pk-paper-2) !important;
+}
+html.pk-on:not(.pk-back-paper) .item-group-condensed { margin-bottom: 16px !important; }
+/* Inside a card, rows part with a hairline and nothing else. */
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header,
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-row { border-left: 0 !important; border-right: 0 !important; border-top: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; box-shadow: none !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-row:last-child { border-bottom: 0 !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-list { border: 0 !important; }
+html.pk-on:not(.pk-back-paper) #grades_summary { border: 0 !important; }
+html.pk-on:not(.pk-back-paper) .ic-DashboardCard:hover { transform: none !important; box-shadow: var(--pk-lift) !important; }
 /* One text stack under the band: name, code, due line, then Canvas's action
  * row. Canvas floats the name box up over the band with rounded corners; that
  * is what made the card look like parts stuck together. */
@@ -243,27 +281,45 @@ html.pk-on:not(.pk-back-paper) .ig-row:hover { background-color: var(--pk-hover)
 /* The list containers behind module and assignment groups are painted white by
  * Canvas; they take the page paper so the rows read as cards on it. */
 html.pk-on:not(.pk-back-paper) .item-group-container,
-html.pk-on:not(.pk-back-paper) #context_modules { background-color: var(--pk-paper) !important; }
+html.pk-on:not(.pk-back-paper) #context_modules,
+html.pk-on:not(.pk-back-paper) #context_modules_sortable_container,
+html.pk-on:not(.pk-back-paper) .item-group-container,
+html.pk-on:not(.pk-back-paper) .ig-list { background-color: transparent !important; border: 0 !important; box-shadow: none !important; }
 /* The dashboard heading is an InstUI Heading; `data-cid` is its stable hook. */
 html.pk-on:not(.pk-back-paper) #dashboard_header_container [data-cid="Heading"] { color: var(--pk-ink) !important; }
 /* Never the login page, never the flash bar, never the global nav rail: those
  * are the school's identity and Canvas's own signals. Nothing above selects them. */
 
 /* ---- A theme's texture on the page ground, in the paper's ink, faint ---- */
-html.pk-on.pk-textured:not(.pk-back-paper) body,
+html.pk-on.pk-textured:not(.pk-back-paper) body {
+  /* The body carries the texture, pinned to the viewport; every layer above
+   * it is glass, so one sheet of paper shows through the whole page (the old
+   * way, a tile on each layer, left the header row and the main column as
+   * plain rectangles on a textured ground — a collage, 2026-09-15). */
+  background-image: var(--pk-texture, none) !important;
+  background-attachment: fixed !important;
+}
 html.pk-on.pk-textured:not(.pk-back-paper) #application,
 html.pk-on.pk-textured:not(.pk-back-paper) #wrapper,
 html.pk-on.pk-textured:not(.pk-back-paper) #main,
 html.pk-on.pk-textured:not(.pk-back-paper) .ic-Layout-contentWrapper,
 html.pk-on.pk-textured:not(.pk-back-paper) .ic-Layout-columns,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-Layout-contentMain,
+html.pk-on.pk-textured:not(.pk-back-paper) #not_right_side,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-app-main-content,
 html.pk-on.pk-textured:not(.pk-back-paper) #content,
+html.pk-on.pk-textured:not(.pk-back-paper) #dashboard_header_container,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-Dashboard-header,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-app-nav-toggle-and-crumbs,
+html.pk-on.pk-textured:not(.pk-back-paper) #breadcrumbs,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-app-course-menu,
+html.pk-on.pk-textured:not(.pk-back-paper) #section-tabs,
+html.pk-on.pk-textured:not(.pk-back-paper) .header-bar,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-Action-header,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-Action-header__Primary,
+html.pk-on.pk-textured:not(.pk-back-paper) .ic-Action-header__Secondary,
 html.pk-on.pk-textured:not(.pk-back-paper) #right-side-wrapper,
-html.pk-on.pk-textured:not(.pk-back-paper) #right-side {
-  /* Every layer that carries the paper carries the texture, pinned to the
-   * viewport so the tiles line up through the nesting. */
-  background-image: var(--pk-texture, none) !important;
-  background-attachment: fixed !important;
-}
+html.pk-on.pk-textured:not(.pk-back-paper) #right-side { background-color: transparent !important; background-image: none !important; }
 /* ---- A theme's wash over the course colour band. The band's own colour and
  * opacity stay; the wash is a second layer that fades in from the right. */
 html.pk-on.pk-head-wash:not(.pk-back-hero) .ic-DashboardCard__header_hero {
@@ -831,8 +887,8 @@ html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--
 
 /* MARK: - This week: our rail card at the top of the sidebar (content.js). */
 #pk-week {
-  margin: 0 0 12px; padding: 14px 14px 12px; border-radius: 16px;
-  background: var(--pk-paper-2); border: 1px solid var(--pk-rule); color: var(--pk-ink);
+  margin: 0 0 12px; padding: 14px 14px 12px; border-radius: var(--pk-radius);
+  background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
   font-variant-numeric: tabular-nums; container-type: inline-size;
 }
@@ -910,8 +966,8 @@ html.pk-on.pk-todo-fold:not(.pk-back-todo-fold) #right-side > .placeholder { dis
 /* MARK: - Next in this class: the course home's three rows (content.js). The
  * rail's card, without the tank. Put back on its receipt row hides it. */
 #pk-course-next {
-  margin: 0 0 12px; padding: 12px 14px; border-radius: 16px;
-  background: var(--pk-paper-2); border: 1px solid var(--pk-rule); color: var(--pk-ink);
+  margin: 0 0 12px; padding: 12px 14px; border-radius: var(--pk-radius);
+  background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums;
 }
 html.pk-back-course-next #pk-course-next { display: none; }
@@ -1083,7 +1139,7 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
 :is(#pk-planner, #pk-grades) .pk-pl-empty:empty { display: none; }
 
 /* Rows: the rail's shape, wider. Circle, tile, title, the date at the right. */
-:is(#pk-planner, #pk-grades) .pk-pl-rows { list-style: none; margin: 0 0 0 13px; padding: 0; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); border-radius: 14px; overflow: hidden; }
+:is(#pk-planner, #pk-grades) .pk-pl-rows { list-style: none; margin: 0 0 0 13px; padding: 0; background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); border-radius: var(--pk-radius); overflow: hidden; }
 :is(#pk-planner, #pk-grades) .pk-pl-rows li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-top: 1px solid var(--pk-rule); min-height: 44px; }
 :is(#pk-planner, #pk-grades) .pk-pl-rows li:first-child { border-top: 0; }
 :is(#pk-planner, #pk-grades) .pk-pl-rows li[draggable="true"] { cursor: grab; }
@@ -1122,7 +1178,7 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
 /* Grades: a row per class; the open one holds the marks, the what-if line, the
  * student's own words for the class, and every assignment. */
 :is(#pk-planner, #pk-grades) .pk-pl-grades { margin-top: 26px; }
-:is(#pk-planner, #pk-grades) .pk-pl-grade { margin: 0 0 8px 13px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); border-radius: 14px; overflow: hidden; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade { margin: 0 0 8px 13px; background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); border-radius: var(--pk-radius); overflow: hidden; }
 :is(#pk-planner, #pk-grades) .pk-pl-grow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; user-select: none; }
 :is(#pk-planner, #pk-grades) .pk-pl-grow:hover { background: var(--pk-paper-sunk); }
 :is(#pk-planner, #pk-grades) .pk-pl-grow:focus-visible { outline: 2px solid #51CFA0; outline-offset: -2px; }
@@ -1164,7 +1220,7 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 :is(#pk-planner, #pk-grades) .pk-pl-grade .every .pk-pl-foot { margin: 0; }
 
 /* The term, in numbers: a card at the top when a term is ending. */
-:is(#pk-planner, #pk-grades) .pk-pl-recap { margin: 8px 0 18px; padding: 16px 18px; border-radius: 16px; background: var(--pk-paper-2); border: 1px solid var(--pk-rule); display: flex; flex-direction: column; gap: 10px; }
+:is(#pk-planner, #pk-grades) .pk-pl-recap { margin: 8px 0 18px; padding: 16px 18px; border-radius: var(--pk-radius); background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); display: flex; flex-direction: column; gap: 10px; }
 :is(#pk-planner, #pk-grades) .pk-pl-recap .head { display: flex; align-items: baseline; gap: 10px; }
 :is(#pk-planner, #pk-grades) .pk-pl-recap .head b { font-size: 17px; font-weight: 800; }
 :is(#pk-planner, #pk-grades) .pk-pl-recap .head small { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }

@@ -81,10 +81,14 @@ property is ever written, and a rule whose hook is missing simply is not on the
 receipt.
 
 What it does today (`extension/receipt.js` is the list, `extension/selectors.js`
-names every Canvas selector it uses):
+names every Canvas selector it uses). Since 2026-09-15 every block on a page is
+one card: the same radius (`--pk-radius`), a soft lift on a light paper and a
+hairline on a dark one (`--pk-lift`, `--pk-card-edge`), and the bars and the
+course menu are the paper itself, so a page reads as one sheet, not a collage:
 
-- The page becomes one of twelve **papers** (Newsprint, Manila, Bond, Vellum,
-  Rose, Lavender, Sage, Sky; and Carbon, Blueprint, Ink, Moss for dark), each
+- The page becomes one of twenty-one **papers** (thirteen light, from Newsprint
+  and Bond to Linen, Mist and the tints; eight dark, from Carbon and Blueprint to
+  Espresso, Obsidian and Slate), each
   printed with its measured body-text contrast. A Look picks a light paper and
   a dark one. Dark is free and always will be, and Auto follows the OS.
 - The course-colour band on a dashboard card is 8px, not 146; its opacity (a
@@ -155,7 +159,7 @@ Click Sprout, bottom-right of any connected Canvas page.
 - **Today, at the top of the dashboard.** The buddy's line, what is due today,
   what still counts, what is due this week, and the next thing with Start and a
   focus timer. On the receipt, one click off.
-- **Themes.** Twenty-six, each a paper, an accent, a card-header wash and a faint
+- **Themes.** Thirty-two, each a paper, an accent, a card-header wash and a faint
   texture, all drawn on the laptop. Every ink measured.
 - **Course pictures.** Under Themes, a picture of your own on any course card,
   under any theme. You pick a file; it is shrunk here to at most 720px wide and

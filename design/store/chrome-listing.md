@@ -14,7 +14,7 @@ Character count: 115 (limit 132)
 
 Dark mode, one to-do list, and your grades. That is what this is for.
 
-**Dark mode** that is a real reading surface, not a grey filter — 26 papers, every ink measured, and it follows your Mac or PC if you want it to. Free, and it always will be.
+**Dark mode** that is a real reading surface, not a grey filter — 32 looks on 21 papers, every ink measured, and it follows your Mac or PC if you want it to. Free, and it always will be.
 
 **One to-do list.** Today, This week, Overdue, and Missing, in one place, so you are not opening five course pages to find out what is due. Every course card says what is due next. A course's home page says "Next in this class" with its own next three. This week is a planner, one list by day, and you can drag any task onto the day you will do it.
 
@@ -30,7 +30,7 @@ Every single change it makes to a Canvas page is listed in the popup — taken o
 
 The app has a paid plan, Prepkin Plus. Plus may add. Plus will never take away something that was free, and never something you already made.
 
-**Looks.** Twenty-six papers and pictures, and every tile in the picker is your own dashboard drawn in that look, with your own courses, so you see what you would get before you pick it.
+**Looks.** Thirty-two, papers and pictures, and every tile in the picker is your own dashboard drawn in that look, with your own courses, so you see what you would get before you pick it.
 
 There is also a buddy in the corner with a focus timer, and a free Prepkin app for iPhone that shares the same list. Both are optional, and both stay out of the way if you leave them alone.
 

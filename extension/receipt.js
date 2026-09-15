@@ -50,6 +50,20 @@ const PAPERS = {
     paper: '#FBEEE7', paper2: '#FEF7F3', sunk: '#F5E2D7', ink: '#2E211A', ink2: '#5E4A3E', rule: '#EFDACC', mark: '#A9482A' },
   plum:      { name: 'Plum', cast: 'aubergine dark', dark: true,
     paper: '#191320', paper2: '#211A2A', sunk: '#120D18', ink: '#E9E4EE', ink2: '#B3AAC0', rule: '#2F2739', mark: '#C3A6EE' },
+  // The fourth five, 2026-09-15 (George: more themes, all at the same floor).
+  // Two lights that sit between the neutrals and the tints, and three darks
+  // students keep asking for: a warm brown-black, a true black for OLED, and
+  // a cool slate between Carbon and Blueprint.
+  linen:     { name: 'Linen', cast: 'warm neutral', dark: false,
+    paper: '#F5F1EA', paper2: '#FCFAF6', sunk: '#ECE6DB', ink: '#2A2521', ink2: '#5A5249', rule: '#E3DCD0', mark: '#8A4B2E' },
+  mist:      { name: 'Mist', cast: 'cool grey', dark: false,
+    paper: '#EEF0F2', paper2: '#F7F8F9', sunk: '#E3E6EA', ink: '#1A1E23', ink2: '#4A525B', rule: '#D9DEE3', mark: '#3B5F8A' },
+  espresso:  { name: 'Espresso', cast: 'warm brown dark', dark: true,
+    paper: '#1C1613', paper2: '#241D19', sunk: '#16110F', ink: '#EFE7DF', ink2: '#C4B8AE', rule: '#362E28', mark: '#E0A96A' },
+  obsidian:  { name: 'Obsidian', cast: 'true black, for OLED', dark: true,
+    paper: '#0B0C0E', paper2: '#141518', sunk: '#060607', ink: '#ECEDEF', ink2: '#B3B7BD', rule: '#24262B', mark: '#7CC4A4' },
+  slate:     { name: 'Slate', cast: 'cool slate dark', dark: true,
+    paper: '#1A1F26', paper2: '#212830', sunk: '#141920', ink: '#E3E8EE', ink2: '#AEB8C4', rule: '#2E3741', mark: '#8AB4E8' },
 };
 
 /// WCAG contrast ratio of two hex colours, so the shop card prints a measured
