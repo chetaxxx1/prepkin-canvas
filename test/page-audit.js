@@ -13,11 +13,15 @@
 //   words     — no .pk-* text with a word wider than its box (it would break mid-word)
 //   uppercase — no .pk-* element that is uppercase with letter-spacing
 //   red       — no .pk-* ink, ground or edge near Canvas's red
+//   patches   — no button whose own box holds a second, contrasting box (a
+//               painted label span inside an unpainted button, 2026-09-16)
+//   blank     — the page's content column has words in it (a React page shot
+//               before it mounted passed every check above, 2026-09-15)
 // Skipped on purpose: text under a non-root background-image (unknown ground),
 // closed shadow roots (the buddy panel), iframes.
 
 function audit({ dark = false } = {}) {
-  const findings = { text: [], blocks: [], controls: [], words: [], uppercase: [], red: [], skipped: 0, counted: 0 };
+  const findings = { text: [], blocks: [], controls: [], words: [], uppercase: [], red: [], patches: [], blank: false, skipped: 0, counted: 0 };
   const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
 
   const parse = (s) => {
@@ -168,6 +172,31 @@ function audit({ dark = false } = {}) {
     const r = ratio(over(fg, bg), bg);
     if (r < 3) findings.controls.push({ path: path(el), text: label.slice(0, 30), ratio: +r.toFixed(2), pk: isPk(el) });
   }
+
+  // ---- patches: a button is one box ----
+  // InstUI paints a button's ground on a span inside it; our rule once reached
+  // the words' span and not the ground's, so the label sat in a paper box on
+  // Canvas's white (or blue). Two opaque grounds inside one control that read
+  // 2:1 apart is a patch, whatever the colours.
+  for (const el of document.body.querySelectorAll('button, a[class*="baseButton"], [role="button"], .btn, .Button')) {
+    if (offscreen(el) || !visible(el) || isPk(el)) continue;
+    const grounds = [];
+    for (const e of [el, ...el.querySelectorAll('*')]) {
+      if (e.closest('svg') || !visible(e)) continue;
+      const bg = parse(getComputedStyle(e).backgroundColor);
+      if (bg && bg.a >= 0.9) grounds.push({ bg, e });
+    }
+    for (let i = 1; i < grounds.length; i++) {
+      if (ratio(grounds[i].bg, grounds[0].bg) >= 2) {
+        findings.patches.push({ path: path(grounds[i].e), text: (el.innerText || '').trim().slice(0, 30), bg: `${getComputedStyle(grounds[0].e).backgroundColor} / ${getComputedStyle(grounds[i].e).backgroundColor}`, pk: isPk(el) });
+        break;
+      }
+    }
+  }
+
+  // ---- blank: the content column has words ----
+  const content = document.querySelector('#content') || document.querySelector('#main');
+  findings.blank = !content || (content.innerText || '').trim().length < 20;
 
   // ---- words, uppercase, red: our own elements only ----
   const canvas = document.createElement('canvas').getContext('2d');

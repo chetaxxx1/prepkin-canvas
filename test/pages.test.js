@@ -7,6 +7,7 @@
 //   ssh -N -L 3000:localhost:3000 canvas@<VM IP>      (in another terminal)
 //   PREPKIN_PORT=8445 node --test test/pages.test.js
 //   PAGES=dashboard,files MODES=dark WIDTHS=1280 node --test test/pages.test.js   (a subset)
+//   Needs the tunnel on :3000 and PREPKIN_PORT free; a full run at two widths is ~50 min.
 //   BASELINE=1 node --test test/pages.test.js   (skin off: records Canvas's own
 //        failures into test/pages-baseline.json so only what we add counts)
 //
@@ -46,9 +47,10 @@ const PAGES = [
   ['modules', '/courses/4/modules', '.context_module'],
   ['assignments', '/courses/4/assignments', '.ig-row, #ag-list'],
   ['assignment', '/courses/4/assignments/12', '#assignment_show'],
-  ['grades', '/courses/4/grades', '#grades_summary'],
+  ['grades', '/courses/4/grades', '#grades_summary tr, .pk-gp-row'],
   ['all-grades', '/grades', '#content table'],
-  ['calendar', '/calendar', '.fc-view, #calendar-app'],
+  // The month with its events on it, not the empty grid: the seed always has work this month.
+  ['calendar', '/calendar', '.fc-event'],
   ['inbox', '/conversations', '[data-testid="conversation-list-container"], #inbox-conversation-holder, [class*="conversation"]'],
   ['announcements', '/courses/4/announcements', '#content [class*="announcement"], .ic-announcement-row, .ic-item-row'],
   ['discussions', '/courses/4/discussion_topics', '.discussions-v2__wrapper, #content [data-testid], .ic-item-row'],
@@ -109,7 +111,7 @@ test.after(async () => {
     const out = { ...baseline };
     for (const [name, r] of Object.entries(report)) {
       out[name] = {};
-      for (const kind of ['text', 'controls']) out[name][kind] = (r.findings?.[kind] || []).map(key);
+      for (const kind of ['text', 'controls', 'patches']) out[name][kind] = (r.findings?.[kind] || []).map(key);
     }
     fs.writeFileSync(BASELINE_FILE, JSON.stringify(out, null, 1));
   }
@@ -123,6 +125,9 @@ async function open(url, ready) {
   await page.waitForSelector(ready, { timeout: 60_000, state: 'attached' }).catch(() => {});
   const mount = Date.now() - t0;
   await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {});
+  // Words in the content column, or the shot is of a page that has not
+  // mounted (two blank pages passed the floor on 2026-09-15).
+  await page.waitForFunction(() => ((document.querySelector('#content')?.innerText || '').trim().length >= 20), null, { timeout: 30_000 }).catch(() => {});
   await page.waitForTimeout(1200);
   return mount;
 }
@@ -157,6 +162,9 @@ for (const width of WIDTHS) for (const mode of MODES) {
       assert.equal(findings.words.length, 0, `${id}: a word wider than its box breaks mid-word:\n${say(findings.words)}`);
       assert.equal(findings.uppercase.length, 0, `${id}: uppercase tracking labels:\n${say(findings.uppercase)}`);
       assert.equal(findings.red.length, 0, `${id}: red on our own elements:\n${say(findings.red)}`);
+      assert.equal(findings.blank, false, `${id}: the content column is blank; the page never mounted, or we hid it`);
+      const patches = counts(id, 'patches', findings.patches);
+      assert.equal(patches.length, 0, `${id}: a button holds a second box:\n${say(patches)}`);
     });
   }
 }

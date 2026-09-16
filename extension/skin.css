@@ -192,6 +192,7 @@ html.pk-on:not(.pk-back-paper) .ic-discussion-row-container,
 html.pk-on:not(.pk-back-paper) #syllabus,
 html.pk-on:not(.pk-back-paper) .roster,
 html.pk-on:not(.pk-back-paper) .quiz-header,
+html.pk-on:not(.pk-back-paper) #quiz_show .description,
 html.pk-on:not(.pk-back-paper) .user_content.enhanced,
 html.pk-on:not(.pk-back-paper) .module-sequence-footer-content {
   border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important;
@@ -520,6 +521,10 @@ html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.more_link 
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #grade-summary-content > :not(.ic-Action-header):not(#pk-grades),
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content > #assignments,
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content #grade-summary-react { display: none !important; }
+/* The student's own /grades: Canvas's two headings and two tables fold under
+ * our rows; the h1 stays. */
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page):not(.pk-grades-open) #content > :not(h1):not(#pk-grades) { display: none !important; }
+#pk-grades .pk-pl-grades > .pk-pl-group:first-child { margin-top: 4px; }
 
 /* ---- grades-fit: Canvas's grades table is 757px wide at 1280 and runs under
  * the sidebar (its own bug: #assignments is 620px, overflow visible). Fixed
@@ -775,6 +780,11 @@ html.pk-on:not(.pk-back-paper) .header-bar,
 html.pk-on:not(.pk-back-paper) .ic-Action-header,
 html.pk-on:not(.pk-back-paper) .ic-Action-header__Primary,
 html.pk-on:not(.pk-back-paper) .ic-Action-header__Secondary { background-color: var(--pk-paper) !important; color: var(--pk-ink) !important; border-color: transparent !important; box-shadow: none !important; }
+/* A quiz's header and description are painted as surfaces above; Canvas sets
+ * them flush, so the title touched the box's edge. The box gets its inset. */
+html.pk-on:not(.pk-back-paper) #quiz_show .quiz-header,
+html.pk-on:not(.pk-back-paper) #quiz_show .description { padding-left: 16px !important; padding-right: 16px !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show .quiz-header { padding-top: 6px !important; border-radius: var(--pk-radius) var(--pk-radius) 0 0; }
 /* A module's requirement pill ("Complete All Items"): Canvas's white pill. */
 html.pk-on:not(.pk-back-paper) .context_module .pill li { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important; }
 /* Today, in the calendar's day-number row and its grid cell, sits a shade sunk. */
@@ -804,6 +814,14 @@ html.pk-on:not(.pk-back-paper) .mini_month .mini-cal-header .year_number { color
 html.pk-on:not(.pk-back-paper) .mini_month .mini_calendar_day .day_wrapper { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important; }
 html.pk-on:not(.pk-back-paper) .mini_month .mini_calendar_day.has_event .day_wrapper,
 html.pk-on:not(.pk-back-paper) .mini_month .mini_calendar_day.today .day_wrapper { background-color: var(--pk-paper-sunk) !important; }
+/* The roster's tabs (jQuery UI, People) and a native select ("All Roles"):
+ * Canvas paints the selected tab white and the select the browser's white. */
+html.pk-on:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav { background-color: transparent !important; border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li { background-color: var(--pk-paper-sunk) !important; border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li.ui-tabs-active { background-color: var(--pk-paper-2) !important; }
+html.pk-on:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li a { color: var(--pk-link) !important; }
+html.pk-on:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li.ui-tabs-active a { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content select { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important; }
 /* Sunk surfaces: table heads and calendar day headers. */
 html.pk-on:not(.pk-back-paper) .ic-Table th,
 html.pk-on:not(.pk-back-paper) #content [class*="-view-head"] [class*="-view-cell"],
@@ -859,17 +877,31 @@ html.pk-on:not(.pk-back-paper) #footer a { color: var(--pk-link) !important; }
 html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]),
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]),
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active),
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)),
+/* InstUI draws a button's ground on the span inside it (`baseButton__content`),
+ * not on the element, and wraps the words in `baseButton__children`. A button
+ * with words takes the paper: the element and its content span, never the
+ * words' span alone (that painted one box around the label of every button
+ * with an icon, 2026-09-16). An icon-only button has no `__children` span, so
+ * it is left alone here by the same test. `#add_discussion` is the one InstUI
+ * primary with an icon on a student's pages; it keeps Canvas's colour. */
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]),
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]) > [class*="baseButton__content"],
 /* The Files page has no colour band for an icon to sit on, so its icon-only
- * buttons (download, the kebab) take the paper too. */
-html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([type="submit"]):not(form *) {
+ * buttons (download, the kebab) take the paper too; and its Search button,
+ * a submit inside a form that hands nothing in, is the one such button named. */
+html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *),
+html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *) [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) body.files #content form [class*="-baseButton"][data-testid="files-search-button"],
+html.pk-on:not(.pk-back-buttons) body.files #content form [class*="-baseButton"][data-testid="files-search-button"] > [class*="baseButton__content"] {
   background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
 }
 html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active):hover,
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([type="submit"]):not(form *):not(:has(svg)):hover,
-html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([type="submit"]):not(form *):hover {
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]):hover,
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]):hover > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover,
+html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover [class*="baseButton__content"] {
   background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
 }
 /* The selected view (Month) is filled in the ink: a pressed key you can see. */
@@ -1001,6 +1033,15 @@ html.pk-on:not(.pk-back-title) body:not(:has(#dashboard_header_container)) #cont
   position: static !important; width: auto !important; height: auto !important;
   clip: auto !important; clip-path: none !important; overflow: visible !important;
 }
+/* The Inbox writes its h1 as an InstUI heading whose words are a screen-reader
+ * span: the heading took the size, the air and the hairline below and showed
+ * nothing, a 40px band with a line under it (2026-09-16). Its own words, unclipped. */
+html.pk-on:not(.pk-back-title) #content h1[class*="-view-heading"] > [class*="screenReaderContent"] {
+  position: static !important; width: auto !important; height: auto !important;
+  clip: auto !important; clip-path: none !important; overflow: visible !important; white-space: normal !important;
+}
+/* That page sets no inset of its own; the title lines up with its toolbar. */
+html.pk-on:not(.pk-back-title) #content h1[class*="-view-heading"]:has(> [class*="screenReaderContent"]) { padding-left: 20px !important; }
 /* 2. One size, every page. `[class*="-view-heading"]` is InstUI's stable
  *    suffix: the dashboard heading has no other hook, and its hash is never
  *    named. `.ic-Dashboard-header__title` is not on this Canvas at all. */
@@ -1137,6 +1178,12 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
 :is(#pk-planner, #pk-grades) .pk-pl-group:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 6px; }
 :is(#pk-planner, #pk-grades) .pk-pl-still, :is(#pk-planner, #pk-grades) .pk-pl-empty, :is(#pk-planner, #pk-grades) .pk-pl-foot { margin: 0 0 4px 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
 :is(#pk-planner, #pk-grades) .pk-pl-empty:empty { display: none; }
+/* A run of empty days: one quiet line, the days as chips you can still drop a
+ * row on. Todoist shows every day; Things shows only the days with work; this
+ * is the middle: the days are there, at a glance, in one line. */
+:is(#pk-planner, #pk-grades) .pk-pl-quiet { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0 0 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-quiet .day { padding: 2px 9px; border-radius: 999px; border: 1px solid var(--pk-rule); color: var(--pk-ink-2); font-weight: 700; }
+:is(#pk-planner, #pk-grades) .pk-pl-quiet .day.over { background: rgba(81, 207, 160, .16); border-color: #51CFA0; color: var(--pk-ink); }
 
 /* Rows: the rail's shape, wider. Circle, tile, title, the date at the right. */
 :is(#pk-planner, #pk-grades) .pk-pl-rows { list-style: none; margin: 0 0 0 13px; padding: 0; background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); border-radius: var(--pk-radius); overflow: hidden; }
@@ -1195,6 +1242,12 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
 :is(#pk-planner, #pk-grades) .pk-pl-grade .recent li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .recent li em { flex: none; font-style: normal; font-weight: 800; color: var(--pk-ink-2); }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .whatif { display: flex; flex-direction: column; gap: 8px; }
+/* One quiet line opens the nickname and the level; the card above it is the grade. */
+:is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more { align-self: flex-start; border: 0; padding: 0; background: none; font: inherit; font-size: 12px; font-weight: 700; color: var(--pk-ink-2); cursor: pointer; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more::after { content: " ›"; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more.open::after { content: " ⌄"; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more:hover { color: var(--pk-ink); }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 4px; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .targets, :is(#pk-planner, #pk-grades) .pk-pl-grade .levels, :is(#pk-planner, #pk-grades) .pk-pl-grade .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .targets .lead { font-size: 13px; font-weight: 700; color: var(--pk-ink-2); margin-right: 2px; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button, :is(#pk-planner, #pk-grades) .pk-pl-grade .levels button, :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button, :is(#pk-planner, #pk-grades) .pk-pl-grade .weight button, :is(#pk-planner, #pk-grades) .pk-pl-grade .rename button {

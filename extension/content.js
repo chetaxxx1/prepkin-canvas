@@ -1281,7 +1281,9 @@ function renderWeek() {
   more.addEventListener('click', openWeek);
   more.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWeek(); } });
   foot.append(more);
-  box.append(foot);
+  // On the planner tab with nothing finished yet, the foot would be a line
+  // over nothing: no foot.
+  if (foot.textContent.trim()) box.append(foot);
   if (existing) existing.replaceWith(box); else side.prepend(box);
   fitAll(box);
   renderFold();

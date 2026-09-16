@@ -145,15 +145,36 @@ function renderPlanner() {
     if (points) list.append(el('p', 'pk-pl-still', `Still counts: ${points} point${points === 1 ? '' : 's'} across ${cost.length} class${cost.length === 1 ? '' : 'es'}.`));
     list.append(plRows(groups.past, now, { slipped: true }));
   }
-  // Today and the next six days, each a drop target for a plan.
+  // Today and the next six days, each a drop target for a plan. Today always
+  // has its heading; a run of empty days after it is one quiet line of day
+  // chips ("Nothing due · Thu · Fri"), each chip still a place to drop a plan,
+  // so five empty headings never stack (the second look, 2026-09-16).
+  const dayName = (d, i) => i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.date.toLocaleDateString([], { weekday: 'long' });
+  let quiet = [];
+  const flushQuiet = () => {
+    if (!quiet.length) return;
+    const row = el('div', 'pk-pl-quiet');
+    row.append(el('span', '', 'Nothing due'));
+    for (const [d, i] of quiet) {
+      const chip = el('span', 'day', i === 1 ? 'Tomorrow' : d.date.toLocaleDateString([], { weekday: 'short' }));
+      chip.dataset.drop = dayKey(d.date);
+      chip.title = d.date.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+      plDropTarget(chip, d.date);
+      row.append(chip);
+    }
+    list.append(row);
+    quiet = [];
+  };
   groups.days.forEach((d, i) => {
-    const name = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.date.toLocaleDateString([], { weekday: 'long' });
-    const h = plGroupHead(name, d.items.filter((t) => !isDone(t)).length, { today: i === 0, date: d.date });
+    if (i > 0 && !d.items.length) { quiet.push([d, i]); return; }
+    flushQuiet();
+    const h = plGroupHead(dayName(d, i), d.items.filter((t) => !isDone(t)).length, { today: i === 0, date: d.date });
     plDropTarget(h, d.date);
     list.append(h);
     if (d.items.length) list.append(plRows(d.items, now, { first: i === 0 && !running ? d.items.find((t) => !isDone(t)) ?? null : null, running: i === 0 && running }));
-    else list.append(el('p', 'pk-pl-empty', i === 0 ? 'Nothing due today.' : ''));
+    else list.append(el('p', 'pk-pl-empty', 'Nothing due today.'));
   });
+  flushQuiet();
   // Further out, folded until asked; then work with no date; then the old zeros.
   const fold = (id, name, items, opts = {}) => {
     if (!items.length) return;
@@ -284,11 +305,11 @@ function plDropTarget(node, date) {
 /// The block under the list. A row: tile, name, per cent, letter. Open, it
 /// holds the sparkline and the last three marks, one what-if line, the
 /// nickname, the level, and every assignment the laptop already has.
-function plGrades(now) {
+function plGrades(now, { heading = 'Grades' } = {}) {
   const { data, levels } = plannerState();
   const wrap = el('div', 'pk-pl-grades');
-  const h = el('div', 'pk-pl-group'); h.append(el('b', '', 'Grades'));
-  wrap.append(h);
+  // On /grades Canvas's own h1 already says it; the word is not said twice.
+  if (heading) { const h = el('div', 'pk-pl-group'); h.append(el('b', '', heading)); wrap.append(h); }
   const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id)));
   if (!courses.length) { wrap.append(el('p', 'pk-pl-empty', 'Nothing graded yet.')); return wrap; }
   for (const c of courses) wrap.append(plGradeRow(c, now));
@@ -339,7 +360,16 @@ function plGradeRow(c, now) {
   }
   // What-if: one line, from Canvas's weights or a weight the student typed.
   if (pct !== null) body.append(plWhatIf(c));
-  // The nickname and the level: the student's own words for the class.
+  // The nickname and the level: the student's own words for the class. Two
+  // rows of controls nobody touches twice a term, so they wait behind one
+  // quiet line; the card above is the grade, the aim and the what-if.
+  const moreKey = `more-${c.id}`;
+  const moreOpen = plUnfolded.has(moreKey);
+  const more = el('button', `pk-pl-more${moreOpen ? ' open' : ''}`, nicknames[c.id] ? `Nickname and level · ${nicknames[c.id]}` : 'Nickname and level');
+  more.type = 'button'; more.setAttribute('aria-expanded', String(moreOpen));
+  more.addEventListener('click', (e) => { if (!e.isTrusted) return; if (moreOpen) plUnfolded.delete(moreKey); else plUnfolded.add(moreKey); renderPlanner(); });
+  body.append(more);
+  if (!moreOpen) { body.append(plCourseLists(c, now)); row.append(body); return row; }
   const rename = el('div', 'rename');
   const input = el('input', '', null); input.type = 'text'; input.maxLength = 40; input.placeholder = 'Nickname, like BIO 101'; input.value = nicknames[c.id] ?? '';
   input.setAttribute('aria-label', `Nickname for ${c.fullName ?? c.name}`);
@@ -455,40 +485,50 @@ function plCourseLists(c, now) {
 
 const GRADES_ID = 'pk-grades';
 function gradesCourseId() { return /^\/courses\/(\d+)\/grades\/?$/.exec(location.pathname)?.[1] ?? null; }
+/// The student's own Grades page (/grades): every class, so our rows are the
+/// page there too, with Canvas's two tables folded under.
+function allGradesPage() { return /^\/grades\/?$/.test(location.pathname); }
 
 /// Our grades row stands in for Canvas's table when it has this course from a
 /// sync, the cards are on, and the row has not been put back. Canvas's table
 /// folds under it (the `grades-page` receipt row); "Show Canvas's table"
 /// brings it out for this visit, Put back for good.
 function gradesPageShows() {
+  const { data, putBack, skin, killed } = plannerState();
+  if (killed || !skin.cards || putBack['grades-page']) return false;
+  if (allGradesPage()) return !!document.querySelector('#content table') && (data.courses ?? []).some((c) => c.name && /^\d+$/.test(String(c.id)));
   const id = gradesCourseId();
   if (!id || !document.querySelector('#grades_summary, #grade-summary-react')) return false;
-  const { data, putBack, skin, killed } = plannerState();
-  return !killed && !!skin.cards && !putBack['grades-page'] && (data.courses ?? []).some((c) => String(c.id) === id);
+  return (data.courses ?? []).some((c) => String(c.id) === id);
 }
 
 function renderGradesPage() {
   const existing = document.getElementById(GRADES_ID);
-  if (!gradesPageShows()) { existing?.remove(); document.documentElement.classList.remove('pk-grades-page'); plGradesFixed = null; return; }
+  if (!gradesPageShows()) { existing?.remove(); document.documentElement.classList.remove('pk-grades-page', 'pk-grades-all'); plGradesFixed = null; return; }
+  const all = allGradesPage();
   const id = gradesCourseId();
   const now = new Date();
   const { data, levels, nicknames, targets } = plannerState();
-  const c = data.courses.find((x) => String(x.id) === id);
-  plGradesFixed = id;
-  const key = JSON.stringify([c.id, c.name, c.score, c.grade, (data.graded?.[id] ?? []).map((g) => [g.id, g.score]), data.tasks.filter((t) => String(t.courseId) === id).map((t) => [t.id, t.submittedAt, t.doneAt, t.missing]), levels[id], nicknames[id], targets[id], plCourseList, plTarget, plWeight]);
+  const c = all ? null : data.courses.find((x) => String(x.id) === id);
+  plGradesFixed = all ? null : id;
+  const key = all
+    ? JSON.stringify([data.courses.map((x) => [x.id, x.name, x.score, x.grade]), levels, nicknames, targets, plOpenCourse, plCourseList, plTarget, plWeight])
+    : JSON.stringify([c.id, c.name, c.score, c.grade, (data.graded?.[id] ?? []).map((g) => [g.id, g.score]), data.tasks.filter((t) => String(t.courseId) === id).map((t) => [t.id, t.submittedAt, t.doneAt, t.missing]), levels[id], nicknames[id], targets[id], plCourseList, plTarget, plWeight]);
   document.documentElement.classList.add('pk-grades-page');
+  document.documentElement.classList.toggle('pk-grades-all', all);
   // Under Canvas's own title row, which React draws after the page; until it
   // is there the box leads #content, and moves under the title when it lands.
-  const anchor = document.querySelector('#grade-summary-content > .ic-Action-header, #content > .header-bar');
+  // On /grades the title is a plain h1 Canvas already wrote.
+  const anchor = all ? document.querySelector('#content > h1') : document.querySelector('#grade-summary-content > .ic-Action-header, #content > .header-bar');
   if (existing && existing.dataset.key === key) {
     if (anchor && anchor.nextElementSibling !== existing) anchor.after(existing);
     return;
   }
   const box = el('section', '', null);
   box.id = GRADES_ID; box.dataset.key = key;
-  box.setAttribute('aria-label', 'Prepkin: your grade in this class');
-  const head = el('div', 'pk-pl-group'); head.append(el('b', '', 'Your grade'));
-  box.append(head, plGradeRow(c, now));
+  box.setAttribute('aria-label', all ? 'Prepkin: your grades' : 'Prepkin: your grade in this class');
+  if (all) box.append(plGrades(now, { heading: null }));
+  else { const head = el('div', 'pk-pl-group'); head.append(el('b', '', 'Your grade')); box.append(head, plGradeRow(c, now)); }
   // Canvas's own table, one click away for this visit; the receipt's Put back
   // brings it back for good.
   const foot = el('p', 'pk-pl-foot pk-gr-foot');

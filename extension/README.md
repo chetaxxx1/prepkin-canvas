@@ -154,8 +154,9 @@ Click Sprout, bottom-right of any connected Canvas page.
   assignment** — one list per class, filtered All / Graded / Missing / Upcoming.
   Weights come from Canvas when the course publishes them; when it does not, the
   panel asks rather than guessing. On a course's own Grades page this row **is
-  the page**, under Canvas's title; Canvas's table folds beneath it, one click
-  away for a visit and a Put back for good (the `grades-page` row).
+  the page**, under Canvas's title, and on the student's own Grades page every
+  class is a row; Canvas's tables fold beneath, one click away for a visit and
+  a Put back for good (the `grades-page` row).
 - **Today, at the top of the dashboard.** The buddy's line, what is due today,
   what still counts, what is due this week, and the next thing with Start and a
   focus timer. On the receipt, one click off.

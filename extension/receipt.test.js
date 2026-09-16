@@ -344,6 +344,7 @@ const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours
 // tokens, and it is gated on its Put back. Everything else in the stylesheet
 // still may not select a button at all.
 const BUTTON_RULE_GATE = 'html.pk-on:not(.pk-back-buttons) ';
+const FORM_BUTTON_OK = ['body.files #content form [class*="-baseButton"][data-testid="files-search-button"]'];
 // The paper's three tokens; the same three inverted for the one selected view
 // toggle; or the ink alone, for a text button with no ground.
 const BUTTON_TOKENS = /^(background-color:var\(--pk-paper-(2|sunk)\)!important;color:var\(--pk-ink\)!important;border-color:var\(--pk-rule\)!important;?|background-color:var\(--pk-ink\)!important;color:var\(--pk-paper\)!important;border-color:var\(--pk-ink\)!important;?|color:var\(--pk-ink\)!important;?)$/;
@@ -361,14 +362,21 @@ test('no rule in the skin writes any property on a button, except the buttons ru
         if (/background-color:var\(--pk-ink\)/.test(r.body.replace(/\s+/g, ''))) assert.match(sel, /active/, `only the selected view is filled: ${sel}`);
         // `.ui-button` is jQuery UI's, only ever a view toggle; the disclosure
         // toggle is a text button that takes the ink alone (checked below).
-        if (!/\.ui-button|toggleDetails__toggle/.test(sel)) {
+        // The Files page's Search: a submit inside a form that hands nothing
+        // in. The one form button named, by its test id, and nothing wider.
+        const namedFormButton = FORM_BUTTON_OK.some((k) => sel.includes(k));
+        if (!/\.ui-button|toggleDetails__toggle/.test(sel) && !namedFormButton) {
           assert.match(sel, /:not\(\[type="submit"\]\)/, `excludes a submit button: ${sel}`);
           assert.ok(/:not\(\.(btn-|Button--)primary\)/.test(sel) || /-baseButton/.test(sel), `excludes a primary button: ${sel}`);
-          // The Files page has no colour band, so its icon buttons may take the paper.
-          assert.ok(/icon-action/.test(sel) || /:not\(:has\(svg\)\)/.test(sel) || /toggleDetails__toggle/.test(sel) || /^html\.pk-on:not\(\.pk-back-buttons\) body\.files /.test(sel), `excludes an icon-only button: ${sel}`);
+          // The Files page has no colour band, so its icon buttons may take the
+          // paper. An InstUI button with a `__children` span has words, so it
+          // is not icon-only either.
+          assert.ok(/icon-action/.test(sel) || /:not\(:has\(svg\)\)/.test(sel) || /:has\(\[class\*="baseButton__children"\]\)/.test(sel) || /toggleDetails__toggle/.test(sel) || /^html\.pk-on:not\(\.pk-back-buttons\) body\.files /.test(sel), `excludes an icon-only button: ${sel}`);
         }
         if (/toggleDetails__toggle/.test(sel)) assert.match(r.body.replace(/\s+/g, ''), /^color:/, `the toggle takes the ink alone: ${sel}`);
-        if (/-baseButton/.test(sel)) assert.match(sel, /:not\(form \*\)/, `never an InstUI button inside a form: ${sel}`);
+        if (/-baseButton/.test(sel) && !namedFormButton) assert.match(sel, /:not\(form \*\)/, `never an InstUI button inside a form: ${sel}`);
+        // InstUI's words span is never painted on its own: that boxed the label.
+        assert.doesNotMatch(sel, /baseButton__children"\](?!\))/, `never the words' span alone: ${sel}`);
         continue;
       }
       // `:not([type="submit"])` excludes a button; it is not a way of naming one.

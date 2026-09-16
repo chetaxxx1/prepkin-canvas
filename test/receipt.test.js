@@ -673,6 +673,22 @@ test('R26 a pending row on a course card is a link that says Start on hover; han
   await page.close();
 });
 
+test('R31 the student\'s own /grades: a row per class under Canvas\'s h1, its tables folded, the word Grades said once', async () => {
+  await h.setStorage({ putBack: {} });
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/grades');
+  await page.waitForSelector('#pk-grades .pk-pl-grade', { timeout: 5000 });
+  assert.equal(await page.$eval('#pk-grades', (e) => e.previousElementSibling?.tagName), 'H1', 'under the h1');
+  assert.ok((await page.$$('#pk-grades .pk-pl-grade')).length >= 2, 'a row per class');
+  assert.equal(await page.$eval('#pk-grades', (e) => (e.textContent.match(/\bGrades\b/g) || []).length), 0, 'Grades is Canvas\'s h1, not said again');
+  assert.equal(await style(page, '#content h2', 'display'), 'none', "Canvas's headings fold");
+  assert.equal(await style(page, '#content table.student_grades', 'display'), 'none', "and its tables");
+  assert.notEqual(await style(page, '#content > h1', 'display'), 'none', 'the h1 stays');
+  await page.click('#pk-grades .pk-gr-show');
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('#content table.student_grades')).display !== 'none', null, { timeout: 3000 });
+  await page.close();
+});
+
 test('R30 a course\'s grades page: our grade row under Canvas\'s title, its table folded, one click out, Put back for good', async () => {
   await h.setStorage({ putBack: {} });
   await h.sw((o) => syncNow(o), SCHOOL_A);
@@ -728,6 +744,9 @@ test('R27 the Planner and Looks tabs: one list by day with the grades block, the
   await page.click('#pk-planner .pk-pl-grade .pk-pl-grow');
   await page.waitForSelector('#pk-planner .pk-pl-grade.open .whatif', { timeout: 3000 });
   assert.match(await page.$eval('#pk-planner .pk-pl-grade.open .whatif', (e) => e.textContent), /needs \d+% on the final|is worth/, 'the what-if line');
+  assert.equal(await page.$('#pk-planner .pk-pl-grade.open .rename input'), null, 'the nickname waits behind one line');
+  await page.click('#pk-planner .pk-pl-grade.open .pk-pl-more');
+  await page.waitForSelector('#pk-planner .pk-pl-grade.open .rename input', { timeout: 3000 });
   assert.ok(await page.$('#pk-planner .pk-pl-grade.open .rename input'), 'the nickname');
   assert.ok(await page.$('#pk-planner .pk-pl-grade.open .levels button.on'), 'the level');
   assert.ok((await page.$$('#pk-planner .pk-pl-grade.open .every .pk-pl-rows li')).length >= 1, 'every assignment');

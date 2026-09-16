@@ -245,6 +245,10 @@ function pageFor(url) {
 <div id="calendar-app"><div class="fc-view"><table><thead><tr><th class="fc-widget-header fc-day-header">Mon</th><th class="fc-widget-header fc-day-header">Tue</th></tr></thead>
 <tbody class="fc-widget-content"><tr><td class="fc-day fc-widget-content">1<a class="fc-event" style="background-color: #fff; border: 1px solid rgb(255, 111, 97); color: rgb(255, 111, 97)"><span class="fc-time">5:03a</span> <span class="fc-title">Problem Set 7</span></a></td><td class="fc-day fc-widget-content">2</td></tr></tbody></table></div></div>`;
     side = `<div id="calendar-list"><h2>Calendars</h2><ul class="context-list"><li class="context"><a href="#">AP Physics C</a></li></ul></div>`;
+  } else if (p === '/grades') {
+    // The student's own Grades page: a plain h1, two headings, two tables.
+    main = `<h1>Grades</h1><h2>Courses I'm Taking</h2><table class="course_details student_grades"><tbody><tr><td class="course"><a href="/courses/1/grades">AP Physics C</a></td><td class="percent">82%</td></tr></tbody></table>
+<h2>Courses I'm Teaching</h2><table class="course_details teacher_grades"><tbody><tr><td class="course">Intro Lab (TA)</td><td class="percent">no grades</td></tr></tbody></table>`;
   } else if (p === '/courses') {
     main = `<div class="header-bar"><div class="ic-Action-header"><h1 class="ic-Action-header__Heading">All Courses</h1></div></div>
 <table id="my_courses_table" class="ic-Table ic-Table--bordered course-list-table"><thead><tr><th class="course-list-column-header">Course</th><th>Term</th></tr></thead>

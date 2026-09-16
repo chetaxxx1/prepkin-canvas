@@ -1,6 +1,6 @@
 {
   "dashboard-light-1280": {
-    "mount": 12890,
+    "mount": 5643,
     "findings": {
       "text": [],
       "blocks": [],
@@ -8,12 +8,299 @@
       "words": [],
       "uppercase": [],
       "red": [],
+      "patches": [],
+      "blank": false,
       "skipped": 0,
-      "counted": 42
+      "counted": 54
+    }
+  },
+  "dashboard-planner-light-1280": {
+    "mount": 5064,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 59
+    }
+  },
+  "courses-light-1280": {
+    "mount": 5542,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 25
+    }
+  },
+  "course-home-light-1280": {
+    "mount": 8574,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 57
+    }
+  },
+  "modules-light-1280": {
+    "mount": 5959,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "assignments-light-1280": {
+    "mount": 13742,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 35
+    }
+  },
+  "assignment-light-1280": {
+    "mount": 5700,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 47
+    }
+  },
+  "grades-light-1280": {
+    "mount": 5871,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 78
+    }
+  },
+  "all-grades-light-1280": {
+    "mount": 6790,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 18
+    }
+  },
+  "calendar-light-1280": {
+    "mount": 15044,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 127
+    }
+  },
+  "inbox-light-1280": {
+    "mount": 12706,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 11
+    }
+  },
+  "announcements-light-1280": {
+    "mount": 8422,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 37
+    }
+  },
+  "discussions-light-1280": {
+    "mount": 10654,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 32
+    }
+  },
+  "files-light-1280": {
+    "mount": 65066,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 38
+    }
+  },
+  "page-light-1280": {
+    "mount": 5163,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 29
+    }
+  },
+  "quizzes-light-1280": {
+    "mount": 8131,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 28
+    }
+  },
+  "quiz-light-1280": {
+    "mount": 5015,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 45
+    }
+  },
+  "people-light-1280": {
+    "mount": 10175,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
+    }
+  },
+  "syllabus-light-1280": {
+    "mount": 4755,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 64
+    }
+  },
+  "settings-light-1280": {
+    "mount": 6525,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
     }
   },
   "dashboard-dark-1280": {
-    "mount": 12329,
+    "mount": 4912,
     "findings": {
       "text": [],
       "blocks": [],
@@ -21,12 +308,299 @@
       "words": [],
       "uppercase": [],
       "red": [],
+      "patches": [],
+      "blank": false,
       "skipped": 0,
-      "counted": 41
+      "counted": 54
+    }
+  },
+  "dashboard-planner-dark-1280": {
+    "mount": 5154,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 59
+    }
+  },
+  "courses-dark-1280": {
+    "mount": 5267,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 25
+    }
+  },
+  "course-home-dark-1280": {
+    "mount": 6281,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 57
+    }
+  },
+  "modules-dark-1280": {
+    "mount": 5098,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "assignments-dark-1280": {
+    "mount": 11539,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 35
+    }
+  },
+  "assignment-dark-1280": {
+    "mount": 5488,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 47
+    }
+  },
+  "grades-dark-1280": {
+    "mount": 5425,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 78
+    }
+  },
+  "all-grades-dark-1280": {
+    "mount": 4790,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 18
+    }
+  },
+  "calendar-dark-1280": {
+    "mount": 12560,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 127
+    }
+  },
+  "inbox-dark-1280": {
+    "mount": 12547,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 11
+    }
+  },
+  "announcements-dark-1280": {
+    "mount": 8251,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 37
+    }
+  },
+  "discussions-dark-1280": {
+    "mount": 9745,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 32
+    }
+  },
+  "files-dark-1280": {
+    "mount": 66222,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 38
+    }
+  },
+  "page-dark-1280": {
+    "mount": 5931,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 29
+    }
+  },
+  "quizzes-dark-1280": {
+    "mount": 9807,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 28
+    }
+  },
+  "quiz-dark-1280": {
+    "mount": 5520,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 45
+    }
+  },
+  "people-dark-1280": {
+    "mount": 10389,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
+    }
+  },
+  "syllabus-dark-1280": {
+    "mount": 5158,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 64
+    }
+  },
+  "settings-dark-1280": {
+    "mount": 5605,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
     }
   },
   "dashboard-light-768": {
-    "mount": 15944,
+    "mount": 6266,
     "findings": {
       "text": [],
       "blocks": [],
@@ -34,12 +608,299 @@
       "words": [],
       "uppercase": [],
       "red": [],
+      "patches": [],
+      "blank": false,
       "skipped": 0,
-      "counted": 41
+      "counted": 54
+    }
+  },
+  "dashboard-planner-light-768": {
+    "mount": 5227,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 59
+    }
+  },
+  "courses-light-768": {
+    "mount": 7034,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 25
+    }
+  },
+  "course-home-light-768": {
+    "mount": 6249,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "modules-light-768": {
+    "mount": 5381,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "assignments-light-768": {
+    "mount": 15492,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 35
+    }
+  },
+  "assignment-light-768": {
+    "mount": 5370,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 47
+    }
+  },
+  "grades-light-768": {
+    "mount": 4871,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 61
+    }
+  },
+  "all-grades-light-768": {
+    "mount": 4376,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 18
+    }
+  },
+  "calendar-light-768": {
+    "mount": 13729,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 127
+    }
+  },
+  "inbox-light-768": {
+    "mount": 13233,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 11
+    }
+  },
+  "announcements-light-768": {
+    "mount": 7972,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 37
+    }
+  },
+  "discussions-light-768": {
+    "mount": 10101,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 31
+    }
+  },
+  "files-light-768": {
+    "mount": 64666,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
+    }
+  },
+  "page-light-768": {
+    "mount": 6825,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 29
+    }
+  },
+  "quizzes-light-768": {
+    "mount": 9693,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 28
+    }
+  },
+  "quiz-light-768": {
+    "mount": 5646,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 45
+    }
+  },
+  "people-light-768": {
+    "mount": 10075,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
+    }
+  },
+  "syllabus-light-768": {
+    "mount": 5555,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 65
+    }
+  },
+  "settings-light-768": {
+    "mount": 5534,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 47
     }
   },
   "dashboard-dark-768": {
-    "mount": 12253,
+    "mount": 5102,
     "findings": {
       "text": [],
       "blocks": [],
@@ -47,14 +908,301 @@
       "words": [],
       "uppercase": [],
       "red": [],
+      "patches": [],
+      "blank": false,
       "skipped": 0,
-      "counted": 19
+      "counted": 54
+    }
+  },
+  "dashboard-planner-dark-768": {
+    "mount": 5342,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 59
+    }
+  },
+  "courses-dark-768": {
+    "mount": 5238,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 25
+    }
+  },
+  "course-home-dark-768": {
+    "mount": 6551,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "modules-dark-768": {
+    "mount": 5446,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 40
+    }
+  },
+  "assignments-dark-768": {
+    "mount": 12193,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 35
+    }
+  },
+  "assignment-dark-768": {
+    "mount": 5199,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 47
+    }
+  },
+  "grades-dark-768": {
+    "mount": 5605,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 61
+    }
+  },
+  "all-grades-dark-768": {
+    "mount": 4576,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 18
+    }
+  },
+  "calendar-dark-768": {
+    "mount": 13373,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 127
+    }
+  },
+  "inbox-dark-768": {
+    "mount": 12373,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 11
+    }
+  },
+  "announcements-dark-768": {
+    "mount": 7941,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 37
+    }
+  },
+  "discussions-dark-768": {
+    "mount": 9513,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 31
+    }
+  },
+  "files-dark-768": {
+    "mount": 64886,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
+    }
+  },
+  "page-dark-768": {
+    "mount": 5910,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 29
+    }
+  },
+  "quizzes-dark-768": {
+    "mount": 8083,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 28
+    }
+  },
+  "quiz-dark-768": {
+    "mount": 5223,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 45
+    }
+  },
+  "people-dark-768": {
+    "mount": 9928,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 49
+    }
+  },
+  "syllabus-dark-768": {
+    "mount": 5497,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 65
+    }
+  },
+  "settings-dark-768": {
+    "mount": 5847,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 47
     }
   },
   "mount": {
-    "on": 9232,
-    "looks": 9570,
-    "off": 10278,
+    "on": 4989,
+    "looks": 5156,
+    "off": 5352,
     "stalls": []
   }
 }

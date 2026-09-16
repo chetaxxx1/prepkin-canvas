@@ -20,7 +20,7 @@ Dark mode, one to-do list, and your grades. That is what this is for.
 
 **Tick it done.** Every row has a circle. Tick it when the work is finished, on the laptop or in the side panel, and it stays ticked on the phone too. It never writes to Canvas.
 
-**Your grades**, with the class average beside each score, a grade you are aiming for, and "what do I need on the final?". On a class's Grades page that view is the page, with Canvas's table one click away.
+**Your grades**, with the class average beside each score, a grade you are aiming for, and "what do I need on the final?". On a class's Grades page that view is the page, and on your own Grades page every class is a row, with Canvas's tables one click away.
 
 Free. No account. Nothing to unlock, and no AI anywhere.
 
