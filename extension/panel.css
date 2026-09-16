@@ -173,6 +173,8 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-keys kbd { font: inherit; font-size: 10px; font-weight: 800; padding: 0 4px; border-radius: 4px; border: 1px solid var(--pk-line); color: var(--pk-text-2); }
 .pk-results li.empty { padding: 12px 10px; color: var(--pk-text-2); font-size: 13px; }
 
-/* The panel takes focus when it opens; that is a announcement, not a highlight. */
-.pk-panel:focus { outline: none; }
-.pk-panel:focus-visible { outline: 2px solid var(--pk-mint); outline-offset: -2px; }
+/* The panel takes focus when it opens; that is an announcement, not a
+ * highlight. Focus moves on to the first control (the search field, the tab),
+ * which wears its own ring; a ring around the whole panel was a race that
+ * showed in one paper and not the other (2026-09-16). */
+.pk-panel:focus, .pk-panel:focus-visible { outline: none; }

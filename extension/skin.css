@@ -286,6 +286,21 @@ html.pk-on:not(.pk-back-paper) #context_modules,
 html.pk-on:not(.pk-back-paper) #context_modules_sortable_container,
 html.pk-on:not(.pk-back-paper) .item-group-container,
 html.pk-on:not(.pk-back-paper) .ig-list { background-color: transparent !important; border: 0 !important; box-shadow: none !important; }
+/* Canvas gives the container 72px of padding under its last group: on the
+ * page paper that is air; painted, it was a plate running past the last row
+ * (Quizzes, 2026-09-16). */
+html.pk-on:not(.pk-back-paper) .item-group-container { padding-bottom: 0 !important; }
+/* Every row a student sees is published, so Canvas's green edge and green
+ * type icon on each one say nothing: the edge takes the rule, the icon the
+ * quiet ink. The Assignments index's Show by Date / Type toggle is set in
+ * uppercase by Canvas; its words, in their own case. */
+html.pk-on:not(.pk-back-paper) .ig-row.ig-published::before { background-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon,
+html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon i { color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #content .header-bar [class*="radioInput__label"] { text-transform: none !important; letter-spacing: normal !important; }
+/* An action header with nothing in it for a student (the courses list) still
+ * carries Canvas's 24px above and below: no margins on an empty one. */
+html.pk-on:not(.pk-back-paper) #content .ic-Action-header:not(:has(a)):not(:has(input)):not(:has(select)):not(:has(h1)):not(:has(h2)):not(:has(h3)):not(:has([role])) { margin-top: 0 !important; margin-bottom: 0 !important; }
 /* The dashboard heading is an InstUI Heading; `data-cid` is its stable hook. */
 html.pk-on:not(.pk-back-paper) #dashboard_header_container [data-cid="Heading"] { color: var(--pk-ink) !important; }
 /* Never the login page, never the flash bar, never the global nav rail: those
@@ -731,7 +746,6 @@ html.pk-on:not(.pk-back-paper) .ui-dialog,
 html.pk-on:not(.pk-back-paper) .ui-tabs,
 html.pk-on:not(.pk-back-paper) .tab-content,
 html.pk-on:not(.pk-back-paper) .ic-item-row,
-html.pk-on:not(.pk-back-paper) .item-group-container,
 html.pk-on:not(.pk-back-paper) .assignment-group,
 html.pk-on:not(.pk-back-paper) .ic-Action-header,
 html.pk-on:not(.pk-back-paper) #calendar_header,
@@ -1153,7 +1167,6 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
   margin: 6px 0 28px; max-width: 720px; color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums;
 }
-:is(#pk-planner, #pk-grades) .pk-pl-icon { display: block; flex: none; }
 :is(#pk-planner, #pk-grades) .pk-pl-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 4px 0 6px; }
 :is(#pk-planner, #pk-grades) .pk-pl-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
 :is(#pk-planner, #pk-grades) .pk-pl-title b { font-size: 22px; line-height: 28px; font-weight: 900; letter-spacing: -.02em; }
@@ -1237,10 +1250,6 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
 :is(#pk-planner, #pk-grades) .pk-pl-grade .bar i { display: block; height: 100%; border-radius: 999px; background: #51CFA0; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .body { padding: 4px 12px 12px; border-top: 1px solid var(--pk-rule); display: flex; flex-direction: column; gap: 12px; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .spark svg { display: block; width: 100%; height: 40px; }
-:is(#pk-planner, #pk-grades) .pk-pl-grade .recent { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
-:is(#pk-planner, #pk-grades) .pk-pl-grade .recent li { display: flex; justify-content: space-between; gap: 10px; }
-:is(#pk-planner, #pk-grades) .pk-pl-grade .recent li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
-:is(#pk-planner, #pk-grades) .pk-pl-grade .recent li em { flex: none; font-style: normal; font-weight: 800; color: var(--pk-ink-2); }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .whatif { display: flex; flex-direction: column; gap: 8px; }
 /* One quiet line opens the nickname and the level; the card above it is the grade. */
 :is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more { align-self: flex-start; border: 0; padding: 0; background: none; font: inherit; font-size: 12px; font-weight: 700; color: var(--pk-ink-2); cursor: pointer; }

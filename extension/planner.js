@@ -18,7 +18,6 @@
 
 const PLANNER_ID = 'pk-planner';
 const PLANNER_TABS_ID = 'pk-dashtabs';
-const PLANNER_ICON_DIR = 'art/icons/';
 const PLANNER_ONE_DAY = 86400000;
 
 /// Which tab is showing: 'cards' (Canvas's own), 'planner' or 'looks'. Remembered.
@@ -39,14 +38,6 @@ const LOOKS_ID = 'pk-looks';
 let plConfirm = null;
 /// The add-a-task form, open or not.
 let plAdding = false;
-
-function plIcon(name, size = 22) {
-  const img = document.createElement('img');
-  img.width = size; img.height = size; img.alt = ''; img.setAttribute('aria-hidden', 'true');
-  img.className = 'pk-pl-icon';
-  if (alive()) img.src = chrome.runtime.getURL(`${PLANNER_ICON_DIR}${name}.webp`);
-  return img;
-}
 
 function plannerShows() {
   return railShows() && !plannerState().putBack.planner && !!document.getElementById('DashboardCard_Container');
@@ -124,7 +115,8 @@ function renderPlanner() {
   // One head row: the title and a way to add a task. No arrows, no count.
   const headRow = el('div', 'pk-pl-head');
   const title = el('div', 'pk-pl-title');
-  title.append(plIcon('tabCalendar', 28), el('b', '', 'Planner'));
+  // Words, no picture: the one picture on a Canvas page of ours is Sprout.
+  title.append(el('b', '', 'Planner'));
   const add = el('span', 'add', '+ Add a task');
   add.setAttribute('role', 'button'); add.tabIndex = 0;
   add.addEventListener('click', () => { plAdding = !plAdding; renderPlanner(); });
@@ -346,18 +338,10 @@ function plGradeRow(c, now) {
 
   const body = el('div', 'body');
   const graded = data.graded?.[c.id] ?? [];
-  // The line of marks and the last three, newest first.
+  // The line of marks. The marks themselves are said once, in the Marked
+  // list below, with the class average beside each; a "last three" here said
+  // them twice in one card (one place per fact, 2026-09-16).
   if (graded.length >= 2) { const spark = el('div', 'spark'); spark.innerHTML = sparkline(graded, color ?? '#51CFA0'); body.append(spark); }
-  const recent = graded.slice(-3).reverse();
-  if (recent.length) {
-    const ul = el('ul', 'recent');
-    for (const g of recent) {
-      const li = el('li');
-      li.append(el('span', '', g.title), el('em', '', `${g.score}/${g.outOf}${typeof g.classMean === 'number' ? ` · class ${g.classMean}` : ''}`));
-      ul.append(li);
-    }
-    body.append(ul);
-  }
   // What-if: one line, from Canvas's weights or a weight the student typed.
   if (pct !== null) body.append(plWhatIf(c));
   // The nickname and the level: the student's own words for the class. Two
@@ -650,7 +634,7 @@ function renderLooks() {
 
   const headRow = el('div', 'pk-pl-head');
   const title = el('div', 'pk-pl-title');
-  title.append(plIcon('collection', 28), el('b', '', 'Looks'), el('small', '', 'Earned with coins from verified work. Dark is always free.'));
+  title.append(el('b', '', 'Looks'), el('small', '', 'Earned with coins from verified work. Dark is always free.'));
   headRow.append(title);
   if (wallet.coins !== null) {
     const coins = el('div', 'pk-pl-coins');
@@ -793,5 +777,5 @@ function plPictures(look, { data, cardArt, banners, ART_AVAILABLE }) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { plIconFor, PLANNER_ICONS };
+  module.exports = {};
 }

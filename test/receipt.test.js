@@ -733,7 +733,7 @@ test('R27 the Planner and Looks tabs: one list by day with the grades block, the
   assert.ok((await page.$$('#pk-planner .pk-pl-list .pk-pl-rows li')).length >= 3, 'the work as rows');
   assert.ok(await page.$('#pk-planner .pk-pl-rows li .pk-tick'), 'each with a circle');
   assert.ok(await page.$('#pk-planner .pk-pl-rows li .pk-tile'), 'and a class tile, no icons');
-  assert.equal(await page.$('#pk-planner img.pk-pl-icon:not(:first-child)'), null);
+  assert.equal(await page.$('#pk-planner img'), null, 'no pictures on the planner but the class tiles');
   assert.ok(await page.$('#pk-planner .pk-pl-rows li.pk-w-first .pk-w-actions a.start'), 'today\'s first row is the one to start, with Start under it');
   assert.equal(await page.$$eval('#pk-planner *', (els) => els.filter((e) => getComputedStyle(e).textTransform === 'uppercase' && (e.textContent || '').trim()).length), 0, 'nothing uppercase');
   assert.equal(await page.$eval('#pk-planner', (e) => /\d+ of \d+|League|Shallows|earned this week/.test(e.textContent)), false, 'no count said twice, no league on the page');

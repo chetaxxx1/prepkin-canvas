@@ -147,11 +147,11 @@ Click Sprout, bottom-right of any connected Canvas page.
   tonight and Today says two — on the panel, on the dashboard strip and in the
   buddy's line. A plan never moves work out of Overdue, because planning
   something for tomorrow does not un-slip it.
-- **Grades.** Tap a course to expand: a sparkline of every graded item, the three
-  most recent scores with the class average beside each one when Canvas publishes
-  it, a grade you are **aiming for** (a tick on the bar, never a countdown), a
-  what-if calculator ("what do I need on the final?"), and **See every
-  assignment** — one list per class, filtered All / Graded / Missing / Upcoming.
+- **Grades.** Tap a course to expand: a sparkline of every graded item, a grade
+  you are **aiming for** (a tick on the bar, never a countdown), a
+  what-if calculator ("what do I need on the final?"), and **every
+  assignment** — one list per class, filtered All / Missing / Ahead / Marked, each
+  mark with the class average beside it when Canvas publishes one.
   Weights come from Canvas when the course publishes them; when it does not, the
   panel asks rather than guessing. On a course's own Grades page this row **is
   the page**, under Canvas's title, and on the student's own Grades page every
