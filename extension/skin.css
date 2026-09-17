@@ -439,8 +439,8 @@ html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-cell"],
 html.pk-on.pk-art:not(.pk-back-paper) #content .module-sequence-footer-content,
 html.pk-on.pk-art:not(.pk-back-paper) #content .item-group-condensed,
 html.pk-on.pk-art:not(.pk-back-paper) #content .user_content.enhanced,
-html.pk-on.pk-art:not(.pk-back-paper) #content .pk-pl-rows,
-html.pk-on.pk-art:not(.pk-back-paper) #content .pk-pl-grade,
+html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-pl-rows,
+html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-pl-grade,
 html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav,
 html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li {
   background-color: transparent !important; box-shadow: none !important;
@@ -1282,6 +1282,21 @@ html.pk-on.pk-show.pk-hide-past #future_enrollments_table {
 html.pk-on.pk-planner-on:not(.pk-back-planner) #DashboardCard_Container { display: none !important; }
 html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-grades) { display: none; }
 
+/* The Planner is one sheet on the page (Todoist's Upcoming is a sheet, not rows
+ * loose on a wall): opaque paper on the papers, frosted glass on an image
+ * look. Rows inside it sit a shade apart with a hairline. Before this, on an
+ * image look the rows sat see-through on the wallpaper (George, 2026-09-17). */
+#pk-planner, #pk-looks {
+  background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); border-radius: 16px; padding: 18px 22px 22px; box-shadow: var(--pk-lift);
+}
+html.pk-on.pk-art:not(.pk-back-paper) #pk-planner,
+html.pk-on.pk-art:not(.pk-back-paper) #pk-looks {
+  background: color-mix(in srgb, var(--pk-paper) 84%, transparent); backdrop-filter: blur(18px) saturate(1.15); -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  border-color: color-mix(in srgb, var(--pk-paper-2) 55%, transparent);
+}
+#pk-planner .pk-pl-rows, #pk-planner .pk-pl-grade { background: var(--pk-paper); box-shadow: none; }
+html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-rows,
+html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: color-mix(in srgb, var(--pk-paper-2) 55%, transparent); }
 :is(#pk-planner, #pk-grades) {
   margin: 6px 0 28px; max-width: 720px; color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums;
@@ -1315,9 +1330,23 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
 /* A run of empty days: one quiet line, the days as chips you can still drop a
  * row on. Todoist shows every day; Things shows only the days with work; this
  * is the middle: the days are there, at a glance, in one line. */
-:is(#pk-planner, #pk-grades) .pk-pl-quiet { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0 0 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
-:is(#pk-planner, #pk-grades) .pk-pl-quiet .day { padding: 2px 9px; border-radius: 999px; border: 1px solid var(--pk-rule); color: var(--pk-ink-2); font-weight: 700; }
-:is(#pk-planner, #pk-grades) .pk-pl-quiet .day.over { background: rgba(81, 207, 160, .16); border-color: #51CFA0; color: var(--pk-ink); }
+:is(#pk-planner, #pk-grades) .pk-pl-quiet { margin: 14px 0 0 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
+/* The week strip (Structured, Tiimo): seven days, the day number, a dot under
+ * a day with work, today filled in the ink. A tap goes to the day; a dragged
+ * row lands on it. */
+#pk-planner .pk-pl-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 4px 0 6px; }
+#pk-planner .pk-pl-strip .day { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 0 6px; border-radius: 12px; border: 1px solid transparent; background: none; font: inherit; color: var(--pk-ink); cursor: pointer; }
+#pk-planner .pk-pl-strip .day small { font-size: 11px; line-height: 14px; font-weight: 700; color: var(--pk-ink-2); }
+#pk-planner .pk-pl-strip .day b { font-size: 17px; line-height: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+#pk-planner .pk-pl-strip .day .dot { width: 5px; height: 5px; border-radius: 999px; background: transparent; margin-top: 2px; }
+#pk-planner .pk-pl-strip .day.has .dot { background: var(--pk-mark); }
+#pk-planner .pk-pl-strip .day.today { background: var(--pk-ink); color: var(--pk-paper); }
+#pk-planner .pk-pl-strip .day.today small { color: var(--pk-paper); opacity: .8; }
+#pk-planner .pk-pl-strip .day.today.has .dot { background: var(--pk-paper); }
+#pk-planner .pk-pl-strip .day:hover { border-color: var(--pk-rule); }
+#pk-planner .pk-pl-strip .day.over { border-color: #51CFA0; background: rgba(81, 207, 160, .16); }
+#pk-planner .pk-pl-strip .day:focus-visible { outline: 2px solid #51CFA0; outline-offset: 1px; }
+#pk-planner .pk-pl-empty a { color: var(--pk-link); font-weight: 700; }
 
 /* Rows: the rail's shape, wider. Circle, tile, title, the date at the right. */
 :is(#pk-planner, #pk-grades) .pk-pl-rows { list-style: none; margin: 0 0 0 13px; padding: 0; background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); border-radius: var(--pk-radius); overflow: hidden; }

@@ -136,6 +136,27 @@ function renderPlanner() {
   if (recap) box.append(plRecapCard(now));
 
   const list = el('div', 'pk-pl-list');
+  // The week at a glance, Structured's strip: seven days from today, the day
+  // number, a dot under a day with work, today filled. A tap scrolls to the
+  // day; a row dragged onto a day is planned for it. It is the planner's
+  // navigation, not a count (the rail lost its strip for saying the count twice).
+  const strip = el('div', 'pk-pl-strip');
+  strip.setAttribute('aria-label', 'This week');
+  groups.days.forEach((d, i) => {
+    const cell = el('button', `day${i === 0 ? ' today' : ''}${d.items.some((t) => !isDone(t)) ? ' has' : ''}`);
+    cell.type = 'button';
+    cell.append(el('small', '', d.date.toLocaleDateString([], { weekday: 'short' })), el('b', '', String(d.date.getDate())), el('i', 'dot'));
+    cell.dataset.drop = dayKey(d.date);
+    cell.title = d.date.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+    plDropTarget(cell, d.date);
+    cell.addEventListener('click', (e) => {
+      if (!e.isTrusted) return;
+      const target = list.querySelector(`[data-day="${dayKey(d.date)}"]`);
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    strip.append(cell);
+  });
+  list.append(strip);
   // What slipped: amber dates, and one line saying what it is still worth.
   if (groups.past.length) {
     list.append(plGroupHead('Past due', groups.past.length));
@@ -144,34 +165,45 @@ function renderPlanner() {
     if (points) list.append(el('p', 'pk-pl-still', `Still counts: ${points} point${points === 1 ? '' : 's'} across ${cost.length} class${cost.length === 1 ? '' : 'es'}.`));
     list.append(plRows(groups.past, now, { slipped: true }));
   }
-  // Today and the next six days, each a drop target for a plan. Today always
-  // has its heading; a run of empty days after it is one quiet line of day
-  // chips ("Nothing due · Thu · Fri"), each chip still a place to drop a plan,
-  // so five empty headings never stack (the second look, 2026-09-16).
+
+  // Today and the next six days. Today always has its heading (with the next
+  // thing named when nothing is due); a day with work has its heading and
+  // rows; a run of empty days is one quiet line, so nothing stacks.
   const dayName = (d, i) => i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.date.toLocaleDateString([], { weekday: 'long' });
+  const shortDay = (d) => d.date.toLocaleDateString([], { weekday: 'short' });
   let quiet = [];
   const flushQuiet = () => {
     if (!quiet.length) return;
-    const row = el('div', 'pk-pl-quiet');
-    row.append(el('span', '', 'Nothing due'));
-    for (const [d, i] of quiet) {
-      const chip = el('span', 'day', i === 1 ? 'Tomorrow' : d.date.toLocaleDateString([], { weekday: 'short' }));
-      chip.dataset.drop = dayKey(d.date);
-      chip.title = d.date.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
-      plDropTarget(chip, d.date);
-      row.append(chip);
-    }
-    list.append(row);
+    const first = quiet[0], last = quiet[quiet.length - 1];
+    const words = quiet.length === 1
+      ? `Nothing due ${first[1] === 1 ? 'tomorrow' : shortDay(first[0])}`
+      : `Nothing due ${first[1] === 1 ? 'tomorrow' : shortDay(first[0])} to ${shortDay(last[0])}`;
+    const line = el('p', 'pk-pl-quiet', words);
+    line.dataset.day = dayKey(first[0].date);
+    list.append(line);
     quiet = [];
   };
+  const nextAfterToday = groups.days.slice(1).flatMap((d) => d.items.filter((t) => !isDone(t)))[0] ?? groups.later[0] ?? null;
   groups.days.forEach((d, i) => {
     if (i > 0 && !d.items.length) { quiet.push([d, i]); return; }
     flushQuiet();
     const h = plGroupHead(dayName(d, i), d.items.filter((t) => !isDone(t)).length, { today: i === 0, date: d.date });
+    h.dataset.day = dayKey(d.date);
     plDropTarget(h, d.date);
     list.append(h);
     if (d.items.length) list.append(plRows(d.items, now, { first: i === 0 && !running ? d.items.find((t) => !isDone(t)) ?? null : null, running: i === 0 && running }));
-    else list.append(el('p', 'pk-pl-empty', 'Nothing due today.'));
+    else {
+      // Nothing today: say so, and name the next thing so the day still points somewhere.
+      const empty = el('p', 'pk-pl-empty', 'Nothing due today.');
+      if (nextAfterToday) {
+        empty.append(' Next: ');
+        const url = safeURL(nextAfterToday.url);
+        const a = url ? el('a', '', nextAfterToday.title) : el('b', '', nextAfterToday.title);
+        if (url) a.href = url;
+        empty.append(a, `, ${dueLabel(nextAfterToday, now).replace(' · still counts', '')}.`);
+      }
+      list.append(empty);
+    }
   });
   flushQuiet();
   // Further out, folded until asked; then work with no date; then the old zeros.
