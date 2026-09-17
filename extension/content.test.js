@@ -356,7 +356,8 @@ test('dayGroups: slipped, today and six days, later folded, undated, old zeros a
     { id: 'old', title: 'Old zero', dueAt: at(-20), submittedAt: null, missing: true },
     { id: 't', title: 'Today', dueAt: at(0), submittedAt: null },
     { id: 'f', title: 'Friday', dueAt: at(4), submittedAt: null },
-    { id: 'n', title: 'Nine days out', dueAt: at(9), submittedAt: null },
+    { id: 'n', title: 'Sixteen days out', dueAt: at(16), submittedAt: null },
+    { id: 'w', title: 'Nine days out', dueAt: at(9), submittedAt: null },
     { id: 'u', title: 'No date', dueAt: null, submittedAt: null },
     { id: 'd', title: 'Ticked today', dueAt: at(2), submittedAt: null, doneAt: now.toISOString() },
     { id: 'e', title: 'Handed in last week', dueAt: at(-3), submittedAt: at(-3, 10) },
@@ -365,10 +366,11 @@ test('dayGroups: slipped, today and six days, later folded, undated, old zeros a
   const g = dayGroups(tasks, now, (t) => dayOf(t));
   assert.deepEqual(g.past.map((t) => t.id), ['y'], 'a day old is past due');
   assert.deepEqual(g.missed.map((t) => t.id), ['old'], 'an old zero is its own folded list');
-  assert.equal(g.days.length, 7);
+  assert.equal(g.days.length, 14, 'two weeks by day');
+  assert.deepEqual(g.days[9].items.map((t) => t.id), ['w'], 'nine days out is a day of its own');
   assert.deepEqual(g.days[0].items.map((t) => t.id), ['t', 'd'], 'today: pending first, then what was finished today');
   assert.deepEqual(g.days[4].items.map((t) => t.id), ['f']);
-  assert.deepEqual(g.later.map((t) => t.id), ['n'], 'nine days out is later');
+  assert.deepEqual(g.later.map((t) => t.id), ['n'], 'sixteen days out is later; nine is a day');
   assert.deepEqual(g.undated.map((t) => t.id), ['u']);
   assert.ok(!g.days.some((d) => d.items.some((t) => t.id === 'e')), 'handed in last week is nowhere on the list');
   // A plan moves Friday's thing to today.

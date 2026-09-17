@@ -1334,10 +1334,12 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: col
 /* The week strip (Structured, Tiimo): seven days, the day number, a dot under
  * a day with work, today filled in the ink. A tap goes to the day; a dragged
  * row lands on it. */
-#pk-planner .pk-pl-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 4px 0 6px; }
-#pk-planner .pk-pl-strip .day { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 0 6px; border-radius: 12px; border: 1px solid transparent; background: none; font: inherit; color: var(--pk-ink); cursor: pointer; }
-#pk-planner .pk-pl-strip .day small { font-size: 11px; line-height: 14px; font-weight: 700; color: var(--pk-ink-2); }
-#pk-planner .pk-pl-strip .day b { font-size: 17px; line-height: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+#pk-planner .pk-pl-strip { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; margin: 4px 0 6px; }
+#pk-planner .pk-pl-strip .day { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 0 5px; border-radius: 10px; border: 1px solid transparent; background: none; font: inherit; color: var(--pk-ink); cursor: pointer; min-width: 0; }
+#pk-planner .pk-pl-strip .day small { font-size: 10px; line-height: 13px; font-weight: 700; color: var(--pk-ink-2); }
+#pk-planner .pk-pl-strip .day b { font-size: 15px; line-height: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+/* The second week starts with a hairline between the two. */
+#pk-planner .pk-pl-strip .day:nth-child(8) { border-left-color: var(--pk-rule); border-radius: 0 10px 10px 0; }
 #pk-planner .pk-pl-strip .day .dot { width: 5px; height: 5px; border-radius: 999px; background: transparent; margin-top: 2px; }
 #pk-planner .pk-pl-strip .day.has .dot { background: var(--pk-mark); }
 #pk-planner .pk-pl-strip .day.today { background: var(--pk-ink); color: var(--pk-paper); }
@@ -1526,9 +1528,9 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 
 /* Course pictures: a banner from the worn theme, or a picture of your own. */
 #pk-looks .pk-pl-pictures { margin-top: 20px; padding-top: 4px; }
-#pk-looks .pk-pl-pictures .row { display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--pk-rule); }
-#pk-looks .pk-pl-pictures .row:first-of-type { border-top: 0; }
-#pk-looks .pk-pl-pictures .row b { font-size: 13px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pk-looks .pk-pl-pictures .pk-pic-row { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; align-items: center; gap: 14px; margin: 0; padding: 10px 0; border-top: 1px solid var(--pk-rule); }
+#pk-looks .pk-pl-pictures .pk-pic-row:first-of-type { border-top: 0; }
+#pk-looks .pk-pl-pictures .pk-pic-row b { font-size: 13px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #pk-looks .pk-pl-pictures .thumbs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 #pk-looks .pk-pl-pictures .thumb { position: relative; width: 72px; height: 28px; border-radius: 7px; background-size: cover; background-position: center; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
 #pk-looks .pk-pl-pictures .thumb.on { box-shadow: 0 0 0 2px #51CFA0; }

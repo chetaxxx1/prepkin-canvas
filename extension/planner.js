@@ -48,8 +48,13 @@ function plannerShows() {
 function renderPlannerTabs() {
   const existing = document.getElementById(PLANNER_TABS_ID);
   const bar = document.querySelector('#dashboard_header_container .ic-Dashboard-header__layout');
-  if (!bar || !plannerShows()) { existing?.remove(); document.documentElement.classList.remove('pk-planner-on'); return; }
+  if (!plannerShows()) { existing?.remove(); document.documentElement.classList.remove('pk-planner-on'); return; }
+  // The cards hide whenever a tab of ours is open, whether or not Canvas's
+  // header bar is in the DOM this instant: React rebuilds the bar, and a pass
+  // that met the gap used to drop the class and let the card skeletons show
+  // under the Looks sheet (2026-09-17).
   document.documentElement.classList.toggle('pk-planner-on', plTab !== 'cards');
+  if (!bar) { existing?.remove(); return; }
   if (existing && existing.parentElement === bar) { plSyncTabs(existing); return; }
   existing?.remove();
   const tabs = el('div', '', null);
@@ -145,7 +150,7 @@ function renderPlanner() {
   groups.days.forEach((d, i) => {
     const cell = el('button', `day${i === 0 ? ' today' : ''}${d.items.some((t) => !isDone(t)) ? ' has' : ''}`);
     cell.type = 'button';
-    cell.append(el('small', '', d.date.toLocaleDateString([], { weekday: 'short' })), el('b', '', String(d.date.getDate())), el('i', 'dot'));
+    cell.append(el('small', '', d.date.toLocaleDateString([], { weekday: 'short' }).slice(0, 2)), el('b', '', String(d.date.getDate())), el('i', 'dot'));
     cell.dataset.drop = dayKey(d.date);
     cell.title = d.date.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
     plDropTarget(cell, d.date);
@@ -782,7 +787,9 @@ function plPictures(look, { data, cardArt, banners, ART_AVAILABLE }) {
   const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)) : null;
   wrap.append(el('span', 'pk-pl-label plain', 'Course pictures'));
   for (const c of courses) {
-    const row = el('div', 'row');
+    // Not "row": Canvas's own .row (its grid) reached in and laid this out
+    // backwards on a real school (2026-09-17).
+    const row = el('div', 'pk-pic-row');
     const name = el('b', '', shortCourse(c.name)); name.title = c.name;
     row.append(name);
     const thumbs = el('div', 'thumbs');

@@ -141,10 +141,11 @@ function voice({ overdue, today, doneToday }) {
 /// its day for the day it was finished, struck; other days list pending work.
 function dayGroups(tasks, now = new Date(), dayOf = () => null) {
   const today = startOfDay(now);
-  const horizon = new Date(today.getTime() + 7 * DAY_MS);
+  // Two weeks by day; further out folds under Later.
+  const horizon = new Date(today.getTime() + 14 * DAY_MS);
   const byTime = (a, b) => Date.parse(a.dueAt ?? 0) - Date.parse(b.dueAt ?? 0);
   const past = [], later = [], undated = [], missed = [];
-  const days = Array.from({ length: 7 }, (_, i) => ({ date: new Date(today.getTime() + i * DAY_MS), items: [] }));
+  const days = Array.from({ length: 14 }, (_, i) => ({ date: new Date(today.getTime() + i * DAY_MS), items: [] }));
   for (const t of tasks) {
     const day = dayOf(t);
     if (isDone(t)) {

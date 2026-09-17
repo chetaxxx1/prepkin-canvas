@@ -12,9 +12,11 @@
 const TODO_TYPE_TO_DO = 'submitting';
 
 /// How far around today an assignment has to fall to be worth showing.
-/// Wider than "due today" so nothing lands as a surprise, narrow enough that a
-/// syllabus full of May deadlines does not bury this week.
-const DAYS_AHEAD = 14;
+/// Six weeks ahead: the planner shows two weeks by day and folds the rest
+/// under Later, so a syllabus of May deadlines does not bury this week, and a
+/// student can still see past next weekend (George, 2026-09-17: "why only
+/// seven days ahead").
+const DAYS_AHEAD = 42;
 const DAYS_OVERDUE = 7;
 /// Work the school itself marked missing keeps showing long after the overdue
 /// window closes. A zero from three weeks ago is the thing a student most needs
