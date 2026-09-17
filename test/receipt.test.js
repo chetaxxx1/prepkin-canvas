@@ -479,6 +479,9 @@ test('R34 wearing a look keeps you on Looks, even when the page was opened at #p
 
 test('R20 Command-K opens the buddy on search; Escape closes it', async () => {
   const page = await open('/');
+  // He mounts after the first sync; the key waits for him (a flake in the full run otherwise).
+  await page.waitForSelector('#prepkin-buddy', { timeout: 8000 });
+  await page.waitForTimeout(300);
   await page.keyboard.press('Meta+KeyK');
   await page.waitForSelector('#prepkin-buddy[data-open][data-view="search"]', { timeout: 3000 });
   await page.keyboard.press('Escape');
@@ -725,6 +728,28 @@ test('R26 a pending row on a course card is a link that says Start on hover; han
   assert.notEqual(await page.$eval('.pk-card-due a.pk-due-row .go', (e) => getComputedStyle(e).display), 'none', 'Start on hover');
   assert.equal(await page.$eval('.pk-card-due a.pk-due-row .d', (e) => getComputedStyle(e).display), 'none', 'the date steps aside');
   assert.ok((await page.$$('.pk-card-due .pk-due-row')).length <= (await page.$$('.ic-DashboardCard')).length, 'one line per card, never more');
+  await page.close();
+});
+
+test('R35 Canvas\'s List View folds under the Planner: no Courses tab, our sheet is the page, Put back brings Canvas\'s list back', async () => {
+  await h.setStorage({ putBack: {}, dashTab: 'cards' });
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/?view=list');
+  await page.waitForSelector('#pk-planner .pk-pl-strip', { timeout: 6000 });
+  assert.ok((await classes(page)).includes('pk-list-on'), 'the page knows it is List View');
+  assert.equal(await style(page, '#dashboard-planner', 'display'), 'none', "Canvas's planner folds");
+  assert.equal(await style(page, '#dashboard-planner-header', 'display'), 'none', 'and its toolbar');
+  assert.deepEqual(await page.$$eval('#pk-dashtabs [role="tab"]', (els) => els.map((e) => e.textContent)), ['Planner', 'Looks'], 'no Courses tab: List View draws no cards');
+  await page.bringToFront();
+  const popup = await openPopup(h);
+  await popup.waitFor('#receipt li');
+  const rows = await popup.evaluate(`[...document.querySelectorAll('#receipt li')].map((li) => li.textContent.trim())`);
+  await popup.close();
+  assert.ok(rows.some((r) => /List View, folded/.test(r)), `on the receipt: ${rows.join(' | ')}`);
+  await h.setStorage({ putBack: { 'list-view': true } });
+  await page.waitForFunction(() => getComputedStyle(document.getElementById('dashboard-planner')).display !== 'none', null, { timeout: 4000 });
+  assert.ok(!(await classes(page)).includes('pk-list-on'), 'put back: Canvas\'s list is Canvas\'s again');
+  await h.setStorage({ putBack: {}, dashTab: 'cards' });
   await page.close();
 });
 

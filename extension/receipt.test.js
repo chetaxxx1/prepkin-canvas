@@ -135,7 +135,7 @@ test('a row is on the receipt only when its hook is on the page', () => {
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'week'), 'the rail is on the dashboard receipt');
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'todo-fold'), 'the fold needs a To Do list on the page');
   assert.ok(receiptRows({ present: () => true, detect: { todoFold: true } }).some((r) => r.key === 'todo-fold'), 'and lists itself when there is one');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true, listView: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
   assert.ok(!light.some((r) => r.key === 'word-paste' || r.key === 'seam'), 'dark-only rows stay off in light');
@@ -252,7 +252,9 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // And 24 for `feedback-rows`: Recent Feedback restyled as rows, never removed.
   // And 25 for `grades-page`: our grade row stands in for Canvas's table on a
   // course's grades page; the table is one click away and Put back restores it.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 25, 'twenty-five keys at most, so it cannot sprawl');
+  // Raised to 26 on 2026-09-17 for `list-view`: Canvas's own planner folded
+  // under ours is the whole main column, so it is a row with a Put back.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 26, 'twenty-six keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names

@@ -1277,6 +1277,12 @@ html.pk-on.pk-show.pk-hide-past #future_enrollments_table {
 #pk-dashtabs [role="tab"]:hover { color: var(--pk-ink); }
 #pk-dashtabs [role="tab"].on { background: var(--pk-paper-2); color: var(--pk-ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
 #pk-dashtabs [role="tab"]:focus-visible { outline: 2px solid #51CFA0; outline-offset: 1px; }
+/* Canvas's List View (its own planner and the toolbar in the title row: Today,
+ * Add To Do, grades, the bell, the New Activity pill) folds under our Planner;
+ * the list-view receipt row puts it back. */
+html.pk-on.pk-list-on:not(.pk-back-list-view) #dashboard-planner,
+html.pk-on.pk-list-on:not(.pk-back-list-view) #dashboard-planner-header,
+html.pk-on.pk-list-on:not(.pk-back-list-view) #dashboard-planner-header-aux { display: none !important; }
 /* The Planner tab hides the cards; Put back on the planner row keeps the cards. */
 /* Canvas sets display:block inline on the container, so this needs the weight. */
 html.pk-on.pk-planner-on:not(.pk-back-planner) #DashboardCard_Container { display: none !important; }

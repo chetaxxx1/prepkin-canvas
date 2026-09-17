@@ -245,6 +245,7 @@ function detectFacts() {
     planner: railShows() && !!document.getElementById('DashboardCard_Container'),
     // Our grades row on a course's own grades page, Canvas's table under it.
     gradesPage: gradesPageShows(),
+    listView: listViewShows(),
     wordPaste: WORD_INKS.some((ink) =>
       document.querySelector(`.user_content [style*="color:${ink}" i], .user_content [style*="color: ${ink}" i]`)),
   };
@@ -264,7 +265,7 @@ function applySkin(s) {
   const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
   const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, gradeHover: !!s.cardGradesHover, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
-    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && !next.has(c)) root.classList.remove(c);
+    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && c !== 'pk-list-on' && !next.has(c)) root.classList.remove(c);
   }
   for (const c of next) root.classList.add(c);
   // The theme's variables, as a stylesheet element boot.js may already have made.

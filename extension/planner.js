@@ -43,24 +43,36 @@ function plannerShows() {
   return railShows() && !plannerState().putBack.planner && !!document.getElementById('DashboardCard_Container');
 }
 
+/// Canvas's own List View (its planner, in the dashboard's main column) is a
+/// second planner. When the student has it on, ours stands in for it: Canvas's
+/// list and its toolbar fold, the Planner tab is the page, and the Courses tab
+/// goes (List View draws no cards). The `list-view` receipt row puts it back.
+function listViewShows() {
+  return plannerShows() && !plannerState().putBack['list-view'] && !!document.getElementById('dashboard-planner');
+}
+
 /// The tabs in the dashboard's own title row: Courses (Canvas's cards) and
 /// Planner (ours). The choice is remembered.
 function renderPlannerTabs() {
   const existing = document.getElementById(PLANNER_TABS_ID);
   const bar = document.querySelector('#dashboard_header_container .ic-Dashboard-header__layout');
-  if (!plannerShows()) { existing?.remove(); document.documentElement.classList.remove('pk-planner-on'); return; }
+  if (!plannerShows()) { existing?.remove(); document.documentElement.classList.remove('pk-planner-on', 'pk-list-on'); return; }
   // The cards hide whenever a tab of ours is open, whether or not Canvas's
   // header bar is in the DOM this instant: React rebuilds the bar, and a pass
   // that met the gap used to drop the class and let the card skeletons show
   // under the Looks sheet (2026-09-17).
+  const list = listViewShows();
+  if (list && plTab === 'cards') plTab = 'planner';
+  document.documentElement.classList.toggle('pk-list-on', list);
   document.documentElement.classList.toggle('pk-planner-on', plTab !== 'cards');
   if (!bar) { existing?.remove(); return; }
-  if (existing && existing.parentElement === bar) { plSyncTabs(existing); return; }
+  if (existing && existing.parentElement === bar && existing.dataset.list === String(list)) { plSyncTabs(existing); return; }
   existing?.remove();
   const tabs = el('div', '', null);
-  tabs.id = PLANNER_TABS_ID;
+  tabs.id = PLANNER_TABS_ID; tabs.dataset.list = String(list);
   tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', 'Dashboard');
   for (const [key, label] of [['cards', 'Courses'], ['planner', 'Planner'], ['looks', 'Looks']]) {
+    if (list && key === 'cards') continue;
     const tab = el('span', '', label);
     tab.setAttribute('role', 'tab'); tab.tabIndex = 0; tab.dataset.tab = key;
     const pick = (e) => { if (!e.isTrusted) return; plSetTab(key); };

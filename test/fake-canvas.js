@@ -186,7 +186,12 @@ function pageFor(url) {
 <li class="section"><a class="conferences" href="/courses/1/conferences">Conferences</a></li><li class="section"><a class="collaborations" href="/courses/1/collaborations">Collaborations</a></li></ul></div>`;
   let main = '';
   let side = '';
-  if (p === '/' || p === '/dashboard') {
+  if ((p === '/' || p === '/dashboard') && url.searchParams.get('view') === 'list') {
+    // Canvas's List View: its planner in the main column, its toolbar in the title row, no cards drawn.
+    main = `<div id="dashboard_header_container" class="ic-Dashboard-header"><div class="ic-Dashboard-header__layout"><h1 class="ic-Dashboard-header__title">Dashboard</h1><div id="dashboard-planner-header" class="CanvasPlanner__HeaderContainer"><div class="PlannerHeader"><button id="planner-today-btn" type="button">Today</button><button type="button" data-testid="add-to-do-button"><svg/></button></div></div></div></div><div id="DashboardCard_Container"></div>
+<div id="dashboard-planner"><div class="PlannerApp"><div class="planner-day"><h2>Today</h2><p>Nothing Planned Yet</p></div></div></div>`;
+    side = `<div class="ic-sidebar-logo"><img class="ic-sidebar-logo__image" alt="School" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></div>`;
+  } else if (p === '/' || p === '/dashboard') {
     main = `<div id="dashboard_header_container" class="ic-Dashboard-header"><div class="ic-Dashboard-header__layout"><h1 class="ic-Dashboard-header__title">Dashboard</h1></div></div><div id="DashboardCard_Container">
 <div class="ic-DashboardCard__box"><div class="ic-DashboardCard__box__container">
 <div class="ic-DashboardCard" data-testid="dashboard-card"><div class="ic-DashboardCard__header"><a class="ic-DashboardCard__link" href="/courses/1"><div class="ic-DashboardCard__header_hero" style="background-color: rgb(255, 111, 97); opacity: 0.6;"></div><div class="ic-DashboardCard__header_content"><h3 class="ic-DashboardCard__header-title ellipsis"><span style="color: rgb(255, 111, 97);">AP Physics C</span></h3><div class="ic-DashboardCard__header-subtitle">PHYS-C</div></div></a></div><nav class="ic-DashboardCard__action-container"><a class="ic-DashboardCard__action assignments" href="/courses/1/assignments"><span class="ic-DashboardCard__action-badge">0</span></a></nav></div>
