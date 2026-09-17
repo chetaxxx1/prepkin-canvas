@@ -461,6 +461,22 @@ test('R33 the buddy\'s host box never takes a click meant for the page: the dash
   await page.close();
 });
 
+test('R34 wearing a look keeps you on Looks, even when the page was opened at #planner', async () => {
+  await h.setStorage({ wallet: { coins: 480, owned: ['classic', 'deepsea'], wearing: 'classic', kin: { species: 'mint', level: 2, skin: '' } } });
+  const page = await open('/#planner');
+  await page.waitForSelector('#pk-planner', { timeout: 6000 });
+  await page.click('#pk-dashtabs [data-tab="looks"]');
+  await page.waitForSelector('#pk-looks [data-look="deepsea"]', { timeout: 6000 });
+  assert.equal(await page.evaluate(() => location.hash), '#looks', 'the hash follows the tab');
+  await page.click('#pk-looks [data-look="deepsea"]');
+  await page.waitForFunction(() => document.documentElement.classList.contains('pk-theme-deepsea'), null, { timeout: 6000 });
+  await page.waitForTimeout(1200);
+  assert.ok(await page.$('#pk-looks'), 'still on Looks after wearing');
+  assert.equal(await page.$('#pk-planner'), null, 'not thrown back to the planner');
+  await h.setStorage({ dashTab: 'cards', wallet: { coins: 480, owned: ['classic', 'deepsea'], wearing: 'classic', kin: { species: 'mint', level: 2, skin: '' } } });
+  await page.close();
+});
+
 test('R20 Command-K opens the buddy on search; Escape closes it', async () => {
   const page = await open('/');
   await page.keyboard.press('Meta+KeyK');

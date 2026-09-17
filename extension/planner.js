@@ -81,6 +81,13 @@ function plSetTab(key) {
   plTab = ['planner', 'looks'].includes(key) ? key : 'cards';
   plConfirm = null;
   if (alive()) chrome.storage.local.set({ dashTab: plTab }).catch(() => {});
+  // A "#planner" hash from the popup or the rail's link used to outlive the
+  // tab: wearing a look (a wallet change remounts the page) read the old hash
+  // and threw the student back to the planner (George, 2026-09-17). The hash
+  // follows the tab, or goes when the cards are back.
+  if (/^#(planner|looks)$/.test(location.hash) || plTab !== 'cards') {
+    try { history.replaceState(null, '', location.pathname + location.search + (plTab === 'cards' ? '' : `#${plTab}`)); } catch {}
+  }
   renderPlannerTabs();
   renderPlanner();
   renderLooks();
