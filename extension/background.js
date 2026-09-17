@@ -334,6 +334,13 @@ function handleMessage(msg, sendResponse, sender) {
   if (msg.type === 'log-error') {
     response = logError('Canvas page', msg).then(() => ({ ok: true }));
   }
+  if (msg.type === 'css-missing') {
+    // The page found pk-on on <html> and no stylesheet: put skin.css on that
+    // tab now. Only the page itself asks (the sender gate), only its top frame.
+    if (sender?.tab?.id != null) {
+      response = chrome.scripting.insertCSS({ target: { tabId: sender.tab.id }, files: ['skin.css'] }).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: String(e?.message ?? e) }));
+    }
+  }
   if (msg.type === 'focus-start') {
     response = focusStart(msg);
   }

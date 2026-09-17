@@ -753,6 +753,20 @@ test('R35 Canvas\'s List View folds under the Planner: no Courses tab, our sheet
   await page.close();
 });
 
+test('R36 a page that lost its stylesheet gets it back: the boot set registered without skin.css, the page asks, the worker answers', async () => {
+  const id = `prepkin-${new URL(SCHOOL_A).hostname}-boot`;
+  await h.sw(async (id) => { await chrome.scripting.updateContentScripts([{ id, css: [] }]); }, id);
+  try {
+    const page = await open('/courses');
+    await page.waitForFunction(() => document.documentElement.classList.contains('pk-on'), null, { timeout: 8000 });
+    await page.waitForFunction(() => !!getComputedStyle(document.documentElement).getPropertyValue('--pk-radius').trim(), null, { timeout: 8000 });
+    assert.ok(await page.evaluate(() => !!getComputedStyle(document.documentElement).getPropertyValue('--pk-radius').trim()), 'the paper\'s token is on the page again');
+    await page.close();
+  } finally {
+    await h.sw(async (id) => { await chrome.scripting.updateContentScripts([{ id, css: ['skin.css'] }]); }, id);
+  }
+});
+
 test('R31 the student\'s own /grades: a row per class under Canvas\'s h1, its tables folded, the word Grades said once', async () => {
   await h.setStorage({ putBack: {} });
   await h.sw((o) => syncNow(o), SCHOOL_A);

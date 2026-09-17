@@ -255,6 +255,25 @@ function detectFacts() {
 let putBack = {};
 let facts = {};
 
+/// The stylesheet rides in with the boot set (background.js registers skin.css
+/// at document_start). On 2026-09-17 a page came up with every class on <html>
+/// and no stylesheet at all: our planner as a bulleted list, Canvas's List View
+/// unfolded, the rail the school's green. Whatever dropped it (a reload with
+/// the folder rewritten under Chrome, a registration that lapsed), the page
+/// can tell: pk-on is set and the paper's token is not. It asks the worker to
+/// put the sheet back, once, and looks again a moment later.
+let cssAsked = false;
+function ensureStylesheet() {
+  if (cssAsked || killed || !alive()) return;
+  const root = document.documentElement;
+  if (!root.classList.contains('pk-on')) return;
+  const check = () => root.classList.contains('pk-on') && !getComputedStyle(root).getPropertyValue('--pk-radius').trim();
+  if (!check()) return;
+  cssAsked = true;
+  if (alive()) chrome.runtime.sendMessage({ type: 'css-missing' }).catch(() => {});
+  setTimeout(() => { if (check() && alive()) chrome.runtime.sendMessage({ type: 'css-missing' }).catch(() => {}); }, 2000);
+}
+
 /// The skin is a set of classes on <html>, nothing else — no inline property is
 /// ever written, so taking every class away leaves Canvas, unchanged. boot.js
 /// put a first guess on before paint; this is the same answer with the DOM read.
@@ -1400,6 +1419,7 @@ let pageTimer = null;
 function refreshPage() {
   if (tornDown) return;
   applySkin(skin);
+  ensureStylesheet();
   decorateCards();
   renderWeek();
   renderCourseNext();
