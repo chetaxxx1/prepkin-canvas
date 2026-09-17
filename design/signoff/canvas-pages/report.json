@@ -1,6 +1,6 @@
 {
-  "dashboard-art-1280": {
-    "mount": 7374,
+  "dashboard-light-1280": {
+    "mount": 6585,
     "findings": {
       "text": [],
       "blocks": [],
@@ -10,12 +10,132 @@
       "red": [],
       "patches": [],
       "blank": false,
-      "skipped": 6,
+      "skipped": 0,
+      "counted": 45
+    }
+  },
+  "courses-light-1280": {
+    "mount": 5384,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 20
+    }
+  },
+  "course-home-light-1280": {
+    "mount": 6020,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 50
+    }
+  },
+  "calendar-light-1280": {
+    "mount": 14698,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 122
+    }
+  },
+  "dashboard-dark-1280": {
+    "mount": 5962,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 45
+    }
+  },
+  "courses-dark-1280": {
+    "mount": 5955,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 20
+    }
+  },
+  "course-home-dark-1280": {
+    "mount": 6316,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 50
+    }
+  },
+  "calendar-dark-1280": {
+    "mount": 15959,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 122
+    }
+  },
+  "dashboard-art-1280": {
+    "mount": 5970,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 1,
       "counted": 44
     }
   },
-  "dashboard-planner-art-1280": {
-    "mount": 6375,
+  "courses-art-1280": {
+    "mount": 5602,
     "findings": {
       "text": [],
       "blocks": [],
@@ -25,12 +145,27 @@
       "red": [],
       "patches": [],
       "blank": false,
-      "skipped": 6,
-      "counted": 52
+      "skipped": 0,
+      "counted": 20
+    }
+  },
+  "course-home-art-1280": {
+    "mount": 5957,
+    "findings": {
+      "text": [],
+      "blocks": [],
+      "controls": [],
+      "words": [],
+      "uppercase": [],
+      "red": [],
+      "patches": [],
+      "blank": false,
+      "skipped": 0,
+      "counted": 50
     }
   },
   "calendar-art-1280": {
-    "mount": 19773,
+    "mount": 14708,
     "findings": {
       "text": [],
       "blocks": [],
@@ -40,14 +175,14 @@
       "red": [],
       "patches": [],
       "blank": false,
-      "skipped": 5,
+      "skipped": 0,
       "counted": 122
     }
   },
   "mount": {
-    "on": 6539,
-    "looks": 5622,
-    "off": 5868,
+    "on": 4874,
+    "looks": 4986,
+    "off": 4924,
     "stalls": []
   }
 }

@@ -425,6 +425,20 @@ test('R19 a nickname goes on the card and comes off with Put back; the registrar
   await page.close();
 });
 
+test('R32 a click on Sprout opens his help: his line, the thing to start, the doors; Escape closes it', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/courses');
+  const { width, height } = page.viewportSize();
+  // The launcher covers him in the bottom-right corner (host right 12px, tab 140 wide).
+  await page.mouse.click(width - 12 - 70, height - 50);
+  await page.waitForSelector('#prepkin-buddy[data-open][data-view="help"]', { timeout: 4000 });
+  const words = await page.evaluate(() => document.getElementById('prepkin-buddy').getAttribute('aria-label'));
+  assert.equal(words, null, 'the host carries no words of its own; the panel does');
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.getElementById('prepkin-buddy').hasAttribute('data-open'), null, { timeout: 3000 });
+  await page.close();
+});
+
 test('R20 Command-K opens the buddy on search; Escape closes it', async () => {
   const page = await open('/');
   await page.keyboard.press('Meta+KeyK');

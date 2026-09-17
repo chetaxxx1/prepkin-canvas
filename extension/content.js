@@ -475,6 +475,47 @@ function ownSpecies() {
 }
 
 
+/// What he says when clicked: his line, the one thing to start with its two
+/// ways to start it, the next few, this class's next three on a course page,
+/// and the two doors (the planner, search). No AI, no server: the same facts
+/// the rail and the planner hold, in one place a click away on every page.
+function helpView() {
+  const now = new Date();
+  const b = buckets(data.tasks ?? [], now, plannedOn);
+  const said = voice(b);
+  const first = [...b.overdue, ...b.today, ...b.week].find((t) => t.dueAt) ?? null;
+  const then = [...b.today, ...b.week, ...b.overdue].filter((t) => t.dueAt && t !== first).slice(0, 3);
+  const cid = /^\/courses\/(\d+)/.exec(location.pathname)?.[1] ?? null;
+  const here = cid ? dueRowsFor(cid, now, 3).filter((r) => !r.done) : [];
+  const running = focus.state === 'running';
+  const row = (t, late) => {
+    const url = safeURL(t.url);
+    const inner = `<b>${escapeHTML(t.title)}</b><small${late ? ' class="amber"' : ''}>${escapeHTML(shortCourse(t.courseName))} · ${escapeHTML(dueLabel(t, now).replace(' · still counts', ''))}</small>`;
+    return `<li>${url ? `<a href="${escapeHTML(url)}">${inner}</a>` : `<span>${inner}</span>`}</li>`;
+  };
+  let top = '';
+  if (running) {
+    top = `<p class="pk-help-label">Now</p><div class="pk-help-first"><b>${escapeHTML(focus.title ?? 'Focus')}</b><small><span class="pk-clock">${clockLeft()}</span> left</small>
+      <div class="pk-help-actions">${safeURL(focus.url) ? `<a class="start" href="${escapeHTML(safeURL(focus.url))}">Open</a>` : ''}<button type="button" data-focus-stop="1">Stop</button></div></div>`;
+  } else if (first) {
+    const late = new Date(first.dueAt) < now;
+    const url = safeURL(first.url);
+    top = `<p class="pk-help-label">Start with</p><div class="pk-help-first"><b>${escapeHTML(first.title)}</b><small${late ? ' class="amber"' : ''}>${escapeHTML(shortCourse(first.courseName))} · ${escapeHTML(dueLabel(first, now).replace(' · still counts', ''))}</small>
+      <div class="pk-help-actions">${url ? `<a class="start" href="${escapeHTML(url)}">Start</a>` : ''}<button type="button" data-focus-first="${escapeHTML(String(first.id))}">Focus ${skin.focusMinutes} min</button></div></div>`;
+  }
+  const thenRows = running ? [first, ...then].filter((t) => t && String(t.id) !== String(focus.taskId)).slice(0, 3) : then;
+  return `
+    <div class="pk-viewhead pk-help-head"><h2>${escapeHTML(said.headline)}</h2></div>
+    <p class="pk-help-sub">${escapeHTML(said.subline)}</p>
+    ${top}
+    ${thenRows.length ? `<p class="pk-help-label">Then</p><ul class="pk-help-list">${thenRows.map((t) => row(t, new Date(t.dueAt) < now)).join('')}</ul>` : ''}
+    ${here.length ? `<p class="pk-help-label">Next in this class</p><ul class="pk-help-list">${here.map((r) => row(r.t, r.overdue)).join('')}</ul>` : ''}
+    <ul class="pk-help-doors">
+      <li><a href="/#planner"><b>Open the planner</b><small>The week by day, your grades</small></a></li>
+      <li><button type="button" data-help-search="1"><b>Search Canvas</b><small>Classes, pages, assignments <kbd>⌘K</kbd></small></button></li>
+    </ul>`;
+}
+
 function searchView() {
   return `
     <div class="pk-viewhead">
@@ -943,7 +984,7 @@ function renderSearchChip() {
   glass.append(c, l);
   const mac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform ?? '');
   chip.append(glass, el('span', '', 'Search'), el('kbd', '', mac ? '⌘K' : 'Ctrl K'));
-  const openSearch = () => { ui.open = true; ui.query = ''; render(); };
+  const openSearch = () => { ui.open = true; ui.view = 'search'; ui.query = ''; render(); };
   chip.addEventListener('click', openSearch);
   chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSearch(); } });
   bar.append(chip);
@@ -1428,7 +1469,7 @@ function spritePlace() {
   // small. He used to take the foot of Canvas's global nav, which on a school
   // with a tall nav (Dartmouth: History, Disability Resources, Help) sat him
   // on top of Help (George, 2026-09-17). The corner is nobody's button.
-  return { side: 'right', mode, navW: 0, bottom: 0, radius: 22, w: 110, h: 170 };
+  return { side: 'right', mode, navW: 0, bottom: 0, radius: 28, w: 140, h: 215 };
 }
 
 /// The five tanks the phone's Home can show; the band paints the one the phone
@@ -1610,8 +1651,8 @@ function render() {
     <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
       ${ui.float && Date.now() - ui.float < 2500 ? `<span class="pk-float" aria-hidden="true">${COIN_SVG}+${COIN_REWARD}</span>` : ''}
     </button>
-    <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="Search" tabindex="-1" ${ui.open ? '' : 'hidden'}>
-      <div class="pk-body">${ui.open ? searchView() : ''}</div>
+    <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="${ui.view === 'search' ? 'Search' : 'Prepkin'}" tabindex="-1" ${ui.open ? '' : 'hidden'}>
+      <div class="pk-body">${ui.open ? (ui.view === 'search' ? searchView() : helpView()) : ''}</div>
     </div>`;
 
   // innerHTML detached the stylesheet; the node itself survives, so putting it
@@ -1630,7 +1671,7 @@ if (typeof window !== 'undefined' && typeof chrome !== 'undefined' && chrome.sto
   window.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'k' && shadow && skin.mascot !== false) {
       e.preventDefault(); e.stopPropagation();
-      ui.open = true; ui.query = ''; render();
+      ui.open = true; ui.view = 'search'; ui.query = ''; render();
     }
   }, true);
 }
@@ -1652,10 +1693,12 @@ async function setPlan(id, key) {
 function wire(root) {
   const tab = root.querySelector('.pk-tab');
   tab?.addEventListener('click', () => {
-    // No panel behind him: a click is a hello, and if the palette is open it
-    // closes. The planner is a tab on the dashboard; the palette is Command-K.
+    // A click opens his help: his line, the thing to start, the next few,
+    // this class's next three, the doors. Open already: it closes. The
+    // palette is Command-K (George, 2026-09-17: "he should actually help").
     if (ui.open) { closePalette(); return; }
-    spriteSend({ do: 'play', emote: ['wave', 'curious', 'bounce'][Math.floor(Math.random() * 3)] });
+    spriteSend({ do: 'play', emote: 'wave' });
+    ui.open = true; ui.view = 'help'; ui.query = ''; render();
   });
   tab?.addEventListener('mouseenter', () => { if (!ui.open) spriteSend({ do: 'play', emote: 'curious' }); });
   // Escape closes the palette and hands focus back to the buddy rather than
@@ -1684,6 +1727,14 @@ function wire(root) {
     });
     q.focus();
   }
+  // The help view: Focus on the first thing, and the door to search.
+  root.querySelector('[data-focus-first]')?.addEventListener('click', (e) => {
+    if (!e.isTrusted || !alive()) return;
+    const t = (data.tasks ?? []).find((x) => String(x.id) === e.currentTarget.dataset.focusFirst);
+    if (t && alive()) chrome.runtime.sendMessage({ type: 'focus-start', taskId: t.id, title: t.title, url: t.url, minutes: skin.focusMinutes });
+    closePalette();
+  });
+  root.querySelector('[data-help-search]')?.addEventListener('click', () => { ui.view = 'search'; ui.query = ''; render(); });
   // The focus card's buttons. A script on the page can fire a click at one;
   // only a real click reaches the worker.
   root.querySelector('[data-focus-extend]')?.addEventListener('click', (e) => {

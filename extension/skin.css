@@ -825,6 +825,19 @@ html.pk-on:not(.pk-back-rail) .ic-app-header__logomark-container { background-co
 html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .ic-app-header__menu-list-link { background-color: var(--pk-paper) !important; }
 html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .ic-icon-svg { fill: var(--pk-rail-active) !important; }
 html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .menu-item__text { color: var(--pk-rail-active) !important; }
+/* The other items take the theme too: icon and word in a pale tint of the
+ * theme's accent, white when the mouse is on them, so a look reaches the whole
+ * bar and not only the tab you are on (George, 2026-09-17). Badges, the avatar
+ * ring and the school's logo block stay the school's. */
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-icon-svg { fill: color-mix(in srgb, var(--pk-rail-active) 42%, white) !important; }
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .menu-item__text { color: color-mix(in srgb, var(--pk-rail-active) 30%, white) !important; }
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:hover .ic-icon-svg,
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:focus .ic-icon-svg { fill: #fff !important; }
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:hover .menu-item__text,
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:focus .menu-item__text { color: #fff !important; }
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:hover { background-color: color-mix(in srgb, #fff 10%, transparent) !important; }
+/* The active tab is a paper pill, not a full-width slab. */
+html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .ic-app-header__menu-list-link { border-radius: 12px !important; margin: 0 6px !important; }
 /* An image theme: the wallpaper shows through the rail under a wash of it. */
 html.pk-on.pk-art:not(.pk-back-rail):not(.pk-back-paper) #header {
   background-image: var(--pk-rail-image) !important; background-size: cover !important;
