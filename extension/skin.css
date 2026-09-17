@@ -838,6 +838,42 @@ html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header_
 html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:hover { background-color: color-mix(in srgb, #fff 10%, transparent) !important; }
 /* The active tab is a paper pill, not a full-width slab. */
 html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .ic-app-header__menu-list-link { border-radius: 12px !important; margin: 0 6px !important; }
+/* The left bar's icons follow the look. Canvas draws line icons; on the image
+ * looks and the dark stocks the bar wears our soft set instead: filled,
+ * rounded, the family Sprout and the app's tiles come from. Each is one SVG
+ * path, inline as a mask (no request leaves the page), painted in the same
+ * tint as the words; the item you are on takes the accent, hover takes white.
+ * Items a school adds (Disability Resources) keep their own icon: we only
+ * know the six Canvas ships. Off with the rail's Put back. One selector per
+ * icon, no comma inside :has(): the suites read selectors by splitting on
+ * commas. Descendant, not child: a school's theme wraps the Inbox svg in a
+ * span. */
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .ic-app-header__menu-list-item .menu-item-icon-container { position: relative; }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--dashboard) .ic-icon-svg { visibility: hidden !important; }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--dashboard)::before { --pk-nav-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' fill-rule='evenodd' d='M4.5 3h5A1.5 1.5 0 0 1 11 4.5v5A1.5 1.5 0 0 1 9.5 11h-5A1.5 1.5 0 0 1 3 9.5v-5A1.5 1.5 0 0 1 4.5 3zm10 0h5A1.5 1.5 0 0 1 21 4.5v5a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 13 9.5v-5A1.5 1.5 0 0 1 14.5 3zm-10 10h5a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 9.5 21h-5A1.5 1.5 0 0 1 3 19.5v-5A1.5 1.5 0 0 1 4.5 13zm10 0h5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5h-5a1.5 1.5 0 0 1-1.5-1.5v-5a1.5 1.5 0 0 1 1.5-1.5z'/></svg>"); }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--courses) .ic-icon-svg { visibility: hidden !important; }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--courses)::before { --pk-nav-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' fill-rule='evenodd' d='M6.5 2.5h11A2.5 2.5 0 0 1 20 5v14a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 19V5a2.5 2.5 0 0 1 2.5-2.5zM8 4.5v15h1.5v-15zm3.5 3h5v1.6h-5zm0 3h5v1.6h-5z'/></svg>"); }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--calendar) .ic-icon-svg { visibility: hidden !important; }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--calendar)::before { --pk-nav-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' fill-rule='evenodd' d='M7 2.5a1 1 0 0 1 1 1V5h8V3.5a1 1 0 1 1 2 0V5h.5A2.5 2.5 0 0 1 21 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-11A2.5 2.5 0 0 1 5.5 5H6V3.5a1 1 0 0 1 1-1zM5 10v8.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V10zm2.5 2h2.5v2.5H7.5zm4 0h2.5v2.5h-2.5zm4 0H18v2.5h-2.5zm-8 4h2.5v2.5H7.5zm4 0h2.5v2.5h-2.5z'/></svg>"); }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--inbox) .ic-icon-svg { visibility: hidden !important; }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--inbox)::before { --pk-nav-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' fill-rule='evenodd' d='M6.6 3.5h10.8a2.5 2.5 0 0 1 2.3 1.5l2.1 5.2c.13.32.2.66.2 1V18a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-6.8c0-.34.07-.68.2-1l2.1-5.2a2.5 2.5 0 0 1 2.3-1.5zm.2 2L4.9 10.5h3.6a3.5 3.5 0 0 0 7 0h3.6L17.2 5.5z'/></svg>"); }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--history) .ic-icon-svg { visibility: hidden !important; }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--history)::before { --pk-nav-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' fill-rule='evenodd' d='M12 2.5a9.5 9.5 0 1 1 0 19 9.5 9.5 0 0 1 0-19zm0 2.5a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm-1 2.5h2v4.6l3.2 1.9-1 1.7-4.2-2.5z'/></svg>"); }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.svg-icon-help) .ic-icon-svg { visibility: hidden !important; }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.svg-icon-help)::before { --pk-nav-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' fill-rule='evenodd' d='M12 2.5a9.5 9.5 0 1 1 0 19 9.5 9.5 0 0 1 0-19zm0 2.5a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0 2a3.4 3.4 0 0 1 3.4 3.4c0 1.4-.8 2.1-1.6 2.7-.6.5-.9.8-.9 1.4h-1.9c0-1.4.7-2.1 1.5-2.7.6-.5.9-.8.9-1.4a1.4 1.4 0 0 0-2.8 0H8.6A3.4 3.4 0 0 1 12 7zm-1 8.6h2v2h-2z'/></svg>"); }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--dashboard)::before,
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--courses)::before,
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--calendar)::before,
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--inbox)::before,
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.ic-icon-svg--history)::before,
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .menu-item-icon-container:has(.svg-icon-help)::before {
+  content: ""; position: absolute; inset: 0; margin: auto; width: 26px; height: 26px;
+  background-color: color-mix(in srgb, var(--pk-rail-active) 42%, white);
+  -webkit-mask: var(--pk-nav-icon) center / contain no-repeat; mask: var(--pk-nav-icon) center / contain no-repeat;
+}
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .ic-app-header__menu-list-item--active .menu-item-icon-container::before { background-color: var(--pk-rail-active); }
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:hover .menu-item-icon-container::before,
+html.pk-on.pk-icons-soft:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:focus .menu-item-icon-container::before { background-color: #fff; }
 /* An image theme: the wallpaper shows through the rail under a wash of it. */
 html.pk-on.pk-art:not(.pk-back-rail):not(.pk-back-paper) #header {
   background-image: var(--pk-rail-image) !important; background-size: cover !important;

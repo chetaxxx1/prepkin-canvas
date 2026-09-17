@@ -108,7 +108,8 @@ test('the theme classes carry the paper, the wash and the texture', () => {
   const c = skinClasses({ on: true, dark: false, look: THEMES_BY_ID.blush });
   assert.deepEqual(c.sort(), ['pk-head-wash', 'pk-on', 'pk-paper-rose', 'pk-textured', 'pk-theme-blush'].sort());
   const d = skinClasses({ on: true, dark: true, look: THEMES_BY_ID.classic });
-  assert.deepEqual(d.sort(), ['pk-dark', 'pk-on', 'pk-paper-carbon', 'pk-theme-classic'].sort());
+  // A dark stock wears the soft icon set on the left bar; a light paper keeps Canvas's line icons.
+  assert.deepEqual(d.sort(), ['pk-dark', 'pk-icons-soft', 'pk-on', 'pk-paper-carbon', 'pk-theme-classic'].sort());
 });
 
 test('an unknown Look reads as Classic, and dark picks the dark stock', () => {

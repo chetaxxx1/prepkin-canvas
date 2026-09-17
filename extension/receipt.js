@@ -196,6 +196,9 @@ function skinClasses({ on, dark, look, dense = false, hidePast = false, gradeHov
   if (look?.header === 'wash') classes.push('pk-head-wash');
   if (look?.texture && look.texture !== 'none') classes.push('pk-textured');
   if (look?.art) classes.push('pk-art');
+  // The left bar's icon set follows the look: Canvas's line icons on the light
+  // papers, our soft filled set on the image looks and the dark stocks.
+  if (look?.art || dark) classes.push('pk-icons-soft');
   for (const [key, back] of Object.entries(putBack)) if (back) classes.push(`pk-back-${key}`);
   if (detect.logoDup) classes.push('pk-logo-dup');
   if (detect.todoDup) classes.push('pk-todo-dup');
