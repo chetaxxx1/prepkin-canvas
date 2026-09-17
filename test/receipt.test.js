@@ -328,7 +328,7 @@ test('R17 this week: our rail card reports finished work, counts by course, and 
   assert.ok(await page.$('#pk-week + *'), 'Canvas\'s own sidebar follows it, folded, not gone');
   assert.equal(await page.$('#pk-week .pk-w-ring, #pk-week .pk-w-days'), null, 'no ring, no week strip: the count is in the foot');
   const finished = await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent);
-  assert.match(finished, /^(?:\d+ things? finished this week|)$/, 'finished work gets a line; nothing finished gets no scold');
+  assert.match(finished, /^(Nothing due this week|(\d+ due|All in) this week( · \d+ finished)?)$/, 'the foot says the week once: what is due, and what is finished when anything is');
   assert.doesNotMatch(finished, /streak|in a row/i, 'the rail no longer presents a streak');
   const legend = await page.$$eval('#pk-week .pk-w-legend li span', (els) => els.map((e) => e.textContent));
   assert.ok(legend.length === 0 || legend.includes('AP Physics C'), legend.join(','));
@@ -501,7 +501,10 @@ test('R21 a pending task of your own counts in the week without inflating the fi
   await page.waitForFunction((n) => JSON.parse(document.getElementById('pk-week')?.dataset.key ?? '[0,0]')[1] > n, before, { timeout: 4000 });
   const after = await total();
   assert.equal(after, before + 1, `the week counts it: ${before} then ${after}`);
-  assert.equal(await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent), finishedBefore, 'pending work is not called finished');
+  const finishedAfter = await page.$eval('#pk-week .pk-w-foot > span:first-child', (e) => e.textContent);
+  const finishedCount = (t) => Number((/(\d+) finished/.exec(t) || [0, 0])[1]);
+  assert.equal(finishedCount(finishedAfter), finishedCount(finishedBefore), 'pending work is not called finished');
+  assert.match(finishedAfter, /\d+ due this week/, 'and it is counted as due');
   const pushed = await phone.fetchTodo();
   assert.ok(!pushed.tasks.some((t) => t.title === 'Read chapter 4'), 'the phone never sees it');
   await h.setStorage({ ownTasks: [] });

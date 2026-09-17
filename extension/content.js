@@ -1313,8 +1313,13 @@ function renderWeek() {
     if (sprite) placeSprite();
     return;
   } else {
-    // Finished work is worth a line; nothing finished is not worth a scold.
-    foot.append(el('span', '', w.done ? `${w.done} thing${w.done === 1 ? '' : 's'} finished this week` : ''));
+    // The week, said once, here (BetterCampus's widget leads with "17 tasks
+    // due this week", the line students quoted): what is due, and what is
+    // finished when anything is. Nothing finished is not a scold.
+    const due = Math.max(0, w.total - w.done);
+    const words = w.total === 0 ? 'Nothing due this week'
+      : `${due === 0 ? 'All in' : `${due} due`} this week${w.done ? ` · ${w.done} finished` : ''}`;
+    foot.append(el('span', '', words));
   }
   const more = el('span', 'more', plTab === 'planner' ? '' : 'Open the planner');
   more.setAttribute('role', 'button'); more.tabIndex = plTab === 'planner' ? -1 : 0;
@@ -1322,8 +1327,6 @@ function renderWeek() {
   more.addEventListener('click', openWeek);
   more.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWeek(); } });
   foot.append(more);
-  // On the planner tab with nothing finished yet, the foot would be a line
-  // over nothing: no foot.
   if (foot.textContent.trim()) box.append(foot);
   if (existing) existing.replaceWith(box); else side.prepend(box);
   fitAll(box);
@@ -1648,7 +1651,7 @@ function render() {
   // opens here. The planner, grades and looks are tabs on the dashboard.
   root.innerHTML = `
     ${focus.state === 'done' || (focus.state === 'running' && !railShows()) ? focusCard() : ''}
-    <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}" title="Prepkin">
+    <button class="pk-tab" aria-expanded="${ui.open}" aria-controls="pk-panel" aria-label="Prepkin${urgent ? `, ${urgent} to do` : ''}">
       ${ui.float && Date.now() - ui.float < 2500 ? `<span class="pk-float" aria-hidden="true">${COIN_SVG}+${COIN_REWARD}</span>` : ''}
     </button>
     <div class="pk-panel" id="pk-panel" role="dialog" aria-modal="false" aria-label="${ui.view === 'search' ? 'Search' : 'Prepkin'}" tabindex="-1" ${ui.open ? '' : 'hidden'}>

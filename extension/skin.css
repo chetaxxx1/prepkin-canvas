@@ -1298,7 +1298,7 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-looks {
 html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-rows,
 html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: color-mix(in srgb, var(--pk-paper-2) 55%, transparent); }
 :is(#pk-planner, #pk-grades) {
-  margin: 6px 0 28px; max-width: 720px; color: var(--pk-ink);
+  margin: 6px 0 28px; color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums;
 }
 :is(#pk-planner, #pk-grades) .pk-pl-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 4px 0 6px; }
@@ -1334,12 +1334,12 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: col
 /* The week strip (Structured, Tiimo): seven days, the day number, a dot under
  * a day with work, today filled in the ink. A tap goes to the day; a dragged
  * row lands on it. */
-#pk-planner .pk-pl-strip { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; margin: 4px 0 6px; }
+/* Two rows of seven: a fortnight that reads like a calendar, whatever the width. */
+#pk-planner .pk-pl-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 0 6px; }
 #pk-planner .pk-pl-strip .day { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 0 5px; border-radius: 10px; border: 1px solid transparent; background: none; font: inherit; color: var(--pk-ink); cursor: pointer; min-width: 0; }
 #pk-planner .pk-pl-strip .day small { font-size: 10px; line-height: 13px; font-weight: 700; color: var(--pk-ink-2); }
 #pk-planner .pk-pl-strip .day b { font-size: 15px; line-height: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
-/* The second week starts with a hairline between the two. */
-#pk-planner .pk-pl-strip .day:nth-child(8) { border-left-color: var(--pk-rule); border-radius: 0 10px 10px 0; }
+
 #pk-planner .pk-pl-strip .day .dot { width: 5px; height: 5px; border-radius: 999px; background: transparent; margin-top: 2px; }
 #pk-planner .pk-pl-strip .day.has .dot { background: var(--pk-mark); }
 #pk-planner .pk-pl-strip .day.today { background: var(--pk-ink); color: var(--pk-paper); }
