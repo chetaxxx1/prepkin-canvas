@@ -1205,6 +1205,12 @@ function renderWeek() {
   box.id = WEEK_ID;
   box.dataset.key = key;
   box.setAttribute('aria-label', 'Prepkin: this week');
+  // Built before he has said ready (or before his frame exists at all, on the
+  // first pass): the card waits, at most 1.5 s, so the two come in as one.
+  if (skin.mascot && (!sprite || (!sprite.ready && Date.now() - (sprite.mountedAt ?? 0) < 1500))) {
+    box.classList.add('pk-w-waiting');
+    setTimeout(() => box.classList.remove('pk-w-waiting'), 1500);
+  }
 
   // The buddy's line, the same words his panel opens with. Finch's bird
   // speaks above its goals; this is that, without a bubble.
@@ -1477,7 +1483,11 @@ function spritePlace() {
   const mode = buddyMode();
   // Above the week card, Finch-style: a water band at the top of our own rail
   // card, the to-do list flowing under him. Only where the card is.
-  const week = (mode === 'tank' || mode === 'perch') ? document.getElementById(WEEK_ID) : null;
+  // Canvas's List View keeps the sidebar in the DOM and hides it, so the card
+  // can be there with no size; a tank you cannot see is no tank, and he takes
+  // the corner (George, 2026-09-17: "the mascot is not there in list view").
+  const weekEl = (mode === 'tank' || mode === 'perch') ? document.getElementById(WEEK_ID) : null;
+  const week = weekEl && weekEl.getBoundingClientRect().width > 0 ? weekEl : null;
   if (week) {
     const band = week.querySelector('.pk-w-tank') ?? week;
     const r = band.getBoundingClientRect();
@@ -1567,6 +1577,12 @@ function placeSprite(place = spritePlace()) {
   }
 }
 
+/// The moment they both show: him, and the card he stands above.
+function revealSprite() {
+  if (sprite) sprite.host.style.opacity = '1';
+  document.getElementById(WEEK_ID)?.classList.remove('pk-w-waiting');
+}
+
 function mountSprite() {
   const place = spritePlace();
   const url = spriteURL(place.radius);
@@ -1586,14 +1602,22 @@ iframe{display:block;width:100%;height:100%;border:0;background:transparent;colo
   frame.tabIndex = -1;
   frame.allowTransparency = true;
   root.append(style, frame);
+  // He and his card arrive together: the frame stays clear until the rig says
+  // ready (a few hundred ms), and the rail card waits with it; a slow rig
+  // never holds the list back more than 1.5 s (George, 2026-09-17: the box
+  // and the water came first, then him).
+  host.style.opacity = '0'; host.style.transition = 'opacity .2s ease';
   document.body.append(host);
-  sprite = { host, frame, url, ready: false, queue: [], place };
+  sprite = { host, frame, url, ready: false, queue: [], place, mountedAt: Date.now() };
+  document.getElementById(WEEK_ID)?.classList.add('pk-w-waiting');
+  setTimeout(() => revealSprite(), 1500);
   placeSprite(place);
   if (!spriteListening) {
     spriteListening = true;
     window.addEventListener('message', (e) => {
       if (!sprite || e.source !== sprite.frame.contentWindow || e.data?.prepkin !== 'sprout' || e.data.event !== 'ready') return;
       sprite.ready = true;
+      revealSprite();
       spriteSend({ do: 'reduceMotion', value: matchMedia('(prefers-reduced-motion: reduce)').matches });
       spriteSend({ do: 'paused', value: document.visibilityState === 'hidden' });
       for (const m of sprite.queue.splice(0)) spriteSend(m);

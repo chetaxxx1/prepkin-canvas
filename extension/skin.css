@@ -1051,7 +1051,10 @@ html.pk-on:not(.pk-back-paper) #content [class*="-view-link"],
 html.pk-on:not(.pk-back-paper) #right-side [class*="-view-link"] { color: var(--pk-link) !important; }
 
 /* MARK: - This week: our rail card at the top of the sidebar (content.js). */
+/* While his frame loads, the card waits with him, so the two come in as one. */
+#pk-week.pk-w-waiting { opacity: 0; }
 #pk-week {
+  transition: opacity .2s ease;
   margin: 0 0 12px; padding: 14px 14px 12px; border-radius: var(--pk-radius);
   background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
