@@ -190,6 +190,9 @@ function renderPlanner() {
 function plGroupHead(name, count, { today = false, fold = false, open = false, onToggle = null, date = null } = {}) {
   const h = el('div', `pk-pl-group${today ? ' today' : ''}${fold ? ' fold' : ''}${open ? ' open' : ''}`);
   h.append(el('b', '', name));
+  // A day's heading carries its date in the quiet ink (Todoist's Upcoming):
+  // "Today · Sep 17", so a week of weekday names still says when.
+  if (date) h.append(el('span', 'when', date.toLocaleDateString([], { month: 'short', day: 'numeric' })));
   if (count) h.append(el('em', '', String(count)));
   if (date) h.dataset.drop = dayKey(date);
   if (fold && onToggle) {

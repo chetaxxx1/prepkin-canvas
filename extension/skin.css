@@ -367,6 +367,111 @@ html.pk-on.pk-art:not(.pk-back-paper) #content:not(:has(#DashboardCard_Container
 html.pk-on.pk-art:not(.pk-back-paper) #right-side {
   background-color: var(--pk-paper) !important; border-radius: 12px !important; padding: 16px !important; margin-top: 12px !important;
 }
+/* On an image theme the panel is one sheet of frosted glass over the wall
+ * (Dialpad's meeting sheet over a photograph: one pane, quiet controls inside
+ * it, nothing white inside the pane). Every surface Canvas paints white
+ * inside the pane goes clear with a hairline; a card inside it is an outlined
+ * section, not a second plate. Before this the courses table, the calendar's
+ * bars and its mini month sat as white slabs on a wallpaper: "a 2000s
+ * website" (George, 2026-09-17). The dashboard's cards and the rail stand on
+ * the wall itself and keep their opaque paper. */
+html.pk-on.pk-art:not(.pk-back-paper) #content:not(:has(#DashboardCard_Container, #dashboard, .ic-Dashboard-header)),
+html.pk-on.pk-art:not(.pk-back-paper) body:not(:has(#DashboardCard_Container)) #right-side {
+  background-color: color-mix(in srgb, var(--pk-paper) 84%, transparent) !important;
+  backdrop-filter: blur(18px) saturate(1.15); -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  border: 1px solid color-mix(in srgb, var(--pk-paper-2) 55%, transparent) !important; border-radius: 14px !important;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content .box,
+html.pk-on.pk-art:not(.pk-back-paper) #content .content-box,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-Table,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-Table td,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ui-widget-content,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs,
+html.pk-on.pk-art:not(.pk-back-paper) #content .tab-content,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-item-row,
+html.pk-on.pk-art:not(.pk-back-paper) #content .assignment-group,
+html.pk-on.pk-art:not(.pk-back-paper) #content .header-bar,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-Action-header,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-Action-header__Primary,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-Action-header__Secondary,
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar_header,
+html.pk-on.pk-art:not(.pk-back-paper) #content .calendar_header,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-view,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-view table,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-body,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-bg,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-day,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-widget-content,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-day-top,
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar-app .fc-view-container,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #calendar-list,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side .rs-section,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-view-container,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-view,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical table,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-body,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-bg,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-day,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-widget-content,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-row,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-day-top,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #calendar-list-holder,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side .mini_month .mini_calendar_day .day_wrapper,
+html.pk-on.pk-art:not(.pk-back-paper) #content .quiz-header,
+html.pk-on.pk-art:not(.pk-back-paper) #content #quiz_show .description,
+html.pk-on.pk-art:not(.pk-back-paper) #content .roster,
+html.pk-on.pk-art:not(.pk-back-paper) #content .roster tr,
+html.pk-on.pk-art:not(.pk-back-paper) #content .roster td,
+html.pk-on.pk-art:not(.pk-back-paper) #content #syllabus,
+html.pk-on.pk-art:not(.pk-back-paper) #content #syllabus tr,
+html.pk-on.pk-art:not(.pk-back-paper) #content #syllabus td,
+html.pk-on.pk-art:not(.pk-back-paper) #content .discussion-topic,
+html.pk-on.pk-art:not(.pk-back-paper) #content .entry-content,
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-discussions-v2__wrapper"],
+html.pk-on.pk-art:not(.pk-back-paper) #content .discussions-v2__container-image,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-discussion-row-container,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-announcement-row,
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-table"],
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-body"],
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-row"],
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-cell"],
+html.pk-on.pk-art:not(.pk-back-paper) #content .module-sequence-footer-content,
+html.pk-on.pk-art:not(.pk-back-paper) #content .item-group-condensed,
+html.pk-on.pk-art:not(.pk-back-paper) #content .user_content.enhanced,
+html.pk-on.pk-art:not(.pk-back-paper) #content .pk-pl-rows,
+html.pk-on.pk-art:not(.pk-back-paper) #content .pk-pl-grade,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li {
+  background-color: transparent !important; box-shadow: none !important;
+  border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important;
+}
+/* Sunk surfaces inside the pane: a tint of the ink, so a table's head or a
+ * selected tab still reads as a step without a slab. */
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-Table th,
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-head"] [class*="-view-cell"],
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-colHeader"],
+html.pk-on.pk-art:not(.pk-back-paper) #content thead[class*="-head"],
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-widget-header,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-day-header,
+html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li.ui-tabs-active,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-day.fc-today,
+html.pk-on.pk-art:not(.pk-back-paper) #content .fc-day-top.fc-today,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-day.fc-today,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical .fc-widget-header,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side .mini_month .mini_calendar_day.has_event .day_wrapper,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side .mini_month .mini_calendar_day.today .day_wrapper {
+  background-color: color-mix(in srgb, var(--pk-ink) 7%, transparent) !important; box-shadow: none !important;
+  border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important;
+}
+/* Fields inside the pane: half-clear paper. Buttons keep their small opaque chip. */
+html.pk-on.pk-art:not(.pk-back-paper) #content input:not([type="checkbox"]):not([type="radio"]),
+html.pk-on.pk-art:not(.pk-back-paper) #content select,
+html.pk-on.pk-art:not(.pk-back-paper) #content textarea,
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="textInput__facade"] {
+  background-color: color-mix(in srgb, var(--pk-paper-2) 60%, transparent) !important;
+  border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important;
+}
 html.pk-on.pk-art:not(.pk-back-hero) .ic-DashboardCard__header_hero {
   /* The banner covers all but the bottom 6px, where the card's own inline
    * course colour shows through as a strip. Its opacity is still Canvas's. */
@@ -500,7 +605,8 @@ html.pk-on:not(.pk-back-cal-rows) #calendar_header .navigation_title_text:hover 
 /* ---- feedback-rows: Canvas's Recent Feedback, as rows -------------------
  * The list stays whole (the house never removes information); it reads as
  * the rail's rows do: the title in the ink, the grade as a small chip in the
- * mark on a sunk paper, the check in the mark, no grey bar down the side. */
+ * ink on a sunk paper (the mark read 4.37:1 on the Sky paper's sunk chip,
+ * 2026-09-17), the check in the mark, no grey bar down the side. */
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback li.event { border: 0 !important; margin: 0 !important; padding: 0 !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon {
   display: flex !important; align-items: flex-start !important; gap: 10px !important; padding: 10px 0 !important;
@@ -517,7 +623,7 @@ html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-detai
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p { margin: 4px 0 0 !important; font-size: 12px !important; line-height: 16px !important; color: var(--pk-ink-2) !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong {
   display: inline-block !important; padding: 1px 8px !important; border-radius: 999px !important;
-  background-color: var(--pk-paper-sunk) !important; color: var(--pk-mark) !important; font-weight: 800 !important; font-variant-numeric: tabular-nums !important;
+  background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; font-weight: 800 !important; font-variant-numeric: tabular-nums !important;
 }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .clear { display: none !important; }
 /* Canvas fades the row's right edge with a white gradient (::after, 12px); on
@@ -1182,6 +1288,8 @@ html.pk-back-planner #pk-dashtabs, html.pk-back-planner :is(#pk-planner, #pk-gra
 :is(#pk-planner, #pk-grades) .pk-pl-group { display: flex; align-items: baseline; gap: 8px; margin: 18px 0 6px; padding: 0 0 0 10px; border-left: 3px solid transparent; }
 :is(#pk-planner, #pk-grades) .pk-pl-group b { font-size: 15px; line-height: 20px; font-weight: 800; }
 :is(#pk-planner, #pk-grades) .pk-pl-group em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-group .when { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-group .when::before { content: "· "; }
 :is(#pk-planner, #pk-grades) .pk-pl-group.today { border-left-color: #51CFA0; }
 :is(#pk-planner, #pk-grades) .pk-pl-group.over { background: rgba(81, 207, 160, .16); border-radius: 8px; }
 :is(#pk-planner, #pk-grades) .pk-pl-group.fold { cursor: pointer; user-select: none; }

@@ -1406,13 +1406,10 @@ let spriteListening = false;
 /// to the bottom right, smaller.
 /// Where he lives: in the tank above the week card by default. `rail`,
 /// `perch` and `corner` are the other candidates from the placement round.
-function buddyMode() { return ['tank', 'perch', 'rail', 'corner'].includes(skin.buddyPlace) ? skin.buddyPlace : 'tank'; }
+function buddyMode() { return ['tank', 'perch', 'corner'].includes(skin.buddyPlace) ? skin.buddyPlace : 'tank'; }
 
 function spritePlace() {
   const mode = buddyMode();
-  const header = document.getElementById('header');
-  const rail = header ? header.getBoundingClientRect() : null;
-  const hasRail = !!(rail && rail.width >= 48 && rail.height >= 400 && rail.left === 0);
   // Above the week card, Finch-style: a water band at the top of our own rail
   // card, the to-do list flowing under him. Only where the card is.
   const week = (mode === 'tank' || mode === 'perch') ? document.getElementById(WEEK_ID) : null;
@@ -1427,16 +1424,11 @@ function spritePlace() {
     const feet = mode === 'tank' ? r.bottom + scrollY - 8 : r.top + scrollY + 6;
     return { side: 'tank', mode, navW: w, bottom: 0, radius, w, h, abs: { left: Math.round(cx - w / 2), top: Math.round(feet - h) } };
   }
-  if (mode === 'corner' || !hasRail) {
-    const small = mode === 'corner';
-    return { side: 'right', mode, navW: 0, bottom: 0, radius: small ? 22 : 36, w: small ? 110 : 150, h: small ? 170 : 240 };
-  }
-  const toggle = document.getElementById('primaryNavToggle')?.getBoundingClientRect();
-  const bottom = Math.round(toggle?.height || 44) + 6;
-  // His stage-three body radius: fins reach about 1.6 radii each side, so
-  // 26 fills the 84 px rail edge to edge and 17 the collapsed 54.
-  const radius = rail.width >= 80 ? 26 : 17;
-  return { side: 'left', mode, navW: Math.round(rail.width), bottom, radius, w: Math.round(rail.width) + 24, h: 190 };
+  // Everywhere else: the bottom right corner, where most apps keep a helper,
+  // small. He used to take the foot of Canvas's global nav, which on a school
+  // with a tall nav (Dartmouth: History, Disability Resources, Help) sat him
+  // on top of Help (George, 2026-09-17). The corner is nobody's button.
+  return { side: 'right', mode, navW: 0, bottom: 0, radius: 22, w: 110, h: 170 };
 }
 
 /// The five tanks the phone's Home can show; the band paints the one the phone
@@ -1484,8 +1476,6 @@ function placeSprite(place = spritePlace()) {
   const st = sprite.host.style;
   if (place.side === 'tank') {
     st.position = 'absolute'; st.left = `${place.abs.left}px`; st.top = `${place.abs.top}px`; st.right = 'auto'; st.bottom = 'auto';
-  } else if (place.side === 'left') {
-    st.position = 'fixed'; st.top = 'auto'; st.left = '-12px'; st.right = 'auto'; st.bottom = `${place.bottom}px`;
   } else {
     st.position = 'fixed'; st.top = 'auto'; st.left = 'auto'; st.right = '12px'; st.bottom = '0px';
   }
@@ -1495,8 +1485,8 @@ function placeSprite(place = spritePlace()) {
     const h = shadow.host;
     h.dataset.side = place.side;
     h.style.setProperty('--pk-nav-w', `${place.side === 'tank' ? place.w : (place.navW || place.w)}px`);
-    h.style.setProperty('--pk-tab-h', `${place.side === 'left' ? 120 : place.side === 'tank' ? 108 : Math.round(place.h * 0.62)}px`);
-    h.style.setProperty('--pk-tab-bottom', `${place.side === 'left' ? place.bottom : 0}px`);
+    h.style.setProperty('--pk-tab-h', `${place.side === 'tank' ? 108 : Math.round(place.h * 0.62)}px`);
+    h.style.setProperty('--pk-tab-bottom', '0px');
     if (place.side === 'tank') {
       // The panel takes the column to his left (360 + 12), so the launcher
       // lands on the band. With no room there — Canvas read right-to-left

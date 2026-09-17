@@ -31,7 +31,11 @@ const SHOTS = path.join(__dirname, '..', 'design', 'signoff', 'canvas-pages');
 const BASELINE_FILE = path.join(__dirname, 'pages-baseline.json');
 const BASELINE = !!process.env.BASELINE;
 const ONLY = process.env.PAGES ? process.env.PAGES.split(',') : null;
-const MODES = (process.env.MODES || 'light,dark').split(',');
+/// light and dark are the two paper stocks; art is an image theme (Deep Sea),
+/// where the page is a frosted pane over a wallpaper and every white block
+/// inside it is a miss (2026-09-17). Text under the wallpaper is skipped by
+/// the audit (unknown ground); the pane, patches, words and blank still count.
+const MODES = (process.env.MODES || 'light,dark,art').split(',');
 /// 1280 is the width most laptops run Canvas at; 768 is Canvas's own
 /// breakpoint (the global nav collapses to #mobile-header below it), a real
 /// layout mode of the page. Not a claim about students' windows.
@@ -137,7 +141,7 @@ for (const width of WIDTHS) for (const mode of MODES) {
   test(`${width} ${mode}: paper set`, async () => {
     await page.setViewportSize({ width, height: 860 });
     const { skin } = await h.storage();
-    await h.setStorage({ skin: { ...skin, dark } });
+    await h.setStorage({ skin: { ...skin, dark }, wallet: { ...wallet(), wearing: mode === 'art' ? 'deepsea' : 'classic' } });
   });
   for (const [name, url, ready, storage] of PAGES) {
     if (ONLY && !ONLY.includes(name)) continue;

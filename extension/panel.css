@@ -46,7 +46,7 @@
   font-size: 13px; font-weight: 800; box-shadow: 0 2px 8px var(--pk-shadow), inset 0 0 0 1px var(--pk-line);
   pointer-events: none; animation: pk-float 2.2s var(--pk-ease) forwards;
 }
-:host([data-side="left"]) .pk-float, :host([data-side="right"]) .pk-float { left: auto; right: 0; top: -10px; }
+:host([data-side="right"]) .pk-float { left: auto; right: 0; top: -10px; }
 @keyframes pk-float { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-18px); } }
 :host([data-side="tank"]) .pk-panel { grid-column: 1; grid-row: 2; margin-bottom: 0; }
 :host([data-side="tank"]) .pk-timer { grid-column: 1; grid-row: 1; }
