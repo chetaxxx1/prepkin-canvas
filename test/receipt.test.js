@@ -429,13 +429,35 @@ test('R32 a click on Sprout opens his help: his line, the thing to start, the do
   await h.sw((o) => syncNow(o), SCHOOL_A);
   const page = await open('/courses');
   const { width, height } = page.viewportSize();
+  // He mounts after the first sync; the click waits for him to be in the corner.
+  await page.waitForSelector('#prepkin-buddy[data-side="right"]', { timeout: 8000 });
+  await page.waitForTimeout(400);
   // The launcher covers him in the bottom-right corner (host right 12px, tab 140 wide).
   await page.mouse.click(width - 12 - 70, height - 50);
-  await page.waitForSelector('#prepkin-buddy[data-open][data-view="help"]', { timeout: 4000 });
+  await page.waitForSelector('#prepkin-buddy[data-open][data-view="help"]', { timeout: 6000 });
   const words = await page.evaluate(() => document.getElementById('prepkin-buddy').getAttribute('aria-label'));
   assert.equal(words, null, 'the host carries no words of its own; the panel does');
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => !document.getElementById('prepkin-buddy').hasAttribute('data-open'), null, { timeout: 3000 });
+  await page.close();
+});
+
+test('R33 the buddy\'s host box never takes a click meant for the page: the dashboard tabs and Search read at 2000px wide', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/');
+  await page.setViewportSize({ width: 2000, height: 1000 });
+  await page.waitForSelector('#pk-dashtabs [data-tab="planner"]', { timeout: 8000 });
+  await page.waitForSelector('#pk-week', { timeout: 8000 });
+  await page.waitForTimeout(600);
+  const hits = await page.evaluate(() => ['#pk-search', '#pk-dashtabs [data-tab="planner"]', '#pk-dashtabs [data-tab="looks"]'].map((sel) => {
+    const r = document.querySelector(sel).getBoundingClientRect();
+    const e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return [sel, e ? (e.closest('#prepkin-buddy') ? 'buddy' : 'page') : 'nothing'];
+  }));
+  for (const [sel, who] of hits) assert.equal(who, 'page', `${sel} is under the buddy's box`);
+  await page.click('#pk-dashtabs [data-tab="planner"]');
+  await page.waitForSelector('#pk-planner', { timeout: 5000 });
+  await h.setStorage({ dashTab: 'cards' });
   await page.close();
 });
 
