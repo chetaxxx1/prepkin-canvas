@@ -1,0 +1,26 @@
+{
+ "plump": {
+  "light": "plump-line-style",
+  "dark": "plump-solid-style"
+ },
+ "sharp": {
+  "light": "sharp-solid-style",
+  "dark": "sharp-solid-style"
+ },
+ "hand": {
+  "light": "streamline-freehand",
+  "dark": "streamline-freehand"
+ },
+ "pixel": {
+  "light": "pixel",
+  "dark": "pixel"
+ },
+ "cyber": {
+  "light": "nova-solid",
+  "dark": "nova-solid"
+ },
+ "thin": {
+  "light": "streamline-light",
+  "dark": "streamline-light"
+ }
+}

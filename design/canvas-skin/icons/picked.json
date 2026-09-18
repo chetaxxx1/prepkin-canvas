@@ -1,0 +1,402 @@
+{
+ "plump-line-style": {
+  "dashboard": {
+   "hash": "ico_Q0ZkFbJMWJfwe9ot",
+   "name": "Dashboard 3"
+  },
+  "courses": {
+   "hash": "ico_33WeOF8DY1M3EmOb",
+   "name": "Book 1"
+  },
+  "calendar": {
+   "hash": "ico_0zPqf8EWgEtJu188",
+   "name": "Blank Calendar"
+  },
+  "inbox": {
+   "hash": "ico_VHpWMFExAp65dydw",
+   "name": "Inbox"
+  },
+  "history": {
+   "hash": "ico_Uc3b1Zm0znAoq8Ku",
+   "name": "Rewind Clock"
+  },
+  "help": {
+   "hash": "ico_kPEFpZUNfCQjQxXN",
+   "name": "Help Question 1"
+  },
+  "page": {
+   "hash": "ico_0i7t9qeLFMvnpncI",
+   "name": "Notepad Text"
+  },
+  "assignment": {
+   "hash": "ico_rfYx5GaBGVtGuA8a",
+   "name": "Pencil"
+  },
+  "quiz": {
+   "hash": "ico_zQbJH81gn7U45fJx",
+   "name": "Task List"
+  },
+  "discussion": {
+   "hash": "ico_haYnkYZ7wGgzgHyy",
+   "name": "Chat Bubble Oval"
+  },
+  "file": {
+   "hash": "ico_tsIDr7cvumxTjpLL",
+   "name": "Paperclip 1"
+  },
+  "link": {
+   "hash": "ico_3xTWlPgg1MUKgFR1",
+   "name": "Link Chain"
+  }
+ },
+ "plump-solid-style": {
+  "dashboard": {
+   "hash": "ico_fuT4iGwSEIfgsPsi",
+   "name": "Dashboard 3"
+  },
+  "courses": {
+   "hash": "ico_O8EjU0nJ5Ewnbi2v",
+   "name": "Book 1"
+  },
+  "calendar": {
+   "hash": "ico_gQSPpH787R4oUD2t",
+   "name": "Blank Calendar"
+  },
+  "inbox": {
+   "hash": "ico_sVifox2qPFWiESXx",
+   "name": "Inbox"
+  },
+  "history": {
+   "hash": "ico_8idGc3t6k2pfGY4Z",
+   "name": "Rewind Clock"
+  },
+  "help": {
+   "hash": "ico_cqjFeQzyxysyhjOd",
+   "name": "Help Question 1"
+  },
+  "page": {
+   "hash": "ico_IeA3pR4HGrYlPngp",
+   "name": "Notepad Text"
+  },
+  "assignment": {
+   "hash": "ico_xgYeqe9qNzLOjHFP",
+   "name": "Pencil"
+  },
+  "quiz": {
+   "hash": "ico_CVVHnRamDzuJv7jN",
+   "name": "Task List"
+  },
+  "discussion": {
+   "hash": "ico_YuG5zmQMSM2GuDnM",
+   "name": "Chat Bubble Oval"
+  },
+  "file": {
+   "hash": "ico_89Fl2liDgdOcnTjR",
+   "name": "Paperclip 1"
+  },
+  "link": {
+   "hash": "ico_JxNk8wcWBMSxXw15",
+   "name": "Link Chain"
+  }
+ },
+ "sharp-solid-style": {
+  "dashboard": {
+   "hash": "ico_n0jINVpFZMwuZP2M",
+   "name": "Dashboard 3"
+  },
+  "courses": {
+   "hash": "ico_92ajRtT2gRhNOYTV",
+   "name": "Book 1"
+  },
+  "calendar": {
+   "hash": "ico_FMXcJVC2lj36KQwD",
+   "name": "Blank Calendar"
+  },
+  "inbox": {
+   "hash": "ico_Kjv7vbWtfdEOrGWc",
+   "name": "Inbox"
+  },
+  "history": {
+   "hash": "ico_YRwoA8LSlL50MSNd",
+   "name": "Rewind Clock"
+  },
+  "help": {
+   "hash": "ico_hA4uaVaQvmnYOwfq",
+   "name": "Help Question 1"
+  },
+  "page": {
+   "hash": "ico_LbIoAkqq0ovl8UHr",
+   "name": "Notepad Text"
+  },
+  "assignment": {
+   "hash": "ico_swXERwqsleRLDXRt",
+   "name": "Pencil"
+  },
+  "quiz": {
+   "hash": "ico_M5ZYW2ngPDedsdPV",
+   "name": "Task List"
+  },
+  "discussion": {
+   "hash": "ico_jwxAtNh0l1ndf5LA",
+   "name": "Chat Bubble Oval"
+  },
+  "file": {
+   "hash": "ico_JSguANGHu5J7wdYF",
+   "name": "Paperclip 1"
+  },
+  "link": {
+   "hash": "ico_TvW1BngwPHKO2lBM",
+   "name": "Link Chain"
+  }
+ },
+ "streamline-freehand": {
+  "dashboard": {
+   "hash": "ico_ajaa2DMYaeZ4Xm46",
+   "name": "Dashboard Layout"
+  },
+  "courses": {
+   "hash": "ico_SZDTaJzNxy78XzV5",
+   "name": "Book Open"
+  },
+  "calendar": {
+   "hash": "ico_q4mpTNiIq6uQHSRM",
+   "name": "Calendar Date"
+  },
+  "inbox": {
+   "hash": "ico_ChQGZS2hL278rXlM",
+   "name": "Mailbox Post"
+  },
+  "history": {
+   "hash": "ico_dSIFTCdps7zTyrQv",
+   "name": "Time Clock Circle"
+  },
+  "help": {
+   "hash": "ico_CzRbdYvZAAUxNfKS",
+   "name": "Help Question Circle"
+  },
+  "page": {
+   "hash": "ico_quM8biHhjbQKXwh1",
+   "name": "Common File Text"
+  },
+  "assignment": {
+   "hash": "ico_N76DNAGOqcSv4oFb",
+   "name": "Edit Pencil"
+  },
+  "quiz": {
+   "hash": "ico_Uh7nT73X4bkJ22WT",
+   "name": "Check Button"
+  },
+  "discussion": {
+   "hash": "ico_FQ4l7UDtEIVjdy5j",
+   "name": "Conversation Chat"
+  },
+  "file": {
+   "hash": "ico_mhHZWZsTkfIjWLn5",
+   "name": "Link Paperclip"
+  },
+  "link": {
+   "hash": "ico_mhHZWZsTkfIjWLn5",
+   "name": "Link Paperclip"
+  }
+ },
+ "pixel": {
+  "dashboard": {
+   "hash": "ico_mRsCHnD7ktpXJPxH",
+   "name": "Interface Essential Home 1"
+  },
+  "courses": {
+   "hash": "ico_RdwQ3kqCSkChG5rV",
+   "name": "Content Files Book"
+  },
+  "calendar": {
+   "hash": "ico_yuQeFmt4saTpIvHS",
+   "name": "Interface Essential Calendar Date"
+  },
+  "inbox": {
+   "hash": "ico_NAdzs9GRswYP5Fwg",
+   "name": "Email Tray"
+  },
+  "history": {
+   "hash": "ico_FR1LBkwCX17eXr0e",
+   "name": "Interface Essential Clock"
+  },
+  "help": {
+   "hash": "ico_FpDtkupbPlngPDXi",
+   "name": "Interface Essential Question Help Square"
+  },
+  "page": {
+   "hash": "ico_VQ8qgnFIPPoQBPIK",
+   "name": "Content Files Note"
+  },
+  "assignment": {
+   "hash": "ico_SQqaOEg0wzWmrhRG",
+   "name": "Design Pencil"
+  },
+  "quiz": {
+   "hash": "ico_tO5gVdIhHK1hI9aU",
+   "name": "Business Product Check"
+  },
+  "discussion": {
+   "hash": "ico_7HQ96rMDwyncmgEO",
+   "name": "Chat Email"
+  },
+  "file": {
+   "hash": "ico_s4VZlhGzwygSA5qx",
+   "name": "Interface Essential Clip 1"
+  },
+  "link": {
+   "hash": "ico_p0axrPzlbXfVyQ1i",
+   "name": "Interface Essential Link"
+  }
+ },
+ "cyber-line": {
+  "dashboard": {
+   "hash": "ico_oIrudeuNIOIWb0KE",
+   "name": "Layout 5"
+  },
+  "courses": {
+   "hash": "ico_NOeCac9ZdtPCRuy4",
+   "name": "Book"
+  },
+  "calendar": {
+   "hash": "ico_xx4dNFYnZ71C6Yaj",
+   "name": "Calendar 1"
+  },
+  "inbox": {
+   "hash": "ico_gPV6vcCupewla2SE",
+   "name": "Email Inbox"
+  },
+  "history": {
+   "hash": "ico_shhVNLPEBZsjf1e3",
+   "name": "Cooking Timer"
+  },
+  "help": {
+   "hash": "ico_GW8W8QShMmHxfnzo",
+   "name": "Window Question"
+  },
+  "page": {
+   "hash": "ico_SXobKdK8DgiPH4DO",
+   "name": "Share Document"
+  },
+  "assignment": {
+   "hash": "ico_qkD76AxFrVnM0QuC",
+   "name": "Pencil 4"
+  },
+  "quiz": {
+   "hash": "ico_FKPunD5dvVGFAtA6",
+   "name": "Checklist"
+  },
+  "discussion": {
+   "hash": "ico_YHRLuvaG5A1OJJQP",
+   "name": "Group Chat"
+  },
+  "file": {
+   "hash": "ico_7qEJcTbvR0MFtKR6",
+   "name": "Paperclip"
+  },
+  "link": {
+   "hash": "ico_fp0OtapZOT5THe95",
+   "name": "Link 2"
+  }
+ },
+ "streamline-light": {
+  "dashboard": {
+   "hash": "ico_mRu4pQJ4vYkh2aEeixxihO4x",
+   "name": "Layout Dashboard"
+  },
+  "courses": {
+   "hash": "ico_mRu4pQJ4vQPv2aEn8Ognsbmo",
+   "name": "Book Open"
+  },
+  "calendar": {
+   "hash": "ico_mRu4pQJ4vt9a2aEeixhNE05e",
+   "name": "Calendar"
+  },
+  "inbox": {
+   "hash": "ico_mRu4pQJ4v8Qu2aEhNE4pQUKg",
+   "name": "Mailbox In"
+  },
+  "history": {
+   "hash": "ico_mRu4pQJ4veHJ2aEeixHO2bUP",
+   "name": "Time Clock Circle"
+  },
+  "help": {
+   "hash": "ico_mRu4pQJ4v8782aEeixeixS12",
+   "name": "Question Circle"
+  },
+  "page": {
+   "hash": "ico_evQ6t4lRUjIIjxRt",
+   "name": "Document"
+  },
+  "assignment": {
+   "hash": "ico_mRu4pQJ4vAh12aEeixjUAcsM",
+   "name": "Pencil"
+  },
+  "quiz": {
+   "hash": "ico_mRu4pQJ4vCjy2aEeixdzplLl",
+   "name": "Checklist"
+  },
+  "discussion": {
+   "hash": "ico_mRu4pQJ4vIju2aEhNErjtrPd",
+   "name": "Conversation Chat"
+  },
+  "file": {
+   "hash": "ico_mRu4pQJ4v2Qm2aEeixDeGhRi",
+   "name": "Attachment"
+  },
+  "link": {
+   "hash": "ico_mRu4pQJ4vWq02aEeixDeGyOK",
+   "name": "Hyperlink"
+  }
+ },
+ "nova-solid": {
+  "dashboard": {
+   "hash": "ico_fB0m2fyieCZ1lSre",
+   "name": "Layout Dashboard 1"
+  },
+  "courses": {
+   "hash": "ico_PWifeAkQ0sBuLn5k",
+   "name": "Book"
+  },
+  "calendar": {
+   "hash": "ico_Wod4TarTR3HCoIxg",
+   "name": "Calendar 1"
+  },
+  "inbox": {
+   "hash": "ico_oYs2Iecv4MG4cO2H",
+   "name": "Email Inbox"
+  },
+  "history": {
+   "hash": "ico_8fwe7Oj0CBSuLBBn",
+   "name": "Clock"
+  },
+  "help": {
+   "hash": "ico_rcQrYHuvIdqPdc8S",
+   "name": "Question Circle"
+  },
+  "page": {
+   "hash": "ico_JmAppIdoefLEfXpu",
+   "name": "File Text"
+  },
+  "assignment": {
+   "hash": "ico_shI43pJgTFMxczs9",
+   "name": "Pencil 1"
+  },
+  "quiz": {
+   "hash": "ico_XFzFX8C4oSJoFMw2",
+   "name": "Task List"
+  },
+  "discussion": {
+   "hash": "ico_UiNEFKX09hq6z4cA",
+   "name": "Message Chat Round"
+  },
+  "file": {
+   "hash": "ico_ckOCqUcMyhVWuGV7",
+   "name": "Paperclip 1"
+  },
+  "link": {
+   "hash": "ico_P96nolCfDFKivGRN",
+   "name": "Hyperlink 1"
+  }
+ }
+}
