@@ -954,6 +954,12 @@ html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #right-
 #pk-grades .pk-gr-side .pk-past { margin: 18px 0 0; }
 #pk-grades .pk-gr-side .pk-past-rows { margin-left: 0; }
 #pk-grades .pk-gr-side .pk-pl-group { padding-left: 0; border-left: 0; }
+/* A closed row on /grades carries its line of marks and one quiet line of
+ * counts (Missing in amber, never red), so three courses still make a sheet. */
+#pk-grades .pk-pl-grade .pk-gr-spark { margin: 0 12px 6px 44px; }
+#pk-grades .pk-pl-grade .pk-gr-spark svg { display: block; width: 100%; height: 32px; }
+#pk-grades .pk-pl-grade .pk-gr-meta { margin: 0 12px 10px 44px; font-size: 12px; line-height: 16px; font-weight: 700; color: var(--pk-ink-2); }
+#pk-grades .pk-pl-grade .pk-gr-meta .amber { color: var(--pk-amber-ink); }
 /* The student's own /grades: Canvas's two headings and two tables fold under
  * our rows; the h1 stays. */
 html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page):not(.pk-grades-open) #content > :not(h1):not(#pk-grades) { display: none !important; }

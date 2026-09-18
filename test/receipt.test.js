@@ -1066,6 +1066,18 @@ test('R31 the student\'s own /grades: a row per class under Canvas\'s h1, its ta
   const [rows, side] = await page.$$eval('#pk-grades .pk-gr-all > *', (els) => els.map((e) => e.getBoundingClientRect()));
   assert.ok(side.left >= rows.right && side.width >= 300, `the side column sits beside the rows: rows to ${rows.right}, side from ${side.left} (${side.width} wide)`);
   assert.ok(await page.$('#pk-grades .pk-gr-side .pk-pl-gpa'), 'the GPA on the right');
+  // A closed row says what is missing, ahead and marked, and draws its marks.
+  const metas = await page.$$eval('#pk-grades .pk-pl-grade:not(.open) .pk-gr-meta', (els) => els.map((e) => e.textContent));
+  assert.ok(metas.length >= 2 && metas.every((m) => /Marked \d+|Nothing handed in yet/.test(m)), `every closed row carries its counts: ${metas.join(' | ')}`);
+  // The line of marks needs two marks; the fake's classes carry one, so the
+  // spark is asserted by the count, not assumed.
+  const marks = Object.values((await h.storage()).lastPayload.graded ?? {}).map((g) => g.length);
+  assert.equal(!!(await page.$('#pk-grades .pk-pl-grade:not(.open) .pk-gr-spark svg path')), marks.some((n) => n >= 2), `a spark exactly when a class has two marks (${marks.join(',')})`);
+  await page.click('#pk-grades .pk-pl-grade .pk-pl-grow');
+  await page.waitForSelector('#pk-grades .pk-pl-grade.open .body', { timeout: 3000 });
+  assert.equal(await page.$('#pk-grades .pk-pl-grade.open .pk-gr-meta'), null, 'the open row says it once, in its chips');
+  await page.click('#pk-grades .pk-pl-grade.open .pk-pl-grow');
+  await page.waitForSelector('#pk-grades .pk-pl-grade:not(.open) .pk-gr-meta', { timeout: 3000 });
   assert.ok(await page.$('#pk-grades .pk-gr-side .pk-past .pk-pl-group.fold.open'), 'the finished fold under it, in the group shape, open here: a finished letter is a grade');
   assert.deepEqual(await page.$$eval('#pk-grades .pk-gr-side .pk-past-rows li a .name', (els) => els.map((e) => e.textContent)), ['Calculus I', 'World History']);
   await page.click('#pk-grades .pk-gr-side .pk-past .pk-pl-group.fold');
@@ -1163,6 +1175,7 @@ test('R27 the Planner and Looks tabs: one list by day with the grades block, the
   const folds = await page.$$eval('#pk-planner .pk-pl-group.fold', (els) => els.map((e) => getComputedStyle(e, '::after').content));
   assert.ok(folds.every((c) => c === '"›"'), `a fold carries its chevron after the chip: ${folds.join(' ')}`);
   assert.equal(await page.$eval('#pk-planner .pk-pl-grades > .pk-pl-group', (e) => `${e.querySelector('b').textContent} ${e.querySelector('em')?.textContent}`), 'Grades 2', 'Grades heads its rows like a day, with its count');
+  assert.equal(await page.$('#pk-planner .pk-gr-meta'), null, 'the planner keeps its short grade rows');
   const addAfter = await page.$eval('#pk-planner .pk-pl-addline', (e) => { let n = e; while ((n = n.previousElementSibling)) if (n.classList.contains('pk-pl-group')) return n.className; return null; });
   assert.match(addAfter, /today/, `Add a task sits at the foot of Today: ${addAfter}`);
   assert.equal(await style(page, '#pk-planner .pk-pl-addline .add', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'a quiet line, no ground');

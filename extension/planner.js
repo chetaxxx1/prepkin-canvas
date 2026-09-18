@@ -474,7 +474,29 @@ function plGradeRow(c, now) {
   row.append(headRow);
   // The fill is the school's course colour (data-pk-course-color says so to the floor).
   if (pct !== null) { const bar = el('div', 'bar'); const fill = el('i', '', null); fill.style.width = `${pct}%`; if (color) { fill.style.background = color; fill.dataset.pkCourseColor = ''; } bar.append(fill); row.append(bar); }
-  if (!open) return row;
+  if (!open) {
+    // On /grades the rows are the page, so a closed row carries what the open
+    // one would say first: the line of marks, and what is missing, ahead and
+    // marked. Both go when the row opens (the chips and the spark say them
+    // there), and the Planner tab keeps its short rows.
+    if (allGradesPage()) {
+      const graded = data.graded?.[c.id] ?? [];
+      const tasks = data.tasks.filter((t) => String(t.courseId) === String(c.id));
+      const missing = tasks.filter((t) => t.missing && !isDone(t)).length;
+      const ahead = tasks.filter((t) => !isDone(t) && !t.missing).length;
+      if (graded.length >= 2) { const spark = el('div', 'spark pk-gr-spark'); spark.innerHTML = sparkline(graded, color ?? '#51CFA0'); row.append(spark); }
+      const meta = el('p', 'pk-gr-meta');
+      if (!missing && !ahead && !graded.length) meta.append('Nothing handed in yet');
+      else {
+        if (missing) meta.append(el('span', 'amber', `Missing ${missing}`));
+        if (ahead) { if (meta.childNodes.length) meta.append(' · '); meta.append(`Ahead ${ahead}`); }
+        if (meta.childNodes.length) meta.append(' · ');
+        meta.append(`Marked ${graded.length}`);
+      }
+      row.append(meta);
+    }
+    return row;
+  }
 
   const body = el('div', 'body');
   const graded = data.graded?.[c.id] ?? [];
