@@ -48,7 +48,12 @@ function plannerShows() {
 /// list and its toolbar fold, the Planner tab is the page, and the Courses tab
 /// goes (List View draws no cards). The `list-view` receipt row puts it back.
 function listViewShows() {
-  return plannerShows() && !plannerState().putBack['list-view'] && !!document.getElementById('dashboard-planner');
+  if (!plannerShows() || plannerState().putBack['list-view']) return false;
+  // Canvas keeps the planner's mount node on a Card View dashboard too, empty
+  // and `display: none` inline (the real sandbox, 2026-09-18); only a node it
+  // is showing is List View. Otherwise every card-view dashboard folded.
+  const node = document.getElementById('dashboard-planner');
+  return !!node && node.style.display !== 'none';
 }
 
 /// The tabs in the dashboard's own title row: Courses (Canvas's cards) and
