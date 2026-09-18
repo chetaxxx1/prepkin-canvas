@@ -595,6 +595,25 @@ test('R39 so far this term: five weeks in with ten handed in, the card at the to
   await page.close();
 });
 
+test('R40 one row shape: a module row is one 44px line, the hint beside the title, not under it', async () => {
+  const page = await open('/courses/1/modules');
+  await page.waitForSelector('.context_module .ig-row .ig-details', { timeout: 6000 });
+  const rows = await page.$$eval('.context_module_item .ig-row:has(.ig-details__item)', (els) => els.map((r) => {
+    const t = r.querySelector('.ig-title').getBoundingClientRect(); const d = r.querySelector('.ig-details').getBoundingClientRect(); const b = r.getBoundingClientRect();
+    return { h: Math.round(b.height), sameLine: Math.abs((t.top + t.height / 2) - (d.top + d.height / 2)) < 4, hintRight: d.left > t.left + 40, detailsSize: getComputedStyle(r.querySelector('.ig-details')).fontSize };
+  }));
+  assert.ok(rows.length >= 2);
+  for (const r of rows) {
+    assert.ok(r.h >= 44 && r.h <= 56, `a 44px row, not a stack: ${r.h}`);
+    assert.ok(r.sameLine, 'the hint shares the title\'s line');
+    assert.ok(r.hintRight, 'and sits at the right');
+    assert.equal(r.detailsSize, '12px', 'in the small quiet size');
+  }
+  const head = await page.$eval('.context_module .ig-header', (e) => Math.round(e.getBoundingClientRect().height));
+  assert.ok(head >= 52 && head <= 60, `the header is one 52px line: ${head}`);
+  await page.close();
+});
+
 test('R20 Command-K opens the buddy on search; Escape closes it', async () => {
   const page = await open('/');
   // He mounts after the first sync; the key waits for him (a flake in the full run otherwise).

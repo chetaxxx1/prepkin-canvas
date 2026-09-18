@@ -558,6 +558,116 @@ html.pk-on:not(.pk-back-nav-dim) #section-tabs a.active { opacity: 1; }
  * takes the paper's ink. Colour only, on a link, never on a button. */
 html.pk-on.pk-dark:not(.pk-back-paper) #section-tabs a.active { color: var(--pk-ink) !important; }
 
+/* ---- rows: one row shape for every list Canvas draws --------------------
+ * A module item, an assignment, a quiz row: Canvas stacks an icon column, the
+ * title, and its hints ("View", "Submit", "Score at least 4.0", the due date)
+ * on a second line in 11px grey. With our paper behind it that reads as old
+ * Canvas on a new background (George, 2026-09-18). One shape instead: 44px, a
+ * 26px icon tile, the title, and the hints on the same line at the right in
+ * the quiet ink. Colour, size and layout only; every link and button keeps
+ * its own hooks. Put back with the paper. */
+html.pk-on:not(.pk-back-paper) .ig-row {
+  display: grid !important; grid-template-columns: auto minmax(0, 1fr) auto !important; align-items: center !important;
+  column-gap: 12px !important; min-height: 44px !important; padding: 4px 14px !important; margin: 0 !important;
+}
+html.pk-on:not(.pk-back-paper) .ig-row > .ig-row__layout { display: contents !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .type_icon { display: contents !important; }
+/* Placed by name, not by position: a row with no type icon (some schools,
+ * the test fake) still puts its words in the middle and its status at the right. */
+html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon { grid-column: 1 !important; grid-row: 1 !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-info { grid-column: 2 !important; grid-row: 1 !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-admin,
+html.pk-on:not(.pk-back-paper) .ig-row .module-item-status-icon { grid-column: 3 !important; grid-row: 1 !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon {
+  display: grid !important; place-items: center !important; width: 26px !important; height: 26px !important; margin: 0 !important; padding: 0 !important;
+  border-radius: 8px !important; background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink-2) !important; font-size: 14px !important; line-height: 1 !important;
+}
+html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon i { font-size: 14px !important; line-height: 1 !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon i::before { font-size: 14px !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-info {
+  display: flex !important; align-items: center !important; gap: 12px !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important;
+}
+html.pk-on:not(.pk-back-paper) .ig-row .ig-info > .module-item-title,
+html.pk-on:not(.pk-back-paper) .ig-row .ig-info > .item_name,
+html.pk-on:not(.pk-back-paper) .ig-row .ig-info > .ig-title { flex: 1 1 auto !important; min-width: 0 !important; }
+/* No `display` here: Canvas hides the link and shows `.locked_title` on a
+ * locked item, and forcing the link back drew the title twice (2026-09-18). */
+html.pk-on:not(.pk-back-paper) .ig-row .ig-title {
+  font-size: 14px !important; line-height: 18px !important; font-weight: 700 !important;
+  overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important;
+}
+html.pk-on:not(.pk-back-paper) .ig-row .item_name { display: block !important; min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .module_item_icons { display: none !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details {
+  display: flex !important; align-items: center !important; flex-wrap: wrap !important; justify-content: flex-end !important; gap: 4px 10px !important;
+  margin: 0 !important; padding: 0 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important;
+  white-space: nowrap !important; flex: none !important;
+}
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details__item { margin: 0 !important; padding: 0 !important; font-size: 12px !important; line-height: 16px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details__item:empty { display: none !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details__item::before,
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details__item::after { content: none !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details__item + .ig-details__item:not(:empty)::before { content: "·" !important; margin-right: 10px; opacity: .6; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details [class*="-text"],
+html.pk-on:not(.pk-back-paper) .ig-row .ig-details time { font-size: 12px !important; color: inherit !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .ig-admin { display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 !important; padding: 0 !important; }
+/* Indented module items step in by the tile's width, one step a level. */
+html.pk-on:not(.pk-back-paper) .context_module_item.indent_1 .ig-row { padding-left: 52px !important; }
+html.pk-on:not(.pk-back-paper) .context_module_item.indent_2 .ig-row { padding-left: 90px !important; }
+html.pk-on:not(.pk-back-paper) .context_module_item.indent_3 .ig-row { padding-left: 128px !important; }
+/* The group header: 52px, the title in 15/800, the requirement as a quiet chip. */
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header,
+html.pk-on:not(.pk-back-paper) .context_module .ig-header {
+  display: flex !important; align-items: center !important; gap: 10px !important; min-height: 52px !important; padding: 0 14px 0 12px !important;
+}
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title,
+html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title { flex: 1 1 auto !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; font-size: 15px !important; line-height: 20px !important; font-weight: 800 !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header h2,
+html.pk-on:not(.pk-back-paper) .context_module .ig-header h2,
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header h3,
+html.pk-on:not(.pk-back-paper) .context_module .ig-header h3 { margin: 0 !important; padding: 0 !important; line-height: 20px !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title i[class*="icon-mini-arrow"],
+html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title i[class*="icon-mini-arrow"] { color: var(--pk-ink-2) !important; margin-right: 4px !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-admin,
+html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-admin { display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) .context_module .requirements_message { margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) .context_module .pill { margin: 0 !important; border: 0 !important; box-shadow: none !important; background: none !important; }
+html.pk-on:not(.pk-back-paper) .context_module .pill li {
+  background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink-2) !important; border: 0 !important;
+  font-size: 12px !important; line-height: 16px !important; font-weight: 700 !important; padding: 4px 10px !important; border-radius: 999px !important; text-transform: none !important; letter-spacing: normal !important; box-shadow: none !important;
+}
+html.pk-on:not(.pk-back-paper) .context_module .prerequisites_message { font-size: 12px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+
+/* The same row on Files (an InstUI table): 44px rows, the file's icon as the
+ * tile, the name in 14/700, the dates and sizes in the quiet ink. */
+html.pk-on:not(.pk-back-paper) #content [class*="-view-table"] tbody [class*="-view-row"] { height: 44px !important; }
+html.pk-on:not(.pk-back-paper) #content [class*="-view-table"] tbody [class*="-view-cell"],
+html.pk-on:not(.pk-back-paper) #content [class*="-view-table"] tbody [class*="-view-rowHeader"] { padding: 4px 10px !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; vertical-align: middle !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] { font-size: 14px !important; font-weight: 700 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] [class*="-text"] { font-size: 14px !important; font-weight: 700 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child > span {
+  display: grid !important; place-items: center !important; width: 26px !important; height: 26px !important; margin: 0 10px 0 0 !important; font-size: 15px !important;
+  border-radius: 8px !important; background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink-2) !important;
+}
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child > span svg { width: 15px !important; height: 15px !important; }
+/* Announcements: the author's face is the tile, the title on the line, the
+ * first line of the post under it in the quiet ink, the date at the right. */
+html.pk-on:not(.pk-back-paper) .ic-item-row {
+  display: grid !important; grid-template-columns: 26px minmax(0, 1fr) auto !important; align-items: center !important; column-gap: 12px !important;
+  min-height: 52px !important; padding: 8px 14px !important;
+}
+html.pk-on:not(.pk-back-paper) .ic-item-row > [class*="view--block"]:first-child { display: none !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__author-col { width: 26px !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__author-col [class*="-avatar"] { width: 26px !important; height: 26px !important; font-size: 12px !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__content-col { min-width: 0 !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__content-link-container h3 { font-size: 14px !important; line-height: 18px !important; font-weight: 700 !important; margin: 0 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__content-container { margin: 2px 0 0 !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-announcement-row__content { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; max-width: 100% !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-announcement-row__content p { margin: 0 !important; display: inline !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-col { margin: 0 !important; padding: 0 !important; text-align: right !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-content-heading { display: none !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-content-timestamp p { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; margin: 0 !important; white-space: nowrap !important; }
+
 /* ---- module-sticky: the module header stays while you scroll ------------
  * Inside an overflow ancestor this degrades to static: a plain header. */
 html.pk-on:not(.pk-back-module-sticky) .context_module .ig-header.header {
@@ -572,7 +682,7 @@ html.pk-on:not(.pk-back-due-column) .context_module .due_date_display {
 }
 /* The details line under a module row (due, points, "Submit") is Canvas's
  * 11px grey; it reads at the page's small size in the quiet ink. */
-html.pk-on:not(.pk-back-due-column) .context_module .ig-details { font-size: 13px !important; line-height: 18px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-due-column) .context_module .ig-details { font-size: 12px !important; line-height: 16px !important; color: var(--pk-ink-2) !important; }
 html.pk-on:not(.pk-back-due-column) .context_module .prerequisites_message { font-size: 13px !important; color: var(--pk-ink-2) !important; }
 
 /* ---- module-band: Canvas's bar above the modules is 90px of paper holding
