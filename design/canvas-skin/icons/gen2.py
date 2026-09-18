@@ -7,7 +7,9 @@ SETS = json.load(open('sets/sets.json'))   # {set: {"light": slug, "dark": slug}
 NAV = [('dashboard', '.ic-icon-svg--dashboard'), ('courses', '.ic-icon-svg--courses'), ('calendar', '.ic-icon-svg--calendar'),
        ('inbox', '.ic-icon-svg--inbox'), ('history', '.ic-icon-svg--history'), ('help', '.svg-icon-help')]
 ROWS = [('page', 'icon-document'), ('assignment', 'icon-assignment'), ('quiz', 'icon-quiz'), ('discussion', 'icon-discussion'),
-        ('file', 'icon-paperclip'), ('link', 'icon-link')]
+        ('file', 'icon-paperclip'), ('link', 'icon-link'), ('announcement', 'icon-announcement')]
+# The four actions under a course card, by Canvas's own class on the link.
+CARDS = [('announcement', 'announcements'), ('assignment', 'assignments'), ('discussion', 'discussions'), ('file', 'files')]
 
 def slim(path):
     s = open(path).read()
@@ -44,14 +46,28 @@ out.append('}')
 out.append('html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item--active .menu-item-icon-container::before { background-color: var(--pk-rail-active); }')
 out.append('html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:hover .menu-item-icon-container::before,')
 out.append('html.pk-on:not(.pk-back-rail) .ic-app-header__menu-list-item:not(.ic-app-header__menu-list-item--active) .ic-app-header__menu-list-link:focus .menu-item-icon-container::before { background-color: #fff; }')
-# The row types: Canvas draws them as icon-font glyphs on <i>; the glyph goes clear and the <i> wears the mask.
-out.append('/* The row-type icons in the lists (modules, assignments, quizzes): the same set as the bar. */')
-for key, cls in ROWS:
-    out.append('html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon i.%s { color: transparent !important; width: 16px !important; height: 16px !important; -webkit-mask: var(--pk-row-icon) center / contain no-repeat; mask: var(--pk-row-icon) center / contain no-repeat; background-color: var(--pk-ink-2) !important; }' % cls)
-    out.append('html.pk-on:not(.pk-back-paper) .ig-row .ig-type-icon i.%s::before { content: none !important; }' % cls)
+# The row and card icons: one variable per icon per set on <html>, read by the
+# list rows (the glyph goes clear and the <i> wears the mask) and by the four
+# actions under a course card (Canvas's svg hides and a ::before wears it).
+out.append('/* The row-type icons in the lists (modules, assignments, quizzes) and the four actions under a course card: the same set as the bar, one variable per icon on <html>. */')
 for name, fam in SETS.items():
-    for key, cls in ROWS:
-        light = uri(fam['light'], key); dark = uri(fam.get('dark', fam['light']), key)
-        if light: out.append('html.pk-on.pk-icons-%s:not(.pk-back-paper) .ig-row .ig-type-icon i.%s { --pk-row-icon: %s; }' % (name, cls, light))
-        if dark and dark != light: out.append('html.pk-on.pk-icons-%s.pk-icons-soft:not(.pk-back-paper) .ig-row .ig-type-icon i.%s { --pk-row-icon: %s; }' % (name, cls, dark))
+    light = {key: uri(fam['light'], key) for key, _ in ROWS}
+    dark = {key: uri(fam.get('dark', fam['light']), key) for key, _ in ROWS}
+    out.append('html.pk-on.pk-icons-%s:not(.pk-back-paper) { %s }' % (name, ' '.join('--pk-icon-%s: %s;' % (k, v) for k, v in light.items() if v)))
+    soft = {k: v for k, v in dark.items() if v and v != light.get(k)}
+    if soft: out.append('html.pk-on.pk-icons-%s.pk-icons-soft:not(.pk-back-paper) { %s }' % (name, ' '.join('--pk-icon-%s: %s;' % (k, v) for k, v in soft.items())))
+def everywhere(key): return all(uri(fam['light'], key) for fam in SETS.values())
+def sets_with(key): return [name for name, fam in SETS.items() if uri(fam['light'], key)]
+for key, cls in ROWS:
+    # An icon a set lacks keeps Canvas's glyph there: the rule is gated on the sets that have it.
+    gates = ['html.pk-on:not(.pk-back-paper)'] if everywhere(key) else ['html.pk-on.pk-icons-%s:not(.pk-back-paper)' % n for n in sets_with(key)]
+    for g in gates:
+        out.append('%s .ig-row .ig-type-icon i.%s { color: transparent !important; width: 16px !important; height: 16px !important; -webkit-mask: var(--pk-icon-%s) center / contain no-repeat; mask: var(--pk-icon-%s) center / contain no-repeat; background-color: var(--pk-ink-2) !important; }' % (g, cls, key, key))
+        out.append('%s .ig-row .ig-type-icon i.%s::before { content: none !important; }' % (g, cls))
+out.append('html.pk-on:not(.pk-back-paper) .ic-DashboardCard__action .ic-DashboardCard__action-layout { position: relative !important; display: grid !important; place-items: center !important; width: 32px !important; height: 32px !important; }')
+for key, cls in CARDS:
+    gates = ['html.pk-on:not(.pk-back-paper)'] if everywhere(key) else ['html.pk-on.pk-icons-%s:not(.pk-back-paper)' % n for n in sets_with(key)]
+    for g in gates:
+        out.append('%s .ic-DashboardCard__action.%s .ic-DashboardCard__action-layout svg { visibility: hidden !important; }' % (g, cls))
+        out.append('%s .ic-DashboardCard__action.%s .ic-DashboardCard__action-layout::before { content: ""; position: absolute; inset: 0; margin: auto; width: 18px; height: 18px; background-color: currentColor; -webkit-mask: var(--pk-icon-%s) center / contain no-repeat; mask: var(--pk-icon-%s) center / contain no-repeat; }' % (g, cls, key, key))
 sys.stdout.write('\n'.join(out) + '\n')

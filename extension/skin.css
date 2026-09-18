@@ -770,14 +770,16 @@ html.pk-on:not(.pk-back-cal-rows) #calendar_header .navigation_title_text:hover 
 
 /* ---- feedback-rows: Canvas's Recent Feedback, as rows -------------------
  * The list stays whole (the house never removes information); it reads as
- * the rail's rows do, in two styles: the title in the ink, one quiet line
- * under it with the class and the mark ("PHYS-C-1 · 18 out of 20"), the
- * teacher's words under that. The check is the planner's tick, filled mint,
- * the mark a finished module row wears. No grey bar down the side. */
+ * the rail's rows do: one 44px line each, the class colour on the edge (the
+ * list pass in content.js names the course on the row), the tick, the title
+ * in the ink, the mark as our chip at the right ("18/20"; the pass writes it
+ * on the node, Canvas's words stay for a screen reader). The teacher's words,
+ * when there are any, sit under on one quiet line. The class code is kept
+ * for a screen reader: the edge says the class, as it does on the calendar. */
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback li.event { border: 0 !important; margin: 0 !important; padding: 0 !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon {
-  display: flex !important; align-items: flex-start !important; gap: 10px !important; padding: 10px 0 !important;
-  border: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; background: transparent !important; text-decoration: none !important;
+  display: flex !important; align-items: center !important; gap: 10px !important; min-height: 44px !important; padding: 8px 0 8px 10px !important;
+  border: 0 !important; border-left: 3px solid var(--pk-course, var(--pk-rule)) !important; border-bottom: 1px solid var(--pk-rule) !important; background: transparent !important; text-decoration: none !important;
 }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon:hover { background-color: var(--pk-hover) !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon > i { color: var(--pk-ink-2) !important; font-size: 0 !important; line-height: 1 !important; margin: 0 !important; flex: 0 0 auto !important; }
@@ -786,23 +788,28 @@ html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_fee
   border-radius: 999px !important; border: 1.5px solid #51CFA0 !important;
   background: #51CFA0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5.2l2.4 2.4L8.6 2.6' fill='none' stroke='%23101820' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px 10px no-repeat !important;
 }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details { flex: 1 1 auto !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details { flex: 1 1 auto !important; min-width: 0 !important; display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; column-gap: 8px !important; align-items: center !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__title {
-  display: block !important; color: var(--pk-ink) !important; font-size: 13px !important; line-height: 18px !important; font-weight: 700 !important;
+  display: block !important; grid-column: 1 !important; color: var(--pk-ink) !important; font-size: 13px !important; line-height: 18px !important; font-weight: 700 !important;
   white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
 }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p { margin: 2px 0 0 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
-/* The class and the mark share one line: "PHYS-C-1 · 18 out of 20". */
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__context { display: inline !important; margin: 0 !important; }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p:has(> strong) { display: inline !important; margin: 0 !important; }
-/* The dot only after a class name: a course's own home names none. */
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__context + p:has(> strong)::before { content: "· " !important; opacity: .6; }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong { font-weight: 700 !important; color: var(--pk-ink-2) !important; font-variant-numeric: tabular-nums !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p { grid-column: 1 / -1 !important; margin: 2px 0 0 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+/* The class code: read, not seen; the edge carries the class. */
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__context { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; margin: 0 !important; }
+/* The mark, on the title's line at the right, as the planner's count chip. */
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p:has(> strong) { grid-column: 2 !important; grid-row: 1 !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong {
+  display: inline-block !important; font-size: 12px !important; line-height: 18px !important; font-weight: 800 !important; padding: 0 7px !important; border-radius: 999px !important;
+  background: var(--pk-paper-sunk) !important; color: var(--pk-ink-2) !important; font-variant-numeric: tabular-nums !important; white-space: nowrap !important;
+}
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong[data-pk-mark] { font-size: 0 !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong[data-pk-mark]::after { content: attr(data-pk-mark); font-size: 12px; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .clear { display: none !important; }
 /* Canvas fades the row's right edge with a white gradient (::after, 12px); on
  * a paper it reads as a grey bar. The title is cut with an ellipsis instead. */
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details::after { display: none !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.more_link { color: var(--pk-link) !important; font-size: 12px !important; }
+html.pk-on.pk-art:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong { background: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
 
 /* ---- grades-page: our grade row is the page; Canvas's table under it ---- */
 #pk-grades { margin: 8px 0 20px; }
@@ -1755,6 +1762,14 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-gpa { background: color
  * open, a row per course with its term and its letter, each a link. */
 .pk-past { margin: 18px 0 8px; }
 .pk-past .pk-pl-group { margin-top: 0; }
+/* Under the course cards it is the foot of the grid: one full-width row on a
+ * hairline, the count beside the name, the chevron at the far right. The
+ * cards start 36px in (Canvas's own margin); the row lines up with them. */
+#DashboardCard_Container + .pk-past { margin: 8px 0 0; padding: 6px 0 0; border-top: 1px solid var(--pk-rule); }
+#DashboardCard_Container + .pk-past .pk-pl-group { min-height: 44px; margin: 0; padding-left: 0; border-left: 0; }
+#DashboardCard_Container + .pk-past .pk-pl-group.fold::after { margin-left: auto; }
+#DashboardCard_Container + .pk-past .pk-past-rows { margin-left: 0; }
+html.pk-on.pk-art:not(.pk-back-paper) #DashboardCard_Container + .pk-past { border-top-color: color-mix(in srgb, var(--pk-rule) 80%, transparent); }
 .pk-past-rows { list-style: none; margin: 4px 0 0 13px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .pk-past-rows li a { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 4px 12px; border-radius: var(--pk-radius); background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); color: var(--pk-ink) !important; text-decoration: none !important; }
 .pk-past-rows li a:hover { background: var(--pk-paper-sunk); }

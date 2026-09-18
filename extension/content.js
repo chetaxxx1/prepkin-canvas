@@ -300,7 +300,7 @@ function applySkin(s) {
   if (!next.size) { style?.remove(); return; }
   if (!style) { style = document.createElement('style'); style.id = 'pk-theme-vars'; root.append(style); }
   if (!alive()) return;
-  const css = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), ownArt));
+  const css = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), ownArt)) + '\n' + courseVarsCSS();
   if (style.textContent !== css) style.textContent = css;
 }
 
@@ -1501,6 +1501,7 @@ function refreshPage() {
   applySkin(skin);
   ensureStylesheet();
   decorateCards();
+  decorateLists();
   renderWeek();
   renderCourseNext();
   renderSearchChip();
@@ -1957,6 +1958,7 @@ async function mount() {
 
   applySkin(skin);
   decorateCards();
+  decorateLists();
   renderWeek();
   renderCourseNext();
   renderSearchChip();

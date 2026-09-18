@@ -580,6 +580,10 @@ test('R38 finished courses: one closed line under the cards, open to names with 
   const head = await page.$eval('#pk-past .pk-pl-group', (e) => e.textContent);
   assert.match(head, /Finished courses/); assert.match(head, /2/);
   assert.equal(await page.$eval('#pk-past', (e) => e.previousElementSibling?.id), 'DashboardCard_Container', 'under the cards');
+  const foot = await page.$eval('#pk-past', (e) => ({ line: getComputedStyle(e).borderTopWidth, h: Math.round(e.querySelector('.pk-pl-group').getBoundingClientRect().height), left: Math.round(e.getBoundingClientRect().left), cards: Math.round(document.querySelector('.ic-DashboardCard').getBoundingClientRect().left) }));
+  assert.equal(foot.line, '1px', 'the foot of the grid: one hairline across');
+  assert.ok(foot.h >= 44, `a 44px row: ${foot.h}`);
+  assert.equal(foot.left, foot.cards, 'lined up with the cards');
   await page.click('#pk-past .pk-pl-group');
   await page.waitForSelector('#pk-past .pk-past-rows li a', { timeout: 4000 });
   const rows = await page.$$eval('#pk-past .pk-past-rows li a', (as) => as.map((a) => [a.getAttribute('href'), a.querySelector('.name').textContent, a.querySelector('.term').textContent, a.querySelector('.letter').textContent, a.querySelector('.pct').textContent]));
