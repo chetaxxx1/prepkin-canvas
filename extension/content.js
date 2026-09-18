@@ -2123,6 +2123,18 @@ function passD() {
     else if (!img.dataset.pkWatched) { img.dataset.pkWatched = '1'; img.addEventListener('error', () => { if (skin.cards && !killed) set(img, 'pkBroken', '1'); }, { once: true }); }
   }
 
+  const faces = '#content .roster [class*="-avatar"]';
+  if (!on || putBack.paper) { clear(faces, 'data-pk-initial'); clear(faces, 'data-pk-course'); }
+  else {
+    const courseId = location.pathname.match(/^\/courses\/(\d+)\//)?.[1] ?? null;
+    for (const face of document.querySelectorAll(faces)) {
+      const src = face.querySelector('img')?.getAttribute('src') ?? face.getAttribute('src') ?? '';
+      const placeholder = !src || /\/images\/messages\/avatar-|\/images\/dotted_pic/.test(src);
+      set(face, 'pkInitial', placeholder ? letters(face.getAttribute('name') ?? face.getAttribute('alt'), 2) : null);
+      set(face, 'pkCourse', placeholder ? courseId : null);
+    }
+  }
+
 }
 // ---- end Session D ----
 // ---- Session E pass (calendar, inbox) ----

@@ -2313,6 +2313,72 @@ html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] tbody
 html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:hover [class*="-view-cell"],
 html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:hover [class*="-view-rowHeader"] { background-color: color-mix(in srgb, var(--pk-ink) 6%, transparent) !important; }
 
+/* ---- People ------------------------------------------------------------------
+ * The roster. Its title is clipped inside the action header (the title rule
+ * reaches only a direct child of #content); its own words, unclipped, with
+ * the kebab on its line. The search is our field at 240 and the role filter,
+ * a native select, our field beside it: hairline, paper, 13px, the planner's
+ * chevron drawn on the row's grid in the select's own cell, no native arrow.
+ * Rows 44px: the name bold in the ink, the section and the role as quiet meta;
+ * a placeholder face is the person's initials on the class colour, with a ring. */
+html.pk-on:not(.pk-back-title) #content .ic-Action-header:has(+ div > #group_categories_tabs) .ic-Action-header__Primary > h1.screenreader-only {
+  position: static !important; width: auto !important; height: auto !important;
+  clip: auto !important; clip-path: none !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; border: 0 !important;
+  font-size: 28px !important; line-height: 36px !important; font-weight: 800 !important; letter-spacing: -.02em !important; color: var(--pk-ink) !important;
+}
+html.pk-on:not(.pk-back-title) #content .ic-Action-header:has(+ div > #group_categories_tabs) { display: flex !important; align-items: center !important; justify-content: space-between !important; margin: 0 0 20px !important; padding: 10px 0 14px !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-title) #content .ic-Action-header:has(+ div > #group_categories_tabs) .ic-Action-header__Primary,
+html.pk-on:not(.pk-back-title) #content .ic-Action-header:has(+ div > #group_categories_tabs) .ic-Action-header__Secondary { margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .roster-tab > div:has(> select[data-view="roleSelect"]) { display: grid !important; grid-template-columns: 240px 180px !important; gap: 12px !important; align-items: center !important; margin: 0 0 14px !important; position: relative !important; }
+html.pk-on:not(.pk-back-paper) #content .roster-tab > div:has(> select[data-view="roleSelect"]) > #search_input_container { grid-column: 1 !important; grid-row: 1 !important; }
+html.pk-on:not(.pk-back-paper) #content #search_input_container label[data-cid="TextInput"] { display: block !important; width: 240px !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content #search_input_container [class*="textInput__facade"] { border-radius: 10px !important; min-height: 32px !important; }
+html.pk-on:not(.pk-back-paper) #content #search_input_container [class*="textInput__facade"] input { font-size: 13px !important; font-weight: 600 !important; height: 30px !important; }
+html.pk-on:not(.pk-back-paper) #content .roster-tab select[data-view="roleSelect"] {
+  grid-column: 2 !important; grid-row: 1 !important; width: 180px !important; height: 32px !important; margin: 0 !important; padding: 0 30px 0 12px !important;
+  border: 1px solid var(--pk-rule) !important; border-radius: 10px !important; background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important;
+  font-size: 13px !important; font-weight: 600 !important; line-height: 30px !important; appearance: none !important; -webkit-appearance: none !important; cursor: pointer !important;
+}
+html.pk-on:not(.pk-back-paper) #content .roster-tab select[data-view="roleSelect"]:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-paper) #content .roster-tab > div:has(> select[data-view="roleSelect"])::after {
+  content: "⌄"; grid-column: 2; grid-row: 1; justify-self: end; align-self: center; margin: -4px 10px 0 0; pointer-events: none;
+  font-size: 18px; line-height: 20px; font-weight: 800; color: var(--pk-ink-2);
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content .roster-tab select[data-view="roleSelect"] { background-color: color-mix(in srgb, var(--pk-paper-2) 60%, transparent) !important; border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+/* The tabs (Everyone, Groups) are jQuery UI's; painted above. The panel under
+ * them loses its 800px floor and its own box. */
+html.pk-on:not(.pk-back-paper) #content .roster-tab { min-height: 0 !important; padding: 14px 0 0 !important; border: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content #group_categories_tabs { border: 0 !important; background-color: transparent !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content #group_categories_tabs > .ui-tabs-nav { padding-left: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .v-gutter { margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content #userDiffTagManager:empty { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .roster { border-collapse: separate !important; border-spacing: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .roster > thead > tr > th:first-child,
+html.pk-on:not(.pk-back-paper) #content .roster > tbody > tr > td:first-child { width: 26px !important; padding-left: 14px !important; padding-right: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .roster > tbody > tr > td { height: 32px !important; padding: 6px 10px !important; border: 0 !important; border-top: 1px solid var(--pk-rule) !important; vertical-align: middle !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content .roster > tbody > tr:first-child > td { border-top: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .roster > tbody > tr { background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content .roster > tbody > tr:hover > td { background-color: var(--pk-hover) !important; }
+html.pk-on:not(.pk-back-paper) #content .roster a.roster_user_name { font-size: 14px !important; line-height: 18px !important; font-weight: 700 !important; color: var(--pk-ink) !important; text-decoration: none !important; }
+html.pk-on:not(.pk-back-paper) #content .roster a.roster_user_name:hover { text-decoration: underline !important; }
+/* Two sections, two roles: one line each, a dot between. */
+html.pk-on:not(.pk-back-paper) #content .roster td .section,
+html.pk-on:not(.pk-back-paper) #content .roster td > div { display: inline !important; }
+html.pk-on:not(.pk-back-paper) #content .roster td .section + .section::before,
+html.pk-on:not(.pk-back-paper) #content .roster td > div + div::before { content: " · "; }
+html.pk-on:not(.pk-back-paper) #content .roster td.right { padding: 0 !important; width: 0 !important; }
+/* The face: a placeholder (Canvas's grey silhouette) becomes the initials on
+ * the class colour; a real photo is left alone. The pass writes the initials
+ * and the course on the node. */
+html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"] { width: 26px !important; height: 26px !important; border: 1px solid var(--pk-rule) !important; background-color: var(--pk-paper-sunk) !important; vertical-align: middle !important; }
+html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial] { display: inline-grid !important; place-items: center !important; background-color: var(--pk-course, var(--pk-paper-sunk)) !important; border-color: color-mix(in srgb, var(--pk-ink) 12%, transparent) !important; }
+html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial] img { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial]::after { content: attr(data-pk-initial); font-size: 10px; line-height: 1; font-weight: 800; letter-spacing: .01em; color: var(--pk-ink-2); }
+html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial][data-pk-course]::after { color: #fff; text-shadow: 0 1px 0 rgba(0, 0, 0, .18); }
+html.pk-on.pk-art:not(.pk-back-paper) #content .roster [class*="-avatar"]:not([data-pk-course]) { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content .roster > tbody > tr > td { border-top-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content .roster > tbody > tr:hover > td { background-color: color-mix(in srgb, var(--pk-ink) 6%, transparent) !important; }
+
 /* ==== end Session D ==== */
 
 

@@ -153,3 +153,39 @@ test('D3 Files: the two title buttons are words and the search is our field on t
   void rows2;
 });
 
+// MARK: - People
+
+test('D4 People: the title shows with the kebab on its line, the role filter is our field with no native arrow, rows are 44px with the name bold and the section and role as meta, a placeholder face is the initials on the class colour', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/courses/1/users');
+  await page.waitForSelector('.roster [class*="-avatar"][data-pk-initial]', { timeout: 5000 });
+  assert.equal(await shows(page, '#content .ic-Action-header__Primary > h1'), true, 'the title is unclipped');
+  assert.equal(await style(page, '#content .ic-Action-header__Primary > h1', 'fontSize'), '28px');
+  const sel = 'select[data-view="roleSelect"]';
+  assert.equal(await style(page, sel, 'appearance'), 'none', 'no native arrow');
+  assert.equal(await style(page, sel, 'borderRadius'), '10px');
+  assert.equal(await style(page, sel, 'fontSize'), '13px');
+  assert.equal(await style(page, '.roster-tab > div:has(> select[data-view="roleSelect"])', 'content', '::after'), '"⌄"', 'the planner\'s chevron');
+  const chevron = await page.evaluate(() => { const w = document.querySelector('.roster-tab > div:has(> select[data-view="roleSelect"])'); const s = w.querySelector('select').getBoundingClientRect(); const c = getComputedStyle(w, '::after'); return { selRight: s.right, selTop: s.top, selBottom: s.bottom, gridCol: c.gridColumnStart }; });
+  assert.equal(chevron.gridCol, '2', 'in the select\'s own cell');
+  const rows = await page.$$eval('.roster > tbody > tr', (els) => els.map((tr) => ({
+    h: Math.round(tr.getBoundingClientRect().height), name: getComputedStyle(tr.querySelector('a.roster_user_name')).fontWeight, nameColor: getComputedStyle(tr.querySelector('a.roster_user_name')).color,
+    meta: getComputedStyle(tr.children[2]).fontSize, face: tr.querySelector('[class*="-avatar"]').dataset.pkInitial, faceCourse: tr.querySelector('[class*="-avatar"]').dataset.pkCourse,
+    initials: getComputedStyle(tr.querySelector('[class*="-avatar"]'), '::after').content, img: tr.querySelector('[class*="-avatar"] img').getClientRects().length,
+    faceBg: getComputedStyle(tr.querySelector('[class*="-avatar"]')).backgroundColor, ring: getComputedStyle(tr.querySelector('[class*="-avatar"]')).borderTopWidth,
+  })));
+  assert.ok(rows.length >= 5);
+  for (const r of rows) {
+    assert.ok(r.h >= 44 && r.h <= 48, `a 44px row: ${r.h}`);
+    assert.equal(r.name, '700'); assert.equal(r.nameColor, 'rgb(27, 31, 36)', 'the name in the ink, not the link blue');
+    assert.equal(r.meta, '12px', 'section and role as meta');
+    assert.equal(r.img, 0, 'the grey silhouette goes'); assert.equal(r.ring, '1px', 'a ring');
+  }
+  assert.equal(rows[0].face, 'RH'); assert.equal(rows[0].initials, '"RH"'); assert.equal(rows[0].faceCourse, '1');
+  assert.equal(rows[0].faceBg, 'rgb(255, 111, 97)', 'the class colour, from the sync');
+  // Two sections, two roles: one line, a dot between.
+  const alex = await page.$eval('#user_3', (tr) => ({ sections: [...tr.querySelectorAll('.section')].map((d) => getComputedStyle(d).display), dot: getComputedStyle(tr.querySelectorAll('.section')[1], '::before').content }));
+  assert.deepEqual(alex.sections, ['inline', 'inline']); assert.equal(alex.dot, '" · "');
+  await page.close();
+});
+
