@@ -200,7 +200,7 @@ const RULES = [
     label: (ctx, n) => `${['One', 'Two', 'Three', 'Four'][n - 1] ?? n} menu item${n === 1 ? '' : 's'} dimmed` },
   { key: 'module-sticky', kind: 'fixed', label: 'Module header stays at the top while you scroll', hook: 'moduleHeader' },
   { key: 'due-column', kind: 'fixed', label: 'Due dates lined up in one column, in readable type', hook: 'moduleDue' },
-  { key: 'module-band', kind: 'fixed', label: 'The empty bar above the modules, folded to its one button', hook: 'moduleBar' },
+  { key: 'module-band', kind: 'fixed', label: 'The empty bar above the modules, folded; Collapse All on the title line', hook: 'moduleBar' },
   { key: 'buttons', kind: 'fixed', label: "Canvas's plain buttons on the paper; submit buttons stay Canvas's", hook: 'plainButton' },
   { key: 'feedback-rows', kind: 'fixed', label: 'Recent Feedback as rows, the grade as a chip', hook: 'recentFeedback' },
   { key: 'cal-rows', kind: 'fixed', label: 'Calendar events as one line each, the class colour on the edge', hook: 'calEvent' },

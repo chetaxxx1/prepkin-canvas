@@ -382,6 +382,15 @@ const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours
 // still may not select a button at all.
 const BUTTON_RULE_GATE = 'html.pk-on:not(.pk-back-buttons) ';
 const FORM_BUTTON_OK = ['body.files #content form [class*="-baseButton"][data-testid="files-search-button"]'];
+// Two buttons are text, each the one control in its title row: Modules'
+// Collapse All and the grades page's Print Grades (2026-09-18). Named in
+// full; a text button takes no ground and no edge, the link ink, and its two
+// states, and nothing else in the stylesheet may take this form.
+const TEXT_BUTTON_OK = [
+  'html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all',
+  'html.pk-on:not(.pk-back-buttons) #content #print-grades-button',
+];
+const TEXT_BUTTON_TOKENS = /^(background-color:transparent!important;border-color:transparent!important;box-shadow:none!important;color:var\(--pk-link\)!important;padding:0!important;font-weight:700!important;?|text-decoration:underline!important;?|outline:2pxsolidvar\(--pk-mark\)!important;outline-offset:2px!important;?)$/;
 // The paper's three tokens; the same three inverted for the one selected view
 // toggle; or the ink alone, for a text button with no ground.
 const BUTTON_TOKENS = /^(background-color:var\(--pk-paper-(2|sunk)\)!important;color:var\(--pk-ink\)!important;border-color:var\(--pk-rule\)!important;?|background-color:var\(--pk-ink\)!important;color:var\(--pk-paper\)!important;border-color:var\(--pk-ink\)!important;?|color:var\(--pk-ink\)!important;?)$/;
@@ -395,6 +404,10 @@ test('no rule in the skin writes any property on a button, except the buttons ru
       if (ours(sel)) continue;
       if (sel.startsWith(BUTTON_RULE_GATE)) {
         seen++;
+        if (TEXT_BUTTON_OK.includes(sel.replace(/:(hover|focus-visible)$/, ''))) {
+          assert.match(r.body.replace(/\s+/g, ''), TEXT_BUTTON_TOKENS, `a text button: no ground, no edge, the link ink, its two states: ${sel}`);
+          continue;
+        }
         assert.match(r.body.replace(/\s+/g, ''), BUTTON_TOKENS, `the paper's three tokens and nothing else: ${sel}`);
         if (/background-color:var\(--pk-ink\)/.test(r.body.replace(/\s+/g, ''))) assert.match(sel, /active/, `only the selected view is filled: ${sel}`);
         // `.ui-button` is jQuery UI's, only ever a view toggle; the disclosure

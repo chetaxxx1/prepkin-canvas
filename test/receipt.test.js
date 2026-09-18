@@ -138,6 +138,24 @@ test('R3 modules and the course nav: sticky header, due column, four tabs dimmed
   assert.equal(await style(page, '#section-tabs a.grades', 'opacity'), '1');
   assert.equal(await style(page, '#section-tabs a.modules', 'display'), 'inline', 'nothing hidden, nothing reordered');
   assert.equal(await style(page, '.ig-row .ig-title', 'color'), rgb('#1B1F24'), 'row titles take the paper ink');
+  // The status mark at the right of a row, and of a header, is our tick:
+  // hollow in the quiet ink, mint with the check when complete; never orange.
+  const before = (sel, prop) => page.$eval(sel, (e, p) => getComputedStyle(e, '::before')[p], prop);
+  assert.equal(await before('.module-item-status-icon i.icon-check', 'backgroundColor'), rgb('#51CFA0'), 'complete: filled mint');
+  assert.equal(await before('.module-item-status-icon i.icon-minimize', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'overdue: hollow');
+  assert.equal(await before('.module-item-status-icon i.icon-minimize', 'borderTopColor'), rgb('#454B54'), 'in the quiet ink');
+  assert.equal(await before('.module-item-status-icon i.icon-minimize', 'borderRadius'), '999px', 'a circle');
+  assert.equal(await before('.context_module.started .completion_status .in_progress_icon', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'the header mark too');
+  assert.equal(await style(page, '.context_module.locked .completion_status .locked_icon', 'color'), rgb('#454B54'), 'the lock keeps its glyph, in the quiet ink');
+  // Collapse All: a quiet text button on the title's own line, not a bar under it.
+  const [h1, bar] = await page.$$eval('#content > h1, #content .header-bar', (els) => els.map((e) => e.getBoundingClientRect()));
+  assert.ok(bar.top >= h1.top && bar.bottom <= h1.bottom, `the bar sits inside the title row: h1 ${h1.top}-${h1.bottom}, bar ${bar.top}-${bar.bottom}`);
+  assert.equal(await style(page, '#expand_collapse_all', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'no ground');
+  const link = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--pk-link').trim());
+  assert.equal(await style(page, '#expand_collapse_all', 'color'), rgb(link), 'the link ink');
+  // A locked module reads in the quiet ink at full strength, not faded to half.
+  assert.equal(await style(page, '.context_module.locked .context_module_item', 'opacity'), '1');
+  assert.equal(await style(page, '.context_module.locked .locked_title', 'color'), rgb('#454B54'));
   await page.close();
 });
 

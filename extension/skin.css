@@ -668,6 +668,42 @@ html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-col { margin: 0 !
 html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-content-heading { display: none !important; }
 html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-content-timestamp p { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; margin: 0 !important; white-space: nowrap !important; }
 
+/* The status mark at the right of a module row, and at the right of its
+ * header: Canvas draws a green check for done and an orange circle for
+ * started or overdue, and the orange reads as a warning on the paper. Both
+ * take the planner's tick shape instead: an 18px circle in the quiet ink,
+ * filled mint with the check when complete. The glyph's own content goes;
+ * the `<i>` keeps its title, so the tooltip still says which. `display` is
+ * never set: Canvas shows one of a header's three marks by the module's
+ * state. The lock keeps its glyph, in the quiet ink. */
+html.pk-on:not(.pk-back-paper) .ig-row .module-item-status-icon i.icon-check,
+html.pk-on:not(.pk-back-paper) .ig-row .module-item-status-icon i.icon-minimize,
+html.pk-on:not(.pk-back-paper) .context_module .completion_status i.complete_icon,
+html.pk-on:not(.pk-back-paper) .context_module .completion_status i.in_progress_icon { color: var(--pk-ink-2) !important; font-size: 0 !important; line-height: 1 !important; }
+html.pk-on:not(.pk-back-paper) .ig-row .module-item-status-icon i.icon-check::before,
+html.pk-on:not(.pk-back-paper) .ig-row .module-item-status-icon i.icon-minimize::before,
+html.pk-on:not(.pk-back-paper) .context_module .completion_status i.complete_icon::before,
+html.pk-on:not(.pk-back-paper) .context_module .completion_status i.in_progress_icon::before {
+  content: "" !important; display: inline-block !important; box-sizing: border-box !important; width: 18px !important; height: 18px !important; vertical-align: middle !important;
+  border-radius: 999px !important; border: 1.5px solid var(--pk-ink-2) !important; background: transparent !important;
+}
+html.pk-on:not(.pk-back-paper) .ig-row .module-item-status-icon i.icon-check::before,
+html.pk-on:not(.pk-back-paper) .context_module .completion_status i.complete_icon::before {
+  border-color: #51CFA0 !important;
+  background: #51CFA0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5.2l2.4 2.4L8.6 2.6' fill='none' stroke='%23101820' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px 10px no-repeat !important;
+}
+html.pk-on:not(.pk-back-paper) .context_module .completion_status i.locked_icon { color: var(--pk-ink-2) !important; }
+/* A locked module: Canvas fades every item to half strength, which on an
+ * image look is under the floor. The rows stay at full strength and read
+ * in the quiet ink instead; the lock in the header says why. */
+html.pk-on:not(.pk-back-paper) .context_module.locked .context_module_item { opacity: 1 !important; }
+html.pk-on:not(.pk-back-paper) .context_module.locked .context_module_item .locked_title,
+html.pk-on:not(.pk-back-paper) .context_module.locked .context_module_item .ig-title,
+html.pk-on:not(.pk-back-paper) .context_module.locked .context_module_item .completion_requirement { color: var(--pk-ink-2) !important; }
+/* On an image look the sunk paper behind a row's icon is a solid slab on a
+ * frosted pane; a tint of the ink is the tile there, as every sunk surface. */
+html.pk-on.pk-art:not(.pk-back-paper) #content .ig-row .ig-type-icon { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
+
 /* ---- module-sticky: the module header stays while you scroll ------------
  * Inside an overflow ancestor this degrades to static: a plain header. */
 html.pk-on:not(.pk-back-module-sticky) .context_module .ig-header.header {
@@ -694,6 +730,14 @@ html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_a
 }
 html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_all) .header-bar-right,
 html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_all) .header-bar-right__buttons { min-height: 0 !important; padding: 0 !important; margin: 0 !important; }
+/* On the Modules page the bar follows the title we unclipped, so it rises
+ * onto the title's own line: the title left, Collapse All right, one row.
+ * The numbers are the title's (36px line, 14px under it, a 1px rule, 20px
+ * of air), and the h1's 20px margin collapses into the pull. Only when the
+ * bar is the h1's next sibling, and only while the title is ours. */
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > h1 + .header-bar:has(#expand_collapse_all) {
+  margin: -71px 0 35px !important; height: 36px !important; padding: 0 !important; align-items: center !important;
+}
 
 /* ---- cal-rows: the month's event chips. Canvas paints each one white with
  * its course colour as the border and the text, seven to a row on the dark
@@ -1281,6 +1325,19 @@ html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active,
 html.pk-on:not(.pk-back-buttons) .btn.calendar-button.active:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]) {
   background-color: var(--pk-ink) !important; color: var(--pk-paper) !important; border-color: var(--pk-ink) !important;
 }
+/* Two named buttons are text: Modules' Collapse All and the grades page's
+ * Print Grades, each the one control in its title row. No ground, no edge,
+ * the link ink; the receipt lint names both (TEXT_BUTTON_OK) and nothing else
+ * may take this form. */
+html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all,
+html.pk-on:not(.pk-back-buttons) #content #print-grades-button {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important;
+}
+html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all:hover,
+html.pk-on:not(.pk-back-buttons) #content #print-grades-button:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all:focus-visible,
+html.pk-on:not(.pk-back-buttons) #content #print-grades-button:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
 /* InstUI's disclosure toggle (Settings' feature list) is a text button with an
  * arrow icon and no ground by design; it takes the ink alone. */
 html.pk-on:not(.pk-back-buttons) #content [class*="toggleDetails__toggle"] { color: var(--pk-ink) !important; }
