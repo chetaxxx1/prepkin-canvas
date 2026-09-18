@@ -649,16 +649,17 @@ function renderGradesPage() {
   box.id = GRADES_ID; box.dataset.key = key;
   box.setAttribute('aria-label', all ? 'Prepkin: your grades' : 'Prepkin: your grade in this class');
   if (all) { box.append(plGrades(now, { heading: null })); if (data.pastCourses?.length) box.append(plPastFold(data.pastCourses)); }
-  else { const head = el('div', 'pk-pl-group'); head.append(el('b', '', 'Your grade')); box.append(head, plGradeRow(c, now)); }
-  // Canvas's own table, one click away for this visit; the receipt's Put back
-  // brings it back for good.
-  const foot = el('p', 'pk-pl-foot pk-gr-foot');
+  else box.append(plGroupHead('Your grade'), plGradeRow(c, now));
+  // Canvas's own table (and, on a course, its side column), one click away
+  // for this visit: a fold in the group shape, like Later on the planner.
+  // The receipt's Put back brings it back for good.
   const open = document.documentElement.classList.contains('pk-grades-open');
-  const show = el('button', 'pk-gr-show', open ? "Hide Canvas's table" : "Show Canvas's table"); show.type = 'button';
-  show.setAttribute('aria-expanded', String(open));
-  show.addEventListener('click', (e) => { if (!e.isTrusted) return; document.documentElement.classList.toggle('pk-grades-open'); existing?.remove(); document.getElementById(GRADES_ID)?.remove(); renderGradesPage(); });
-  foot.append(show);
-  box.append(foot);
+  const show = plGroupHead("Canvas's table", 0, { fold: true, open, onToggle: (e) => {
+    if (e && !e.isTrusted) return;
+    document.documentElement.classList.toggle('pk-grades-open'); existing?.remove(); document.getElementById(GRADES_ID)?.remove(); renderGradesPage();
+  } });
+  show.classList.add('pk-gr-show');
+  box.append(show);
   if (existing) existing.replaceWith(box);
   else if (anchor) anchor.after(box);
   else document.getElementById('content')?.prepend(box);

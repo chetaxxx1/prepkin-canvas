@@ -242,9 +242,12 @@ function pageFor(url) {
 <div class="submit_assignment"><button type="button" class="btn btn-primary" id="assignment_submit">Start Assignment</button></div>
 <div id="submit_assignment"><form id="submit_online_text_entry_form" method="post" action="${p}/submissions"><textarea name="submission[body]"></textarea><button type="submit" class="btn btn-primary" id="submit_text_entry">Submit Assignment</button></form></div></div>`;
   } else if (/\/courses\/\d+\/grades/.test(p)) {
-    main = `<div id="grade-summary-content"><div id="print-grades-container" class="ic-Action-header"><div class="ic-Action-header__Primary"><h1 class="ic-Action-header__Heading">Grades for Alex Rivera</h1></div></div><div id="assignments"><table id="grades_summary"><thead><tr><th>Name</th><th>Due</th><th>Score</th></tr></thead>
+    // Real Canvas: Print Grades in the title row; the right column says the
+    // total a second time, offers Show All Details and explains what-if.
+    main = `<div id="grade-summary-content"><div id="print-grades-container" class="ic-Action-header"><div class="ic-Action-header__Primary"><h1 class="ic-Action-header__Heading">Grades for Alex Rivera</h1></div><div id="print-grades-button-container" class="ic-Action-header__Secondary"><a role="button" id="print-grades-button" class="Button print-grades icon-printer" href="#">Print Grades</a></div></div><div id="assignments"><table id="grades_summary"><thead><tr><th>Name</th><th>Due</th><th>Score</th></tr></thead>
 <tbody><tr class="student_assignment"><th class="title">Problem Set 6</th><td class="due">Sep 1</td><td class="assignment_score"><span class="grade">41</span><span class="possible points_possible">/ 50</span></td></tr></tbody></table></div>
 <div id="student-grades-final">Total: 82%</div></div>`;
+    side = `<div id="student-grades-right-content"><div class="student_assignment final_grade">Total: <span class="grade">82%</span> (<span class="letter_grade">B-</span>)</div><div id="student-grades-show-all" class="show_all_details"><button type="button" class="Button" id="show_all_details_button">Show All Details</button></div><p>You can view your grades based on What-If scores so that you know how grades will be affected by upcoming or resubmitted assignments.</p></div>`;
   } else if (/\/courses\/\d+\/external_tools\//.test(p)) {
     main = `<h1>Tool</h1><div class="tool_content_wrapper"><iframe id="tool_content" src="about:blank" title="tool"></iframe></div>`;
   } else if (/^\/login/.test(p)) {

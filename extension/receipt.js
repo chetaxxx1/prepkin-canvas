@@ -225,7 +225,7 @@ const RULES = [
   { key: 'todo-fold', kind: 'taken', label: "Canvas's To Do and Coming Up. The rail and the planner hold the same work", detect: 'todoFold' },
   { key: 'search', kind: 'added', label: 'Search, in the corner of every page', when: () => true, opt: 'search', undo: 'Turn on' },
   { key: 'planner', kind: 'added', label: 'A Planner tab beside your courses', detect: 'planner' },
-  { key: 'grades-page', kind: 'taken', label: "Canvas's grades table, folded under your own grade row", detect: 'gradesPage' },
+  { key: 'grades-page', kind: 'taken', label: "Canvas's grades table, folded under your own grade row, with its side column", detect: 'gradesPage' },
   { key: 'list-view', kind: 'taken', label: "Canvas's List View, folded under the Planner", detect: 'listView' },
   { key: 'nickname', kind: 'fixed', when: (ctx) => ctx.nicknames > 0,
     label: (ctx) => `${ctx.nicknames} course name${ctx.nicknames === 1 ? '' : 's'} you chose` },

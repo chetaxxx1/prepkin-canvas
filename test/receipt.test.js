@@ -949,10 +949,17 @@ test('R30 a course\'s grades page: our grade row under Canvas\'s title, its tabl
   assert.equal(await page.$('#pk-grades .pk-pl-grow[role="button"]'), null, 'the row is the page, not a toggle');
   assert.ok((await page.$$('#pk-grades .pk-pl-rows li')).length >= 1, 'every assignment, as rows');
   assert.equal(await style(page, '#assignments', 'display'), 'none', "Canvas's table is folded");
+  const drawn = () => page.$eval('#student-grades-right-content', (e) => e.getClientRects().length > 0);
+  assert.equal(await drawn(), false, 'and its side column (the total again, Show All Details, the paragraph)');
+  assert.equal(await style(page, '#right-side-wrapper', 'display'), 'none', 'the emptied column goes, so the page takes the width');
   assert.notEqual(await style(page, '#grade-summary-content > .ic-Action-header', 'display'), 'none', 'the title stays');
+  assert.equal(await style(page, '#print-grades-button', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'Print Grades is a quiet text button in the title row');
+  assert.ok(await page.$('#pk-grades .pk-gr-show.pk-pl-group.fold'), 'the way to Canvas\'s table is a fold in the group shape');
+  assert.equal(await page.$eval('#pk-grades .pk-gr-show', (e) => e.getAttribute('aria-expanded')), 'false');
   await page.click('#pk-grades .pk-gr-show');
   await page.waitForFunction(() => getComputedStyle(document.getElementById('assignments')).display !== 'none', null, { timeout: 3000 });
-  assert.equal(await page.$eval('#pk-grades .pk-gr-show', (e) => e.textContent), "Hide Canvas's table");
+  assert.equal(await page.$eval('#pk-grades .pk-gr-show', (e) => e.getAttribute('aria-expanded')), 'true');
+  assert.equal(await drawn(), true, 'the side column comes out with the table');
   await page.bringToFront();
   const popup = await openPopup(h);
   await popup.waitFor('#receipt li');

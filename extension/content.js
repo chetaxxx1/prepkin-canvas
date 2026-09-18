@@ -286,7 +286,10 @@ function applySkin(s) {
   const look = wornLook();
   const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, gradeHover: !!s.cardGradesHover, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
-    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && c !== 'pk-list-on' && !next.has(c)) root.classList.remove(c);
+    // `pk-grades-open` is the student's own click on "Canvas's table" this
+    // visit; the sweep used to take it off a moment later and the table
+    // snapped shut (found 2026-09-18, the old test passed on the race).
+    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && c !== 'pk-list-on' && c !== 'pk-grades-open' && !next.has(c)) root.classList.remove(c);
   }
   for (const c of next) root.classList.add(c);
   // The theme's variables, as a stylesheet element boot.js may already have made.

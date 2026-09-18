@@ -788,14 +788,16 @@ html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.more_link 
 /* ---- grades-page: our grade row is the page; Canvas's table under it ---- */
 #pk-grades { margin: 8px 0 20px; }
 #pk-grades .pk-pl-grade { margin-left: 0; }
-#pk-grades .pk-gr-foot { margin: 10px 0 0; }
-#pk-grades .pk-gr-show { border: 0; padding: 0; background: none; font: inherit; font-weight: 700; color: var(--pk-link); cursor: pointer; }
-#pk-grades .pk-gr-show:focus-visible { outline: 2px solid var(--pk-mark); outline-offset: 2px; border-radius: 4px; }
+/* "Canvas's table" is a fold in the group shape, like Later on the planner. */
+#pk-grades .pk-gr-show { margin: 14px 0 0; }
 /* Everything of Canvas's under its title row — the Course / Arrange By
- * controls, the table — folds; the title and Print Grades stay. */
+ * controls, the table — folds; the title and Print Grades stay. The right
+ * column (the total a second time, Show All Details, the what-if paragraph)
+ * folds with it, and the empty column goes so the page takes the width. */
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #grade-summary-content > :not(.ic-Action-header):not(#pk-grades),
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content > #assignments,
-html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content #grade-summary-react { display: none !important; }
+html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content #grade-summary-react,
+html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #right-side-wrapper:has(#student-grades-right-content) { display: none !important; }
 /* The student's own /grades: Canvas's two headings and two tables fold under
  * our rows; the h1 stays. */
 html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page):not(.pk-grades-open) #content > :not(h1):not(#pk-grades) { display: none !important; }
@@ -1733,7 +1735,7 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-gpa { background: color
 :is(#pk-planner, #pk-grades) .pk-pl-grade .bar i { display: block; height: 100%; border-radius: 999px; background: #51CFA0; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .body { padding: 4px 12px 12px; border-top: 1px solid var(--pk-rule); display: flex; flex-direction: column; gap: 12px; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .spark svg { display: block; width: 100%; height: 40px; }
-:is(#pk-planner, #pk-grades) .pk-pl-grade .whatif { display: flex; flex-direction: column; gap: 8px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .whatif { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
 /* One quiet line opens the nickname and the level; the card above it is the grade. */
 :is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more { align-self: flex-start; border: 0; padding: 0; background: none; font: inherit; font-size: 12px; font-weight: 700; color: var(--pk-ink-2); cursor: pointer; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .pk-pl-more::after { content: " ›"; }
@@ -1746,11 +1748,12 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-gpa { background: color
   appearance: none; font: inherit; font-size: 13px; font-weight: 800; padding: 4px 11px; border-radius: 999px; cursor: pointer;
   border: 1px solid var(--pk-rule); background: var(--pk-paper); color: var(--pk-ink);
 }
-:is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, :is(#pk-planner, #pk-grades) .pk-pl-grade .levels button.on, :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button.on { background: rgba(81, 207, 160, .16); border-color: #51CFA0; color: #0B7A55; }
+/* #086345: 5.9:1 on the mint tint over a frosted pane (Deep Sea); #0B7A55 was 4.4 there. */
+:is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, :is(#pk-planner, #pk-grades) .pk-pl-grade .levels button.on, :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button.on { background: rgba(81, 207, 160, .16); border-color: #51CFA0; color: #086345; }
 html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .levels button.on, html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button.on { color: #7FDDB8; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .chips button em { font-style: normal; margin-left: 5px; color: var(--pk-ink-2); }
 :is(#pk-planner, #pk-grades) .pk-pl-grade button:focus-visible, :is(#pk-planner, #pk-grades) .pk-pl-grade input:focus-visible { outline: 2px solid #51CFA0; outline-offset: 1px; }
-:is(#pk-planner, #pk-grades) .pk-pl-grade .line { margin: 0; font-size: 13px; line-height: 18px; font-weight: 600; }
+:is(#pk-planner, #pk-grades) .pk-pl-grade .line { flex: 1 1 240px; margin: 0; font-size: 13px; line-height: 18px; font-weight: 600; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .weight { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
 :is(#pk-planner, #pk-grades) .pk-pl-grade .weight input, :is(#pk-planner, #pk-grades) .pk-pl-grade .rename input {
   font: inherit; font-size: 13px; font-weight: 600; height: 32px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--pk-rule); background: var(--pk-paper); color: var(--pk-ink);
