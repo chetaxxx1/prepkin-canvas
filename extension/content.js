@@ -246,6 +246,8 @@ function detectFacts() {
     // Our grades row on a course's own grades page, Canvas's table under it.
     gradesPage: gradesPageShows(),
     listView: listViewShows(),
+    // The finished-courses fold under the cards on the Courses tab.
+    pastFold: pastFoldShows(),
     wordPaste: WORD_INKS.some((ink) =>
       document.querySelector(`.user_content [style*="color:${ink}" i], .user_content [style*="color: ${ink}" i]`)),
   };
@@ -378,22 +380,6 @@ function isMoved(t, planned = plans) {
 const LEVELS = { regular: 0, honors: 0.5, ap: 1.0 };
 const LEVEL_NAMES = { regular: 'Regular', honors: 'Honors', ap: 'AP' };
 let levels = {};
-
-function gpa(courses, levelsByCourse = {}) {
-  const scored = courses.filter((c) => typeof c.score === 'number');
-  if (!scored.length) return null;
-  // Unweighted 4.0 on the usual US cutoffs. Shown as an estimate, because a
-  // school's real scale is its own business and Canvas does not publish it.
-  const points = scored.map((c) =>
-    c.score >= 93 ? 4.0 : c.score >= 90 ? 3.7 : c.score >= 87 ? 3.3 : c.score >= 83 ? 3.0
-    : c.score >= 80 ? 2.7 : c.score >= 77 ? 2.3 : c.score >= 73 ? 2.0 : c.score >= 70 ? 1.7
-    : c.score >= 67 ? 1.3 : c.score >= 65 ? 1.0 : 0);
-  const avg = (xs) => (xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2);
-  const bumps = scored.map((c) => LEVELS[levelsByCourse[c.id]] ?? 0);
-  const weighted = bumps.some((b) => b > 0)
-    ? avg(points.map((pt, i) => (pt > 0 ? pt + bumps[i] : 0))) : null;
-  return { unweighted: avg(points), weighted };
-}
 
 /// A polyline across a course's graded work. Scaled to its own range with a
 /// little headroom, because the shape is the point, not the absolute height.
@@ -1506,6 +1492,7 @@ function refreshPage() {
   renderPlanner();
   renderGradesPage();
   renderLooks();
+  renderPastFold();
   if (sprite) mountSprite();
 }
 function watchPage() {
@@ -1961,6 +1948,7 @@ async function mount() {
   renderPlannerTabs();
   renderPlanner();
   renderLooks();
+  renderPastFold();
   watchPage();
   if (!handInWatched) { handInWatched = true; watchHandIn(); syncIfJustHandedIn(stored); }
 
@@ -1990,7 +1978,7 @@ async function mount() {
 
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.
-  module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, gpa, dayKey, dayFromKey, planDay, isMoved, missingCost,
+  module.exports = { startOfDay, sameLocalDay, buckets, dueLabel, submittedLabel, voice, dayKey, dayFromKey, planDay, isMoved, missingCost,
                      targetsFor, safeURL, escapeHTML, sparkline, LETTERS, nextUpFor, LEVELS, composeData, searchItems, searchRank, searchGroups, dayShort, tankId, TANKS, ownSpecies, KIN_SPECIES,
                      searchView, focusCard,
                      _setData: (d) => { data = d; }, _setWallet: (w) => { wallet = w; }, _setFocus: (f) => { focus = f; }, _setSkin: (k) => { skin = { ...skin, ...k }; }, _ui: ui, _setLevels: (l) => { levels = l; } };

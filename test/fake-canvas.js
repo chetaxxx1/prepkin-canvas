@@ -47,6 +47,7 @@ function blankWorld() {
     loggedIn: true,
     notCanvas: false,
     courses: [],
+    pastCourses: [],
     colors: {},
     assignments: {},
     groups: {},
@@ -151,8 +152,11 @@ function canvasRoute(req, url, world) {
   if (p === '/api/v1/users/self') return json(world.me);
   if (p === '/api/v1/users/self/colors') return json({ custom_colors: world.colors });
   if (p === '/api/v1/courses') {
-    const active = url.searchParams.get('enrollment_state') === 'active';
-    const rows = world.courses.filter((c) => !active || (c.enrollments ?? []).some((e) => e.enrollment_state === 'active'));
+    const state = url.searchParams.get('enrollment_state');
+    // Finished courses answer only to `completed`, as Canvas's do; a course
+    // with an ended term still sits in the active list, as Canvas's does.
+    if (state === 'completed') return paged(req, url, world.pastCourses ?? [], world);
+    const rows = world.courses.filter((c) => state !== 'active' || (c.enrollments ?? []).some((e) => e.enrollment_state === 'active'));
     return paged(req, url, rows, world);
   }
   if (p === '/api/v1/users/self/todo') return paged(req, url, derivedTodo(world), world);

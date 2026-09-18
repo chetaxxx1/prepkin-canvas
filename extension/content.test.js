@@ -2,7 +2,7 @@
 // Also worth running under a different clock: TZ=Asia/Kolkata node --test extension/content.test.js
 const test = require('node:test');
 const assert = require('node:assert');
-const { sameLocalDay, buckets, dueLabel, voice, gpa, targetsFor, safeURL, escapeHTML, sparkline, LETTERS,
+const { sameLocalDay, buckets, dueLabel, voice, targetsFor, safeURL, escapeHTML, sparkline, LETTERS,
         dayKey, dayFromKey, planDay, isMoved, missingCost } = require('./content.js');
 
 const local = (y, m, d, hh = 0, mm = 0) => new Date(y, m - 1, d, hh, mm);
@@ -68,12 +68,6 @@ test('the buddy never scolds', () => {
 
 // MARK: - Grades
 
-test('gpa ignores courses with no grade and never invents one', () => {
-  assert.equal(gpa([{ score: null }, { score: undefined }]), null);
-  assert.equal(gpa([{ score: 93 }, { score: null }]).unweighted, '4.00');
-  assert.equal(gpa([{ score: 0 }]).unweighted, '0.00', 'a zero is a grade');
-});
-
 test('four what-if targets from anywhere in the table', () => {
   for (const score of [100, 95, 88, 75, 60, 0]) {
     const t = targetsFor(score);
@@ -105,14 +99,14 @@ test('Canvas text is text, never markup', () => {
 });
 
 test('the GPA is unweighted until the student marks a class Honors or AP', () => {
-  const { gpa } = require('./content.js');
+  const { gpaReport } = require('./canvas.js');
   const courses = [{ id: 'a', score: 95 }, { id: 'b', score: 85 }, { id: 'c', score: 40 }, { id: 'd' }];
-  assert.deepEqual(gpa(courses), { unweighted: '2.33', weighted: null }, 'the unscored course does not count');
-  assert.equal(gpa(courses, { a: 'regular' }).weighted, null, 'Regular is no bump');
-  const w = gpa(courses, { a: 'ap', b: 'honors', c: 'ap' });
-  assert.equal(w.unweighted, '2.33');
-  assert.equal(w.weighted, '2.83', 'AP +1, Honors +0.5, and a failing class gets nothing');
-  assert.equal(gpa([{ id: 'x' }]), null);
+  assert.deepEqual([gpaReport(courses).overall, gpaReport(courses).weighted], [2.33, null], 'the unscored course does not count');
+  assert.equal(gpaReport(courses, [], { a: 'regular' }).weighted, null, 'Regular is no bump');
+  const w = gpaReport(courses, [], { a: 'ap', b: 'honors', c: 'ap' });
+  assert.equal(w.overall, 2.33);
+  assert.equal(w.weighted, 2.83, 'AP +1, Honors +0.5, and a failing class gets nothing');
+  assert.equal(gpaReport([{ id: 'x' }]), null);
 });
 
 test('weekStats counts the Monday-to-Sunday week by course and handed-in tasks', () => {

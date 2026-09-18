@@ -85,6 +85,101 @@ function mapCourses(raw, colors = {}, { now = Date.now() } = {}) {
   });
 }
 
+/// The courses that are over: every completed enrolment, plus any active one
+/// whose term has ended (`isCurrentTerm` says no). Kept apart from `courses`
+/// so nothing downstream reads a finished class as work; they feed the
+/// finished-courses fold and the GPA. `term` is the term's name when Canvas
+/// gives one. Newest term first, then by name.
+function mapPastCourses(rawCompleted, rawActive = [], colors = {}, { now = Date.now() } = {}) {
+  const rows = [];
+  const seen = new Set();
+  const take = (course) => {
+    if (!course || course.id == null || !course.name || seen.has(String(course.id))) return;
+    const enrollments = course.enrollments ?? [];
+    const enrollment = enrollments.find((e) => e.type === 'student') ?? null;
+    if (enrollments.length && !enrollment) return; // a TA's or observer's course is not your grade
+    seen.add(String(course.id));
+    rows.push({
+      id: String(course.id),
+      name: course.name,
+      code: course.course_code ?? '',
+      score: numberOrNull(enrollment?.computed_current_score ?? enrollment?.computed_final_score),
+      grade: enrollment?.computed_current_grade ?? enrollment?.computed_final_grade ?? null,
+      colorHex: safeColor(colors[`course_${course.id}`]),
+      term: typeof course.term?.name === 'string' && course.term.name !== 'Default Term' ? course.term.name : null,
+      termEndsAt: typeof course.term?.end_at === 'string' ? course.term.end_at : (typeof course.end_at === 'string' ? course.end_at : null),
+      past: true,
+    });
+  };
+  for (const c of Array.isArray(rawCompleted) ? rawCompleted : []) take(c);
+  for (const c of Array.isArray(rawActive) ? rawActive : []) {
+    if (c?.access_restricted_by_date === true) continue;
+    if (!isCurrentTerm(c, now)) take(c);
+  }
+  const at = (r) => Date.parse(r.termEndsAt ?? '') || 0;
+  return rows.sort((a, b) => at(b) - at(a) || a.name.localeCompare(b.name));
+}
+
+// MARK: - GPA
+
+/// A letter on the usual 4.0 scale. Canvas's own letter (the school's scale)
+/// when it has one, tolerant of `A−` and `A-` and a trailing `+`; anything it
+/// does not know (`P`, `HD`, `S`) is null and the score decides instead.
+const LETTER_POINTS = { A: 4.0, B: 3.0, C: 2.0, D: 1.0, F: 0 };
+function letterPoints(letter) {
+  if (typeof letter !== 'string') return null;
+  const m = /^([ABCDF])\s*([+\-−–])?$/i.exec(letter.trim());
+  if (!m) return null;
+  const base = LETTER_POINTS[m[1].toUpperCase()];
+  if (base === 0) return 0;
+  if (m[2] === '+') return base === 4 ? 4.0 : base + 0.3;
+  if (m[2]) return Math.round((base - 0.3) * 10) / 10;
+  return base;
+}
+
+/// The usual US cutoffs, when Canvas gave a score and no letter.
+function scorePoints(score) {
+  if (typeof score !== 'number') return null;
+  return score >= 93 ? 4.0 : score >= 90 ? 3.7 : score >= 87 ? 3.3 : score >= 83 ? 3.0
+    : score >= 80 ? 2.7 : score >= 77 ? 2.3 : score >= 73 ? 2.0 : score >= 70 ? 1.7
+    : score >= 67 ? 1.3 : score >= 65 ? 1.0 : 0;
+}
+
+/// Canvas does not know which classes are Honors or AP, so the student says.
+/// The usual US bump: Honors +0.5, AP +1.0, never lifting a failing grade.
+const LEVEL_BUMP = { regular: 0, honors: 0.5, ap: 1.0 };
+
+/// GPA so far, per term and overall, from the courses the laptop holds: the
+/// live ones as "This term", the finished ones by their term. Unweighted by
+/// credits, because Canvas does not give credits. `letters` and `cutoffs` say
+/// how many courses each path counted, so the block can say what it did.
+/// Null with nothing graded. An estimate, and the block says so.
+function gpaReport(courses = [], pastCourses = [], levelsByCourse = {}) {
+  const rows = [];
+  const add = (c, term) => {
+    const fromLetter = letterPoints(c.grade);
+    const pts = fromLetter ?? scorePoints(c.score);
+    if (pts === null) return;
+    const bump = LEVEL_BUMP[levelsByCourse[c.id]] ?? 0;
+    rows.push({ term, pts, bumped: pts > 0 ? pts + bump : 0, letter: fromLetter !== null });
+  };
+  for (const c of courses) add(c, 'This term');
+  for (const c of pastCourses) add(c, c.term ?? 'Earlier');
+  if (!rows.length) return null;
+  const avg = (xs, k) => Math.round((xs.reduce((a, r) => a + r[k], 0) / xs.length) * 100) / 100;
+  const names = [...new Set(rows.map((r) => r.term))];
+  const terms = names.map((name) => { const xs = rows.filter((r) => r.term === name); return { name, gpa: avg(xs, 'pts'), n: xs.length }; });
+  const bumped = rows.some((r) => r.bumped !== r.pts);
+  return {
+    overall: avg(rows, 'pts'),
+    weighted: bumped ? avg(rows, 'bumped') : null,
+    terms,
+    courses: rows.length,
+    letters: rows.filter((r) => r.letter).length,
+    cutoffs: rows.filter((r) => !r.letter).length,
+  };
+}
+
 /// Canvas leaves you enrolled in a course forever, so `enrollment_state=active`
 /// alone still hands back a class that finished years ago — and with it every
 /// undated quiz nobody ever took. The term's end date and the course's own
@@ -409,7 +504,7 @@ function numberOrNull(value) {
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    mapCourses, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore, safeColor, nextLink,
+    mapCourses, mapPastCourses, letterPoints, scorePoints, gpaReport, mapAssignments, mapTodo, merge, examinedIds, mapGraded, mapWeights, requiredScore, safeColor, nextLink,
     mapEvents, eventQueries,
     TODO_TYPE_TO_DO, DAYS_AHEAD, DAYS_OVERDUE, DAYS_MISSING, DAYS_AFTER_SUBMIT, DAYS_NEW, EVENT_DAYS_AHEAD, EVENT_DAYS_BACK,
   };

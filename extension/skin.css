@@ -1442,6 +1442,34 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: col
 /* Grades: a row per class; the open one holds the marks, the what-if line, the
  * student's own words for the class, and every assignment. */
 :is(#pk-planner, #pk-grades) .pk-pl-grades { margin-top: 26px; }
+/* GPA so far: the number large, the words beside it, one chip per term. An
+ * estimate, and the block says so in the same ink as the number. */
+:is(#pk-planner, #pk-grades) .pk-pl-gpa { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 14px 0 0 13px; padding: 12px 14px; border-radius: var(--pk-radius); background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); }
+:is(#pk-planner, #pk-grades) .pk-pl-gpa > strong { font-size: 26px; line-height: 30px; font-weight: 800; letter-spacing: -0.01em; }
+:is(#pk-planner, #pk-grades) .pk-pl-gpa > b { font-size: 14px; font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-gpa > b small { font-weight: 700; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-gpa .terms { flex: 1 0 100%; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+:is(#pk-planner, #pk-grades) .pk-pl-gpa .terms span { font-size: 12px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--pk-paper-sunk); color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades) .pk-pl-gpa .terms span b { color: var(--pk-ink); font-weight: 800; }
+:is(#pk-planner, #pk-grades) .pk-pl-gpa .pk-pl-foot { flex: 1 0 100%; margin: 2px 0 0; }
+
+/* Finished courses: one closed line under the cards (and under the grade rows);
+ * open, a row per course with its term and its letter, each a link. */
+.pk-past { margin: 18px 0 8px; }
+.pk-past .pk-pl-group { margin-top: 0; }
+.pk-past-rows { list-style: none; margin: 4px 0 0 13px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.pk-past-rows li a { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 4px 12px; border-radius: var(--pk-radius); background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); color: var(--pk-ink) !important; text-decoration: none !important; }
+.pk-past-rows li a:hover { background: var(--pk-paper-sunk); }
+.pk-past-rows .name { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-past-rows .term { font-size: 12px; font-weight: 700; color: var(--pk-ink-2); }
+.pk-past-rows .letter { font-size: 13px; font-weight: 800; min-width: 22px; text-align: right; }
+.pk-past-rows .pct { font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
+.pk-past .pk-pl-group { display: flex; align-items: baseline; gap: 8px; padding: 0 0 0 10px; border-left: 3px solid transparent; cursor: pointer; user-select: none; }
+.pk-past .pk-pl-group b { font-size: 15px; line-height: 20px; font-weight: 800; }
+.pk-past .pk-pl-group em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
+.pk-past .pk-pl-group.fold b::after { content: " ›"; color: var(--pk-ink-2); }
+.pk-past .pk-pl-group.fold.open b::after { content: " ⌄"; }
+.pk-past .pk-pl-group:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 6px; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade { margin: 0 0 8px 13px; background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); border-radius: var(--pk-radius); overflow: hidden; }
 :is(#pk-planner, #pk-grades) .pk-pl-grow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; user-select: none; }
 :is(#pk-planner, #pk-grades) .pk-pl-grow:hover { background: var(--pk-paper-sunk); }

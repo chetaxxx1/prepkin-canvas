@@ -511,3 +511,63 @@ test('calendar queries are chunked ten courses at a time inside the window', () 
   assert.ok(qs[0].includes(`end_date=${new Date(NOW + EVENT_DAYS_AHEAD * DAY).toISOString().slice(0, 10)}`));
   assert.deepEqual(eventQueries([], NOW), []);
 });
+
+// MARK: - Finished courses and the GPA (2026-09-18)
+
+test('finished courses: completed enrolments and ended terms, apart from the live list, newest term first', () => {
+  const { mapPastCourses, mapCourses } = require('./canvas.js');
+  const now = Date.parse('2026-09-18T12:00:00Z');
+  const row = (id, name, term, endsAt, state, extra = {}) => ({
+    id, name, course_code: name.slice(0, 4).toUpperCase(), workflow_state: 'available',
+    term: { name: term, end_at: endsAt },
+    enrollments: [{ type: 'student', enrollment_state: state, computed_current_score: 91, computed_current_grade: 'A-', ...extra }],
+  });
+  const completed = [
+    row(3, 'Calculus I', 'Spring 2026', '2026-06-12T00:00:00Z', 'completed'),
+    row(9, 'Old Seminar', 'Fall 2025', '2025-12-15T00:00:00Z', 'completed', { computed_current_score: null, computed_current_grade: null, computed_final_score: 78, computed_final_grade: 'C+' }),
+    { ...row(5, 'TA Lab', 'Spring 2026', '2026-06-12T00:00:00Z', 'completed'), enrollments: [{ type: 'ta', enrollment_state: 'completed' }] },
+  ];
+  const active = [
+    row(4, 'AP Physics C', 'Fall 2026', '2026-12-20T00:00:00Z', 'active'),
+    row(6, 'Summer Lab', 'Summer 2026', '2026-08-20T00:00:00Z', 'active'), // still "active", term over
+    { ...row(7, 'Locked', 'Summer 2026', '2026-08-20T00:00:00Z', 'active'), access_restricted_by_date: true },
+  ];
+  const past = mapPastCourses(completed, active, { course_3: '#123456' }, { now });
+  assert.deepEqual(past.map((c) => [c.id, c.term, c.grade, c.score, c.past]), [
+    ['6', 'Summer 2026', 'A-', 91, true], ['3', 'Spring 2026', 'A-', 91, true], ['9', 'Fall 2025', 'C+', 78, true],
+  ], 'the TA row and the locked stub are out; the final score stands in when the current one is empty');
+  assert.equal(past[1].colorHex, '#123456');
+  assert.deepEqual(mapCourses(active, {}, { now }).map((c) => c.id), ['4'], 'the live list is unchanged');
+  assert.equal(mapPastCourses([{ id: 1, name: 'x', term: { name: 'Default Term' }, enrollments: [] }])[0].term, null, 'a nameless default term says nothing');
+});
+
+test('letters read on the 4.0 scale, with the minus in any of its spellings', () => {
+  const { letterPoints, scorePoints } = require('./canvas.js');
+  assert.deepEqual(['A', 'A-', 'A−', 'A–', 'B+', 'B', 'C-', 'D', 'F', 'a+', ' b ', 'P', 'HD', null, 92].map(letterPoints),
+    [4, 3.7, 3.7, 3.7, 3.3, 3, 1.7, 1, 0, 4, 3, null, null, null, null]);
+  assert.deepEqual([93, 90, 89.9, 65, 64, null].map(scorePoints), [4, 3.7, 3.3, 1, 0, null]);
+});
+
+test('GPA so far: the school\'s letter first, the cutoffs after, per term and overall, honours bumped', () => {
+  const { gpaReport } = require('./canvas.js');
+  const live = [
+    { id: '1', name: 'Physics', score: 70.71, grade: 'C-' },   // the letter wins: 1.7, not the cutoff's 1.7 either way
+    { id: '2', name: 'English', score: 90, grade: null },      // no letter: the cutoff, 3.7
+    { id: '3', name: 'Ceramics', score: null, grade: null },   // nothing graded: left out
+    { id: '8', name: 'Pass/fail', score: 88, grade: 'P' },     // an unknown letter: the score, 3.3
+  ];
+  const past = [
+    { id: '5', name: 'Calculus I', score: 91, grade: 'A-', term: 'Spring 2026', past: true },
+    { id: '6', name: 'World History', score: 84, grade: 'B', term: 'Spring 2026', past: true },
+    { id: '7', name: 'Old', score: 95, grade: null, term: null, past: true },
+  ];
+  const r = gpaReport(live, past);
+  assert.deepEqual(r.terms, [{ name: 'This term', gpa: 2.9, n: 3 }, { name: 'Spring 2026', gpa: 3.35, n: 2 }, { name: 'Earlier', gpa: 4, n: 1 }]);
+  assert.equal(r.overall, 3.23, '(1.7 + 3.7 + 3.3 + 3.7 + 3 + 4) / 6');
+  assert.deepEqual([r.courses, r.letters, r.cutoffs, r.weighted], [6, 3, 3, null]);
+  const bumped = gpaReport(live, past, { 1: 'ap', 2: 'honors' });
+  assert.equal(bumped.weighted, 3.48, 'AP +1, Honors +0.5, on the overall');
+  assert.equal(bumped.overall, 3.23, 'the plain number stays');
+  assert.equal(gpaReport([{ id: '1', score: null, grade: null }], []), null, 'nothing graded, nothing said');
+  assert.equal(gpaReport([], []), null);
+});

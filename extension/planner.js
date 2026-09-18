@@ -108,6 +108,7 @@ function plSetTab(key) {
   renderPlannerTabs();
   renderPlanner();
   renderLooks();
+  renderPastFold();
   // The rail folds its list while the planner is open, and unfolds after.
   renderWeek();
 }
@@ -127,7 +128,7 @@ function renderPlanner() {
   const key = JSON.stringify([
     groups.past.map((t) => t.id), groups.days.map((d) => d.items.map((t) => [t.id, t.submittedAt, t.doneAt, plans[t.id] ?? null])),
     groups.later.map((t) => t.id), groups.undated.map((t) => t.id), groups.missed.map((t) => t.id),
-    data.courses.map((c) => [c.id, c.name, c.score, c.grade]), running && focus.title, focus.state, focus.endsAt,
+    data.courses.map((c) => [c.id, c.name, c.score, c.grade]), (data.pastCourses ?? []).map((c) => [c.id, c.grade, c.score]), running && focus.title, focus.state, focus.endsAt,
     skin.focusMinutes, plAdding, levels, nicknames, targets, plOpenCourse, plCourseList, [...plUnfolded], plTarget, plWeight, recap,
   ]);
   if (existing && existing.dataset.key === key) return;
@@ -364,9 +365,81 @@ function plGrades(now, { heading = 'Grades' } = {}) {
   const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id)));
   if (!courses.length) { wrap.append(el('p', 'pk-pl-empty', 'Nothing graded yet.')); return wrap; }
   for (const c of courses) wrap.append(plGradeRow(c, now));
-  const est = gpa(courses, levels);
-  if (est) wrap.append(el('p', 'pk-pl-foot', `GPA about ${est.weighted ?? est.unweighted}${est.weighted ? ' weighted' : ''}. An estimate; your school's scale wins.`));
+  wrap.append(plGpaBlock(courses, data.pastCourses ?? [], levels));
   return wrap;
+}
+
+/// GPA so far: the number large, a chip per term, and what it is made of. One
+/// block on the Planner tab and on /grades, so the fact lives once. An
+/// estimate, and the block says so beside the number, not in a tooltip.
+function plGpaBlock(courses, past, levels) {
+  const r = gpaReport(courses, past, levels);
+  if (!r) return document.createDocumentFragment();
+  const box = el('div', 'pk-pl-gpa');
+  box.append(el('strong', '', (r.weighted ?? r.overall).toFixed(2)));
+  const label = el('b', '', `GPA so far${r.weighted ? ', weighted' : ''} `);
+  label.append(el('small', '', '· an estimate'));
+  box.append(label);
+  if (r.terms.length > 1) {
+    const terms = el('div', 'terms');
+    for (const t of r.terms) { const chip = el('span', '', `${t.name} `); chip.append(el('b', '', t.gpa.toFixed(2))); terms.append(chip); }
+    box.append(terms);
+  }
+  const n = (k, w) => `${k} course${k === 1 ? '' : 's'} ${w}`;
+  const made = r.letters && r.cutoffs ? `${n(r.letters, "from your school's letters")}, ${n(r.cutoffs, 'from the usual cutoffs')}`
+    : r.letters ? `${n(r.letters, "from your school's letters")}`
+    : `${n(r.cutoffs, 'from the usual cutoffs; Canvas gave no letters')}`;
+  box.append(el('p', 'pk-pl-foot', `${made}. Not weighted by credits. Your registrar's number wins.`));
+  return box;
+}
+
+// MARK: - Finished courses
+
+let plPastOpen = false;
+const PAST_ID = 'pk-past';
+
+/// The fold belongs on the Courses tab of a synced dashboard, with something
+/// finished to fold. The receipt row `past-fold` reads this.
+function pastFoldShows() {
+  const { data } = plannerState();
+  return plannerShows() && plTab === 'cards' && (data.pastCourses?.length ?? 0) > 0;
+}
+
+/// One closed line, "Finished courses · 2"; open, a row per course with its
+/// term and its letter, each a link to the course. The class list the rival
+/// puts in a sidebar, without the sidebar; the hiding is that it starts closed.
+function plPastFold(rows) {
+  const wrap = el('div', 'pk-past');
+  const toggle = () => { plPastOpen = !plPastOpen; renderPastFold(); renderGradesPage(); };
+  wrap.append(plGroupHead('Finished courses', rows.length, { fold: true, open: plPastOpen, onToggle: toggle }));
+  if (!plPastOpen) return wrap;
+  const ul = el('ul', 'pk-past-rows');
+  for (const c of rows) {
+    const li = el('li');
+    const a = el('a', '', null); a.href = `/courses/${c.id}`;
+    a.append(classTile({ courseName: c.name, colorHex: c.colorHex }));
+    const name = el('span', 'name', c.name); name.title = c.name;
+    a.append(name);
+    if (c.term) a.append(el('span', 'term', c.term));
+    if (typeof c.score === 'number') a.append(el('span', 'pct', `${c.score}%`));
+    a.append(el('span', 'letter', c.grade ?? ''));
+    li.append(a);
+    ul.append(li);
+  }
+  wrap.append(ul);
+  return wrap;
+}
+
+function renderPastFold() {
+  const existing = document.getElementById(PAST_ID);
+  const cards = document.getElementById('DashboardCard_Container');
+  if (!pastFoldShows() || !cards) { existing?.remove(); return; }
+  const { data } = plannerState();
+  const key = JSON.stringify([data.pastCourses.map((c) => [c.id, c.name, c.grade, c.score, c.term]), plPastOpen]);
+  if (existing && existing.dataset.key === key) { if (cards.nextElementSibling !== existing) cards.after(existing); return; }
+  const box = plPastFold(data.pastCourses);
+  box.id = PAST_ID; box.dataset.key = key; box.setAttribute('aria-label', 'Prepkin: finished courses');
+  if (existing) existing.replaceWith(box); else cards.after(box);
 }
 
 function plGradeRow(c, now) {
@@ -555,7 +628,7 @@ function renderGradesPage() {
   const c = all ? null : data.courses.find((x) => String(x.id) === id);
   plGradesFixed = all ? null : id;
   const key = all
-    ? JSON.stringify([data.courses.map((x) => [x.id, x.name, x.score, x.grade]), levels, nicknames, targets, plOpenCourse, plCourseList, plTarget, plWeight])
+    ? JSON.stringify([data.courses.map((x) => [x.id, x.name, x.score, x.grade]), (data.pastCourses ?? []).map((x) => [x.id, x.grade, x.score]), plPastOpen, levels, nicknames, targets, plOpenCourse, plCourseList, plTarget, plWeight])
     : JSON.stringify([c.id, c.name, c.score, c.grade, (data.graded?.[id] ?? []).map((g) => [g.id, g.score]), data.tasks.filter((t) => String(t.courseId) === id).map((t) => [t.id, t.submittedAt, t.doneAt, t.missing]), levels[id], nicknames[id], targets[id], plCourseList, plTarget, plWeight]);
   document.documentElement.classList.add('pk-grades-page');
   document.documentElement.classList.toggle('pk-grades-all', all);
@@ -570,7 +643,7 @@ function renderGradesPage() {
   const box = el('section', '', null);
   box.id = GRADES_ID; box.dataset.key = key;
   box.setAttribute('aria-label', all ? 'Prepkin: your grades' : 'Prepkin: your grade in this class');
-  if (all) box.append(plGrades(now, { heading: null }));
+  if (all) { box.append(plGrades(now, { heading: null })); if (data.pastCourses?.length) box.append(plPastFold(data.pastCourses)); }
   else { const head = el('div', 'pk-pl-group'); head.append(el('b', '', 'Your grade')); box.append(head, plGradeRow(c, now)); }
   // Canvas's own table, one click away for this visit; the receipt's Put back
   // brings it back for good.

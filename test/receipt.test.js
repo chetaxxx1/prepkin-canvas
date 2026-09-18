@@ -523,6 +523,40 @@ test('R37 Your picture: a photo becomes a look, in its own colours, kept in this
   await page.close();
 });
 
+test('R38 finished courses: one closed line under the cards, open to names with letters; the GPA counts them by term; never on the Planner', async () => {
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/');
+  await page.waitForSelector('#pk-past .pk-pl-group.fold', { timeout: 8000 });
+  assert.equal(await page.$('#pk-past .pk-past-rows'), null, 'closed by default: the hiding is that it starts folded');
+  const head = await page.$eval('#pk-past .pk-pl-group', (e) => e.textContent);
+  assert.match(head, /Finished courses/); assert.match(head, /2/);
+  assert.equal(await page.$eval('#pk-past', (e) => e.previousElementSibling?.id), 'DashboardCard_Container', 'under the cards');
+  await page.click('#pk-past .pk-pl-group');
+  await page.waitForSelector('#pk-past .pk-past-rows li a', { timeout: 4000 });
+  const rows = await page.$$eval('#pk-past .pk-past-rows li a', (as) => as.map((a) => [a.getAttribute('href'), a.querySelector('.name').textContent, a.querySelector('.term').textContent, a.querySelector('.letter').textContent, a.querySelector('.pct').textContent]));
+  assert.deepEqual(rows, [['/courses/3', 'Calculus I', 'Spring 2026', 'A-', '91%'], ['/courses/4', 'World History', 'Spring 2026', 'B', '84%']]);
+  const stored = await h.storage();
+  assert.equal(stored.lastPayload.pastCourses.length, 2, 'kept on this machine');
+  assert.ok(!stored.lastPayload.courses.some((c) => c.past), 'never in the live list');
+  // The Planner tab: no fold, but the GPA counts the spring.
+  await page.click('#pk-dashtabs [data-tab="planner"]');
+  await page.waitForSelector('#pk-planner .pk-pl-gpa', { timeout: 6000 });
+  assert.equal(await page.$('#pk-past'), null, 'not on the Planner tab');
+  const gpa = await page.$eval('#pk-planner .pk-pl-gpa', (e) => e.textContent);
+  assert.match(gpa, /GPA so far/); assert.match(gpa, /an estimate/); assert.match(gpa, /This term/); assert.match(gpa, /Spring 2026/);
+  assert.match(gpa, /from your school's letters/, 'says where the number came from');
+  const big = await page.$eval('#pk-planner .pk-pl-gpa > strong', (e) => e.textContent);
+  // Physics B+ (3.3), Calculus A- (3.7), World History B (3.0): 10 / 3.
+  assert.equal(big, '3.33');
+  // /grades: the same block, the same fold, once each.
+  await h.setStorage({ dashTab: 'cards' });
+  await page.goto(`${SCHOOL_A}/grades`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#pk-grades .pk-pl-gpa', { timeout: 8000 });
+  assert.equal(await page.$$eval('#pk-grades .pk-pl-gpa', (els) => els.length), 1);
+  assert.equal(await page.$$eval('#pk-grades .pk-past .pk-pl-group', (els) => els.length), 1, 'the fold under the rows');
+  await page.close();
+});
+
 test('R20 Command-K opens the buddy on search; Escape closes it', async () => {
   const page = await open('/');
   // He mounts after the first sync; the key waits for him (a flake in the full run otherwise).

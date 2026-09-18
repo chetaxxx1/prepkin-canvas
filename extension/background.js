@@ -486,6 +486,8 @@ async function send(fresh) {
     version: payloadVersion(),
     tasks: all.flatMap((r) => r.tasks),
     courses: all.flatMap((r) => r.courses),
+    // Finished courses stay on this machine (the fold, the GPA); see forBridge.
+    pastCourses: all.flatMap((r) => r.pastCourses ?? []),
     events: all.flatMap((r) => r.events ?? []),
     graded: Object.assign({}, ...all.map((r) => r.graded ?? {})),
     weights: Object.assign({}, ...all.map((r) => r.weights ?? {})),
@@ -506,7 +508,7 @@ async function send(fresh) {
   // what Canvas said; the page lays the map over it when it reads.
   await changeDone((done) => pruneDone(done, payload.tasks));
   const { done: ticks = {} } = await chrome.storage.local.get('done');
-  const { graded, weights, ...rest } = payload;
+  const { graded, weights, pastCourses, ...rest } = payload;
   rest.tasks = rest.tasks.map((t) => (!t.submittedAt && ticks[t.id] ? { ...t, doneAt: ticks[t.id] } : t));
   // Old missing work stays on this machine too. The phone's list is today; a
   // term of three-week-old zeros would fill it with work nobody is doing
@@ -679,13 +681,18 @@ async function readSchool(origin) {
   const { lastResults = {} } = await chrome.storage.local.get('lastResults');
   const previous = lastResults[origin] ?? null;
 
-  const [rawCourses, rawColors] = await Promise.all([
+  const [rawCourses, rawColors, rawDone] = await Promise.all([
     getPaged(origin, '/api/v1/courses?enrollment_state=active&include[]=total_scores&include[]=term&per_page=100'),
     getJSON(`${origin}/api/v1/users/self/colors`),
+    // The finished ones, for the fold and the GPA. One call; a miss keeps last time's.
+    getPaged(origin, '/api/v1/courses?enrollment_state=completed&include[]=total_scores&include[]=term&per_page=100'),
   ]);
   if (rawCourses === null) return null; // logged out, or not Canvas any more
 
   const courses = mapCourses(rawCourses, rawColors?.custom_colors ?? {});
+  const pastCourses = rawDone === null && previous?.pastCourses
+    ? previous.pastCourses
+    : mapPastCourses(rawDone ?? [], rawCourses, rawColors?.custom_colors ?? {});
 
   const graded = {};
   const weights = {};
@@ -726,6 +733,7 @@ async function readSchool(origin) {
 
   return {
     courses,
+    pastCourses,
     graded,
     weights,
     events,

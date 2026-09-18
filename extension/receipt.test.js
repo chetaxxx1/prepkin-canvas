@@ -164,7 +164,7 @@ test('a row is on the receipt only when its hook is on the page', () => {
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'week'), 'the rail is on the dashboard receipt');
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'todo-fold'), 'the fold needs a To Do list on the page');
   assert.ok(receiptRows({ present: () => true, detect: { todoFold: true } }).some((r) => r.key === 'todo-fold'), 'and lists itself when there is one');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true, listView: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2, ownWall: true });
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true, listView: true, pastFold: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2, ownWall: true });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'own-wall'), 'the photo row needs the photo worn');
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
@@ -285,8 +285,9 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // Raised to 26 on 2026-09-17 for `list-view`: Canvas's own planner folded
   // under ours is the whole main column, so it is a row with a Put back.
   // Raised to 27 on 2026-09-18 for `own-wall`: the student's own photo under
-  // the paper is on every page while the look is worn.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 27, 'twenty-seven keys at most, so it cannot sprawl');
+  // the paper is on every page while the look is worn. And 28 for `past-fold`:
+  // the finished courses as one closed line under the cards and the grades.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 28, 'twenty-eight keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names

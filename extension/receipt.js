@@ -234,6 +234,10 @@ const RULES = [
   // of surprise the whole receipt exists to avoid. Turning it on is one click,
   // and this row is what says the table is gone and how to get it back.
   { key: 'past-courses', kind: 'taken', label: 'Courses you have finished, folded away', hook: 'pastCourses', opt: 'hidePast', undo: 'Turn on' },
+  // The finished courses, one closed line under the cards and under the grade
+  // rows: the class list the rival puts in a sidebar, with nothing to hide
+  // because it starts folded.
+  { key: 'past-fold', kind: 'added', label: 'Finished courses, folded under your cards', detect: 'pastFold' },
   { key: 'buddy', kind: 'added', label: 'The buddy, bottom right', when: () => true, opt: 'mascot', putBack: 'Take off', undo: 'Bring back' },
 ];
 

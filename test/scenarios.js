@@ -18,11 +18,11 @@ const fresh = () => (nextId += 1);
 
 function course({ id = fresh(), name, code = name.toUpperCase().replace(/\W+/g, '-').slice(0, 10),
                   score = 88.5, grade = 'B+', termEnds = 120, state = 'available',
-                  role = 'student', enrollment = 'active', weighted = true } = {}) {
+                  role = 'student', enrollment = 'active', weighted = true, termName = 'Fall 2026' } = {}) {
   return {
     id, name, course_code: code, workflow_state: state,
     apply_assignment_group_weights: weighted,
-    term: termEnds === null ? {} : { id: 1, name: 'Fall 2026', end_at: at(termEnds) },
+    term: termEnds === null ? {} : { id: termName === 'Fall 2026' ? 1 : 2, name: termName, end_at: at(termEnds) },
     enrollments: [{
       type: role, role: role === 'student' ? 'StudentEnrollment' : 'TaEnrollment',
       enrollment_state: enrollment,
@@ -96,6 +96,11 @@ function plainSemester() {
   const english = course({ id: 2, name: 'English 11', code: 'ENG-11', score: null, grade: null });
   return {
     courses: [physics, english],
+    // Two finished courses from the spring, letter-graded, for the fold and the GPA.
+    pastCourses: [
+      course({ id: 3, name: 'Calculus I', code: 'MATH-3', score: 91, grade: 'A-', termEnds: -98, termName: 'Spring 2026', enrollment: 'completed' }),
+      course({ id: 4, name: 'World History', code: 'HIST-1', score: 84, grade: 'B', termEnds: -98, termName: 'Spring 2026', enrollment: 'completed' }),
+    ],
     colors: { course_1: '#FF6F61', course_2: '#57C79B' },
     assignments: {
       1: [
