@@ -382,15 +382,18 @@ const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours
 // still may not select a button at all.
 const BUTTON_RULE_GATE = 'html.pk-on:not(.pk-back-buttons) ';
 const FORM_BUTTON_OK = ['body.files #content form [class*="-baseButton"][data-testid="files-search-button"]'];
-// Two buttons are text, each the one control in its title row: Modules'
-// Collapse All and the grades page's Print Grades (2026-09-18). Named in
-// full; a text button takes no ground and no edge, the link ink, and its two
-// states, and nothing else in the stylesheet may take this form.
+// Three buttons are text, each the one control in its row: Modules' Collapse
+// All and the grades page's Print Grades (2026-09-18), and the dashboard
+// sidebar's View Grades (the same evening). Named in full; a text button takes
+// no ground and no edge, the link ink at 13/700, and its two states; its
+// `::before` may only drop a glyph (Print Grades' printer); and nothing else
+// in the stylesheet may take this form.
 const TEXT_BUTTON_OK = [
   'html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all',
   'html.pk-on:not(.pk-back-buttons) #content #print-grades-button',
+  'html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide',
 ];
-const TEXT_BUTTON_TOKENS = /^(background-color:transparent!important;border-color:transparent!important;box-shadow:none!important;color:var\(--pk-link\)!important;padding:0!important;font-weight:700!important;?|text-decoration:underline!important;?|outline:2pxsolidvar\(--pk-mark\)!important;outline-offset:2px!important;?)$/;
+const TEXT_BUTTON_TOKENS = /^(background-color:transparent!important;border-color:transparent!important;box-shadow:none!important;color:var\(--pk-link\)!important;padding:0!important;font-weight:700!important;font-size:13px!important;?|text-decoration:underline!important;?|outline:2pxsolidvar\(--pk-mark\)!important;outline-offset:2px!important;?|content:none!important;?)$/;
 // The paper's three tokens; the same three inverted for the one selected view
 // toggle; or the ink alone, for a text button with no ground.
 const BUTTON_TOKENS = /^(background-color:var\(--pk-paper-(2|sunk)\)!important;color:var\(--pk-ink\)!important;border-color:var\(--pk-rule\)!important;?|background-color:var\(--pk-ink\)!important;color:var\(--pk-paper\)!important;border-color:var\(--pk-ink\)!important;?|color:var\(--pk-ink\)!important;?)$/;
@@ -404,7 +407,7 @@ test('no rule in the skin writes any property on a button, except the buttons ru
       if (ours(sel)) continue;
       if (sel.startsWith(BUTTON_RULE_GATE)) {
         seen++;
-        if (TEXT_BUTTON_OK.includes(sel.replace(/:(hover|focus-visible)$/, ''))) {
+        if (TEXT_BUTTON_OK.includes(sel.replace(/:(hover|focus-visible)$|::before$/, ''))) {
           assert.match(r.body.replace(/\s+/g, ''), TEXT_BUTTON_TOKENS, `a text button: no ground, no edge, the link ink, its two states: ${sel}`);
           continue;
         }

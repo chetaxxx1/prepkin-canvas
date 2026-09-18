@@ -118,6 +118,20 @@ test('R3 dashboard: paper, thin hero, one To Do, every Coming Up row, one logo â
   assert.equal(await style(page, '.events_list.coming_up a.more_link', 'display'), 'none');
   assert.equal(await style(page, '.events_list.recent_feedback li.event[style*="display: none"]', 'display'), 'none', 'Recent Feedback is never touched');
   assert.equal(await style(page, '.events_list.recent_feedback a.more_link', 'display'), 'inline');
+  // Recent Feedback in two styles: the title, then the class and the mark on
+  // one quiet line; the check is our tick, filled mint; View Grades under it
+  // is a quiet text button, not Canvas's plain one.
+  const fb = await page.$eval('.events_list.recent_feedback li.event a', (a) => {
+    const ctx = a.querySelector('.event-details__context').getBoundingClientRect();
+    const mark = a.querySelector('p strong').getBoundingClientRect();
+    return { sameLine: Math.abs(ctx.top - mark.top) < 3, tick: getComputedStyle(a.querySelector('i'), '::before').backgroundColor, chip: getComputedStyle(a.querySelector('p strong')).backgroundColor, sep: getComputedStyle(a.querySelector('p:has(> strong)'), '::before').content };
+  });
+  assert.ok(fb.sameLine, 'the class and the mark share a line');
+  assert.equal(fb.tick, rgb('#51CFA0'), 'the check is our tick');
+  assert.equal(fb.chip, 'rgba(0, 0, 0, 0)', 'the mark is words, not a chip');
+  assert.equal(fb.sep, '"Â· "', 'a dot between');
+  assert.equal(await style(page, '#right-side .button-sidebar-wide', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'View Grades: no ground');
+  assert.equal(await style(page, '#right-side .button-sidebar-wide', 'fontSize'), '13px', 'the add-line size');
   assert.equal(await style(page, '.ic-app-header__logomark-container', 'display'), 'none', 'the header copy of the mark');
   assert.equal(await style(page, '.ic-sidebar-logo', 'display'), 'block', 'the school sidebar logo stays');
   // The one lift: the card token, on a light paper (2026-09-15).

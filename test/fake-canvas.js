@@ -211,8 +211,9 @@ function pageFor(url) {
 <li class="event" style="display: none;"><a href="#"><i class="icon-assignment"></i><div class="event-details"><b class="event-details__title">Rhetorical analysis</b><p>60 points • Sep 14</p></div></a></li>
 <li class="event" style="display: none;"><a href="#"><i class="icon-assignment"></i><div class="event-details"><b class="event-details__title">Unit 4 check</b><p>6 points • Sep 15</p></div></a></li>
 </ul><a class="more_link" href="#">2 more…</a></div>
-<div class="events_list recent_feedback"><h2>Recent Feedback</h2><ul class="right-side-list events"><li class="event"><a class="recent_feedback_icon" href="#"><b class="event-details__title recent_feedback_title">Problem Set 6</b><p><strong>41 out of 50</strong></p></a></li>
-<li class="event" style="display: none;"><a class="recent_feedback_icon" href="#"><b class="event-details__title recent_feedback_title">Older feedback</b></a></li></ul><a class="more_link" href="#">1 more…</a></div>`;
+<div class="events_list recent_feedback"><h2>Recent Feedback</h2><ul class="right-side-list events"><li class="event"><a class="recent_feedback_icon" href="#"><i class="icon-check"></i><div class="event-details"><b class="event-details__title recent_feedback_title">Problem Set 6</b><p class="event-details__context">PHYS-C-1</p><p><strong>41 out of 50</strong></p><p>"Redo part (c) and resubmit."</p></div><div class="clear"></div></a></li>
+<li class="event" style="display: none;"><a class="recent_feedback_icon" href="#"><i class="icon-check"></i><div class="event-details"><b class="event-details__title recent_feedback_title">Older feedback</b><p class="event-details__context">PHYS-C-1</p></div></a></li></ul><a class="more_link" href="#">1 more…</a></div>
+<div><a href="/grades" class="Button button-sidebar-wide">View Grades</a></div>`;
   } else if (/\/courses\/\d+\/modules/.test(p)) {
     // Real Canvas (the sandbox, 2026-09-18): the bar with its one button after
     // the h1; a status mark at the right of a row (a green check, an orange

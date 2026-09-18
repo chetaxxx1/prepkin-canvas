@@ -760,27 +760,34 @@ html.pk-on:not(.pk-back-cal-rows) #calendar_header .navigation_title_text:hover 
 
 /* ---- feedback-rows: Canvas's Recent Feedback, as rows -------------------
  * The list stays whole (the house never removes information); it reads as
- * the rail's rows do: the title in the ink, the grade as a small chip in the
- * ink on a sunk paper (the mark read 4.37:1 on the Sky paper's sunk chip,
- * 2026-09-17), the check in the mark, no grey bar down the side. */
+ * the rail's rows do, in two styles: the title in the ink, one quiet line
+ * under it with the class and the mark ("PHYS-C-1 · 18 out of 20"), the
+ * teacher's words under that. The check is the planner's tick, filled mint,
+ * the mark a finished module row wears. No grey bar down the side. */
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback li.event { border: 0 !important; margin: 0 !important; padding: 0 !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon {
   display: flex !important; align-items: flex-start !important; gap: 10px !important; padding: 10px 0 !important;
   border: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; background: transparent !important; text-decoration: none !important;
 }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon:hover { background-color: var(--pk-hover) !important; }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon > i { color: var(--pk-mark) !important; margin: 2px 0 0 !important; flex: 0 0 auto !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon > i { color: var(--pk-ink-2) !important; font-size: 0 !important; line-height: 1 !important; margin: 0 !important; flex: 0 0 auto !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback a.recent_feedback_icon > i::before {
+  content: "" !important; display: inline-block !important; box-sizing: border-box !important; width: 18px !important; height: 18px !important; vertical-align: top !important;
+  border-radius: 999px !important; border: 1.5px solid #51CFA0 !important;
+  background: #51CFA0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5.2l2.4 2.4L8.6 2.6' fill='none' stroke='%23101820' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px 10px no-repeat !important;
+}
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details { flex: 1 1 auto !important; min-width: 0 !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__title {
-  display: block !important; color: var(--pk-ink) !important; font-size: 13px !important; line-height: 17px !important; font-weight: 700 !important;
+  display: block !important; color: var(--pk-ink) !important; font-size: 13px !important; line-height: 18px !important; font-weight: 700 !important;
   white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
 }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__context { color: var(--pk-ink-2) !important; font-size: 12px !important; line-height: 16px !important; margin: 0 !important; }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p { margin: 4px 0 0 !important; font-size: 12px !important; line-height: 16px !important; color: var(--pk-ink-2) !important; }
-html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong {
-  display: inline-block !important; padding: 1px 8px !important; border-radius: 999px !important;
-  background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; font-weight: 800 !important; font-variant-numeric: tabular-nums !important;
-}
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p { margin: 2px 0 0 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+/* The class and the mark share one line: "PHYS-C-1 · 18 out of 20". */
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__context { display: inline !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p:has(> strong) { display: inline !important; margin: 0 !important; }
+/* The dot only after a class name: a course's own home names none. */
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details__context + p:has(> strong)::before { content: "· " !important; opacity: .6; }
+html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .event-details p strong { font-weight: 700 !important; color: var(--pk-ink-2) !important; font-variant-numeric: tabular-nums !important; }
 html.pk-on:not(.pk-back-feedback-rows) .events_list.recent_feedback .clear { display: none !important; }
 /* Canvas fades the row's right edge with a white gradient (::after, 12px); on
  * a paper it reads as a grey bar. The title is cut with an ellipsis instead. */
@@ -1338,19 +1345,26 @@ html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active,
 html.pk-on:not(.pk-back-buttons) .btn.calendar-button.active:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]) {
   background-color: var(--pk-ink) !important; color: var(--pk-paper) !important; border-color: var(--pk-ink) !important;
 }
-/* Two named buttons are text: Modules' Collapse All and the grades page's
- * Print Grades, each the one control in its title row. No ground, no edge,
- * the link ink; the receipt lint names both (TEXT_BUTTON_OK) and nothing else
- * may take this form. */
+/* Three named buttons are text: Modules' Collapse All and the grades page's
+ * Print Grades, each the one control in its title row, and the dashboard
+ * sidebar's View Grades, the one control under Recent Feedback. No ground,
+ * no edge, the link ink, 13/700 like the planner's "+ Add a task"; the
+ * receipt lint names all three (TEXT_BUTTON_OK) and nothing else may take
+ * this form. Print Grades wore Canvas's printer glyph; a text button is
+ * words only. */
 html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all,
-html.pk-on:not(.pk-back-buttons) #content #print-grades-button {
+html.pk-on:not(.pk-back-buttons) #content #print-grades-button,
+html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide {
   background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
-  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
 }
 html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all:hover,
-html.pk-on:not(.pk-back-buttons) #content #print-grades-button:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content #print-grades-button:hover,
+html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide:hover { text-decoration: underline !important; }
 html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all:focus-visible,
-html.pk-on:not(.pk-back-buttons) #content #print-grades-button:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-buttons) #content #print-grades-button:focus-visible,
+html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-buttons) #content #print-grades-button::before { content: none !important; }
 /* InstUI's disclosure toggle (Settings' feature list) is a text button with an
  * arrow icon and no ground by design; it takes the ink alone. */
 html.pk-on:not(.pk-back-buttons) #content [class*="toggleDetails__toggle"] { color: var(--pk-ink) !important; }
