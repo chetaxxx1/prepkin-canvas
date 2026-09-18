@@ -400,7 +400,10 @@ function plGpaBlock(courses, past, levels) {
 
 // MARK: - Finished courses
 
-let plPastOpen = false;
+/// Closed under the cards (the hiding is that it starts folded); open on the
+/// student's own /grades, where a finished class's letter is a grade too.
+let plPastOpen = null;
+const pastOpen = () => plPastOpen ?? allGradesPage();
 const PAST_ID = 'pk-past';
 
 /// The fold belongs on the Courses tab of a synced dashboard, with something
@@ -415,9 +418,9 @@ function pastFoldShows() {
 /// puts in a sidebar, without the sidebar; the hiding is that it starts closed.
 function plPastFold(rows) {
   const wrap = el('div', 'pk-past');
-  const toggle = () => { plPastOpen = !plPastOpen; renderPastFold(); renderGradesPage(); };
-  wrap.append(plGroupHead('Finished courses', rows.length, { fold: true, open: plPastOpen, onToggle: toggle }));
-  if (!plPastOpen) return wrap;
+  const toggle = () => { plPastOpen = !pastOpen(); renderPastFold(); renderGradesPage(); };
+  wrap.append(plGroupHead('Finished courses', rows.length, { fold: true, open: pastOpen(), onToggle: toggle }));
+  if (!pastOpen()) return wrap;
   const ul = el('ul', 'pk-past-rows');
   for (const c of rows) {
     const li = el('li');
@@ -440,7 +443,7 @@ function renderPastFold() {
   const cards = document.getElementById('DashboardCard_Container');
   if (!pastFoldShows() || !cards) { existing?.remove(); return; }
   const { data } = plannerState();
-  const key = JSON.stringify([data.pastCourses.map((c) => [c.id, c.name, c.grade, c.score, c.term]), plPastOpen]);
+  const key = JSON.stringify([data.pastCourses.map((c) => [c.id, c.name, c.grade, c.score, c.term]), pastOpen()]);
   if (existing && existing.dataset.key === key) { if (cards.nextElementSibling !== existing) cards.after(existing); return; }
   const box = plPastFold(data.pastCourses);
   box.id = PAST_ID; box.dataset.key = key; box.setAttribute('aria-label', 'Prepkin: finished courses');
@@ -633,7 +636,7 @@ function renderGradesPage() {
   const c = all ? null : data.courses.find((x) => String(x.id) === id);
   plGradesFixed = all ? null : id;
   const key = all
-    ? JSON.stringify([data.courses.map((x) => [x.id, x.name, x.score, x.grade]), (data.pastCourses ?? []).map((x) => [x.id, x.grade, x.score]), plPastOpen, levels, nicknames, targets, plOpenCourse, plCourseList, plTarget, plWeight])
+    ? JSON.stringify([data.courses.map((x) => [x.id, x.name, x.score, x.grade]), (data.pastCourses ?? []).map((x) => [x.id, x.grade, x.score]), pastOpen(), levels, nicknames, targets, plOpenCourse, plCourseList, plTarget, plWeight])
     : JSON.stringify([c.id, c.name, c.score, c.grade, (data.graded?.[id] ?? []).map((g) => [g.id, g.score]), data.tasks.filter((t) => String(t.courseId) === id).map((t) => [t.id, t.submittedAt, t.doneAt, t.missing]), levels[id], nicknames[id], targets[id], plCourseList, plTarget, plWeight]);
   document.documentElement.classList.add('pk-grades-page');
   document.documentElement.classList.toggle('pk-grades-all', all);

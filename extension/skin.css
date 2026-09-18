@@ -1712,6 +1712,10 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-gpa { background: color
 :is(#pk-planner, #pk-grades) .pk-tile { flex: none; width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center;
   font-style: normal; font-size: 11px; font-weight: 800; color: #fff; background: var(--pk-ink-2);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); text-shadow: 0 1px 0 rgba(0, 0, 0, .18); }
+/* A class Canvas gave no colour (a finished course) wears the quiet ink as its
+ * tile; on the dark stock that ink is light, so the letter takes the paper's
+ * colour instead of white (1.96:1 on Carbon, found by the floor 2026-09-18). */
+:is(#pk-planner, #pk-grades, #pk-week) .pk-tile:not([data-pk-course-color]) { color: var(--pk-paper); text-shadow: none; }
 /* The one to start: the two ways to start it under the row, the rail's buttons. */
 :is(#pk-planner, #pk-grades) .pk-pl-rows li.pk-w-first { flex-wrap: wrap; padding-bottom: 12px; }
 :is(#pk-planner, #pk-grades) .pk-pl-words { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }

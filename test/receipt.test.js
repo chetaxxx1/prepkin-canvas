@@ -959,7 +959,10 @@ test('R31 the student\'s own /grades: a row per class under Canvas\'s h1, its ta
   const [rows, side] = await page.$$eval('#pk-grades .pk-gr-all > *', (els) => els.map((e) => e.getBoundingClientRect()));
   assert.ok(side.left >= rows.right && side.width >= 300, `the side column sits beside the rows: rows to ${rows.right}, side from ${side.left} (${side.width} wide)`);
   assert.ok(await page.$('#pk-grades .pk-gr-side .pk-pl-gpa'), 'the GPA on the right');
-  assert.ok(await page.$('#pk-grades .pk-gr-side .pk-past .pk-pl-group.fold'), 'the finished fold under it, in the group shape');
+  assert.ok(await page.$('#pk-grades .pk-gr-side .pk-past .pk-pl-group.fold.open'), 'the finished fold under it, in the group shape, open here: a finished letter is a grade');
+  assert.deepEqual(await page.$$eval('#pk-grades .pk-gr-side .pk-past-rows li a .name', (els) => els.map((e) => e.textContent)), ['Calculus I', 'World History']);
+  await page.click('#pk-grades .pk-gr-side .pk-past .pk-pl-group.fold');
+  await page.waitForFunction(() => !document.querySelector('#pk-grades .pk-past-rows'), null, { timeout: 3000 });
   assert.ok(await page.$('#pk-grades .pk-gr-show.pk-pl-group.fold'), 'and Canvas\'s table as the same fold');
   await page.click('#pk-grades .pk-gr-show');
   await page.waitForFunction(() => getComputedStyle(document.querySelector('#content table.student_grades')).display !== 'none', null, { timeout: 3000 });
@@ -980,6 +983,7 @@ test('R30 a course\'s grades page: our grade row under Canvas\'s title, its tabl
   assert.equal(await style(page, '#right-side-wrapper', 'display'), 'none', 'the emptied column goes, so the page takes the width');
   assert.notEqual(await style(page, '#grade-summary-content > .ic-Action-header', 'display'), 'none', 'the title stays');
   assert.equal(await style(page, '#print-grades-button', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'Print Grades is a quiet text button in the title row');
+  assert.equal(await page.$eval('#print-grades-button', (e) => getComputedStyle(e, '::before').content), 'none', 'words only: the printer glyph goes');
   assert.ok(await page.$('#pk-grades .pk-gr-show.pk-pl-group.fold'), 'the way to Canvas\'s table is a fold in the group shape');
   assert.equal(await page.$eval('#pk-grades .pk-gr-show', (e) => e.getAttribute('aria-expanded')), 'false');
   await page.click('#pk-grades .pk-gr-show');
