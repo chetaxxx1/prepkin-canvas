@@ -144,18 +144,14 @@ function renderPlanner() {
   box.id = PLANNER_ID; box.dataset.key = key;
   box.setAttribute('aria-label', 'Prepkin: planner');
 
-  // One head row: the title and a way to add a task. No arrows, no count.
+  // One head row: the title. No arrows, no count, no button: the one action
+  // (add a task) sits at the foot of Today, where Todoist's Upcoming keeps it.
   const headRow = el('div', 'pk-pl-head');
   const title = el('div', 'pk-pl-title');
   // Words, no picture: the one picture on a Canvas page of ours is Sprout.
   title.append(el('b', '', 'Planner'));
-  const add = el('span', 'add', '+ Add a task');
-  add.setAttribute('role', 'button'); add.tabIndex = 0;
-  add.addEventListener('click', () => { plAdding = !plAdding; renderPlanner(); });
-  add.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); plAdding = !plAdding; renderPlanner(); } });
-  headRow.append(title, add);
+  headRow.append(title);
   box.append(headRow);
-  if (plAdding) box.append(plAddForm(now));
 
   // The term, in numbers, when a term is ending.
   if (recap) box.append(plRecapCard(now));
@@ -186,9 +182,6 @@ function renderPlanner() {
   // What slipped: amber dates, and one line saying what it is still worth.
   if (groups.past.length) {
     list.append(plGroupHead('Past due', groups.past.length));
-    const cost = missingCost(groups.past);
-    const points = cost.reduce((n, r) => n + r.points, 0);
-    if (points) list.append(el('p', 'pk-pl-still', `Still counts: ${points} point${points === 1 ? '' : 's'} across ${cost.length} class${cost.length === 1 ? '' : 'es'}.`));
     list.append(plRows(groups.past, now, { slipped: true }));
   }
 
@@ -230,6 +223,7 @@ function renderPlanner() {
       }
       list.append(empty);
     }
+    if (i === 0) list.append(plAdding ? plAddForm(now) : plAddLine());
   });
   flushQuiet();
   // Further out, folded until asked; then work with no date; then the old zeros.
@@ -289,7 +283,9 @@ function plRows(items, now, { slipped = false, first = null, running = false } =
     name.title = `${t.title}\n${t.courseName}${t.dueAt ? ` · ${dueLabel(t, now)}` : ''}${isMoved(t) ? '\nMoved. Drag it back to its due day to undo.' : ''}`;
     li.append(name);
     const when = t.submittedAt ? 'in' : t.doneAt ? 'done'
-      : slipped && t.dueAt ? `was due ${new Date(t.dueAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}`
+      // What slipped says its date and what it is still worth, in one line
+      // of meta; before this a band over the group said the sum (2026-09-18).
+      : slipped && t.dueAt ? `was due ${new Date(t.dueAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}${Number(t.pointsPossible) > 0 ? ` · still counts · ${Number(t.pointsPossible)} pts` : ''}`
       : isMoved(t) ? `due ${dayShort(t, now)}`
       : t.dueAt ? new Date(t.dueAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'any time';
     if (t === first) {
@@ -365,15 +361,16 @@ function plDropTarget(node, date) {
 /// The block under the list. A row: tile, name, per cent, letter. Open, it
 /// holds the sparkline and the last three marks, one what-if line, the
 /// nickname, the level, and every assignment the laptop already has.
-function plGrades(now, { heading = 'Grades' } = {}) {
+function plGrades(now, { heading = 'Grades', gpa = true } = {}) {
   const { data, levels } = plannerState();
   const wrap = el('div', 'pk-pl-grades');
-  // On /grades Canvas's own h1 already says it; the word is not said twice.
-  if (heading) { const h = el('div', 'pk-pl-group'); h.append(el('b', '', heading)); wrap.append(h); }
   const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id)));
+  // On /grades Canvas's own h1 already says it; the word is not said twice.
+  // The heading is a group head like the days above it: the word, the count.
+  if (heading) wrap.append(plGroupHead(heading, courses.length));
   if (!courses.length) { wrap.append(el('p', 'pk-pl-empty', 'Nothing graded yet.')); return wrap; }
   for (const c of courses) wrap.append(plGradeRow(c, now));
-  wrap.append(plGpaBlock(courses, data.pastCourses ?? [], levels));
+  if (gpa) wrap.append(plGpaBlock(courses, data.pastCourses ?? [], levels));
   return wrap;
 }
 
@@ -721,6 +718,19 @@ function plRecapCard(now, { soFar = false } = {}) {
   card.append(actions);
   card.append(el('p', 'pk-pl-foot', 'Counted on your own laptop. Nothing was sent anywhere, and the picture has no grades in it.'));
   return card;
+}
+
+/// The one way in: a quiet line at the foot of Today. Click, and the form
+/// takes its place.
+function plAddLine() {
+  const p = el('p', 'pk-pl-addline');
+  const b = el('span', 'add', '+ Add a task');
+  b.setAttribute('role', 'button'); b.tabIndex = 0;
+  const go = () => { plAdding = true; renderPlanner(); };
+  b.addEventListener('click', go);
+  b.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  p.append(b);
+  return p;
 }
 
 /// Add a task of your own: a title, a day, a class. Lives in this browser.

@@ -1543,7 +1543,8 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-looks {
 }
 #pk-planner .pk-pl-rows, #pk-planner .pk-pl-grade { background: var(--pk-paper); box-shadow: none; }
 html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-rows,
-html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: color-mix(in srgb, var(--pk-paper-2) 55%, transparent); }
+html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade,
+html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-gpa { background: color-mix(in srgb, var(--pk-paper-2) 55%, transparent); }
 :is(#pk-planner, #pk-grades) {
   margin: 6px 0 28px; color: var(--pk-ink);
   font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums;
@@ -1551,28 +1552,32 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: col
 :is(#pk-planner, #pk-grades) .pk-pl-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 4px 0 6px; }
 :is(#pk-planner, #pk-grades) .pk-pl-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
 :is(#pk-planner, #pk-grades) .pk-pl-title b { font-size: 22px; line-height: 28px; font-weight: 900; letter-spacing: -.02em; }
-:is(#pk-planner, #pk-grades) .pk-pl-head .add {
-  height: 30px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; cursor: pointer; user-select: none;
-  font-size: 13px; font-weight: 800; background: #51CFA0; border: 1px solid #51CFA0; color: #101820; box-shadow: 0 2px 0 #35A87D;
-}
-:is(#pk-planner, #pk-grades) .pk-pl-head .add:active { transform: translateY(1px); box-shadow: 0 1px 0 #35A87D; }
-:is(#pk-planner, #pk-grades) .pk-pl-head .add:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; }
+/* The one action, at the foot of Today (Todoist's Upcoming keeps "Add task"
+ * under each day): a quiet line in the link ink, never a second mint button
+ * beside the title. Click, and the form takes its place. */
+:is(#pk-planner, #pk-grades) .pk-pl-addline { margin: 8px 0 0 13px; font-size: 13px; line-height: 18px; }
+:is(#pk-planner, #pk-grades) .pk-pl-addline .add { display: inline-block; padding: 4px 0; font-weight: 700; color: var(--pk-link); cursor: pointer; user-select: none; }
+:is(#pk-planner, #pk-grades) .pk-pl-addline .add:hover { text-decoration: underline; text-decoration-color: var(--pk-link); }
+:is(#pk-planner, #pk-grades) .pk-pl-addline .add:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 4px; }
 
-/* Groups: a heading in plain words, the count in the quiet ink, today outlined
- * down its left. A day's heading takes a dropped row as a plan. */
-:is(#pk-planner, #pk-grades) .pk-pl-group { display: flex; align-items: baseline; gap: 8px; margin: 18px 0 6px; padding: 0 0 0 10px; border-left: 3px solid transparent; }
-:is(#pk-planner, #pk-grades) .pk-pl-group b { font-size: 15px; line-height: 20px; font-weight: 800; }
-:is(#pk-planner, #pk-grades) .pk-pl-group em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
-:is(#pk-planner, #pk-grades) .pk-pl-group .when { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
-:is(#pk-planner, #pk-grades) .pk-pl-group .when::before { content: "· "; }
-:is(#pk-planner, #pk-grades) .pk-pl-group.today { border-left-color: #51CFA0; }
-:is(#pk-planner, #pk-grades) .pk-pl-group.over { background: rgba(81, 207, 160, .16); border-radius: 8px; }
-:is(#pk-planner, #pk-grades) .pk-pl-group.fold { cursor: pointer; user-select: none; }
-:is(#pk-planner, #pk-grades) .pk-pl-group.fold b::after { content: " ›"; color: var(--pk-ink-2); }
-:is(#pk-planner, #pk-grades) .pk-pl-group.fold.open b::after { content: " ⌄"; }
-:is(#pk-planner, #pk-grades) .pk-pl-group.fold:hover b { text-decoration: underline; text-decoration-color: var(--pk-rule); }
-:is(#pk-planner, #pk-grades) .pk-pl-group:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 6px; }
-:is(#pk-planner, #pk-grades) .pk-pl-still, :is(#pk-planner, #pk-grades) .pk-pl-empty, :is(#pk-planner, #pk-grades) .pk-pl-foot { margin: 0 0 4px 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
+/* Groups: one shape for every heading on the sheet, day, fold or Grades: the
+ * name in plain words, the count as a chip, today outlined down its left, and
+ * a fold's chevron in the same slot after its chip (Things 3). A day's
+ * heading takes a dropped row as a plan. `.pk-past` (the finished-courses
+ * fold) wears the same heading under the cards. */
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group { display: flex; align-items: center; gap: 8px; margin: 18px 0 6px; padding: 0 0 0 10px; border-left: 3px solid transparent; }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group b { font-size: 15px; line-height: 20px; font-weight: 800; }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group em { font-style: normal; font-size: 12px; line-height: 18px; min-width: 18px; padding: 0 7px; border-radius: 999px; text-align: center; font-weight: 800; background: var(--pk-paper-sunk); color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group .when { font-size: 13px; font-weight: 600; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group .when::before { content: "· "; }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group.today { border-left-color: #51CFA0; }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group.over { background: rgba(81, 207, 160, .16); border-radius: 8px; }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group.fold { cursor: pointer; user-select: none; }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group.fold::after { content: "›"; width: 18px; font-size: 18px; line-height: 20px; font-weight: 800; text-align: center; color: var(--pk-ink-2); }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group.fold.open::after { content: "⌄"; }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group.fold:hover b { text-decoration: underline; text-decoration-color: var(--pk-rule); }
+:is(#pk-planner, #pk-grades, .pk-past) .pk-pl-group:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 6px; }
+:is(#pk-planner, #pk-grades) .pk-pl-empty, :is(#pk-planner, #pk-grades) .pk-pl-foot { margin: 0 0 4px 13px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
 :is(#pk-planner, #pk-grades) .pk-pl-empty:empty { display: none; }
 /* A run of empty days: one quiet line, the days as chips you can still drop a
  * row on. Todoist shows every day; Things shows only the days with work; this
@@ -1636,7 +1641,7 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: col
 
 /* Grades: a row per class; the open one holds the marks, the what-if line, the
  * student's own words for the class, and every assignment. */
-:is(#pk-planner, #pk-grades) .pk-pl-grades { margin-top: 26px; }
+:is(#pk-planner, #pk-grades) .pk-pl-grades { margin-top: 10px; }
 /* GPA so far: the number large, the words beside it, one chip per term. An
  * estimate, and the block says so in the same ink as the number. */
 :is(#pk-planner, #pk-grades) .pk-pl-gpa { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 14px 0 0 13px; padding: 12px 14px; border-radius: var(--pk-radius); background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); }
@@ -1659,12 +1664,6 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-grade { background: col
 .pk-past-rows .term { font-size: 12px; font-weight: 700; color: var(--pk-ink-2); }
 .pk-past-rows .letter { font-size: 13px; font-weight: 800; min-width: 22px; text-align: right; }
 .pk-past-rows .pct { font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
-.pk-past .pk-pl-group { display: flex; align-items: baseline; gap: 8px; padding: 0 0 0 10px; border-left: 3px solid transparent; cursor: pointer; user-select: none; }
-.pk-past .pk-pl-group b { font-size: 15px; line-height: 20px; font-weight: 800; }
-.pk-past .pk-pl-group em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
-.pk-past .pk-pl-group.fold b::after { content: " ›"; color: var(--pk-ink-2); }
-.pk-past .pk-pl-group.fold.open b::after { content: " ⌄"; }
-.pk-past .pk-pl-group:focus-visible { outline: 2px solid #51CFA0; outline-offset: 2px; border-radius: 6px; }
 :is(#pk-planner, #pk-grades) .pk-pl-grade { margin: 0 0 8px 13px; background: var(--pk-paper-2); border: 1px solid var(--pk-card-edge); box-shadow: var(--pk-lift); border-radius: var(--pk-radius); overflow: hidden; }
 :is(#pk-planner, #pk-grades) .pk-pl-grow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; user-select: none; }
 :is(#pk-planner, #pk-grades) .pk-pl-grow:hover { background: var(--pk-paper-sunk); }

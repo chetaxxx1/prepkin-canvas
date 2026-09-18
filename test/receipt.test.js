@@ -538,6 +538,8 @@ test('R38 finished courses: one closed line under the cards, open to names with 
   const page = await open('/');
   await page.waitForSelector('#pk-past .pk-pl-group.fold', { timeout: 8000 });
   assert.equal(await page.$('#pk-past .pk-past-rows'), null, 'closed by default: the hiding is that it starts folded');
+  assert.equal(await page.$eval('#pk-past .pk-pl-group.fold', (e) => getComputedStyle(e, '::after').content), '"›"', 'the fold wears the planner\'s heading: count chip, then the chevron');
+  assert.equal(await style(page, '#pk-past .pk-pl-group em', 'borderRadius'), '999px');
   const head = await page.$eval('#pk-past .pk-pl-group', (e) => e.textContent);
   assert.match(head, /Finished courses/); assert.match(head, /2/);
   assert.equal(await page.$eval('#pk-past', (e) => e.previousElementSibling?.id), 'DashboardCard_Container', 'under the cards');
@@ -983,11 +985,30 @@ test('R27 the Planner and Looks tabs: one list by day with the grades block, the
   assert.ok((await page.$$('#pk-planner .pk-pl-grade.open .every .pk-pl-rows li')).length >= 1, 'every assignment');
   assert.equal((await h.storage()).dashTab, 'planner', 'the choice is kept');
   // Dragging a row onto a day plans it; the plan is kept in this browser only.
+  // Onto the first day after Today: it is on screen with the row, and a drag
+  // whose target must be scrolled to while the mouse is down never starts
+  // in Chromium (the far day worked only by the page's height, 2026-09-18).
   const id = await page.$eval('#pk-planner .pk-pl-list .pk-pl-rows li[draggable="true"]', (e) => e.dataset.drag);
-  const lastDay = (await page.$$('#pk-planner .pk-pl-list .pk-pl-group[data-drop]')).at(-1);
-  await page.dragAndDrop(`#pk-planner li[data-drag="${id}"]`, `#pk-planner .pk-pl-group[data-drop="${await lastDay.evaluate((e) => e.dataset.drop)}"]`);
+  const nextDay = await page.$eval('#pk-planner .pk-pl-list .pk-pl-group[data-drop]:not(.today)', (e) => e.dataset.drop);
+  await page.dragAndDrop(`#pk-planner li[data-drag="${id}"]`, `#pk-planner .pk-pl-group[data-drop="${nextDay}"]`);
   await page.waitForTimeout(600);
   assert.ok((await h.storage()).plans?.[id], 'planned onto a day');
+  // One shape for every heading: the count as a chip; a fold's chevron after
+  // it; the one action at the foot of Today, not a mint button by the title.
+  assert.equal(await page.$('#pk-planner .pk-pl-head .add'), null, 'no button beside the title');
+  assert.equal(await page.$('#pk-planner .pk-pl-still'), null, 'no band over Past due: each slipped row says what it is still worth');
+  assert.equal(await style(page, '#pk-planner .pk-pl-group em', 'borderRadius'), '999px', 'the count is a chip');
+  const folds = await page.$$eval('#pk-planner .pk-pl-group.fold', (els) => els.map((e) => getComputedStyle(e, '::after').content));
+  assert.ok(folds.every((c) => c === '"›"'), `a fold carries its chevron after the chip: ${folds.join(' ')}`);
+  assert.equal(await page.$eval('#pk-planner .pk-pl-grades > .pk-pl-group', (e) => `${e.querySelector('b').textContent} ${e.querySelector('em')?.textContent}`), 'Grades 2', 'Grades heads its rows like a day, with its count');
+  const addAfter = await page.$eval('#pk-planner .pk-pl-addline', (e) => { let n = e; while ((n = n.previousElementSibling)) if (n.classList.contains('pk-pl-group')) return n.className; return null; });
+  assert.match(addAfter, /today/, `Add a task sits at the foot of Today: ${addAfter}`);
+  assert.equal(await style(page, '#pk-planner .pk-pl-addline .add', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'a quiet line, no ground');
+  await page.click('#pk-planner .pk-pl-addline .add');
+  await page.waitForSelector('#pk-planner .pk-pl-add input[name="title"]', { timeout: 3000 });
+  assert.equal(await page.$('#pk-planner .pk-pl-addline'), null, 'the form takes the line\'s place');
+  await page.click('#pk-planner .pk-pl-add .ghost');
+  await page.waitForSelector('#pk-planner .pk-pl-addline', { timeout: 3000 });
   await page.click('#pk-dashtabs [data-tab="cards"]');
   await page.waitForTimeout(400);
   assert.equal(await page.$$eval('#pk-week .pk-w-label', (els) => els.length), 2, 'the rail\'s list is back on Courses');
