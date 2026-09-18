@@ -1578,6 +1578,19 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 #pk-looks .pk-pl-look .price { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 12px; font-weight: 800; color: #8A5A12; }
 #pk-looks .pk-pl-look.on-dark .price { color: #ECB35C; }
 
+/* "Your picture": a photo of the student's own as a look. Empty, it is a
+ * label over a file input with a dashed edge; with a photo it is any image
+ * tile, plus a way to take the photo off. */
+#pk-looks label.pk-pl-look { margin: 0; font-weight: inherit; }
+#pk-looks .pk-pl-look.own.empty .scene { display: grid; place-items: center; grid-template-columns: none; box-shadow: inset 0 0 0 2px var(--pk-rule); background: var(--tp); }
+#pk-looks .pk-pl-look.own.empty:hover .scene { box-shadow: inset 0 0 0 2px var(--pk-ink-2); }
+#pk-looks .pk-pl-look.own.empty .add { font-size: 13px; line-height: 18px; font-weight: 800; color: var(--pk-ink-2); }
+#pk-looks .pk-pl-look.own.empty.busy { opacity: .6; }
+#pk-looks .pk-pl-look.own input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+#pk-looks .pk-pl-look:has(input:focus-visible) { outline: 2px solid #51CFA0; outline-offset: 2px; }
+#pk-looks .pk-pl-look .remove { position: absolute; left: 6px; top: 6px; z-index: 1; width: 22px; height: 22px; border-radius: 999px; background: var(--pk-ink); color: var(--pk-paper-2); font-size: 14px; font-weight: 800; display: grid; place-items: center; cursor: pointer; }
+#pk-looks .pk-pl-look .remove:hover { background: #101820; color: #fff; }
+
 /* Course pictures: a banner from the worn theme, or a picture of your own. */
 #pk-looks .pk-pl-pictures { margin-top: 20px; padding-top: 4px; }
 #pk-looks .pk-pl-pictures .pk-pic-row { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; align-items: center; gap: 14px; margin: 0; padding: 10px 0; border-top: 1px solid var(--pk-rule); }

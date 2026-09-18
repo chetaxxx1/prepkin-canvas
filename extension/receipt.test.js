@@ -39,7 +39,7 @@ test('every paper clears AAA for body text, and the card prints the measured num
 test('the catalog is twenty-one papers, thirteen light and eight dark, and every theme names two of them', () => {
   assert.equal(Object.keys(PAPERS).length, 21);
   assert.equal(Object.values(PAPERS).filter((p) => p.dark).length, 8);
-  assert.equal(LOOKS.length, 32, 'twenty-four flat themes and eight image themes');
+  assert.equal(LOOKS.length, 33, 'twenty-four flat themes, eight image themes, and Your picture');
   for (const look of LOOKS) {
     assert.ok(PAPERS[look.paper.light] && !PAPERS[look.paper.light].dark, `${look.id} light`);
     assert.ok(PAPERS[look.paper.dark] && PAPERS[look.paper.dark].dark, `${look.id} dark`);
@@ -103,6 +103,34 @@ test('an image theme draws the placeholder set until its own folder is packed', 
   assert.ok(skinClasses({ on: true, dark: false, look: THEMES_BY_ID.graffiti }).includes('pk-art'));
 });
 
+test('Your picture: a look only with a photo behind it, in the photo\'s own colours', () => {
+  const { THEMES_BY_ID, OWN_THEME, artFor } = require('./themes.js');
+  const { paletteFrom, contrast, PAPERS } = require('./receipt.js');
+  assert.equal(THEMES_BY_ID.own, OWN_THEME);
+  assert.ok(OWN_THEME.free && OWN_THEME.price === 0 && OWN_THEME.art === 'own', 'free: the photo is theirs');
+  const url = (f) => `chrome-extension://x/${f}`;
+  assert.equal(artFor(OWN_THEME, [], url), null, 'no photo, no art: content.js wears Classic');
+  const a = artFor(OWN_THEME, [], url, { src: 'data:image/jpeg;base64,AAA', thumb: 'data:image/jpeg;base64,BBB' });
+  assert.deepEqual(a, { wallpaper: 'data:image/jpeg;base64,AAA', thumb: 'data:image/jpeg;base64,BBB', cards: [] }, 'the photo, never a file of ours');
+  // A red photo: a red accent, AA on both tones of the paper; a rail white reads on.
+  const px = (r, g, b, n = 4096) => { const out = new Uint8ClampedArray(n * 4); for (let i = 0; i < n; i++) { out[i * 4] = r; out[i * 4 + 1] = g; out[i * 4 + 2] = b; out[i * 4 + 3] = 255; } return out; };
+  const red = paletteFrom(px(220, 40, 50));
+  for (const mode of ['light', 'dark']) {
+    const p = PAPERS[mode === 'light' ? 'newsprint' : 'carbon'];
+    assert.ok(contrast(red.accent[mode], p.paper) >= 4.5 && contrast(red.accent[mode], p.paper2) >= 4.5, `${mode} accent ${red.accent[mode]} is AA on the paper`);
+    assert.ok(contrast(red.rail[mode], '#FFFFFF') >= 4.5, `${mode} rail ${red.rail[mode]} carries white`);
+  }
+  const n = parseInt(red.accent.light.slice(1), 16);
+  assert.ok(((n >> 16) & 255) > ((n >> 8) & 255) + 40 && ((n >> 16) & 255) > (n & 255) + 40, `the accent is red: ${red.accent.light}`);
+  const grey = paletteFrom(px(128, 128, 128));
+  assert.ok(contrast(grey.accent.light, PAPERS.newsprint.paper) >= 4.5 && contrast(grey.rail.dark, '#FFFFFF') >= 4.5, 'a grey photo still reads');
+  assert.equal(paletteFrom(new Uint8ClampedArray(0)), null);
+  // Worn with a photo the classes say art; the merged look keeps the id.
+  const worn = { ...OWN_THEME, ...red };
+  const c = skinClasses({ on: true, dark: false, look: worn });
+  assert.ok(c.includes('pk-art') && c.includes('pk-theme-own') && c.includes('pk-icons-soft'));
+});
+
 test('the theme classes carry the paper, the wash and the texture', () => {
   const { THEMES_BY_ID } = require('./themes.js');
   const c = skinClasses({ on: true, dark: false, look: THEMES_BY_ID.blush });
@@ -136,8 +164,9 @@ test('a row is on the receipt only when its hook is on the page', () => {
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'week'), 'the rail is on the dashboard receipt');
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'todo-fold'), 'the fold needs a To Do list on the page');
   assert.ok(receiptRows({ present: () => true, detect: { todoFold: true } }).some((r) => r.key === 'todo-fold'), 'and lists itself when there is one');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true, listView: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2 });
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true, listView: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2, ownWall: true });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
+  assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'own-wall'), 'the photo row needs the photo worn');
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
   assert.ok(!light.some((r) => r.key === 'word-paste' || r.key === 'seam'), 'dark-only rows stay off in light');
 });
@@ -255,7 +284,9 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // course's grades page; the table is one click away and Put back restores it.
   // Raised to 26 on 2026-09-17 for `list-view`: Canvas's own planner folded
   // under ours is the whole main column, so it is a row with a Put back.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 26, 'twenty-six keys at most, so it cannot sprawl');
+  // Raised to 27 on 2026-09-18 for `own-wall`: the student's own photo under
+  // the paper is on every page while the look is worn.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 27, 'twenty-seven keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names

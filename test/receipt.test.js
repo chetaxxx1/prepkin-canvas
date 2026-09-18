@@ -477,6 +477,52 @@ test('R34 wearing a look keeps you on Looks, even when the page was opened at #p
   await page.close();
 });
 
+/// A solid PNG, so the photo's colour is known. zlib is enough: one IDAT.
+function solidPNG(w, h, [r, g, b]) {
+  const zlib = require('node:zlib');
+  const crc = (buf) => { let c = ~0; for (const x of buf) { c ^= x; for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xEDB88320 & -(c & 1)); } return (~c) >>> 0; };
+  const chunk = (type, data) => { const len = Buffer.alloc(4); len.writeUInt32BE(data.length); const td = Buffer.concat([Buffer.from(type), data]); const c = Buffer.alloc(4); c.writeUInt32BE(crc(td)); return Buffer.concat([len, td, c]); };
+  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 2; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
+  const row = Buffer.concat([Buffer.from([0]), Buffer.alloc(w * 3, Buffer.from([r, g, b]))]);
+  const raw = Buffer.concat(Array.from({ length: h }, () => row));
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', zlib.deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
+}
+
+test('R37 Your picture: a photo becomes a look, in its own colours, kept in this browser, off in one click', async () => {
+  await h.setStorage({ ownArt: null, wallet: { coins: 480, owned: ['classic'], wearing: 'classic', kin: { species: 'mint', level: 2, skin: '' } } });
+  const page = await open('/');
+  await page.waitForSelector('#pk-dashtabs [data-tab="looks"]', { timeout: 6000 });
+  await page.click('#pk-dashtabs [data-tab="looks"]');
+  await page.waitForSelector('#pk-looks label[data-look="own"].empty input[type="file"]', { timeout: 6000 });
+  const tiles = await page.$$eval('#pk-looks .pk-pl-look', (els) => els.map((e) => e.dataset.look));
+  assert.equal(tiles[1], 'own', 'Your picture sits right after the worn look');
+  await page.setInputFiles('#pk-looks label[data-look="own"] input[type="file"]', { name: 'red.png', mimeType: 'image/png', buffer: solidPNG(1600, 900, [220, 40, 50]) });
+  await page.waitForFunction(() => document.documentElement.classList.contains('pk-theme-own') && document.documentElement.classList.contains('pk-art'), null, { timeout: 8000 });
+  const vars = await page.evaluate(() => { const cs = getComputedStyle(document.documentElement); return { wall: cs.getPropertyValue('--pk-wallpaper').trim(), rail: cs.getPropertyValue('--pk-rail').trim(), mark: cs.getPropertyValue('--pk-mark').trim() }; });
+  assert.match(vars.wall, /^url\("data:image\/jpeg/, 'the wallpaper is the photo, as a data URL, never a file of ours');
+  const hex = (v) => parseInt(v.slice(1), 16);
+  const red = (v) => ((hex(v) >> 16) & 255) > ((hex(v) >> 8) & 255) + 30;
+  assert.ok(red(vars.mark), `the accent came off the photo: ${vars.mark}`);
+  assert.ok(red(vars.rail), `and so did the rail: ${vars.rail}`);
+  const body = await style(page, 'body', 'backgroundImage');
+  assert.match(body, /data:image\/jpeg/, 'the photo is under the page');
+  const stored = await h.storage();
+  assert.equal(stored.wallet.wearing, 'own');
+  assert.ok(stored.ownArt.src.length < 1_500_000 && stored.ownArt.thumb.length < 80_000, `shrunk: ${stored.ownArt.src.length} + ${stored.ownArt.thumb.length}`);
+  assert.equal(stored.ownArt.w, 1600, 'never wider than the photo');
+  // Back with the look before Canvas paints: boot.js reads the photo too.
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  assert.ok((await classes(page)).includes('pk-theme-own'), 'worn from the first paint after a reload');
+  await page.waitForSelector('#pk-looks .pk-pl-look.own.has-art .remove', { timeout: 8000 });
+  assert.equal(await page.$('#pk-looks label[data-look="own"]'), null, 'with a photo the tile is a look, not a picker');
+  await page.click('#pk-looks .pk-pl-look.own .remove');
+  await page.waitForFunction(() => document.documentElement.classList.contains('pk-theme-classic') && !document.documentElement.classList.contains('pk-art'), null, { timeout: 6000 });
+  assert.equal((await h.storage()).ownArt, null, 'the photo is gone from this browser');
+  await page.waitForSelector('#pk-looks label[data-look="own"].empty', { timeout: 6000 });
+  await h.setStorage({ dashTab: 'cards' });
+  await page.close();
+});
+
 test('R20 Command-K opens the buddy on search; Escape closes it', async () => {
   const page = await open('/');
   // He mounts after the first sync; the key waits for him (a flake in the full run otherwise).

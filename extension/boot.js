@@ -5,7 +5,7 @@
 (async () => {
   try {
     if (isLoginPath(location.pathname) || isQuizTake(location.pathname) || isSubmissionPath(location.pathname, location.hash)) return;
-    const s = await chrome.storage.local.get(['skin', 'wallet', 'putBack', 'flags', 'lastPayload']);
+    const s = await chrome.storage.local.get(['skin', 'wallet', 'putBack', 'flags', 'lastPayload', 'ownArt']);
     if (remoteKill(s.flags, {
       host: location.host,
       page: pageName(location.pathname),
@@ -20,17 +20,20 @@
     // turns out not to draw.
     const putBack = s.putBack ?? {};
     const todoFold = /^\/(dashboard)?\/?$/.test(location.pathname) && !!s.lastPayload?.at && !putBack.week && !putBack['todo-fold'];
+    // "Your picture" is a look only with a photo behind it; the photo's own
+    // colours ride on the look. content.js `wornLook()` is the same answer.
+    const base = LOOKS_BY_ID[s.wallet?.wearing] ?? LOOKS_BY_ID.classic;
+    const look = base.art !== 'own' ? base : (s.ownArt?.src ? { ...base, ...(s.ownArt.palette ?? {}) } : LOOKS_BY_ID.classic);
     const classes = skinClasses({
       on: !!skin.cards, dark: !!skin.dark, dense: !!skin.dense, hidePast: !!skin.hidePast, gradeHover: !!skin.cardGradesHover,
-      look: LOOKS_BY_ID[s.wallet?.wearing] ?? LOOKS_BY_ID.classic,
+      look,
       putBack, detect: { todoFold },
     });
     document.documentElement.classList.add(...classes);
     if (classes.length) {
       const style = document.getElementById('pk-theme-vars') ?? document.createElement('style');
       style.id = 'pk-theme-vars';
-      const look = LOOKS_BY_ID[s.wallet?.wearing] ?? LOOKS_BY_ID.classic;
-      style.textContent = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)));
+      style.textContent = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), s.ownArt ?? null));
       document.documentElement.append(style);
     }
   } catch {

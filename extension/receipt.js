@@ -81,6 +81,64 @@ function contrast(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
+// MARK: - A photo's own colours
+
+function rgbToHsl(r, g, b) {
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2, d = max - min;
+  if (d < 1e-6) return { h: 0, s: 0, l };
+  const s = d / (1 - Math.abs(2 * l - 1));
+  let h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  h = (h * 60 + 360) % 360;
+  return { h, s, l };
+}
+
+function hslToHex(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = l - c / 2;
+  const [r, g, b] = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x] : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
+  return '#' + [r, g, b].map((v) => Math.round((v + m) * 255).toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+
+/// The colours a photo hands its look: the rail from the photo's mean colour,
+/// deepened until white reads on it; the accent from its strongest hue, moved
+/// until it is AA on both tones of the paper the look sits on. `px` is RGBA
+/// bytes; every sixteenth pixel is read. A grey photo gets a quiet grey pair.
+/// Pure, so node holds it to the same 4.5:1 as every theme in the catalogue.
+function paletteFrom(px, { light = 'newsprint', dark = 'carbon' } = {}) {
+  let r = 0, g = 0, b = 0, n = 0;
+  const hues = new Array(12).fill(0);
+  for (let i = 0; i + 2 < px.length; i += 64) {
+    const R = px[i] / 255, G = px[i + 1] / 255, B = px[i + 2] / 255;
+    r += R; g += G; b += B; n += 1;
+    const { h, s, l } = rgbToHsl(R, G, B);
+    if (s < 0.25 || l < 0.12 || l > 0.88) continue;
+    hues[Math.floor(h / 30) % 12] += s;
+  }
+  if (!n) return null;
+  const mean = rgbToHsl(r / n, g / n, b / n);
+  const top = hues.indexOf(Math.max(...hues));
+  const vivid = hues[top] > 0;
+  const hue = vivid ? top * 30 + 15 : mean.h;
+  // Walk the lightness a step at a time until every ground clears 4.5:1.
+  const fit = (h, s, l0, grounds, step) => {
+    let l = l0, hex = hslToHex(h, s, l);
+    for (let k = 0; k < 40 && !grounds.every((gd) => contrast(hex, gd) >= 4.5); k += 1) {
+      l = Math.min(0.98, Math.max(0.02, l + step)); hex = hslToHex(h, s, l);
+    }
+    return hex;
+  };
+  const lp = PAPERS[light], dp = PAPERS[dark];
+  return {
+    rail: {
+      light: fit(mean.h, Math.min(mean.s, 0.45), 0.24, ['#FFFFFF'], -0.02),
+      dark: fit(mean.h, Math.min(mean.s, 0.4), 0.16, ['#FFFFFF'], -0.02),
+    },
+    accent: {
+      light: fit(hue, vivid ? 0.55 : 0.2, 0.38, [lp.paper, lp.paper2], -0.02),
+      dark: fit(hue, vivid ? 0.6 : 0.2, 0.72, [dp.paper, dp.paper2], 0.02),
+    },
+  };
+}
+
 /// How much black a student's own picture takes behind a course card.
 ///
 /// Canvas paints its own white controls — the three-dot menu — on that band, so
@@ -155,6 +213,10 @@ const RULES = [
   // `opt` rows are the student's own switches, listed here instead of in a
   // settings card: the row is struck through while the switch is off and its
   // button turns it on. Same receipt, one fewer panel of toggles.
+  // The student's own photo as the wallpaper: on every page while the look is
+  // worn, so it is a row on every page. Put back is the paper row's; this one
+  // says what the wallpaper is and where it came from.
+  { key: 'own-wall', kind: 'added', label: 'Your own picture, under the paper', when: (ctx) => ctx.ownWall },
   { key: 'card-grade', kind: 'added', label: 'Your grade on each course card', hook: 'card', opt: 'cardGrades', undo: 'Turn on' },
   // For a shared screen: the grade stays hidden until the mouse is on its card.
   { key: 'card-grade-hover', kind: 'added', label: 'The grade only while the mouse is on the card', hook: 'card', opt: 'cardGradesHover', undo: 'Turn on', when: (ctx) => ctx.cardGrades },
@@ -210,8 +272,8 @@ function skinClasses({ on, dark, look, dense = false, hidePast = false, gradeHov
 /// put back. `present(hookName)` says how many times the hook matches (a
 /// boolean reads as one); the content script supplies it from the DOM, tests
 /// supply it directly.
-function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = true, cardGradesHover = false, dense = false, hidePast = false, nicknames = 0, ownArt = 0, search = true }) {
-  const ctx = { dark, mascot, stock, detect, cardGrades, cardGradesHover, dense, hidePast, nicknames, ownArt, search };
+function receiptRows({ present, detect = {}, dark = false, mascot = true, stock = 'newsprint', putBack = {}, cardGrades = true, cardGradesHover = false, dense = false, hidePast = false, nicknames = 0, ownArt = 0, ownWall = false, search = true }) {
+  const ctx = { dark, mascot, stock, detect, cardGrades, cardGradesHover, dense, hidePast, nicknames, ownArt, ownWall, search };
   return RULES.flatMap((rule) => {
     if (rule.darkOnly && !dark) return [];
     const hits = rule.hook ? Number(present(rule.hook)) || 0 : 0;
@@ -377,5 +439,5 @@ function shouldStepAside({ mine, current, alive }) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PAPERS, RULES, WORD_INKS, contrast, scrimFor, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, tileTokens, shouldStepAside };
+  module.exports = { PAPERS, RULES, WORD_INKS, contrast, paletteFrom, scrimFor, paperLine, stockFor, skinClasses, receiptRows, pageName, remoteKill, killReason, isLoginPath, isQuizTake, isSubmissionPath, themeStyle, tileTokens, shouldStepAside };
 }

@@ -281,7 +281,7 @@ function applySkin(s) {
   const root = document.documentElement;
   killed = detectKill();
   facts = detectFacts();
-  const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
+  const look = wornLook();
   const next = new Set(killed ? [] : skinClasses({ on: !!s.cards, dark: !!s.dark, dense: !!s.dense, hidePast: !!s.hidePast, gradeHover: !!s.cardGradesHover, look, putBack, detect: facts }));
   for (const c of [...root.classList]) {
     if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && c !== 'pk-list-on' && !next.has(c)) root.classList.remove(c);
@@ -295,20 +295,20 @@ function applySkin(s) {
   if (!next.size) { style?.remove(); return; }
   if (!style) { style = document.createElement('style'); style.id = 'pk-theme-vars'; root.append(style); }
   if (!alive()) return;
-  const css = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)));
+  const css = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), ownArt));
   if (style.textContent !== css) style.textContent = css;
 }
 
 /// The receipt for this page, for the popup.
 function receiptForPage() {
-  const look = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
+  const look = wornLook();
   return {
     page: pageName(location.pathname),
     off: killed,
     on: !!skin.cards,
     rows: killed || !skin.cards ? [] : receiptRows({
       present: (k) => document.querySelectorAll(SELECTORS[k].sel).length,
-      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: skin.cardGrades !== false, cardGradesHover: !!skin.cardGradesHover, dense: !!skin.dense, hidePast: !!skin.hidePast, nicknames: Object.keys(nicknames).length, ownArt: Object.keys(cardArt).length, search: skin.search !== false,
+      detect: facts, dark: !!skin.dark, mascot: !!skin.mascot, cardGrades: skin.cardGrades !== false, cardGradesHover: !!skin.cardGradesHover, dense: !!skin.dense, hidePast: !!skin.hidePast, nicknames: Object.keys(nicknames).length, ownArt: Object.keys(cardArt).length, ownWall: look.art === 'own', search: skin.search !== false,
       stock: stockFor(look, !!skin.dark), putBack,
     }),
   };
@@ -711,6 +711,57 @@ async function readPicture(file) {
   return out;
 }
 
+/// The student's own photo as the wallpaper of the "Your picture" look:
+/// `{ src, thumb, w, h, palette }`. Read from a file they pick, shrunk here,
+/// kept in this browser. Never uploaded, never fetched, never pushed to the
+/// phone. The palette (receipt.js `paletteFrom`) is the rail and accent the
+/// look wears while this photo is under it.
+let ownArt = null;
+/// Wide enough for a laptop screen; a wallpaper sits under a paper wash, so it
+/// need not be sharper than the screen.
+const OWN_WALL_STEPS = [[1920, 0.82], [1600, 0.78], [1280, 0.74], [1024, 0.7]];
+/// A megabyte and a half of the ten the browser gives the whole extension.
+const OWN_WALL_MAX = 1_500_000;
+
+async function readWallpaper(file) {
+  const bmp = await createImageBitmap(file);
+  let out = null;
+  try {
+    for (const [width, quality] of OWN_WALL_STEPS) {
+      const w = Math.max(1, Math.min(width, bmp.width));
+      const h = Math.max(1, Math.round(bmp.height * (w / bmp.width)));
+      const canvas = new OffscreenCanvas(w, h);
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(bmp, 0, 0, w, h);
+      const palette = paletteFrom(ctx.getImageData(0, 0, w, h).data);
+      const src = await blobToDataURL(await canvas.convertToBlob({ type: 'image/jpeg', quality }));
+      out = { src, w, h, palette, thumb: await wallpaperThumb(bmp) };
+      if (src.length <= OWN_WALL_MAX) break;
+    }
+  } finally { bmp.close(); }
+  return out;
+}
+
+/// A 480x270 cover crop for the Looks tile, the size the bundled thumbs are.
+async function wallpaperThumb(bmp) {
+  const W = 480, H = 270;
+  const scale = Math.max(W / bmp.width, H / bmp.height);
+  const w = bmp.width * scale, h = bmp.height * scale;
+  const canvas = new OffscreenCanvas(W, H);
+  canvas.getContext('2d').drawImage(bmp, (W - w) / 2, (H - h) / 2, w, h);
+  return blobToDataURL(await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.7 }));
+}
+
+/// The look being worn. "Your picture" is a look only with a photo behind it:
+/// with none it is Classic, and with one the photo's own colours ride on it.
+/// boot.js works the same answer out before first paint.
+function wornLook() {
+  const base = LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic;
+  if (base.art !== 'own') return base;
+  if (typeof ownArt?.src !== 'string') return LOOKS_BY_ID.classic;
+  return { ...base, ...(ownArt.palette ?? {}) };
+}
+
 /// The pictures, as one stylesheet of custom properties.
 ///
 /// Variables here, rules in skin.css — the same split themeStyle uses, so
@@ -1095,7 +1146,28 @@ function plannerSetOwnTasks(next) { ownTasks = next; }
 // the world (Annex B hoisting); an async function does not. Hence the wrappers.
 function plannerPlan(id, key) { return setPlan(id, key); }
 function plannerBuy(id) { return buy(id); }
-function plannerLooks() { return { LOOKS, LOOKS_BY_ID, PAPERS, ART_AVAILABLE, cardArt, banners }; }
+function plannerLooks() { return { LOOKS, LOOKS_BY_ID, PAPERS, ART_AVAILABLE, cardArt, banners, ownArt, worn: wornLook() }; }
+/// The student's own photo as a wallpaper: read here, shrunk here, kept here,
+/// and worn at once.
+async function plannerWallpaper(file) {
+  const pic = await readWallpaper(file);
+  if (!pic) return false;
+  ownArt = pic;
+  wallet = { ...wallet, wearing: 'own', owned: wallet.owned.includes('own') ? wallet.owned : [...wallet.owned, 'own'] };
+  await chrome.storage.local.set({ ownArt, wallet });
+  applySkin(skin);
+  render();
+  return true;
+}
+function plannerWallpaperAsync(file) { return plannerWallpaper(file); }
+async function plannerClearWallpaper() {
+  ownArt = null;
+  if (wallet.wearing === 'own') wallet = { ...wallet, wearing: 'classic' };
+  await chrome.storage.local.set({ ownArt: null, wallet });
+  applySkin(skin);
+  render();
+}
+function plannerClearWallpaperAsync() { return plannerClearWallpaper(); }
 /// A picture the student picked for a course card, or a banner from the theme.
 async function plannerPicture(courseId, file) {
   const pic = await readPicture(file);
@@ -1859,7 +1931,7 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', 'done', 'recapDismissed', HANDED_IN_KEY]);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', 'done', 'recapDismissed', 'ownArt', HANDED_IN_KEY]);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
@@ -1871,6 +1943,7 @@ async function mount() {
   targets = stored.targets ?? {};
   banners = stored.banners ?? {};
   cardArt = stored.cardArt ?? {};
+  ownArt = stored.ownArt && typeof stored.ownArt.src === 'string' ? stored.ownArt : null;
   putBack = stored.putBack ?? {};
   flags = stored.flags ?? null;
   wallet = { ...wallet, ...(stored.wallet ?? {}) };
@@ -1933,7 +2006,7 @@ if (typeof module !== 'undefined') {
       // And the number: what the phone will pay for it, floating up from him.
       ui.float = Date.now();
     }
-    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.nicknames || changes.ownTasks || changes.done || changes.flags) mount();
+    if (changes.lastPayload || changes.skin || changes.wallet || changes.focus || changes.putBack || changes.banners || changes.cardArt || changes.ownArt || changes.nicknames || changes.ownTasks || changes.done || changes.flags) mount();
     // Not plans, levels or targets: the tab that set one has already redrawn,
     // and a remount here would throw the student back to the top of the panel
     // they just tapped in.

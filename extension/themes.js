@@ -181,6 +181,21 @@ const IMAGE_THEMES = [
 ];
 for (const t of IMAGE_THEMES) THEMES.push(t);
 
+/// Your picture: a photo of the student's own as the wallpaper, under the
+/// paper's wash like any image look. The photo is read and shrunk in the page
+/// and kept in this browser (`ownArt`); the rail and the accent are read off
+/// it (receipt.js `paletteFrom`) and ride on this look when it is worn. Free,
+/// because the photo is theirs. The colours here are Classic's, for the tile
+/// before a photo is chosen and for the tests that hold every look to AA.
+const OWN_THEME = {
+  id: 'own', name: 'Your picture', vibe: 'a photo of yours, under the paper',
+  paper: { light: 'newsprint', dark: 'carbon' }, accent: { light: '#2F6BAA', dark: '#6FA8DC' },
+  rail: { light: '#2F4A66', dark: '#1B2733' },
+  header: 'band', texture: 'none', accessory: null, price: 0, free: true,
+  art: 'own', wash: { light: 0.82, dark: 0.7 },
+};
+THEMES.push(OWN_THEME);
+
 const THEMES_BY_ID = Object.fromEntries(THEMES.map((t) => [t.id, t]));
 
 /// The left menu takes the theme's rail colour. White text and icons sit on
@@ -190,8 +205,15 @@ const THEMES_BY_ID = Object.fromEntries(THEMES.map((t) => [t.id, t]));
 /// The files an image theme uses, as extension URLs. Falls back to the
 /// placeholder set until the theme's own folder exists (art/manifest.json
 /// lists the folders that do).
-function artFor(theme, available, toURL) {
+function artFor(theme, available, toURL, ownArt = null) {
   if (!theme?.art) return null;
+  // The student's own photo: a data URL from this browser, no file of ours.
+  // With no photo chosen the look has no art, and content.js wears Classic.
+  if (theme.art === 'own') {
+    return typeof ownArt?.src === 'string'
+      ? { wallpaper: ownArt.src, thumb: typeof ownArt.thumb === 'string' ? ownArt.thumb : ownArt.src, cards: [] }
+      : null;
+  }
   const folder = available.includes(theme.art) ? theme.art : '_placeholder';
   const ext = folder === '_placeholder' ? 'svg' : 'webp';
   return {
@@ -209,4 +231,4 @@ function textureImage(kind, ink) {
   return `url("data:image/svg+xml,${encodeURIComponent(draw(ink))}")`;
 }
 
-if (typeof module !== 'undefined') module.exports = { THEMES, THEMES_BY_ID, IMAGE_THEMES, TEXTURES, textureImage, artFor };
+if (typeof module !== 'undefined') module.exports = { THEMES, THEMES_BY_ID, IMAGE_THEMES, OWN_THEME, TEXTURES, textureImage, artFor };

@@ -683,8 +683,8 @@ function renderLooks() {
   const head = document.getElementById('dashboard_header_container');
   if (!plannerShows() || plTab !== 'looks' || !head) { existing?.remove(); return; }
   const { wallet, skin, data } = plannerState();
-  const { LOOKS, LOOKS_BY_ID, PAPERS, ART_AVAILABLE, cardArt, banners } = plannerLooks();
-  const key = JSON.stringify([wallet.coins, wallet.owned, wallet.wearing, !!skin.dark, plConfirm, Object.keys(cardArt), banners, data.courses.map((c) => [c.id, c.colorHex])]);
+  const { LOOKS, LOOKS_BY_ID, PAPERS, ART_AVAILABLE, cardArt, banners, ownArt, worn } = plannerLooks();
+  const key = JSON.stringify([wallet.coins, wallet.owned, wallet.wearing, !!skin.dark, plConfirm, Object.keys(cardArt), banners, data.courses.map((c) => [c.id, c.colorHex]), ownArt?.thumb?.length ?? 0, plWallBusy]);
   if (existing && existing.dataset.key === key) return;
 
   const box = el('section', '', null);
@@ -728,17 +728,18 @@ function renderLooks() {
 
   // The student's own classes, so every tile's two cards are theirs.
   const courses = data.courses.filter((c) => /^\d+$/.test(String(c.id)));
+  // The worn look first, then "Your picture", then the rest of what is theirs.
   const yours = LOOKS.filter((look) => look.free || wallet.owned.includes(look.id))
-    .sort((a, b) => (b.id === wallet.wearing) - (a.id === wallet.wearing));
+    .sort((a, b) => (b.id === wallet.wearing) - (a.id === wallet.wearing) || (b.art === 'own') - (a.art === 'own'));
   const locked = LOOKS.filter((look) => !yours.includes(look));
   const grid = (list) => {
     const g = el('div', 'pk-pl-looks');
-    for (const look of list) g.append(plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned: yours.includes(look), courses }));
+    for (const look of list) g.append(plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned: yours.includes(look), courses, ownArt }));
     return g;
   };
   box.append(el('span', 'pk-pl-label plain', 'Yours'), grid(yours));
   if (locked.length) box.append(el('span', 'pk-pl-label plain', 'Locked'), grid(locked));
-  box.append(plPictures(LOOKS_BY_ID[wallet.wearing] ?? LOOKS_BY_ID.classic, { data, cardArt, banners, ART_AVAILABLE }));
+  box.append(plPictures(worn, { data, cardArt, banners, ART_AVAILABLE, ownArt }));
 
   if (existing) existing.replaceWith(box); else head.after(box);
 }
@@ -749,18 +750,33 @@ function renderLooks() {
 /// beside them. Drawn in container units, so the tile is the page at 4:3 and
 /// nothing is scaled. The name and the mood under it, a tick when worn, a
 /// price when locked. No request: the wallpapers are the ones already bundled.
-function plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned, courses = [] }) {
+function plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned, courses = [], ownArt = null }) {
+  // "Your picture" with no photo yet is a place to drop one: the tile is a
+  // label over a file input, and the scene says so. With a photo it is a look
+  // like any other, in the photo's own colours, with a way to take it off.
+  const own = look.art === 'own';
+  if (own && typeof ownArt?.src !== 'string') return plOwnEmptyTile(look, { skin, PAPERS });
+  if (own) look = { ...look, ...(ownArt.palette ?? {}) };
   const wearing = wallet.wearing === look.id;
   const dark = !!skin.dark;
   const stock = stockFor(look, dark);
   const p = PAPERS[stock];
-  const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)) : null;
-  const tile = el('div', `pk-pl-look${wearing ? ' wearing' : ''}${p.dark ? ' on-dark' : ''}${art ? ' has-art' : ''}`);
+  const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), ownArt) : null;
+  const tile = el('div', `pk-pl-look${wearing ? ' wearing' : ''}${p.dark ? ' on-dark' : ''}${art ? ' has-art' : ''}${own ? ' own' : ''}`);
   tile.setAttribute('role', 'button'); tile.tabIndex = 0; tile.setAttribute('aria-pressed', String(wearing));
   tile.dataset.look = look.id;
   tile.style.cssText = tileTokens(look, dark, courses, art);
   const scene = el('div', 'scene');
   scene.setAttribute('aria-hidden', 'true');
+  if (own) {
+    const off = el('span', 'remove', '×');
+    off.setAttribute('role', 'button'); off.tabIndex = 0; off.setAttribute('aria-label', 'Remove your picture'); off.title = 'Remove your picture';
+    off.setAttribute('aria-hidden', 'false');
+    const clear = (e) => { e.stopPropagation(); e.preventDefault(); if (e.isTrusted) plannerClearWallpaperAsync().then(() => renderLooks()); };
+    off.addEventListener('click', clear);
+    off.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') clear(e); });
+    scene.append(off);
+  }
   scene.append(el('i', 'rail'));
   const page = el('div', 'page');
   page.append(el('b', 'title'), el('i', 'link'));
@@ -790,13 +806,36 @@ function plLookTile(look, { wallet, skin, PAPERS, ART_AVAILABLE, owned, courses 
   return tile;
 }
 
+let plWallBusy = false;
+
+/// "Your picture" before a photo is chosen: the paper, a dashed edge, the
+/// words. A label, so the click is the file picker's own.
+function plOwnEmptyTile(look, { skin, PAPERS }) {
+  const dark = !!skin.dark;
+  const p = PAPERS[stockFor(look, dark)];
+  const tile = el('label', `pk-pl-look own empty${p.dark ? ' on-dark' : ''}${plWallBusy ? ' busy' : ''}`);
+  tile.dataset.look = look.id;
+  tile.style.cssText = tileTokens(look, dark, [], null);
+  const scene = el('div', 'scene');
+  scene.append(el('span', 'add', plWallBusy ? 'Reading it…' : '+ Add a photo'));
+  const input = el('input', '', null); input.type = 'file'; input.accept = 'image/*';
+  input.setAttribute('aria-label', 'Your picture: choose a photo for the wallpaper');
+  input.addEventListener('change', () => {
+    const file = input.files?.[0]; if (!file) return;
+    plWallBusy = true; renderLooks();
+    plannerWallpaperAsync(file).catch(() => {}).then(() => { plWallBusy = false; renderLooks(); });
+  });
+  tile.append(scene, input, el('b', '', look.name), el('small', '', 'A photo of yours, under the paper. Kept in this browser.'));
+  return tile;
+}
+
 /// Course pictures: the worn theme's banners for each course, or a picture of
 /// your own, read here, shrunk here, kept in this browser.
-function plPictures(look, { data, cardArt, banners, ART_AVAILABLE }) {
+function plPictures(look, { data, cardArt, banners, ART_AVAILABLE, ownArt = null }) {
   const wrap = el('div', 'pk-pl-pictures');
   const courses = data.courses.filter((c) => c.name && /^\d+$/.test(String(c.id))).slice(0, 8);
   if (!courses.length) return wrap;
-  const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f)) : null;
+  const art = alive() ? artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), ownArt) : null;
   wrap.append(el('span', 'pk-pl-label plain', 'Course pictures'));
   for (const c of courses) {
     // Not "row": Canvas's own .row (its grid) reached in and laid this out
