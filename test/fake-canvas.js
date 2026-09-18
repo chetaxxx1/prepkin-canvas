@@ -570,7 +570,27 @@ class FakeServer {
 function pageC(p, url) { return null; }
 // ---- end Session C ----
 // ---- Session D pages (all courses, files, people, syllabus) ----
-function pageD(p, url) { return null; }
+// Trimmed from the sandbox (2026-09-18) into test/d-pages/. The real All
+// Courses markup answers `/courses?full=1` only, so the chain's flat table
+// below still serves R16 and R20 as it always has; Files, People and the
+// Syllabus have no page in the chain and answer here. `?empty=1` on the
+// syllabus blanks the teacher's body.
+function pageD(p, url) {
+  const read = (name) => require('fs').readFileSync(require('path').join(__dirname, 'd-pages', name), 'utf8');
+  // The little of InstUI's own CSS these pages lean on (its flex boxes, its
+  // screen-reader clip, its checkbox and icon-button sizes), so a row in the
+  // fake is the height it is on Canvas.
+  const instui = '<style>[class*="screenReaderContent"]{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}[class*="view--flex-flex"]{display:flex;align-items:center}[class*="view--flex-flex"][direction="column"]{flex-direction:column;align-items:stretch}[class*="view--flex-flex"][wrap="wrap"]{flex-wrap:wrap}[class*="view-flexItem"]{min-width:0}[class*="checkboxFacade__facade"]{display:inline-block;width:16px;height:16px;border:1px solid #888;border-radius:3px}[class*="checkbox__input"]{position:absolute;left:-10000px}[class*="-baseButton"]{background:#fff;border:1px solid #ccc;border-radius:4px;padding:6px 10px;font:inherit}[class*="baseButton__iconOnly"] svg{width:16px;height:16px}[class*="textInput__facade"]{display:flex;border:1px solid #ccc;border-radius:4px;padding:0 8px}[class*="textInput__facade"] input{border:0;outline:0;flex:1}.ui-tabs-nav{list-style:none;display:flex;gap:4px;padding:10px 130px 0 14px;margin:0}.roster td,.roster th{padding:12px 8px}#syllabus{width:100%;table-layout:fixed}.mini_calendar{width:100%}</style>';
+  if (p === '/courses' && url.searchParams.get('full') === '1') return { main: read('courses-main.html') };
+  if (/^\/courses\/\d+\/files\/?$/.test(p)) return { main: instui + read('files-main.html') };
+  if (/^\/courses\/\d+\/users\/?$/.test(p)) return { main: instui + read('people-main.html') };
+  if (/^\/courses\/\d+\/assignments\/syllabus\/?$/.test(p)) {
+    let main = read('syllabus-main.html');
+    if (url.searchParams.get('empty') === '1') main = main.replace(/(<div id="course_syllabus"[^>]*>)[\s\S]*?(<\/div>\s*<div id="course_syllabus_details")/, '$1 $2');
+    return { main: instui + main, side: read('syllabus-side.html') };
+  }
+  return null;
+}
 // ---- end Session D ----
 // ---- Session E pages (calendar, inbox) ----
 // The calendar (FullCalendar's rendered month with its sidebar) and the Inbox

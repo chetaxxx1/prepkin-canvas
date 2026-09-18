@@ -360,7 +360,8 @@ test('R16 everywhere: calendar, the courses table and a quiz page take the paper
   assert.equal(await style(page, '#calendar-list-holder', 'backgroundColor'), paper2, 'the calendar list is paper');
   await page.close();
   page = await open('/courses');
-  assert.equal(await style(page, '.ic-Table th', 'backgroundColor'), sunk);
+  // A table head is quiet words on a hairline, no band, since session D (2026-09-18).
+  assert.equal(await style(page, '.ic-Table th', 'backgroundColor'), 'rgba(0, 0, 0, 0)');
   assert.equal(await style(page, '[class*="-view-link"]', 'color'), link, 'an InstUI link takes the mark, found by the end of its class name');
   assert.equal(await style(page, '[class*="-text"]', 'color'), ink, 'InstUI text takes the ink');
   assert.equal(await style(page, '#content h1', 'color'), ink);

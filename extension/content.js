@@ -2067,7 +2067,53 @@ async function mount() {
 function passC() {}
 // ---- end Session C ----
 // ---- Session D pass (all courses, files, people, syllabus) ----
-function passD() {}
+/// The tables (2026-09-18). Attributes only, for CSS to draw; Canvas's words
+/// stay for a screen reader. All Courses: the course's initial and id on its
+/// name cell (the colour tile), the term re-said as a chip, the grade the
+/// sync holds on the row (under the cards' own grade switch), a count on the
+/// "Past Enrollments" heading. People: a placeholder face gets the person's
+/// initials and the course (the class colour). Syllabus: an empty body is
+/// marked so it draws no card.
+function passD() {
+  const on = skin.cards && !killed;
+  const clear = (sel, attr) => document.querySelectorAll(`${sel}[${attr}]`).forEach((el) => el.removeAttribute(attr));
+  const set = (el, key, value) => {
+    if (value == null || value === '') { if (el.dataset[key] != null) delete el.dataset[key]; }
+    else if (el.dataset[key] !== value) el.dataset[key] = value;
+  };
+  const letters = (name, n) => String(name ?? '').trim().split(/\s+/).filter(Boolean).slice(0, n).map((w) => (w.match(/[\p{L}\p{N}]/u) ?? [''])[0].toUpperCase()).join('');
+  const courseIdOf = (a) => a?.getAttribute('href')?.match(/\/courses\/(\d+)/)?.[1] ?? null;
+
+  const tables = '#content .course-list-table';
+  if (!on || putBack.columns) {
+    for (const [sel, attr] of [[`${tables} td`, 'data-pk-initial'], [`${tables} td`, 'data-pk-course'], [`${tables} td`, 'data-pk-term'], [`${tables} tr`, 'data-pk-grade'], [`${tables} tr`, 'data-pk-letter'], ['#content h2', 'data-pk-count']]) clear(sel, attr);
+  } else {
+    const grades = skin.cardGrades !== false ? [...(data.courses ?? []), ...(data.pastCourses ?? [])] : [];
+    for (const row of document.querySelectorAll(`${tables} > tbody > tr`)) {
+      const cell = row.querySelector('td.course-list-course-title-column');
+      if (!cell) continue;
+      const a = cell.querySelector('a[href*="/courses/"]');
+      const id = courseIdOf(a);
+      set(cell, 'pkInitial', letters(a?.textContent, 1));
+      set(cell, 'pkCourse', id);
+      // The colour square carries the initial when Canvas drew one.
+      const block = cell.querySelector('.course-color-block');
+      if (block) set(block, 'pkInitial', letters(a?.textContent, 1));
+      const term = row.querySelector('td.course-list-term-column');
+      if (term) set(term, 'pkTerm', [...term.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim());
+      const c = id ? grades.find((x) => String(x.id) === id) : null;
+      set(row, 'pkGrade', typeof c?.score === 'number' ? `${Number.isInteger(c.score) ? c.score : c.score.toFixed(1)}%` : null);
+      set(row, 'pkLetter', typeof c?.grade === 'string' && c.grade ? c.grade : null);
+    }
+    // "Past Enrollments" / "Future Enrollments": the heading sits in its own
+    // block, its table in the next; the count goes on the heading.
+    for (const h2 of document.querySelectorAll('#content .content--hasMarginTop > h2')) {
+      const table = h2.parentElement?.nextElementSibling?.querySelector?.('.course-list-table');
+      set(h2, 'pkCount', table ? String(table.querySelectorAll('tbody > tr').length) : null);
+    }
+  }
+
+}
 // ---- end Session D ----
 // ---- Session E pass (calendar, inbox) ----
 /// The Inbox (2026-09-19): the sender's initials on each conversation row

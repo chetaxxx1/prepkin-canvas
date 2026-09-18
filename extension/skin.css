@@ -2088,6 +2088,124 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 
 
 /* ==== Session D (tables: all courses, files, people, syllabus). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
+/* MARK: - Session D (2026-09-18): the tables. All Courses, Files, People, Syllabus.
+ *
+ * One head for every table Canvas draws: no band. The labels are quiet 12px
+ * words in the second ink with one hairline under the row; nothing is filled.
+ * The courses tables, the roster and the syllabus summary are `.ic-Table`;
+ * Files is an InstUI table whose head is a hashed `-head` thead of
+ * `-colHeader` cells (named by the stable end of the class, never the hash).
+ * A row header (a syllabus date, a Files checkbox) is not a head: only a
+ * `thead` counts. The calendar's day headers are FullCalendar's `th` and are
+ * left out here; the calendar is session E's. The art rules above tint every
+ * head; these come later at the same or a higher rank, so they win there too. No `body.<page>` here: the fake serves these pages without Canvas's body class, so each rule is anchored on the page's own markup. */
+html.pk-on:not(.pk-back-paper) #content table > thead > tr > th:not(.fc-day-header):not(.fc-widget-header),
+html.pk-on:not(.pk-back-paper) #content th[class*="-colHeader"],
+html.pk-on.pk-art:not(.pk-back-paper) #content th[class*="-colHeader"],
+html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-head"] [class*="-view-cell"] {
+  background-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-ink-2) !important; font-size: 12px !important; line-height: 16px !important; font-weight: 700 !important;
+  text-transform: none !important; letter-spacing: normal !important;
+  border: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; padding: 8px 10px !important; vertical-align: middle !important;
+}
+html.pk-on:not(.pk-back-paper) #content table > thead,
+html.pk-on:not(.pk-back-paper) #content table > thead > tr,
+html.pk-on:not(.pk-back-paper) #content thead[class*="-head"],
+html.pk-on.pk-art:not(.pk-back-paper) #content thead[class*="-head"] { background-color: transparent !important; box-shadow: none !important; }
+/* A sortable head is a link (the courses tables) or, in InstUI, a button; the
+ * words take the quiet ink either way, and the sort arrow with them. */
+html.pk-on:not(.pk-back-paper) #content table > thead > tr > th:not(.fc-day-header) a,
+html.pk-on:not(.pk-back-paper) #content table > thead > tr > th:not(.fc-day-header) a:hover { color: var(--pk-ink-2) !important; text-decoration: none !important; }
+html.pk-on:not(.pk-back-paper) #content table > thead > tr > th:not(.fc-day-header) a:hover { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content table > thead > tr > th:not(.fc-day-header) i[class*="icon-mini-arrow"] { font-size: 10px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #content [class*="-colHeader"] svg { width: 10px !important; height: 10px !important; }
+/* InstUI's sort control and its parts inside the cell share the suffix; they
+ * take the cell's words and nothing of its box. */
+html.pk-on:not(.pk-back-paper) #content th[class*="-colHeader"] [class*="colHeader__"] { padding: 0 !important; margin: 0 !important; border: 0 !important; background-color: transparent !important; color: inherit !important; font-size: inherit !important; font-weight: inherit !important; line-height: inherit !important; box-shadow: none !important; }
+html.pk-on:not(.pk-back-paper) #content th[class*="-colHeader"] svg { margin-left: 4px !important; vertical-align: middle !important; }
+html.pk-on:not(.pk-back-paper) #content th[class*="-colHeader"] span { color: var(--pk-ink-2) !important; }
+
+/* ---- All Courses: the /grades rows, as a table ------------------------------
+ * The columns a student never reads (Favorite, Nickname, Enrolled as,
+ * Published) and the sort row go under the `columns` receipt row; the name,
+ * the term and the grade stay. The table then draws as the finished-courses
+ * fold on /grades: one 44px line a course, the class colour as a 26px tile
+ * with the course's initial (the pass in content.js writes the initial on the
+ * name cell; the tile's colour is Canvas's own square where there is one,
+ * else the sync's colour for that course, else the quiet ink), the term as a
+ * chip (the pass re-says it; Canvas's words stay for a screen reader), the
+ * grade the sync holds at the row's end under the cards' own grade switch. */
+html.pk-on.pk-back-columns:not(.pk-back-paper) #content .course-list-table > thead { display: block !important; }
+html.pk-on:not(.pk-back-columns) #content .course-list-table > thead,
+html.pk-on:not(.pk-back-columns) #content .course-list-table .course-list-star-column,
+html.pk-on:not(.pk-back-columns) #content .course-list-table .course-list-nickname-column,
+html.pk-on:not(.pk-back-columns) #content .course-list-table .course-list-enrolled-as-column,
+html.pk-on:not(.pk-back-columns) #content .course-list-table .course-list-published-column { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .table-overflow-container { overflow: visible !important; }
+/* The finished tables' own fold (the past-courses switch, above) outranks
+ * the block display here; Show me still brings them back for a look. */
+html.pk-on.pk-hide-past #content #past_enrollments_table,
+html.pk-on.pk-hide-past #content #future_enrollments_table { display: none !important; }
+html.pk-on.pk-show.pk-hide-past #content #past_enrollments_table,
+html.pk-on.pk-show.pk-hide-past #content #future_enrollments_table { display: block !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table { display: block !important; width: 100% !important; margin: 0 !important; border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important; box-shadow: var(--pk-lift) !important; overflow: clip !important; background-color: var(--pk-paper-2) !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table > tbody { display: block !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table tr { display: flex !important; align-items: center !important; gap: 12px !important; min-height: 44px !important; padding: 0 14px !important; border: 0 !important; border-top: 1px solid var(--pk-rule) !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table > tbody > tr:first-child { border-top: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table > thead > tr { border-top: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table > tbody > tr:hover { background-color: var(--pk-hover) !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table th,
+html.pk-on:not(.pk-back-paper) #content .course-list-table td { display: block !important; flex: none !important; width: auto !important; min-width: 0 !important; padding: 0 !important; border: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table .course-list-course-title-column { flex: 1 1 auto !important; min-width: 0 !important; display: flex !important; align-items: center !important; gap: 10px !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-course-title-column a { flex: 1 1 auto !important; min-width: 0 !important; font-size: 14px !important; font-weight: 700 !important; color: var(--pk-ink) !important; text-decoration: none !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-course-title-column a:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-course-title-column a .name { padding: 0 !important; }
+/* The tile: Canvas's own colour square, grown to 26px with the initial on it
+ * (its inline colour is the class colour), or, on a finished course with no
+ * square, a tile drawn on the cell in the sync's colour for that course. */
+html.pk-on:not(.pk-back-paper) #content .course-list-table td .course-color-block,
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-course-title-column[data-pk-initial]:not(:has(.course-color-block))::before {
+  display: grid !important; place-items: center !important; flex: none !important; width: 26px !important; height: 26px !important; margin: 0 !important; padding: 0 !important;
+  border-radius: 8px !important; font-size: 12px !important; line-height: 1 !important; font-weight: 800 !important; font-style: normal !important;
+  box-sizing: border-box !important; border: 1px solid rgba(0, 0, 0, .12) !important; text-shadow: 0 1px 0 rgba(0, 0, 0, .18);
+}
+html.pk-on:not(.pk-back-paper) #content .course-list-table td .course-color-block { background-color: currentColor !important; }
+/* Canvas draws the square as a "■" glyph in ::before; the tile is the box itself. */
+html.pk-on:not(.pk-back-paper) #content .course-list-table td .course-color-block::before { content: none !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table td .course-color-block::after { content: attr(data-pk-initial); color: #fff; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-course-title-column[data-pk-initial]:not(:has(.course-color-block))::before { content: attr(data-pk-initial); background-color: var(--pk-course, var(--pk-ink-2)); color: var(--pk-paper); text-shadow: none; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-course-title-column[data-pk-course][data-pk-initial]:not(:has(.course-color-block))::before { color: #fff; }
+/* The term as a quiet chip. The cell's own words shrink to nothing and the
+ * chip re-says them; a live course's "Default Term" is a screen-reader span
+ * Canvas already hides, and draws nothing. */
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-term-column { font-size: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table td.course-list-term-column[data-pk-term]::after {
+  content: attr(data-pk-term); display: inline-block; font-size: 12px; line-height: 18px; padding: 0 8px; border-radius: 999px; font-weight: 700;
+  background: var(--pk-paper-sunk); color: var(--pk-ink-2); white-space: nowrap;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content .course-list-table td.course-list-term-column[data-pk-term]::after { background: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+/* The grade at the row's end: the score, then the letter, the /grades shape.
+ * Drawn on the row itself, after its cells; nothing when the sync has none. */
+html.pk-on:not(.pk-back-paper) #content .course-list-table tr[data-pk-grade]::after,
+html.pk-on:not(.pk-back-paper) #content .course-list-table tr[data-pk-letter]::after { display: flex; align-items: baseline; gap: 6px; flex: none; margin-left: auto; font-variant-numeric: tabular-nums; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table tr[data-pk-grade]::after { content: attr(data-pk-grade); font-size: 13px; font-weight: 700; color: var(--pk-ink-2); }
+html.pk-on:not(.pk-back-paper) #content .course-list-table tr[data-pk-letter]::after { content: attr(data-pk-grade) "  " attr(data-pk-letter); white-space: pre; }
+html.pk-on:not(.pk-back-paper) #content .course-list-table tr[data-pk-letter]:not([data-pk-grade])::after { content: attr(data-pk-letter); }
+html.pk-on:not(.pk-back-paper) #content .course-list-table tr[data-pk-letter]::after { font-size: 13px; font-weight: 800; color: var(--pk-ink); }
+/* "Past Enrollments" and "Future Enrollments" head their tables as the planner's
+ * groups do: plain words at 15/800 with the row count as a chip after them. */
+html.pk-on:not(.pk-back-paper) #content .content--hasMarginTop:has(> h2 + *) { margin: 20px 0 6px !important; }
+html.pk-on:not(.pk-back-paper) #content h2[data-pk-count] { display: flex !important; align-items: center !important; gap: 8px !important; margin: 20px 0 6px !important; font-size: 15px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content h2[data-pk-count]::after {
+  content: attr(data-pk-count); font-size: 12px; line-height: 18px; min-width: 18px; padding: 0 7px; border-radius: 999px; text-align: center; font-weight: 800;
+  background: var(--pk-paper-sunk); color: var(--pk-ink-2); font-variant-numeric: tabular-nums;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content h2[data-pk-count]::after { background: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+html.pk-on:not(.pk-back-paper) #content .course-list-table + .content--hasMarginTop { margin-top: 20px !important; }
+/* On the frosted pane the table is an outlined section, not a plate. */
+html.pk-on.pk-art:not(.pk-back-paper) #content .course-list-table { background-color: transparent !important; box-shadow: none !important; border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content .course-list-table tr { background-color: transparent !important; border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content .course-list-table > tbody > tr:hover { background-color: color-mix(in srgb, var(--pk-ink) 6%, transparent) !important; }
 
 /* ==== end Session D ==== */
 

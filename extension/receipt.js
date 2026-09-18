@@ -243,6 +243,10 @@ const RULES = [
   // ---- Session C rows (course pages) ----
   // ---- end Session C ----
   // ---- Session D rows (tables) ----
+  // The columns a student never reads, folded: on All Courses the Favorite
+  // star, Nickname, Enrolled as and Published with the sort row (the name, the
+  // term and the grade stay, as rows); on Files Created, Modified By and Status.
+  { key: 'columns', kind: 'taken', label: 'Columns you never read: Favorite, Nickname, Enrolled as and Published on All Courses; Created, Modified By and Status on Files', hook: 'tableColumns' },
   // ---- end Session D ----
   // ---- Session E rows (calendar, inbox) ----
   // The Inbox as rows (2026-09-19): the toolbar one line, each conversation

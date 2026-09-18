@@ -23,6 +23,8 @@ const SELECTORS = {
   recentFeedback:  { sel: '.events_list.recent_feedback', page: 'any', conf: 'verified', never: true }, // never hidden; restyled as rows
   courseNav:       { sel: '#section-tabs', page: 'course', conf: 'verified' },
   pastCourses:     { sel: '#past_enrollments_table, #future_enrollments_table', page: 'courses', conf: 'likely' },
+  // The tables with columns a student never reads (session D, 2026-09-18): All Courses and the InstUI Files table.
+  tableColumns:    { sel: '#my_courses_table, #files-table', page: 'courses', conf: 'verified' },
   courseNavLowUse: { sel: '#section-tabs a.files, #section-tabs a.outcomes, #section-tabs a.conferences, #section-tabs a.collaborations', page: 'course', conf: 'verified' },
   moduleHeader:    { sel: '.context_module .ig-header.header', page: 'modules', conf: 'verified' },
   moduleDue:       { sel: '.context_module .due_date_display, .ig-row .ig-details .score-display', page: 'modules', conf: 'verified' },
