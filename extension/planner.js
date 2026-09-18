@@ -648,8 +648,18 @@ function renderGradesPage() {
   const box = el('section', '', null);
   box.id = GRADES_ID; box.dataset.key = key;
   box.setAttribute('aria-label', all ? 'Prepkin: your grades' : 'Prepkin: your grade in this class');
-  if (all) { box.append(plGrades(now, { heading: null })); if (data.pastCourses?.length) box.append(plPastFold(data.pastCourses)); }
-  else box.append(plGroupHead('Your grade'), plGradeRow(c, now));
+  if (all) {
+    // Two columns: the rows on the left, the GPA and the finished fold on the
+    // right, so the sheet fills the page instead of a strip down one side.
+    const grid = el('div', 'pk-gr-all');
+    grid.append(plGrades(now, { heading: null, gpa: false }));
+    const side = el('aside', 'pk-gr-side');
+    side.setAttribute('aria-label', 'GPA and finished courses');
+    side.append(plGpaBlock(data.courses.filter((x) => x.name && /^\d+$/.test(String(x.id))), data.pastCourses ?? [], levels));
+    if (data.pastCourses?.length) side.append(plPastFold(data.pastCourses));
+    grid.append(side);
+    box.append(grid);
+  } else box.append(plGroupHead('Your grade'), plGradeRow(c, now));
   // Canvas's own table (and, on a course, its side column), one click away
   // for this visit: a fold in the group shape, like Later on the planner.
   // The receipt's Put back brings it back for good.

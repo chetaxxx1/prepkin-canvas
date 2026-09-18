@@ -441,6 +441,8 @@ html.pk-on.pk-art:not(.pk-back-paper) #content .item-group-condensed,
 html.pk-on.pk-art:not(.pk-back-paper) #content .user_content.enhanced,
 html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-pl-rows,
 html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-pl-grade,
+html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-pl-gpa,
+html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-past-rows li a,
 html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav,
 html.pk-on.pk-art:not(.pk-back-paper) #content .ui-tabs .ui-tabs-nav li {
   background-color: transparent !important; box-shadow: none !important;
@@ -798,6 +800,15 @@ html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #grade-
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content > #assignments,
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content #grade-summary-react,
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #right-side-wrapper:has(#student-grades-right-content) { display: none !important; }
+/* The student's own /grades: the rows take the left, the GPA and the
+ * finished fold the right, so the sheet is the page and not a strip down
+ * one side of it. One column again under 1000px. */
+#pk-grades .pk-gr-all { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 0 24px; align-items: start; }
+@media (max-width: 1000px) { #pk-grades .pk-gr-all { grid-template-columns: minmax(0, 1fr); } }
+#pk-grades .pk-gr-side .pk-pl-gpa { margin: 0; }
+#pk-grades .pk-gr-side .pk-past { margin: 18px 0 0; }
+#pk-grades .pk-gr-side .pk-past-rows { margin-left: 0; }
+#pk-grades .pk-gr-side .pk-pl-group { padding-left: 0; border-left: 0; }
 /* The student's own /grades: Canvas's two headings and two tables fold under
  * our rows; the h1 stays. */
 html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page):not(.pk-grades-open) #content > :not(h1):not(#pk-grades) { display: none !important; }

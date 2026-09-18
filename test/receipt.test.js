@@ -935,6 +935,13 @@ test('R31 the student\'s own /grades: a row per class under Canvas\'s h1, its ta
   assert.equal(await style(page, '#content h2', 'display'), 'none', "Canvas's headings fold");
   assert.equal(await style(page, '#content table.student_grades', 'display'), 'none', "and its tables");
   assert.notEqual(await style(page, '#content > h1', 'display'), 'none', 'the h1 stays');
+  // Two columns: the rows left, the GPA and the finished fold at the right, so
+  // the sheet fills the page instead of a strip down one side of it.
+  const [rows, side] = await page.$$eval('#pk-grades .pk-gr-all > *', (els) => els.map((e) => e.getBoundingClientRect()));
+  assert.ok(side.left >= rows.right && side.width >= 300, `the side column sits beside the rows: rows to ${rows.right}, side from ${side.left} (${side.width} wide)`);
+  assert.ok(await page.$('#pk-grades .pk-gr-side .pk-pl-gpa'), 'the GPA on the right');
+  assert.ok(await page.$('#pk-grades .pk-gr-side .pk-past .pk-pl-group.fold'), 'the finished fold under it, in the group shape');
+  assert.ok(await page.$('#pk-grades .pk-gr-show.pk-pl-group.fold'), 'and Canvas\'s table as the same fold');
   await page.click('#pk-grades .pk-gr-show');
   await page.waitForFunction(() => getComputedStyle(document.querySelector('#content table.student_grades')).display !== 'none', null, { timeout: 3000 });
   await page.close();
