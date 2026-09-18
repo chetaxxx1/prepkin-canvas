@@ -117,6 +117,13 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-help-actions a.start { background: var(--pk-mint); border-color: var(--pk-mint); color: #101820; }
 .pk-help-actions a:focus-visible, .pk-help-actions button:focus-visible, .pk-help-doors button:focus-visible, .pk-help-list a:focus-visible, .pk-help-doors a:focus-visible { outline: 2px solid var(--pk-mint); outline-offset: 1px; }
 .pk-help-list, .pk-help-doors { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+/* Your classes: a tile, the name, the letter; each row a door to the course. */
+.pk-help-classes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.pk-help-classes a { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 4px 8px; border-radius: 10px; color: inherit; text-decoration: none; }
+.pk-help-classes a:hover, .pk-help-classes a:focus-visible { background: var(--pk-inset); outline: none; }
+.pk-help-classes b { flex: 1 1 auto; min-width: 0; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-help-classes small { font-size: 12px; font-weight: 800; color: var(--pk-text-2); }
+.pk-help-classes .pk-tile { flex: none; width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 800; color: #fff; background: var(--pk-text-2); }
 .pk-help-list li a, .pk-help-list li > span, .pk-help-doors a, .pk-help-doors button {
   display: flex; flex-direction: column; gap: 2px; padding: 9px 10px; border-radius: 10px; color: inherit; text-decoration: none; text-align: left;
   font: inherit; background: none; border: 0; width: 100%; cursor: pointer;

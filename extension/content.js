@@ -510,12 +510,18 @@ function helpView() {
       <div class="pk-help-actions">${url ? `<a class="start" href="${escapeHTML(url)}">Start</a>` : ''}<button type="button" data-focus-first="${escapeHTML(String(first.id))}">Focus ${skin.focusMinutes} min</button></div></div>`;
   }
   const thenRows = running ? [first, ...then].filter((t) => t && String(t.id) !== String(focus.taskId)).slice(0, 3) : then;
+  // Your classes, from any page: the tile, the name, the letter when grades
+  // are on the cards. The class list without a sidebar of ours.
+  const classes = (data.courses ?? []).filter((c) => c.name && /^\d+$/.test(String(c.id))).slice(0, 8);
+  const tile = (c) => { const color = safeColor(c.colorHex); return `<i class="pk-tile"${color ? ` style="background:${color}"` : ''} aria-hidden="true">${escapeHTML((shortCourse(c.name) || '?').trim().charAt(0).toUpperCase())}</i>`; };
+  const classRows = classes.map((c) => `<li><a href="/courses/${escapeHTML(String(c.id))}">${tile(c)}<b>${escapeHTML(c.name)}</b>${skin.cardGrades !== false && c.grade ? `<small>${escapeHTML(String(c.grade))}</small>` : ''}</a></li>`).join('');
   return `
     <div class="pk-viewhead pk-help-head"><h2>${escapeHTML(said.headline)}</h2></div>
     <p class="pk-help-sub">${escapeHTML(said.subline)}</p>
     ${top}
     ${thenRows.length ? `<p class="pk-help-label">Then</p><ul class="pk-help-list">${thenRows.map((t) => row(t, new Date(t.dueAt) < now)).join('')}</ul>` : ''}
     ${here.length ? `<p class="pk-help-label">Next in this class</p><ul class="pk-help-list">${here.map((r) => row(r.t, r.overdue)).join('')}</ul>` : ''}
+    ${classRows ? `<p class="pk-help-label">Your classes</p><ul class="pk-help-classes">${classRows}</ul>` : ''}
     <ul class="pk-help-doors">
       <li><a href="/#planner"><b>Open the planner</b><small>The week by day, your grades</small></a></li>
       <li><button type="button" data-help-search="1"><b>Search Canvas</b><small>Classes, pages, assignments <kbd>⌘K</kbd></small></button></li>
@@ -1094,7 +1100,7 @@ function dayShort(t, now) {
 /// and a script cannot see the top-level let/const of one that runs after it;
 /// function declarations it can. So the state goes out through this one.
 function plannerState() {
-  return { data, plans, wallet, focus, skin, putBack, killed, levels, ownTasks, plannedOn, nicknames, targets, recapDismissed, LEVELS, LEVEL_NAMES };
+  return { data, plans, wallet, focus, skin, putBack, killed, levels, ownTasks, plannedOn, nicknames, targets, recapDismissed, soFarDismissed, LEVELS, LEVEL_NAMES };
 }
 /// The student's own words for a class: a nickname, its level, the grade they
 /// aim for. Each is kept in this browser; the tab that set it redraws itself.
@@ -1120,6 +1126,13 @@ async function setAim(courseId, cut) {
 function plannerAim(courseId, cut) { return setAim(courseId, cut); }
 /// The recap card, put away for this term; the rail's door goes with it.
 let recapDismissed = null;
+let soFarDismissed = null;
+async function dismissSoFar(key) {
+  soFarDismissed = key;
+  await chrome.storage.local.set({ soFarDismissed: key });
+  renderPlannerTabs(); renderPlanner(); renderWeek();
+}
+function plannerDismissSoFar(key) { return dismissSoFar(key); }
 async function dismissRecap(key) {
   recapDismissed = key;
   await chrome.storage.local.set({ recapDismissed: key });
@@ -1701,7 +1714,7 @@ function unmountSprite() {
 /// canvas of our own and handed to the browser as a download, so nothing
 /// leaves the page and nothing on the page is touched.
 function saveRecapPicture(now) {
-  const r = termRecap(data.tasks, now);
+  const r = termRecap(data.tasks, now, data.graded, data.courses);
   const W = 1080, H = 1350, pad = 88;
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const g = cv.getContext('2d');
@@ -1918,12 +1931,13 @@ function panelStyle(host) {
 async function mount() {
   if (tornDown || !alive()) return;
   skin = await settings();
-  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', 'done', 'recapDismissed', 'ownArt', HANDED_IN_KEY]);
+  const stored = await chrome.storage.local.get(['lastPayload', 'wallet', 'focus', 'putBack', 'levels', 'banners', 'cardArt', 'nicknames', 'ownTasks', 'plans', 'targets', 'flags', 'celebrated', 'dashTab', 'done', 'recapDismissed', 'soFarDismissed', 'ownArt', HANDED_IN_KEY]);
   if (tornDown || !alive()) return;
   nicknames = stored.nicknames ?? {};
   ownTasks = Array.isArray(stored.ownTasks) ? stored.ownTasks : [];
   done = stored.done && typeof stored.done === 'object' ? stored.done : {};
   recapDismissed = typeof stored.recapDismissed === 'string' ? stored.recapDismissed : null;
+  soFarDismissed = typeof stored.soFarDismissed === 'string' ? stored.soFarDismissed : null;
   data = composeData(stored.lastPayload ?? null, ownTasks, nicknames, done);
   levels = stored.levels ?? {};
   plans = stored.plans ?? {};

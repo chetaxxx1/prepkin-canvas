@@ -21,16 +21,43 @@ function recapDue(courses, tasks, now = new Date()) {
   return t - Math.max(...due) > 14 * RECAP_DAY;
 }
 
-/// The numbers. `tasks` is the whole list the laptop holds for the term.
-function termRecap(tasks, now = new Date()) {
-  const dated = (tasks ?? []).filter((x) => x.dueAt && Number.isFinite(Date.parse(x.dueAt)) && !x.own);
+/// "So far this term": the same numbers, mid-term, once a month. Four weeks
+/// in and eight things handed in is enough to be worth a look; when the term
+/// is ending the recap itself takes the slot instead. Never a daily counter.
+function soFarDue(courses, tasks, now = new Date(), graded = {}) {
+  if (recapDue(courses, tasks, now)) return false;
+  const r = termRecap(tasks, now, graded, courses);
+  if (!r.firstDue || r.handedIn < 8) return false;
+  return now.getTime() - r.firstDue.getTime() >= 28 * RECAP_DAY;
+}
+
+/// The month, so "Put it away" keeps it away until the next one.
+function soFarKey(now = new Date()) {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/// The numbers. `tasks` is the list the laptop holds now; `graded` (by course
+/// id) is every mark it has, which is where the term's handed-in work lives
+/// once it has left the list. A row in both counts once.
+function termRecap(tasks, now = new Date(), graded = {}, courses = []) {
+  const seen = new Set((tasks ?? []).map((x) => String(x.id)));
+  const byId = Object.fromEntries((courses ?? []).map((c) => [String(c.id), c]));
+  const marks = Object.entries(graded ?? {}).flatMap(([courseId, rows]) => (Array.isArray(rows) ? rows : []).flatMap((g) => {
+    if (!g || g.id == null || seen.has(String(g.id))) return [];
+    const dueAt = g.dueAt ?? g.at ?? null;
+    if (!dueAt) return [];
+    seen.add(String(g.id));
+    const c = byId[String(courseId)];
+    return [{ id: g.id, courseId, courseName: c?.name ?? '', colorHex: c?.colorHex ?? null, dueAt, submittedAt: g.submittedAt ?? g.at ?? null }];
+  }));
+  const dated = [...(tasks ?? []), ...marks].filter((x) => x.dueAt && Number.isFinite(Date.parse(x.dueAt)) && !x.own);
   const done = dated.filter((x) => x.submittedAt && Number.isFinite(Date.parse(x.submittedAt)));
   const onTime = done.filter((x) => Date.parse(x.submittedAt) <= Date.parse(x.dueAt) + 60_000).length;
 
   const byCourse = new Map();
   for (const x of dated) {
     const k = String(x.courseId);
-    if (!byCourse.has(k)) byCourse.set(k, { courseId: k, name: x.courseName ?? '', colorHex: x.colorHex ?? null, done: 0, total: 0 });
+    if (!byCourse.has(k)) byCourse.set(k, { courseId: k, name: x.courseName || byId[k]?.name || '', colorHex: x.colorHex ?? byId[k]?.colorHex ?? null, done: 0, total: 0 });
     const c = byCourse.get(k); c.total++; if (x.submittedAt) c.done++;
   }
 
@@ -72,4 +99,4 @@ function hourLabel(h) {
   return h < 12 ? `${h}am` : `${h - 12}pm`;
 }
 
-if (typeof module !== 'undefined') module.exports = { recapDue, termRecap, hourLabel };
+if (typeof module !== 'undefined') module.exports = { recapDue, soFarDue, soFarKey, termRecap, hourLabel };

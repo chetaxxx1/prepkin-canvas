@@ -121,15 +121,17 @@ function renderPlanner() {
   const head = document.getElementById('dashboard_header_container');
   if (!plannerShows() || plTab !== 'planner' || !head) { existing?.remove(); return; }
   const now = new Date();
-  const { data, plans, focus, skin, levels, plannedOn, nicknames, targets, recapDismissed } = plannerState();
+  const { data, plans, focus, skin, levels, plannedOn, nicknames, targets, recapDismissed, soFarDismissed } = plannerState();
   const groups = dayGroups(data.tasks, now, (t) => planDay(t, plans));
   const running = focus.state === 'running';
   const recap = recapDue(data.courses, data.tasks, now) && plRecapKey(data.tasks, now) !== recapDismissed;
+  // Mid-term, the same card as "So far this term", once a month.
+  const soFar = !recap && soFarDue(data.courses, data.tasks, now, data.graded) && soFarKey(now) !== soFarDismissed;
   const key = JSON.stringify([
     groups.past.map((t) => t.id), groups.days.map((d) => d.items.map((t) => [t.id, t.submittedAt, t.doneAt, plans[t.id] ?? null])),
     groups.later.map((t) => t.id), groups.undated.map((t) => t.id), groups.missed.map((t) => t.id),
-    data.courses.map((c) => [c.id, c.name, c.score, c.grade]), (data.pastCourses ?? []).map((c) => [c.id, c.grade, c.score]), running && focus.title, focus.state, focus.endsAt,
-    skin.focusMinutes, plAdding, levels, nicknames, targets, plOpenCourse, plCourseList, [...plUnfolded], plTarget, plWeight, recap,
+    data.courses.map((c) => [c.id, c.name, c.score, c.grade]), (data.pastCourses ?? []).map((c) => [c.id, c.grade, c.score]), Object.values(data.graded ?? {}).reduce((n, g) => n + g.length, 0), running && focus.title, focus.state, focus.endsAt,
+    skin.focusMinutes, plAdding, levels, nicknames, targets, plOpenCourse, plCourseList, [...plUnfolded], plTarget, plWeight, recap, soFar,
   ]);
   if (existing && existing.dataset.key === key) return;
 
@@ -152,6 +154,7 @@ function renderPlanner() {
 
   // The term, in numbers, when a term is ending.
   if (recap) box.append(plRecapCard(now));
+  else if (soFar) box.append(plRecapCard(now, { soFar: true }));
 
   const list = el('div', 'pk-pl-list');
   // The week at a glance, Structured's strip: seven days from today, the day
@@ -664,21 +667,23 @@ function renderGradesPage() {
 /// Which term the recap is for: the month the last due date fell in. The
 /// dismiss remembers it, so the card shows once a term.
 function plRecapKey(tasks, now) {
-  const r = termRecap(tasks, now);
+  const { data } = plannerState();
+  const r = termRecap(tasks, now, data.graded, data.courses);
   const d = r.lastDue ?? now;
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 
 /// The card at the top of the planner when a term is ending: the big number,
 /// the lines, a bar per course, Save as a picture, and a way to put it away.
-function plRecapCard(now) {
+function plRecapCard(now, { soFar = false } = {}) {
   const { data } = plannerState();
-  const r = termRecap(data.tasks, now);
+  const r = termRecap(data.tasks, now, data.graded, data.courses);
   const fmt = (d) => d.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  const card = el('div', 'pk-pl-recap');
+  const card = el('div', `pk-pl-recap${soFar ? ' so-far' : ''}`);
   const h = el('div', 'head');
-  h.append(el('b', '', 'Your term, in numbers'));
-  if (r.firstDue && r.lastDue) h.append(el('small', '', `${fmt(r.firstDue)} to ${fmt(r.lastDue)}`));
+  h.append(el('b', '', soFar ? 'So far this term' : 'Your term, in numbers'));
+  if (soFar && r.firstDue) h.append(el('small', '', `since ${fmt(r.firstDue)}`));
+  else if (r.firstDue && r.lastDue) h.append(el('small', '', `${fmt(r.firstDue)} to ${fmt(r.lastDue)}`));
   card.append(h);
   const big = el('div', 'big');
   big.append(el('strong', '', String(r.handedIn)), el('span', '', ` thing${r.handedIn === 1 ? '' : 's'} handed in${r.total ? ` of ${r.total}` : ''}`));
@@ -706,7 +711,7 @@ function plRecapCard(now) {
   const save = el('span', 'start', 'Save as a picture'); save.setAttribute('role', 'button'); save.tabIndex = 0;
   save.addEventListener('click', (e) => { if (e.isTrusted) saveRecapPicture(now); });
   const later = el('span', 'ghost', 'Put it away'); later.setAttribute('role', 'button'); later.tabIndex = 0;
-  later.addEventListener('click', (e) => { if (e.isTrusted) plannerDismissRecap(plRecapKey(data.tasks, now)); });
+  later.addEventListener('click', (e) => { if (!e.isTrusted) return; if (soFar) plannerDismissSoFar(soFarKey(now)); else plannerDismissRecap(plRecapKey(data.tasks, now)); });
   actions.append(save, later);
   card.append(actions);
   card.append(el('p', 'pk-pl-foot', 'Counted on your own laptop. Nothing was sent anywhere, and the picture has no grades in it.'));

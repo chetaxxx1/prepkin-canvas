@@ -713,7 +713,8 @@ async function readSchool(origin) {
     examinedIds(raw, host, examined);
     // The same rows feed the task list and the grade sparkline — one fetch read
     // two ways, rather than asking Canvas twice for the same assignments.
-    graded[course.id] = mapGraded(raw, { host });
+    // Sixty, not twenty-four: the recap counts a term from these.
+    graded[course.id] = mapGraded(raw, { host, limit: 60 });
     const rawGroups = await getPaged(origin, `/api/v1/courses/${course.id}/assignment_groups?per_page=50`);
     weights[course.id] = mapWeights(rawGroups, { weighted: course.weighted !== false });
     return mapAssignments(raw, { host, course });

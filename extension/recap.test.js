@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { recapDue, termRecap, hourLabel } = require('./recap.js');
+const { recapDue, soFarDue, soFarKey, termRecap, hourLabel } = require('./recap.js');
 
 const day = 86_400_000;
 const at = (d, h = 23) => { const x = new Date(2026, 10, d, h, 15); return x.toISOString(); };
@@ -50,4 +50,32 @@ test('the busiest week is Monday to Sunday', () => {
 
 test('hours read like a person says them', () => {
   assert.equal(hourLabel(23), '11pm'); assert.equal(hourLabel(8), '8am'); assert.equal(hourLabel(0), 'midnight'); assert.equal(hourLabel(12), 'noon');
+});
+
+test('so far this term: four weeks in with eight handed in, once a month, never while the recap is due', () => {
+  const now = new Date(2026, 9, 20);
+  const far = [{ termEndsAt: new Date(2026, 11, 18).toISOString() }];
+  const week = (n, handed = true) => ({ dueAt: new Date(now - n * day).toISOString(), submittedAt: handed ? new Date(now - n * day - 3600e3).toISOString() : null, courseId: 1 });
+  const ten = [35, 33, 30, 27, 24, 20, 16, 12, 8, 4].map((n) => week(n));
+  assert.equal(soFarDue(far, ten, now), true, 'five weeks in, ten handed in');
+  assert.equal(soFarDue(far, ten.slice(0, 7), now), false, 'seven is not enough to say anything');
+  assert.equal(soFarDue(far, [20, 16, 12, 8, 6, 5, 4, 3, 2, 1].map((n) => week(n)), now), false, 'three weeks in: too soon');
+  assert.equal(soFarDue(far, ten.map((t) => ({ ...t, submittedAt: null })), now), false, 'nothing handed in, nothing to say');
+  assert.equal(soFarDue([{ termEndsAt: new Date(2026, 9, 24).toISOString() }], ten, now), false, 'the recap takes the slot when the term is ending');
+  assert.equal(soFarKey(now), '2026-10');
+});
+
+test('the marks count: handed-in work that has left the list is still the term\'s, and a row in both counts once', () => {
+  const now = new Date(2026, 10, 15);
+  const tasks = [{ id: 'c-x-a1', courseId: '1', courseName: 'Physics', dueAt: at(14), submittedAt: at(13) }];
+  const graded = { 1: [
+    { id: 'c-x-a1', at: at(13), dueAt: at(14), submittedAt: at(13), score: 9, outOf: 10 },   // the same row: once
+    { id: 'c-x-a2', at: at(2), dueAt: at(3), submittedAt: at(2, 22), score: 8, outOf: 10 },  // gone from the list, still handed in
+    { id: 'c-x-a3', at: at(5), dueAt: null, submittedAt: null, score: 8, outOf: 10 },        // an on-paper mark: its date stands in
+  ] };
+  const r = termRecap(tasks, now, graded, [{ id: '1', name: 'Physics', colorHex: '#123456' }]);
+  assert.equal(r.handedIn, 3);
+  assert.equal(r.total, 3);
+  assert.deepEqual(r.byCourse, [{ courseId: '1', name: 'Physics', colorHex: '#123456', done: 3, total: 3 }]);
+  assert.equal(termRecap(tasks, now).handedIn, 1, 'with no marks, the list alone');
 });

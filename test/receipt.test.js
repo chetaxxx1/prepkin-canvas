@@ -437,6 +437,16 @@ test('R32 a click on Sprout opens his help: his line, the thing to start, the do
   await page.waitForSelector('#prepkin-buddy[data-open][data-view="help"]', { timeout: 6000 });
   const words = await page.evaluate(() => document.getElementById('prepkin-buddy').getAttribute('aria-label'));
   assert.equal(words, null, 'the host carries no words of its own; the panel does');
+  // Your classes, from any page: a row per live course, each a door.
+  // The panel is a closed shadow root; the accessibility tree still sees it.
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Accessibility.enable');
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  const links = nodes.filter((n) => n.role?.value === 'link').map((n) => n.name?.value ?? '');
+  await cdp.detach();
+  assert.ok(links.includes('AP Physics C B+'), `a row per live class, the letter beside it: ${links.join(' | ')}`);
+  assert.ok(links.includes('English 11'), 'and no letter where Canvas has none');
+  assert.ok(!links.some((l) => /Calculus I/.test(l)), 'the finished ones stay in their fold');
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => !document.getElementById('prepkin-buddy').hasAttribute('data-open'), null, { timeout: 3000 });
   await page.close();
@@ -554,6 +564,34 @@ test('R38 finished courses: one closed line under the cards, open to names with 
   await page.waitForSelector('#pk-grades .pk-pl-gpa', { timeout: 8000 });
   assert.equal(await page.$$eval('#pk-grades .pk-pl-gpa', (els) => els.length), 1);
   assert.equal(await page.$$eval('#pk-grades .pk-past .pk-pl-group', (els) => els.length), 1, 'the fold under the rows');
+  await page.close();
+});
+
+test('R39 so far this term: five weeks in with ten handed in, the card at the top of the planner; Put it away keeps it away this month', async () => {
+  // Ten things handed in over five weeks. Handed-in work leaves the task list
+  // three days after it is in; the recap counts it from the marks instead.
+  const w = S.plainSemester();
+  for (let i = 0; i < 10; i += 1) {
+    const n = 38 - i * 3.5;
+    w.assignments[1].push(S.assignment({ id: 900 + i, name: `Problem Set ${i + 1}`, due: -n, course: 1, sub: S.submitted(-n - 0.1, { score: 40 + i }) }));
+  }
+  await control('world', { host: 'localhost', world: w });
+  await h.sw((o) => syncNow(o), SCHOOL_A);
+  const page = await open('/#planner');
+  await page.waitForSelector('#pk-planner .pk-pl-recap.so-far', { timeout: 8000 });
+  const head = await page.$eval('#pk-planner .pk-pl-recap.so-far .head', (e) => e.textContent);
+  assert.match(head, /^So far this term/); assert.match(head, /since /);
+  const big = await page.$eval('#pk-planner .pk-pl-recap.so-far .big', (e) => e.textContent);
+  assert.match(big, /^1[0-9] things handed in/, `counts the marks, not just the last three days: ${big}`);
+  assert.equal(await page.$('#pk-planner .pk-pl-recap:not(.so-far)'), null, 'not the end-of-term card');
+  await page.click('#pk-planner .pk-pl-recap.so-far .ghost');
+  await page.waitForFunction(() => !document.querySelector('#pk-planner .pk-pl-recap'), null, { timeout: 4000 });
+  const key = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+  assert.equal((await h.storage()).soFarDismissed, key, 'put away for the month');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#pk-planner .pk-pl-rows', { timeout: 8000 });
+  assert.equal(await page.$('#pk-planner .pk-pl-recap'), null, 'and stays away');
+  await h.setStorage({ dashTab: 'cards' });
   await page.close();
 });
 

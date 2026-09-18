@@ -345,6 +345,11 @@ function mapGraded(raw, { limit = 24, host = '' } = {}) {
         percent: Math.round((score / outOf) * 1000) / 10,
         classMean: mean === null ? null : Math.round(mean * 10) / 10,
         at,
+        // When it was due and when it went in, for the term's numbers: handed-in
+        // work leaves the task list three days after it is in, and the marks are
+        // what the laptop still holds of the term. Never pushed (see `send`).
+        dueAt: typeof a.due_at === 'string' ? a.due_at : null,
+        submittedAt: typeof a.submission?.submitted_at === 'string' ? a.submission.submitted_at : null,
       }];
     })
     .sort((x, y) => String(x.at ?? '').localeCompare(String(y.at ?? '')))
