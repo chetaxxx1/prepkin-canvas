@@ -167,6 +167,11 @@ test('R3 modules and the course nav: sticky header, due column, four tabs dimmed
   assert.equal(await style(page, '#expand_collapse_all', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'no ground');
   const link = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--pk-link').trim());
   assert.equal(await style(page, '#expand_collapse_all', 'color'), rgb(link), 'the link ink');
+  // The module's fold arrow is the planner's chevron, not Canvas's triangle.
+  assert.equal(await style(page, '.context_module .ig-header-title i.icon-mini-arrow-down', 'display'), 'none', 'the glyph goes');
+  assert.equal(await before('.context_module .ig-header-title.collapse_module_link', 'content'), '"⌄"', 'open: the planner\'s chevron');
+  assert.equal(await before('.context_module .ig-header-title.expand_module_link', 'content'), '"›"', 'closed: the same as a folded group');
+  assert.equal(await before('.context_module .ig-header-title.collapse_module_link', 'color'), rgb('#454B54'), 'in the quiet ink');
   // A locked module reads in the quiet ink at full strength, not faded to half.
   assert.equal(await style(page, '.context_module.locked .context_module_item', 'opacity'), '1');
   assert.equal(await style(page, '.context_module.locked .locked_title', 'color'), rgb('#454B54'));

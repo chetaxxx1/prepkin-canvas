@@ -628,8 +628,18 @@ html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header h2,
 html.pk-on:not(.pk-back-paper) .context_module .ig-header h2,
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header h3,
 html.pk-on:not(.pk-back-paper) .context_module .ig-header h3 { margin: 0 !important; padding: 0 !important; line-height: 20px !important; }
-html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title i[class*="icon-mini-arrow"],
-html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title i[class*="icon-mini-arrow"] { color: var(--pk-ink-2) !important; margin-right: 4px !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title i[class*="icon-mini-arrow"] { color: var(--pk-ink-2) !important; margin-right: 4px !important; }
+/* A module's fold arrow is Canvas's small triangle; it takes the planner's
+ * chevron instead, "⌄" open and "›" closed, drawn on the title span in the
+ * quiet ink, and the glyph goes. Canvas shows one of the two spans by the
+ * module's state, so each carries its own. */
+html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title i[class*="icon-mini-arrow"] { display: none !important; }
+html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title.collapse_module_link::before,
+html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title.expand_module_link::before {
+  content: "⌄" !important; display: inline-block !important; width: 18px !important; margin-right: 6px !important; text-align: center !important;
+  font-size: 18px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink-2) !important; vertical-align: top !important;
+}
+html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title.expand_module_link::before { content: "›" !important; }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-admin,
 html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-admin { display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 !important; }
 html.pk-on:not(.pk-back-paper) .context_module .requirements_message { margin: 0 !important; }
