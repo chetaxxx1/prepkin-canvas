@@ -128,16 +128,18 @@ test('Your picture: a look only with a photo behind it, in the photo\'s own colo
   // Worn with a photo the classes say art; the merged look keeps the id.
   const worn = { ...OWN_THEME, ...red };
   const c = skinClasses({ on: true, dark: false, look: worn });
-  assert.ok(c.includes('pk-art') && c.includes('pk-theme-own') && c.includes('pk-icons-soft'));
+  assert.ok(c.includes('pk-art') && c.includes('pk-theme-own') && c.includes('pk-icons-soft') && c.includes('pk-icons-plump'));
 });
 
 test('the theme classes carry the paper, the wash and the texture', () => {
   const { THEMES_BY_ID } = require('./themes.js');
   const c = skinClasses({ on: true, dark: false, look: THEMES_BY_ID.blush });
-  assert.deepEqual(c.sort(), ['pk-head-wash', 'pk-on', 'pk-paper-rose', 'pk-textured', 'pk-theme-blush'].sort());
+  assert.deepEqual(c.sort(), ['pk-head-wash', 'pk-icons-plump', 'pk-on', 'pk-paper-rose', 'pk-textured', 'pk-theme-blush'].sort());
   const d = skinClasses({ on: true, dark: true, look: THEMES_BY_ID.classic });
   // A dark stock wears the soft icon set on the left bar; a light paper keeps Canvas's line icons.
-  assert.deepEqual(d.sort(), ['pk-dark', 'pk-icons-soft', 'pk-on', 'pk-paper-carbon', 'pk-theme-classic'].sort());
+  assert.deepEqual(d.sort(), ['pk-dark', 'pk-icons-plump', 'pk-icons-soft', 'pk-on', 'pk-paper-carbon', 'pk-theme-classic'].sort());
+  const s = skinClasses({ on: true, dark: false, look: THEMES_BY_ID.graffiti });
+  assert.ok(s.includes('pk-icons-pixel') && s.includes('pk-icons-soft'), 'Graffiti wears the pixel set, solid on an image look');
 });
 
 test('an unknown Look reads as Classic, and dark picks the dark stock', () => {
@@ -152,7 +154,7 @@ test('an unknown Look reads as Classic, and dark picks the dark stock', () => {
 test('the skin is classes only, and off means no classes at all', () => {
   assert.deepEqual(skinClasses({ on: false, dark: true, look: LOOKS[1], putBack: { hero: true } }), []);
   const on = skinClasses({ on: true, dark: false, look: LOOKS[1], putBack: { hero: true, 'nav-dim': false }, detect: { logoDup: true } });
-  assert.deepEqual(on.sort(), ['pk-back-hero', 'pk-head-wash', 'pk-logo-dup', 'pk-on', 'pk-paper-vellum', 'pk-textured', 'pk-theme-academia'].sort());
+  assert.deepEqual(on.sort(), ['pk-back-hero', 'pk-head-wash', 'pk-icons-hand', 'pk-logo-dup', 'pk-on', 'pk-paper-vellum', 'pk-textured', 'pk-theme-academia'].sort(), 'Dark Academia wears the hand-drawn set');
   assert.ok(skinClasses({ on: true, dark: true, look: LOOKS[0] }).includes('pk-paper-carbon'));
 });
 
