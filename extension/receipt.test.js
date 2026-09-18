@@ -291,7 +291,10 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // the finished courses as one closed line under the cards and the grades.
   // And 29 for `reply-dup`: the Reply link under every announcement row,
   // taken, because the row is already that link.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 29, 'twenty-nine keys at most, so it cannot sprawl');
+  // 30–33 are a budget, not rows: one each for the four parallel sessions of
+  // 2026-09-18 (C course pages, D tables, E calendar and inbox, F discussions
+  // and settings). Bring the number back down to what was used when they land.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 33, 'thirty-three keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names
@@ -399,6 +402,15 @@ const TEXT_BUTTON_OK = [
   // envelope wrapper may only be hidden.
   'html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read',
   'html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read > [class*="baseButton__content"]',
+  // Parallel sessions (2026-09-18): each adds its text buttons inside its own pair.
+  // ---- Session C text buttons (course pages) ----
+  // ---- end Session C ----
+  // ---- Session D text buttons (tables) ----
+  // ---- end Session D ----
+  // ---- Session E text buttons (calendar, inbox) ----
+  // ---- end Session E ----
+  // ---- Session F text buttons (discussions, settings) ----
+  // ---- end Session F ----
 ];
 const TEXT_BUTTON_GLYPH = / \[class\*="baseButton__iconWrapper"\]$/;
 const TEXT_BUTTON_TOKENS = /^(background-color:transparent!important;border-color:transparent!important;box-shadow:none!important;color:var\(--pk-link\)!important;padding:0!important;font-weight:700!important;font-size:13px!important;?|text-decoration:underline!important;?|outline:2pxsolidvar\(--pk-mark\)!important;outline-offset:2px!important;?|content:none!important;?)$/;

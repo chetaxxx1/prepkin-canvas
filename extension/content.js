@@ -281,6 +281,21 @@ function ensureStylesheet() {
 /// The skin is a set of classes on <html>, nothing else — no inline property is
 /// ever written, so taking every class away leaves Canvas, unchanged. boot.js
 /// put a first guess on before paint; this is the same answer with the DOM read.
+// Per-visit classes of ours that the sweep in applySkin must leave on <html>.
+// Each session that runs in parallel (2026-09-18) adds its own between its
+// two marker lines and nowhere else, so branches merge without a conflict.
+const KEPT_CLASSES = new Set([
+  'pk-show', 'pk-planner-on', 'pk-list-on', 'pk-grades-open',
+  // ---- Session C classes (course pages) ----
+  // ---- end Session C ----
+  // ---- Session D classes (tables) ----
+  // ---- end Session D ----
+  // ---- Session E classes (calendar, inbox) ----
+  // ---- end Session E ----
+  // ---- Session F classes (discussions, settings) ----
+  // ---- end Session F ----
+]);
+
 function applySkin(s) {
   const root = document.documentElement;
   killed = detectKill();
@@ -291,7 +306,7 @@ function applySkin(s) {
     // `pk-grades-open` is the student's own click on "Canvas's table" this
     // visit; the sweep used to take it off a moment later and the table
     // snapped shut (found 2026-09-18, the old test passed on the race).
-    if (c.startsWith('pk-') && c !== 'pk-show' && c !== 'pk-planner-on' && c !== 'pk-list-on' && c !== 'pk-grades-open' && !next.has(c)) root.classList.remove(c);
+    if (c.startsWith('pk-') && !KEPT_CLASSES.has(c) && !next.has(c)) root.classList.remove(c);
   }
   for (const c of next) root.classList.add(c);
   // The theme's variables, as a stylesheet element boot.js may already have made.
@@ -1550,6 +1565,7 @@ function refreshPage() {
   ensureStylesheet();
   decorateCards();
   decorateLists();
+  for (const pass of PAGE_PASSES) pass();
   renderWeek();
   renderCourseNext();
   renderSearchChip();
@@ -2007,6 +2023,7 @@ async function mount() {
   applySkin(skin);
   decorateCards();
   decorateLists();
+  for (const pass of PAGE_PASSES) pass();
   renderWeek();
   renderCourseNext();
   renderSearchChip();
@@ -2042,6 +2059,23 @@ async function mount() {
   render();
 
 }
+
+// Per-page passes that write data-pk-* attributes for CSS to draw (never
+// Canvas's words). One function per parallel session, each edited only inside
+// its own marker pair; the list is fixed so nobody touches a shared line.
+// ---- Session C pass (course home, page, assignment, quiz) ----
+function passC() {}
+// ---- end Session C ----
+// ---- Session D pass (all courses, files, people, syllabus) ----
+function passD() {}
+// ---- end Session D ----
+// ---- Session E pass (calendar, inbox) ----
+function passE() {}
+// ---- end Session E ----
+// ---- Session F pass (discussions, settings) ----
+function passF() {}
+// ---- end Session F ----
+const PAGE_PASSES = [passC, passD, passE, passF];
 
 if (typeof module !== 'undefined') {
   // `node --test` reads the pure parts; the page never sees this branch.

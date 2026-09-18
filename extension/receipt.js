@@ -239,6 +239,15 @@ const RULES = [
   // because it starts folded.
   { key: 'past-fold', kind: 'added', label: 'Finished courses, folded under your cards', detect: 'pastFold' },
   { key: 'reply-dup', kind: 'taken', label: 'The Reply link under each announcement. The row is the link', detect: 'replyDup' },
+  // Parallel sessions (2026-09-18): one row each at most, inside its own pair.
+  // ---- Session C rows (course pages) ----
+  // ---- end Session C ----
+  // ---- Session D rows (tables) ----
+  // ---- end Session D ----
+  // ---- Session E rows (calendar, inbox) ----
+  // ---- end Session E ----
+  // ---- Session F rows (discussions, settings) ----
+  // ---- end Session F ----
   { key: 'buddy', kind: 'added', label: 'The buddy, bottom right', when: () => true, opt: 'mascot', putBack: 'Take off', undo: 'Bring back' },
 ];
 

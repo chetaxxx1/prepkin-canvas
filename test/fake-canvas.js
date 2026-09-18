@@ -210,7 +210,14 @@ function pageFor(url) {
 <li class="section"><a class="conferences" href="/courses/1/conferences">Conferences</a></li><li class="section"><a class="collaborations" href="/courses/1/collaborations">Collaborations</a></li></ul></div>`;
   let main = '';
   let side = '';
-  if ((p === '/' || p === '/dashboard') && url.searchParams.get('view') === 'list') {
+  // Pages added by the parallel sessions of 2026-09-18, each in its own function
+  // below, tried first so nobody edits the chain that follows.
+  for (const extra of [pageC, pageD, pageE, pageF]) {
+    const r = extra(p, url);
+    if (r) { main = r.main ?? ''; side = r.side ?? ''; }
+  }
+  if (main) {
+  } else if ((p === '/' || p === '/dashboard') && url.searchParams.get('view') === 'list') {
     // Canvas's List View: its planner in the main column, its toolbar in the title row, no cards drawn.
     main = `<div id="dashboard_header_container" class="ic-Dashboard-header"><div class="ic-Dashboard-header__layout"><h1 class="ic-Dashboard-header__title">Dashboard</h1><div id="dashboard-planner-header" class="CanvasPlanner__HeaderContainer"><div class="PlannerHeader"><button id="planner-today-btn" type="button">Today</button><button type="button" data-testid="add-to-do-button"><svg/></button></div></div></div></div><div id="DashboardCard_Container"></div>
 <div id="dashboard-planner"><div class="PlannerApp"><div class="planner-day"><h2>Today</h2><p>Nothing Planned Yet</p></div></div></div>`;
@@ -555,6 +562,22 @@ class FakeServer {
     }
   }
 }
+
+// Each parallel session (2026-09-18) fills its own function with the pages it
+// needs, trimmed from a sandbox dump: return { main, side } or null. Edit only
+// inside your own marker pair.
+// ---- Session C pages (course home, page, assignment, quiz) ----
+function pageC(p, url) { return null; }
+// ---- end Session C ----
+// ---- Session D pages (all courses, files, people, syllabus) ----
+function pageD(p, url) { return null; }
+// ---- end Session D ----
+// ---- Session E pages (calendar, inbox) ----
+function pageE(p, url) { return null; }
+// ---- end Session E ----
+// ---- Session F pages (discussions, settings) ----
+function pageF(p, url) { return null; }
+// ---- end Session F ----
 
 module.exports = { FakeServer, FakeBridge, blankWorld, DAY };
 

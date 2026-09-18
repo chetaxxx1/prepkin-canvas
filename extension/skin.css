@@ -2048,3 +2048,23 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 #pk-looks .pk-pl-pictures .pick input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 #pk-looks .pk-pl-pictures > small { display: block; margin-top: 10px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--pk-ink-2); }
 @media (max-width: 1100px) { #pk-looks .pk-pl-looks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+
+/* ==== Session C (course pages: course home, page, assignment, quiz). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
+
+/* ==== end Session C ==== */
+
+
+/* ==== Session D (tables: all courses, files, people, syllabus). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
+
+/* ==== end Session D ==== */
+
+
+/* ==== Session E (calendar and inbox). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
+
+/* ==== end Session E ==== */
+
+
+/* ==== Session F (discussions and settings). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
+
+/* ==== end Session F ==== */
