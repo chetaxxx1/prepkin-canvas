@@ -2207,6 +2207,112 @@ html.pk-on.pk-art:not(.pk-back-paper) #content .course-list-table { background-c
 html.pk-on.pk-art:not(.pk-back-paper) #content .course-list-table tr { background-color: transparent !important; border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
 html.pk-on.pk-art:not(.pk-back-paper) #content .course-list-table > tbody > tr:hover { background-color: color-mix(in srgb, var(--pk-ink) 6%, transparent) !important; }
 
+/* ---- Files -----------------------------------------------------------------
+ * The InstUI page. Its title row holds two plain buttons at the right; they
+ * become words (the text-button door, below). The search block under the
+ * title rises onto the title line as our 240px field with its Search button,
+ * at the right edge, and the title row's buttons make room for it. The
+ * helper line under the field ("Enter at least 2 characters to search")
+ * shows only while the field has focus, under the field. The column heads
+ * take the one rule above; Created, Modified By and Status go under the
+ * `columns` row (a student reads the name, when it changed, and its size). */
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > div > [class*="view--flex-flex"]:has(> div > form[name="files-search"]) { position: relative !important; }
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > div > [class*="view--flex-flex"] > div:has(> form[name="files-search"]) {
+  position: absolute !important; right: 0 !important; top: 12px !important; width: auto !important; margin: 0 !important; padding: 0 !important; z-index: 2;
+}
+html.pk-on:not(.pk-back-title) #content > div > [class*="view--flex-flex"] > div:first-child:has(> [class*="view--flex-flex"] > [class*="view-flexItem"] > h1):has(~ div > form[name="files-search"]) { margin: 0 0 20px !important; padding: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-title) #content > div > [class*="view--flex-flex"] > div:first-child:has(~ div > form[name="files-search"]) > [class*="view--flex-flex"] { display: flex !important; flex-wrap: nowrap !important; align-items: flex-start !important; justify-content: space-between !important; }
+html.pk-on:not(.pk-back-title) #content > div > [class*="view--flex-flex"] > div:first-child > [class*="view--flex-flex"] > [class*="view-flexItem"]:has(> h1) { flex: 1 1 auto !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-title) #content > div > [class*="view--flex-flex"] > div:first-child h1[class*="-view-heading"] { margin: 0 !important; border: 0 !important; }
+/* The title row's right item (the two text buttons) sits on the title's own
+ * line and ends before the search. */
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > div > [class*="view--flex-flex"] > div:first-child > [class*="view--flex-flex"] > [class*="view-flexItem"]:last-child:has([data-id="switch-to-old-files-button"]) { padding: 0 340px 0 0 !important; margin: 10px 0 0 !important; align-self: flex-start !important; height: 36px !important; display: flex !important; align-items: center !important; }
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > div > [class*="view--flex-flex"] > div:first-child > [class*="view--flex-flex"] > [class*="view-flexItem"]:last-child > [class*="view--flex-flex"] { gap: 16px !important; align-items: center !important; }
+html.pk-on:not(.pk-back-module-band) #content form[name="files-search"] > [class*="view--flex-flex"] { display: flex !important; align-items: center !important; gap: 8px !important; }
+html.pk-on:not(.pk-back-module-band) #content form[name="files-search"] [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; flex: none !important; }
+html.pk-on:not(.pk-back-module-band) #content form[name="files-search"] label[data-cid="TextInput"] { display: block !important; width: 240px !important; margin: 0 !important; }
+/* The field's label stays for a screen reader; the placeholder says it on screen. */
+html.pk-on:not(.pk-back-module-band) #content form[name="files-search"] [class*="formFieldLayout__label"] { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
+html.pk-on:not(.pk-back-module-band) #content form[name="files-search"] [class*="textInput__facade"] { border-radius: 10px !important; min-height: 32px !important; }
+html.pk-on:not(.pk-back-module-band) #content form[name="files-search"] [class*="textInput__facade"] input { font-size: 13px !important; font-weight: 600 !important; height: 30px !important; }
+html.pk-on:not(.pk-back-module-band) #content > div > [class*="view--flex-flex"] > div:has(> form[name="files-search"]) > [class*="view--block"] { display: none !important; }
+html.pk-on:not(.pk-back-module-band) #content > div > [class*="view--flex-flex"] > div:has(> form[name="files-search"] input:focus) > [class*="view--block"] {
+  display: block !important; position: absolute !important; left: 0 !important; top: 36px !important; width: 240px !important; margin: 0 !important; padding: 0 !important;
+}
+html.pk-on:not(.pk-back-module-band) #content > div > [class*="view--flex-flex"] > div:has(> form[name="files-search"]) > [class*="view--block"] [class*="-text"] { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+/* The two buttons on the Files title row are words: the text-button door
+ * (TEXT_BUTTON_OK in receipt.test.js names them). The plain-buttons rule
+ * above names two ids in its :not() chain and so outranks any attribute
+ * selector; the three :not(#…) here are the other named text buttons, and
+ * carry these past it. Words only, the link ink, hover underline, focus ring. */
+html.pk-on:not(.pk-back-buttons) #content [data-id="switch-to-old-files-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button),
+html.pk-on:not(.pk-back-buttons) #content [data-id="switch-to-old-files-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button),
+html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"] {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #content [data-id="switch-to-old-files-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button):hover,
+html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button):hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content [data-id="switch-to-old-files-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button):focus-visible,
+html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button):focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-paper) #content a[href="/files"] { text-decoration: none !important; }
+/* The folder line under it: the breadcrumb bold at the left, "0 selected" and
+ * the download at the right, one 36px line with air under it. */
+html.pk-on:not(.pk-back-paper) #content > div > [class*="view--flex-flex"] > div:has(> [class*="view--flex-flex"] > div > [data-cid="Breadcrumb"]) { margin: 0 0 10px !important; }
+html.pk-on:not(.pk-back-paper) #content [data-cid="Breadcrumb"] .breadcrumb__crumb,
+html.pk-on:not(.pk-back-paper) #content [data-cid="Breadcrumb"] .breadcrumb__crumb b { font-size: 14px !important; font-weight: 800 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content [data-cid="Breadcrumb"] [class*="view--block-link"] { color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content [data-cid="Breadcrumb"] li.breadcrumb__crumb::before,
+html.pk-on:not(.pk-back-paper) #content [data-cid="Breadcrumb"] li.breadcrumb__crumb svg { color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #content > div > [class*="view--flex-flex"] > div:has(> [class*="view--flex-flex"] > div > [data-cid="Breadcrumb"]) [class*="-text"] { font-size: 12px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+/* The columns a student never reads. */
+html.pk-on:not(.pk-back-columns) #content [data-testid="files-table"] th[data-testid="created_at"],
+html.pk-on:not(.pk-back-columns) #content [data-testid="files-table"] td[data-testid="table-cell-created_at"],
+html.pk-on:not(.pk-back-columns) #content [data-testid="files-table"] th[data-testid="modified_by"],
+html.pk-on:not(.pk-back-columns) #content [data-testid="files-table"] td[data-testid="table-cell-modified_by"],
+html.pk-on:not(.pk-back-columns) #content [data-testid="files-table"] th[data-testid="permissions"],
+html.pk-on:not(.pk-back-columns) #content [data-testid="files-table"] td[data-testid="table-cell-permissions"] { display: none !important; }
+/* The table is the sheet; the rows part with a hairline (the R40 row shape
+ * gives them their height and type). The date and size cells are quiet meta. */
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] { border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important; box-shadow: var(--pk-lift) !important; overflow: clip !important; background-color: var(--pk-paper-2) !important; border-collapse: separate !important; border-spacing: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"] [class*="-view-cell"],
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"] [class*="-view-rowHeader"] { border: 0 !important; border-top: 1px solid var(--pk-rule) !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:first-child [class*="-view-cell"],
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:first-child [class*="-view-rowHeader"] { border-top: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] td[data-testid="table-cell-size"] [class*="-text"] { font-size: 12px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:hover [class*="-view-cell"],
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:hover [class*="-view-rowHeader"] { background-color: var(--pk-hover) !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] [class*="-colHeader"]:first-child,
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-rowHeader"] { padding-left: 14px !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] td[data-testid="table-cell-size"] { white-space: nowrap !important; font-variant-numeric: tabular-nums !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] td[data-testid="table-cell-updated_at"] > div { padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] td[data-testid="table-cell-updated_at"] { white-space: nowrap !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-table"] td[data-testid="table-cell-actions"] { text-align: right !important; padding-right: 8px !important; }
+/* The page's foot: "1-1 of 1" between its arrows, in the quiet ink. */
+html.pk-on:not(.pk-back-paper) #content [data-testid="files-pagination"] { font-size: 12px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; align-items: center !important; }
+/* A picture's thumbnail is its own tile, the same size and corner. */
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child > img { width: 26px !important; height: 26px !important; object-fit: cover !important; border-radius: 8px !important; margin: 0 10px 0 0 !important; vertical-align: middle !important; }
+/* A thumbnail that never loaded (the pass marks it) gives way to a tile with the look's file icon. */
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child > img[data-pk-broken] { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child:has(> img[data-pk-broken])::before {
+  content: ""; display: inline-block; vertical-align: middle; width: 26px; height: 26px; margin: 0 10px 0 0; border-radius: 8px; background-color: var(--pk-paper-sunk);
+  -webkit-mask: none; mask: none; position: relative;
+}
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child:has(> img[data-pk-broken]) { position: relative; display: inline-block; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child:has(> img[data-pk-broken])::after {
+  content: ""; position: absolute; left: 5px; top: 0; bottom: 0; margin: auto; width: 16px; height: 16px; background-color: var(--pk-ink-2);
+  -webkit-mask: var(--pk-icon-file) center / contain no-repeat; mask: var(--pk-icon-file) center / contain no-repeat;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child:has(> img[data-pk-broken])::before { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+/* On the pane: an outlined section, its rows clear, the type icon's tile a tint. */
+html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="table-cell-name"] a > span > span:first-child > span { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] { background-color: transparent !important; box-shadow: none !important; border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"] [class*="-view-cell"],
+html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"] [class*="-view-rowHeader"] { border-top-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:hover [class*="-view-cell"],
+html.pk-on.pk-art:not(.pk-back-paper) #content [data-testid="files-table"] tbody [class*="-view-row"]:hover [class*="-view-rowHeader"] { background-color: color-mix(in srgb, var(--pk-ink) 6%, transparent) !important; }
+
 /* ==== end Session D ==== */
 
 

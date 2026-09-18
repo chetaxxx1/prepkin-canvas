@@ -410,6 +410,13 @@ const TEXT_BUTTON_OK = [
   // ---- Session C text buttons (course pages) ----
   // ---- end Session C ----
   // ---- Session D text buttons (tables) ----
+  // The Files title row's two buttons (2026-09-18). The plain-buttons rule
+  // names two ids in its :not() chain, so these carry three of their own to
+  // outrank it; the content span is named too, as Mark All as Read's is.
+  'html.pk-on:not(.pk-back-buttons) #content [data-id="switch-to-old-files-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content [data-id="switch-to-old-files-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
+  'html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
   // ---- end Session D ----
   // ---- Session E text buttons (calendar, inbox) ----
   // The calendar sidebar's Calendar Feed, the one control under its lists (2026-09-19).

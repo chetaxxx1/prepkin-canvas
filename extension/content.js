@@ -2113,6 +2113,16 @@ function passD() {
     }
   }
 
+  // Files: a picture's thumbnail that never loaded (a storage hiccup, a host
+  // the browser cannot reach) is marked, so the row shows a tile, not a
+  // broken image. Marked on the pass when the browser already knows, and on
+  // the image's own error after it.
+  for (const img of document.querySelectorAll('#content [data-testid="table-cell-name"] img[data-testid="name-icon"]')) {
+    if (!on || putBack.paper) { set(img, 'pkBroken', null); continue; }
+    if (img.complete && img.naturalWidth === 0) set(img, 'pkBroken', '1');
+    else if (!img.dataset.pkWatched) { img.dataset.pkWatched = '1'; img.addEventListener('error', () => { if (skin.cards && !killed) set(img, 'pkBroken', '1'); }, { once: true }); }
+  }
+
 }
 // ---- end Session D ----
 // ---- Session E pass (calendar, inbox) ----

@@ -105,3 +105,51 @@ test('D2 All Courses draws as the /grades rows: the columns a student never read
   await page.close();
 });
 
+// MARK: - Files
+
+test('D3 Files: the two title buttons are words and the search is our field on the title line; the helper shows only on focus; Created, Modified By and Status fold; a folder and a file row share the row shape', async () => {
+  const page = await open('/courses/1/files');
+  await page.waitForSelector('[data-testid="files-table"]', { timeout: 5000 });
+  for (const sel of ['[data-id="switch-to-old-files-button"]', 'a[href="/files"] > [class*="-baseButton"]']) {
+    assert.equal(await style(page, sel, 'backgroundColor'), clear, `${sel}: no ground`);
+    assert.equal(await style(page, `${sel} > [class*="baseButton__content"]`, 'backgroundColor'), clear, `${sel}: no ground on the content span`);
+    assert.equal(await style(page, sel, 'fontSize'), '13px');
+  }
+  const h1 = await box(page, '#content h1[class*="-view-heading"]');
+  const search = await box(page, 'form[name="files-search"] input');
+  const button = await box(page, '[data-id="switch-to-old-files-button"]');
+  const mid = (b) => b.top + b.height / 2;
+  assert.ok(Math.abs(mid(search) - mid(h1)) < 6, `the search sits on the title line: ${mid(search)} vs ${mid(h1)}`);
+  assert.ok(Math.abs(mid(button) - mid(h1)) < 6, `and the words too: ${mid(button)} vs ${mid(h1)}`);
+  assert.ok(button.left + button.width < search.left, 'the words end before the search');
+  assert.equal(Math.round(await page.$eval('form[name="files-search"] label[data-cid="TextInput"]', (e) => e.getBoundingClientRect().width)), 240, 'the field is 240');
+  const helper = 'form[name="files-search"] + [class*="view--block"]';
+  assert.equal(await shows(page, helper), false, 'the helper waits');
+  await page.focus('[data-testid="files-search-input"]'); await page.waitForTimeout(100);
+  assert.equal(await shows(page, helper), true, 'and shows on focus');
+  assert.equal(await style(page, `${helper} [class*="-text"]`, 'fontSize'), '12px');
+  for (const col of ['th[data-testid="created_at"]', 'td[data-testid="table-cell-created_at"]', 'th[data-testid="modified_by"]', 'td[data-testid="table-cell-modified_by"]', 'th[data-testid="permissions"]', 'td[data-testid="table-cell-permissions"]']) {
+    assert.equal(await shows(page, `[data-testid="files-table"] ${col}`), false, `${col} folded`);
+  }
+  assert.equal(await shows(page, '[data-testid="files-table"] td[data-testid="table-cell-updated_at"]'), true, 'Last Modified stays');
+  const rows = await page.$$eval('[data-testid="files-table"] tbody [data-testid="table-row"]', (els) => els.map((r) => ({
+    h: Math.round(r.getBoundingClientRect().height), name: getComputedStyle(r.querySelector('[data-testid="table-cell-name"] [class*="-text"]')).fontWeight,
+    tile: getComputedStyle(r.querySelector('[data-testid="table-cell-name"] a > span > span:first-child > :first-child')).width,
+    size: getComputedStyle(r.querySelector('[data-testid="table-cell-size"]')).fontSize, folder: !!r.querySelector('[data-testid="folder-icon"]'),
+  })));
+  assert.ok(rows.some((r) => r.folder) && rows.some((r) => !r.folder), 'a folder and a file');
+  for (const r of rows) {
+    assert.ok(r.h >= 44 && r.h <= 56, `a 44px row: ${r.h}`);
+    assert.equal(r.name, '700'); assert.equal(r.tile, '26px'); assert.equal(r.size, '12px');
+  }
+  // The receipt lists the fold, once, with a Put back.
+  const rows2 = await page.evaluate(() => new Promise((res) => chrome.runtime.sendMessage({ type: 'receipt' }, res)).catch(() => null)).catch(() => null);
+  await page.close();
+  // Put back the columns: Created and the rest return.
+  await h.setStorage({ putBack: { columns: true } });
+  const back = await open('/courses/1/files');
+  assert.equal(await shows(back, '[data-testid="files-table"] th[data-testid="created_at"]'), true, 'Put back: Created is back');
+  await back.close();
+  void rows2;
+});
+
