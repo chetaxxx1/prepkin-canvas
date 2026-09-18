@@ -786,6 +786,52 @@ function applyCardArt() {
   if (style.textContent !== css) style.textContent = css;
 }
 
+/// Facts the stylesheet cannot read off Canvas's own lists, written as
+/// attributes on the nodes (never their text): which course a Recent Feedback
+/// row belongs to (its colour goes on the edge), the mark as "18/20", how many
+/// rows an assignment or quiz group holds (its count chip), and the points of
+/// an unscored assignment ("15 pts", where Canvas writes "-/15 pts"). Off, or
+/// on a page we leave alone, every attribute goes.
+function decorateLists() {
+  const on = skin.cards && !killed;
+  const clear = (sel, attr) => document.querySelectorAll(`${sel}[${attr}]`).forEach((el) => el.removeAttribute(attr));
+  if (!on || putBack['feedback-rows']) { clear('.events_list.recent_feedback a', 'data-pk-course'); clear('.events_list.recent_feedback strong', 'data-pk-mark'); }
+  else {
+    for (const a of document.querySelectorAll('.events_list.recent_feedback a.recent_feedback_icon')) {
+      const id = a.getAttribute('href')?.match(/\/courses\/(\d+)\//)?.[1];
+      if (id) { if (a.dataset.pkCourse !== id) a.dataset.pkCourse = id; } else delete a.dataset.pkCourse;
+      const strong = a.querySelector('.event-details p > strong');
+      const m = strong?.textContent.trim().match(/^(\d+(?:\.\d+)?) out of (\d+(?:\.\d+)?)$/);
+      if (m) { const mark = `${m[1]}/${m[2]}`; if (strong.dataset.pkMark !== mark) strong.dataset.pkMark = mark; }
+      else strong?.removeAttribute('data-pk-mark');
+    }
+  }
+  if (!on || putBack.paper) clear('.item-group-condensed .ig-header-title', 'data-pk-count');
+  else {
+    for (const head of document.querySelectorAll('.item-group-condensed .ig-header .ig-header-title')) {
+      const n = String(head.closest('.item-group-condensed')?.querySelectorAll('.ig-row:not(.ig-row-empty)').length ?? 0);
+      if (head.dataset.pkCount !== n) head.dataset.pkCount = n;
+    }
+  }
+  if (!on || putBack['due-column']) clear('.ig-row .score-display', 'data-pk-pts');
+  else {
+    for (const el of document.querySelectorAll('.ig-row .ig-details .score-display')) {
+      const m = el.textContent.trim().match(/^-\s*\/\s*(\S+)\s*pts$/);
+      if (m) { const pts = `${m[1]} pts`; if (el.dataset.pkPts !== pts) el.dataset.pkPts = pts; }
+      else el.removeAttribute('data-pk-pts');
+    }
+  }
+}
+
+/// The course colours, one rule per course, for any node of Canvas's that
+/// names its course (`data-pk-course`): the edge of a feedback row.
+function courseVarsCSS() {
+  return [...(data.courses ?? []), ...(data.pastCourses ?? [])]
+    .map((c) => ({ id: String(c.id), color: safeColor(c.colorHex) }))
+    .filter((c) => /^\d+$/.test(c.id) && c.color)
+    .map((c) => `html.pk-on [data-pk-course="${c.id}"]{--pk-course:${c.color}}`).join('\n');
+}
+
 /// The rows a card shows under "Due": up to three, pending first (overdue,
 /// then soonest, then undated), then the latest handed-in work, struck.
 /// Work the school marked missing more than a week ago. It belongs in the

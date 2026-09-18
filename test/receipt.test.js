@@ -1160,7 +1160,7 @@ test('R4 the receipt on Modules and on a dark assignment names the right rows; T
   let popup = await openPopup(h);
   await popup.waitFor('#receipt-fixed li');
   let listed = await popup.evaluate(`[...document.querySelectorAll('#receipt li')].map((li) => li.textContent.trim())`);
-  for (const line of ['Four menu items dimmed', 'Module header stays at the top while you scroll', 'Due dates lined up in one column']) {
+  for (const line of ['Four menu items dimmed', 'Module header stays at the top while you scroll', 'Due dates and points in one column']) {
     assert.ok(listed.some((t) => t.startsWith(line)), `missing: ${line}`);
   }
   assert.equal(await popup.text('#receipt-page'), 'Modules');
