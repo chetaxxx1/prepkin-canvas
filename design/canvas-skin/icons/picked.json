@@ -47,6 +47,10 @@
   "link": {
    "hash": "ico_3xTWlPgg1MUKgFR1",
    "name": "Link Chain"
+  },
+  "announcement": {
+   "hash": "ico_JHWVdEexgBNqpYS1",
+   "name": "Megaphone 1"
   }
  },
  "plump-solid-style": {
@@ -97,6 +101,10 @@
   "link": {
    "hash": "ico_JxNk8wcWBMSxXw15",
    "name": "Link Chain"
+  },
+  "announcement": {
+   "hash": "ico_FZH7Br5ctMRKSsPp",
+   "name": "Megaphone 1"
   }
  },
  "sharp-solid-style": {
@@ -147,6 +155,10 @@
   "link": {
    "hash": "ico_TvW1BngwPHKO2lBM",
    "name": "Link Chain"
+  },
+  "announcement": {
+   "hash": "ico_68NJTGWw3fU2BT5o",
+   "name": "Megaphone 1"
   }
  },
  "streamline-freehand": {
@@ -197,6 +209,10 @@
   "link": {
    "hash": "ico_mhHZWZsTkfIjWLn5",
    "name": "Link Paperclip"
+  },
+  "announcement": {
+   "hash": "ico_6Ad7lN7MSoE6LTwt",
+   "name": "Campaign Megaphone"
   }
  },
  "pixel": {
@@ -247,6 +263,10 @@
   "link": {
    "hash": "ico_p0axrPzlbXfVyQ1i",
    "name": "Interface Essential Link"
+  },
+  "announcement": {
+   "hash": "ico_Oq6D10I0yUX52ucb",
+   "name": "Interface Essential Speaker Announce"
   }
  },
  "cyber-line": {
@@ -347,6 +367,10 @@
   "link": {
    "hash": "ico_mRu4pQJ4vWq02aEeixDeGyOK",
    "name": "Hyperlink"
+  },
+  "announcement": {
+   "hash": "ico_mRu4pQJ4v1j62aEeixJttVog",
+   "name": "Megaphone"
   }
  },
  "nova-solid": {
@@ -397,6 +421,10 @@
   "link": {
    "hash": "ico_P96nolCfDFKivGRN",
    "name": "Hyperlink 1"
+  },
+  "announcement": {
+   "hash": "ico_VX3z6CUicsKuKb30",
+   "name": "Megaphone 1"
   }
  }
 }

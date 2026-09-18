@@ -127,12 +127,12 @@ test('R3 dashboard: paper, thin hero, one To Do, every Coming Up row, one logo â
     const title = a.querySelector('.event-details__title').getBoundingClientRect();
     const mark = a.querySelector('p strong').getBoundingClientRect();
     const cs = getComputedStyle(a.querySelector('p strong'));
-    return { course: a.dataset.pkCourse, edge: getComputedStyle(a).borderLeftColor, sameLine: Math.abs((title.top + title.height / 2) - (mark.top + mark.height / 2)) < 4, right: mark.left > title.left + 60, tick: getComputedStyle(a.querySelector('i'), '::before').backgroundColor, chip: cs.backgroundColor, radius: cs.borderRadius, said: getComputedStyle(a.querySelector('p strong'), '::after').content, ctx: getComputedStyle(a.querySelector('.event-details__context')).width, h: Math.round(a.getBoundingClientRect().height) };
+    return { course: a.dataset.pkCourse, edge: getComputedStyle(a).borderLeftColor, sameLine: Math.abs((title.top + title.height / 2) - (mark.top + mark.height / 2)) < 4, right: mark.left > title.left + 60, tick: getComputedStyle(a.querySelector('i')).display, chip: cs.backgroundColor, radius: cs.borderRadius, said: getComputedStyle(a.querySelector('p strong'), '::after').content, ctx: getComputedStyle(a.querySelector('.event-details__context')).width, h: Math.round(a.getBoundingClientRect().height) };
   });
   assert.equal(fb.course, '1', 'the row knows its course');
   assert.equal(fb.edge, 'rgb(255, 111, 97)', 'the class colour on the edge');
   assert.ok(fb.sameLine && fb.right, 'the mark sits on the title\'s line at the right');
-  assert.equal(fb.tick, rgb('#51CFA0'), 'the check is our tick');
+  assert.equal(fb.tick, 'none', 'no check: every row here is marked work, and the title needs the line');
   assert.equal(fb.chip, rgb('#EFEDE8'), 'the mark is our chip');
   assert.equal(fb.radius, '999px');
   assert.equal(fb.said, '"41/50"', 'said short; Canvas\'s words stay for a screen reader');
@@ -747,6 +747,8 @@ test('R42 announcements: the title shows, its controls rise onto its line, Mark 
   assert.equal(top.search, 240); assert.equal(top.feeds, '13px');
   const rows = await page.$$eval('.ic-announcement-row', (els) => els.map((r) => ({ reply: getComputedStyle(r.querySelector('a:has([data-testid="announcement-reply"])')).display, radius: getComputedStyle(r).borderRadius, dot: getComputedStyle(r.querySelector('.ic-item-row__author-col'), '::after').content, dotW: getComputedStyle(r.querySelector('.ic-item-row__author-col'), '::after').width, dotColor: getComputedStyle(r.querySelector('.ic-item-row__author-col'), '::after').backgroundColor, ring: getComputedStyle(r.querySelector('[class*="-avatar"]')).borderTopWidth, initials: getComputedStyle(r.querySelector('[class*="avatar__initials"]')).color })));
   assert.deepEqual(rows.map((r) => r.reply), ['none', 'none'], 'Reply is taken: the row is the link');
+  const lines = await page.$$eval('.ic-announcement-row', (els) => els.map((r) => { const t = r.querySelector('h3').getBoundingClientRect(); const sct = r.querySelector('.ic-section-tooltip').getBoundingClientRect(); return { sameLine: Math.abs((t.top + t.height / 2) - (sct.top + sct.height / 2)) < 6, after: sct.left > t.right - 2, size: getComputedStyle(r.querySelector('.ic-section-tooltip')).fontSize, dot: getComputedStyle(r.querySelector('.ic-section-tooltip'), '::before').content }; }));
+  for (const l of lines) { assert.ok(l.sameLine && l.after, 'the sections line sits after the title, on its line'); assert.equal(l.size, '12px'); assert.equal(l.dot, '"Â· "'); }
   assert.deepEqual(rows.map((r) => r.radius), ['0px', '0px'], 'rows in one sheet, not a card each');
   assert.equal(await style(page, '#content span:has(> .ic-announcement-row)', 'borderRadius'), '14px', 'the sheet is the card');
   assert.equal(rows[0].dot, '""'); assert.equal(rows[0].dotW, '8px'); assert.equal(rows[0].dotColor, rgb('#2F6BAA'), 'unread: our mark, 8px, never red');

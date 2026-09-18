@@ -18,6 +18,7 @@ Q = {
   'history': ['clock', 'history'], 'help': ['question', 'help'],
   'page': ['notepad', 'notes', 'paper', 'document', 'blank document', 'text file', 'page'], 'assignment': ['pencil', 'edit'], 'quiz': ['checklist', 'check mark', 'check', 'task'],
   'discussion': ['chat', 'message'], 'file': ['paperclip', 'attachment'], 'link': ['link', 'hyperlink'],
+  'announcement': ['megaphone', 'bullhorn', 'announcement'],
 }
 # In order of preference. `^` anchors: the plain name wins over a variant.
 P = {
@@ -32,6 +33,7 @@ P = {
   'quiz': [r'^Checklist( \d)?$', r'^Task List( \d)?$', r'^Interface Essential Check( \d)?$', r'^Interface Essential Checklist.*', r'^Check Mark( \d)?$', r'^Business Product Check$', r'^Check Square$', r'^Check( \d)?$', r'^Checkmark.*', r'^Check List.*', r'^Checklist.*', r'^Check.*'],
   'discussion': [r'^Chat Bubble( \d)?$', r'^Chat( \d)?$', r'^Chat Bubble (Square|Oval)( \d)?$', r'^Message Chat (Bubble|Round|Square)( \d)?$', r'^Chat Two Bubbles.*', r'^Conversation Chat.*', r'^Message( \d)?$', r'^Conversation( \d)?$', r'^Chat Two Bubbles.*', r'^Chat Email$', r'^Messages( \d)?$', r'^Chat Bubble.*', r'^Chat.*'],
   'file': [r'^Paperclip( \d)?$', r'^Attachment( \d)?$', r'^Paper Clip.*', r'^Interface Essential Paperclip.*', r'^Interface Essential Clip \d$', r'^Link Paperclip$', r'^Paperclip.*', r'^Attachment.*'],
+  'announcement': [r'^Megaphone( \d)?$', r'^Bullhorn( \d)?$', r'^Announcement( \d)?$', r'^Announcement Megaphone( \d)?$', r'^Megaphone Announcement.*', r'^Interface Essential Megaphone.*', r'^Megaphone.*', r'^Bullhorn.*', r'^Announcement.*', r'^Share Megaphone( \d)?$', r'^Campaign Megaphone$', r'^Interface Essential Speaker Announce$'],
   'link': [r'^Link( \d)?$', r'^Link Chain$', r'^Hyperlink( \d)?$', r'^Chain( \d)?$', r'^Hyperlink Circle$', r'^Link Chain \d$', r'^Interface Essential Link.*', r'^Link.*', r'^Hyperlink.*'],
 }
 BAD = re.compile(r'\b(off|remove|delete|add|plus|minus|lock|download|upload|warning|alert|search|setting|star|heart|dollar|cancel|slash|fire|refresh|clear|share|laptop|order|payment|transaction|linkedin|arrow|trash|certificate|zoom|scan|5g|3d|full|empty|gas|fuel|user|return|thinking|smiley|typing)\b', re.I)
@@ -41,7 +43,8 @@ for slug in fams:
     picked.setdefault(slug, {})
     os.makedirs('sets/' + slug, exist_ok=True)
     line = any(w in slug for w in ['line', 'light', 'regular', 'outline', 'linear', 'thin', 'broken', 'stroke', 'freehand'])
-    for key in Q:
+    # ONLY=announcement picks one icon and leaves the rest alone (one request in fifty).
+    for key in (os.environ['ONLY'].split(',') if os.environ.get('ONLY') else Q):
         names = []
         for q in Q[key]:
             r = get('search/family/%s?%s' % (slug, urllib.parse.urlencode({'query': q, 'limit': 40})))
