@@ -2135,6 +2135,16 @@ function passD() {
     }
   }
 
+  const body = document.getElementById('course_syllabus');
+  if (body) {
+    if (!on || putBack.paper) set(body, 'pkEmpty', null);
+    else set(body, 'pkEmpty', body.textContent.trim() || body.querySelector('img, iframe, video') ? null : '1');
+  }
+  const summary = document.querySelector('#content h2 + #syllabusContainer');
+  if (summary) {
+    const h2 = summary.previousElementSibling;
+    set(h2, 'pkCount', !on || putBack.paper ? null : String(summary.querySelectorAll('#syllabus > tbody > tr').length));
+  }
 }
 // ---- end Session D ----
 // ---- Session E pass (calendar, inbox) ----

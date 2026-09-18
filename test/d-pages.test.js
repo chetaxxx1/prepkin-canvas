@@ -189,3 +189,36 @@ test('D4 People: the title shows with the kebab on its line, the role filter is 
   await page.close();
 });
 
+// MARK: - Syllabus
+
+test('D5 Syllabus: the body reads in the page\'s column, an empty one draws no card, Course Summary heads its rows with a count, the date is a quiet row header, the work is the row\'s link with the look\'s icon, the mini month is the planner\'s', async () => {
+  let page = await open('/courses/1/assignments/syllabus');
+  await page.waitForSelector('#content h2[data-pk-count] + #syllabusContainer', { timeout: 5000 });
+  assert.equal(await shows(page, '#course_syllabus'), true, 'the teacher\'s body shows');
+  assert.equal(await style(page, '#course_syllabus', 'fontSize'), '15px');
+  assert.equal(await style(page, '#content h2[data-pk-count]', 'fontSize'), '15px', 'Course Summary is a group head');
+  assert.match(await page.$eval('#content h2[data-pk-count]', (h) => h.dataset.pkCount), /^\d+$/);
+  const row = await page.$eval('#syllabus > tbody > tr', (tr) => ({
+    h: Math.round(tr.getBoundingClientRect().height), dateBg: getComputedStyle(tr.querySelector('th.day_date')).backgroundColor, dateColor: getComputedStyle(tr.querySelector('th.day_date')).color, dateSize: getComputedStyle(tr.querySelector('th.day_date')).fontSize,
+    link: getComputedStyle(tr.querySelector('td.name a')).fontWeight, linkColor: getComputedStyle(tr.querySelector('td.name a')).color,
+    tile: getComputedStyle(tr.querySelector('td.name i')).width, mask: getComputedStyle(tr.querySelector('td.name i'), '::before').maskImage || getComputedStyle(tr.querySelector('td.name i'), '::before').webkitMaskImage,
+    due: getComputedStyle(tr.querySelector('td.dates')).textAlign, nameW: tr.querySelector('td.name').getBoundingClientRect().width,
+  }));
+  assert.ok(row.h >= 44 && row.h <= 50, `a 44px row: ${row.h}`);
+  assert.equal(row.dateBg, clear, 'the date has no fill'); assert.equal(row.dateColor, 'rgb(69, 75, 84)', 'in the quiet ink'); assert.equal(row.dateSize, '12px');
+  assert.equal(row.link, '700'); assert.equal(row.linkColor, 'rgb(27, 31, 36)', 'the work in the ink');
+  assert.equal(row.tile, '26px', 'the icon on a tile'); assert.match(row.mask, /^url\("data:image\/svg\+xml/, 'the look\'s icon');
+  assert.equal(row.due, 'right'); assert.ok(row.nameW > 300, `the work takes the width: ${row.nameW}`);
+  // The mini month.
+  assert.equal(await style(page, '#right-side .mini_month table.mini_calendar > thead > tr > th:nth-child(2)', 'content', '::before'), '"M"', 'weekday letters');
+  const cell = await page.$eval('#right-side .mini_month .mini_calendar_day.has_event .day_wrapper', (d) => ({ h: Math.round(d.getBoundingClientRect().height), bg: getComputedStyle(d).backgroundColor, dot: getComputedStyle(d, '::after').width }));
+  assert.equal(cell.h, 28, 'a 28px cell'); assert.equal(cell.bg, clear, 'no wash'); assert.equal(cell.dot, '4px', 'a dot for a day with work');
+  assert.equal(await style(page, '#right-side .mini_month .mini_calendar_day.today .day_wrapper', 'borderTopColor'), 'rgb(27, 31, 36)', 'today as a ring');
+  assert.equal(await style(page, '#right-side [aria-label="Assignment Weights"] > h2', 'fontSize'), '12px', 'the weights line is quiet');
+  await page.close();
+  // No body from the teacher: no empty card.
+  page = await open('/courses/1/assignments/syllabus?empty=1');
+  await page.waitForSelector('#course_syllabus[data-pk-empty]', { state: 'attached', timeout: 5000 });
+  assert.equal(await shows(page, '#course_syllabus'), false, 'an empty body draws nothing');
+  await page.close();
+});
