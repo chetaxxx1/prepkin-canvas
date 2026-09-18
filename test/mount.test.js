@@ -27,7 +27,8 @@ const ONLY = process.env.PAGES ? process.env.PAGES.split(',') : null;
 const PAGES = [
   ['dashboard', '/', '.ic-DashboardCard'],
   ['modules', '/courses/4/modules', '.context_module'],
-  ['files', '/courses/4/files', '.ef-directory, .ef-item-row, .ic-Table'],
+  // The new InstUI Files page has no .ef-* nodes; its search button is what says it mounted.
+  ['files', '/courses/4/files', '[data-testid="files-search-button"], .ef-directory, .ef-item-row, .ic-Table'],
   ['page', '/courses/4/pages/rotation-the-short-version', '.show-content, #wiki_page_show'],
 ].filter(([name]) => !ONLY || ONLY.includes(name));
 
