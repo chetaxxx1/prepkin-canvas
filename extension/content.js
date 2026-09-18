@@ -239,6 +239,8 @@ function detectFacts() {
     // folds a synced dashboard from the first paint, before Canvas's list has
     // mounted; that fold is kept, or its spinner shows in the gap.
     todoFold: (has('todoReact') || has('todoLegacy') || document.documentElement.classList.contains('pk-todo-fold')) && (railShows() || courseNextShows()),
+    // The announcements index: every row ends in a Reply link that goes where the row goes.
+    replyDup: has('replyLink'),
     // "Next in this class" on a course's home page.
     courseNext: courseNextShows(),
     // The Planner tab, on the dashboard with cards to stand beside.

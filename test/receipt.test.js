@@ -118,18 +118,32 @@ test('R3 dashboard: paper, thin hero, one To Do, every Coming Up row, one logo �
   assert.equal(await style(page, '.events_list.coming_up a.more_link', 'display'), 'none');
   assert.equal(await style(page, '.events_list.recent_feedback li.event[style*="display: none"]', 'display'), 'none', 'Recent Feedback is never touched');
   assert.equal(await style(page, '.events_list.recent_feedback a.more_link', 'display'), 'inline');
-  // Recent Feedback in two styles: the title, then the class and the mark on
-  // one quiet line; the check is our tick, filled mint; View Grades under it
-  // is a quiet text button, not Canvas's plain one.
+  // Recent Feedback in the rail's row shape: the class colour on the edge (the
+  // list pass names the course from the link), the tick, the title, the mark
+  // as our chip on the title's line, said "41/50"; the class code is kept for
+  // a screen reader. View Grades under it is a quiet text button.
+  await page.waitForSelector('.events_list.recent_feedback li.event a[data-pk-course]', { timeout: 4000 });
   const fb = await page.$eval('.events_list.recent_feedback li.event a', (a) => {
-    const ctx = a.querySelector('.event-details__context').getBoundingClientRect();
+    const title = a.querySelector('.event-details__title').getBoundingClientRect();
     const mark = a.querySelector('p strong').getBoundingClientRect();
-    return { sameLine: Math.abs(ctx.top - mark.top) < 3, tick: getComputedStyle(a.querySelector('i'), '::before').backgroundColor, chip: getComputedStyle(a.querySelector('p strong')).backgroundColor, sep: getComputedStyle(a.querySelector('p:has(> strong)'), '::before').content };
+    const cs = getComputedStyle(a.querySelector('p strong'));
+    return { course: a.dataset.pkCourse, edge: getComputedStyle(a).borderLeftColor, sameLine: Math.abs((title.top + title.height / 2) - (mark.top + mark.height / 2)) < 4, right: mark.left > title.left + 60, tick: getComputedStyle(a.querySelector('i'), '::before').backgroundColor, chip: cs.backgroundColor, radius: cs.borderRadius, said: getComputedStyle(a.querySelector('p strong'), '::after').content, ctx: getComputedStyle(a.querySelector('.event-details__context')).width, h: Math.round(a.getBoundingClientRect().height) };
   });
-  assert.ok(fb.sameLine, 'the class and the mark share a line');
+  assert.equal(fb.course, '1', 'the row knows its course');
+  assert.equal(fb.edge, 'rgb(255, 111, 97)', 'the class colour on the edge');
+  assert.ok(fb.sameLine && fb.right, 'the mark sits on the title\'s line at the right');
   assert.equal(fb.tick, rgb('#51CFA0'), 'the check is our tick');
-  assert.equal(fb.chip, 'rgba(0, 0, 0, 0)', 'the mark is words, not a chip');
-  assert.equal(fb.sep, '"· "', 'a dot between');
+  assert.equal(fb.chip, rgb('#EFEDE8'), 'the mark is our chip');
+  assert.equal(fb.radius, '999px');
+  assert.equal(fb.said, '"41/50"', 'said short; Canvas\'s words stay for a screen reader');
+  assert.equal(fb.ctx, '1px', 'the class code is read, not seen');
+  assert.ok(fb.h >= 44, `a rail row, 44px or more: ${fb.h}`);
+  // The four actions under a card wear the look's icon set: Canvas's svg hides
+  // and a masked mark takes its place; an icon a set lacks keeps Canvas's.
+  const act = await page.$eval('.ic-DashboardCard__action.assignments .ic-DashboardCard__action-layout', (el) => ({ svg: getComputedStyle(el.querySelector('svg')).visibility, mask: getComputedStyle(el, '::before').maskImage, size: getComputedStyle(el, '::before').width }));
+  assert.equal(act.svg, 'hidden'); assert.match(act.mask, /^url\("data:image\/svg\+xml/); assert.equal(act.size, '18px');
+  const ann = await page.$eval('.ic-DashboardCard__action.announcements .ic-DashboardCard__action-layout', (el) => ({ svg: getComputedStyle(el.querySelector('svg')).visibility, mask: getComputedStyle(el, '::before').maskImage }));
+  if (ann.svg === 'hidden') assert.match(ann.mask, /^url\("data:image\/svg\+xml/, 'an action never hides its glyph without a mark of ours to show'); else assert.equal(ann.mask, 'none');
   assert.equal(await style(page, '#right-side .button-sidebar-wide', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'View Grades: no ground');
   assert.equal(await style(page, '#right-side .button-sidebar-wide', 'fontSize'), '13px', 'the add-line size');
   assert.equal(await style(page, '.ic-app-header__logomark-container', 'display'), 'none', 'the header copy of the mark');
@@ -654,6 +668,95 @@ test('R40 one row shape: a module row is one 44px line, the hint beside the titl
   }
   const head = await page.$eval('.context_module .ig-header', (e) => Math.round(e.getBoundingClientRect().height));
   assert.ok(head >= 52 && head <= 60, `the header is one 52px line: ${head}`);
+  await page.close();
+});
+
+test('R41 assignments and quizzes: the bar on the title line, a segmented Show by, one sheet with quiet heads and counts, the points without a dash, a lone group with no card', async () => {
+  let page = await open('/courses/1/assignments');
+  await page.waitForSelector('.item-group-condensed .ig-header-title[data-pk-count]', { timeout: 6000 });
+  const bar = await page.evaluate(() => {
+    const h1 = document.querySelector('#content > h1').getBoundingClientRect();
+    const b = document.querySelector('#content .header-bar').getBoundingClientRect();
+    const search = document.querySelector('.assignment-search label[data-cid="TextInput"]').getBoundingClientRect();
+    const seg = document.querySelector('[data-view="showBy"] [class*="-gridRow"]');
+    const on = document.querySelector('[data-view="showBy"] input:checked + label'); const off = document.querySelector('[data-view="showBy"] input:not(:checked) + label');
+    return { sameLine: Math.abs((h1.top + h1.height / 2) - (b.top + b.height / 2)) < 10, right: b.right >= h1.right - 2, search: Math.round(search.width), track: getComputedStyle(seg).borderRadius, on: getComputedStyle(on).backgroundColor, off: getComputedStyle(off).backgroundColor, caseOn: getComputedStyle(on.querySelector('[class*="radioInput__label"]')).textTransform, facade: getComputedStyle(document.querySelector('[data-view="showBy"] [class*="radioInput__facade"]')).display, order: search.left < seg.getBoundingClientRect().left };
+  });
+  assert.ok(bar.sameLine && bar.right, 'the bar rises onto the title line, at the right');
+  assert.equal(bar.search, 240, 'the search is our field at 240');
+  assert.equal(bar.track, '999px', 'Show by is a segmented control');
+  assert.equal(bar.on, 'rgb(255, 255, 255)', 'the chosen segment on the card tone');
+  assert.equal(bar.off, 'rgba(0, 0, 0, 0)', 'the other on the track');
+  assert.equal(bar.caseOn, 'none'); assert.equal(bar.facade, 'none', 'no radio circle');
+  assert.ok(bar.order, 'the search, then the toggle at the far right');
+  const sheet = await page.evaluate(() => {
+    const c = getComputedStyle(document.querySelector('#ag-list')); const g = getComputedStyle(document.querySelector('.item-group-condensed'));
+    const heads = [...document.querySelectorAll('.item-group-condensed .ig-header')].map((h) => ({ h: Math.round(h.getBoundingClientRect().height), size: getComputedStyle(h.querySelector('.element_toggler')).fontSize, count: getComputedStyle(h.querySelector('.ig-header-title'), '::after').content, chevron: getComputedStyle(h.querySelector('.element_toggler'), '::before').content, arrow: getComputedStyle(h.querySelector('i[class*="icon-mini-arrow"]')).display, top: getComputedStyle(h).borderTopWidth }));
+    return { sheet: c.borderRadius, groupRadius: g.borderRadius, groupBg: g.backgroundColor, groupMargin: g.marginBottom, groupPad: g.paddingBottom, heads };
+  });
+  assert.equal(sheet.sheet, '14px', 'the list is one card');
+  assert.equal(sheet.groupRadius, '0px'); assert.equal(sheet.groupBg, 'rgba(0, 0, 0, 0)'); assert.equal(sheet.groupMargin, '0px', 'a group is not a card'); assert.equal(sheet.groupPad, '0px', 'no air between groups');
+  assert.deepEqual(sheet.heads.map((h) => h.count), ['"2"', '"1"', '"1"'], 'each head counts its rows');
+  for (const h of sheet.heads) { assert.ok(h.h >= 44 && h.h <= 52, `a quiet 44px head: ${h.h}`); assert.equal(h.size, '14px'); assert.equal(h.chevron, '"⌄"'); assert.equal(h.arrow, 'none'); }
+  assert.deepEqual(sheet.heads.map((h) => h.top), ['0px', '1px', '1px'], 'a hairline above every group but the first');
+  const pts = await page.$$eval('.ig-row .score-display', (els) => els.map((el) => { const a = el.getBoundingClientRect(); const d = el.closest('.ig-details').querySelector('.assignment-date-due').getBoundingClientRect(); return { attr: el.dataset.pkPts ?? null, size: getComputedStyle(el).fontSize, after: getComputedStyle(el, '::after').content, text: el.textContent.trim(), off: Math.abs((a.top + a.height / 2) - (d.top + d.height / 2)) }; }));
+  for (const p of pts) assert.ok(p.off < 2.5, `the points sit on the due date's line: ${p.off}`);
+  assert.deepEqual(pts.map((p) => [p.attr, p.size, p.after]), [['15 pts', '0px', '"15 pts"'], ['50 pts', '0px', '"50 pts"'], [null, '12px', 'none']], 'no dash where nothing is scored; a scored row is untouched');
+  assert.deepEqual(pts.map((p) => p.text), ['-/15 pts', '-/50 pts', '47/50 pts'], 'Canvas\'s own words are never edited');
+  await h.setStorage({ putBack: { 'module-band': true } }); await page.waitForTimeout(400);
+  assert.ok(parseFloat(await style(page, '#content .header-bar', 'marginTop')) >= 0, 'Put back: the bar drops back under the title');
+  await h.setStorage({ putBack: {} });
+  await page.close();
+  page = await open('/courses/1/quizzes');
+  await page.waitForSelector('.item-group-condensed .ig-header-title[data-pk-count]', { timeout: 6000 });
+  const quiz = await page.evaluate(() => {
+    const h1 = document.querySelector('#content > h1').getBoundingClientRect(); const b = document.querySelector('#content .header-bar').getBoundingClientRect();
+    const details = [...document.querySelectorAll('.ig-row .ig-details__item')].map((d) => Math.round(d.getBoundingClientRect().top));
+    return { sameLine: Math.abs((h1.top + h1.height / 2) - (b.top + b.height / 2)) < 10, search: Math.round(document.querySelector('.ic-Search').getBoundingClientRect().width), field: getComputedStyle(document.querySelector('.ic-Search-input')).borderRadius, container: getComputedStyle(document.querySelector('.item-group-container')).borderRadius, group: getComputedStyle(document.querySelector('.item-group-condensed')).backgroundColor, list: getComputedStyle(document.querySelector('#assignment-quizzes')).borderBottomWidth, count: getComputedStyle(document.querySelector('.ig-header-title'), '::after').content, details, seps: [...document.querySelectorAll('.ig-row .ig-details__item + .ig-details__item')].map((d) => getComputedStyle(d, '::before').content) };
+  });
+  assert.ok(quiz.sameLine, 'the search rises onto the title line');
+  assert.equal(quiz.search, 240); assert.equal(quiz.field, '10px');
+  assert.equal(quiz.container, '0px', 'a lone group: no card around it');
+  assert.equal(quiz.group, 'rgba(0, 0, 0, 0)'); assert.equal(quiz.list, '1px', 'the rows sit between hairlines on the page');
+  assert.equal(quiz.count, '"1"');
+  assert.equal(new Set(quiz.details).size, 1, `four details on one line: ${quiz.details.join(',')}`);
+  assert.deepEqual(quiz.seps, ['"·"', '"·"', '"·"'], 'a dot between each');
+  await page.close();
+  page = await open('/courses/1/quizzes?empty=1');
+  await page.waitForSelector('.ig-row-empty', { timeout: 4000 });
+  const empty = await page.$eval('.ig-row-empty', (e) => ({ border: getComputedStyle(e).borderStyle, bg: getComputedStyle(e).backgroundColor, size: getComputedStyle(e.querySelector('.ig-empty-msg')).fontSize, text: e.textContent.trim() }));
+  assert.equal(empty.border, 'none'); assert.equal(empty.bg, 'rgba(0, 0, 0, 0)'); assert.equal(empty.size, '13px'); assert.equal(empty.text, 'No quizzes found', 'one quiet line, no box');
+  await page.close();
+});
+
+test('R42 announcements: the title shows, its controls rise onto its line, Mark All as Read is words, Reply is taken with a Put back, unread is our mark on the face', async () => {
+  const page = await open('/courses/1/announcements');
+  await page.waitForSelector('.ic-announcement-row', { timeout: 6000 });
+  const top = await page.evaluate(() => {
+    const h1 = document.querySelector('#content h1'); const r = h1.getBoundingClientRect();
+    const bar = document.querySelector('.announcements-v2__wrapper > span + div').getBoundingClientRect();
+    const mark = document.querySelector('#mark_all_announcement_read'); const cs = getComputedStyle(mark); const inner = getComputedStyle(mark.querySelector('[class*="baseButton__content"]'));
+    const filter = document.querySelector('[class*="textInput__facade"]:has(#announcement-filter)');
+    return { shown: r.height > 20 && r.width > 50, size: getComputedStyle(h1).fontSize, sameLine: Math.abs((r.top + r.height / 2) - (bar.top + bar.height / 2)) < 12, markBg: cs.backgroundColor, markInner: inner.backgroundColor, markSize: cs.fontSize, glyph: getComputedStyle(mark.querySelector('[class*="baseButton__iconWrapper"]')).display, filterBg: getComputedStyle(filter).backgroundColor, filterEdge: getComputedStyle(filter).borderTopColor, search: Math.round(document.querySelector('[data-cid="TextInput"]:has(#announcements-search)').getBoundingClientRect().width), feeds: getComputedStyle(document.querySelector('#external_feed')).fontSize };
+  });
+  assert.ok(top.shown, 'the page has its title'); assert.equal(top.size, '28px');
+  assert.ok(top.sameLine, 'the filter line is the title line');
+  assert.equal(top.markBg, 'rgba(0, 0, 0, 0)'); assert.equal(top.markInner, 'rgba(0, 0, 0, 0)', 'Mark All as Read: no ground, on the element or InstUI\'s span');
+  assert.equal(top.markSize, '13px'); assert.equal(top.glyph, 'none', 'words only');
+  assert.equal(top.filterBg, 'rgba(0, 0, 0, 0)'); assert.equal(top.filterEdge, 'rgba(0, 0, 0, 0)', 'the filter is words with a chevron'); assert.equal(await style(page, '#announcement-filter', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'and its input has no box of its own');
+  assert.equal(top.search, 240); assert.equal(top.feeds, '13px');
+  const rows = await page.$$eval('.ic-announcement-row', (els) => els.map((r) => ({ reply: getComputedStyle(r.querySelector('a:has([data-testid="announcement-reply"])')).display, radius: getComputedStyle(r).borderRadius, dot: getComputedStyle(r.querySelector('.ic-item-row__author-col'), '::after').content, dotW: getComputedStyle(r.querySelector('.ic-item-row__author-col'), '::after').width, dotColor: getComputedStyle(r.querySelector('.ic-item-row__author-col'), '::after').backgroundColor, ring: getComputedStyle(r.querySelector('[class*="-avatar"]')).borderTopWidth, initials: getComputedStyle(r.querySelector('[class*="avatar__initials"]')).color })));
+  assert.deepEqual(rows.map((r) => r.reply), ['none', 'none'], 'Reply is taken: the row is the link');
+  assert.deepEqual(rows.map((r) => r.radius), ['0px', '0px'], 'rows in one sheet, not a card each');
+  assert.equal(await style(page, '#content span:has(> .ic-announcement-row)', 'borderRadius'), '14px', 'the sheet is the card');
+  assert.equal(rows[0].dot, '""'); assert.equal(rows[0].dotW, '8px'); assert.equal(rows[0].dotColor, rgb('#2F6BAA'), 'unread: our mark, 8px, never red');
+  assert.equal(rows[1].dot, 'none', 'a read row has none');
+  assert.deepEqual(rows.map((r) => r.ring), ['1px', '1px'], 'the face has a ring'); assert.equal(rows[0].initials, rgb('#454B54'));
+  await h.setStorage({ putBack: { 'reply-dup': true } }); await page.waitForTimeout(400);
+  assert.notEqual(await style(page, '.ic-announcement-row a:has([data-testid="announcement-reply"])', 'display'), 'none', 'Put back: Reply is back');
+  await h.setStorage({ putBack: {} });
+  const receipt = await page.evaluate(() => [...document.documentElement.classList]);
+  assert.ok(!receipt.includes('pk-back-reply-dup'));
   await page.close();
 });
 

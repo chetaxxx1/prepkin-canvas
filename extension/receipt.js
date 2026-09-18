@@ -238,6 +238,7 @@ const RULES = [
   // rows: the class list the rival puts in a sidebar, with nothing to hide
   // because it starts folded.
   { key: 'past-fold', kind: 'added', label: 'Finished courses, folded under your cards', detect: 'pastFold' },
+  { key: 'reply-dup', kind: 'taken', label: 'The Reply link under each announcement. The row is the link', detect: 'replyDup' },
   { key: 'buddy', kind: 'added', label: 'The buddy, bottom right', when: () => true, opt: 'mascot', putBack: 'Take off', undo: 'Bring back' },
 ];
 

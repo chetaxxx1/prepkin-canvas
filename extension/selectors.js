@@ -25,9 +25,12 @@ const SELECTORS = {
   pastCourses:     { sel: '#past_enrollments_table, #future_enrollments_table', page: 'courses', conf: 'likely' },
   courseNavLowUse: { sel: '#section-tabs a.files, #section-tabs a.outcomes, #section-tabs a.conferences, #section-tabs a.collaborations', page: 'course', conf: 'verified' },
   moduleHeader:    { sel: '.context_module .ig-header.header', page: 'modules', conf: 'verified' },
-  moduleDue:       { sel: '.context_module .due_date_display', page: 'modules', conf: 'verified' },
+  moduleDue:       { sel: '.context_module .due_date_display, .ig-row .ig-details .score-display', page: 'modules', conf: 'verified' },
   // Canvas's bar above the module list: 90px of paper holding one Collapse All.
-  moduleBar:       { sel: '#content .header-bar:has(#expand_collapse_all)', page: 'modules', conf: 'verified' },
+  // The same bar above the assignments (its search and Show by) and the quizzes (its search).
+  moduleBar:       { sel: '#content .header-bar:has(#expand_collapse_all), #content .header-bar:has(.assignment-search), #content .header-bar:has(.ic-Search)', page: 'modules', conf: 'verified' },
+  // The Reply link under every announcement row, the row's own link said again.
+  replyLink:       { sel: '.ic-item-row [data-testid="announcement-reply"]', page: 'announcements', conf: 'verified' },
   // A calendar event chip: a link, coloured by its course's own class rule.
   calEvent:        { sel: '#calendar-app .fc-event', page: 'calendar', conf: 'verified' },
   // A plain Canvas button (the buttons rule excludes submit, primary and icon-only ones in its own text).

@@ -166,7 +166,7 @@ test('a row is on the receipt only when its hook is on the page', () => {
   assert.ok(receiptRows({ present: () => true }).some((r) => r.key === 'week'), 'the rail is on the dashboard receipt');
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'todo-fold'), 'the fold needs a To Do list on the page');
   assert.ok(receiptRows({ present: () => true, detect: { todoFold: true } }).some((r) => r.key === 'todo-fold'), 'and lists itself when there is one');
-  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true, listView: true, pastFold: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2, ownWall: true });
+  const all = receiptRows({ present: () => true, detect: { logoDup: true, todoDup: true, todoFold: true, wordPaste: true, planner: true, courseNext: true, gradesPage: true, listView: true, pastFold: true, replyDup: true }, dark: true, cardGrades: true, nicknames: 1, ownArt: 2, ownWall: true });
   assert.deepEqual(all.map((r) => r.key).sort(), RULES.map((r) => r.key).sort());
   assert.ok(!receiptRows({ present: () => true }).some((r) => r.key === 'own-wall'), 'the photo row needs the photo worn');
   const light = receiptRows({ present: () => true, detect: { wordPaste: true }, dark: false });
@@ -289,7 +289,9 @@ test('every rule names a hook that exists, and no hook is a hashed class', () =>
   // Raised to 27 on 2026-09-18 for `own-wall`: the student's own photo under
   // the paper is on every page while the look is worn. And 28 for `past-fold`:
   // the finished courses as one closed line under the cards and the grades.
-  assert.ok(RULES.filter((r) => !r.opt).length <= 28, 'twenty-eight keys at most, so it cannot sprawl');
+  // And 29 for `reply-dup`: the Reply link under every announcement row,
+  // taken, because the row is already that link.
+  assert.ok(RULES.filter((r) => !r.opt).length <= 29, 'twenty-nine keys at most, so it cannot sprawl');
 });
 
 // MARK: - Off switches and names
@@ -392,7 +394,13 @@ const TEXT_BUTTON_OK = [
   'html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all',
   'html.pk-on:not(.pk-back-buttons) #content #print-grades-button',
   'html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide',
+  // The announcements' Mark All as Read (2026-09-18, the four 8s). InstUI
+  // paints the ground on the content span, so that span is named too; its
+  // envelope wrapper may only be hidden.
+  'html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read',
+  'html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read > [class*="baseButton__content"]',
 ];
+const TEXT_BUTTON_GLYPH = / \[class\*="baseButton__iconWrapper"\]$/;
 const TEXT_BUTTON_TOKENS = /^(background-color:transparent!important;border-color:transparent!important;box-shadow:none!important;color:var\(--pk-link\)!important;padding:0!important;font-weight:700!important;font-size:13px!important;?|text-decoration:underline!important;?|outline:2pxsolidvar\(--pk-mark\)!important;outline-offset:2px!important;?|content:none!important;?)$/;
 // The paper's three tokens; the same three inverted for the one selected view
 // toggle; or the ink alone, for a text button with no ground.
@@ -409,6 +417,10 @@ test('no rule in the skin writes any property on a button, except the buttons ru
         seen++;
         if (TEXT_BUTTON_OK.includes(sel.replace(/:(hover|focus-visible)$|::before$/, ''))) {
           assert.match(r.body.replace(/\s+/g, ''), TEXT_BUTTON_TOKENS, `a text button: no ground, no edge, the link ink, its two states: ${sel}`);
+          continue;
+        }
+        if (TEXT_BUTTON_GLYPH.test(sel) && TEXT_BUTTON_OK.includes(sel.replace(TEXT_BUTTON_GLYPH, ''))) {
+          assert.equal(r.body.replace(/\s+/g, ''), 'display:none!important;', `a text button's glyph may only go: ${sel}`);
           continue;
         }
         assert.match(r.body.replace(/\s+/g, ''), BUTTON_TOKENS, `the paper's three tokens and nothing else: ${sel}`);

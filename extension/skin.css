@@ -446,6 +446,8 @@ html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-row"],
 html.pk-on.pk-art:not(.pk-back-paper) #content [class*="-view-cell"],
 html.pk-on.pk-art:not(.pk-back-paper) #content .module-sequence-footer-content,
 html.pk-on.pk-art:not(.pk-back-paper) #content .item-group-condensed,
+html.pk-on.pk-art:not(.pk-back-paper) #content .item-group-container,
+html.pk-on.pk-art:not(.pk-back-paper) #content span:has(> .ic-announcement-row),
 html.pk-on.pk-art:not(.pk-back-paper) #content .user_content.enhanced,
 html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-pl-rows,
 html.pk-on.pk-art:not(.pk-back-paper) #content #pk-grades .pk-pl-grade,
@@ -706,6 +708,28 @@ html.pk-on:not(.pk-back-paper) .ic-item-row .ic-announcement-row__content p { ma
 html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-col { margin: 0 !important; padding: 0 !important; text-align: right !important; }
 html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-content-heading { display: none !important; }
 html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__meta-content-timestamp p { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; margin: 0 !important; white-space: nowrap !important; }
+/* The list is one sheet: the span that holds the rows is the card, each row
+ * a hairline apart, none a card of its own. */
+html.pk-on:not(.pk-back-paper) #content span:has(> .ic-announcement-row) {
+  display: block !important; border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important; box-shadow: var(--pk-lift) !important; overflow: clip !important; background-color: var(--pk-paper-2) !important;
+}
+html.pk-on:not(.pk-back-paper) #content span:has(> .ic-announcement-row) > .ic-announcement-row { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background-color: transparent !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content span:has(> .ic-announcement-row) > .ic-announcement-row + .ic-announcement-row { border-top: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-announcement-row:hover { background-color: var(--pk-hover) !important; }
+/* The author's face: a tile with a ring, its initial in the quiet ink, so a
+ * placeholder face holds on the dark stock and the frosted pane alike. */
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__author-col [class*="-avatar"] { border: 1px solid var(--pk-rule) !important; background-color: var(--pk-paper-sunk) !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__author-col [class*="avatar__initials"] { color: var(--pk-ink-2) !important; font-weight: 800 !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-item-row .ic-item-row__author-col [class*="-avatar"] { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
+/* Unread: Canvas's blue badge before the row is folded; the mark is ours, 8px
+ * in the paper's mark colour on the tile's corner. Never red. */
+html.pk-on:not(.pk-back-paper) .ic-item-row .ic-item-row__author-col { position: relative !important; }
+html.pk-on:not(.pk-back-paper) .ic-item-row:has(> [class*="view--block"]:first-child [data-cid="Badge"]) .ic-item-row__author-col::after {
+  content: ""; position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 999px; background: var(--pk-mark); box-shadow: none;
+}
+/* ---- reply-dup: the Reply link under every announcement row ------------
+ * The row is a link to the announcement, and Reply goes to the same place. */
+html.pk-on:not(.pk-back-reply-dup) .ic-item-row .ic-item-row__content-col > a.ic-item-row__content-link:has([data-testid="announcement-reply"]) { display: none !important; }
 
 /* The status mark at the right of a module row, and at the right of its
  * header: Canvas draws a green check for done and an orange circle for
@@ -782,6 +806,71 @@ html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_a
 html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > h1 + .header-bar:has(#expand_collapse_all) {
   margin: -71px 0 35px !important; height: 36px !important; padding: 0 !important; align-items: center !important;
 }
+/* The same bar above the assignments (a search and Show by) and the quizzes
+ * (a search): folded the same way onto the title line, the search as our
+ * field at 240px, Show by as a segmented control in the paper's tokens. Each
+ * hook in its own :has() (no commas inside one). */
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(.assignment-search),
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(.ic-Search) {
+  min-height: 0 !important; height: auto !important; padding: 0 0 8px !important; margin: 0 !important;
+  background-color: transparent !important; border: 0 !important; box-shadow: none !important;
+  display: flex !important; justify-content: flex-end !important; align-items: center !important; gap: 12px !important; flex-wrap: wrap !important;
+}
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > h1 + .header-bar:has(.assignment-search),
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > h1 + .header-bar:has(.ic-Search) {
+  margin: -71px 0 35px !important; min-height: 36px !important; padding: 0 !important;
+}
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(.assignment-search) .header-bar-left,
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(.assignment-search) .header-bar-right,
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(.ic-Search) .header-bar-left,
+html.pk-on:not(.pk-back-module-band) #content .header-bar:has(.ic-Search) .header-bar-right { float: none !important; display: flex !important; align-items: center !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; width: auto !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar .assignment-search .ic-Multi-input { display: block !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar .assignment-search label[data-cid="TextInput"] { display: block !important; width: 240px !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar .assignment-search [class*="textInput__facade"] { border-radius: 10px !important; min-height: 32px !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar .assignment-search [class*="textInput__facade"] input { font-size: 13px !important; font-weight: 600 !important; height: 30px !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar .ic-Search { width: 240px !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar .ic-Search .ic-Search-input { height: 32px !important; border-radius: 10px !important; font-size: 13px !important; font-weight: 600 !important; padding-left: 34px !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar .ic-Search .ic-Search-icon { color: var(--pk-ink-2) !important; }
+/* Show by Date / Show by Type: Canvas's radio group, painted as a primary. A
+ * segmented control: a sunk track, the chosen segment raised on the paper's
+ * card tone (the pressed key you can see), the words in their own case. */
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] fieldset { margin: 0 !important; padding: 0 !important; border: 0 !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] [class*="-gridRow"] { display: inline-flex !important; gap: 2px !important; padding: 2px !important; margin: 0 !important; border-radius: 999px !important; background-color: var(--pk-paper-sunk) !important; width: auto !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] [class*="-gridCol"] { padding: 0 !important; margin: 0 !important; width: auto !important; flex: none !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] [class*="radioInput__facade"] { display: none !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] [class*="radioInput__control"] {
+  display: inline-flex !important; align-items: center !important; height: 26px !important; padding: 0 12px !important; margin: 0 !important; border-radius: 999px !important;
+  font-size: 13px !important; font-weight: 700 !important; color: var(--pk-ink-2) !important; cursor: pointer !important; background-color: transparent !important;
+}
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] [class*="radioInput__label"] { color: inherit !important; font-size: 13px !important; font-weight: 700 !important; padding: 0 !important; margin: 0 !important; text-transform: none !important; letter-spacing: normal !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] input:checked + [class*="radioInput__control"] { background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; box-shadow: var(--pk-lift) !important; }
+html.pk-on:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] input:focus-visible + [class*="radioInput__control"] { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on.pk-art:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] [class*="-gridRow"] { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-module-band) #content .header-bar [data-view="showBy"] input:checked + [class*="radioInput__control"] { background-color: color-mix(in srgb, var(--pk-paper-2) 70%, transparent) !important; }
+/* The announcements index has the same row of controls (a filter, a search,
+ * Mark All as Read) under an InstUI heading. The heading is unclipped by the
+ * title rule; the row rises onto its line: the filter as words with its
+ * chevron, the search as the field above, Mark All as Read as words (the
+ * buttons rule), External Feeds after it. */
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content .announcements-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div {
+  margin: -71px 0 35px !important; min-height: 36px !important; display: flex !important; align-items: center !important; justify-content: flex-end !important;
+}
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div > [class*="-view"] { display: flex !important; align-items: center !important; gap: 14px !important; flex-wrap: wrap !important; justify-content: flex-end !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div [class*="view--block"] { margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div [class*="view--flex-flex"] { display: flex !important; gap: 14px !important; align-items: center !important; flex-wrap: nowrap !important; justify-content: flex-start !important; width: auto !important; }
+/* InstUI gives the first item `min-width: 100%`; with it the row overflowed to the left, over the title (2026-09-18). */
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; width: auto !important; min-width: 0 !important; flex: none !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [data-cid="TextInput"]:has(#announcement-filter) { display: inline-block !important; width: auto !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [class*="textInput__facade"]:has(#announcement-filter) { display: inline-flex !important; width: auto !important; background-color: transparent !important; border-color: transparent !important; box-shadow: none !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [class*="textInput__facade"]:has(#announcement-filter) [class*="textInput__layout"],
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [class*="textInput__facade"]:has(#announcement-filter) [class*="textInput__inputLayout"] { width: auto !important; flex: none !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper #announcement-filter { font-size: 13px !important; font-weight: 700 !important; color: var(--pk-ink) !important; background-color: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; width: auto !important; min-width: 0 !important; field-sizing: content; cursor: pointer !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [class*="textInput__facade"]:has(#announcement-filter) [class*="textInput__inputLayout"] { gap: 4px !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [class*="textInput__facade"]:has(#announcement-filter) [class*="select__icon"] { color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [data-cid="TextInput"]:has(#announcements-search) { display: block !important; width: 240px !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper [class*="textInput__facade"]:has(#announcements-search) { border-radius: 10px !important; min-height: 32px !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper #announcements-search { font-size: 13px !important; font-weight: 600 !important; height: 30px !important; }
+html.pk-on:not(.pk-back-module-band) #content .announcements-v2__wrapper #external_feed { font-size: 13px !important; font-weight: 700 !important; }
 
 /* ---- cal-rows: the month's event chips. Canvas paints each one white with
  * its course colour as the border and the text, seven to a row on the dark
@@ -1340,8 +1429,8 @@ html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active),
  * with an icon, 2026-09-16). An icon-only button has no `__children` span, so
  * it is left alone here by the same test. `#add_discussion` is the one InstUI
  * primary with an icon on a student's pages; it keeps Canvas's colour. */
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]),
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]) > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]),
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]) > [class*="baseButton__content"],
 /* The Files page has no colour band for an icon to sit on, so its icon-only
  * buttons (download, the kebab) take the paper too; and its Search button,
  * a submit inside a form that hands nothing in, is the one such button named. */
@@ -1354,8 +1443,8 @@ html.pk-on:not(.pk-back-buttons) body.files #content form [class*="-baseButton"]
 html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active):hover,
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]):hover,
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):has([class*="baseButton__children"]):hover > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]):hover,
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]):hover > [class*="baseButton__content"],
 html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover,
 html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover [class*="baseButton__content"] {
   background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
@@ -1366,26 +1455,33 @@ html.pk-on:not(.pk-back-buttons) .ui-button.ui-state-active,
 html.pk-on:not(.pk-back-buttons) .btn.calendar-button.active:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]) {
   background-color: var(--pk-ink) !important; color: var(--pk-paper) !important; border-color: var(--pk-ink) !important;
 }
-/* Three named buttons are text: Modules' Collapse All and the grades page's
- * Print Grades, each the one control in its title row, and the dashboard
- * sidebar's View Grades, the one control under Recent Feedback. No ground,
+/* Four named buttons are text: Modules' Collapse All and the grades page's
+ * Print Grades, each the one control in its title row, the dashboard
+ * sidebar's View Grades, the one control under Recent Feedback, and the
+ * announcements' Mark All as Read, on the title line with the filter. No ground,
  * no edge, the link ink, 13/700 like the planner's "+ Add a task"; the
  * receipt lint names all three (TEXT_BUTTON_OK) and nothing else may take
  * this form. Print Grades wore Canvas's printer glyph; a text button is
  * words only. */
 html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all,
 html.pk-on:not(.pk-back-buttons) #content #print-grades-button,
-html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide {
+html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide,
+html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read,
+html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read > [class*="baseButton__content"] {
   background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
   color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
 }
 html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all:hover,
 html.pk-on:not(.pk-back-buttons) #content #print-grades-button:hover,
-html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide:hover,
+html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read:hover { text-decoration: underline !important; }
 html.pk-on:not(.pk-back-buttons) #content .header-bar #expand_collapse_all:focus-visible,
 html.pk-on:not(.pk-back-buttons) #content #print-grades-button:focus-visible,
-html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-buttons) #right-side .Button.button-sidebar-wide:focus-visible,
+html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
 html.pk-on:not(.pk-back-buttons) #content #print-grades-button::before { content: none !important; }
+/* Mark All as Read wore an envelope; a text button is words only. */
+html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read [class*="baseButton__iconWrapper"] { display: none !important; }
 /* InstUI's disclosure toggle (Settings' feature list) is a text button with an
  * arrow icon and no ground by design; it takes the ink alone. */
 html.pk-on:not(.pk-back-buttons) #content [class*="toggleDetails__toggle"] { color: var(--pk-ink) !important; }
@@ -1517,6 +1613,12 @@ html.pk-on:not(.pk-back-title) body:not(:has(#dashboard_header_container)) #cont
  * nothing, a 40px band with a line under it (2026-09-16). Its own words, unclipped. */
 html.pk-on:not(.pk-back-title) #content h1[class*="-view-heading"] > [class*="screenReaderContent"] {
   position: static !important; width: auto !important; height: auto !important;
+  clip: auto !important; clip-path: none !important; overflow: visible !important; white-space: normal !important;
+}
+/* The announcements index does it the other way round: the screen-reader span
+ * wraps the heading. The span is unclipped, and the heading takes the rules below. */
+html.pk-on:not(.pk-back-title) #content [class*="screenReaderContent"]:has(> h1[class*="-view-heading"]) {
+  position: static !important; width: auto !important; height: auto !important; display: block !important;
   clip: auto !important; clip-path: none !important; overflow: visible !important; white-space: normal !important;
 }
 /* That page sets no inset of its own; the title lines up with its toolbar. */
