@@ -31,10 +31,18 @@
     });
     document.documentElement.classList.add(...classes);
     if (classes.length) {
+      const art = artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), s.ownArt ?? null);
       const style = document.getElementById('pk-theme-vars') ?? document.createElement('style');
       style.id = 'pk-theme-vars';
-      style.textContent = themeStyle(look, textureImage, artFor(look, ART_AVAILABLE, (f) => chrome.runtime.getURL(f), s.ownArt ?? null));
+      style.textContent = themeStyle(look, textureImage, art);
       document.documentElement.append(style);
+      // The wall and the four banners are asked for now, so the cards wear
+      // them the moment they render: a dashboard once showed four seconds of
+      // Canvas's flat bands while the pictures were still being read
+      // (the tour of 2026-09-19). Extension files, no request leaves.
+      if (art && /^\/(dashboard)?\/?$/.test(location.pathname)) {
+        for (const src of [art.wallpaper, ...(art.cards ?? [])]) { const img = new Image(); img.decoding = 'async'; img.src = src; }
+      }
     }
   } catch {
     // No storage, no skin. The page is Canvas, unchanged.

@@ -270,6 +270,8 @@ function plRows(items, now, { slipped = false, first = null, running = false } =
   const { focus, skin } = plannerState();
   if (running) ul.append(plSessionRow(focus));
   for (const t of items) {
+    // The running task is the session row above; not the same task twice.
+    if (running && String(t.id) === String(focus.taskId)) continue;
     const finished = isDone(t);
     const late = !finished && t.dueAt && Date.parse(t.dueAt) < now.getTime();
     const li = el('li', `${finished ? 'done' : ''}${isMoved(t) ? ' moved' : ''}${t === first ? ' pk-w-first' : ''}`.trim());
@@ -974,8 +976,16 @@ function plPictures(look, { data, cardArt, banners, ART_AVAILABLE, ownArt = null
     row.append(name);
     const thumbs = el('div', 'thumbs');
     const own = cardArt[c.id];
+    // With no pick the card wears the rotation's banner (its place among the
+    // cards); that one is marked too, so a row always says which is on.
+    const cardsOrder = [...document.querySelectorAll('.ic-DashboardCard[data-pk-course]')].map((card) => card.dataset.pkCourse);
+    const place = cardsOrder.indexOf(String(c.id));
+    // Four banners a theme (content.js BANNER_COUNT; a const there is not
+    // this script's to read).
+    const worn = banners[c.id] ?? (place >= 0 ? (place % 4) + 1 : null);
     if (art) art.cards.forEach((u, i) => {
-      const b = el('span', `thumb${!own && banners[c.id] === i + 1 ? ' on' : ''}`, null);
+      const b = el('span', `thumb${!own && worn === i + 1 ? ' on' : ''}`, null);
+      b.setAttribute('aria-pressed', String(!own && worn === i + 1));
       b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', `Banner ${i + 1}`);
       b.style.backgroundImage = `url("${u}")`;
       b.addEventListener('click', (e) => { if (e.isTrusted) plannerBannerAsync(String(c.id), i + 1).then(() => renderLooks()); });

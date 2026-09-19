@@ -133,7 +133,12 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .pk-help-list b, .pk-help-doors b { font-size: 14px; font-weight: 700; }
 .pk-help-doors small { font-size: 12px; color: var(--pk-text-2); display: inline-flex; gap: 6px; align-items: center; }
 .pk-help-doors kbd { font: inherit; font-size: 10px; font-weight: 800; padding: 0 4px; border-radius: 4px; border: 1px solid var(--pk-line); color: var(--pk-text-2); }
-.pk-help-doors { border-top: 1px solid var(--pk-line); padding-top: 8px; }
+/* The two doors sit under his line, side by side, so they are on screen
+ * before the lists (at the foot they were below the fold at 1280×800). */
+.pk-help-doors { flex-direction: row; gap: 6px; }
+.pk-help-doors li { flex: 1 1 0; min-width: 0; }
+.pk-help-doors a, .pk-help-doors button { height: 100%; padding: 8px 10px; background: var(--pk-inset); }
+.pk-help-doors small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* Sub-view header (week planner, what-if, looks) */
 .pk-viewhead { display: flex; align-items: center; gap: 10px; }
 .pk-viewhead h2 { margin: 0; font-size: 16px; line-height: 20px; font-weight: 800; letter-spacing: -.01em; }

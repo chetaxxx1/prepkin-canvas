@@ -285,7 +285,7 @@ function ensureStylesheet() {
 // Each session that runs in parallel (2026-09-18) adds its own between its
 // two marker lines and nowhere else, so branches merge without a conflict.
 const KEPT_CLASSES = new Set([
-  'pk-show', 'pk-planner-on', 'pk-list-on', 'pk-grades-open',
+  'pk-show', 'pk-planner-on', 'pk-list-on', 'pk-grades-open', 'pk-buddy-corner', 'pk-blank',
   // ---- Session C classes (course pages) ----
   // ---- end Session C ----
   // ---- Session D classes (tables) ----
@@ -519,8 +519,12 @@ function helpView() {
     const inner = `<b>${escapeHTML(t.title)}</b><small${late ? ' class="amber"' : ''}>${escapeHTML(shortCourse(t.courseName))} · ${escapeHTML(dueLabel(t, now).replace(' · still counts', ''))}</small>`;
     return `<li>${url ? `<a href="${escapeHTML(url)}">${inner}</a>` : `<span>${inner}</span>`}</li>`;
   };
+  // On the dashboard the rail beside him already says Start with and Then;
+  // the panel does not say it twice (the tour of 2026-09-19).
+  const railHere = railShows() && !!document.getElementById(WEEK_ID);
   let top = '';
-  if (running) {
+  if (railHere) {
+  } else if (running) {
     top = `<p class="pk-help-label">Now</p><div class="pk-help-first"><b>${escapeHTML(focus.title ?? 'Focus')}</b><small><span class="pk-clock">${clockLeft()}</span> left</small>
       <div class="pk-help-actions">${safeURL(focus.url) ? `<a class="start" href="${escapeHTML(safeURL(focus.url))}">Open</a>` : ''}<button type="button" data-focus-stop="1">Stop</button></div></div>`;
   } else if (first) {
@@ -529,23 +533,25 @@ function helpView() {
     top = `<p class="pk-help-label">Start with</p><div class="pk-help-first"><b>${escapeHTML(first.title)}</b><small${late ? ' class="amber"' : ''}>${escapeHTML(shortCourse(first.courseName))} · ${escapeHTML(dueLabel(first, now).replace(' · still counts', ''))}</small>
       <div class="pk-help-actions">${url ? `<a class="start" href="${escapeHTML(url)}">Start</a>` : ''}<button type="button" data-focus-first="${escapeHTML(String(first.id))}">Focus ${skin.focusMinutes} min</button></div></div>`;
   }
-  const thenRows = running ? [first, ...then].filter((t) => t && String(t.id) !== String(focus.taskId)).slice(0, 3) : then;
+  const thenRows = railHere ? [] : running ? [first, ...then].filter((t) => t && String(t.id) !== String(focus.taskId)).slice(0, 3) : then;
   // Your classes, from any page: the tile, the name, the letter when grades
   // are on the cards. The class list without a sidebar of ours.
   const classes = (data.courses ?? []).filter((c) => c.name && /^\d+$/.test(String(c.id))).slice(0, 8);
   const tile = (c) => { const color = safeColor(c.colorHex); return `<i class="pk-tile"${color ? ` style="background:${color}"` : ''} aria-hidden="true">${escapeHTML((shortCourse(c.name) || '?').trim().charAt(0).toUpperCase())}</i>`; };
   const classRows = classes.map((c) => `<li><a href="/courses/${escapeHTML(String(c.id))}">${tile(c)}<b>${escapeHTML(c.name)}</b>${skin.cardGrades !== false && c.grade ? `<small>${escapeHTML(String(c.grade))}</small>` : ''}</a></li>`).join('');
+  // The two doors sit under his line, where a 1280×800 screen shows them;
+  // at the foot they were below the panel's fold (the tour of 2026-09-19).
   return `
     <div class="pk-viewhead pk-help-head"><h2>${escapeHTML(said.headline)}</h2></div>
     <p class="pk-help-sub">${escapeHTML(said.subline)}</p>
-    ${top}
-    ${thenRows.length ? `<p class="pk-help-label">Then</p><ul class="pk-help-list">${thenRows.map((t) => row(t, new Date(t.dueAt) < now)).join('')}</ul>` : ''}
-    ${here.length ? `<p class="pk-help-label">Next in this class</p><ul class="pk-help-list">${here.map((r) => row(r.t, r.overdue)).join('')}</ul>` : ''}
-    ${classRows ? `<p class="pk-help-label">Your classes</p><ul class="pk-help-classes">${classRows}</ul>` : ''}
     <ul class="pk-help-doors">
       <li><a href="/#planner"><b>Open the planner</b><small>The week by day, your grades</small></a></li>
       <li><button type="button" data-help-search="1"><b>Search Canvas</b><small>Classes, pages, assignments <kbd>⌘K</kbd></small></button></li>
-    </ul>`;
+    </ul>
+    ${top}
+    ${thenRows.length ? `<p class="pk-help-label">Then</p><ul class="pk-help-list">${thenRows.map((t) => row(t, new Date(t.dueAt) < now)).join('')}</ul>` : ''}
+    ${here.length ? `<p class="pk-help-label">Next in this class</p><ul class="pk-help-list">${here.map((r) => row(r.t, r.overdue)).join('')}</ul>` : ''}
+    ${classRows ? `<p class="pk-help-label">Your classes</p><ul class="pk-help-classes">${classRows}</ul>` : ''}`;
 }
 
 function searchView() {
@@ -826,7 +832,10 @@ function decorateLists() {
   if (!on || putBack.paper) clear('.item-group-condensed .ig-header-title', 'data-pk-count');
   else {
     for (const head of document.querySelectorAll('.item-group-condensed:not(.context_module) .ig-header .ig-header-title')) {
-      const n = String(head.closest('.item-group-condensed')?.querySelectorAll('.ig-row:not(.ig-row-empty)').length ?? 0);
+      // The rows a search left showing, not every row: Canvas puts `hidden`
+      // on the row's li, and the chip said 8 over 4 rows (the tour of 2026-09-19).
+      const rows = [...(head.closest('.item-group-condensed')?.querySelectorAll('.ig-row:not(.ig-row-empty)') ?? [])];
+      const n = String(rows.filter((r) => r.style.display !== 'none' && !r.hidden && !r.parentElement?.classList.contains('hidden')).length);
       if (head.dataset.pkCount !== n) head.dataset.pkCount = n;
     }
   }
@@ -1559,9 +1568,19 @@ function renderFold() {
 /// re-read the page and re-apply whatever depends on what is there.
 let pageObserver = null;
 let pageTimer = null;
+/// Canvas's JavaScript pages start as an empty #content; a paper pane around
+/// nothing was an empty pill for ten seconds on a slow host (the tour of
+/// 2026-09-19). The class holds the pane back until there is something in it.
+function markBlank() {
+  const content = document.getElementById('content');
+  const blank = !!content && !killed && !!skin.cards && content.textContent.trim() === '' && !content.querySelector('img, svg, table, input, iframe');
+  document.documentElement.classList.toggle('pk-blank', blank);
+}
+
 function refreshPage() {
   if (tornDown) return;
   applySkin(skin);
+  markBlank();
   ensureStylesheet();
   decorateCards();
   decorateLists();
@@ -1696,6 +1715,9 @@ function placeSprite(place = spritePlace()) {
   }
   st.width = `${place.w}px`; st.height = `${place.h}px`;
   sprite.place = place;
+  // In the corner he is fixed over the page's bottom right, so the page keeps
+  // its last rows clear of him (skin.css pads the main column).
+  document.documentElement.classList.toggle('pk-buddy-corner', place.side === 'right' && !!skin.cards && !killed);
   if (shadow) {
     const h = shadow.host;
     h.dataset.side = place.side;
@@ -1769,6 +1791,7 @@ iframe{display:block;width:100%;height:100%;border:0;background:transparent;colo
 
 function unmountSprite() {
   document.getElementById(SPRITE_ID)?.remove();
+  document.documentElement.classList.remove('pk-buddy-corner');
   sprite = null;
 }
 
@@ -1850,7 +1873,8 @@ function render() {
   const scroller = root.querySelector('.pk-panel');
   // Opening the panel moves focus into it. Without this a keyboard has to tab
   // back through the whole Canvas page to reach what it just opened.
-  if (ui.open && !wasOpen && scroller) scroller.focus({ preventScroll: true });
+  // Search has its own box, focused by wire(); the panel would take it back.
+  if (ui.open && !wasOpen && scroller && !root.querySelector('#pk-q')) scroller.focus({ preventScroll: true });
   wasOpen = ui.open;
 }
 
@@ -2021,6 +2045,7 @@ async function mount() {
   celebrated = typeof stored.celebrated === 'string' ? stored.celebrated : null;
 
   applySkin(skin);
+  markBlank();
   decorateCards();
   decorateLists();
   for (const pass of PAGE_PASSES) pass();
@@ -2259,6 +2284,12 @@ if (typeof module !== 'undefined') {
       else { location.assign('/#planner'); respond({ ok: true }); }
     }
   });
-  mount();
+  // Start once the HTML is parsed, before Canvas's deferred bundles run:
+  // Sprout and the chip arrive with the page, not after its JavaScript.
+  // Injected into a tab that is already open, readyState is 'complete'.
+  let booted = false;
+  const boot = () => { if (booted) return; booted = true; mount(); };
+  if (document.readyState !== 'loading') boot();
+  else document.addEventListener('readystatechange', () => { if (document.readyState !== 'loading') boot(); });
 }
 }

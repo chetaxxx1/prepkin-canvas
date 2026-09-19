@@ -375,6 +375,19 @@ html.pk-on.pk-art:not(.pk-back-paper) #content:not(:has(#DashboardCard_Container
 html.pk-on.pk-art:not(.pk-back-paper) #right-side {
   background-color: var(--pk-paper) !important; border-radius: 12px !important; padding: 16px !important; margin-top: 12px !important;
 }
+/* Sprout in the corner is fixed over the page's bottom right (content.js sets
+ * the class); the main column ends above him, so the last row of a long list
+ * is never under him (the tour of 2026-09-19: a due time behind his head). */
+html.pk-on.pk-buddy-corner:not(.pk-back-paper) #content-wrapper,
+html.pk-on.pk-buddy-corner:not(.pk-back-paper) .ic-Layout-contentWrapper { padding-bottom: 200px !important; }
+/* A pane with nothing in it is no pane: the sidebar before Canvas fills it
+ * was an empty rounded box for ten seconds on a slow host, and #content on
+ * a JavaScript page (assignments, quizzes, pages) an empty pill until the
+ * bundle rendered (`pk-blank`, content.js). The wall shows through instead. */
+html.pk-on.pk-art:not(.pk-back-paper) body #right-side:not(:has(*)),
+html.pk-on.pk-art.pk-blank:not(.pk-back-paper) body #content:not(:has(#DashboardCard_Container)) {
+  background-color: transparent !important; padding: 0 !important; border: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+}
 /* On an image theme the panel is one sheet of frosted glass over the wall
  * (Dialpad's meeting sheet over a photograph: one pane, quiet controls inside
  * it, nothing white inside the pane). Every surface Canvas paints white
@@ -649,6 +662,8 @@ html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title
   content: "⌄"; display: inline-block; width: 18px; margin-right: 6px; text-align: center; font-size: 18px; line-height: 20px; font-weight: 800; color: var(--pk-ink-2); position: relative; top: -2px;
 }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title .element_toggler[aria-expanded="false"]::before { content: "›"; }
+/* A mouse click leaves no dotted box on the head; the keyboard's ring stays. */
+html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title .element_toggler:focus:not(:focus-visible) { outline: 0 !important; }
 html.pk-on:not(.pk-back-paper) .item-group-condensed:not(.context_module) .ig-header .ig-header-title[data-pk-count]::after {
   content: attr(data-pk-count); font-size: 12px; line-height: 18px; min-width: 18px; padding: 0 7px; border-radius: 999px; text-align: center; font-weight: 800;
   background: var(--pk-paper-sunk); color: var(--pk-ink-2); font-variant-numeric: tabular-nums;
@@ -974,6 +989,10 @@ html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #grade-
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content > #assignments,
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #content #grade-summary-react,
 html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #right-side-wrapper:has(#student-grades-right-content) { display: none !important; }
+/* With Canvas's table out, its right column stays folded: opened with the
+ * table it popped up at the top beside our card, a page away from the rows
+ * it explains (the tour of 2026-09-19). Put back brings the column too. */
+html.pk-on.pk-grades-page.pk-grades-open:not(.pk-back-grades-page) #right-side-wrapper:has(#student-grades-right-content) { display: none !important; }
 /* The student's own /grades: the rows take the left, the GPA and the
  * finished fold the right, so the sheet is the page and not a strip down
  * one side of it. One column again under 1000px. */
@@ -991,7 +1010,18 @@ html.pk-on.pk-grades-page:not(.pk-back-grades-page):not(.pk-grades-open) #right-
 #pk-grades .pk-pl-grade .pk-gr-meta .amber { color: var(--pk-amber-ink); }
 /* The student's own /grades: Canvas's two headings and two tables fold under
  * our rows; the h1 stays. */
-html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page):not(.pk-grades-open) #content > :not(h1):not(#pk-grades) { display: none !important; }
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page):not(.pk-grades-open) #content > :not(h1):not(#pk-grades):not(.teacher_grades):not(h2:has(+ .teacher_grades)) { display: none !important; }
+/* "Courses I'm Teaching" (a class the student TAs) has no grade of theirs and
+ * no row of ours; Canvas's table for it stays under our rows as a quiet head
+ * and a 44px row a class (the tour of 2026-09-19 lost Intro Lab). */
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > h2:has(+ .teacher_grades) { margin: 22px 0 6px 13px !important; font-size: 15px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink) !important; }
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > .teacher_grades { width: 100% !important; border-collapse: collapse !important; margin: 0 !important; background: transparent !important; }
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > .teacher_grades td { height: 44px !important; padding: 0 12px !important; border: 0 !important; border-top: 1px solid var(--pk-rule) !important; font-size: 14px !important; line-height: 20px !important; vertical-align: middle !important; background: transparent !important; }
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > .teacher_grades td.course a { font-weight: 700 !important; color: var(--pk-ink) !important; text-decoration: none !important; }
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > .teacher_grades td.percent { text-align: right !important; font-weight: 700 !important; color: var(--pk-ink-2) !important; }
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > .teacher_grades td.percent span { font: inherit !important; }
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > .teacher_grades td.report,
+html.pk-on.pk-grades-page.pk-grades-all:not(.pk-back-grades-page) #content > .teacher_grades td:empty { display: none !important; }
 #pk-grades .pk-pl-grades > .pk-pl-group:first-child { margin-top: 4px; }
 
 /* ---- grades-fit: Canvas's grades table is 757px wide at 1280 and runs under
@@ -1915,7 +1945,6 @@ html.pk-on.pk-art:not(.pk-back-paper) #pk-planner .pk-pl-gpa { background: color
  * cards start 36px in (Canvas's own margin); the row lines up with them. */
 #DashboardCard_Container + .pk-past { margin: 8px 0 0; padding: 6px 0 0; border-top: 1px solid var(--pk-rule); }
 #DashboardCard_Container + .pk-past .pk-pl-group { min-height: 44px; margin: 0; padding-left: 0; border-left: 0; }
-#DashboardCard_Container + .pk-past .pk-pl-group.fold::after { margin-left: auto; }
 #DashboardCard_Container + .pk-past .pk-past-rows { margin-left: 0; }
 html.pk-on.pk-art:not(.pk-back-paper) #DashboardCard_Container + .pk-past { border-top-color: color-mix(in srgb, var(--pk-rule) 80%, transparent); }
 .pk-past-rows { list-style: none; margin: 4px 0 0 13px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -2083,6 +2112,7 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 #pk-looks .pk-pl-pictures .thumbs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 #pk-looks .pk-pl-pictures .thumb { position: relative; width: 72px; height: 28px; border-radius: 7px; background-size: cover; background-position: center; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
 #pk-looks .pk-pl-pictures .thumb.on { box-shadow: 0 0 0 2px #51CFA0; }
+#pk-looks .pk-pl-pictures .thumb.on:not(.own)::after { content: "✓"; position: absolute; right: -6px; top: -6px; width: 16px; height: 16px; border-radius: 999px; background: #51CFA0; color: #101820; font-size: 11px; line-height: 16px; font-weight: 800; text-align: center; }
 #pk-looks .pk-pl-pictures .thumb i { position: absolute; right: -6px; top: -6px; width: 18px; height: 18px; border-radius: 999px; background: var(--pk-ink); color: var(--pk-paper-2); font-size: 12px; font-style: normal; font-weight: 800; display: grid; place-items: center; }
 #pk-looks .pk-pl-pictures .pick { display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 7px; border: 1px dashed var(--pk-rule); font-size: 12px; font-weight: 700; color: var(--pk-ink-2); cursor: pointer; }
 #pk-looks .pk-pl-pictures .pick:hover { border-color: var(--pk-ink-2); color: var(--pk-ink); }
@@ -2646,7 +2676,7 @@ html.pk-on:not(.pk-back-paper) #content .roster td.right { padding: 0 !important
 html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"] { width: 26px !important; height: 26px !important; border: 1px solid var(--pk-rule) !important; background-color: var(--pk-paper-sunk) !important; vertical-align: middle !important; }
 html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial] { display: inline-grid !important; place-items: center !important; background-color: var(--pk-course, var(--pk-paper-sunk)) !important; border-color: color-mix(in srgb, var(--pk-ink) 12%, transparent) !important; }
 html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial] img { display: none !important; }
-html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial]::after { content: attr(data-pk-initial); font-size: 10px; line-height: 1; font-weight: 800; letter-spacing: .01em; color: var(--pk-ink-2); }
+html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial]::after { content: attr(data-pk-initial); font-size: 12px; line-height: 1; font-weight: 800; letter-spacing: 0; color: var(--pk-ink-2); }
 html.pk-on:not(.pk-back-paper) #content .roster [class*="-avatar"][data-pk-initial][data-pk-course]::after { color: #fff; text-shadow: 0 1px 0 rgba(0, 0, 0, .18); }
 html.pk-on.pk-art:not(.pk-back-paper) #content .roster [class*="-avatar"]:not([data-pk-course]) { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
 html.pk-on.pk-art:not(.pk-back-paper) #content .roster > tbody > tr > td { border-top-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
@@ -3254,7 +3284,7 @@ html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table
 /* A field in a row: the paper and an edge, nothing about what it does. */
 html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table input:not([type="checkbox"]):not([type="hidden"]),
 html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table select {
-  background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border: 1px solid var(--pk-rule) !important; border-radius: 10px !important;
+  background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border: 1px solid color-mix(in srgb, var(--pk-ink) 26%, var(--pk-paper-2)) !important; border-radius: 10px !important;
   height: 32px !important; padding: 0 10px !important; font-size: 13px !important; font-weight: 600 !important; margin: 0 !important; box-shadow: none !important; text-align: left !important;
 }
 html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table .locale-warning { margin-left: 6px !important; }

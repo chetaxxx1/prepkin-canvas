@@ -1117,7 +1117,9 @@ test('R30 a course\'s grades page: our grade row under Canvas\'s title, its tabl
   await page.click('#pk-grades .pk-gr-show');
   await page.waitForFunction(() => getComputedStyle(document.getElementById('assignments')).display !== 'none', null, { timeout: 3000 });
   assert.equal(await page.$eval('#pk-grades .pk-gr-show', (e) => e.getAttribute('aria-expanded')), 'true');
-  assert.equal(await drawn(), true, 'the side column comes out with the table');
+  // The column stays folded with the table out: opened together it popped up
+  // at the top beside our card, a page away from the rows (2026-09-19).
+  assert.equal(await drawn(), false, 'the side column stays folded with the table out');
   await page.bringToFront();
   const popup = await openPopup(h);
   await popup.waitFor('#receipt li');

@@ -189,6 +189,10 @@ test('F2 settings: one column of rows (label, value right, the hint under the la
   await page.evaluate(() => { document.querySelectorAll('.profile_table .change_password_row').forEach((tr) => { tr.style.display = ''; }); });
   await page.waitForTimeout(200);
   const pw = await page.evaluate(() => { const i = document.getElementById('old_password'); const cs = getComputedStyle(i); return { display: cs.display, visibility: cs.visibility, pointer: cs.pointerEvents, bg: cs.backgroundColor, edge: cs.borderTopColor, type: i.type, rowDisplay: getComputedStyle(i.closest('tr')).display }; });
-  assert.equal(pw.rowDisplay, 'grid'); assert.notEqual(pw.display, 'none'); assert.equal(pw.visibility, 'visible'); assert.equal(pw.pointer, 'auto'); assert.equal(pw.bg, rgb('#FFFFFF')); assert.equal(pw.edge, rgb('#E3E0D9')); assert.equal(pw.type, 'password');
+  assert.equal(pw.rowDisplay, 'grid'); assert.notEqual(pw.display, 'none'); assert.equal(pw.visibility, 'visible'); assert.equal(pw.pointer, 'auto'); assert.equal(pw.bg, rgb('#FFFFFF'));
+  // The edit box's edge is the ink at 26% over its paper (on Newsprint about
+  // #C4C5C6), so a field reads as a field: on the rule alone the form barely
+  // looked editable (the tour of 2026-09-19).
+  assert.match(pw.edge, /^color\(srgb 0\.7[5-8]\d* 0\.7[5-8]\d* 0\.7[6-9]\d*\)$/, `the edit box's edge is the ink at 26%: ${pw.edge}`); assert.equal(pw.type, 'password');
   await page.close();
 });
