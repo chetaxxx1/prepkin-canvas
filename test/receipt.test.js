@@ -763,7 +763,7 @@ test('R42 announcements: the title shows, its controls rise onto its line, Mark 
   assert.deepEqual(rows.map((r) => r.ring), ['1px', '1px'], 'the face has a ring'); assert.equal(rows[0].initials, rgb('#454B54'));
   await h.setStorage({ putBack: { 'reply-dup': true } }); await page.waitForTimeout(400);
   assert.notEqual(await style(page, '.ic-announcement-row a:has([data-testid="announcement-reply"])', 'display'), 'none', 'Put back: Reply is back');
-  await h.setStorage({ putBack: {} });
+  await h.setStorage({ putBack: {} }); await page.waitForTimeout(400); // the sweep runs after the storage change lands
   const receipt = await page.evaluate(() => [...document.documentElement.classList]);
   assert.ok(!receipt.includes('pk-back-reply-dup'));
   await page.close();
