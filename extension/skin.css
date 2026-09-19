@@ -1469,9 +1469,10 @@ html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active),
  * words' span alone (that painted one box around the label of every button
  * with an icon, 2026-09-16). An icon-only button has no `__children` span, so
  * it is left alone here by the same test. `#add_discussion` is the one InstUI
- * primary with an icon on a student's pages; it keeps Canvas's colour. */
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]),
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]) > [class*="baseButton__content"],
+ * primary with an icon on a student's pages; it keeps Canvas's colour. The
+ * module footer's Previous and Next are text (Session C, 2026-09-19). */
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):not(.module-sequence-footer *):has([class*="baseButton__children"]),
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):not(.module-sequence-footer *):has([class*="baseButton__children"]) > [class*="baseButton__content"],
 /* The Files page has no colour band for an icon to sit on, so its icon-only
  * buttons (download, the kebab) take the paper too; and its Search button,
  * a submit inside a form that hands nothing in, is the one such button named. */
@@ -1484,8 +1485,8 @@ html.pk-on:not(.pk-back-buttons) body.files #content form [class*="-baseButton"]
 html.pk-on:not(.pk-back-buttons) .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .Button:not(.Button--primary):not(.Button--danger):not(.Button--success):not(.Button--warning):not([type="submit"]):not([class*="icon-action"]):hover,
 html.pk-on:not(.pk-back-buttons) .ui-button:not(.ui-state-active):hover,
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]):hover,
-html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):has([class*="baseButton__children"]):hover > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):not(.module-sequence-footer *):has([class*="baseButton__children"]):hover,
+html.pk-on:not(.pk-back-buttons) #content [class*="-baseButton"]:not([class*="baseButton__"]):not([type="submit"]):not(form *):not(#add_discussion):not(#mark_all_announcement_read):not(.module-sequence-footer *):has([class*="baseButton__children"]):hover > [class*="baseButton__content"],
 html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover,
 html.pk-on:not(.pk-back-buttons) body.files #content [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover [class*="baseButton__content"] {
   background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
@@ -2114,6 +2115,187 @@ html.pk-on:not(.pk-back-paper):not(.pk-back-buttons) #right-side #course_show_se
 html.pk-on:not(.pk-back-paper) #right-side #course_show_secondary { margin: 0 0 16px !important; padding: 0 !important; }
 html.pk-on:not(.pk-back-paper) #right-side #course_show_secondary .course-options { margin: 0 !important; padding: 0 !important; }
 
+
+/* ---- Detail pages: one sheet -------------------------------------------
+ * An assignment, a quiz and a wiki page are one thing each, so the page is
+ * one sheet: the title on its line (the page's one action at the right), the
+ * facts on one quiet line under it, the body as prose, and the module's
+ * Previous / Next as a hairline foot. On the papers the sheet is #content
+ * itself, a card; on an image look #content is already the frosted pane and
+ * keeps it. Nothing inside is a card again. Put back with the paper. */
+html.pk-on:not(.pk-back-paper):not(.pk-art) #content:has(> #assignment_show),
+html.pk-on:not(.pk-back-paper):not(.pk-art) #content:has(> #quiz_show),
+html.pk-on:not(.pk-back-paper):not(.pk-art) #content:has(> #wiki_page_show) {
+  background-color: var(--pk-paper-2) !important; border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important;
+  box-shadow: var(--pk-lift) !important; margin: 24px 24px 24px 0 !important;
+}
+html.pk-on:not(.pk-back-paper) #content:has(> #assignment_show),
+html.pk-on:not(.pk-back-paper) #content:has(> #quiz_show),
+html.pk-on:not(.pk-back-paper) #content:has(> #wiki_page_show) { padding: 20px 32px 28px !important; }
+/* A page is for reading: the sheet holds a 720px column. */
+html.pk-on:not(.pk-back-paper) #content:has(> #wiki_page_show) { max-width: 784px !important; box-sizing: border-box !important; }
+/* An empty sidebar (a quiz's hidden "Related Items", a page's bare aside) took
+ * a column and, on an image look, painted an empty pane. Nothing to show, no column. */
+html.pk-on:not(.pk-back-paper) #right-side-wrapper:not(:has(#right-side *)) { display: none !important; }
+html.pk-on:not(.pk-back-paper) #right-side-wrapper:has(> #right-side > #sidebar_content:only-child > .page-action-list[style*="display:none"]:only-child) { display: none !important; }
+/* The title inside the sheet: the page title's own tokens (the quiz's h1 has
+ * no class the title rule knows). */
+html.pk-on:not(.pk-back-title) #content #quiz_show #quiz_title {
+  font-size: 28px !important; line-height: 36px !important; font-weight: 800 !important; letter-spacing: -.02em !important; color: var(--pk-ink) !important;
+  padding: 10px 0 14px !important; margin: 0 0 20px !important; border: 0 !important; border-bottom: 1px solid var(--pk-rule) !important;
+}
+/* The assignment's title row: the title left, New Attempt right (Canvas's
+ * button, untouched), one hairline under both. */
+html.pk-on:not(.pk-back-paper) #assignment_show .assignment-title { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 16px !important; margin: 0 0 14px !important; padding: 0 0 14px !important; border: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #assignment_show .assignment-title .title-content { flex: 1 1 auto !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #assignment_show .assignment-title .assignment-buttons { flex: none !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-title) #content #assignment_show .assignment-title h1.title { padding: 10px 0 0 !important; margin: 0 !important; border: 0 !important; }
+/* The facts, one quiet line: Due · Points · Submitting (an assignment); Due ·
+ * Points · Questions · Available · Time Limit · Allowed Attempts (a quiz).
+ * Canvas's labels stay, in the quiet ink; the values in the ink. */
+html.pk-on:not(.pk-back-paper) #assignment_show ul.student-assignment-overview,
+html.pk-on:not(.pk-back-paper) #quiz_show ul#quiz_student_details {
+  display: flex !important; flex-wrap: wrap !important; align-items: baseline !important; gap: 4px 0 !important; list-style: none !important;
+  margin: 0 0 20px !important; padding: 0 !important; border: 0 !important; font-size: 13px !important; line-height: 18px !important; white-space: nowrap !important;
+}
+html.pk-on:not(.pk-back-paper) #assignment_show ul.student-assignment-overview > li,
+html.pk-on:not(.pk-back-paper) #quiz_show ul#quiz_student_details > li { display: inline-flex !important; align-items: baseline !important; gap: 6px !important; float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #assignment_show ul.student-assignment-overview > li + li::before,
+html.pk-on:not(.pk-back-paper) #quiz_show ul#quiz_student_details > li + li::before { content: "·"; margin: 0 8px; color: var(--pk-ink-2); opacity: .6; }
+html.pk-on:not(.pk-back-paper) #assignment_show ul.student-assignment-overview .title,
+html.pk-on:not(.pk-back-paper) #quiz_show ul#quiz_student_details .title { display: inline !important; font-size: 12px !important; line-height: 18px !important; font-weight: 700 !important; color: var(--pk-ink-2) !important; margin: 0 !important; padding: 0 !important; width: auto !important; text-transform: none !important; }
+html.pk-on:not(.pk-back-paper) #assignment_show ul.student-assignment-overview .value,
+html.pk-on:not(.pk-back-paper) #quiz_show ul#quiz_student_details .value { display: inline !important; font-size: 13px !important; line-height: 18px !important; font-weight: 700 !important; color: var(--pk-ink) !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show .row-fluid { margin: 0 !important; }
+/* The body: prose on the sheet, never a card of its own; 16 on 26, headings
+ * on our scale, a wide table or picture kept inside the sheet. No !important
+ * on the type, so what a teacher set inline stays theirs. */
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content,
+html.pk-on:not(.pk-back-paper) #quiz_show .quiz-header,
+html.pk-on:not(.pk-back-paper) #quiz_show .description { background-color: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; overflow: visible !important; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content,
+html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation { font-size: 16px; line-height: 26px; color: var(--pk-ink); overflow-x: auto !important; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content p,
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content li,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content p,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content li,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content p,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content li { font-size: 16px; line-height: 26px; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content p,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content p,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content p { margin: 0 0 14px; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content h2,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content h2,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content h2 { font-size: 22px; line-height: 28px; font-weight: 800; letter-spacing: -.01em; margin: 26px 0 10px; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content h3,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content h3,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content h3 { font-size: 18px; line-height: 24px; font-weight: 800; margin: 22px 0 8px; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content h4,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content h4,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content h4 { font-size: 16px; line-height: 22px; font-weight: 800; margin: 18px 0 6px; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content img,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content img,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content img { max-width: 100% !important; height: auto !important; }
+html.pk-on:not(.pk-back-paper) #assignment_show .description.user_content table,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .show-content.user_content table,
+html.pk-on:not(.pk-back-paper) #quiz_show .description.user_content table { max-width: 100% !important; }
+/* The page's title sits at the top of the reading column; its toolbar (View
+ * All Pages, a wide button stranded above the sheet) becomes a text button on
+ * the title's line, at the right. */
+html.pk-on:not(.pk-back-paper) #wiki_page_show { position: relative !important; }
+html.pk-on:not(.pk-back-paper) #wiki_page_show .header-bar-outer-container { position: absolute !important; top: 18px !important; right: 0 !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; z-index: 2 !important; }
+html.pk-on:not(.pk-back-paper) #wiki_page_show .sticky-toolbar { position: static !important; }
+html.pk-on:not(.pk-back-paper) #wiki_page_show .header-bar.page-toolbar { display: flex !important; align-items: center !important; min-height: 0 !important; height: auto !important; margin: 0 !important; padding: 0 !important; background-color: transparent !important; border: 0 !important; box-shadow: none !important; }
+html.pk-on:not(.pk-back-paper) #wiki_page_show .page-toolbar .page-toolbar-start,
+html.pk-on:not(.pk-back-paper) #wiki_page_show .page-toolbar .page-heading { margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #wiki_page_show .page-toolbar .page-toolbar-end:not(:has(a)):not(:has(input)):not(:has(select)) { display: none !important; }
+html.pk-on:not(.pk-back-paper) #wiki_page_show .page-changed-alert:empty { display: none !important; }
+html.pk-on:not(.pk-back-title) #content #wiki_page_show h1.page-title { padding-right: 140px !important; }
+html.pk-on:not(.pk-back-buttons) #content .page-toolbar .btn.view_all_pages {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #content .page-toolbar .btn.view_all_pages:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content .page-toolbar .btn.view_all_pages:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+/* The foot: Previous and Next as quiet words on a hairline, one rule for a
+ * page and a quiz (the seventh text button, both of them). */
+html.pk-on:not(.pk-back-paper) #content .module-sequence-padding { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .module-sequence-footer { margin: 28px 0 0 !important; padding: 0 !important; position: static !important; }
+html.pk-on:not(.pk-back-paper) #content .module-sequence-footer-content {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; min-height: 0 !important;
+  margin: 0 !important; padding: 16px 0 0 !important; border: 0 !important; border-top: 1px solid var(--pk-rule) !important; border-radius: 0 !important;
+  box-shadow: none !important; background-color: transparent !important; overflow: visible !important;
+}
+html.pk-on:not(.pk-back-paper) #content .module-sequence-footer-left,
+html.pk-on:not(.pk-back-paper) #content .module-sequence-footer-right { float: none !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"],
+html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"] > [class*="baseButton__content"] {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"]:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"]:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+/* A quiz that is locked: Canvas's h2 "Completion Prerequisites" and an
+ * indented list. The lock line stays a sentence; the heading is a group head
+ * at 14/800, the module's name a quiet label, each requirement a row with its
+ * condition at the right. */
+html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation { font-size: 14px; line-height: 22px; text-align: left !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation > br,
+html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation > .spinner:empty { display: none !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation > h2 { font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; margin: 24px 0 2px !important; padding: 0 !important; border: 0 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list { list-style: none !important; margin: 10px 0 0 !important; padding: 0 !important; font-size: 13px; line-height: 18px; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.module { margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.module > i { display: none !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.module > h3 { font-size: 12px !important; line-height: 16px !important; font-weight: 700 !important; color: var(--pk-ink-2) !important; margin: 0 0 4px !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.module > ul { list-style: none !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.requirement { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; min-height: 40px !important; margin: 0 !important; padding: 6px 0 !important; border-top: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.requirement > a { font-size: 14px !important; line-height: 20px !important; font-weight: 700 !important; color: var(--pk-link) !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.requirement > .description { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; white-space: nowrap !important; }
+/* ---- submission-rows: the Submission box beside an assignment, as rows --
+ * Canvas stacks it in small type: "Submitted!", a date, Submission Details, a
+ * grade line, Graded Anonymously, "Comments:". It reads as the rail's rows:
+ * the head as our label, one line "Submitted!" with the mint tick and the
+ * mark as our chip at its right (content.js writes "47/50" on the node), the
+ * date and the details link on the next quiet line, the comments under a
+ * quiet label. Every word of Canvas's stays; Put back restores the stack. */
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details {
+  display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; column-gap: 8px !important; align-items: center !important;
+  margin: 0 0 16px !important; padding: 12px 14px !important; border-radius: var(--pk-radius) !important;
+  background-color: var(--pk-paper-2) !important; border: 1px solid var(--pk-card-edge) !important; box-shadow: var(--pk-lift) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+html.pk-on.pk-art:not(.pk-back-submission-rows) #sidebar_content > .details { background-color: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > h2 { grid-column: 1 / -1 !important; margin: 0 0 8px !important; padding: 0 !important; border: 0 !important; font-size: 13px !important; line-height: 18px !important; font-weight: 800 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .header { grid-row: 2 !important; grid-column: 1 !important; display: flex !important; align-items: center !important; gap: 9px !important; margin: 0 !important; padding: 0 !important; font-size: 13px !important; line-height: 18px !important; font-weight: 700 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .header > i { color: var(--pk-ink-2) !important; font-size: 0 !important; line-height: 1 !important; margin: 0 !important; flex: 0 0 auto !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .header > i.icon-check::before {
+  content: "" !important; display: inline-block !important; box-sizing: border-box !important; width: 18px !important; height: 18px !important; vertical-align: top !important;
+  border-radius: 999px !important; border: 1.5px solid #51CFA0 !important;
+  background: #51CFA0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5.2l2.4 2.4L8.6 2.6' fill='none' stroke='%23101820' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px 10px no-repeat !important;
+}
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .content,
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .content > .module:not(.comments) { display: contents !important; }
+/* The mark: the chip on the "Submitted!" line. */
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details .module > div[data-pk-mark] { grid-row: 2 !important; grid-column: 2 !important; justify-self: end !important; font-size: 0 !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details .module > div[data-pk-mark]::after {
+  content: attr(data-pk-mark); display: inline-block; font-size: 12px; line-height: 18px; font-weight: 800; padding: 0 7px; border-radius: 999px;
+  background: var(--pk-paper-sunk); color: var(--pk-ink-2); white-space: nowrap;
+}
+html.pk-on.pk-art:not(.pk-back-submission-rows) #sidebar_content > .details .module > div[data-pk-mark]::after { background: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+/* The date under the line; Submission Details is the box's foot line, as View Grades is the rail's. */
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .content > span { grid-row: 3 !important; grid-column: 1 / -1 !important; margin: 2px 0 0 27px !important; white-space: nowrap !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .content > div:has(> a[href*="/submissions/"]) { grid-row: 6 !important; grid-column: 1 / -1 !important; margin: 12px 0 0 !important; font-size: 13px !important; line-height: 18px !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details > .content > div > a[href*="/submissions/"] { font-size: 13px !important; font-weight: 700 !important; color: var(--pk-link) !important; white-space: nowrap !important; }
+/* What is left of the grade module (Graded Anonymously): a quiet line. */
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details .module:not(.comments) > div:not([data-pk-mark]) { grid-row: 4 !important; grid-column: 1 / -1 !important; margin: 4px 0 0 27px !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+/* The comments: a quiet label, the teacher's words in the ink, the signature under. */
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details .comments.module { grid-row: 5 !important; grid-column: 1 / -1 !important; margin: 12px 0 0 !important; padding: 10px 0 0 !important; border-top: 1px solid var(--pk-rule) !important; font-size: 13px !important; line-height: 18px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details .comments.module > h3 { display: block !important; margin: 0 0 4px !important; padding: 0 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 700 !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details .comments.module .comment .comment { font-size: 13px !important; line-height: 18px !important; font-weight: 600 !important; color: var(--pk-ink) !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-submission-rows) #sidebar_content > .details .comments.module .signature { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; margin: 2px 0 6px !important; }
 /* ==== end Session C ==== */
 
 

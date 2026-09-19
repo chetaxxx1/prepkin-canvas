@@ -42,6 +42,8 @@ const SELECTORS = {
   // A plain Canvas button (the buttons rule excludes submit, primary and icon-only ones in its own text).
   plainButton:     { sel: '.btn, .Button, .ui-button, #content [class*="-baseButton"]', page: 'any', conf: 'verified' },
   userContent:     { sel: '.user_content', page: 'assignment', conf: 'verified' },
+  // The Submission box beside an assignment (Session C, 2026-09-19).
+  submissionBox:   { sel: '#sidebar_content > .details', page: 'assignment', conf: 'verified' },
   gradesReact:     { sel: '#grade-summary-react', page: 'grades', conf: 'verified' },
   gradesTable:     { sel: '#grades_summary', page: 'grades', conf: 'verified' },
   ltiFrame:        { sel: '.tool_content_wrapper', page: 'lti', conf: 'verified' },

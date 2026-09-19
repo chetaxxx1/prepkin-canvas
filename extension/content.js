@@ -2064,7 +2064,19 @@ async function mount() {
 // Canvas's words). One function per parallel session, each edited only inside
 // its own marker pair; the list is fixed so nobody touches a shared line.
 // ---- Session C pass (course home, page, assignment, quiz) ----
-function passC() {}
+/// The Submission box beside an assignment: "Grade: 47 (50 pts possible)" is
+/// re-said as the chip "47/50" (a letter alone when the grade is a letter);
+/// Canvas's words stay for a screen reader. Cleared when the row is put back.
+function passC() {
+  const on = skin.cards && !killed && !putBack['submission-rows'];
+  for (const div of document.querySelectorAll('#sidebar_content > .details .content > .module > div')) {
+    const m = on && div.textContent.replace(/\s+/g, ' ').trim().match(/^Grade:\s*(.+?)\s*(?:\((\S+) pts possible\))?$/);
+    if (m) {
+      const mark = m[2] && /^\d+(\.\d+)?$/.test(m[1]) ? `${m[1]}/${m[2]}` : m[1];
+      if (div.dataset.pkMark !== mark) div.dataset.pkMark = mark;
+    } else div.removeAttribute('data-pk-mark');
+  }
+}
 // ---- end Session C ----
 // ---- Session D pass (all courses, files, people, syllabus) ----
 /// The tables (2026-09-18). Attributes only, for CSS to draw; Canvas's words

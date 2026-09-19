@@ -411,6 +411,12 @@ const TEXT_BUTTON_OK = [
   // A course home's three sidebar links (View Course Stream, Calendar,
   // Notifications): `.btn`, where the dashboard's View Grades is `.Button`.
   'html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide',
+  // A wiki page's View All Pages, on the title line (2026-09-19).
+  'html.pk-on:not(.pk-back-buttons) #content .page-toolbar .btn.view_all_pages',
+  // The module footer's Previous and Next under a page and a quiz: InstUI,
+  // so the content span is named too.
+  'html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"]',
+  'html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"] > [class*="baseButton__content"]',
   // ---- end Session C ----
   // ---- Session D text buttons (tables) ----
   // The Files title row's two buttons (2026-09-18). The plain-buttons rule

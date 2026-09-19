@@ -77,3 +77,94 @@ test('C1 course home: a module head once, Collapse All on the title line as word
   await h.setStorage({ putBack: {} });
   await page.close();
 });
+
+// MARK: - Assignment
+
+test('C2 assignment: one sheet with the title row, the facts on one line, the description as prose; the Submission box as rows with the mark as a chip', async () => {
+  const off = await (async () => {
+    await h.setStorage({ skin: SKIN({ cards: false }) });
+    const p = await open('/courses/1/assignments/12');
+    const b = await style(p, '.assignment-buttons .Button', 'backgroundColor');
+    await p.close(); return b;
+  })();
+  await h.setStorage({ skin: SKIN() });
+  const page = await open('/courses/1/assignments/12');
+  assert.equal(await style(page, '#content', 'backgroundColor'), rgb('#FFFFFF'), 'the sheet is the page');
+  assert.equal(await style(page, '#content', 'borderTopLeftRadius'), '14px');
+  assert.equal(await style(page, '#assignment_show .description.user_content', 'backgroundColor'), CLEAR, 'no card inside the sheet');
+  const h1 = await box(page, '#assignment_show h1.title'), btn = await box(page, '.assignment-buttons .Button');
+  assert.ok(Math.abs(h1.cy - btn.cy) < 12, `New Attempt on the title line: ${JSON.stringify([h1, btn])}`);
+  assert.equal(await style(page, '.assignment-buttons .Button', 'backgroundColor'), off, "Canvas's own button, untouched");
+  const tops = await page.$$eval('ul.student-assignment-overview > li', (els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
+  assert.equal(new Set(tops).size, 1, `Due, Points and Submitting on one line: ${tops}`);
+  assert.equal(await style(page, 'ul.student-assignment-overview .title', 'color'), rgb('#454B54'), 'labels in the quiet ink');
+  // The Submission box.
+  assert.equal(await style(page, '#sidebar_content > .details', 'display'), 'grid');
+  assert.equal(await page.$eval('#sidebar_content .module > div[data-pk-mark]', (e) => e.dataset.pkMark), '47/50', 'the mark, re-said');
+  assert.equal(await page.$eval('#sidebar_content .module > div[data-pk-mark]', (e) => e.textContent.replace(/\s+/g, ' ').trim()), 'Grade: 47 (50 pts possible)', "Canvas's words stay");
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('#sidebar_content .module > div[data-pk-mark]'), '::after').content), '"47/50"');
+  assert.equal(await style(page, '#sidebar_content .details > .header > i.icon-check', 'fontSize'), '0px', 'the check is our tick');
+  const head = await box(page, '#sidebar_content .details > .header'), chip = await box(page, '#sidebar_content .module > div[data-pk-mark]'), details = await box(page, '#sidebar_content a[href*="/submissions/"]'), comments = await box(page, '#sidebar_content .comments.module');
+  assert.ok(Math.abs(head.cy - chip.cy) < 8, 'the chip sits on the Submitted line');
+  assert.ok(details.y > comments.y, 'Submission Details is the foot line');
+  assert.equal(await page.$eval('#sidebar_content .comments .comment .comment', (e) => getComputedStyle(e).color), rgb('#1B1F24'), "the teacher's words in the ink");
+  // Put back: Canvas's stack, the mark unsaid.
+  await h.setStorage({ putBack: { 'submission-rows': true } }); await page.waitForTimeout(500);
+  assert.notEqual(await style(page, '#sidebar_content > .details', 'display'), 'grid');
+  assert.equal(await page.$('#sidebar_content [data-pk-mark]'), null, 'the attribute goes with the row');
+  await h.setStorage({ putBack: {} });
+  await page.close();
+});
+
+// MARK: - Quiz
+
+test('C3 quiz: six facts on one line, no empty sidebar, prerequisites as a head and rows, Previous and Next as words on a hairline; the take page gets nothing', async () => {
+  const page = await open('/courses/1/quizzes/2');
+  assert.equal(await style(page, '#content', 'backgroundColor'), rgb('#FFFFFF'), 'the sheet');
+  assert.equal(await style(page, '#quiz_show .quiz-header', 'backgroundColor'), CLEAR, 'no card inside it');
+  assert.equal(await style(page, '#quiz_title', 'fontSize'), '28px', 'the page title');
+  const tops = await page.$$eval('#quiz_student_details > li', (els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
+  assert.equal(tops.length, 6);
+  assert.equal(new Set(tops).size, 1, `six facts on one line at 1280: ${tops}`);
+  assert.equal(await style(page, '#right-side-wrapper', 'display'), 'none', 'a hidden Related Items list is no sidebar');
+  assert.equal(await style(page, '.lock_explanation > h2', 'fontSize'), '14px', 'Completion Prerequisites is a group head');
+  assert.equal(await style(page, '#module_prerequisites_list li.requirement', 'display'), 'flex', 'a requirement is a row');
+  assert.equal(await style(page, '#module_prerequisites_list li.requirement', 'borderTopWidth'), '1px');
+  assert.equal(await style(page, '#module_prerequisites_list li.requirement .description', 'backgroundColor'), CLEAR, 'its condition is words, not a pill');
+  assert.equal(await style(page, '.module-sequence-footer-content', 'backgroundColor'), CLEAR, 'the foot is a hairline, not a card');
+  assert.equal(await style(page, '.module-sequence-footer-content', 'borderTopWidth'), '1px');
+  for (const sel of ['.module-sequence-footer-button--previous a', '.module-sequence-footer-button--next a']) {
+    assert.equal(await style(page, sel, 'backgroundColor'), CLEAR, `${sel}: no ground`);
+    assert.equal(await style(page, `${sel} > [class*="baseButton__content"]`, 'backgroundColor'), CLEAR, `${sel}: no ground on the content span`);
+    assert.equal(await style(page, sel, 'color'), LINK);
+  }
+  await page.close();
+  const take = await open('/courses/1/quizzes/2/take');
+  assert.deepEqual(await take.evaluate(() => [...document.documentElement.classList].filter((c) => c.startsWith('pk-'))), [], 'nothing on a quiz being taken');
+  await take.close();
+});
+
+// MARK: - Page
+
+test('C4 page: one sheet at reading width, View All Pages on the title line as words, 16 on 26, a wide table and a wide picture kept inside, Next at the foot', async () => {
+  const page = await open('/courses/1/pages/rotation-the-short-version');
+  const sheet = await box(page, '#content');
+  assert.ok(sheet.w <= 784 && sheet.w > 700, `a reading column: ${sheet.w}`);
+  assert.equal(await style(page, '#content', 'backgroundColor'), rgb('#FFFFFF'));
+  assert.equal(await style(page, '.show-content.user_content', 'backgroundColor'), CLEAR, 'no card inside the sheet');
+  const h1 = await box(page, 'h1.page-title'), all = await box(page, '.view_all_pages');
+  assert.ok(Math.abs(h1.cy - all.cy) < 12 && all.x > h1.x, `View All Pages on the title line: ${JSON.stringify([h1, all])}`);
+  assert.equal(await style(page, '.view_all_pages', 'backgroundColor'), CLEAR);
+  assert.equal(await style(page, '.view_all_pages', 'color'), LINK);
+  assert.equal(await style(page, '.show-content p', 'fontSize'), '16px');
+  assert.equal(await style(page, '.show-content p', 'lineHeight'), '26px');
+  assert.equal(await style(page, '.show-content h2', 'fontSize'), '22px');
+  const table = await box(page, '.show-content table'), img = await box(page, '.show-content img');
+  assert.ok(table.x + table.w <= sheet.x + sheet.w + 1, `the table stays inside the sheet: ${table.x + table.w} vs ${sheet.x + sheet.w}`);
+  assert.ok(img.x + img.w <= sheet.x + sheet.w + 1, `the picture stays inside the sheet: ${img.x + img.w} vs ${sheet.x + sheet.w}`);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true, 'no sideways scroll');
+  const foot = await box(page, '.module-sequence-footer-content');
+  assert.ok(foot.y > img.y && foot.x + foot.w <= sheet.x + sheet.w + 1, 'Next is the foot of the same sheet');
+  assert.equal(await style(page, '.module-sequence-footer-button--next a', 'backgroundColor'), CLEAR, 'Next is words');
+  await page.close();
+});

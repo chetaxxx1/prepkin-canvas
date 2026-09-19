@@ -241,6 +241,7 @@ const RULES = [
   { key: 'reply-dup', kind: 'taken', label: 'The Reply link under each announcement. The row is the link', detect: 'replyDup' },
   // Parallel sessions (2026-09-18): one row each at most, inside its own pair.
   // ---- Session C rows (course pages) ----
+  { key: 'submission-rows', kind: 'fixed', label: 'The Submission box as rows: turned in, the mark as a chip, the comments under', hook: 'submissionBox' },
   // ---- end Session C ----
   // ---- Session D rows (tables) ----
   // The columns a student never reads, folded: on All Courses the Favorite
