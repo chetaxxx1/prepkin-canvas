@@ -33,6 +33,8 @@ const SELECTORS = {
   replyLink:       { sel: '.ic-item-row [data-testid="announcement-reply"]', page: 'announcements', conf: 'verified' },
   // A calendar event chip: a link, coloured by its course's own class rule.
   calEvent:        { sel: '#calendar-app .fc-event', page: 'calendar', conf: 'verified' },
+  // The Inbox's conversation list (the InstUI Inbox, 2026-09-19).
+  inboxList:       { sel: '#inbox-conversation-holder', page: 'inbox', conf: 'verified' },
   // A plain Canvas button (the buttons rule excludes submit, primary and icon-only ones in its own text).
   plainButton:     { sel: '.btn, .Button, .ui-button, #content [class*="-baseButton"]', page: 'any', conf: 'verified' },
   userContent:     { sel: '.user_content', page: 'assignment', conf: 'verified' },

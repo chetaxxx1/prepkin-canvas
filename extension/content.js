@@ -2070,7 +2070,33 @@ function passC() {}
 function passD() {}
 // ---- end Session D ----
 // ---- Session E pass (calendar, inbox) ----
-function passE() {}
+/// The Inbox (2026-09-19): the sender's initials on each conversation row
+/// (CSS draws the face tile from them; the other party, never the student,
+/// whose name is Canvas's ENV `current_user`), and a mark on a count badge
+/// that says "1" (a thread of one message has no count to show). Off, or
+/// put back, every attribute goes; Canvas's words are never touched.
+function passE() {
+  const rows = document.querySelectorAll('#inbox-conversation-holder [data-testid="conversation"]');
+  if (!rows.length) return;
+  const on = skin.cards && !killed && !putBack['inbox-rows'];
+  let me = '';
+  if (on) {
+    const m = (envText ?? '').match(/"current_user":\{[^}]*?"display_name":"((?:[^"\\]|\\.)*)"/);
+    try { me = m ? JSON.parse(`"${m[1]}"`) : ''; } catch { me = ''; }
+  }
+  for (const row of rows) {
+    const badge = row.querySelector('[data-cid="Badge"]');
+    if (!on) { row.removeAttribute('data-pk-face'); badge?.removeAttribute('data-pk-one'); continue; }
+    const names = (row.querySelector('h2')?.textContent ?? '').split(',').map((n) => n.trim()).filter(Boolean);
+    const who = names.find((n) => n !== me) ?? names[0] ?? '';
+    const face = who.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+    if (face) { if (row.dataset.pkFace !== face) row.dataset.pkFace = face; } else row.removeAttribute('data-pk-face');
+    if (badge) {
+      const one = badge.querySelector('[aria-hidden="true"]')?.textContent.trim() === '1';
+      if (one) { if (!badge.hasAttribute('data-pk-one')) badge.setAttribute('data-pk-one', ''); } else badge.removeAttribute('data-pk-one');
+    }
+  }
+}
 // ---- end Session E ----
 // ---- Session F pass (discussions, settings) ----
 function passF() {}

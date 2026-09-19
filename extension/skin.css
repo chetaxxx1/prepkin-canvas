@@ -2212,6 +2212,121 @@ html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button {
 }
 html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button:hover { text-decoration: underline !important; }
 html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+/* ---- Inbox (Session E, 2026-09-19). Two panes that read as ours: the
+ * toolbar one quiet line under the title (Compose first, the filters and the
+ * search as our fields, the strip for a chosen thread at the right, More at
+ * the far right), each conversation the announcements' row (the sender's
+ * face as a tile with the unread mark on its corner, the name, the subject,
+ * one line of the message, the date at the right), and in place of Canvas's
+ * envelope drawing one quiet line. All under the inbox-rows Put back. The
+ * pass in content.js writes the face's initials on the row and marks a
+ * count of one; Canvas's words are never changed. Never a property on a
+ * button: the buttons here are Canvas's, only their wrappers move. */
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] { border: 0 !important; padding: 0 20px 14px !important; width: 100% !important; box-sizing: border-box !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] > [class*="view--flex-flex"] { display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; gap: 10px !important; width: 100% !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] > [class*="view--flex-flex"] > [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; flex: none !important; width: auto !important; }
+/* The search and its address book sit together. */
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view--flex-flex"][direction="row"]:has(> [class*="view-flexItem"] > [class*="-position"] > [class*="formFieldLayout"]) { display: inline-flex !important; align-items: center !important; gap: 6px !important; width: auto !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view--flex-flex"][direction="row"]:has(> [class*="view-flexItem"] > [class*="-position"] > [class*="formFieldLayout"]) > [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; flex: none !important; }
+/* Compose and the strip share one flex item of Canvas's; opened up (display:
+ * contents) so Compose can lead the line and the strip can trail it. */
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] > [class*="view--flex-flex"] > [class*="view-flexItem"]:has(#compose-new-message),
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] > [class*="view--flex-flex"] > [class*="view-flexItem"]:has(#compose-new-message) > [class*="view--flex-flex"] { display: contents !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view-flexItem"]:has(> [class*="-view"] > [class*="-position"] > #compose-new-message) { order: -1 !important; padding: 0 !important; margin: 0 !important; flex: none !important; width: auto !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view-flexItem"] > [class*="-view"]:has(> [class*="-position"] > #compose-new-message) { padding: 0 !important; margin: 0 !important; display: inline-block !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view-flexItem"]:has(> [class*="-position"] > #reply-to-message) { margin-left: auto !important; padding: 0 !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; flex: none !important; width: auto !important; }
+/* Nothing chosen: Canvas disables Reply, Reply all, Archive and Delete; they
+ * wait out of sight until a thread is open. More stays at the far right. */
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="-position"]:has(> [data-testid="reply"][disabled]),
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="-position"]:has(> [data-testid="reply-all"][disabled]),
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="-position"]:has(> [data-testid="archive"][disabled]),
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="-position"]:has(> [data-testid="delete"][disabled]) { display: none !important; }
+/* The course filter, the mailbox and the search: our field, 32px, one line. */
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="formFieldLayout"]:has([data-testid="course-select"]) { width: 200px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="formFieldLayout"]:has([data-testid="mailbox-select"]) { width: 150px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="formFieldLayout"]:has([data-testid="message-list-actions-address-book-input"]) { width: 240px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="textInput__facade"] { border-radius: 10px !important; min-height: 32px !important; border-color: var(--pk-rule) !important; background-color: var(--pk-paper-2) !important; box-shadow: none !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="textInput__facade"] input { font-size: 13px !important; font-weight: 600 !important; height: 30px !important; color: var(--pk-ink) !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="select__icon"] { color: var(--pk-ink-2) !important; }
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="textInput__facade"] { background-color: color-mix(in srgb, var(--pk-paper-2) 60%, transparent) !important; }
+/* The two panes under one hairline; the list parts from the thread with another. */
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="desktop-message-action-header"] + [class*="view-flexItem"] { border-top: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) { border-right: 1px solid var(--pk-rule) !important; border-color: var(--pk-rule) !important; }
+/* A conversation: the announcements' row. The face is a tile drawn from
+ * the initials the pass wrote on the row; Canvas's check box lies over it,
+ * shown on hover, on focus and when it is ticked. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"] { position: relative !important; padding: 10px 14px 10px 58px !important; min-height: 64px !important; border: 0 !important; border-bottom: 1px solid var(--pk-rule) !important; box-sizing: border-box !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:hover { background-color: var(--pk-hover) !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"][data-pk-face]::before {
+  content: attr(data-pk-face); position: absolute; left: 14px; top: 12px; width: 32px; height: 32px; box-sizing: border-box; display: grid; place-items: center;
+  border-radius: 10px; background-color: var(--pk-paper-sunk); border: 1px solid var(--pk-rule); font-size: 12px; line-height: 1; font-weight: 800; color: var(--pk-ink-2); letter-spacing: .02em;
+}
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"][data-pk-face]::before { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+/* Unread: our 8px mark on the tile's corner, in the paper's mark colour. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:has([data-testid="unread-badge"])::after { content: ""; position: absolute; left: 40px; top: 8px; width: 8px; height: 8px; border-radius: 999px; background-color: var(--pk-mark); }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] { display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; column-gap: 10px !important; row-gap: 2px !important; align-items: center !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"] { display: contents !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"] > [class*="-gridCol"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; width: auto !important; }
+/* Row one: the check box (over the face), the date, the count. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(1) > [class*="-gridCol"]:nth-child(1) { position: absolute !important; left: 14px !important; top: 12px !important; width: 32px !important; height: 32px !important; display: grid !important; place-items: center !important; opacity: 0; z-index: 2; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(1) > [class*="-gridCol"]:nth-child(1) > [class*="-view"] { margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:hover [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(1) > [class*="-gridCol"]:nth-child(1),
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:has(input:focus-visible) [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(1) > [class*="-gridCol"]:nth-child(1) { opacity: 1; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:hover::before,
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:has(input:focus-visible)::before { color: transparent; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(1) > [class*="-gridCol"]:nth-child(2) { grid-area: 1 / 2 !important; justify-self: end !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(1) > [class*="-gridCol"]:nth-child(2) [class*="-text"] { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; white-space: nowrap !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(1) > [class*="-gridCol"]:nth-child(3) { grid-area: 2 / 2 !important; justify-self: end !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-cid="Badge"] { display: inline-block !important; font-size: 11px !important; line-height: 16px !important; min-width: 16px !important; padding: 0 5px !important; border-radius: 999px !important; text-align: center !important; font-weight: 800 !important; background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink-2) !important; font-variant-numeric: tabular-nums !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-cid="Badge"] > span { position: static !important; display: inline !important; background-color: transparent !important; color: inherit !important; font: inherit !important; padding: 0 !important; }
+/* A thread of one message has no count to show; the pass marks it. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-cid="Badge"][data-pk-one] { display: none !important; }
+/* Row two: Canvas's read/unread circle goes (the mark on the face says it; the kebab still offers Mark as read), the names lead. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(2) > [class*="-gridCol"]:nth-child(1),
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(3) > [class*="-gridCol"]:nth-child(1),
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(1) { display: none !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(2) > [class*="-gridCol"]:nth-child(2) { grid-area: 1 / 1 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] h2 { margin: 0 !important; font-size: 14px !important; line-height: 18px !important; font-weight: 700 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] h2 [class*="-text"] { display: block !important; font-size: 14px !important; line-height: 18px !important; font-weight: 700 !important; color: var(--pk-ink) !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+/* Row three: the subject. Row four: one line of the message, the star at the right. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(3) > [class*="-gridCol"]:nth-child(2) { grid-area: 2 / 1 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] h3 { margin: 0 !important; font-size: 13px !important; line-height: 18px !important; font-weight: 600 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] h3 [class*="-text"] { display: block !important; font-size: 13px !important; line-height: 18px !important; font-weight: 600 !important; color: var(--pk-ink) !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(2) { grid-area: 3 / 1 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content #inbox-conversation-holder [data-testid="last-message-content"] { display: block !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(3) { position: absolute !important; right: 8px !important; bottom: 4px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(2) { padding-right: 44px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(3) [class*="-view"] { margin: 0 !important; padding: 0 !important; }
+/* The chosen thread: Canvas paints its row light blue with a blue inset edge, inline. Ours is the sunk paper with the mark on the edge. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"]) { background-color: var(--pk-paper-sunk) !important; box-shadow: none !important; position: relative !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"])::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background-color: var(--pk-mark); z-index: 1; }
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"]) { background-color: color-mix(in srgb, var(--pk-ink) 7%, transparent) !important; }
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:hover { background-color: color-mix(in srgb, var(--pk-ink) 5%, transparent) !important; }
+/* No thread chosen: Canvas's envelope drawing goes; one quiet line in its place (Canvas's words stay for a screen reader). */
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > [class*="-view"] > [class*="view--flex-flex"][direction="column"]:has(> [class*="view-flexItem"] > svg) { padding-top: 96px !important; align-items: center !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > [class*="-view"] > [class*="view--flex-flex"][direction="column"] > [class*="view-flexItem"]:has(> svg) { display: none !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > [class*="-view"] > [class*="view--flex-flex"][direction="column"]:has(> [class*="view-flexItem"] > svg) [class*="-text"] { font-size: 0 !important; line-height: 0 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > [class*="-view"] > [class*="view--flex-flex"][direction="column"]:has(> [class*="view-flexItem"] > svg) [class*="-text"]::after { content: "Pick a message on the left"; display: inline-block; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--pk-ink-2); }
+/* A thread open: its title 18/800 on its own line with Canvas's three buttons, each message with the sender's face as our tile, the name, the class and the time on one quiet line. */
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] { border-color: var(--pk-rule) !important; padding: 0 0 0 20px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > div > [class*="view--flex-flex"][direction="row"]:has(> [class*="view-flexItem"] > h2) { align-items: center !important; gap: 6px !important; padding: 10px 0 !important; min-height: 56px !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > div > [class*="view--flex-flex"][direction="row"] > [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > div > [class*="view--flex-flex"][direction="row"] > [class*="view-flexItem"]:has(> h2) { flex: 1 1 auto !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] h2 [data-testid="message-detail-header-desktop"] { font-size: 18px !important; line-height: 24px !important; font-weight: 800 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] { padding: 14px 0 !important; gap: 12px !important; align-items: flex-start !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(2) { flex: 1 1 auto !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] [class*="-avatar"] { width: 32px !important; height: 32px !important; margin: 0 12px 0 0 !important; line-height: 30px !important; border-radius: 10px !important; background-color: var(--pk-paper-sunk) !important; border: 1px solid var(--pk-rule) !important; font-size: 12px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] [class*="avatar__initials"] { color: var(--pk-ink-2) !important; font-weight: 800 !important; font-size: 12px !important; }
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] [class*="-avatar"] { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(2) > [class*="view--flex-flex"][direction="column"] { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: baseline !important; gap: 0 6px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(2) > [class*="view--flex-flex"][direction="column"] > [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(2) > [class*="view--flex-flex"][direction="column"] > [class*="view-flexItem"]:first-child [class*="-text"] { font-size: 14px !important; line-height: 18px !important; font-weight: 700 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(2) > [class*="view--flex-flex"][direction="column"] > [class*="view-flexItem"]:not(:first-child) [class*="-text"] { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(2) > [class*="view--flex-flex"][direction="column"] > [class*="view-flexItem"]:not(:first-child)::before { content: "·"; margin-right: 6px; font-size: 12px; font-weight: 800; color: var(--pk-ink-2); }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(3) { display: inline-flex !important; gap: 4px !important; }
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] + [class*="-text"],
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] ~ [class*="-text"] { display: block !important; font-size: 14px !important; line-height: 20px !important; color: var(--pk-ink) !important; padding: 0 0 14px 56px !important; }
 /* ==== end Session E ==== */
 
 

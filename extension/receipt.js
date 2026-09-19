@@ -245,6 +245,10 @@ const RULES = [
   // ---- Session D rows (tables) ----
   // ---- end Session D ----
   // ---- Session E rows (calendar, inbox) ----
+  // The Inbox as rows (2026-09-19): the toolbar one line, each conversation
+  // the announcements' row with the sender's face and the unread mark on it,
+  // Canvas's envelope drawing replaced by one quiet line. One row, one Put back.
+  { key: 'inbox-rows', kind: 'fixed', label: "The Inbox as rows: the sender's face with the unread mark, one line of the message, the toolbar grouped; Canvas's envelope drawing taken", hook: 'inboxList' },
   // ---- end Session E ----
   // ---- Session F rows (discussions, settings) ----
   // ---- end Session F ----

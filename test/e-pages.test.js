@@ -146,3 +146,104 @@ test('E4 calendar sidebar: the mini month without boxes, the calendars as 32px r
   assert.equal(await style(page, '#calendar-feed-button', 'fontSize'), '13px');
   await page.close();
 });
+
+// MARK: - The Inbox
+
+test('E5 inbox toolbar: one line under the title, Compose first, the filters and the search as our fields, the strip folded until a thread is open, More at the far right', async () => {
+  const page = await open('/conversations');
+  const bar = '#content [data-testid="tool-bar"]';
+  assert.equal(await style(page, bar, 'borderTopWidth'), '0px', 'no bar above the toolbar');
+  assert.equal(await style(page, bar, 'borderBottomWidth'), '0px');
+  const order = await page.evaluate(() => {
+    const at = (s) => document.querySelector(s)?.getBoundingClientRect();
+    const compose = at('#compose-new-message'), course = at('[data-testid="course-select"]'), mailbox = at('[data-testid="mailbox-select"]'), search = at('[data-testid="message-list-actions-address-book-input"]'), book = at('[data-testid="address-button"]'), more = at('[data-testid="settings"]');
+    return { compose: compose.left, course: course.left, mailbox: mailbox.left, search: search.left, book: book.left, more: more.right, bar: at('[data-testid="tool-bar"]').right, sameLine: [compose, course, mailbox, search, book, more].every((b) => Math.abs(b.top + b.height / 2 - (compose.top + compose.height / 2)) < 20) };
+  });
+  assert.ok(order.compose < order.course && order.course < order.mailbox && order.mailbox < order.search && order.search < order.book, `Compose leads, then the filters, then the search with its address book: ${JSON.stringify(order)}`);
+  assert.ok(order.book - order.search < 320, 'the address book hugs the search');
+  assert.ok(order.bar - order.more < 30, 'More at the far right');
+  assert.ok(order.sameLine, 'one line');
+  for (const id of ['reply', 'reply-all', 'archive', 'delete']) assert.equal(await shows(page, `[data-testid="${id}"]`), false, `${id} waits until a thread is open`);
+  assert.equal(await shows(page, '[data-testid="settings"]'), true);
+  assert.equal(await style(page, `${bar} [class*="textInput__facade"]`, 'borderRadius'), '10px', 'our field');
+  assert.equal(await style(page, `${bar} [class*="textInput__facade"]`, 'borderTopColor'), RULE);
+  assert.equal(await style(page, `${bar} [data-testid="course-select"]`, 'fontSize'), '13px');
+  // Only the paper's tokens on a button: Compose keeps Canvas's own shape.
+  assert.equal(await style(page, '#compose-new-message [class*="baseButton__content"]', 'borderRadius'), '4px', "Compose is Canvas's button, moved, not painted");
+  await page.close();
+  // A thread open: the strip shows.
+  const open2 = await open('/conversations?open=1');
+  for (const id of ['reply', 'reply-all', 'archive', 'delete']) assert.equal(await shows(open2, `[data-testid="${id}"]`), true, `${id} shows for the open thread`);
+  await open2.close();
+});
+
+test('E6 inbox rows: the face tile with the initials the pass wrote, the unread mark on its corner, name, subject, one line, the date at the right, a hairline between', async () => {
+  const page = await open('/conversations');
+  const rows = await page.$$eval('#inbox-conversation-holder [data-testid="conversation"]', (els) => els.map((el) => ({ face: el.getAttribute('data-pk-face'), unread: !!el.querySelector('[data-testid="unread-badge"]'), h: Math.round(el.getBoundingClientRect().height), border: getComputedStyle(el).borderBottomWidth + ' ' + getComputedStyle(el).borderBottomColor })));
+  assert.equal(rows.length, 4);
+  assert.ok(rows.every((r) => r.face === 'DW'), `the sender's initials (never the student's): ${JSON.stringify(rows)}`);
+  assert.deepEqual(rows.map((r) => r.unread), [false, true, true, false], 'the dump has two unread');
+  assert.ok(rows.every((r) => r.h >= 72 && r.h <= 92), `rows of one height: ${rows.map((r) => r.h)}`);
+  assert.ok(rows.every((r) => r.border === `1px ${RULE}`), 'a hairline between rows');
+  const row = '#inbox-conversation-holder [data-testid="conversation"]';
+  assert.equal(await style(page, row, 'content', '::before'), '"DW"', 'the tile draws the initials');
+  assert.equal(await style(page, row, 'width', '::before'), '32px');
+  assert.equal(await style(page, row, 'backgroundColor', '::before'), SUNK);
+  assert.equal(await style(page, row, 'borderRadius', '::before'), '10px');
+  assert.equal(await style(page, `${row}:has([data-testid="unread-badge"])`, 'backgroundColor', '::after'), MARK, 'unread is our mark on the tile');
+  assert.equal(await style(page, `${row}:has([data-testid="unread-badge"])`, 'width', '::after'), '8px');
+  assert.equal(await style(page, `${row}:not(:has([data-testid="unread-badge"]))`, 'content', '::after'), 'none', 'read: no mark');
+  assert.equal(await shows(page, `${row} [data-testid="unread-badge"]`), false, "Canvas's circle is folded; the kebab still offers Mark as read");
+  assert.equal(await shows(page, `${row} [data-cid="Badge"]`), false, 'a count of one is nothing to say');
+  assert.equal(await page.$eval(`${row} [data-cid="Badge"]`, (el) => el.hasAttribute('data-pk-one')), true, 'the pass marked it');
+  assert.equal(await style(page, `${row} h2 [class*="-text"]`, 'fontWeight'), '700', 'the names bold');
+  assert.equal(await style(page, `${row} h2 [class*="-text"]`, 'fontSize'), '14px');
+  assert.equal(await style(page, `${row} h3 [class*="-text"]`, 'fontSize'), '13px', 'the subject');
+  assert.equal(await style(page, `${row} [data-testid="last-message-content"]`, 'color'), INK2, 'one quiet line of the message');
+  assert.equal(await style(page, `${row} [data-testid="last-message-content"]`, 'whiteSpace'), 'nowrap');
+  const geo = await page.evaluate((s) => { const el = document.querySelector(s); const r = (x) => x.getBoundingClientRect(); const row = r(el), h2 = r(el.querySelector('h2')), date = r(el.querySelector('[color="brand"]')), cb = r(el.querySelector('[data-testid="conversationListItem-Checkbox"]').closest('[class*="-gridCol"]')); return { textLeft: Math.round(h2.left - row.left), dateRight: Math.round(row.right - date.right), sameTop: Math.abs(h2.top - date.top) < 6, cbOverFace: Math.round(cb.left - row.left) === 14 && Math.round(cb.width) === 32, cbOpacity: getComputedStyle(el.querySelector('[data-testid="conversationListItem-Checkbox"]').closest('[class*="-gridCol"]')).opacity }; }, row);
+  assert.equal(geo.textLeft, 58, `the words clear the tile: ${JSON.stringify(geo)}`);
+  assert.ok(geo.dateRight <= 16 && geo.sameTop, 'the date at the right, on the first line');
+  assert.ok(geo.cbOverFace && geo.cbOpacity === '0', "Canvas's check box lies over the face, unseen until hovered");
+  await page.hover(row); await page.waitForTimeout(200);
+  assert.equal(await page.evaluate((s) => getComputedStyle(document.querySelector(s).querySelector('[data-testid="conversationListItem-Checkbox"]').closest('[class*="-gridCol"]')).opacity, row), '1', 'hover shows it');
+  await page.close();
+});
+
+test('E7 inbox: no thread chosen is one quiet line; the chosen thread is the sunk paper with the mark on its edge; its messages carry our face', async () => {
+  const page = await open('/conversations');
+  const detail = '#content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"]';
+  assert.equal(await shows(page, `${detail} svg`), false, "Canvas's envelope drawing is gone");
+  const words = await page.evaluate((s) => { const el = document.querySelector(`${s} [class*="-text"]`); return { canvas: el.textContent.trim(), ours: getComputedStyle(el, '::after').content, size: getComputedStyle(el).fontSize }; }, detail);
+  assert.deepEqual(words, { canvas: 'No Conversations Selected', ours: '"Pick a message on the left"', size: '0px' }, "Canvas's words stay for a screen reader; ours are what shows");
+  await page.close();
+  const open2 = await open('/conversations?open=1');
+  const chosen = '#inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"])';
+  assert.equal(await style(open2, chosen, 'backgroundColor'), SUNK, "Canvas's light blue is the sunk paper");
+  assert.equal(await style(open2, chosen, 'boxShadow'), 'none', 'no blue inset');
+  assert.equal(await style(open2, chosen, 'backgroundColor', '::before'), MARK, 'the mark on the edge');
+  assert.equal(await style(open2, chosen, 'width', '::before'), '3px');
+  assert.equal(await style(open2, `${detail} h2 [data-testid="message-detail-header-desktop"]`, 'fontSize'), '18px');
+  assert.equal(await style(open2, `${detail} h2 [data-testid="message-detail-header-desktop"]`, 'fontWeight'), '800');
+  const face = '[data-testid="message-detail-item-desktop"] [class*="-avatar"]';
+  assert.equal(await style(open2, face, 'borderRadius'), '10px', "the sender's face is our tile");
+  assert.equal(await style(open2, face, 'backgroundColor'), SUNK);
+  assert.equal(await style(open2, `${face} [class*="avatar__initials"]`, 'color'), INK2);
+  const meta = await open2.evaluate(() => { const col = document.querySelector('[data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(2) > [class*="view--flex-flex"]'); const kids = [...col.children]; const tops = kids.map((k) => Math.round(k.getBoundingClientRect().top)); return { n: kids.length, oneLine: tops.every((t) => Math.abs(t - tops[0]) < 8), dot: getComputedStyle(kids[1], '::before').content }; });
+  assert.ok(meta.n === 3 && meta.oneLine && meta.dot === '"·"', `the name, the class and the time on one line with dots: ${JSON.stringify(meta)}`);
+  await open2.close();
+});
+
+test('E8 inbox: Put back returns Canvas’s rows, drawing and toolbar, and the pass takes its attributes away', async () => {
+  await h.setStorage({ putBack: { 'inbox-rows': true } });
+  const page = await open('/conversations');
+  const row = '#inbox-conversation-holder [data-testid="conversation"]';
+  assert.equal(await page.$eval(row, (el) => el.hasAttribute('data-pk-face')), false, 'no initials written');
+  assert.equal(await page.$eval(`${row} [data-cid="Badge"]`, (el) => el.hasAttribute('data-pk-one')), false);
+  assert.equal(await style(page, row, 'content', '::before'), 'none', 'no tile');
+  assert.equal(await shows(page, `${row} [data-testid="unread-badge"]`), true, "Canvas's circle is back");
+  assert.equal(await shows(page, '#content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] svg'), true, 'the envelope is back');
+  assert.equal(await shows(page, '[data-testid="reply"]'), true, 'the toolbar is whole');
+  assert.equal(await style(page, '#content [data-testid="tool-bar"]', 'borderTopWidth'), '1px');
+  await page.close();
+});
