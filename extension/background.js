@@ -130,7 +130,12 @@ async function registerFor(origin) {
         // document_start (the boot set) in this same world; naming them twice
         // redeclared their constants on every page.
         js: CONTENT_SCRIPTS,
-        runAt: 'document_end',
+        // document_start too: content.js waits for the parser to finish
+        // (readyState 'interactive') and mounts then. document_end came
+        // after Canvas's deferred bundles had run, which on a slow host is
+        // seconds after the page painted: paper with no Sprout and no chip
+        // (the tour of 2026-09-19).
+        runAt: 'document_start',
       },
     ]);
   } catch (e) {
