@@ -637,20 +637,23 @@ html.pk-on:not(.pk-back-paper) .context_module .ig-header {
  * (content.js writes the count on the heading), the planner's chevron, and a
  * hairline above every group but the first. Canvas's toggle is a button
  * that is the heading; only its type is set. */
-html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header { min-height: 44px !important; background-color: transparent !important; }
-html.pk-on:not(.pk-back-paper) .item-group-condensed:not(:first-child) .ig-header { border-top: 1px solid var(--pk-rule) !important; }
-html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title { display: flex !important; align-items: center !important; gap: 8px !important; font-size: 14px !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed:not(.context_module) .ig-header { min-height: 44px !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) .item-group-condensed:not(.context_module):not(:first-child) .ig-header { border-top: 1px solid var(--pk-rule) !important; }
+/* `:not(.context_module)`: on a real Canvas a module carries both classes, and
+ * `display: flex` on its title span showed the hidden expand title beside the
+ * collapse title, one module head twice (course home, 2026-09-18). */
+html.pk-on:not(.pk-back-paper) .item-group-condensed:not(.context_module) .ig-header .ig-header-title { display: flex !important; align-items: center !important; gap: 8px !important; font-size: 14px !important; }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title .element_toggler { font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; padding: 0 !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title i[class*="icon-mini-arrow"] { display: none !important; }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title .element_toggler::before {
   content: "⌄"; display: inline-block; width: 18px; margin-right: 6px; text-align: center; font-size: 18px; line-height: 20px; font-weight: 800; color: var(--pk-ink-2); position: relative; top: -2px;
 }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title .element_toggler[aria-expanded="false"]::before { content: "›"; }
-html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title[data-pk-count]::after {
+html.pk-on:not(.pk-back-paper) .item-group-condensed:not(.context_module) .ig-header .ig-header-title[data-pk-count]::after {
   content: attr(data-pk-count); font-size: 12px; line-height: 18px; min-width: 18px; padding: 0 7px; border-radius: 999px; text-align: center; font-weight: 800;
   background: var(--pk-paper-sunk); color: var(--pk-ink-2); font-variant-numeric: tabular-nums;
 }
-html.pk-on.pk-art:not(.pk-back-paper) #content .item-group-condensed .ig-header .ig-header-title[data-pk-count]::after { background: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+html.pk-on.pk-art:not(.pk-back-paper) #content .item-group-condensed:not(.context_module) .ig-header .ig-header-title[data-pk-count]::after { background: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header .ig-header-title,
 html.pk-on:not(.pk-back-paper) .context_module .ig-header .ig-header-title { flex: 1 1 auto !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; font-size: 15px !important; line-height: 20px !important; font-weight: 800 !important; }
 html.pk-on:not(.pk-back-paper) .item-group-condensed .ig-header h2,

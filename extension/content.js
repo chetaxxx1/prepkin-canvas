@@ -825,7 +825,7 @@ function decorateLists() {
   }
   if (!on || putBack.paper) clear('.item-group-condensed .ig-header-title', 'data-pk-count');
   else {
-    for (const head of document.querySelectorAll('.item-group-condensed .ig-header .ig-header-title')) {
+    for (const head of document.querySelectorAll('.item-group-condensed:not(.context_module) .ig-header .ig-header-title')) {
       const n = String(head.closest('.item-group-condensed')?.querySelectorAll('.ig-row:not(.ig-row-empty)').length ?? 0);
       if (head.dataset.pkCount !== n) head.dataset.pkCount = n;
     }
