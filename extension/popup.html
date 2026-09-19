@@ -96,6 +96,14 @@
     border-radius: 12px; color: var(--ink); outline: none;
   }
   input#code:focus { box-shadow: inset 0 0 0 2px var(--mint); }
+  /* A running session, on every tab the popup opens over. */
+  .focus .clock { font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--green); }
+  .session { display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
+  .session .who { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .session b { font-size: 14px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .session small { font-size: 12px; font-weight: 600; color: var(--ink-2); }
+  .session .acts { display: flex; gap: 6px; flex-shrink: 0; }
+  .session .acts button { padding: 7px 10px; font-size: 13px; }
   .linked { display: flex; align-items: center; gap: 10px; padding: 11px 14px; font-size: 13px; font-weight: 700; }
   .linked b { flex-grow: 1; }
   .linked small { font-weight: 600; color: var(--ink-2); }
@@ -190,6 +198,18 @@
 
 <div id="onboarding" hidden></div>
 <div id="main">
+
+<section class="focus" id="focus" hidden>
+  <div class="row"><p class="label">Focus</p><span class="clock" id="focus-left"></span></div>
+  <div class="card outline session">
+    <div class="who"><b id="focus-title"></b><small id="focus-sub"></small></div>
+    <div class="acts">
+      <button id="focus-extend" class="quiet">+5 min</button>
+      <button id="focus-stop" class="quiet">Stop</button>
+      <button id="focus-clear" class="mint" hidden>Done</button>
+    </div>
+  </div>
+</section>
 
 <section class="buddy" id="buddy" hidden>
   <button id="open-buddy" class="mint wide">Open the planner</button>

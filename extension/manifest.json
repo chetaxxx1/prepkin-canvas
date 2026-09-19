@@ -9,7 +9,8 @@
     "alarms",
     "activeTab",
     "scripting",
-    "sidePanel"
+    "sidePanel",
+    "notifications"
   ],
   "host_permissions": [
     "https://*.supabase.co/*"

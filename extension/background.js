@@ -73,6 +73,7 @@ chrome.runtime.onInstalled.addListener(({ reason }) =>
     chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
     chrome.alarms.create(FLAGS_ALARM, { periodInMinutes: 360 });
     await chrome.storage.local.remove(UPDATE_WAITING);
+    await paintBadge();
     await refreshFlags();
     await registerAll();
     if (reason === 'update') await reinjectOpenTabs();
@@ -86,6 +87,7 @@ chrome.runtime.onStartup.addListener(() =>
   Promise.resolve().then(async () => {
     chrome.alarms.create(SYNC_ALARM, { periodInMinutes: 30 });
     chrome.alarms.create(FLAGS_ALARM, { periodInMinutes: 360 });
+    await paintBadge();
     await refreshFlags();
     await registerAll();
   }).catch(async (err) => {
@@ -175,6 +177,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === SYNC_ALARM) work = syncAll();
   if (alarm.name === FLAGS_ALARM) work = refreshFlags();
   if (alarm.name === FOCUS_ALARM) work = focusDone();
+  if (alarm.name === FOCUS_TICK) work = paintBadge();
   work?.catch(async (err) => {
     await logError('worker alarm', err);
     throw err;
@@ -235,6 +238,36 @@ chrome.tabs.onUpdated.addListener(async (_id, info, tab) => {
 // navigation, and a timer that resets when you open your reading is useless.
 
 const FOCUS_ALARM = 'prepkin-focus';
+/// Once a minute while a session runs: the badge counts down.
+const FOCUS_TICK = 'prepkin-focus-tick';
+
+/// The toolbar icon says what the pages cannot: a running session follows the
+/// student to every tab, Canvas or not (George, 2026-09-19: "the timer doesn't
+/// follow me to other tabs"). Minutes left in mint while it runs, a tick when
+/// it is done, otherwise the last sync's count as before.
+async function paintBadge() {
+  const { focus, lastSync } = await chrome.storage.local.get(['focus', 'lastSync']);
+  const name = chrome.runtime.getManifest().name;
+  if (focus?.state === 'running') {
+    const left = Math.max(1, Math.ceil((focus.endsAt - Date.now()) / 60_000));
+    await chrome.action.setBadgeBackgroundColor({ color: '#51CFA0' });
+    if (chrome.action.setBadgeTextColor) await chrome.action.setBadgeTextColor({ color: '#101820' });
+    await chrome.action.setBadgeText({ text: `${left}m` });
+    await chrome.action.setTitle({ title: `${focus.title ?? 'Focus'} · ${left} min left` });
+    return;
+  }
+  if (focus?.state === 'done') {
+    await chrome.action.setBadgeBackgroundColor({ color: '#51CFA0' });
+    if (chrome.action.setBadgeTextColor) await chrome.action.setBadgeTextColor({ color: '#101820' });
+    await chrome.action.setBadgeText({ text: '✓' });
+    await chrome.action.setTitle({ title: `${focus.durationMin} minutes. Nice.` });
+    return;
+  }
+  await chrome.action.setBadgeBackgroundColor({ color: '#2F6BAA' });
+  if (chrome.action.setBadgeTextColor) await chrome.action.setBadgeTextColor({ color: '#FFFFFF' });
+  await chrome.action.setBadgeText({ text: lastSync?.count ? String(lastSync.count) : '' });
+  await chrome.action.setTitle({ title: name });
+}
 
 async function focusStart({ taskId, title, url, minutes }) {
   // A second press while one runs keeps the one running; it is not a reset.
@@ -247,6 +280,8 @@ async function focusStart({ taskId, title, url, minutes }) {
   };
   await chrome.storage.local.set({ focus });
   chrome.alarms.create(FOCUS_ALARM, { when: focus.endsAt });
+  chrome.alarms.create(FOCUS_TICK, { periodInMinutes: 1 });
+  await paintBadge();
   return focus;
 }
 
@@ -266,6 +301,7 @@ async function focusExtend() {
   const next = { ...focus, durationMin: focus.durationMin + 5, endsAt: focus.endsAt + 5 * 60_000 };
   await chrome.storage.local.set({ focus: next });
   chrome.alarms.create(FOCUS_ALARM, { when: next.endsAt });
+  await paintBadge();
   return next;
 }
 
@@ -283,14 +319,27 @@ async function syncAfterSubmit(origin) {
 /// Giving up costs nothing — no coins lost, no record kept, no nagging.
 async function focusStop() {
   chrome.alarms.clear(FOCUS_ALARM);
+  chrome.alarms.clear(FOCUS_TICK);
   await chrome.storage.local.set({ focus: { state: 'idle' } });
+  await paintBadge();
   await reloadAfterFocus();
 }
 
 async function focusDone() {
   const { focus } = await chrome.storage.local.get('focus');
   if (focus?.state !== 'running') return;
+  chrome.alarms.clear(FOCUS_TICK);
   await chrome.storage.local.set({ focus: { ...focus, state: 'done' } });
+  await paintBadge();
+  // The student may be on any tab when the time is up: one system notice,
+  // the buddy's own words. Missing permission, no notice, nothing else lost.
+  try {
+    await chrome.notifications?.create('prepkin-focus', {
+      type: 'basic', iconUrl: 'icons/icon128.png',
+      title: `${focus.durationMin} minutes. Nice.`,
+      message: `${focus.title ?? 'Focus'} · +${focus.durationMin} coins on your phone`,
+    });
+  } catch (err) { await logError('focus notice', err); }
   await queueRequest({ kind: 'focus', taskId: focus.taskId, minutes: focus.durationMin });
   if (!(await reloadAfterFocus())) syncAll();
 }
@@ -304,6 +353,9 @@ async function focusDone() {
 /// any connected site could drive the timer or file spend requests.
 const SETUP_MESSAGES = ['register', 'forget', 'sync-now', 'verify-canvas', 'pair'];
 const TICK_MESSAGES = ['done', 'undone'];
+/// The popup can give a running session five minutes more, stop it, or put a
+/// finished one away; starting one stays the page's (it names the task).
+const FOCUS_FROM_OURS = ['focus-extend', 'focus-stop', 'focus-clear'];
 
 async function senderMayAsk(type, sender) {
   if (!sender || sender.id !== chrome.runtime.id) return false;
@@ -311,7 +363,7 @@ async function senderMayAsk(type, sender) {
     return !sender.tab && (sender.url ?? '').startsWith(chrome.runtime.getURL(''));
   }
   // A tick may also come from the side panel, which is our own page with no tab.
-  if (TICK_MESSAGES.includes(type) && !sender.tab && (sender.url ?? '').startsWith(chrome.runtime.getURL(''))) return true;
+  if ((TICK_MESSAGES.includes(type) || FOCUS_FROM_OURS.includes(type)) && !sender.tab && (sender.url ?? '').startsWith(chrome.runtime.getURL(''))) return true;
   // Only the page itself, never a frame inside it: an embedded tool on the same
   // origin is somebody else's code.
   if (!sender.tab || sender.frameId !== 0) return false;
@@ -874,6 +926,6 @@ async function pushToBridge(payload) {
 async function finish(result, count) {
   const status = { ...result, count, at: new Date().toISOString() };
   await chrome.storage.local.set({ lastSync: status });
-  chrome.action.setBadgeText({ text: count ? String(count) : '' });
+  await paintBadge();
   return status;
 }

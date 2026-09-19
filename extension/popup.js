@@ -14,6 +14,43 @@ function kinAt(size) {
 }
 
 document.getElementById('kin').innerHTML = kinAt(36);
+
+// MARK: - The running session
+//
+// The timer lives in the worker (alarms, storage) and the buddy shows it on
+// Canvas pages; here it shows over any tab the popup opens on, with the same
+// two ways to change it. Ticked once a second while the popup is open.
+const focusEl = document.getElementById('focus');
+let focusTimer = null;
+async function renderFocus() {
+  const { focus } = await chrome.storage.local.get('focus');
+  const state = focus?.state;
+  focusEl.hidden = !(state === 'running' || state === 'done');
+  clearInterval(focusTimer); focusTimer = null;
+  if (focusEl.hidden) return;
+  document.getElementById('focus-title').textContent = focus.title ?? 'Focus';
+  document.getElementById('focus-extend').hidden = state !== 'running';
+  document.getElementById('focus-stop').hidden = state !== 'running';
+  document.getElementById('focus-clear').hidden = state !== 'done';
+  const tick = () => {
+    if (state === 'done') {
+      document.getElementById('focus-left').textContent = 'done';
+      document.getElementById('focus-sub').textContent = `${focus.durationMin} minutes. +${focus.durationMin} coins on your phone.`;
+      return;
+    }
+    const left = Math.max(0, focus.endsAt - Date.now());
+    const m = Math.floor(left / 60_000), sec = Math.floor((left % 60_000) / 1000);
+    document.getElementById('focus-left').textContent = `${m}:${String(sec).padStart(2, '0')} left`;
+    document.getElementById('focus-sub').textContent = `Ends at ${new Date(focus.endsAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+  };
+  tick();
+  if (state === 'running') focusTimer = setInterval(tick, 1000);
+}
+document.getElementById('focus-extend').addEventListener('click', () => chrome.runtime.sendMessage({ type: 'focus-extend' }));
+document.getElementById('focus-stop').addEventListener('click', () => chrome.runtime.sendMessage({ type: 'focus-stop' }));
+document.getElementById('focus-clear').addEventListener('click', () => chrome.runtime.sendMessage({ type: 'focus-clear' }));
+chrome.storage.onChanged.addListener((changes) => { if (changes.focus) renderFocus(); });
+renderFocus();
 document.getElementById('version').textContent = `v${chrome.runtime.getManifest().version}`;
 
 const CHECK_SVG = `
