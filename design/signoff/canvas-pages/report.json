@@ -1,6 +1,6 @@
 {
-  "all-grades-light-1280": {
-    "mount": 4511,
+  "course-home-light-1280": {
+    "mount": 23767,
     "findings": {
       "text": [],
       "blocks": [],
@@ -11,11 +11,11 @@
       "patches": [],
       "blank": false,
       "skipped": 0,
-      "counted": 31
+      "counted": 50
     }
   },
-  "all-grades-dark-1280": {
-    "mount": 4310,
+  "course-home-dark-1280": {
+    "mount": 24072,
     "findings": {
       "text": [],
       "blocks": [],
@@ -26,11 +26,11 @@
       "patches": [],
       "blank": false,
       "skipped": 0,
-      "counted": 31
+      "counted": 54
     }
   },
-  "all-grades-art-1280": {
-    "mount": 4717,
+  "course-home-art-1280": {
+    "mount": 19468,
     "findings": {
       "text": [],
       "blocks": [],
@@ -41,7 +41,7 @@
       "patches": [],
       "blank": false,
       "skipped": 0,
-      "counted": 31
+      "counted": 54
     }
   }
 }

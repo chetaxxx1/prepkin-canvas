@@ -812,8 +812,12 @@ html.pk-on:not(.pk-back-module-band) #content .header-bar:has(#expand_collapse_a
  * onto the title's own line: the title left, Collapse All right, one row.
  * The numbers are the title's (36px line, 14px under it, a 1px rule, 20px
  * of air), and the h1's 20px margin collapses into the pull. Only when the
- * bar is the h1's next sibling, and only while the title is ours. */
-html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > h1 + .header-bar:has(#expand_collapse_all) {
+ * bar is the h1's next sibling, and only while the title is ours. On a
+ * course home the same bar is the first thing in flow inside
+ * #course_home_content, which follows the h1: the pull collapses through the
+ * wrapper the same way (2026-09-18). */
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > h1 + .header-bar:has(#expand_collapse_all),
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content > h1 + #course_home_content > .header-bar:has(#expand_collapse_all) {
   margin: -71px 0 35px !important; height: 36px !important; padding: 0 !important; align-items: center !important;
 }
 /* The same bar above the assignments (a search and Show by) and the quizzes
@@ -2088,6 +2092,27 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 
 
 /* ==== Session C (course pages: course home, page, assignment, quiz). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
+
+/* ---- Course home: the sidebar is one column ------------------------------
+ * Under our "Next in this class" card Canvas stacks three wide buttons (View
+ * Course Stream, View Course Calendar, View Course Notifications), each with a
+ * glyph, and its own To Do (folded). The three are quiet text lines instead,
+ * the fifth text button (TEXT_BUTTON_OK in receipt.test.js): no ground, no
+ * edge, the link ink at 13/700, their words untouched. The glyphs go: a text
+ * line is words only. One line for all three would need their words changed
+ * (a button never takes font-size 0), so they stack, tight, as one group. */
+html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-paper):not(.pk-back-buttons) #right-side #course_show_secondary .course-options > a > i,
+html.pk-on:not(.pk-back-paper):not(.pk-back-buttons) #right-side #course_show_secondary > a > i { display: none !important; }
+/* The group: a hairline above, the same air as a rail section, no gap
+ * between the lines beyond Canvas's own. */
+html.pk-on:not(.pk-back-paper) #right-side #course_show_secondary { margin: 0 0 16px !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #right-side #course_show_secondary .course-options { margin: 0 !important; padding: 0 !important; }
 
 /* ==== end Session C ==== */
 

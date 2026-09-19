@@ -408,6 +408,9 @@ const TEXT_BUTTON_OK = [
   'html.pk-on:not(.pk-back-buttons) #content #mark_all_announcement_read > [class*="baseButton__content"]',
   // Parallel sessions (2026-09-18): each adds its text buttons inside its own pair.
   // ---- Session C text buttons (course pages) ----
+  // A course home's three sidebar links (View Course Stream, Calendar,
+  // Notifications): `.btn`, where the dashboard's View Grades is `.Button`.
+  'html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide',
   // ---- end Session C ----
   // ---- Session D text buttons (tables) ----
   // The Files title row's two buttons (2026-09-18). The plain-buttons rule

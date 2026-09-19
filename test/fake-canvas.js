@@ -567,7 +567,87 @@ class FakeServer {
 // needs, trimmed from a sandbox dump: return { main, side } or null. Edit only
 // inside your own marker pair.
 // ---- Session C pages (course home, page, assignment, quiz) ----
-function pageC(p, url) { return null; }
+// Trimmed from the sandbox (2026-09-19). The course home is course 1's, as a
+// student sees it: the h1 screen-reader-only, Collapse All in a bar inside
+// #course_home_content, a module carrying both `item-group-condensed` and
+// `context_module` (real Canvas gives it both), three wide buttons and Canvas's
+// To Do and Recent Feedback in the sidebar. The assignment (12), the quiz (2)
+// and the wiki page are on ids the older fixtures do not use.
+const C_FOOTER = (prev) => `<div class="module-sequence-padding"></div>
+<div class="module-sequence-footer" role="navigation"><div class="module-sequence-footer-content">
+<div class="module-sequence-footer-left">${prev ? '<span class="module-sequence-footer-button--previous"><span class="css-1ihz85b-position"><a dir="ltr" href="/courses/1/modules/items/1" class="css-1sec0gm-view--inlineBlock-baseButton"><span class="css-1ta5ds2-baseButton__content"><span class="css-11xkk0o-baseButton__children"><span dir="ltr" class="css-p0uk0p-view--flex-flex"><svg name="IconMiniArrowStart" viewBox="0 0 1920 1920" width="1em" height="1em" role="presentation" class="css-1xnn9jb-inlineSVG-svgIcon"><path d="M694 926c-27 19-27 49 0 68l510 351c27 19 49 7 49-26V601c0-33-22-45-49-26L694 926Z"/></svg> Previous</span></span></span></a></span></span>' : ''}</div>
+<div class="module-sequence-footer-right"><span class="module-sequence-footer-button--next"><span class="css-1ihz85b-position"><a dir="ltr" href="/courses/1/modules/items/3" class="css-1sec0gm-view--inlineBlock-baseButton"><span class="css-1ta5ds2-baseButton__content"><span class="css-11xkk0o-baseButton__children"><span dir="ltr" class="css-p0uk0p-view--flex-flex">Next <svg name="IconMiniArrowEnd" viewBox="0 0 1920 1920" width="1em" height="1em" role="presentation" class="css-1xnn9jb-inlineSVG-svgIcon"><path d="M1226 926c27 19 27 49 0 68l-510 351c-27 19-49 7-49-26V601c0-33 22-45 49-26l510 351Z"/></svg></span></span></span></a></span></span></div>
+</div></div>`;
+const C_MODULE = (id, name, cls, items) => `<div class="item-group-condensed context_module ${cls}" id="context_module_${id}"><div class="ig-header header" id="${id}"><h2 class="screenreader-only">${name}</h2>
+<span role="button" tabindex="0" class="ig-header-title collapse_module_link ellipsis" aria-controls="context_module_content_${id}" aria-expanded="true"><i class="icon-mini-arrow-down"></i><span class="name">${name}</span></span>
+<span role="button" tabindex="0" class="ig-header-title expand_module_link ellipsis" aria-controls="context_module_content_${id}" aria-expanded="false"><i class="icon-mini-arrow-right"></i><span class="name ellipsis">${name}</span></span>
+<div class="prerequisites"><div class="prerequisites_message">Prerequisites: </div></div>
+<div class="module_header_items"><div class="ig-header-admin"><div class="requirements_message"><ul class="pill"><li>Complete All Items</li></ul></div><div class="completion_status"><i class="icon-check complete_icon"></i><i class="icon-minimize in_progress_icon"></i><i class="icon-lock locked_icon"></i></div></div></div></div>
+<div class="content" id="context_module_content_${id}"><ul class="ig-list items context_module_items">${items}</ul></div></div>`;
+const C_ITEM = (id, cls, indent, title, details, status) => `<li id="context_module_item_${id}" class="context_module_item student-view ${cls} indent_${indent} rendered"><div class="ig-row with-completion-requirements ig-published student-view">
+<span class="type_icon" role="none"><span class="ig-type-icon"><i class="icon-document"></i></span></span>
+<div class="ig-info"><div class="module-item-title"><span class="item_name"><a class="ig-title title item_link" href="/courses/1/modules/items/${id}">${title}</a><span class="title locked_title">${title}</span></span></div>
+<div class="ig-details">${details}</div></div>${status ? `<div class="module-item-status-icon"><i class="${status}"></i></div>` : ''}</div></li>`;
+function pageC(p, url) {
+  if (/^\/courses\/1\/?$/.test(p)) {
+    const main = `<h1 class="screenreader-only">AP Physics C: Mechanics</h1>
+<div id="course_home_content"><div class="screenreader-only">AP Physics C: Mechanics</div><h2 class="context-modules-title screenreader-only">Course Modules</h2>
+<div class="header-bar"><div class="header-bar-right header-bar__module-layout"><div class="header-bar-right__buttons"><button class="btn" id="expand_collapse_all" aria-expanded="true" data-expand="false" aria-label="Collapse All Modules">Collapse All</button></div></div></div>
+<div class="item-group-container" id="context_modules_sortable_container"><div id="context_modules" class="ig-list">
+${C_MODULE(1, 'Unit 4 — Rotation', 'has_requirements student-view started', [
+  C_ITEM(1, 'wiki_page completed_item', 0, 'Rotation: the short version', '<div class="requirement-description ig-details__item"><span class="completion_requirement"><span class="requirement_type must_view_requirement"><span class="unfulfilled">View</span><span class="fulfilled">Viewed</span></span></span></div>', 'icon-check'),
+  C_ITEM(2, 'assignment', 1, 'Problem Set 7', '<div class="ig-details__item"><span class="due_date_display">Sep 5 at 5:03am</span></div><div class="ig-details__item"><span class="points_possible_display">50 pts</span></div><div class="requirement-description ig-details__item"><span class="completion_requirement"><span class="requirement_type must_submit_requirement"><span class="unfulfilled">Submit</span><span class="fulfilled">Submitted</span></span></span></div>', 'icon-minimize'),
+].join(''))}
+${C_MODULE(2, 'Unit 5 — Oscillation', 'locked', C_ITEM(3, 'wiki_page', 0, "Read: Hooke's law", '', ''))}
+</div></div></div>`;
+    const side = `<div id="course_show_secondary"><div class="course-options"><a id="view_course_stream_btn" class="btn button-sidebar-wide" href="/courses/1?view=feed"><i class="icon-stats"></i> View Course Stream</a></div>
+<a class="btn button-sidebar-wide" href="/calendar?include_contexts=course_1"><i class="icon-calendar-day"></i> View Course Calendar</a>
+<a id="view_course_notifications_btn" class="btn button-sidebar-wide" href="/courses/1?view=notifications"><i class="icon-unmuted"></i> View Course Notifications</a>
+<div class="todo-list Sidebar__TodoListContainer"><div><h2 class="todo-list-header">To Do</h2><div data-testid="ToDoSidebar"><ul><li class="ToDoSidebarItem"><span class="ToDoSidebarItem__Title">Turn in Problem Set 7</span></li></ul></div></div></div></div>
+<div class="events_list recent_feedback"><div class="h2 shared-space"><h2>Recent Feedback</h2></div><ul class="right-side-list events">
+<li class="event"><a class="recent_feedback_icon" href="/courses/1/assignments/22/submissions/3"><i class="icon-check"></i><div class="event-details"><b class="event-details__title recent_feedback_title">In-class derivation check</b><p><strong>18 out of 20</strong></p></div><div class="clear"></div></a><div class="clear"></div></li>
+<li class="event"><a class="recent_feedback_icon" href="/courses/1/assignments/21/submissions/3"><i class="icon-check"></i><div class="event-details"><b class="event-details__title recent_feedback_title">Problem Set 5: Kinematics</b><p>"Redo part (c) and resubmit."</p></div><div class="clear"></div></a><div class="clear"></div></li>
+<li><a href="#" class="more_link">4 more…</a></li></ul></div>`;
+    return { main, side };
+  }
+  if (/^\/courses\/1\/assignments\/12\/?$/.test(p)) {
+    // A short description, a hand-in already marked; `?open=1` is the unsubmitted case (no Submission box).
+    const marked = url.searchParams.get('open') !== '1';
+    const main = `<div id="assignment_show" class="assignment content_underline_links"><div class="assignment-title"><div class="title-content"><h1 class="title">Problem Set 8: Angular Momentum</h1></div><div class="assignment-buttons"><button type="button" class="Button Button--primary submit_assignment_link">${marked ? 'New Attempt' : 'Start Assignment'}</button></div></div>
+<ul class="student-assignment-overview"><li><span class="title">Due</span><span class="value"><span class="date_text"><span class="display_date">Sep 11</span> by <span class="display_time">5:03am</span></span></span></li><li><span class="title">Points</span><span class="value">50</span></li><li><span class="title">Submitting</span><span class="value">a text entry box</span></li><div class="clear"></div></ul>
+<div class="clear"></div><div class="description user_content enhanced"><p>Read the chapter, then write a short response. Three paragraphs is plenty.</p><ul><li>State the claim.</li><li>Give one piece of evidence.</li><li>Say what it does not explain.</li></ul></div>
+<div style="display: none;"><span class="timestamp">1789124629</span></div></div>
+<div style="display: none;" id="submit_assignment"><form id="submit_online_text_entry_form" class="submit_assignment_form" action="/courses/1/assignments/12/submissions" method="post"><textarea name="submission[body]"></textarea><button type="button" class="cancel_button btn">Cancel</button><button type="submit" class="btn btn-primary">Submit Assignment</button></form></div>`;
+    const side = marked ? `<div id="sidebar_content"><div class="details"><h2>Submission</h2><div class="header"><i class="icon-check"></i> Submitted!</div>
+<div class="content"><span class="">Sep 5 at 5:14am</span><div><a href="/courses/1/assignments/12/submissions/3">Submission Details</a></div>
+<div class="module"><div>Grade: 47 <span style="font-size: 0.8em;">(50 pts possible)</span></div><div>Graded Anonymously: no</div></div>
+<div class="comments module"><h3>Comments: </h3><div class="comment"><div class="comment">Good, but part (b) is one step short.</div><div class="signature">Dr. Vega, Sep 6 at 9:12am</div></div></div></div></div></div>` : '';
+    return { main, side };
+  }
+  if (/^\/courses\/1\/quizzes\/2\/?$/.test(p)) {
+    // Six details (Available until among them), the lock explanation with its prerequisites, a footer.
+    const main = `<div id="quiz_show"><header class="quiz-header"><h1 id="quiz_title">Unit 4 concept check</h1><div class="row-fluid"><div id="quiz_details_wrapper"></div></div><div class="row-fluid">
+<ul id="quiz_student_details"><li><span class="title">Due</span><span class="value"><span>Sep 8 at 5:03am</span></span></li><li><span class="title">Points</span><span class="value">6</span></li><li><span class="title">Questions</span><span class="value">3</span></li><li><span class="title">Available</span><span class="value"><span>Sep 1 at 12am - Sep 20 at 11:59pm</span></span></li><li><span class="title">Time Limit</span><span class="value">None</span></li><li><span class="title">Allowed Attempts</span><span class="value">Unlimited</span></li></ul></div>
+<div class="lock_explanation">This quiz is part of the module <b>Unit 4 — Rotation</b> and hasn't been unlocked yet.<br><div class="spinner"></div><a style="display: none;" class="module_prerequisites_fallback" href="/courses/1/modules#module_1">Visit the course modules page for information on how to unlock this content.</a><br><h2 style="margin-top: 15px;">Completion Prerequisites</h2>The following requirements need to be completed before this page will be unlocked:<ul id="module_prerequisites_list"><li class="module"><i></i><h3>Unit 4 — Rotation</h3><ul><li class="requirement"><a href="/courses/1/modules/items/2">Problem Set 7</a><div class="description">must submit the assignment</div></li><li class="requirement locked_requirement"><a href="/courses/1/modules/items/3" class="icon-lock">Unit 4 concept check</a><div class="description">must score at least a 4.0</div></li></ul></li></ul></div>
+<div id="quiz-submission-version-table"></div></header><div id="assignment_external_tools"><div></div></div><div id="module_sequence_footer">${C_FOOTER(true)}</div></div>`;
+    const side = `<div id="sidebar_content" class="rs-margin-bottom"><ul class="page-action-list" style="display:none;"><h2>Related Items</h2></ul></div>`;
+    return { main, side };
+  }
+  if (/^\/courses\/1\/pages\/rotation-the-short-version\/?$/.test(p)) {
+    // A page with a heading, prose, a wide table and a wide image: nothing may run past the sheet.
+    const main = `<div id="wiki_page_show"><div class="header-bar-outer-container"><div class="sticky-toolbar"><div class="header-bar page-toolbar"><div class="page-toolbar-start"><div class="page-heading"><a class="btn view_all_pages" href="/courses/1/pages">View All Pages</a></div></div><div class="page-toolbar-end"><div class="blueprint-label"></div><div class="publishing"><div class="published"></div></div><div class="buttons"></div></div></div></div><div class="page-changed-alert" role="alert"></div></div>
+<div id="direct-share-mount-point"></div>
+<div class="show-content user_content clearfix enhanced"><h1 class="page-title">Rotation: the short version</h1><div id="todo-date-mount-point"></div>
+<h2>What actually matters</h2><p>Three equations. That is the unit. Torque is force times lever arm, angular momentum is inertia times angular speed, and the second one is conserved when the first is zero.</p>
+<h3>The table</h3><table style="width: 1400px; border-collapse: collapse;"><thead><tr><th>Quantity</th><th>Symbol</th><th>Unit</th><th>Linear twin</th></tr></thead><tbody><tr><td>Torque</td><td>τ</td><td>N·m</td><td>Force</td></tr><tr><td>Moment of inertia</td><td>I</td><td>kg·m²</td><td>Mass</td></tr></tbody></table>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="1600" height="400" alt="A wide diagram"></p>
+<div id="assign-to-mount-point"></div></div></div>
+<div id="module_navigation_target"><div>${C_FOOTER(false)}</div></div>`;
+    // Real Canvas keeps an empty aside on a wiki page (the space keeps the wrapper).
+    return { main, side: ' ' };
+  }
+  return null;
+}
 // ---- end Session C ----
 // ---- Session D pages (all courses, files, people, syllabus) ----
 // Trimmed from the sandbox (2026-09-18) into test/d-pages/. The real All
