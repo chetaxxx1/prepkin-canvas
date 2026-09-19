@@ -2297,10 +2297,14 @@ html.pk-on:not(.pk-back-inbox-rows) #content #inbox-conversation-holder [data-te
 html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(3) { position: absolute !important; right: 8px !important; bottom: 4px !important; }
 html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(2) { padding-right: 44px !important; }
 html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(3) [class*="-view"] { margin: 0 !important; padding: 0 !important; }
-/* The chosen thread: Canvas paints its row light blue with a blue inset edge, inline. Ours is the sunk paper with the mark on the edge. */
-html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"]) { background-color: var(--pk-paper-sunk) !important; box-shadow: none !important; position: relative !important; }
-html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"])::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background-color: var(--pk-mark); z-index: 1; }
-html.pk-on.pk-art:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"]) { background-color: color-mix(in srgb, var(--pk-ink) 7%, transparent) !important; }
+/* The chosen thread: Canvas paints its row light blue inline, and while it
+ * has focus a blue inset shadow too (the shadow goes on blur; the ground is
+ * what says chosen). Ours is the sunk paper with the mark on the edge, and
+ * the focus ring is the mark's outline. */
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="background-color"]:has(> [data-testid="conversation"]) { background-color: var(--pk-paper-sunk) !important; box-shadow: none !important; position: relative !important; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="background-color"]:has(> [data-testid="conversation"])::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background-color: var(--pk-mark); z-index: 1; }
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"]) { box-shadow: none !important; outline: 2px solid var(--pk-mark) !important; outline-offset: -2px !important; }
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #inbox-conversation-holder div[style*="background-color"]:has(> [data-testid="conversation"]) { background-color: color-mix(in srgb, var(--pk-ink) 7%, transparent) !important; }
 html.pk-on.pk-art:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversation"]:hover { background-color: color-mix(in srgb, var(--pk-ink) 5%, transparent) !important; }
 /* No thread chosen: Canvas's envelope drawing goes; one quiet line in its place (Canvas's words stay for a screen reader). */
 html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > [class*="-view"] > [class*="view--flex-flex"][direction="column"]:has(> [class*="view-flexItem"] > svg) { padding-top: 96px !important; align-items: center !important; }
@@ -2327,6 +2331,76 @@ html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-d
 html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(3) { display: inline-flex !important; gap: 4px !important; }
 html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] + [class*="-text"],
 html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] ~ [class*="-text"] { display: block !important; font-size: 14px !important; line-height: 20px !important; color: var(--pk-ink) !important; padding: 0 0 14px 56px !important; }
+/* The week view (FullCalendar's time grid): the hour labels quiet 12px at the
+ * right of their column, today's header in the ink without Canvas's blue
+ * bar, the now line in the paper's mark. The chips are the month's. */
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agenda-view .fc-axis { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; text-align: right !important; padding: 2px 8px 0 0 !important; vertical-align: top !important; border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agenda-view .fc-axis.fc-widget-header { background-color: transparent !important; border-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agenda-view .fc-day-header.fc-today { border-top-color: transparent !important; color: var(--pk-ink) !important; font-weight: 800 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agenda-view .fc-slats td { border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agenda-view .fc-slats .fc-minor td { border-top-style: dotted !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .calendar-nowline { background-color: var(--pk-mark) !important; border-color: var(--pk-mark) !important; opacity: .8; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agenda-view .fc-day-grid .fc-day.fc-today { background-color: var(--pk-paper-sunk) !important; }
+/* The agenda view (Canvas's own list): each day a planner group head, each
+ * item a 44px row, the class colour an 8px dot (the icon's own class rule
+ * colours it), the title in the ink, the time at the right in the quiet ink.
+ * The list is the card, as the month is. */
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper { background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-container { border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important; box-shadow: var(--pk-lift) !important; overflow: clip !important; background-color: var(--pk-paper-2) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar-app .agenda-wrapper .agenda-container { background-color: transparent !important; box-shadow: none !important; border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-day { background-color: transparent !important; border: 0 !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-day:not(:first-child) { border-top: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper h3.agenda-date { margin: 0 !important; padding: 14px 16px 4px !important; font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink) !important; background-color: transparent !important; border: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-event__container { margin: 0 !important; padding: 0 0 6px !important; background-color: transparent !important; border: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper ul.agenda-event__list { margin: 0 !important; padding: 0 !important; list-style: none !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper li.agenda-event__item { margin: 0 !important; padding: 0 !important; border: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-event__item-container { display: grid !important; grid-template-columns: 8px minmax(0, 1fr) auto !important; column-gap: 12px !important; align-items: center !important; min-height: 44px !important; padding: 0 16px !important; margin: 0 !important; border: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-event__item-container:hover { background-color: var(--pk-hover) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar-app .agenda-wrapper .agenda-event__item-container:hover { background-color: color-mix(in srgb, var(--pk-ink) 5%, transparent) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-event__icon { grid-column: 1 !important; width: 8px !important; height: 8px !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background-color: currentColor !important; overflow: hidden !important; font-size: 0 !important; line-height: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-event__icon i { display: none !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-event__title { grid-column: 2 !important; grid-row: 1 !important; font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; color: var(--pk-ink) !important; text-decoration: none !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-event__time { grid-column: 3 !important; grid-row: 1 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; white-space: nowrap !important; margin: 0 !important; padding: 0 !important; width: auto !important; min-width: 0 !important; text-align: right !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .agenda-wrapper .agenda-actions { padding: 8px 16px 12px !important; }
+/* The Inbox's icon-only buttons (Compose, the address book, the strip, More,
+ * a row's star, an open thread's Reply and More): no colour band to sit on,
+ * so like the Files page's they take the paper through the buttons rule
+ * (the lint names the Inbox in ICON_BUTTON_OK). Compose keeps the raised
+ * paper as the one key on the line; the rest stand bare, because their
+ * wrappers say the raised paper is the page's and the rule is clear; on an
+ * image look the raised paper is clear too. Hover is the sunk paper. */
+html.pk-on:not(.pk-back-buttons) #content [data-testid="tool-bar"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *),
+html.pk-on:not(.pk-back-buttons) #content [data-testid="tool-bar"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *) [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content #inbox-conversation-holder [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *),
+html.pk-on:not(.pk-back-buttons) #content #inbox-conversation-holder [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *) [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *),
+html.pk-on:not(.pk-back-buttons) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *) [class*="baseButton__content"] {
+  background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
+}
+html.pk-on:not(.pk-back-buttons) #content [data-testid="tool-bar"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover,
+html.pk-on:not(.pk-back-buttons) #content [data-testid="tool-bar"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content #inbox-conversation-holder [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover,
+html.pk-on:not(.pk-back-buttons) #content #inbox-conversation-holder [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover,
+html.pk-on:not(.pk-back-buttons) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] [class*="-baseButton"]:not([class*="baseButton__children"]):not([type="submit"]):not(form *):hover [class*="baseButton__content"] {
+  background-color: var(--pk-paper-sunk) !important; color: var(--pk-ink) !important; border-color: var(--pk-rule) !important;
+}
+/* The wrappers that say "bare": the strip, the address book, a row's star, an open thread's buttons. */
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view-flexItem"]:has(> [class*="-position"] > #reply-to-message),
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view-flexItem"]:has(> [data-testid="address-button"]),
+html.pk-on:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(3),
+html.pk-on:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > div > [class*="view--flex-flex"][direction="row"] > [class*="view-flexItem"]:not(:has(> h2)),
+html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(3) { --pk-paper-2: var(--pk-paper); --pk-rule: transparent; }
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view-flexItem"]:has(> [class*="-position"] > #reply-to-message),
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #content [data-testid="tool-bar"] [class*="view-flexItem"]:has(> [data-testid="address-button"]),
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #inbox-conversation-holder [data-testid="conversationListItem-Item"] > [class*="-gridRow"]:nth-child(4) > [class*="-gridCol"]:nth-child(3),
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] > div > [class*="view--flex-flex"][direction="row"] > [class*="view-flexItem"]:not(:has(> h2)),
+html.pk-on.pk-art:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-desktop"] > [class*="view-flexItem"]:nth-child(3) { --pk-paper-2: transparent; }
+/* Canvas marks today's all-day cell with a blue box-shadow bar and frames
+ * today's column in 3px grey; a tint and a hairline instead. */
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agendaWeek-view .fc-day-grid .fc-today { box-shadow: none !important; background-color: var(--pk-paper-sunk) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar-app .fc-agendaWeek-view .fc-day-grid .fc-today { background-color: color-mix(in srgb, var(--pk-ink) 7%, transparent) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-agendaWeek-view .fc-time-grid .fc-today { border-width: 0 1px !important; border-color: var(--pk-rule) !important; background-color: transparent !important; }
 /* ==== end Session E ==== */
 
 

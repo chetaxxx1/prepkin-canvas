@@ -218,9 +218,10 @@ test('E7 inbox: no thread chosen is one quiet line; the chosen thread is the sun
   assert.deepEqual(words, { canvas: 'No Conversations Selected', ours: '"Pick a message on the left"', size: '0px' }, "Canvas's words stay for a screen reader; ours are what shows");
   await page.close();
   const open2 = await open('/conversations?open=1');
-  const chosen = '#inbox-conversation-holder div[style*="box-shadow"]:has(> [data-testid="conversation"])';
-  assert.equal(await style(open2, chosen, 'backgroundColor'), SUNK, "Canvas's light blue is the sunk paper");
+  const chosen = '#inbox-conversation-holder div[style*="background-color"]:has(> [data-testid="conversation"])';
+  assert.equal(await style(open2, chosen, 'backgroundColor'), SUNK, "Canvas's light blue is the sunk paper (the ground says chosen; the inset shadow is only focus)");
   assert.equal(await style(open2, chosen, 'boxShadow'), 'none', 'no blue inset');
+  assert.equal(await style(open2, chosen, 'outlineColor'), MARK, 'the focus ring is the mark');
   assert.equal(await style(open2, chosen, 'backgroundColor', '::before'), MARK, 'the mark on the edge');
   assert.equal(await style(open2, chosen, 'width', '::before'), '3px');
   assert.equal(await style(open2, `${detail} h2 [data-testid="message-detail-header-desktop"]`, 'fontSize'), '18px');
@@ -246,4 +247,64 @@ test('E8 inbox: Put back returns Canvas’s rows, drawing and toolbar, and the p
   assert.equal(await shows(page, '[data-testid="reply"]'), true, 'the toolbar is whole');
   assert.equal(await style(page, '#content [data-testid="tool-bar"]', 'borderTopWidth'), '1px');
   await page.close();
+});
+
+// MARK: - The calendar's other two views, and the Inbox's icon buttons (2026-09-19, the second pass)
+
+test('E9 calendar week view: quiet hour labels, today a tint with no blue bar and no grey frame, the now line in the mark', async () => {
+  const page = await open('/calendar?view=week');
+  assert.ok(await page.$('#calendar-app .fc-agendaWeek-view'), 'the week view');
+  assert.equal(await style(page, '#calendar-app .fc-agenda-view .fc-axis.fc-time', 'fontSize'), '12px');
+  assert.equal(await style(page, '#calendar-app .fc-agenda-view .fc-axis.fc-time', 'color'), INK2);
+  assert.equal(await style(page, '#calendar-app .fc-agenda-view .fc-axis.fc-time', 'textAlign'), 'right');
+  assert.equal(await style(page, '#calendar-app .fc-agendaWeek-view .fc-day-grid .fc-day.fc-today', 'boxShadow'), 'none', "Canvas's blue bar is gone");
+  assert.equal(await style(page, '#calendar-app .fc-agendaWeek-view .fc-day-grid .fc-day.fc-today', 'backgroundColor'), SUNK, 'today is a tint');
+  assert.equal(await style(page, '#calendar-app .fc-agendaWeek-view .fc-time-grid .fc-day.fc-today', 'borderLeftWidth'), '1px', 'a hairline, not a 3px frame');
+  assert.equal(await style(page, '#calendar-app .fc-agendaWeek-view .fc-time-grid .fc-day.fc-today', 'borderLeftColor'), RULE);
+  assert.equal(await style(page, '#calendar-app .fc-agenda-view .fc-day-header.fc-today', 'fontWeight'), '800');
+  assert.equal(await style(page, '#calendar-app .calendar-nowline', 'backgroundColor'), MARK, 'the now line is the mark, never orange');
+  assert.equal(await style(page, '#calendar-app .fc-time-grid-event.fc-event', 'borderLeftWidth'), '3px', 'the chip is the month chip');
+  await page.close();
+});
+
+test('E10 calendar agenda view: each day a group head, each item a 44px row with the class dot, the title in the ink, the time at the right', async () => {
+  const page = await open('/calendar?view=agenda');
+  assert.equal(await style(page, '#calendar-app .agenda-container', 'borderRadius'), '14px', 'the list is the card');
+  assert.equal(await style(page, '#calendar-app h3.agenda-date', 'fontSize'), '14px');
+  assert.equal(await style(page, '#calendar-app h3.agenda-date', 'fontWeight'), '800');
+  assert.equal(await style(page, '#calendar-app h3.agenda-date', 'backgroundColor'), CLEAR, 'no band');
+  assert.equal(await style(page, '#calendar-app .agenda-day:not(:first-child)', 'borderTopColor'), RULE, 'days part with a hairline');
+  const row = '#calendar-app .agenda-event__item-container';
+  assert.equal(await style(page, row, 'display'), 'grid');
+  const h = await box(page, row);
+  assert.ok(h.h >= 44 && h.h <= 48, `44px rows: ${JSON.stringify(h)}`);
+  const dot = await box(page, `${row} .agenda-event__icon`);
+  assert.deepEqual([dot.w, dot.h], [8, 8], 'the class colour is an 8px dot');
+  assert.equal(await style(page, `${row} .agenda-event__icon`, 'backgroundColor'), 'rgb(255, 111, 97)', "the icon's own class rule colours it");
+  assert.equal(await shows(page, `${row} .agenda-event__icon i`), false, 'no glyph');
+  assert.equal(await style(page, `${row} .agenda-event__title`, 'color'), INK, 'the title in the ink, not the course colour');
+  assert.equal(await style(page, `${row} .agenda-event__time`, 'color'), INK2);
+  const geo = await page.evaluate((s) => { const el = document.querySelector(s); const r = (x) => x.getBoundingClientRect(); const row = r(el), t = r(el.querySelector('.agenda-event__title')), time = r(el.querySelector('.agenda-event__time')); return { titleLeft: Math.round(t.left - row.left), timeRight: Math.round(row.right - time.right), order: t.left < time.left }; }, row);
+  assert.ok(geo.titleLeft === 36 && geo.timeRight === 16 && geo.order, `dot, title, then the time at the right: ${JSON.stringify(geo)}`);
+  await page.close();
+});
+
+test('E11 inbox icon buttons: Compose the one raised key, the address book, the strip, More and a row star bare on the paper; an open thread the same', async () => {
+  const page = await open('/conversations');
+  const content = (id) => `#content [data-testid="${id}"] [class*="baseButton__content"]`;
+  assert.equal(await style(page, '#compose-new-message [class*="baseButton__content"]', 'backgroundColor'), PAPER2, 'Compose is raised');
+  assert.equal(await style(page, '#compose-new-message [class*="baseButton__content"]', 'borderTopColor'), RULE);
+  assert.equal(await style(page, content('address-button'), 'backgroundColor'), PAPER, 'the address book is bare');
+  assert.equal(await style(page, content('address-button'), 'borderTopColor'), CLEAR);
+  assert.equal(await style(page, content('settings'), 'backgroundColor'), PAPER, 'More is bare');
+  assert.equal(await style(page, content('settings'), 'color'), INK);
+  assert.equal(await style(page, content('visible-not-starred'), 'backgroundColor'), PAPER, 'the star is bare');
+  assert.equal(await style(page, content('visible-not-starred'), 'borderTopColor'), CLEAR);
+  await page.close();
+  const open2 = await open('/conversations?open=1');
+  assert.equal(await style(open2, content('reply'), 'backgroundColor'), PAPER, 'the strip is bare');
+  assert.equal(await style(open2, content('reply'), 'borderTopColor'), CLEAR);
+  assert.equal(await style(open2, content('message-detail-header-reply-btn'), 'backgroundColor'), PAPER, "the thread's Reply is bare");
+  assert.equal(await style(open2, content('message-reply'), 'backgroundColor'), PAPER, "a message's Reply is bare");
+  await open2.close();
 });

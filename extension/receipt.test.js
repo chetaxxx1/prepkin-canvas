@@ -387,6 +387,10 @@ const rules = allRules.filter((r) => !r.selectors.split(',').every((sel) => ours
 // still may not select a button at all.
 const BUTTON_RULE_GATE = 'html.pk-on:not(.pk-back-buttons) ';
 const FORM_BUTTON_OK = ['body.files #content form [class*="-baseButton"][data-testid="files-search-button"]'];
+// Pages with no colour band for an icon to sit on, where an icon-only InstUI
+// button may take the paper: the Files page, and (2026-09-19, Session E) the
+// Inbox's toolbar, its conversation rows and its open thread.
+const ICON_BUTTON_OK = ['body.files ', '#content [data-testid="tool-bar"] ', '#content #inbox-conversation-holder ', '#content [class*="view-flexItem"]:has(> #inbox-conversation-holder) + [class*="view-flexItem"] '];
 // Three buttons are text, each the one control in its row: Modules' Collapse
 // All and the grades page's Print Grades (2026-09-18), and the dashboard
 // sidebar's View Grades (the same evening). Named in full; a text button takes
@@ -470,7 +474,7 @@ test('no rule in the skin writes any property on a button, except the buttons ru
           // The Files page has no colour band, so its icon buttons may take the
           // paper. An InstUI button with a `__children` span has words, so it
           // is not icon-only either.
-          assert.ok(/icon-action/.test(sel) || /:not\(:has\(svg\)\)/.test(sel) || /:has\(\[class\*="baseButton__children"\]\)/.test(sel) || /toggleDetails__toggle/.test(sel) || /^html\.pk-on:not\(\.pk-back-buttons\) body\.files /.test(sel), `excludes an icon-only button: ${sel}`);
+          assert.ok(/icon-action/.test(sel) || /:not\(:has\(svg\)\)/.test(sel) || /:has\(\[class\*="baseButton__children"\]\)/.test(sel) || /toggleDetails__toggle/.test(sel) || ICON_BUTTON_OK.some((k) => sel.startsWith(BUTTON_RULE_GATE + k)), `excludes an icon-only button: ${sel}`);
         }
         if (/toggleDetails__toggle/.test(sel)) assert.match(r.body.replace(/\s+/g, ''), /^color:/, `the toggle takes the ink alone: ${sel}`);
         if (/-baseButton/.test(sel) && !namedFormButton) assert.match(sel, /:not\(form \*\)/, `never an InstUI button inside a form: ${sel}`);

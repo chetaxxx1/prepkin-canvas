@@ -582,7 +582,7 @@ function ePage(name) {
   return E_PAGES[name];
 }
 function pageE(p, url) {
-  if (p === '/calendar') return { main: ePage('calendar-main'), side: ePage('calendar-side') };
+  if (p === '/calendar') { const v = url.searchParams.get('view'); return { main: ePage(v === 'week' || v === 'agenda' ? `calendar-${v}-main` : 'calendar-main'), side: ePage('calendar-side') }; }
   if (p === '/conversations') return { main: ePage(url.searchParams.get('open') === '1' ? 'inbox-open-main' : 'inbox-main'), side: '' };
   return null;
 }

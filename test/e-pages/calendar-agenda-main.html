@@ -1,0 +1,433 @@
+<style>
+/* The rules Canvas's own stylesheet and calendar code put on this page; the fake has no Canvas CSS. */
+.group_user_3, .group_user_3:hover, .group_user_3:focus { color: rgb(74, 118, 178); border-color: rgb(74, 118, 178); background-color: rgb(74, 118, 178); }
+.group_course_4, .group_course_4:hover, .group_course_4:focus { color: rgb(255, 111, 97); border-color: rgb(255, 111, 97); background-color: rgb(255, 111, 97); }
+.group_course_5, .group_course_5:hover, .group_course_5:focus { color: rgb(87, 199, 155); border-color: rgb(87, 199, 155); background-color: rgb(87, 199, 155); }
+.group_course_7, .group_course_7:hover, .group_course_7:focus { color: rgb(145, 52, 155); border-color: rgb(145, 52, 155); background-color: rgb(145, 52, 155); }
+.screenreader-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.fc th, .fc td { border-style: solid; border-width: 1px; padding: 0; vertical-align: top; }
+.fc-day-header { text-transform: uppercase; font-weight: 700; padding: 10px 0; }
+.fc-row { position: relative; } .fc-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; } .fc-bg table { height: 100%; width: 100%; } .fc-content-skeleton { position: relative; z-index: 4; }
+.fc-day-grid-event { margin: 2px 2px 0; padding: 3px 3px 3px 5px; display: block; } .fc-day-grid-event .fc-content { white-space: nowrap; overflow: hidden; }
+.fc-day-number { float: right; padding: 2px; }
+#minical .event { position: relative; } #minical .event::after { position: absolute; top: 1px; left: 1px; height: 1.2em; right: 1px; border: 1px solid rgb(39, 53, 64); content: " "; }
+.context-list-toggle-box { display: inline-block; width: 12px; height: 12px; border: 2px solid; box-sizing: content-box; }
+.context_list_context.not-checked .context-list-toggle-box { background-color: rgb(230, 231, 233); border-color: rgb(187, 187, 187); }
+.btn { display: inline-block; padding: 8px 14px; border: 1px solid #ccc; border-radius: 3px; background: #fff; font-size: 14px; line-height: 22px; }
+.btn-group > .btn + .btn { margin-left: -1px; }
+.rs-section h2 { text-transform: uppercase; font-size: 13px; }
+</style><style>
+.fc-agenda-view .fc-axis { font-size: 16px; } .calendar-nowline { position: absolute; height: 2px; background: rgb(226, 134, 58); }
+#calendar-app .fc-agendaWeek-view .fc-day-grid .fc-today { background-color: transparent; box-shadow: 0.5px -6px 0 0 rgb(0, 142, 226); }
+#calendar-app .fc-agendaWeek-view .fc-time-grid .fc-today { background-color: transparent; border: 3px solid rgb(232, 234, 236); }
+.agenda-date { background: #f5f5f5; font-size: 14px; padding: 8px; } .agenda-event__item-container { display: flex; padding: 12px 8px; } .agenda-event__icon { width: 20px; } .agenda-event__time { width: 120px; } .agenda-event__title { text-decoration: none; }
+</style>
+<h1 class="screenreader-only">Calendar</h1>
+
+
+
+<div id="calendar_header">
+<div class="header-bar-outer-container calendar_header">
+    <div class="sticky-toolbar" data-sticky="">
+        <div class="header-bar flex-container">
+            <div class="header-bar-left header-left-flex">
+                <div class="calendar_navigator">
+<button class="navigate_today btn">Today</button>
+<span class="navigation_buttons ui-buttonset" style="display: none;">
+  <button class="navigate_prev btn ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false"><span class="ui-button-text">
+    <i class="icon-arrow-left" style="vertical-align: middle" aria-hidden="true"></i>
+    <span class="screenreader-only">Previous</span>
+  </span></button>
+  <button class="navigate_next btn ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-disabled="false"><span class="ui-button-text">
+    <i class="icon-arrow-right" style="vertical-align: middle" aria-hidden="true"></i>
+    <span class="screenreader-only">Next</span>
+  </span></button>
+</span>
+<h2 class="navigation_title" tabindex="-1"><span role="button" class="navigation_title_text" tabindex="0" aria-label="Sep 19, 2026 – Oct 8, 2026 click to change">Sep 19, 2026 – Oct 8, 2026</span></h2>
+<span class="date_field_wrapper" style="display: none;">
+    <label class="screenreader-only" id="calendar_navigation_date_accessible_label">
+      Enter the date you would like to navigate to.
+      Format Like YYYY-MM-DD
+    </label>
+    <div class="input-append"><input type="text" name="start date" style="width: 100px;" class="date_field datetime_field_enabled hasDatepicker" aria-labelledby="calendar_navigation_date_accessible_label" data-tooltip="" title="YYYY-MM-DD" aria-invalid="false"><button type="button" class="ui-datepicker-trigger btn" aria-hidden="true" tabindex="-1"><i class="icon-calendar-month"></i></button></div><div class="datetime_suggest" style="display: none;"></div>
+</span>
+
+</div>
+            </div>
+
+            <div class="header-bar-right header-right-flex">
+                <div class="recommend_agenda screenreader-only" style="display: none;">
+                    <button id="use_agenda" class="accessibility-warning">Warning: For improved accessibility, please use the "Agenda view" Calendar.</button>
+                </div>
+                <span id="refresh_calendar_link" title="Loading" data-tooltip="" class="">
+                    <span class="screenreader-only">Loading</span>
+                </span>
+                <span class="calendar_view_buttons btn-group" role="tablist">
+                    <button type="button" id="week" class="btn calendar-button" role="tab" aria-selected="false" aria-controls="calendar-app" tabindex="-1">
+                        Week
+                    </button>
+                    <button type="button" id="month" class="btn calendar-button" role="tab" aria-selected="false" aria-controls="calendar-app" tabindex="-1">
+                        Month
+                    </button>
+                    <button type="button" id="agenda" class="btn active" role="tab" aria-selected="true" aria-controls="calendar-app" tabindex="0">
+                        Agenda
+                    </button>
+                  </span>
+                <a href="#" id="create_new_event_link" class="btn" title="Create New Event" data-tooltip="" role="button">
+                    <i class="icon-plus"></i>
+                    <span class="screenreader-only">Create New Event</span>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<div id="calendar-app" role="tabpanel" class="inline-calendar-event-titles"><div class="scheduler-wrapper" style="display: none">
+  <div class="appointment-list">
+    <div class="list-wrapper"></div>
+  </div>
+</div>
+<div class="agenda-wrapper active"><div class="agenda-container">
+  
+    
+      <div class="agenda-day">
+        <h3 class="agenda-date" tabindex="-1">
+          <span aria-hidden="true">Thu, Sep 24</span>
+          <span class="screenreader-only">Thursday, September 24</span>
+        </h3>
+      </div>
+
+        <div class="agenda-event__container">
+          <ul class="agenda-event__list">
+            
+              <li class="agenda-event__item" data-event-id="calendar_event_1">
+                <span class="screenreader-only">
+                  Event,
+                  
+                    
+                      Starts at
+                      1:00pm
+                      Ends at
+                      2:30pm
+                    
+                  ,
+                </span>
+                <span class="screenreader-only">
+                  
+                    
+                      Momentum lab section
+                    
+                  
+                </span>
+                <span class="screenreader-only">
+                  
+                    Not Completed
+                  
+                </span>
+                <span class="screenreader-only">Calendar AP Physics C: Mechanics</span>
+                <div class="agenda-event__item-container" tabindex="0" role="button">
+                  <div class="agenda-event__icon group_course_4">
+                    <i class="icon-calendar-month"></i>
+                  </div>
+                  <span class="screenreader-only">Open event menu for Momentum lab section</span>
+                  <div class="agenda-event__time" aria-hidden="true">
+                    
+                      
+                        1:00pm
+                      
+                    
+                  </div>
+                  <span class="agenda-event__title group_course_4 ">
+                    
+                      
+                        Momentum lab section
+                      
+                    
+                  </span>
+                </div>
+              </li>
+            
+              <li class="agenda-event__item" data-event-id="assignment_68">
+                <span class="screenreader-only">
+                  Quiz,
+                  
+                    Due 11:03pm
+                  ,
+                </span>
+                <span class="screenreader-only">
+                  
+                    
+                      Unit 5 reading check
+                    
+                  
+                </span>
+                <span class="screenreader-only">
+                  
+                    Not Completed
+                  
+                </span>
+                <span class="screenreader-only">Calendar AP Physics C: Mechanics</span>
+                <div class="agenda-event__item-container" tabindex="0" role="button">
+                  <div class="agenda-event__icon group_course_4">
+                    <i class="icon-quiz"></i>
+                  </div>
+                  <span class="screenreader-only">Open event menu for Unit 5 reading check</span>
+                  <div class="agenda-event__time" aria-hidden="true">
+                    
+                      Due 11:03pm
+                    
+                  </div>
+                  <span class="agenda-event__title group_course_4 ">
+                    
+                      
+                        Unit 5 reading check
+                      
+                    
+                  </span>
+                </div>
+              </li>
+            
+          </ul>
+        </div>
+
+    
+      <div class="agenda-day">
+        <h3 class="agenda-date" tabindex="-1">
+          <span aria-hidden="true">Fri, Sep 25</span>
+          <span class="screenreader-only">Friday, September 25</span>
+        </h3>
+      </div>
+
+        <div class="agenda-event__container">
+          <ul class="agenda-event__list">
+            
+              <li class="agenda-event__item" data-event-id="assignment_70">
+                <span class="screenreader-only">
+                  Quiz,
+                  
+                    Due 10:59pm
+                  ,
+                </span>
+                <span class="screenreader-only">
+                  
+                    
+                      Lab safety quiz
+                    
+                  
+                </span>
+                <span class="screenreader-only">
+                  
+                    Not Completed
+                  
+                </span>
+                <span class="screenreader-only">Calendar AP Physics C: Mechanics</span>
+                <div class="agenda-event__item-container" tabindex="0" role="button">
+                  <div class="agenda-event__icon group_course_4">
+                    <i class="icon-quiz"></i>
+                  </div>
+                  <span class="screenreader-only">Open event menu for Lab safety quiz</span>
+                  <div class="agenda-event__time" aria-hidden="true">
+                    
+                      Due 10:59pm
+                    
+                  </div>
+                  <span class="agenda-event__title group_course_4 ">
+                    
+                      
+                        Lab safety quiz
+                      
+                    
+                  </span>
+                </div>
+              </li>
+            
+          </ul>
+        </div>
+
+    
+      <div class="agenda-day">
+        <h3 class="agenda-date" tabindex="-1">
+          <span aria-hidden="true">Tue, Sep 29</span>
+          <span class="screenreader-only">Tuesday, September 29</span>
+        </h3>
+      </div>
+
+        <div class="agenda-event__container">
+          <ul class="agenda-event__list">
+            
+              <li class="agenda-event__item" data-event-id="calendar_event_2">
+                <span class="screenreader-only">
+                  Event,
+                  
+                    
+                      Starts at
+                      2:30pm
+                      Ends at
+                      3:30pm
+                    
+                  ,
+                </span>
+                <span class="screenreader-only">
+                  
+                    
+                      Unit 4 review session
+                    
+                  
+                </span>
+                <span class="screenreader-only">
+                  
+                    Not Completed
+                  
+                </span>
+                <span class="screenreader-only">Calendar AP Physics C: Mechanics</span>
+                <div class="agenda-event__item-container" tabindex="0" role="button">
+                  <div class="agenda-event__icon group_course_4">
+                    <i class="icon-calendar-month"></i>
+                  </div>
+                  <span class="screenreader-only">Open event menu for Unit 4 review session</span>
+                  <div class="agenda-event__time" aria-hidden="true">
+                    
+                      
+                        2:30pm
+                      
+                    
+                  </div>
+                  <span class="agenda-event__title group_course_4 ">
+                    
+                      
+                        Unit 4 review session
+                      
+                    
+                  </span>
+                </div>
+              </li>
+            
+          </ul>
+        </div>
+
+    
+      <div class="agenda-day">
+        <h3 class="agenda-date" tabindex="-1">
+          <span aria-hidden="true">Fri, Oct 2</span>
+          <span class="screenreader-only">Friday, October 2</span>
+        </h3>
+      </div>
+
+        <div class="agenda-event__container">
+          <ul class="agenda-event__list">
+            
+              <li class="agenda-event__item" data-event-id="assignment_13">
+                <span class="screenreader-only">
+                  Assignment,
+                  
+                    Due 5:03am
+                  ,
+                </span>
+                <span class="screenreader-only">
+                  
+                    
+                      Unit 4 project proposal
+                    
+                  
+                </span>
+                <span class="screenreader-only">
+                  
+                    Not Completed
+                  
+                </span>
+                <span class="screenreader-only">Calendar AP Physics C: Mechanics</span>
+                <div class="agenda-event__item-container" tabindex="0" role="button">
+                  <div class="agenda-event__icon group_course_4">
+                    <i class="icon-assignment"></i>
+                  </div>
+                  <span class="screenreader-only">Open event menu for Unit 4 project proposal</span>
+                  <div class="agenda-event__time" aria-hidden="true">
+                    
+                      Due 5:03am
+                    
+                  </div>
+                  <span class="agenda-event__title group_course_4 ">
+                    
+                      
+                        Unit 4 project proposal
+                      
+                    
+                  </span>
+                </div>
+              </li>
+            
+          </ul>
+        </div>
+
+    
+      <div class="agenda-day">
+        <h3 class="agenda-date" tabindex="-1">
+          <span aria-hidden="true">Thu, Oct 8</span>
+          <span class="screenreader-only">Thursday, October 8</span>
+        </h3>
+      </div>
+
+        <div class="agenda-event__container">
+          <ul class="agenda-event__list">
+            
+              <li class="agenda-event__item" data-event-id="assignment_69">
+                <span class="screenreader-only">
+                  Quiz,
+                  
+                    Due 10:59pm
+                  ,
+                </span>
+                <span class="screenreader-only">
+                  
+                    
+                      Momentum warm-up
+                    
+                  
+                </span>
+                <span class="screenreader-only">
+                  
+                    Not Completed
+                  
+                </span>
+                <span class="screenreader-only">Calendar AP Physics C: Mechanics</span>
+                <div class="agenda-event__item-container" tabindex="0" role="button">
+                  <div class="agenda-event__icon group_course_4">
+                    <i class="icon-quiz"></i>
+                  </div>
+                  <span class="screenreader-only">Open event menu for Momentum warm-up</span>
+                  <div class="agenda-event__time" aria-hidden="true">
+                    
+                      Due 10:59pm
+                    
+                  </div>
+                  <span class="agenda-event__title group_course_4 ">
+                    
+                      
+                        Momentum warm-up
+                      
+                    
+                  </span>
+                </div>
+              </li>
+            
+          </ul>
+        </div>
+
+    
+  
+</div>
+
+<div class="agenda-actions">
+  
+  <i class="loading-spinner" aria-label="Loading" aria-hidden="true" style="display: none;"></i>
+</div>
+</div>
+<div class="scheduler_navigator"></div>
+<div class="calendar fc fc-unthemed fc-ltr" style="display: none;"><div class="fc-view-container" style=""><div class="fc-view fc-agendaWeek-view fc-agenda-view" style=""><table class=""><thead class="fc-head"><tr><td class="fc-head-container fc-widget-header"><div class="fc-row fc-widget-header"><table class=""><thead><tr><th class="fc-axis fc-widget-header" style="width: 60px;"></th><th class="fc-day-header fc-widget-header fc-sun fc-past" data-date="2026-09-13"><span>Sun 9/13</span></th><th class="fc-day-header fc-widget-header fc-mon fc-past" data-date="2026-09-14"><span>Mon 9/14</span></th><th class="fc-day-header fc-widget-header fc-tue fc-past" data-date="2026-09-15"><span>Tue 9/15</span></th><th class="fc-day-header fc-widget-header fc-wed fc-past" data-date="2026-09-16"><span>Wed 9/16</span></th><th class="fc-day-header fc-widget-header fc-thu fc-past" data-date="2026-09-17"><span>Thu 9/17</span></th><th class="fc-day-header fc-widget-header fc-fri fc-past" data-date="2026-09-18"><span>Fri 9/18</span></th><th class="fc-day-header fc-widget-header fc-sat fc-today" data-date="2026-09-19"><span>Sat 9/19</span></th></tr></thead></table></div></td></tr></thead><tbody class="fc-body"><tr><td class="fc-widget-content"><div class="fc-day-grid fc-unselectable"><div class="fc-row fc-week fc-widget-content"><div class="fc-bg"><table class=""><tbody><tr><td class="fc-axis fc-widget-content" style="width: 69px;"><span>all-day</span></td><td class="fc-day fc-widget-content fc-sun fc-past" data-date="2026-09-13"></td><td class="fc-day fc-widget-content fc-mon fc-past" data-date="2026-09-14"></td><td class="fc-day fc-widget-content fc-tue fc-past" data-date="2026-09-15"></td><td class="fc-day fc-widget-content fc-wed fc-past" data-date="2026-09-16"></td><td class="fc-day fc-widget-content fc-thu fc-past" data-date="2026-09-17"></td><td class="fc-day fc-widget-content fc-fri fc-past" data-date="2026-09-18"></td><td class="fc-day fc-widget-content fc-sat fc-today " data-date="2026-09-19"></td></tr></tbody></table></div><div class="fc-content-skeleton"><table><tbody><tr><td class="fc-axis" style="width: 69px;"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div></div></div><hr class="fc-divider fc-widget-header"><div class="fc-scroller fc-time-grid-container" style="overflow: hidden scroll; height: 517px;"><div class="fc-time-grid fc-unselectable"><div class="fc-bg"><table class=""><tbody><tr><td class="fc-axis fc-widget-content" style="width: 69px;"></td><td class="fc-day fc-widget-content fc-sun fc-past" data-date="2026-09-13"></td><td class="fc-day fc-widget-content fc-mon fc-past" data-date="2026-09-14"></td><td class="fc-day fc-widget-content fc-tue fc-past" data-date="2026-09-15"></td><td class="fc-day fc-widget-content fc-wed fc-past" data-date="2026-09-16"></td><td class="fc-day fc-widget-content fc-thu fc-past" data-date="2026-09-17"></td><td class="fc-day fc-widget-content fc-fri fc-past" data-date="2026-09-18"></td><td class="fc-day fc-widget-content fc-sat fc-today " data-date="2026-09-19"></td></tr></tbody></table></div><div class="fc-slats"><table class=""><tbody><tr data-time="00:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>12am</span></td><td class="fc-widget-content"></td></tr><tr data-time="00:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="01:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>1am</span></td><td class="fc-widget-content"></td></tr><tr data-time="01:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="02:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>2am</span></td><td class="fc-widget-content"></td></tr><tr data-time="02:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="03:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>3am</span></td><td class="fc-widget-content"></td></tr><tr data-time="03:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="04:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>4am</span></td><td class="fc-widget-content"></td></tr><tr data-time="04:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="05:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>5am</span></td><td class="fc-widget-content"></td></tr><tr data-time="05:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="06:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>6am</span></td><td class="fc-widget-content"></td></tr><tr data-time="06:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="07:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>7am</span></td><td class="fc-widget-content"></td></tr><tr data-time="07:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="08:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>8am</span></td><td class="fc-widget-content"></td></tr><tr data-time="08:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="09:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>9am</span></td><td class="fc-widget-content"></td></tr><tr data-time="09:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="10:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>10am</span></td><td class="fc-widget-content"></td></tr><tr data-time="10:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="11:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>11am</span></td><td class="fc-widget-content"></td></tr><tr data-time="11:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="12:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>12pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="12:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="13:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>1pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="13:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="14:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>2pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="14:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="15:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>3pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="15:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="16:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>4pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="16:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="17:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>5pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="17:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="18:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>6pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="18:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="19:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>7pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="19:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="20:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>8pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="20:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="21:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>9pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="21:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="22:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>10pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="22:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr><tr data-time="23:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"><span>11pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="23:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 69px;"></td><td class="fc-widget-content"></td></tr></tbody></table><div class="calendar-nowline" style="width: 810px; top: 399.375px;"></div></div><hr class="fc-divider fc-widget-header" style="display:none"><div class="fc-content-skeleton"><table><tbody><tr><td class="fc-axis" style="width: 69px;"></td><td><div class="fc-content-col"><div class="fc-event-container fc-helper-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-helper-container"></div><div class="fc-event-container"><a class="fc-time-grid-event fc-v-event fc-event fc-start fc-end group_course_5 assignment ui-draggable-handle" title="5:03 AM
+Comparative essay: how do Douglass and Jacobs each construct the reader they are writing for, and what does each of them refuse to say out loud?
+
+Calendar: English 11: American Voices" style="inset: 273.435px 0% -327.435px; z-index: 1;"><div class="fc-content"><i class="icon-assignment"></i><span class="screenreader-only">Calendar: English 11: American Voices</span><div class="fc-time" data-start="5:03" data-full="5:03 AM"><span>5:03</span></div><div class="fc-title"><span class="screenreader-only">Assignment Title: </span>Comparative essay: how do Douglass and Jacobs each construct the reader they are writing for, and what does each of them refuse to say out loud?</div></div><div class="fc-bg"></div></a></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-helper-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-helper-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-helper-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-helper-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-helper-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td></tr></tbody></table></div></div></div></td></tr></tbody></table></div></div></div>
+</div>
+<div id="calendar-drag-and-drop-container"></div>
