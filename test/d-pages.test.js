@@ -66,10 +66,16 @@ test('D2 All Courses draws as the /grades rows: the columns a student never read
   await h.sw((o) => syncNow(o), SCHOOL_A);
   let page = await open('/courses?full=1');
   await page.waitForSelector('#my_courses_table td.course-list-course-title-column[data-pk-initial]', { timeout: 5000 });
-  for (const col of ['thead', '.course-list-star-column', '.course-list-nickname-column', '.course-list-enrolled-as-column', '.course-list-published-column']) {
+  for (const col of ['.course-list-star-column', '.course-list-nickname-column', '.course-list-enrolled-as-column', '.course-list-published-column']) {
     assert.equal(await shows(page, `#my_courses_table ${col}`), false, `${col} folded`);
   }
   assert.equal(await shows(page, '#my_courses_table td.course-list-course-title-column'), true, 'the name stays');
+  // The sort row stays, as the quiet head: Course and Term, no band, one hairline on the row.
+  assert.equal(await shows(page, '#my_courses_table > thead > tr > th.course-list-course-title-column a'), true, 'sorting stays');
+  assert.equal(await style(page, '#my_courses_table > thead > tr > th.course-list-course-title-column', 'backgroundColor'), clear, 'no band');
+  assert.equal(await style(page, '#my_courses_table > thead > tr > th.course-list-course-title-column', 'borderBottomWidth'), '0px', 'the hairline is the row\'s');
+  assert.equal(await style(page, '#my_courses_table > thead > tr', 'borderBottomWidth'), '1px');
+  assert.equal(await page.$eval('#my_courses_table > tbody > tr:first-child td.course-list-course-title-column', (td) => [td.dataset.pkCode, getComputedStyle(td, '::after').content]).then(String), 'PHYS-C,"PHYS-C"', 'the course code as meta after the name');
   const row = await page.$eval('#my_courses_table > tbody > tr:first-child', (tr) => ({
     h: Math.round(tr.getBoundingClientRect().height), grade: tr.dataset.pkGrade, letter: tr.dataset.pkLetter,
     initial: tr.querySelector('.course-color-block')?.dataset.pkInitial, after: getComputedStyle(tr.querySelector('.course-color-block'), '::after').content,
@@ -95,13 +101,18 @@ test('D2 All Courses draws as the /grades rows: the columns a student never read
   await h.setStorage({ skin: SKIN({ cardGrades: false }) }); await page.waitForTimeout(500);
   assert.equal(await page.$eval('#my_courses_table > tbody > tr:first-child', (tr) => tr.hasAttribute('data-pk-grade')), false, 'grades off: no grade on the row');
   await page.close();
-  // Put back: Canvas's columns and its sort row return, the head quiet.
+  // Put back: Canvas's columns return, the head still quiet.
   await h.setStorage({ skin: SKIN(), putBack: { columns: true } });
   page = await open('/courses?full=1');
-  assert.equal(await shows(page, '#my_courses_table thead'), true, 'the sort row is back');
-  assert.equal(await shows(page, '#my_courses_table .course-list-published-column'), true, 'and Published');
+  assert.equal(await shows(page, '#my_courses_table .course-list-published-column'), true, 'Published is back');
   assert.equal(await style(page, '#my_courses_table > thead > tr > th', 'backgroundColor'), clear, 'still no band');
   assert.equal(await page.$eval('#my_courses_table > tbody > tr:first-child', (tr) => tr.hasAttribute('data-pk-grade')), false, 'nothing of ours on the row');
+  await page.close();
+  // The past-courses switch on Canvas's own markup: the heading's block goes with its table.
+  await h.setStorage({ skin: SKIN({ hidePast: true }), putBack: {} });
+  page = await open('/courses?full=1');
+  assert.equal(await shows(page, '#past_enrollments_table'), false, 'hidePast: the table folds');
+  assert.equal(await page.evaluate(() => { const h2 = [...document.querySelectorAll('#content h2')].find((e) => /Past Enrollments/.test(e.textContent)); return h2 ? h2.getClientRects().length : -1; }), 0, 'and its heading with it (the real markup keeps them in two blocks)');
   await page.close();
 });
 
@@ -115,6 +126,19 @@ test('D3 Files: the two title buttons are words and the search is our field on t
     assert.equal(await style(page, `${sel} > [class*="baseButton__content"]`, 'backgroundColor'), clear, `${sel}: no ground on the content span`);
     assert.equal(await style(page, sel, 'fontSize'), '13px');
   }
+  assert.equal(await style(page, 'form[name="files-search"] [data-testid="files-search-button"]', 'backgroundColor'), clear, 'Search is words');
+  assert.equal(await style(page, 'form[name="files-search"] [data-testid="files-search-button"]', 'borderTopColor'), clear);
+  for (const sel of ['[data-testid="action-menu-button-large"]', '[data-testid="bulk-actions-download-button"]', '[data-testid="files-pagination"] [class*="-baseButton"]']) {
+    assert.equal(await style(page, sel, 'backgroundColor'), clear, `${sel}: no box`);
+    assert.equal(await style(page, sel, 'borderTopColor'), clear, `${sel}: no edge`);
+    assert.equal(await style(page, `${sel} svg`, 'width'), '16px', `${sel}: a 16px glyph`);
+  }
+  assert.equal(await style(page, '[data-testid="files-pagination"] [class*="-position"]:has(> [disabled])', 'opacity'), '0.4', 'a disabled arrow dims');
+  const facade = '[data-testid="files-table"] tbody [class*="checkboxFacade__facade"]';
+  assert.equal(await style(page, facade, 'borderRadius'), '999px', 'the checkbox is our circle');
+  assert.equal(await style(page, facade, 'width'), '18px');
+  await page.click('[data-testid="files-table"] tbody [data-testid="row-select-checkbox"] + label'); await page.waitForTimeout(100);
+  assert.equal(await style(page, facade, 'borderTopColor'), 'rgb(81, 207, 160)', 'mint when on');
   const h1 = await box(page, '#content h1[class*="-view-heading"]');
   const search = await box(page, 'form[name="files-search"] input');
   const button = await box(page, '[data-id="switch-to-old-files-button"]');
@@ -209,6 +233,12 @@ test('D5 Syllabus: the body reads in the page\'s column, an empty one draws no c
   assert.equal(row.link, '700'); assert.equal(row.linkColor, 'rgb(27, 31, 36)', 'the work in the ink');
   assert.equal(row.tile, '26px', 'the icon on a tile'); assert.match(row.mask, /^url\("data:image\/svg\+xml/, 'the look\'s icon');
   assert.equal(row.due, 'right'); assert.ok(row.nameW > 300, `the work takes the width: ${row.nameW}`);
+  // An event: its two times on one line, the look's calendar on its tile.
+  const event = await page.$eval('#syllabus > tbody > tr.syllabus_event', (tr) => ({
+    br: getComputedStyle(tr.querySelector('td.dates br')).display, h: Math.round(tr.querySelector('td.dates').getBoundingClientRect().height),
+    mask: getComputedStyle(tr.querySelector('td.name i.icon-calendar-month'), '::before').maskImage || getComputedStyle(tr.querySelector('td.name i.icon-calendar-month'), '::before').webkitMaskImage,
+  }));
+  assert.equal(event.br, 'none'); assert.ok(event.h <= 50, `one line: ${event.h}`); assert.match(event.mask, /^url\("data:image\/svg\+xml/, 'the look\'s calendar');
   // The mini month.
   assert.equal(await style(page, '#right-side .mini_month table.mini_calendar > thead > tr > th:nth-child(2)', 'content', '::before'), '"M"', 'weekday letters');
   const cell = await page.$eval('#right-side .mini_month .mini_calendar_day.has_event .day_wrapper', (d) => ({ h: Math.round(d.getBoundingClientRect().height), bg: getComputedStyle(d).backgroundColor, dot: getComputedStyle(d, '::after').width }));

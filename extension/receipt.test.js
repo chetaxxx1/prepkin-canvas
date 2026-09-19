@@ -417,6 +417,17 @@ const TEXT_BUTTON_OK = [
   'html.pk-on:not(.pk-back-buttons) #content [data-id="switch-to-old-files-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
   'html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
   'html.pk-on:not(.pk-back-buttons) #content a[href="/files"] > [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
+  // The Files search's Search (a submit in a form that hands nothing in, the
+  // one FORM_BUTTON_OK names) and the page's icon-only buttons: the bulk
+  // download, each row's menu, the page arrows. Words and glyphs, no box.
+  'html.pk-on:not(.pk-back-buttons) #content form[name="files-search"] [data-testid="files-search-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content form[name="files-search"] [data-testid="files-search-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
+  'html.pk-on:not(.pk-back-buttons) #content [data-testid="bulk-actions-download-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content [data-testid="bulk-actions-download-button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
+  'html.pk-on:not(.pk-back-buttons) #content [data-testid="action-menu-button-large"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content [data-testid="action-menu-button-large"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
+  'html.pk-on:not(.pk-back-buttons) #content [data-testid="files-pagination"] [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content [data-testid="files-pagination"] [class*="-baseButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
   // ---- end Session D ----
   // ---- Session E text buttons (calendar, inbox) ----
   // The calendar sidebar's Calendar Feed, the one control under its lists (2026-09-19).

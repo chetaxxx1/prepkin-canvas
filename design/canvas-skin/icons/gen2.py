@@ -7,7 +7,9 @@ SETS = json.load(open('sets/sets.json'))   # {set: {"light": slug, "dark": slug}
 NAV = [('dashboard', '.ic-icon-svg--dashboard'), ('courses', '.ic-icon-svg--courses'), ('calendar', '.ic-icon-svg--calendar'),
        ('inbox', '.ic-icon-svg--inbox'), ('history', '.ic-icon-svg--history'), ('help', '.svg-icon-help')]
 ROWS = [('page', 'icon-document'), ('assignment', 'icon-assignment'), ('quiz', 'icon-quiz'), ('discussion', 'icon-discussion'),
-        ('file', 'icon-paperclip'), ('link', 'icon-link'), ('announcement', 'icon-announcement')]
+        ('file', 'icon-paperclip'), ('link', 'icon-link'), ('announcement', 'icon-announcement'),
+        # A calendar event in a list (the syllabus summary): the bar's own calendar, as a row var.
+        ('calendar', 'icon-calendar-month')]
 # The four actions under a course card, by Canvas's own class on the link.
 CARDS = [('announcement', 'announcements'), ('assignment', 'assignments'), ('discussion', 'discussions'), ('file', 'files')]
 

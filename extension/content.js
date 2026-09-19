@@ -2086,7 +2086,7 @@ function passD() {
 
   const tables = '#content .course-list-table';
   if (!on || putBack.columns) {
-    for (const [sel, attr] of [[`${tables} td`, 'data-pk-initial'], [`${tables} td`, 'data-pk-course'], [`${tables} td`, 'data-pk-term'], [`${tables} tr`, 'data-pk-grade'], [`${tables} tr`, 'data-pk-letter'], ['#content h2', 'data-pk-count']]) clear(sel, attr);
+    for (const [sel, attr] of [[`${tables} td`, 'data-pk-initial'], [`${tables} td`, 'data-pk-course'], [`${tables} td`, 'data-pk-code'], [`${tables} td`, 'data-pk-term'], [`${tables} tr`, 'data-pk-grade'], [`${tables} tr`, 'data-pk-letter'], ['#content h2', 'data-pk-count']]) clear(sel, attr);
   } else {
     const grades = skin.cardGrades !== false ? [...(data.courses ?? []), ...(data.pastCourses ?? [])] : [];
     for (const row of document.querySelectorAll(`${tables} > tbody > tr`)) {
@@ -2104,6 +2104,9 @@ function passD() {
       const c = id ? grades.find((x) => String(x.id) === id) : null;
       set(row, 'pkGrade', typeof c?.score === 'number' ? `${Number.isInteger(c.score) ? c.score : c.score.toFixed(1)}%` : null);
       set(row, 'pkLetter', typeof c?.grade === 'string' && c.grade ? c.grade : null);
+      // The course code, as quiet meta after the name.
+      const known = id ? [...(data.courses ?? []), ...(data.pastCourses ?? [])].find((x) => String(x.id) === id) : null;
+      set(cell, 'pkCode', typeof known?.code === 'string' && known.code.trim() ? known.code.trim() : null);
     }
     // "Past Enrollments" / "Future Enrollments": the heading sits in its own
     // block, its table in the next; the count goes on the heading.
