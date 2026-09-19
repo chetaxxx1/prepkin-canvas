@@ -2093,7 +2093,125 @@ html.pk-dark :is(#pk-planner, #pk-grades) .pk-pl-grade .targets button.on, html.
 
 
 /* ==== Session E (calendar and inbox). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
-
+/* ---- Calendar (Session E, 2026-09-19). One designed month: quiet weekday
+ * letters with a hairline under them, hairline cells, today a paper tint,
+ * the other month's days at half ink, the chip a bar of the class colour and
+ * two lines of the title (a due time on a month grid says nothing; the
+ * planner says when), the toolbar's words bare on the paper and the view
+ * switch a segmented control. All under the paper, cal-rows and buttons
+ * rows' Put backs. The class colours are Canvas's own class rules, untouched. */
+/* The grid: no outer frame (the card is the frame), no band over the weekday row. */
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-view > table,
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-view > table > thead > tr > td,
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-view > table > tbody > tr > td { border: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-head-container { background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app thead .fc-row.fc-widget-header { border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-widget-header,
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-day-header { background-color: transparent !important; border-color: transparent !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar-app .fc-widget-header,
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar-app .fc-day-header,
+/* `thead.fc-head` answers to the art pane's `thead[class*="-head"]` tint. */
+html.pk-on.pk-art:not(.pk-back-paper) #content #calendar-app thead.fc-head,
+html.pk-on.pk-art:not(.pk-back-paper) #right-side #minical thead.fc-head { background-color: transparent !important; }
+/* The day-number and chip layer sits over the cell layer; it must be clear
+ * or today's tint (and the mini month's dots) show only under it. */
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-content-skeleton table,
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-content-skeleton table { background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-day-header { padding: 10px 0 7px !important; font-size: 12px !important; line-height: 16px !important; font-weight: 700 !important; color: var(--pk-ink-2) !important; text-transform: none !important; letter-spacing: normal !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-day { border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-row.fc-week { border-left: 0 !important; border-right: 0 !important; border-color: var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-bg td:first-child { border-left: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-bg td:last-child { border-right: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-day-top { background-color: transparent !important; border: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-day-number { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; padding: 6px 8px 4px !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-day-top.fc-other-month .fc-day-number { opacity: .5 !important; }
+html.pk-on:not(.pk-back-paper) #calendar-app .fc-day-top.fc-today .fc-day-number { color: var(--pk-ink) !important; font-weight: 800 !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #calendar-app .fc-day.fc-today { background-color: color-mix(in srgb, var(--pk-ink) 7%, transparent) !important; }
+/* The chip: the bar, then the title on up to two lines. The icon and a due
+ * time are hidden from the eye; a screen reader still hears Canvas's words. */
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event { margin: 0 6px 3px 6px !important; padding: 2px 6px 3px 7px !important; border-radius: 0 4px 4px 0 !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-content { display: -webkit-box !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 2 !important; white-space: normal !important; overflow: hidden !important; font-size: 12px !important; line-height: 16px !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-content > i { display: none !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-title { font-weight: 600 !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event .fc-title.calendar__event--completed { color: var(--pk-ink-2) !important; text-decoration: line-through !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event.assignment .fc-time,
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-event.assignment_override .fc-time { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
+html.pk-on:not(.pk-back-cal-rows) #calendar-app .fc-more { font-size: 11px !important; font-weight: 700 !important; color: var(--pk-link) !important; margin-left: 9px !important; }
+/* The toolbar: the month's name 18/800, Today and the arrows as bare words
+ * and glyphs on the paper (the buttons rule gives them the raised paper; here
+ * the raised paper is the page paper, so nothing is boxed until hovered). */
+html.pk-on:not(.pk-back-paper) #calendar_header .header-bar { align-items: center !important; padding: 0 0 14px !important; }
+html.pk-on:not(.pk-back-paper) #calendar_header .header-bar-left { margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) #calendar_header .header-bar-right { margin: 0 0 0 auto !important; display: flex !important; align-items: center !important; gap: 8px !important; }
+html.pk-on:not(.pk-back-paper) #calendar_header .calendar_navigator { display: flex !important; align-items: center !important; gap: 4px !important; --pk-paper-2: var(--pk-paper); --pk-rule: transparent; }
+html.pk-on:not(.pk-back-paper) #calendar_header .calendar_navigator .navigation_buttons { display: inline-flex !important; }
+html.pk-on:not(.pk-back-paper) #calendar_header .navigation_title { font-size: 18px !important; line-height: 24px !important; font-weight: 800 !important; margin: 0 0 0 8px !important; padding: 0 !important; color: var(--pk-ink) !important; }
+html.pk-on.pk-art:not(.pk-back-paper) #calendar_header .calendar_navigator { --pk-paper-2: transparent; }
+/* The view switch: a sunk track, the chosen view filled in the ink (the
+ * pressed key). Inside the track the rule is the track, so no segment is
+ * outlined; on an image look the track is a tint of the ink. */
+html.pk-on:not(.pk-back-paper) #calendar_header .calendar_view_buttons { display: inline-flex !important; border-radius: 8px !important; overflow: hidden !important; background-color: var(--pk-paper-sunk) !important; --pk-rule: var(--pk-paper-sunk); --pk-paper-2: var(--pk-paper-sunk); }
+html.pk-on.pk-art:not(.pk-back-paper) #calendar_header .calendar_view_buttons { --pk-paper-sunk: color-mix(in srgb, var(--pk-ink) 9%, transparent); --pk-rule: transparent; }
+html.pk-on:not(.pk-back-buttons) #calendar_header .calendar_view_buttons .btn.active:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not([type="submit"]):not([class*="icon-action"]) { background-color: var(--pk-ink) !important; color: var(--pk-paper) !important; border-color: var(--pk-ink) !important; }
+/* The + is a bare glyph on the paper too, boxed only on hover. */
+html.pk-on:not(.pk-back-paper) #calendar_header .header-bar-right { --pk-paper-2: var(--pk-paper); --pk-rule: transparent; }
+html.pk-on.pk-art:not(.pk-back-paper) #calendar_header .header-bar-right { --pk-paper-2: transparent; }
+html.pk-on:not(.pk-back-paper) #calendar_header #create_new_event_link { margin: 0 !important; }
+/* ---- The right pane: the mini month, the calendars, the undated list. ---- */
+html.pk-on:not(.pk-back-paper) #right-side #minical { padding: 10px 10px 8px !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-toolbar { margin: 0 0 6px !important; border: 0 !important; }
+/* FullCalendar draws each week as a bordered white strip; the mini month's
+ * rows are 25px and their borders pushed the last week out of the frame. */
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-row.fc-week { border-width: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day-top { padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-toolbar .fc-icon { color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-toolbar h2 { font-size: 14px !important; line-height: 32px !important; font-weight: 800 !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-view > table,
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-view > table td,
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day,
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day-top,
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-head-container,
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-widget-header { border-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day-top { background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day { border-radius: 6px !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day-number { font-size: 12px !important; line-height: 20px !important; height: 20px !important; font-weight: 600 !important; text-align: center !important; padding: 2px 0 !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day-top.fc-other-month .fc-day-number { opacity: .5 !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day-top.fc-today .fc-day-number { color: var(--pk-ink) !important; font-weight: 800 !important; }
+/* A day with work on it: a 4px dot under the number, in the quiet ink. */
+/* Canvas boxes a day with work in it (`#minical .event::after`); the dot says it. */
+html.pk-on:not(.pk-back-paper) #right-side #minical .event::after { content: none !important; }
+html.pk-on:not(.pk-back-paper) #right-side #minical .fc-day.event { background-image: radial-gradient(circle at 50% calc(100% - 3px), color-mix(in srgb, var(--pk-ink-2) 60%, transparent) 1.8px, transparent 2.4px) !important; }
+/* The section heads (Calendars, Undated): the planner's group head, the
+ * chevron after the words, never uppercase. */
+html.pk-on:not(.pk-back-paper) #right-side .rs-section h2 { margin: 0 0 6px !important; padding: 0 !important; font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; text-transform: none !important; letter-spacing: normal !important; border: 0 !important; }
+html.pk-on:not(.pk-back-paper) #right-side .rs-section h2 .element_toggler { display: inline-flex !important; align-items: center !important; gap: 6px !important; font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink) !important; text-transform: none !important; letter-spacing: normal !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #right-side .rs-section h2 .element_toggler i[class*="icon-mini-arrow"] { display: none !important; }
+html.pk-on:not(.pk-back-paper) #right-side .rs-section h2 .element_toggler::after { content: "⌄"; display: inline-block; width: 18px; text-align: center; font-size: 18px; line-height: 20px; font-weight: 800; color: var(--pk-ink-2); position: relative; top: -2px; }
+html.pk-on:not(.pk-back-paper) #right-side .rs-section h2 .element_toggler[aria-expanded="false"]::after { content: "›"; }
+/* The calendars: 32px rows, the colour as an 8px dot, the name 13/600. */
+html.pk-on:not(.pk-back-paper) #right-side #calendar-list-holder { padding: 4px 10px !important; }
+html.pk-on:not(.pk-back-paper) #right-side #calendars-context-list li.context_list_context { min-height: 32px !important; align-items: center !important; gap: 10px !important; padding: 0 0 0 4px !important; margin: 0 !important; border: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #right-side #calendars-context-list .context-list-toggle-box { width: 4px !important; height: 4px !important; box-sizing: content-box !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; border-radius: 999px !important; border-width: 2px !important; box-shadow: none !important; }
+html.pk-on:not(.pk-back-paper) #right-side #calendars-context-list label { font-size: 13px !important; line-height: 18px !important; font-weight: 600 !important; margin: 0 !important; padding: 0 !important; color: var(--pk-ink) !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; min-width: 0 !important; }
+/* The undated items in the row shape: the dot in the class colour (the
+ * item's own class rule sets its colour; the dot reads it), then the title. */
+html.pk-on:not(.pk-back-paper) #right-side #undated-events { padding: 0 10px 4px !important; }
+html.pk-on:not(.pk-back-paper) #right-side #undated_events_list { margin: 0 !important; padding: 0 !important; list-style: none !important; }
+html.pk-on:not(.pk-back-paper) #right-side #undated_events_list li.undated_event { display: flex !important; align-items: center !important; gap: 10px !important; min-height: 32px !important; margin: 0 !important; padding: 0 0 0 4px !important; border-width: 0 !important; background-color: transparent !important; }
+/* The item's class rule sets its border colour (its ink is ours, for the
+ * words); the dot is a border of that colour, 8px round. */
+html.pk-on:not(.pk-back-paper) #right-side #undated_events_list li.undated_event::before { content: ""; flex: none; width: 0; height: 0; border: 4px solid; border-color: inherit; border-radius: 999px; }
+html.pk-on:not(.pk-back-paper) #right-side #undated_events_list li.undated_event a.undated_event_title { font-size: 13px !important; line-height: 18px !important; font-weight: 600 !important; color: var(--pk-ink) !important; text-decoration: none !important; padding: 0 !important; margin: 0 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-paper) #right-side #undated_events_list li.undated_event a.undated_event_title:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-paper) #right-side #undated_events_list li.undated_event a.undated_event_title::before { content: none !important; }
+/* Calendar Feed: the one control under the lists, as words (a text button,
+ * named in the receipt lint). */
+html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
 /* ==== end Session E ==== */
 
 

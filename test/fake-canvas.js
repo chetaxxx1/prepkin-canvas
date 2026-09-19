@@ -573,7 +573,19 @@ function pageC(p, url) { return null; }
 function pageD(p, url) { return null; }
 // ---- end Session D ----
 // ---- Session E pages (calendar, inbox) ----
-function pageE(p, url) { return null; }
+// The calendar (FullCalendar's rendered month with its sidebar) and the Inbox
+// (InstUI, a list of four and a thread open at `?open=1`), dumped from the
+// sandbox on 2026-09-19 into test/e-pages/. InstUI's hashes read `css-x-`.
+const E_PAGES = {};
+function ePage(name) {
+  if (!(name in E_PAGES)) E_PAGES[name] = fs.readFileSync(path.join(__dirname, 'e-pages', `${name}.html`), 'utf8');
+  return E_PAGES[name];
+}
+function pageE(p, url) {
+  if (p === '/calendar') return { main: ePage('calendar-main'), side: ePage('calendar-side') };
+  if (p === '/conversations') return { main: ePage(url.searchParams.get('open') === '1' ? 'inbox-open-main' : 'inbox-main'), side: '' };
+  return null;
+}
 // ---- end Session E ----
 // ---- Session F pages (discussions, settings) ----
 function pageF(p, url) { return null; }

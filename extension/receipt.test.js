@@ -408,6 +408,8 @@ const TEXT_BUTTON_OK = [
   // ---- Session D text buttons (tables) ----
   // ---- end Session D ----
   // ---- Session E text buttons (calendar, inbox) ----
+  // The calendar sidebar's Calendar Feed, the one control under its lists (2026-09-19).
+  'html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button',
   // ---- end Session E ----
   // ---- Session F text buttons (discussions, settings) ----
   // ---- end Session F ----

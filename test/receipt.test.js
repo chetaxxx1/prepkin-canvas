@@ -342,16 +342,22 @@ test('R16 everywhere: calendar, the courses table and a quiz page take the paper
   // The toolbar is the paper itself since 2026-09-15 (no block behind a title);
   // its plain Today button takes the paper's card tone under the buttons row.
   assert.equal(await style(page, '.header-bar', 'backgroundColor'), 'rgb(23, 25, 29)', 'the calendar toolbar is the paper');
-  assert.equal(await style(page, '.header-bar .btn', 'backgroundColor'), paper2, 'a plain button takes the paper');
+  // Since 2026-09-19 (Session E) the toolbar's Today stands bare on the page
+  // paper (the buttons rule still gives it the raised paper; the navigator
+  // says the raised paper is the page's), and the view switch is a sunk
+  // track with the chosen view filled in the ink.
+  assert.equal(await style(page, '.header-bar .btn', 'backgroundColor'), 'rgb(23, 25, 29)', 'Today is bare on the paper');
   assert.equal(await style(page, '.header-bar .btn', 'color'), ink, 'in the ink');
-  assert.equal(await style(page, '.fc-widget-header', 'backgroundColor'), sunk, 'day headers are sunk paper');
+  assert.equal(await style(page, '.calendar_view_buttons #week', 'backgroundColor'), sunk, 'an unchosen view sits on the sunk track');
+  assert.equal(await style(page, '.calendar_view_buttons #month', 'backgroundColor'), ink, 'the chosen view is filled in the ink');
+  assert.equal(await style(page, '.fc-widget-header', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'no band over the weekday letters (was sunk paper until 2026-09-19)');
   assert.equal(await style(page, '.fc-day', 'backgroundColor'), paper2);
   // cal-rows: the chip is one ink line; the course colour stays on its edge.
   assert.equal(await style(page, '.fc-event', 'backgroundColor'), 'rgba(0, 0, 0, 0)', 'an event chip has no fill of its own');
   assert.equal(await style(page, '.fc-event', 'borderLeftColor'), 'rgb(255, 111, 97)', 'an event keeps its course colour, on the edge');
   assert.equal(await style(page, '.fc-event', 'borderLeftWidth'), '3px');
   assert.equal(await style(page, '.fc-event .fc-title', 'color'), ink, 'the title is in the ink');
-  assert.equal(await style(page, '#calendar-list', 'backgroundColor'), paper2, 'the calendar list is paper');
+  assert.equal(await style(page, '#calendar-list-holder', 'backgroundColor'), paper2, 'the calendar list is paper');
   await page.close();
   page = await open('/courses');
   assert.equal(await style(page, '.ic-Table th', 'backgroundColor'), sunk);
