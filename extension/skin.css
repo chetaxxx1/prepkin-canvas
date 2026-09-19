@@ -2238,6 +2238,9 @@ html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-base
 }
 html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"]:hover { text-decoration: underline !important; }
 html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-baseButton"]:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+/* An open quiz's "Instructions" h2 is the same group head; its Take the Quiz
+ * (Canvas's primary, untouched) sits at the left under the words, not centred. */
+html.pk-on:not(.pk-back-paper) #quiz_show .take_quiz_button { text-align: left !important; margin: 20px 0 0 !important; }
 /* A quiz that is locked: Canvas's h2 "Completion Prerequisites" and an
  * indented list. The lock line stays a sentence; the heading is a group head
  * at 14/800, the module's name a quiet label, each requirement a row with its
@@ -2245,6 +2248,7 @@ html.pk-on:not(.pk-back-buttons) #content .module-sequence-footer [class*="-base
 html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation { font-size: 14px; line-height: 22px; text-align: left !important; margin: 0 !important; }
 html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation > br,
 html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation > .spinner:empty { display: none !important; }
+html.pk-on:not(.pk-back-paper) #quiz_show .quiz-header .row-fluid > h2,
 html.pk-on:not(.pk-back-paper) #quiz_show .lock_explanation > h2 { font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; margin: 24px 0 2px !important; padding: 0 !important; border: 0 !important; color: var(--pk-ink) !important; }
 html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list { list-style: none !important; margin: 10px 0 0 !important; padding: 0 !important; font-size: 13px; line-height: 18px; }
 html.pk-on:not(.pk-back-paper) #quiz_show #module_prerequisites_list li.module { margin: 0 !important; padding: 0 !important; }

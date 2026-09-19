@@ -139,6 +139,12 @@ test('C3 quiz: six facts on one line, no empty sidebar, prerequisites as a head 
     assert.equal(await style(page, sel, 'color'), LINK);
   }
   await page.close();
+  // An open quiz: Instructions is the same group head; Take the Quiz keeps Canvas's colour, at the left.
+  const openQuiz = await open('/courses/1/quizzes/2?open=1');
+  assert.equal(await style(openQuiz, '#quiz_show .quiz-header .row-fluid > h2', 'fontSize'), '14px');
+  assert.equal(await style(openQuiz, '#take_quiz_link', 'backgroundColor'), 'rgb(3, 116, 181)', 'never a button');
+  assert.equal(await style(openQuiz, '#quiz_show .take_quiz_button', 'textAlign'), 'left');
+  await openQuiz.close();
   const take = await open('/courses/1/quizzes/2/take');
   assert.deepEqual(await take.evaluate(() => [...document.documentElement.classList].filter((c) => c.startsWith('pk-'))), [], 'nothing on a quiz being taken');
   await take.close();
