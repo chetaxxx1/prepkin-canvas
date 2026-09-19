@@ -112,3 +112,72 @@ test('F1 discussions with nothing in them: no sheet, one quiet line, the drawing
   assert.equal(line.said, '"No discussions yet"'); assert.equal(line.size, '13px'); assert.equal(line.edge, 'none', 'no dashed box');
   await page.close();
 });
+
+// MARK: - Settings
+
+test('F2 settings: one column of rows (label, value right, the hint under the label), sections as group heads, New Access Token as words, the feature table with no band, the contact rows on hairlines; edit mode keeps every control', async () => {
+  const page = await open('/profile/settings');
+  await page.waitForSelector('.profile_table', { timeout: 6000 });
+  const rows = await page.$$eval('.profile_table > tbody > tr', (els) => els.map((tr) => {
+    const cs = getComputedStyle(tr); const label = tr.querySelector('th label, th.nobr'); const value = tr.querySelector('td > .display_data'); const hint = tr.querySelector('td > .data_description');
+    const r = (el) => el ? el.getBoundingClientRect() : null;
+    return { display: cs.display, shown: tr.getClientRects().length > 0, style: tr.getAttribute('style'), label: label ? { size: getComputedStyle(label).fontSize, weight: getComputedStyle(label).fontWeight, left: Math.round(r(label).left) } : null,
+      value: value ? { right: Math.round(r(value).right), size: getComputedStyle(value).fontSize } : null, hint: hint ? { size: getComputedStyle(hint).fontSize, color: getComputedStyle(hint).color, top: Math.round(r(hint).top), left: Math.round(r(hint).left), br: getComputedStyle(hint.querySelector('br')).display } : null, rowRight: Math.round(r(tr).right), rowTop: Math.round(r(tr).top), edge: cs.borderBottomWidth };
+  }));
+  const shown = rows.filter((x) => x.shown);
+  assert.equal(shown.length, 4, `four rows show while Canvas shows the values (Full Name, Display Name, Language, Time Zone): ${rows.map((x) => `${x.display}/${x.shown}`).join(' ')}`);
+  assert.ok(rows.filter((x) => /display: none/.test(x.style ?? '')).every((x) => x.display === 'none'), 'a row Canvas hides stays hidden');
+  for (const x of shown) {
+    assert.equal(x.display, 'grid'); assert.equal(x.edge, '1px', 'a hairline under each row');
+    assert.equal(x.label.size, '14px'); assert.equal(x.label.weight, '700', 'the label bold');
+    assert.ok(x.value.right >= x.rowRight - 2, `the value at the right edge (${x.value.right} vs ${x.rowRight})`);
+  }
+  assert.equal(shown[0].hint.size, '12px'); assert.equal(shown[0].hint.color, rgb('#454B54'), 'the hint quiet');
+  assert.equal(shown[0].hint.left, shown[0].label.left, 'the hint under the label, not the value'); assert.ok(shown[0].hint.top > shown[0].rowTop + 20);
+  assert.equal(shown[0].hint.br, 'none', 'no blank first line');
+  // Sections: 14/800 on a hairline; the paragraph under one a quiet 12px line; the checkbox line a row with the box right.
+  const heads = await page.$$eval('#content h2', (els) => els.map((h) => ({ text: h.textContent.trim(), size: getComputedStyle(h).fontSize, weight: getComputedStyle(h).fontWeight, edge: getComputedStyle(h).borderBottomWidth })));
+  for (const hd of heads.filter((x) => x.text !== 'User')) { assert.equal(hd.size, '14px', hd.text); assert.equal(hd.weight, '800', hd.text); assert.equal(hd.edge, '1px', hd.text); }
+  assert.equal(heads.find((x) => x.text === 'User').size, '12px', 'the feature table\'s own heading is a quiet line');
+  assert.equal(await style(page, '#content h2 + p', 'fontSize'), '12px'); assert.equal(await style(page, '#no_approved_integrations', 'fontSize'), '12px');
+  const box = await page.evaluate(() => { const p = document.querySelector('p:has(> #show_user_services)'); const i = p.querySelector('input'); const l = p.querySelector('label'); return { display: getComputedStyle(p).display, boxRight: Math.round(i.getBoundingClientRect().right), pRight: Math.round(p.getBoundingClientRect().right), labelLeft: Math.round(l.getBoundingClientRect().left), pLeft: Math.round(p.getBoundingClientRect().left) }; });
+  assert.equal(box.display, 'flex'); assert.ok(box.boxRight >= box.pRight - 20 && box.labelLeft <= box.pLeft + 2, `the words left, the box right: ${JSON.stringify(box)}`);
+  // New Access Token: a Canvas primary that is not a submit, as words with its plus.
+  const token = await page.evaluate(() => { const a = document.querySelector('.add_access_token_link'); const cs = getComputedStyle(a); return { bg: cs.backgroundColor, edge: cs.borderTopColor, color: cs.color, size: cs.fontSize, weight: cs.fontWeight }; });
+  assert.equal(token.bg, 'rgba(0, 0, 0, 0)'); assert.equal(token.edge, 'rgba(0, 0, 0, 0)'); assert.equal(token.color, rgb('#2F6BAA')); assert.equal(token.size, '13px'); assert.equal(token.weight, '700');
+  // The feature table: the filter as words, the search as our field, no header band, the state at the right, the flag's name in the row's type.
+  const ff = await page.evaluate(() => { const w = document.querySelector('.feature-flag-wrapper'); const facade = w.querySelector('[class*="textInput__facade"]:has(input[role="combobox"])'); const head = w.querySelector('thead th'); const last = w.querySelector('tbody tr td:last-child'); const btn = last.querySelector('button');
+    return { filterBg: getComputedStyle(facade).backgroundColor, filterEdge: getComputedStyle(facade).borderTopColor, search: Math.round(w.querySelector('label[data-cid="TextInput"]:has(input[type="search"])').getBoundingClientRect().width), headBg: getComputedStyle(head).backgroundColor, headLabel: getComputedStyle(head.querySelector('p')).fontSize, headEdge: getComputedStyle(head).borderBottomWidth, name: getComputedStyle(w.querySelector('[class*="toggleDetails__summaryText"]')).fontSize, nameWeight: getComputedStyle(w.querySelector('[class*="toggleDetails__summaryText"]')).fontWeight, stateRight: Math.round(btn.getBoundingClientRect().right), cellRight: Math.round(last.getBoundingClientRect().right), rowH: Math.round(w.querySelector('tbody tr').getBoundingClientRect().height) }; });
+  assert.equal(ff.filterBg, 'rgba(0, 0, 0, 0)'); assert.equal(ff.filterEdge, 'rgba(0, 0, 0, 0)'); assert.equal(ff.search, 240);
+  assert.equal(ff.headBg, 'rgba(0, 0, 0, 0)', 'no header band'); assert.equal(ff.headLabel, '12px'); assert.equal(ff.headEdge, '1px');
+  assert.equal(ff.name, '14px'); assert.equal(ff.nameWeight, '700'); assert.ok(ff.stateRight >= ff.cellRight - 2, `the state control at the right (${ff.stateRight} vs ${ff.cellRight})`); assert.ok(ff.rowH >= 44);
+  // The right column: a group head, the address a 44px row with its star at the right, the add lines in the link ink, no header band.
+  const side = await page.evaluate(() => { const h2 = document.querySelector('#right-side > h2'); const th = document.querySelector('#right-side .channel_list thead th'); const row = document.querySelector('#right-side #channel_3'); const star = row.querySelector('.icon-star'); const add = document.querySelector('#right-side .add_email_link');
+    return { head: getComputedStyle(h2).fontSize, headWeight: getComputedStyle(h2).fontWeight, thBg: getComputedStyle(th).backgroundColor, thSize: getComputedStyle(th).fontSize, rowH: Math.round(row.getBoundingClientRect().height), path: getComputedStyle(row.querySelector('.path')).fontSize, starRight: Math.round(star.getBoundingClientRect().right), rowRight: Math.round(row.getBoundingClientRect().right), add: getComputedStyle(add).color, addSize: getComputedStyle(add).fontSize, addLeft: Math.round(add.getBoundingClientRect().left), rowLeft: Math.round(row.getBoundingClientRect().left) }; });
+  assert.equal(side.head, '14px'); assert.equal(side.headWeight, '800'); assert.equal(side.thBg, 'rgba(0, 0, 0, 0)'); assert.equal(side.thSize, '12px');
+  assert.ok(side.rowH >= 44, `a 44px row (${side.rowH})`); assert.equal(side.path, '14px'); assert.ok(side.starRight >= side.rowRight - 4, `the star at the right (${side.starRight} vs ${side.rowRight})`);
+  assert.equal(side.add, rgb('#2F6BAA')); assert.equal(side.addSize, '13px'); assert.ok(side.addLeft <= side.rowLeft + 2, 'the add line starts at the left, not centred');
+  // Edit mode, as Canvas does it: the table takes `editing`, jQuery shows the
+  // edit-only rows. The fields sit at the right in our field shape, the
+  // checkbox line is a row, the password field is untouched but for paper
+  // and edge, the empty "more options" row goes, Cancel and Update stay.
+  await page.evaluate(() => { document.querySelector('.profile_table').classList.add('editing'); document.querySelectorAll('.profile_table .edit_data_row').forEach((tr) => { tr.style.display = ''; }); });
+  await page.waitForTimeout(300);
+  const edit = await page.evaluate(() => { const name = document.getElementById('user_name'); const cs = getComputedStyle(name); const row = name.closest('tr');
+    const pw = document.getElementById('old_password'); const pwRow = pw.closest('tr');
+    return { field: { right: Math.round(name.getBoundingClientRect().right), rowRight: Math.round(row.getBoundingClientRect().right), bg: cs.backgroundColor, radius: cs.borderRadius, h: cs.height, display: cs.display, text: cs.textAlign }, hint: Math.round(document.getElementById('hints_name').getBoundingClientRect().left), labelLeft: Math.round(row.querySelector('label').getBoundingClientRect().left),
+      more: getComputedStyle(document.querySelector('.more_options_link_row')).display, pwRow: getComputedStyle(pwRow).display, pwType: pw.type, pwDisplay: getComputedStyle(pw).display,
+      news: (() => { const l = document.querySelector('label[for="user_subscribe_to_emails"]'); const i = l.querySelector('input[type="checkbox"]'); return { display: getComputedStyle(l).display, boxRight: Math.round(i.getBoundingClientRect().right), labelRight: Math.round(l.getBoundingClientRect().right) }; })(),
+      actions: getComputedStyle(document.querySelector('.profile_table .form-actions')).display, submit: getComputedStyle(document.querySelector('.profile_table .form-actions [type="submit"]')).display, cancel: getComputedStyle(document.querySelector('.profile_table .cancel_button')).backgroundColor }; });
+  assert.ok(edit.field.right >= edit.field.rowRight - 2, 'the field at the right'); assert.equal(edit.field.bg, rgb('#FFFFFF')); assert.equal(edit.field.radius, '10px'); assert.equal(edit.field.h, '32px'); assert.equal(edit.field.text, 'left');
+  assert.notEqual(edit.field.display, 'none', 'the field shows'); assert.equal(edit.hint, edit.labelLeft, 'the hint stays under the label');
+  assert.equal(edit.more, 'none', 'the empty more-options row goes'); assert.equal(edit.pwRow, 'none', 'the password rows stay hidden until asked for'); assert.equal(edit.pwType, 'password');
+  assert.equal(edit.news.display, 'flex'); assert.ok(edit.news.boxRight >= edit.news.labelRight - 2, 'the newsletter box at the right');
+  assert.equal(edit.actions, 'flex'); assert.notEqual(edit.submit, 'none', 'Update Settings is Canvas\'s submit, untouched'); assert.equal(edit.cancel, rgb('#FFFFFF'), 'Cancel on the paper');
+  // The password field, when asked for: the paper and an edge, nothing else of ours.
+  await page.evaluate(() => { document.querySelectorAll('.profile_table .change_password_row').forEach((tr) => { tr.style.display = ''; }); });
+  await page.waitForTimeout(200);
+  const pw = await page.evaluate(() => { const i = document.getElementById('old_password'); const cs = getComputedStyle(i); return { display: cs.display, visibility: cs.visibility, pointer: cs.pointerEvents, bg: cs.backgroundColor, edge: cs.borderTopColor, type: i.type, rowDisplay: getComputedStyle(i.closest('tr')).display }; });
+  assert.equal(pw.rowDisplay, 'grid'); assert.notEqual(pw.display, 'none'); assert.equal(pw.visibility, 'visible'); assert.equal(pw.pointer, 'auto'); assert.equal(pw.bg, rgb('#FFFFFF')); assert.equal(pw.edge, rgb('#E3E0D9')); assert.equal(pw.type, 'password');
+  await page.close();
+});

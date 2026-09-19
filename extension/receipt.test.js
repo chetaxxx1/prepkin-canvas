@@ -419,6 +419,9 @@ const TEXT_BUTTON_OK = [
   'html.pk-on:not(.pk-back-buttons) #content #add_discussion > [class*="baseButton__content"]',
   'html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read)',
   'html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read) > [class*="baseButton__content"]',
+  // The settings page's New Access Token (a Canvas primary that is not a
+  // submit): words on the line under Approved Integrations.
+  'html.pk-on:not(.pk-back-buttons) #content .add_access_token_link',
   // ---- end Session F ----
 ];
 const TEXT_BUTTON_GLYPH = / \[class\*="baseButton__iconWrapper"\]$/;

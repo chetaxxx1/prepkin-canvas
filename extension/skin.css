@@ -2487,4 +2487,130 @@ html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__container-image [c
 html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__wrapper:not(:has([data-testid="discussion-row-container"])) > span[class*="-view"]:has(> [data-testid="discussion-connected-container"]) { border: 0 !important; box-shadow: none !important; background-color: transparent !important; border-radius: 0 !important; }
 html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__wrapper:not(:has([data-testid="discussion-row-container"])) [data-testid="discussion-connected-container"]:not(.unpinned-discussions-v2__wrapper) { display: none !important; }
 html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__wrapper:not(:has([data-testid="discussion-row-container"])) .unpinned-discussions-v2__wrapper [class*="toggleDetails__summary"] { display: none !important; }
+/* ---- Profile settings (session F, 2026-09-19) --------------------------
+ * Canvas's settings page is a label column beside a value column with
+ * paragraphs between; here it is one column of rows: the label bold, the
+ * value or its control at the right, the explanation a 12px quiet line
+ * under the label. Each row is Canvas's own table row with its cells laid
+ * out by our grid; a row Canvas hides (the edit-only rows, the password
+ * rows) keeps its inline display:none, so nothing here reaches it. The
+ * form's own toggling by id is untouched: only the shape is ours. The
+ * page is known by its form (#update_profile_form), never by a body class. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table { display: block !important; width: auto !important; margin: 0 0 8px !important; border-collapse: collapse !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table > tbody { display: block !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table > tbody > tr:not([style*="display: none"]) {
+  display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; column-gap: 16px !important; align-items: center !important;
+  min-height: 44px !important; box-sizing: border-box !important; padding: 10px 0 !important; border-bottom: 1px solid var(--pk-rule) !important;
+}
+/* A row whose only content is for edit mode (the newsletter checkbox) is
+ * empty while Canvas shows the values; it goes until Edit Settings. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table:not(.editing) > tbody > tr:has(> td[colspan] > .edit_data:only-child) { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table > tbody > tr:not([style*="display: none"]) > th,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table > tbody > tr:not([style*="display: none"]) > td { display: contents !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table th label,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table th.nobr { grid-column: 1 !important; grid-row: 1 !important; font-size: 14px !important; line-height: 20px !important; font-weight: 700 !important; color: var(--pk-ink) !important; margin: 0 !important; padding: 0 !important; text-align: left !important; white-space: normal !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td > .display_data,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td > .edit_data,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td > input,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td > select,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td > label.checkbox { grid-column: 2 !important; grid-row: 1 !important; justify-self: end !important; text-align: right !important; font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; color: var(--pk-ink) !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td > .data_description { grid-column: 1 !important; grid-row: 2 !important; display: block !important; margin: 2px 0 0 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table .data_description br { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table .edit_data .data_description { display: block !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; text-align: right !important; }
+/* A cell spanning the row (the newsletter checkbox in edit mode, the
+ * password notes, the form's own buttons) takes the whole line. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td[colspan] > *,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table th[colspan] > * { grid-column: 1 / -1 !important; justify-self: start !important; text-align: left !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table .form-actions { grid-column: 1 / -1 !important; justify-self: stretch !important; display: flex !important; gap: 8px !important; justify-content: flex-end !important; margin: 0 !important; padding: 0 !important; background-color: transparent !important; border: 0 !important; }
+/* The "more options" row is a link Canvas hides; the row goes with it. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table > tbody > tr.more_options_link_row:has(> th > a[style*="display: none"]) { display: none !important; }
+/* A checkbox line in edit mode is a row too: the words left, the box right. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td[colspan] > .edit_data { justify-self: stretch !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td[colspan] > .edit_data > label.checkbox { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 16px !important; margin: 0 !important; padding: 0 !important; font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table td[colspan] > .edit_data > label.checkbox > input[type="checkbox"] { order: 2 !important; margin: 0 !important; flex: none !important; }
+/* A field in a row: the paper and an edge, nothing about what it does. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table input:not([type="checkbox"]):not([type="hidden"]),
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table select {
+  background-color: var(--pk-paper-2) !important; color: var(--pk-ink) !important; border: 1px solid var(--pk-rule) !important; border-radius: 10px !important;
+  height: 32px !important; padding: 0 10px !important; font-size: 13px !important; font-weight: 600 !important; margin: 0 !important; box-shadow: none !important; text-align: left !important;
+}
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .profile_table .locale-warning { margin-left: 6px !important; }
+/* 2. Sections as group heads: 14/800 on a hairline, the paragraph under
+ *    each one a 12px quiet line. Canvas's h2s wore 28px and a colon. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) h2 { font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink) !important; margin: 28px 0 0 !important; padding: 0 0 10px !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) h2[aria-hidden="true"] + .feature-flag-wrapper h2 { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; border: 0 !important; margin: 12px 0 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) h2 + p,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) #no_approved_integrations,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) #access_tokens_holder { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; margin: 10px 0 0 !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) h2 + div[style*="margin-left"] { margin-left: 0 !important; }
+/* The one checkbox line is a row: the words left, the box right. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) p:has(> #show_user_services) { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 16px !important; min-height: 44px !important; margin: 0 !important; padding: 10px 0 !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) p:has(> #show_user_services) > label { order: 1 !important; margin: 0 !important; font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) p:has(> #show_user_services) > input { order: 2 !important; margin: 0 !important; flex: none !important; }
+/* Registered and Other Services: two quiet columns under the head. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) table[role="presentation"] { width: 100% !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) td.services-cell { padding: 12px 16px 0 0 !important; vertical-align: top !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) td.services-cell h3 { font-size: 13px !important; line-height: 18px !important; font-weight: 700 !important; color: var(--pk-ink) !important; margin: 0 0 4px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) td.services-cell > div,
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) td.services-cell > div > div { margin: 0 !important; font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+/* 3. New Access Token: not a submit, so words on the line, the planner's
+ *    "+ Add a task" (its plus is Canvas's own glyph and stays). Named in
+ *    the receipt lint (TEXT_BUTTON_OK). */
+html.pk-on:not(.pk-back-buttons) #content .add_access_token_link {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #content .add_access_token_link:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content .add_access_token_link:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) div:has(> .add_access_token_link) { margin: 12px 0 0 !important; }
+/* 4. Feature Options: the filter as words with its chevron, the search as
+ *    our field, Clear on the paper (the buttons rule); the table with no
+ *    header band, 44px rows, the flag's name in the row's type, its state
+ *    control at the right. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper > [class*="-view"] > [class*="view--flex-flex"] { display: flex !important; align-items: center !important; gap: 14px !important; flex-wrap: wrap !important; margin: 12px 0 0 !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; width: auto !important; min-width: 0 !important; flex: none !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper label[data-cid="TextInput"] { width: auto !important; margin: 0 !important; display: block !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="textInput__facade"]:has(input[role="combobox"]) { display: inline-flex !important; width: auto !important; background-color: transparent !important; border-color: transparent !important; box-shadow: none !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="textInput__facade"]:has(input[role="combobox"]) [class*="textInput__layout"],
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="textInput__facade"]:has(input[role="combobox"]) [class*="textInput__inputLayout"] { width: auto !important; flex: none !important; gap: 4px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper input[role="combobox"] { font-size: 13px !important; font-weight: 700 !important; color: var(--pk-ink) !important; background-color: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; width: auto !important; min-width: 0 !important; field-sizing: content; cursor: pointer !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="textInput__facade"]:has(input[role="combobox"]) [class*="select__icon"] { color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper label[data-cid="TextInput"]:has(input[type="search"]) { width: 240px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="textInput__facade"]:has(input[type="search"]) { border-radius: 10px !important; min-height: 32px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper input[type="search"] { font-size: 13px !important; font-weight: 600 !important; height: 30px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="-view-table"] { margin: 4px 0 0 !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper thead[class*="-head"],
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="-colHeader"] { background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper th[class*="-colHeader"] { width: auto !important; padding: 0 10px 6px 0 !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper th[class*="-colHeader"]:first-child { width: 100% !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper th[class*="-colHeader"]:last-child { padding-right: 0 !important; text-align: right !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper th[class*="-colHeader"] p { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; margin: 0 !important; text-transform: none !important; letter-spacing: normal !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper tbody [class*="-view-row"] { height: 44px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper tbody [class*="-view-cell"] { padding: 4px 10px 4px 0 !important; border-bottom: 1px solid var(--pk-rule) !important; vertical-align: middle !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper tbody [class*="-view-cell"]:last-child { padding-right: 0 !important; text-align: right !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper tbody [class*="-view-cell"]:last-child [class*="view--flex-flex"] { justify-content: flex-end !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="toggleDetails__summaryText"] { font-size: 14px !important; line-height: 20px !important; font-weight: 700 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="toggleDetails__details"] { font-size: 12px !important; line-height: 16px !important; color: var(--pk-ink-2) !important; }
+/* 5. The right column: Ways to Contact as a group head, each address a
+ *    44px row on a hairline with its star at the right, "+ Email Address"
+ *    and "+ Contact Method" as lines in the link ink, no header bands. */
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side > h2 { font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink) !important; margin: 0 !important; padding: 0 0 10px !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list { width: 100% !important; margin: 0 !important; border: 0 !important; border-collapse: collapse !important; background-color: transparent !important; box-shadow: none !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list th,
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list td { background-color: transparent !important; border: 0 !important; padding: 0 !important; vertical-align: middle !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list thead th { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; padding: 12px 0 4px !important; text-align: left !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list thead th:last-child { text-align: right !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list tbody tr.channel:not([style*="display: none"]) th,
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list tbody tr.channel:not([style*="display: none"]) td { height: 44px !important; border-bottom: 1px solid var(--pk-rule) !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list tbody th { width: 100% !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .path { font-size: 14px !important; line-height: 20px !important; font-weight: 600 !important; color: var(--pk-ink) !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .email_meta,
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .email_actions { text-align: right !important; white-space: nowrap !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .email_meta a { color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .standalone-icon { font-size: 14px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list td[colspan] { text-align: left !important; height: 44px !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .add_email_link,
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .add_contact_link { font-size: 13px !important; line-height: 20px !important; font-weight: 700 !important; color: var(--pk-link) !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .content-box-mini { margin: 0 !important; padding: 0 !important; border: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side hr { border: 0 !important; border-top: 1px solid var(--pk-rule) !important; margin: 16px 0 12px !important; background: none !important; height: 0 !important; }
 /* ==== end Session F ==== */
