@@ -2591,6 +2591,11 @@ html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-
 html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper tbody [class*="-view-cell"]:last-child [class*="view--flex-flex"] { justify-content: flex-end !important; }
 html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="toggleDetails__summaryText"] { font-size: 14px !important; line-height: 20px !important; font-weight: 700 !important; color: var(--pk-ink) !important; }
 html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="toggleDetails__details"] { font-size: 12px !important; line-height: 16px !important; color: var(--pk-ink-2) !important; }
+/* The flag's disclosure arrow is the planner's chevron, as on Discussions. */
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="toggleDetails__icon"] { display: inline-block !important; width: 18px !important; margin: 0 4px 0 0 !important; text-align: center !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="toggleDetails__icon"] svg { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [class*="toggleDetails__icon"]::before { content: "›"; display: inline-block; font-size: 18px; line-height: 20px; font-weight: 800; color: var(--pk-ink-2); position: relative; top: -2px; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper [aria-expanded="true"] [class*="toggleDetails__icon"]::before { content: "⌄"; }
 /* 5. The right column: Ways to Contact as a group head, each address a
  *    44px row on a hairline with its star at the right, "+ Email Address"
  *    and "+ Contact Method" as lines in the link ink, no header bands. */
@@ -2612,5 +2617,35 @@ html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .chann
 html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .add_email_link,
 html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .channel_list .add_contact_link { font-size: 13px !important; line-height: 20px !important; font-weight: 700 !important; color: var(--pk-link) !important; }
 html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side .content-box-mini { margin: 0 !important; padding: 0 !important; border: 0 !important; background-color: transparent !important; }
-html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side hr { border: 0 !important; border-top: 1px solid var(--pk-rule) !important; margin: 16px 0 12px !important; background: none !important; height: 0 !important; }
+/* The two lines sit left like the add lines above them. Canvas lays each
+ * wide button out as a block with auto side margins and its words left;
+ * in a grid those margins would centre it, so the wrapper stays a block
+ * and only carries the hairline Canvas drew with an hr. */
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side hr { display: none !important; }
+html.pk-on:not(.pk-back-paper) body:has(#update_profile_form) #right-side > div:has(> hr) { margin: 16px 0 0 !important; padding: 10px 0 0 !important; border-top: 1px solid var(--pk-rule) !important; }
+/* 6. Three more controls as words, so nothing on the page is Canvas's box.
+ *    Clear, beside the feature search (the InstUI plain rule would paper it;
+ *    the three :not() ids outrank that rule, as on Files); the state control
+ *    on each flag row, an icon-only InstUI button (its childrenLayout span
+ *    satisfies the plain rule's :has(), so the same three ids), bare: its own svg at 16px
+ *    in the quiet ink, the modules' mint when the flag is on (a rule on the
+ *    svg, not the button); and the sidebar's Edit Settings and Download Submissions, the
+ *    course home's shape for wide sidebar buttons, their glyphs gone. All
+ *    named in the receipt lint (TEXT_BUTTON_OK). */
+html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [class*="view-flexItem"] > [data-cid="BaseButton Button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button),
+html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [class*="view-flexItem"] > [data-cid="BaseButton Button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [data-cid="BaseButton IconButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button),
+html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [data-cid="BaseButton IconButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [class*="view-flexItem"] > [data-cid="BaseButton Button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button):hover,
+html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [class*="view-flexItem"] > [data-cid="BaseButton Button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button):focus-visible,
+html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [data-cid="BaseButton IconButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button):focus-visible,
+html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide:focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper td[class*="-view-cell"] div[title] svg { width: 16px !important; height: 16px !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-paper) #content:has(#update_profile_form) .feature-flag-wrapper td[class*="-view-cell"] div[title="Enabled"] svg { color: #51CFA0 !important; }
+html.pk-on:not(.pk-back-paper):not(.pk-back-buttons) body:has(#update_profile_form) #right-side > div > a > i { display: none !important; }
 /* ==== end Session F ==== */

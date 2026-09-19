@@ -422,6 +422,16 @@ const TEXT_BUTTON_OK = [
   // The settings page's New Access Token (a Canvas primary that is not a
   // submit): words on the line under Approved Integrations.
   'html.pk-on:not(.pk-back-buttons) #content .add_access_token_link',
+  // The settings page's feature list: Clear beside the search (the three
+  // :not() ids outrank the plain rule, as on Files), and each flag's state
+  // control, an icon-only button left bare (its svg is painted by a rule on
+  // the svg); and the sidebar's wide buttons, Edit Settings and Download
+  // Submissions, as the course home's text lines (the same selector there).
+  'html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [class*="view-flexItem"] > [data-cid="BaseButton Button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [class*="view-flexItem"] > [data-cid="BaseButton Button"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
+  'html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [data-cid="BaseButton IconButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button)',
+  'html.pk-on:not(.pk-back-buttons) #content .feature-flag-wrapper [data-cid="BaseButton IconButton"]:not(#add_discussion):not(#mark_all_announcement_read):not(#print-grades-button) > [class*="baseButton__content"]',
+  'html.pk-on:not(.pk-back-buttons) #right-side .btn.button-sidebar-wide',
   // ---- end Session F ----
 ];
 const TEXT_BUTTON_GLYPH = / \[class\*="baseButton__iconWrapper"\]$/;
