@@ -2099,7 +2099,36 @@ function passE() {
 }
 // ---- end Session E ----
 // ---- Session F pass (discussions, settings) ----
-function passF() {}
+/// The discussions index: each section's row count on its head, Canvas's
+/// two reply counts said once as "3 replies", and unread replies as a fact
+/// on the row (CSS draws the mark). Canvas's own words stay in the DOM.
+function passF() {
+  const on = skin.cards && !killed;
+  const clear = (sel, attr) => document.querySelectorAll(`${sel}[${attr}]`).forEach((el) => el.removeAttribute(attr));
+  if (!on || putBack.paper) {
+    clear('.discussions-container__wrapper [class*="toggleDetails__summaryText"]', 'data-pk-count');
+    clear('.ic-discussion-row .ic-unread-badge', 'data-pk-replies');
+    clear('.ic-discussion-row', 'data-pk-new');
+    return;
+  }
+  for (const w of document.querySelectorAll('.discussions-container__wrapper')) {
+    const head = w.querySelector('[class*="toggleDetails__summaryText"]');
+    if (!head) continue;
+    const n = String(w.querySelectorAll('[data-testid="discussion-row-container"]').length);
+    if (head.dataset.pkCount !== n) head.dataset.pkCount = n;
+  }
+  for (const row of document.querySelectorAll('.ic-discussion-row')) {
+    const badge = row.querySelector('.ic-unread-badge');
+    const total = Number(badge?.querySelector('.ic-unread-badge__total-count')?.textContent.trim());
+    const fresh = Number(badge?.querySelector('.ic-unread-badge__unread-count')?.textContent.trim());
+    if (badge && Number.isFinite(total)) {
+      const said = `${total} ${total === 1 ? 'reply' : 'replies'}`;
+      if (badge.dataset.pkReplies !== said) badge.dataset.pkReplies = said;
+    } else badge?.removeAttribute('data-pk-replies');
+    if (fresh > 0) { if (row.dataset.pkNew !== String(fresh)) row.dataset.pkNew = String(fresh); }
+    else row.removeAttribute('data-pk-new');
+  }
+}
 // ---- end Session F ----
 const PAGE_PASSES = [passC, passD, passE, passF];
 

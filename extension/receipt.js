@@ -251,6 +251,9 @@ const RULES = [
   { key: 'inbox-rows', kind: 'fixed', label: "The Inbox as rows: the sender's face with the unread mark, one line of the message, the toolbar grouped; Canvas's envelope drawing taken", hook: 'inboxList' },
   // ---- end Session E ----
   // ---- Session F rows (discussions, settings) ----
+  // An empty section on the discussions index drew a cartoon in a dashed box;
+  // a page with nothing in it says so in one quiet line.
+  { key: 'disc-empty', kind: 'taken', label: "Canvas's drawings for an empty discussion list. One quiet line instead", hook: 'discEmpty' },
   // ---- end Session F ----
   { key: 'buddy', kind: 'added', label: 'The buddy, bottom right', when: () => true, opt: 'mascot', putBack: 'Take off', undo: 'Bring back' },
 ];

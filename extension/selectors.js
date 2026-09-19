@@ -31,6 +31,8 @@ const SELECTORS = {
   moduleBar:       { sel: '#content .header-bar:has(#expand_collapse_all), #content .header-bar:has(.assignment-search), #content .header-bar:has(.ic-Search)', page: 'modules', conf: 'verified' },
   // The Reply link under every announcement row, the row's own link said again.
   replyLink:       { sel: '.ic-item-row [data-testid="announcement-reply"]', page: 'announcements', conf: 'verified' },
+  // The discussions index's empty-state drawing, one per section with nothing in it.
+  discEmpty:       { sel: '.discussions-v2__container-image', page: 'discussions', conf: 'verified' },
   // A calendar event chip: a link, coloured by its course's own class rule.
   calEvent:        { sel: '#calendar-app .fc-event', page: 'calendar', conf: 'verified' },
   // The Inbox's conversation list (the InstUI Inbox, 2026-09-19).

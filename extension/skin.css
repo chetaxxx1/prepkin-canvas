@@ -2331,5 +2331,160 @@ html.pk-on:not(.pk-back-inbox-rows) #content [data-testid="message-detail-item-d
 
 
 /* ==== Session F (discussions and settings). Parallel work of 2026-09-18: this session edits only inside this pair. ==== */
-
+/* ---- Discussions index (session F, 2026-09-19) ------------------------
+ * The same shape as the announcements index next to it: the title shows,
+ * its controls rise onto its line, the list is one sheet with quiet group
+ * heads, 52px rows on a hairline, the look's icon on a tile. Canvas's
+ * rows were caught by the announcements grid above (.ic-item-row) and
+ * folded into its 26px column; this block takes them back. */
+/* 1. The controls on the title line: the filter as words with its chevron,
+ *    the search as our field at 240, Add Discussion and Settings as words. */
+html.pk-on:not(.pk-back-module-band):not(.pk-back-title) #content .discussions-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div {
+  margin: -71px 0 35px !important; min-height: 36px !important; display: flex !important; align-items: center !important; justify-content: flex-end !important;
+}
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div [data-testid="discussions-index-container"] { margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div [class*="view--flex-flex"] { display: flex !important; gap: 14px !important; align-items: center !important; flex-wrap: nowrap !important; justify-content: flex-end !important; width: auto !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper > [class*="screenReaderContent"]:has(> h1) + div [class*="view-flexItem"] { padding: 0 !important; margin: 0 !important; width: auto !important; min-width: 0 !important; flex: none !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [data-cid="TextInput"]:has(#discussion-filter) { display: inline-block !important; width: auto !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [class*="textInput__facade"]:has(#discussion-filter) { display: inline-flex !important; width: auto !important; background-color: transparent !important; border-color: transparent !important; box-shadow: none !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [class*="textInput__facade"]:has(#discussion-filter) [class*="textInput__layout"],
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [class*="textInput__facade"]:has(#discussion-filter) [class*="textInput__inputLayout"] { width: auto !important; flex: none !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper #discussion-filter { font-size: 13px !important; font-weight: 700 !important; color: var(--pk-ink) !important; background-color: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; width: auto !important; min-width: 0 !important; field-sizing: content; cursor: pointer !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [class*="textInput__facade"]:has(#discussion-filter) [class*="textInput__inputLayout"] { gap: 4px !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [class*="textInput__facade"]:has(#discussion-filter) [class*="select__icon"] { color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [data-cid="TextInput"]:has(#discussion-search) { display: block !important; width: 240px !important; margin: 0 !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper [class*="textInput__facade"]:has(#discussion-search) { border-radius: 10px !important; min-height: 32px !important; }
+html.pk-on:not(.pk-back-module-band) #content .discussions-v2__wrapper #discussion-search { font-size: 13px !important; font-weight: 600 !important; height: 30px !important; }
+/* Add Discussion (Canvas's one InstUI primary on a student's page) and
+ * Settings are words on the title line, the announcements' Mark All as Read
+ * shape; both named in the receipt lint (TEXT_BUTTON_OK). Settings is
+ * also caught by the plain InstUI rule above, which names two ids in its
+ * :not() chain; the same two here so this rule outweighs it. */
+html.pk-on:not(.pk-back-buttons) #content #add_discussion,
+html.pk-on:not(.pk-back-buttons) #content #add_discussion > [class*="baseButton__content"],
+html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read),
+html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read) > [class*="baseButton__content"] {
+  background-color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  color: var(--pk-link) !important; padding: 0 !important; font-weight: 700 !important; font-size: 13px !important;
+}
+html.pk-on:not(.pk-back-buttons) #content #add_discussion:hover,
+html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read):hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-buttons) #content #add_discussion:focus-visible,
+html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read):focus-visible { outline: 2px solid var(--pk-mark) !important; outline-offset: 2px !important; }
+/* Words only: the plus and the gear go. */
+html.pk-on:not(.pk-back-buttons) #content #add_discussion [class*="baseButton__iconWrapper"],
+html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read) [class*="baseButton__iconWrapper"] { display: none !important; }
+/* 2. One sheet for the three sections (pinned, open, closed). Canvas gives
+ *    each section a white block and each row a box; the span that holds
+ *    the sections is the card, the sections and rows sit on it plain. */
+html.pk-on:not(.pk-back-paper) #content .discussions-v2__wrapper > span[class*="-view"]:has(> [data-testid="discussion-connected-container"]) {
+  display: block !important; margin: 0 !important; border: 1px solid var(--pk-card-edge) !important; border-radius: var(--pk-radius) !important; box-shadow: var(--pk-lift) !important; overflow: clip !important; background-color: var(--pk-paper-2) !important;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content .discussions-v2__wrapper > span[class*="-view"]:has(> [data-testid="discussion-connected-container"]) { background-color: transparent !important; box-shadow: none !important; border-color: color-mix(in srgb, var(--pk-rule) 80%, transparent) !important; }
+html.pk-on:not(.pk-back-paper) #content [class*="-discussions-v2__wrapper"],
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper,
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__details"],
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__content"] { background-color: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
+/* A section head only where there are rows; a hairline above each head
+ * that follows another section with rows. */
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__wrapper:has([data-testid="discussion-row-container"]) [data-testid="discussion-connected-container"]:not(:has([data-testid="discussion-row-container"])) { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-connected-container"]:has([data-testid="discussion-row-container"]) ~ [data-testid="discussion-connected-container"]:has([data-testid="discussion-row-container"]) { border-top: 1px solid var(--pk-rule) !important; }
+/* 3. The head: the group-head shape (14/800, the count as a chip written by
+ *    content.js, the planner's chevron), 44px. Canvas's toggle is a button
+ *    that is the heading; the buttons rule gives it the ink and nothing
+ *    else, so the shape lives on the spans inside it. */
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__summary"] { display: flex !important; justify-content: flex-start !important; align-items: center !important; gap: 8px !important; min-height: 44px !important; padding: 0 14px 0 12px !important; text-align: left !important; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__icon"] { display: inline-block !important; width: 18px !important; margin: 0 !important; text-align: center !important; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__icon"] svg { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__icon"]::before { content: "⌄"; display: inline-block; font-size: 18px; line-height: 20px; font-weight: 800; color: var(--pk-ink-2); position: relative; top: -2px; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [aria-expanded="false"] [class*="toggleDetails__icon"]::before { content: "›"; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__summaryText"] { display: inline-flex !important; align-items: center !important; gap: 8px !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__summaryText"] [class*="-text"] { font-size: 14px !important; line-height: 20px !important; font-weight: 800 !important; color: var(--pk-ink) !important; font-style: normal !important; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__summaryText"] [class*="view--flex-flex"],
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__summaryText"] [class*="view-flexItem"] { display: inline-flex !important; align-items: center !important; margin: 0 !important; padding: 0 !important; width: auto !important; min-width: 0 !important; flex: none !important; }
+/* "Ordered by Recent Activity", said on every section: the rows are in that order. */
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper .recent-activity-text-container { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__summaryText"][data-pk-count]::after {
+  content: attr(data-pk-count); font-size: 12px; line-height: 18px; min-width: 18px; padding: 0 7px; border-radius: 999px; text-align: center; font-weight: 800;
+  background: var(--pk-paper-sunk); color: var(--pk-ink-2); font-variant-numeric: tabular-nums;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content .discussions-container__wrapper [class*="toggleDetails__summaryText"][data-pk-count]::after { background: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+/* 4. The rows. Canvas nests each in a two-column grid (a blue unread badge,
+ *    then the row); the badge column folds (the mark is ours, on the tile),
+ *    the row column is the row. Above, .ic-item-row is the announcements
+ *    grid; here it is a plain block and the container inside it is the row. */
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"] { border-top: 1px solid var(--pk-rule) !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"] > div,
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"] > div > div,
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"] > div > div > [class*="-grid"],
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"] > div > div > [class*="-grid"] > [class*="-gridRow"],
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"] > div > div > [class*="-grid"] > [class*="-gridRow"] > [class*="-gridCol"]:has(> .ic-item-row) { display: block !important; margin: 0 !important; padding: 0 !important; width: auto !important; min-width: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"] > div > div > [class*="-grid"] > [class*="-gridRow"] > [class*="-gridCol"]:has(> [data-testid="ic-blue-unread-badge"]) { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-item-row.ic-discussion-row { display: block !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-row-container {
+  display: grid !important; grid-template-columns: 26px minmax(0, 1fr) !important; align-items: center !important; column-gap: 12px !important;
+  min-height: 52px !important; width: auto !important; box-sizing: border-box !important; margin: 0 !important; padding: 8px 14px !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background-color: transparent !important;
+}
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-row-container:hover { background-color: var(--pk-hover) !important; }
+/* The tile: Canvas's empty drag handle (a student cannot reorder) carries
+ * the look's discussion icon; unread is our 8px mark on its corner, for a
+ * topic not yet opened or one with replies not yet read (content.js writes
+ * data-pk-new from Canvas's own count). Never red. */
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-drag-handle-container {
+  display: grid !important; place-items: center !important; width: 26px !important; height: 26px !important; margin: 0 !important; padding: 0 !important;
+  border-radius: 8px !important; background-color: var(--pk-paper-sunk) !important; position: relative !important;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-discussion-row .ic-drag-handle-container { background-color: color-mix(in srgb, var(--pk-ink) 9%, transparent) !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-drag-handle-container::before { content: ""; width: 16px; height: 16px; -webkit-mask: var(--pk-icon-discussion) center / contain no-repeat; mask: var(--pk-icon-discussion) center / contain no-repeat; background-color: var(--pk-ink-2); }
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"]:has([data-testid="ic-blue-unread-badge"] [data-cid="Badge"]) .ic-drag-handle-container::after,
+html.pk-on:not(.pk-back-paper) #content [data-testid="discussion-row-container"]:has(.ic-discussion-row[data-pk-new]) .ic-drag-handle-container::after {
+  content: ""; position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 999px; background: var(--pk-mark); box-shadow: none;
+}
+/* The content: Canvas's inner grid is two rows (the title and its buttons;
+ * the last post). One grid of ours: title and last post stacked at the
+ * left, the buttons centred at the right across both. The rows become
+ * `contents` so their cells are placed by name; the two empty cells go. */
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container { display: block !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container > [class*="-grid"] { display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; column-gap: 12px !important; align-items: center !important; margin: 0 !important; padding: 0 !important; width: auto !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container > [class*="-grid"] > [class*="-gridRow"] { display: contents !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container > [class*="-grid"] > [class*="-gridRow"] > [class*="-gridCol"] { margin: 0 !important; padding: 0 !important; min-width: 0 !important; width: auto !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container > [class*="-grid"] > [class*="-gridRow"]:first-child > [class*="-gridCol"]:first-child { grid-column: 1 !important; grid-row: 1 !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container > [class*="-grid"] > [class*="-gridRow"]:first-child > [class*="-gridCol"]:last-child { grid-column: 2 !important; grid-row: 1 / span 2 !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container > [class*="-grid"] > [class*="-gridRow"]:nth-child(2) > [class*="-gridCol"]:first-child { grid-column: 1 !important; grid-row: 2 !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-discussion-content-container > [class*="-grid"] > [class*="-gridRow"]:nth-child(2) > [class*="-gridCol"]:not(:first-child) { display: none !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row h3[class*="-view-heading"] { font-size: 14px !important; line-height: 18px !important; font-weight: 700 !important; margin: 0 !important; padding: 0 !important; color: var(--pk-ink) !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row h3[class*="-view-heading"] a[class*="-view-link"] { color: var(--pk-ink) !important; text-decoration: none !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row h3[class*="-view-heading"] a[class*="-view-link"]:hover { text-decoration: underline !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .last-reply-at { display: block !important; margin: 2px 0 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .last-reply-at [class*="-text"] { font-size: 12px !important; line-height: 16px !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+/* At the right: the replies as one quiet chip ("3 replies", written by
+ * content.js from Canvas's total; Canvas's two counts keep their words for
+ * a screen reader at font-size 0), then Canvas's subscribe toggle, an
+ * icon-only button left to the buttons rule. */
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-button-line-left,
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-button-line-right { display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 !important; padding: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-unread-badge[data-pk-replies] { display: inline-flex !important; align-items: center !important; font-size: 0 !important; line-height: 0 !important; margin: 0 8px 0 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background-color: transparent !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-unread-badge[data-pk-replies]::after {
+  content: attr(data-pk-replies); display: inline-block; font-size: 12px; line-height: 18px; padding: 0 8px; border-radius: 999px; font-weight: 700; white-space: nowrap;
+  background: var(--pk-paper-sunk); color: var(--pk-ink-2); font-variant-numeric: tabular-nums; vertical-align: top;
+}
+html.pk-on.pk-art:not(.pk-back-paper) #content .ic-discussion-row .ic-unread-badge[data-pk-replies]::after { background: color-mix(in srgb, var(--pk-ink) 9%, transparent); }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-unread-badge [class*="-position"],
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-unread-badge [class*="-position"] > span { font-size: 0 !important; line-height: 0 !important; }
+html.pk-on:not(.pk-back-paper) #content .ic-discussion-row .ic-unread-badge__count { font-size: 0 !important; line-height: 0 !important; padding: 0 !important; margin: 0 !important; border: 0 !important; background: transparent !important; min-width: 0 !important; }
+/* ---- disc-empty: Canvas's empty-state drawings on Discussions --------
+ * A section with nothing in it drew a cartoon in a dashed box under its
+ * head. An empty section goes while another has rows (above); a page
+ * with none says so in one quiet line, on the paper, with no sheet. The
+ * "Click here to add a discussion" link says what Add Discussion says. */
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__container-image img,
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__container-image a[class*="-view-link"] { display: none !important; }
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__container-image { border: 0 !important; padding: 0 !important; margin: 0 !important; background-color: transparent !important; min-height: 0 !important; text-align: left !important; }
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__container-image [class*="-view"] { padding: 0 !important; margin: 0 !important; text-align: left !important; }
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__container-image [class*="-text"] { display: block !important; font-size: 0 !important; line-height: 0 !important; font-weight: 600 !important; color: var(--pk-ink-2) !important; }
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__container-image [class*="-text"]::after { content: "No discussions yet"; display: inline-block; font-size: 13px; line-height: 18px; vertical-align: top; }
+/* The page with nothing in it: no sheet, the open section's line alone. */
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__wrapper:not(:has([data-testid="discussion-row-container"])) > span[class*="-view"]:has(> [data-testid="discussion-connected-container"]) { border: 0 !important; box-shadow: none !important; background-color: transparent !important; border-radius: 0 !important; }
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__wrapper:not(:has([data-testid="discussion-row-container"])) [data-testid="discussion-connected-container"]:not(.unpinned-discussions-v2__wrapper) { display: none !important; }
+html.pk-on:not(.pk-back-disc-empty) #content .discussions-v2__wrapper:not(:has([data-testid="discussion-row-container"])) .unpinned-discussions-v2__wrapper [class*="toggleDetails__summary"] { display: none !important; }
 /* ==== end Session F ==== */

@@ -412,6 +412,13 @@ const TEXT_BUTTON_OK = [
   'html.pk-on:not(.pk-back-buttons) #right-side #calendar-feed-button',
   // ---- end Session E ----
   // ---- Session F text buttons (discussions, settings) ----
+  // The discussions index's Add Discussion and Settings, on the title line
+  // (2026-09-19). Settings carries the plain rule's two :not() ids so it
+  // outweighs that rule; the content span is named for both, as above.
+  'html.pk-on:not(.pk-back-buttons) #content #add_discussion',
+  'html.pk-on:not(.pk-back-buttons) #content #add_discussion > [class*="baseButton__content"]',
+  'html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read)',
+  'html.pk-on:not(.pk-back-buttons) #content #discussion_settings:not(#add_discussion):not(#mark_all_announcement_read) > [class*="baseButton__content"]',
   // ---- end Session F ----
 ];
 const TEXT_BUTTON_GLYPH = / \[class\*="baseButton__iconWrapper"\]$/;
